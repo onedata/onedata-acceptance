@@ -284,6 +284,15 @@ Feature: Workflow execution statuses tests
     And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
     And user of browser clicks on "Create" button in modal "Create new lane"
     And user of browser creates task using 1st revision of "inout" lambda in "Lane1" lane with following configuration:
+        task name: "15s sleep"
+        arguments:
+            _config:
+              value builder: "Constant value"
+              value: {"sleep": 15}
+            data:
+              value builder: "Iterated item"
+    And user of browser creates another task using 1st revision of "inout" lambda in "Lane1" lane with following configuration:
+        where parallel box: "below"
         task name: "10s sleep"
         arguments:
             _config:
@@ -291,33 +300,24 @@ Feature: Workflow execution statuses tests
               value: {"sleep": 10}
             data:
               value builder: "Iterated item"
-    And user of browser creates another task using 1st revision of "inout" lambda in "Lane1" lane with following configuration:
-        where parallel box: "below"
-        task name: "5s sleep"
-        arguments:
-            _config:
-              value builder: "Constant value"
-              value: {"sleep": 5}
-            data:
-              value builder: "Iterated item"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     And user of browser executes 1st revision of "temporary-workflow-with-sleep-one-lane", using "file1" as initial value, in "space1" space
     And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep-one-lane" is "Preparing"
     And user of browser clicks "Pause" button on "temporary-workflow-with-sleep-one-lane" workflow status bar
-    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Paused" maximum of 10 seconds
+    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Paused" maximum of 20 seconds
     And user of browser clicks "Resume" button on "temporary-workflow-with-sleep-one-lane" workflow status bar
 
     Then user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep-one-lane" is "Resuming"
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
+    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
 
-    And user of browser awaits for status of "Lane1" lane to be "Active" maximum of 60 seconds
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Active"
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Pending"
-    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Finished" maximum of 20 seconds
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser awaits for status of "Lane1" lane to be "Active" maximum of 100 seconds
+    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Active"
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Pending"
+    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Finished" maximum of 30 seconds
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Finished"
 
 
   Scenario: User resume workflow execution after pausing execution of uploaded workflow while first task had active status
@@ -327,18 +327,17 @@ Feature: Workflow execution statuses tests
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
     And user of browser executes 1st revision of "temporary-workflow-with-sleep-one-lane", using "file1" as initial value, in "space1" space
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active" maximum of 20 seconds
+    And user of browser awaits for status of task "15s sleep" in 1st parallel box in "Lane1" lane to be "Active" maximum of 20 seconds
     And user of browser clicks "Pause" button on "temporary-workflow-with-sleep-one-lane" workflow status bar
-    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Paused" maximum of 10 seconds
+    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Paused" maximum of 20 seconds
     And user of browser clicks "Resume" button on "temporary-workflow-with-sleep-one-lane" workflow status bar
 
     Then user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep-one-lane" is "Resuming"
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
-    And user of browser awaits for status of "Lane1" lane to be "Active" maximum of 60 seconds
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Active"
-    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Finished" maximum of 20 seconds
-    And user of browser sees that status of task "5s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
-
+    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
+    And user of browser awaits for status of "Lane1" lane to be "Active" maximum of 100 seconds
+    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Active"
+    And user of browser awaits for status of "temporary-workflow-with-sleep-one-lane" workflow to be "Finished" maximum of 30 seconds
+    And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
 

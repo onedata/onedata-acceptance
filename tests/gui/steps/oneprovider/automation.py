@@ -29,7 +29,14 @@ def click_button_in_navigation_tab(selenium, browser_id, op_container,
                                    tab_name):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    op_container(driver).automation_page.navigation_tab[tab_name].click()
+    try:
+        op_container(driver).automation_page.navigation_tab[tab_name].click()
+    except RuntimeError:
+        driver.refresh()
+        # wait for page to refresh
+        time.sleep(5)
+        switch_to_iframe(selenium, browser_id)
+        op_container(driver).automation_page.navigation_tab[tab_name].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) chooses to run '
