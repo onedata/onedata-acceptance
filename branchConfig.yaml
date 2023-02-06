@@ -6,7 +6,7 @@ images:
   onezone: current_branch
   oneprovider: current_branch
   oneclient: current_branch
-  rest_cli: default
+  rest-cli: default
 
 sources:
   # Specification of branches from which sources for components will be pulled.
