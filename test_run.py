@@ -30,7 +30,7 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
     images_cfg = []
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
-    add_image_to_images_cfg(rest_cli_image, 'rest_cli', '--rest-cli-image', images_cfg, pull)
+    add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
 
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
@@ -339,7 +339,7 @@ SERVICE_TO_IMAGE = {
     'onezone': 'docker.onedata.org/onezone-dev',
     'oneprovider': 'docker.onedata.org/oneprovider-dev',
     'oneclient': 'docker.onedata.org/oneclient-dev',
-    'rest_cli': 'docker.onedata.org/rest-cli'
+    'rest-cli': 'docker.onedata.org/rest-cli'
 }
 
 
