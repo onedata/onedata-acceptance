@@ -34,7 +34,6 @@ def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, 
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
     add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
 
-
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
     elif test_type == 'gui' and env_file_name:
