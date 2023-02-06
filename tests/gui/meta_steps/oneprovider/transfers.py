@@ -20,6 +20,7 @@ from tests.gui.steps.oneprovider.transfers import (
     wait_for_transfers_page_to_load)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -42,6 +43,21 @@ def open_transfers_page(selenium, browser_id, provider, space, hosts, oz_page,
         choose_provider_in_selected_page(selenium, browser_id, provider,
                                          hosts, oz_page)
 
+    wait_for_transfers_page_to_load(selenium, browser_id, op_container)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) opens transfer page using '
+               '"(?P<link>.*)" link on "Distribution" tab for '
+               '"(?P<file>.*)" file'))
+def open_transfer_page_by_clicking_on_link(browser_id, file, tmp_memory,
+                                           selenium, popups, modals, link,
+                                           op_container):
+    option = 'Data distribution'
+    click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
+    getattr(modals(selenium[browser_id]).details_modal.data_distribution,
+            transform(link))()
     wait_for_transfers_page_to_load(selenium, browser_id, op_container)
 
 

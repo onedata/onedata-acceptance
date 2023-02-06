@@ -30,8 +30,8 @@ Feature: Cancel transfer test
     And user of browser replicates "0" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser cancels transfer in waiting transfers
+    And user of browser opens transfer page using "see ongoing transfers" link on "Distribution" tab for "0" file
+    And user of browser cancels transfer in transfers tab for certain file
     And user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
