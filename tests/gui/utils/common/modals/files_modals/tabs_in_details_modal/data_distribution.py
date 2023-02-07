@@ -72,6 +72,8 @@ class DataDistributionTab(Modal):
                                  cls=_DataDistributionRecord)
     migrate = WebItem('.destination-oneprovider-selector', cls=MigrationRecord)
     see_history_btn = NamedButton('.link-to-transfers', text='see history')
+    see_ongoing_transfers = NamedButton('.link-to-transfers',
+                                        text='see ongoing transfers')
 
     def __str__(self):
         return 'Data distribution modal for "{}"'.format(self.file_name)

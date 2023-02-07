@@ -15,7 +15,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe, click_option_in_popup_labeled_menu)
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -70,6 +70,8 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
+               'in transfers tab for (?P<state>certain file)'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
                'in (?P<state>waiting|ended) transfers'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
@@ -81,7 +83,7 @@ def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
         except RuntimeError:
             transfers.ongoing[0].menu_button()
     else:
-        getattr(transfers, state)[0].menu_button()
+        getattr(transfers, transform(state))[0].menu_button()
 
     option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
