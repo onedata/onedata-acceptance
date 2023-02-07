@@ -363,8 +363,8 @@ def check_number_of_events(selenium, browser_id, modals, exp_num, task):
     actual_num = int(modals(
         driver).function_pods_activity.get_number_of_data_rows(driver))
     exp_num = int(exp_num)
-    err_msg = (f'numer of events on "Pods activity" for task "{task}" is not'
-               f' about {exp_num}')
+    err_msg = (f'numer of events on "Pods activity" ({actual_num}) for task '
+               f'"{task}" is not about {exp_num}')
     assert abs(actual_num - exp_num) < 3, err_msg
 
 

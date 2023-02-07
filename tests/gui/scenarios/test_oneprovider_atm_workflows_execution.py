@@ -71,6 +71,6 @@ def screens():
     return [0]
 
 
-# scenarios('../features/onezone/automation/'
-#           'automation_workflows_execution.feature')
+scenarios('../features/onezone/automation/'
+          'automation_workflows_execution.feature')
 scenarios('../features/onezone/automation/automation_workflows_status.feature')
