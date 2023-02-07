@@ -102,6 +102,8 @@ class _TransfersTab(PageObject):
                                      cls=TransferRecordActive)
     _waiting_list = WebItemsSequence('.col-waiting-transfers tr.data-row',
                                      cls=TransferRecordHistory)
+    _transfers_list_for_certain_file = WebItemsSequence(
+        '.transfers-table-container .transfer-row', cls=TransferRecord)
 
     @property
     def ongoing(self):
@@ -117,6 +119,10 @@ class _TransfersTab(PageObject):
     def waiting(self):
         self['waiting'].click()
         return self._waiting_list
+
+    @property
+    def certain_file(self):
+        return self._transfers_list_for_certain_file
 
     def __getitem__(self, name):
         for tab in self.tabs:
