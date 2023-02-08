@@ -58,11 +58,15 @@ class _Breadcrumbs(PageObject):
                         path.remove(path[i])
 
                 for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_name)):
+                    if i == 0:
+                        continue
                     assert dir1 == dir2, err_msg.format(dir=dir1, idx=i,
                                                         item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2)-1].click()
             else:
                 for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
+                    if i == 0:
+                        continue
                     assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i,
                                                              item=self)
                 dir2.click()
