@@ -178,7 +178,7 @@ Feature: Basic share management in Oneprovider GUI
 
     # upload file to shared directory
     And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1/dir1
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
 
     And user of browser opens shares view of "space1"
