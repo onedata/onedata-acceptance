@@ -218,3 +218,47 @@ Feature: Workflow execution statuses tests
     And user of browser clicks on "temporary-workflow-with-sleep" menu on workflow executions list
     Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
 
+
+  Scenario: User sees that workflow is cancelled after cancelling workflow that is paused
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-one-box.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "temporary-workflow-with-one-box", using "file1" as initial value, in "space1" space
+
+    And user of browser clicks "Pause" button on "temporary-workflow-with-one-box" workflow status bar
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused" maximum of 10 seconds
+    And user of browser sees that status of "Lane1" lane in "Workflow1" is "Paused"
+    And user of browser sees that status of "temporary-workflow-with-one-box" workflow is "Paused"
+
+    And user of browser clicks on "Suspended" tab in automation subpage
+    And user of browser sees "temporary-workflow-with-one-box" on workflow executions list
+    And user of browser clicks on "temporary-workflow-with-one-box" menu on workflow executions list
+    And user of browser clicks "Cancel" option in data row menu in automation workflows page
+
+    Then user of browser clicks on "Ended" tab in automation subpage
+    And user of browser sees "temporary-workflow-with-one-box" on workflow executions list
+    And user of browser clicks on "temporary-workflow-with-one-box" on workflow executions list
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
+    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
+    And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
+    And user of browser sees that status of "temporary-workflow-with-one-box" workflow is "Cancelled"
+
+
+  Scenario: User sees that tasks are cancelled after cancelling workflow while task was pausing
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-one-box.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "temporary-workflow-with-one-box", using "file1" as initial value, in "space1" space
+
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active" maximum of 10 seconds
+    And user of browser clicks "Pause" button on "temporary-workflow-with-one-box" workflow status bar
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused" maximum of 10 seconds
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Stopping" maximum of 10 seconds
+    And user of browser clicks "Cancel" button on "temporary-workflow-with-one-box" workflow status bar
+
+    Then user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled" maximum of 10 seconds
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled" maximum of 10 seconds
+    And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
+    And user of browser sees that status of "temporary-workflow-with-one-box" workflow is "Cancelled"
