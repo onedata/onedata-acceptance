@@ -40,9 +40,9 @@ Feature: Basic files tab operations on nested directory structure in file browse
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir2
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1/dir2
     And user of browser clicks and presses enter on item named "dir4" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir2/dir4
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1/dir2/dir4
 
     And user of browser changes current working directory to space root using breadcrumbs
     Then user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
