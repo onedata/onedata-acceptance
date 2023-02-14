@@ -178,7 +178,7 @@ Feature: Basic share management in Oneprovider GUI
 
     # upload file to shared directory
     And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1/dir1
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
 
     And user of browser opens shares view of "space1"
@@ -213,7 +213,7 @@ Feature: Basic share management in Oneprovider GUI
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using "Shared" tag
 
-    And user of browser sees that absolute share path visible in share's info header is as follows: /dir2
+    And user of browser sees that absolute share path visible in share's info header is as follows: space1/dir2
     And user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2
     And user of browser clicks and presses enter on item named "dir2" in file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2
@@ -233,7 +233,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser opens "share_dir2_dir3" single share view of "dir3" using "Shared" tag
 
-    And user of browser sees that absolute share path visible in share's info header is as follows: /dir2/dir3
+    And user of browser sees that absolute share path visible in share's info header is as follows: space1/dir2/dir3
     And user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2_dir3
     And user of browser clicks and presses enter on item named "dir3" in file browser
     And user of browser sees that current working directory path visible in share's file browser is as follows: /dir3

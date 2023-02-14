@@ -16,6 +16,7 @@ branches:
   link-to-jira: true
 notifications: []
 labels: []
+triggers: []
 dependencies:
   require-all-stages-passing: false
   enabled-for-branches: true
