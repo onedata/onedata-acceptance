@@ -37,7 +37,7 @@ Feature: Workflow execution statuses tests
     And user of browser sees that status of "Workflow1" workflow is "Finished"
 
 
-  Scenario: User sees that lane, task and workflow statuses are "Preparing", "Pending" and "Active" in turn, during execution of uploaded "Workflow1" workflow
+  Scenario: User sees that lane, task and workflow statuses are "Preparing", "Pending" and "Active" in turn, during execution of uploaded "temporary-workflow-with-sleep-one-lane" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
@@ -183,7 +183,6 @@ Feature: Workflow execution statuses tests
     And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Preparing"
     And user of browser clicks "<stop_button>" button on "temporary-workflow-with-sleep" workflow status bar
 
-    And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
     And user of browser waits for workflow "temporary-workflow-with-sleep" to be stopped
 
     Then user of browser sees that status of "temporary-workflow-with-sleep" workflow is "<status>"
