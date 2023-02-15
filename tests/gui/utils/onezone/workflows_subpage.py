@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     WebItemsSequence, Input, Label, Button, WebItem, NamedButton, WebElement,
-    WebElementsSequence)
+    WebElementsSequence, AceEditor)
 from tests.gui.utils.onezone.common import InputBox, EditBox
 from tests.gui.utils.onezone.generic_page import Element
 
@@ -64,10 +64,16 @@ class NavigationTab(Element):
     name = id = Label('.nav-link')
 
 
+class JSONWorkflowsPanel(PageObject):
+    text_area = AceEditor('.editor-with-json')
+
+
 class Arguments(Element):
     argument_name = id = Label('.control-label')
     value_builder_dropdown = WebElement('.valueBuilderType-field')
-    json_editor = Input('.json-editor-textarea')
+    data_type = Label('.data-spec-type')
+    string_editor = Input('.value-field .form-control')
+    json = WebItem('.valueBuilderConstValue-field', cls=JSONWorkflowsPanel)
 
 
 class Results(Element):
