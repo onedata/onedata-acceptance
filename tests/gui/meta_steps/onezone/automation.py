@@ -279,9 +279,8 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
                 selenium, browser_id, oz_page, popups, arg['value builder'],
                 arg_name, arg_type)
             if 'value' in arg:
-                write_text_into_json_editor_bracket(
-                    selenium, browser_id, oz_page, json.dumps(arg['value']),
-                    arg_name, arg_type)
+                write_text_into_editor_bracket(selenium, browser_id, oz_page,
+                                               arg['value'], arg_name, arg_type)
 
     if results:
         for res_name, res in results.items():
