@@ -52,6 +52,7 @@ class Task(Element):
     instance_id = Label('.instance-id-detail .truncated-string')
     status = Label('.status-detail .detail-value')
     time_series = Button('.view-task-time-series-action-trigger')
+    audit_log = Button('.view-task-audit-log-action-trigger')
 
     def get_elem_id(self):
         elem_id = self.web_elem.get_attribute('id')

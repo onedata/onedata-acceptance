@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import yaml
 import json
 
+from tests import GUI_LOGDIR
 from tests.gui.meta_steps.oneprovider.automation import (
     choose_file_as_initial_workflow_value,
     wait_for_workflows_in_automation_subpage)
@@ -18,7 +19,8 @@ from tests.gui.steps.modals.modal import (
     choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.oneprovider.automation import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
-    confirm_workflow_to_execute, expand_first_executed_workflow_record)
+    confirm_workflow_to_execute, expand_first_executed_workflow_record,
+    switch_to_automation_page, check_if_task_is_opened)
 from tests.gui.steps.onezone.automation import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.spaces import (
@@ -378,3 +380,59 @@ def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
 
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(type)
+
+
+def write(path, text):
+    import os
+    with open(path, 'a') as f:
+        f.write(f'{text}\n\n')
+        os.utime(path, None)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_task_audit_log(task):
+        if not check_if_task_is_opened(task):
+            task.drag_handle.click()
+        task.audit_log()
+        
+
+@wt(parsers.parse('if workflow status is "{exp_status}" {user} of {browser_id} saves audit logs for all tasks to logs'))
+def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
+                            modals, clipboard, displays):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    # if page.workflow_visualiser.status == exp_status:
+    time.sleep(2)
+    lanes = page.workflow_visualiser.workflow_lanes
+
+    # path = GUI_LOGDIR + '/report/audit_logs.txt'
+    # może trzeba będzie dodać coś takiego na bamboo
+    path = GUI_LOGDIR + '/audit_logs.txt'
+
+    for lane in lanes:
+        boxes = lane.parallel_box
+        for box in boxes:
+            tasks = box.task_list
+            for task in tasks:
+                task.drag_handle.click()
+                #  if task.status == 'Failed':
+                if task.status != 'Finished' and task.status != 'Unscheduled':
+                    write(path, task.name)
+                    time.sleep(2)
+                    click_on_task_audit_log(task)
+                    time.sleep(2)
+                    modal = modals(selenium[browser_id]).task_audit_log
+                    logs = modal.logs_entry
+                    for log in logs:
+                        # if log.severity != 'Info':
+                        log.click()
+                        modal.copy_json()
+                        audit_log = clipboard.paste(display=displays[browser_id])
+                        write(path, audit_log)
+                        modal.close_details()
+                        write(path, '\n')
+                    time.sleep(2)
+                    modal.x()
+                    task.drag_handle.click()
+
+# spr czy zapisywanie na bamboo wgl działa, jak zadziała
+# trzeba do dostosować do failowania i włożyć do testu wyżej
