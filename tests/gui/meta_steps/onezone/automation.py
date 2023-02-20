@@ -414,6 +414,9 @@ def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
             tasks = box.task_list
             for task in tasks:
                 task.drag_handle.click()
+                time.sleep(2)
+                if not check_if_task_is_opened(task):
+                    task.drag_handle.click()
                 #  if task.status == 'Failed':
                 if task.status != 'Finished' and task.status != 'Unscheduled':
                     write(path, task.name)
