@@ -45,8 +45,8 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks data write protection toggle in Datasets modal
-    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     Then user of browser sees data protected status tag for "dir1" in file browser
@@ -95,14 +95,15 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     And user of browser goes to "/dir2/dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
     And user of browser clicks on menu for "dir4" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     Then user of browser clicks and presses enter on item named "dir4" in file browser
@@ -113,7 +114,7 @@ Feature: Basic datasets operations
     And user of browser sees that data write protection toggle is checked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is unchecked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
-    And user of browser sees that data write protection toggle is unchecked on "/space1/dir2/dir3/dir4" in ancestors list
+    And user of browser sees that data write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
     And user of browser clicks on "X" button in modal "Datasets"
 
 
@@ -234,7 +235,7 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
     And user of browser clicks and presses enter on item named "dir2" in file browser
 
@@ -255,7 +256,7 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # check hardlink's data protection
@@ -277,14 +278,15 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark hardlink as dataset and set metadata write protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # check hardlink's data protection tags
@@ -310,14 +312,15 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # check file's and hardlink's protection status tagss
