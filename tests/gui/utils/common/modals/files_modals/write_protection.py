@@ -12,11 +12,9 @@ from tests.gui.utils.common.common import Toggle, Button
 
 
 class WriteProtection(Modal):
-    data_protection_toggle = Toggle('.direct-dataset-item .data-flag-toggle'
-                                    ' .one-way-toggle-track')
+    data_protection_toggle = Toggle('.direct-dataset-item .data-flag-toggle')
     metadata_protection_toggle = Toggle('.direct-dataset-item '
-                                        '.metadata-flag-toggle '
-                                        '.one-way-toggle-track')
+                                        '.metadata-flag-toggle')
     close = Button('.close-btn')
 
     def __str__(self):

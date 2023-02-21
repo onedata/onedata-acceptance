@@ -126,7 +126,7 @@ Feature: Workflow execution statuses tests
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
     And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 30 seconds
+    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 40 seconds
     And user of browser clicks "Pause" button on "temporary-workflow-with-sleep" workflow status bar
     And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
     And user of browser waits for workflow "temporary-workflow-with-sleep" to be paused

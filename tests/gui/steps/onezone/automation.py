@@ -6,17 +6,16 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import json
 import time
 
-from selenium.common.exceptions import NoSuchElementException
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import transform, upload_file_path
+from tests.gui.utils.generic import upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, \
-    switch_to_iframe
+from tests.gui.steps.common.miscellaneous import (
+    press_backspace_on_active_element)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create automation inventory '
@@ -197,19 +196,31 @@ def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
     popups(driver).power_select.choose_item(option)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<json_text>.*)" into'
+def clean_tab_textarea_in_json_argument_editor(tab, selenium, browser_id):
+    tab.click()
+    while tab.text_area:
+        press_backspace_on_active_element(selenium, browser_id)
+    time.sleep(0.5)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<input_value>.*)" into'
                ' json editor bracket in "(?P<object_name>.*)" '
                '(?P<object_type>result|argument) in task creation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_text_into_json_editor_bracket(selenium, browser_id, oz_page,
-                                        json_text, object_name,
-                                        object_type):
+def write_text_into_editor_bracket(selenium, browser_id, oz_page, input_value,
+                                   object_name, object_type):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].workflows_page.task_form
     if object_type == 'result':
-        page.results[object_name + ':'].json_editor = json_text
+        page.results[object_name + ':'].json_editor = input_value
     else:
-        page.arguments[object_name + ':'].json_editor = json_text
+        tab = page.arguments[object_name + ':']
+        if tab.data_type == 'STRING':
+            tab.string_editor = input_value
+        elif tab.data_type == 'OBJECT':
+            clean_tab_textarea_in_json_argument_editor(tab.json, selenium,
+                                                       browser_id)
+            tab.json.text_area = json.dumps(input_value)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '

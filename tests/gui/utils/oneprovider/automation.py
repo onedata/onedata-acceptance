@@ -101,7 +101,7 @@ class WorkflowExecutionPage(PageObject):
 
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
-    input_icon = Button('.tag-creator-trigger')
+    input_link = Button('.add-item-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     workflow_executions_list = WebItemsSequence(
