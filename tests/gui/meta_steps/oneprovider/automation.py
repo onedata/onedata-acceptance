@@ -39,9 +39,11 @@ def check_if_files_were_selected(modals, driver, files):
         pass
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_files_modal(op_container, driver, popups):
     op_container(driver).automation_page.input_link.click()
     option = "Select/upload files"
+    time.sleep(1)
     popups(driver).workflow_initial_values.menu[option]()
 
 

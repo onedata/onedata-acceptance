@@ -400,42 +400,35 @@ def click_on_task_audit_log(task):
 def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
                             modals, clipboard, displays):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    # if page.workflow_visualiser.status == exp_status:
     time.sleep(2)
-    lanes = page.workflow_visualiser.workflow_lanes
-
-    # path = GUI_LOGDIR + '/report/audit_logs.txt'
-    # może trzeba będzie dodać coś takiego na bamboo
-    path = GUI_LOGDIR + '/audit_logs.txt'
-
-    for lane in lanes:
-        boxes = lane.parallel_box
-        for box in boxes:
-            tasks = box.task_list
-            for task in tasks:
-                task.drag_handle.click()
-                time.sleep(2)
-                if not check_if_task_is_opened(task):
+    act_status = page.workflow_visualiser.status
+    if act_status == exp_status:
+        lanes = page.workflow_visualiser.workflow_lanes
+        path = GUI_LOGDIR + '/audit_logs.txt'
+        for lane in lanes:
+            boxes = lane.parallel_box
+            for box in boxes:
+                tasks = box.task_list
+                for task in tasks:
                     task.drag_handle.click()
-                #  if task.status == 'Failed':
-                if task.status != 'Finished' and task.status != 'Unscheduled':
-                    write(path, task.name)
                     time.sleep(2)
-                    click_on_task_audit_log(task)
-                    time.sleep(2)
-                    modal = modals(selenium[browser_id]).task_audit_log
-                    logs = modal.logs_entry
-                    for log in logs:
-                        # if log.severity != 'Info':
-                        log.click()
-                        modal.copy_json()
-                        audit_log = clipboard.paste(display=displays[browser_id])
-                        write(path, audit_log)
-                        modal.close_details()
-                        write(path, '\n')
-                    time.sleep(2)
-                    modal.x()
-                    task.drag_handle.click()
-
-# spr czy zapisywanie na bamboo wgl działa, jak zadziała
-# trzeba do dostosować do failowania i włożyć do testu wyżej
+                    if not check_if_task_is_opened(task):
+                        task.drag_handle.click()
+                    if task.status == 'Failed':
+                        write(path, task.name)
+                        time.sleep(2)
+                        click_on_task_audit_log(task)
+                        time.sleep(2)
+                        modal = modals(selenium[browser_id]).task_audit_log
+                        logs = modal.logs_entry
+                        for log in logs:
+                            if log.severity != 'Info':
+                                log.click()
+                                modal.copy_json()
+                                audit_log = clipboard.paste(display=displays[browser_id])
+                                write(path, audit_log)
+                                modal.close_details()
+                                write(path, '\n')
+                        time.sleep(2)
+                        modal.x()
+                        task.drag_handle.click()
