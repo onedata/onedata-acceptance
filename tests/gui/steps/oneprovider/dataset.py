@@ -61,14 +61,17 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks {toggle_type} write protection'
+@wt(parsers.parse('user of {browser_id} checks {toggle_type} write protection'
                   ' toggle in {modal_name} modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals, toggle_type,
                             modal_name):
     driver = selenium[browser_id]
-    getattr(getattr(modals(driver), transform(modal_name)),
-            f'{toggle_type}_protection_toggle').check()
+    toggle = getattr(getattr(modals(driver), transform(modal_name)),
+                     f'{toggle_type}_protection_toggle')
+    toggle.check()
+    if toggle.is_unchecked():
+        raise Exception(f'Cannot check {toggle_type} write protection toggle')
 
 
 @wt(parsers.parse('user of {browser_id} cannot click {toggle_type} write '
@@ -77,9 +80,13 @@ def click_protection_toggle(browser_id, selenium, modals, toggle_type,
 def can_not_click_protection_toggle(browser_id, selenium, modals, toggle_type,
                                     modal_name):
     driver = selenium[browser_id]
-    err_msg = f'{toggle_type}_protection_toggle is clickable'
-    assert not getattr(getattr(modals(driver), transform(modal_name)),
-                       f'{toggle_type}_protection_toggle').check(), err_msg
+    try:
+        getattr(getattr(modals(driver), transform(modal_name)),
+                f'{toggle_type}_protection_toggle').check()
+        raise Exception(f'{toggle_type}_protection_toggle is clickable')
+    except RuntimeError:
+        pass
+
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))

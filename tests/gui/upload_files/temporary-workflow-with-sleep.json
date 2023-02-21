@@ -3,7 +3,7 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "eb8389e28e374adb2c0fa9ca920dcac7ch53e8": {
+      "50632911453d23ee817773e63170d8b0checc9": {
         "1": {
           "schemaFormatVersion": 2,
           "revision": {
@@ -34,7 +34,8 @@
               },
               "name": "inout",
               "description": "",
-              "checksum": "32998922d4a69dedf1e47552a680ec26",
+              "configParameterSpecs": [],
+              "checksum": "55b9c21e4faa04462f1b0a8252d14aa9",
               "argumentSpecs": [
                 {
                   "name": "_config",
@@ -57,7 +58,7 @@
               ]
             }
           },
-          "originalAtmLambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8"
+          "originalAtmLambdaId": "50632911453d23ee817773e63170d8b0checc9"
         }
       }
     },
@@ -69,7 +70,7 @@
           "type": "list",
           "requiresInitialContent": true,
           "name": "input",
-          "id": "c52a3fca6df53142fbd2f06ff9ea42ad0c2d03",
+          "id": "bacb9457144dd10448f868ec00ef72dea75955",
           "description": "",
           "defaultInitialContent": null,
           "config": {
@@ -86,7 +87,7 @@
       "lanes": [
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "c52a3fca6df53142fbd2f06ff9ea42ad0c2d03",
+            "storeSchemaId": "bacb9457144dd10448f868ec00ef72dea75955",
             "maxBatchSize": 100
           },
           "parallelBoxes": [
@@ -98,8 +99,9 @@
                   "resourceSpecOverride": null,
                   "name": "1s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8",
-                  "id": "f816cb1552b3b3b41ca0b1514dcc6595b4468e",
+                  "lambdaId": "50632911453d23ee817773e63170d8b0checc9",
+                  "lambdaConfig": {},
+                  "id": "068f2bbddfdcf4d1f6ff4addac9461969a6462",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -121,7 +123,7 @@
                 }
               ],
               "name": "Parallel box",
-              "id": "015742b4b42649244ea459aba55488734fc719"
+              "id": "a25c9525306be2fc26855945086f03a7cc9617"
             },
             {
               "tasks": [
@@ -131,8 +133,9 @@
                   "resourceSpecOverride": null,
                   "name": "10s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8",
-                  "id": "952c7e8647690dacd748ebde4258088fbf9276",
+                  "lambdaId": "50632911453d23ee817773e63170d8b0checc9",
+                  "lambdaConfig": {},
+                  "id": "af73e88ea6ce849bf4eda03a5ec89ac92ec7fb",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -154,17 +157,17 @@
                 }
               ],
               "name": "Parallel box",
-              "id": "7b203be6c2cb89eca17f2223a726722a03e35e"
+              "id": "4845ac73ea780c271e1b0e3c173acbce00ddec"
             }
           ],
           "name": "Lane1",
           "maxRetries": 0,
-          "id": "fcb37750ed0370fb2abb756fac88201abb1077",
+          "id": "3792e1ab2af90627e33fd758730de6a8848ebd",
           "dashboardSpec": null
         },
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "c52a3fca6df53142fbd2f06ff9ea42ad0c2d03",
+            "storeSchemaId": "bacb9457144dd10448f868ec00ef72dea75955",
             "maxBatchSize": 100
           },
           "parallelBoxes": [
@@ -176,8 +179,9 @@
                   "resourceSpecOverride": null,
                   "name": "1s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8",
-                  "id": "6c886e7a13756b3501ca500ec74dcffe0b02c6",
+                  "lambdaId": "50632911453d23ee817773e63170d8b0checc9",
+                  "lambdaConfig": {},
+                  "id": "283420379fb06326b30b7c2f9944ea9579b88d",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -199,7 +203,7 @@
                 }
               ],
               "name": "Parallel box",
-              "id": "31ed100a3e127636aa1c2610eac7f26ff74278"
+              "id": "40a267f11eef6c653c5901242bcd768b1d14e8"
             },
             {
               "tasks": [
@@ -209,8 +213,9 @@
                   "resourceSpecOverride": null,
                   "name": "10s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8",
-                  "id": "f6f911595bd95775630ad1f3b780542672d098",
+                  "lambdaId": "50632911453d23ee817773e63170d8b0checc9",
+                  "lambdaConfig": {},
+                  "id": "0ceecae74b11ac41df1ccd256907554cac5793",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -232,7 +237,7 @@
                 }
               ],
               "name": "Parallel box",
-              "id": "8db3cb1f093ad49b9d20640ccff37db165fef3"
+              "id": "6c17ae72b0e1ec48383385b2becde690a188b8"
             },
             {
               "tasks": [
@@ -242,8 +247,9 @@
                   "resourceSpecOverride": null,
                   "name": "5s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "eb8389e28e374adb2c0fa9ca920dcac7ch53e8",
-                  "id": "9cc83b57debb23cd195d27b51459e956bcc11e",
+                  "lambdaId": "50632911453d23ee817773e63170d8b0checc9",
+                  "lambdaConfig": {},
+                  "id": "956141c4348a8f620f22e87495312effb8dfca",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -265,12 +271,12 @@
                 }
               ],
               "name": "Parallel box",
-              "id": "9efaba79c8532b713c78f49b14bc743c7f135c"
+              "id": "7034822e02dc8c058151c593ec0aaec1ed105c"
             }
           ],
           "name": "Lane2",
           "maxRetries": 0,
-          "id": "dce3f197af780bd19b93a16548b9e7778c8942",
+          "id": "3b5a27d96aaaa1aa7d56a67c39f8f83b3822d4",
           "dashboardSpec": null
         }
       ],
@@ -278,6 +284,6 @@
       "dashboardSpec": null
     }
   },
-  "originalAtmWorkflowSchemaId": "444f7628061e27bc1b07005c42ff49acch8bf9",
+  "originalAtmWorkflowSchemaId": "125d8ced33e2671ef54e987342eb099bch9c2f",
   "name": "temporary-workflow-with-sleep"
 }

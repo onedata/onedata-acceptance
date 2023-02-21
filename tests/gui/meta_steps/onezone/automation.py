@@ -279,9 +279,8 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
                 selenium, browser_id, oz_page, popups, arg['value builder'],
                 arg_name, arg_type)
             if 'value' in arg:
-                write_text_into_json_editor_bracket(
-                    selenium, browser_id, oz_page, json.dumps(arg['value']),
-                    arg_name, arg_type)
+                write_text_into_editor_bracket(selenium, browser_id, oz_page,
+                                               arg['value'], arg_name, arg_type)
 
     if results:
         for res_name, res in results.items():
@@ -296,7 +295,7 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
                   '"{workflow}", using "{item_list}" as initial value, in '
                   '"{space}" space'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item_list):
+                     ordinal, workflow, modals, item_list, popups):
     spaces = 'spaces'
     automation_workflows = 'Automation Workflows'
     tab_name = 'Run workflow'
@@ -310,7 +309,7 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
     choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     ordinal, workflow)
     choose_file_as_initial_workflow_value(selenium, browser_id, item_list, modals,
-                                          op_container)
+                                          op_container, popups)
     confirm_workflow_to_execute(selenium, browser_id, op_container)
 
 
@@ -319,11 +318,12 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                   '"{space}" space and waits extended time for workflow to '
                   'finish'))
 def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
-                              op_container, ordinal, workflow, modals, item):
+                              op_container, ordinal, workflow, modals, item,
+                              popups):
     start = 'start'
     finish = 'finish'
     execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item)
+                     ordinal, workflow, modals, item, popups)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              start)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
