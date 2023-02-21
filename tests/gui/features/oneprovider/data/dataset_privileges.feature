@@ -153,8 +153,8 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Write protection" option in data row menu in dataset browser
-    And user of browser_user1 clicks data write protection toggle in Write Protection modal
-    And user of browser_user1 clicks metadata write protection toggle in Write Protection modal
+    And user of browser_user1 checks data write protection toggle in Write Protection modal
+    And user of browser_user1 checks metadata write protection toggle in Write Protection modal
     And user of browser_user1 clicks on "Close" button in modal "Write Protection"
     Then user of browser_user1 sees metadata protected status tag for "dir1" in dataset browser
     And user of browser_user1 sees data protected status tag for "dir1" in dataset browser
