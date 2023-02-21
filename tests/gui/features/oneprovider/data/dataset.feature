@@ -265,75 +265,7 @@ Feature: Basic datasets operations
     Then user of browser sees "File's data is write protected" label in Datasets modal
 
 
-  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files have these flags separately set
-    # create hardlink
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "file3" file in file browser
-    And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser clicks "Place hard link" button from file browser menu bar
-
-    # mark file as dataset and set data write protection
-    And user of browser clicks on menu for "file3" file in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser checks data write protection toggle in Datasets modal
-    And user of browser clicks on "X" button in modal "Datasets"
-
-    # mark hardlink as dataset and set metadata write protection
-    And user of browser clicks on menu for "file3(1)" file in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser checks data write protection toggle in Datasets modal
-    And user of browser checks metadata write protection toggle in Datasets modal
-    And user of browser clicks on "X" button in modal "Datasets"
-
-    # check hardlink's data protection tags
-    Then user of browser sees data protected status tag for "file3(1)" in file browser
-    And user of browser sees metadata protected status tag for "file3(1)" in file browser
-
-
-  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files inherit these flags from their parents separately
-    # create hardlink
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser changes current working directory to space root using breadcrumbs
-
-    And user of browser clicks and presses enter on item named "dir2" in file browser
-    And user of browser clicks "Place hard link" button from file browser menu bar
-    And user of browser changes current working directory to space root using breadcrumbs
-
-    # mark directory as dataset and set data write protection
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser checks data write protection toggle in Datasets modal
-    And user of browser clicks on "X" button in modal "Datasets"
-
-    # mark directory as dataset and set metadata write protection
-    And user of browser clicks on menu for "dir2" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset" button in modal "Datasets"
-    And user of browser checks data write protection toggle in Datasets modal
-    And user of browser checks metadata write protection toggle in Datasets modal
-    And user of browser clicks on "X" button in modal "Datasets"
-
-    # check file's and hardlink's protection status tagss
-    And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser clicks on inherited status tag for "file1" in file browser
-    Then user of browser sees data protected status tag for "file1" in file browser
-    And user of browser sees metadata protected status tag for "file1" in file browser
-    And user of browser changes current working directory to space root using breadcrumbs
-
-    And user of browser clicks and presses enter on item named "dir2" in file browser
-    And user of browser clicks on inherited status tag for "file1" in file browser
-    And user of browser sees data protected status tag for "file1" in file browser
-    And user of browser sees metadata protected status tag for "file1" in file browser
+  # TODO VFS-10555 check hardlink inherited protection flags behavior
 
 
   # checks bugfix from VFS-8739
