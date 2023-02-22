@@ -24,12 +24,19 @@ def switch_to_automation_page(selenium, browser_id, op_container):
 
 @wt(parsers.parse('user of {browser_id} clicks "{tab_name}" '
                   'in the automation tab bar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_navigation_tab(selenium, browser_id, op_container,
                                    tab_name):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    op_container(driver).automation_page.navigation_tab[tab_name].click()
+    try:
+        op_container(driver).automation_page.navigation_tab[tab_name].click()
+    except RuntimeError:
+        driver.refresh()
+        # wait for page to refresh
+        time.sleep(5)
+        switch_to_iframe(selenium, browser_id)
+        op_container(driver).automation_page.navigation_tab[tab_name].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) chooses to run '
@@ -171,6 +178,7 @@ def await_for_lane_workflow_status(selenium, browser_id, op_container,
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_of_workflow_if_needed_wait_for_stopping_status(
         selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
