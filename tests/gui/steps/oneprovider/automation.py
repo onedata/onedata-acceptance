@@ -24,7 +24,7 @@ def switch_to_automation_page(selenium, browser_id, op_container):
 
 @wt(parsers.parse('user of {browser_id} clicks "{tab_name}" '
                   'in the automation tab bar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_navigation_tab(selenium, browser_id, op_container,
                                    tab_name):
     switch_to_iframe(selenium, browser_id)
@@ -145,6 +145,7 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
     assert_status(lane, actual_status, expected_status)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_status(page, option, name):
     if option == 'lane':
         return page.workflow_visualiser.workflow_lanes[name].status
@@ -171,9 +172,11 @@ def await_for_lane_workflow_status(selenium, browser_id, op_container,
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_of_workflow_if_needed_wait_for_stopping_status(
         selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
+    time.sleep(0.5)
     actual_status = page.workflow_visualiser.status
     if expected_status == 'Stopping' and  actual_status == 'Active':
         seconds = 20

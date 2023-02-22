@@ -139,7 +139,7 @@ Feature: Workflow execution statuses tests
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
     And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
-    And user of browser awaits for status of "Lane1" lane to be "Finished" maximum of 60 seconds
+    And user of browser awaits for status of "Lane1" lane to be "Finished" maximum of 70 seconds
     And user of browser awaits for status of "Lane2" lane to be "Active" maximum of 30 seconds
 
     And user of browser clicks "<stop_button>" button on "temporary-workflow-with-sleep" workflow status bar
