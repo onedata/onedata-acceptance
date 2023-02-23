@@ -137,8 +137,8 @@ def await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
             break
     else:
         raise Exception(f'After awaiting for task "{task}" for {seconds} '
-                        f'seconds its status is not {expected_status} as '
-                        f'expected')
+                        f'seconds its status ({actual_status}) is not '
+                        f'{expected_status} as expected')
 
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
@@ -242,6 +242,13 @@ def expand_first_executed_workflow_record(selenium, browser_id, op_container):
 def click_on_workflow_menu(selenium, browser_id, op_container, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     page.workflow_executions_list[workflow].menu_button()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" '
+               'on workflow executions list'))
+def click_and_enter_workflow(selenium, browser_id, op_container, workflow):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.workflow_executions_list[workflow].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees)'
