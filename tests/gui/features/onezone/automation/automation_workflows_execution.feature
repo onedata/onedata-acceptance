@@ -119,12 +119,12 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
+        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:dev"
         read-only: False
         arguments:
           - name: "file"
             type: File
-          - name: "metadata_key"
+          - name: "metadataKey"
             type: String
           - name: "algorithm"
             type: String
@@ -159,7 +159,7 @@ Feature: Workflows execution
         arguments:
             file:
               value builder: "Iterated item"
-            metadata_key:
+            metadataKey:
               value builder: "Constant value"
               value: "md5_key"
             algorithm:
@@ -176,7 +176,7 @@ Feature: Workflows execution
         arguments:
             file:
               value builder: "Iterated item"
-            metadata_key:
+            metadataKey:
               value builder: "Constant value"
               value: "sha256_key"
             algorithm:
