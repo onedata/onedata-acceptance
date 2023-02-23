@@ -90,7 +90,10 @@ class WorkflowVisualiser(PageObject):
     add_store_button = Button('.create-store-action-trigger')
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
                                    '.tag-item', cls=Store)
-    pause = Button('.pause-resume-atm-workflow-execution-action-trigger')
+    pause = NamedButton('.pause-resume-atm-workflow-execution-action-trigger',
+                        text="Pause")
+    resume = NamedButton('.pause-resume-atm-workflow-execution-action-trigger',
+                         text="Resume")
     cancel = Button('.cancel-atm-workflow-execution-action-trigger')
 
 
