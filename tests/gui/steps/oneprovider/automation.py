@@ -137,8 +137,8 @@ def await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
             break
     else:
         raise Exception(f'After awaiting for task "{task}" for {seconds} '
-                        f'seconds its status is not {expected_status} as '
-                        f'expected')
+                        f'seconds its status ({actual_status}) is not '
+                        f'{expected_status} as expected')
 
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
@@ -152,6 +152,7 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
     assert_status(lane, actual_status, expected_status)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_status(page, option, name):
     if option == 'lane':
         return page.workflow_visualiser.workflow_lanes[name].status
@@ -182,6 +183,7 @@ def await_for_lane_workflow_status(selenium, browser_id, op_container,
 def assert_status_of_workflow_if_needed_wait_for_stopping_status(
         selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
+    time.sleep(0.5)
     actual_status = page.workflow_visualiser.status
     if expected_status == 'Stopping' and  actual_status == 'Active':
         seconds = 20
@@ -241,6 +243,13 @@ def expand_first_executed_workflow_record(selenium, browser_id, op_container):
 def click_on_workflow_menu(selenium, browser_id, op_container, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     page.workflow_executions_list[workflow].menu_button()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" '
+               'on workflow executions list'))
+def click_and_enter_workflow(selenium, browser_id, op_container, workflow):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.workflow_executions_list[workflow].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees)'

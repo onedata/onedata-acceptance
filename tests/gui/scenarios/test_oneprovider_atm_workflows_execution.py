@@ -73,4 +73,6 @@ def screens():
 
 scenarios('../features/onezone/automation/'
           'automation_workflows_execution.feature')
-# scenarios('../features/onezone/automation/automation_workflows_status.feature')
+scenarios('../features/onezone/automation/automation_workflows_status.feature')
+scenarios('../features/onezone/automation/'
+          'workflows_pausing_and_cancelling.feature')
