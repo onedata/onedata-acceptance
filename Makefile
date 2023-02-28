@@ -151,4 +151,7 @@ clean_swaggers:
 
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=
+	@./bamboos/scripts/run-with-surefire-report.py \
+		--test-name CodetagTracker \
+		--report-path test/codetag_tracker_results/TEST-codetag_tracker.xml \
+		echo "Skipping codetag-tracker for release version 20.02.*"
