@@ -39,10 +39,15 @@ def check_if_files_were_selected(modals, driver, files):
         pass
 
 
-def open_select_initial_files_modal(op_container, driver, popups):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_select_initial_files_modal(op_container, driver, popups, modals):
     op_container(driver).automation_page.input_link.click()
     option = "Select/upload files"
+    time.sleep(1)
     popups(driver).workflow_initial_values.menu[option]()
+    time.sleep(1)
+    # check if modal opened
+    select_files_modal = modals(driver).select_files
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
@@ -53,7 +58,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
     files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(op_container, driver, popups)
+    open_select_initial_files_modal(op_container, driver, popups, modals)
 
     for path in files:
         modal_name = 'select files'
@@ -67,7 +72,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                 select_files_modal.confirm_button.click()
                 if file_name not in files[-1]:
                     open_select_initial_files_modal(op_container, driver,
-                                                    popups)
+                                                    popups, modals)
                 break
 
     check_if_files_were_selected(modals, driver, files)

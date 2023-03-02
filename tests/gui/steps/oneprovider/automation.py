@@ -203,6 +203,7 @@ def assert_status(name, actual_status, expected_status):
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
                   '"{workflow}" workflow status bar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_status_bar(selenium, browser_id, op_container, button):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     getattr(page.workflow_visualiser, transform(button))()
