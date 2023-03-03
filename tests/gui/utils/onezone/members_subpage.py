@@ -65,7 +65,7 @@ class MembersItemRow(PageObject):
 
 
 class MembersUsersItemRow(MembersItemRow):
-    name = id = Label('.user-info-with-icon .user-fullname')
+    name = id = Label('.record-name-general')
 
 
 class MembersList(PageObject):
