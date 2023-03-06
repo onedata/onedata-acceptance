@@ -180,7 +180,8 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
 
 @wt(parsers.re('user of (?P<browser_id>.*) chooses "(?P<option>.*)" in '
                '(?P<dropdown_name>.*) in "(?P<object_name>.*)" '
-               '(?P<object_type>result|argument) in task creation page'))
+               '(?P<object_type>result|argument|configuration parameters) in '
+               'task creation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
                                                 popups, option, object_name,
@@ -190,8 +191,10 @@ def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
     if object_type == 'result':
         page.results[object_name + ':'].add_mapping()
         page.results[object_name + ':'].target_store_dropdown.click()
-    else:
+    elif object_type == 'argument':
         page.arguments[object_name + ':'].value_builder_dropdown.click()
+    elif object_type == 'configuration parameters':
+        page.conf_parameters[object_name + ':'].value_builder_dropdown.click()
 
     popups(driver).power_select.choose_item(option)
 
@@ -213,7 +216,7 @@ def write_text_into_editor_bracket(selenium, browser_id, oz_page, input_value,
     page = oz_page(driver)['automation'].workflows_page.task_form
     if object_type == 'result':
         page.results[object_name + ':'].json_editor = input_value
-    else:
+    elif object_type == 'argument':
         tab = page.arguments[object_name + ':']
         if tab.data_type == 'STRING':
             tab.string_editor = input_value
@@ -221,6 +224,8 @@ def write_text_into_editor_bracket(selenium, browser_id, oz_page, input_value,
             clean_tab_textarea_in_json_argument_editor(tab.json, selenium,
                                                        browser_id)
             tab.json.text_area = json.dumps(input_value)
+    elif object_type == 'configuration parameters':
+        page.conf_parameters[object_name + ':'].value_editor = str(input_value)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '

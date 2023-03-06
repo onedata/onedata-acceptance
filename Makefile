@@ -14,7 +14,7 @@ ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL
 export ONEDATA_GIT_URL
 
 ACCEPTANCE_GUI_IMAGE := onedata/acceptance_gui:v9
-ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v10
+ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v11
 
 unpack = tar xzf $(1).tar.gz
 

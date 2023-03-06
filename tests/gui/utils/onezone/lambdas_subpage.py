@@ -14,32 +14,18 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
 
-class LambdaArgument(PageObject):
-    add_argument = Button('.add-field-button')
-    argument_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
+class LambdaParameter(PageObject):
+    add_button = Button('.add-field-button')
+    name = WebItem('.entryName-field .text-like-field', cls=InputBox)
     type_dropdown = WebElement('.entryDataSpec-field '
                                '.ember-power-select-trigger')
 
 
-class LambdaResult(PageObject):
-    add_result = Button('.add-field-button')
-    result_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
-    type_dropdown = WebElement('.entryDataSpec-field '
-                               '.ember-power-select-trigger')
-
-
-class LambdaArguments(PageObject):
-    add_argument = Button('.add-field-button')
-    bracket_1st = WebItem('.collection-item:nth-child(1) ', cls=LambdaArgument)
-    bracket_2nd = WebItem('.collection-item:nth-child(2) ', cls=LambdaArgument)
-    bracket_3rd = WebItem('.collection-item:nth-child(3) ', cls=LambdaArgument)
-
-
-class LambdaResults(PageObject):
-    add_result = Button('.add-field-button')
-    bracket_1st = WebItem('.collection-item:nth-child(1) ', cls=LambdaResult)
-    bracket_2nd = WebItem('.collection-item:nth-child(2) ', cls=LambdaResult)
-    bracket_3rd = WebItem('.collection-item:nth-child(3) ', cls=LambdaResult)
+class LambdaParameters(PageObject):
+    add_button = Button('.add-field-button')
+    bracket_1st = WebItem('.collection-item:nth-child(1)', cls=LambdaParameter)
+    bracket_2nd = WebItem('.collection-item:nth-child(2)', cls=LambdaParameter)
+    bracket_3rd = WebItem('.collection-item:nth-child(3)', cls=LambdaParameter)
 
 
 class LambdaAddForm(PageObject):
@@ -49,9 +35,10 @@ class LambdaAddForm(PageObject):
     mount_space_toggle = Toggle('.mountSpace-field .form-control')
     read_only_toggle = Toggle('.readonly-field .form-control')
 
-    argument = WebItem('.arguments-field ', cls=LambdaArguments)
-    result = WebItem('.results-field ', cls=LambdaResults)
-
+    argument = WebItem('.arguments-field', cls=LambdaParameters)
+    result = WebItem('.results-field', cls=LambdaParameters)
+    configuration_parameters = WebItem('.configParameters-field',
+                                       cls=LambdaParameters)
     create_button = Button('.btn-primary')
 
 

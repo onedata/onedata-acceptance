@@ -41,7 +41,7 @@
                   "mountOneclient": true
                 }
               },
-              "name": "counting-different-checksums",
+              "name": "calculate-checksum-mounted",
               "description": "",
               "checksum": "b912fe441503d9cbad013c02d4856567",
               "argumentSpecs": [

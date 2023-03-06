@@ -58,7 +58,6 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
     files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-
     open_select_initial_files_modal(op_container, driver, popups, modals)
 
     for path in files:
