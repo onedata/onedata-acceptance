@@ -14,7 +14,8 @@ from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.miscellaneous import (
+    switch_to_iframe, click_option_in_popup_labeled_menu)
 
 
 def switch_to_automation_page(selenium, browser_id, op_container):
@@ -344,3 +345,14 @@ def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
     else:
         raise Exception(f'There is no {option} processing speed on chart with'
                         f' processing stat.')
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option in latest '
+                  'run menu for "{lane_name}" lane'))
+def click_option_for_lane(selenium, browser_id, op_container, lane_name,
+                          option, popups):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    workflow_visualiser = page.workflow_visualiser
+    lane = workflow_visualiser.workflow_lanes[lane_name]
+    lane.latest_run_menu()
+    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)

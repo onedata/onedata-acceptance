@@ -76,3 +76,4 @@ scenarios('../features/onezone/automation/'
 scenarios('../features/onezone/automation/automation_workflows_status.feature')
 scenarios('../features/onezone/automation/'
           'workflows_pausing_and_cancelling.feature')
+scenarios('../features/onezone/automation/rerun_workflow.feature')

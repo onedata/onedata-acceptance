@@ -68,6 +68,7 @@ class WorkflowLane(Element):
     status = Label('.visible-run-status-label')
     parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                     cls=ParallelBox)
+    latest_run_menu = Button('.lane-run-actions-trigger .menu-toggle-frame')
 
     def scroll_to_first_task_in_parallel_box(self, number):
         from tests.gui.utils.core import scroll_to_css_selector_bottom
