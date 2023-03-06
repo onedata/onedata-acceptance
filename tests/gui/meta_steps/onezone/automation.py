@@ -137,24 +137,23 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
                                        % 10::4])
 
     if configuration_parameters:
-        for i in range(len(configuration_parameters)):
+        for i, config_param in enumerate(configuration_parameters):
             add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, conf_param_option,
-                configuration_parameters[i]['name'],
-                configuration_parameters[i]['type'], ordinal(i + 1))
+                config_param['name'], config_param['type'], ordinal(i + 1))
 
 
     if arguments:
-        for i in range(len(arguments)):
+        for i, args in enumerate(arguments):
             add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, argument_option,
-                arguments[i]['name'], arguments[i]['type'], ordinal(i+1))
+                args['name'], args['type'], ordinal(i+1))
 
     if results:
-        for i in range(len(results)):
+        for i, res in enumerate(results):
             add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, result_option,
-                results[i]['name'], results[i]['type'], ordinal(i+1))
+                res['name'], res['type'], ordinal(i+1))
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
 
