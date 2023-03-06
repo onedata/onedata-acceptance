@@ -83,6 +83,12 @@ class Results(Element):
     add_mapping = Button('.add-field-button')
 
 
+class Parameters(Element):
+    param_name = id = Label('.control-label')
+    value_builder_dropdown = WebElement('.paramValueBuilder-field')
+    value_editor = Input('.value-field .form-control')
+
+
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
@@ -91,6 +97,8 @@ class TaskAddForm(PageObject):
                                  '.argumentMapping-field', cls=Arguments)
     results = WebItemsSequence('.resultMappings-field '
                                '.singleResultMappings-field', cls=Results)
+    conf_parameters = WebItemsSequence('.lambdaConfigSection-field '
+                                       '.configMapping-field', cls=Parameters)
 
 
 class Revision(Element):

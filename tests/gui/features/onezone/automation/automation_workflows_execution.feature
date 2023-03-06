@@ -32,15 +32,15 @@ Feature: Workflows execution
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User sees desirable pods statuses after execution of uploaded "inout" workflow finishes
+  Scenario: User sees desirable pods statuses after execution of uploaded "echo" workflow finishes
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "Workflow1" workflow
+    And user of browser chooses to run 2nd revision of "echo" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
@@ -49,8 +49,8 @@ Feature: Workflows execution
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     # User tests openfaas-pods-activity-monitor
-    And user of browser clicks on task "inout" in 1st parallel box in "Lane1" lane in workflow visualizer
-    And user of browser clicks on link "Pods activity" in "inout" task in 1st parallel box in "Lane1" lane in workflow visualizer
+    And user of browser clicks on task "echo" in 1st parallel box in "lane 1" lane in workflow visualizer
+    And user of browser clicks on link "Pods activity" in "echo" task in 1st parallel box in "lane 1" lane in workflow visualizer
     And user of browser waits for all pods to finish execution in modal "Function pods activity"
     And user of browser clicks on first terminated pod in modal "Function pods activity"
     And user of browser sees events in modal "Function pods activity" with following reasons:
@@ -65,9 +65,16 @@ Feature: Workflows execution
 
     # User manually creates inout lambda
     And user of browser creates lambda with following configuration:
-        name: "inout"
-        docker image: "docker.onedata.org/in-out:v1"
+        name: "echo"
+        docker image: "docker.onedata.org/lambda-echo:v1"
         mount space: False
+        configuration parameters:
+          - name: "sleepDurationSec"
+            type: Number
+          - name: "exceptionProbability"
+            type: Number
+          - name: "streamResults"
+            type: Boolean
         arguments:
           - name: "data"
             type: Object
@@ -75,9 +82,9 @@ Feature: Workflows execution
            - name: "data"
              type: Object
 
-    And user of browser sees "inout" in lambdas list in inventory lambdas subpage
+    And user of browser sees "echo" in lambdas list in inventory lambdas subpage
 
-    # User manually creates workflow using inout lambda
+    # User manually creates workflow using echo lambda
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser creates workflow "Workflow1"
 
@@ -98,7 +105,7 @@ Feature: Workflows execution
         type dropdown: List
         data type dropdown: Object
 
-    And user of browser creates task using 1st revision of "inout" lambda in "Lane1" lane with following configuration:
+    And user of browser creates task using 1st revision of "echo" lambda in "Lane1" lane with following configuration:
         results:
             data:
               target store: "output"
@@ -119,12 +126,12 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
+        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:v1"
         read-only: False
         arguments:
           - name: "file"
             type: File
-          - name: "metadata_key"
+          - name: "metadataKey"
             type: String
           - name: "algorithm"
             type: String
@@ -159,7 +166,7 @@ Feature: Workflows execution
         arguments:
             file:
               value builder: "Iterated item"
-            metadata_key:
+            metadataKey:
               value builder: "Constant value"
               value: "md5_key"
             algorithm:
@@ -176,7 +183,7 @@ Feature: Workflows execution
         arguments:
             file:
               value builder: "Iterated item"
-            metadata_key:
+            metadataKey:
               value builder: "Constant value"
               value: "sha256_key"
             algorithm:
@@ -239,15 +246,15 @@ Feature: Workflows execution
          - 'message that contains: "calculate-checksum-rest-no-stats" + "Stopping container"'
     And user of browser sees that numer of events on "Pods activity" list for task "sha256" in 1st parallel box in "calculate-checksums" lane is about 11
 
-    And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "counting-different-checksums"
+    And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-mounted"
     And user of browser sees following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
          - "Created container oneclient-sidecar"
          - "Started container oneclient-sidecar"
          - "Pod initialized, containers ready"
          - "Stopping container oneclient-sidecar"
          - "The pod has been terminated"
-         - 'message that contains: "counting-different-checksums" + "Started container"'
-         - 'message that contains: "counting-different-checksums" + "Created container"'
+         - 'message that contains: "calculate-checksum-mounted" + "Started container"'
+         - 'message that contains: "calculate-checksum-mounted" + "Created container"'
     And user of browser sees that numer of events on "Pods activity" list for task "adler32" in 2nd parallel box in "calculate-checksums" lane is about 14
 
     And user of browser sees that name of first pod in tab "All" for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane contains lambda name "calculate-checksum-mounted"

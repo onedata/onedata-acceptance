@@ -24,6 +24,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu)
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -106,6 +107,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     read_only_toggle = 'Read only'
     mount_space_toggle = 'Mount space'
     argument_option = 'argument'
+    conf_param_option = 'configuration parameters'
     result_option = 'result'
     option = 'lambda'
 
@@ -116,6 +118,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     mount_space = data.get('mount space', True)
     arguments = data.get('arguments', False)
     results = data.get('results', False)
+    configuration_parameters = data.get('configuration parameters', False)
 
     read_only_option = 'checks' if read_only else 'unchecks'
     mount_space_option = 'checks' if mount_space else 'unchecks'
@@ -133,17 +136,24 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
         return "%d%s" % (n, "tsnrhtdd"[(n // 10 % 10 != 1) * (n % 10 < 4) * n
                                        % 10::4])
 
+    if configuration_parameters:
+        for i, config_param in enumerate(configuration_parameters):
+            add_parameter_into_lambda_form(
+                selenium, browser_id, oz_page, popups, conf_param_option,
+                config_param['name'], config_param['type'], ordinal(i + 1))
+
+
     if arguments:
-        for i in range(len(arguments)):
-            add_argument_result_into_lambda_form(
+        for i, args in enumerate(arguments):
+            add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, argument_option,
-                arguments[i]['name'], arguments[i]['type'], ordinal(i+1))
+                args['name'], args['type'], ordinal(i+1))
 
     if results:
-        for i in range(len(results)):
-            add_argument_result_into_lambda_form(
+        for i, res in enumerate(results):
+            add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, result_option,
-                results[i]['name'], results[i]['type'], ordinal(i+1))
+                res['name'], res['type'], ordinal(i+1))
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
 
@@ -252,11 +262,13 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
                                                  which):
     arg_type = 'argument'
     res_type = 'result'
+    conf_param_option = 'configuration parameters'
     option = 'task'
     data = yaml.load(config)
     arguments = data.get('arguments', False)
     results = data.get('results', False)
     task_name = data.get('task name', False)
+    configuration_parameters = data.get('configuration parameters', False)
 
     if 'another' in which:
         position = data['where parallel box']
@@ -272,6 +284,15 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
     if task_name:
         write_task_name_in_task_edition_text_field(selenium, browser_id,
                                                    oz_page, task_name)
+
+    if configuration_parameters:
+        for param_name, param in configuration_parameters.items():
+            choose_option_in_dropdown_menu_in_task_page(
+                selenium, browser_id, oz_page, popups, param['value builder'],
+                param_name, conf_param_option)
+            write_text_into_editor_bracket(selenium, browser_id, oz_page,
+                                           param['value'], param_name,
+                                           conf_param_option)
 
     if arguments:
         for arg_name, arg in arguments.items():
@@ -355,26 +376,25 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) adds '
-               '(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result) '
-               'named "(?P<name>.*)" of "(?P<type>.*)" type'))
+               '(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result'
+               '|configuration parameters) named "(?P<name>.*)" '
+               'of "(?P<type>.*)" type'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
-                                         option, name, type, ordinal):
+def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
+                                   option, name, type, ordinal):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].lambdas_page.form
-    subpage = getattr(page, option)
 
-    button_name = 'add_' + option
-    button = getattr(subpage, button_name)
-    button.click()
-
+    subpage = getattr(page, transform(option))
+    subpage.add_button()
     ordinal = '1st' if not ordinal else ordinal
     bracket_name = 'bracket_' + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
 
-    label_name = option + '_name'
-    label = getattr(object_bracket, label_name)
-    label.value = name
+    name_input = object_bracket.name
+    css_sel = '#' + name_input.web_elem.get_attribute('id')
+    scroll_to_css_selector(driver, css_sel)
+    name_input.value = name
 
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(type)

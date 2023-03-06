@@ -3,7 +3,7 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "c52c69512001496b6321a84fc50390a9ch61aa": {
+      "cf48ce79bb4f7be215dbb3d178873046chac27": {
         "1": {
           "schemaFormatVersion": 2,
           "revision": {
@@ -24,7 +24,7 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-in-out:dev",
+                "dockerImage": "docker.onedata.org/lambda-echo:v1",
                 "dockerExecutionOptions": {
                   "readonly": true,
                   "oneclientOptions": "",
@@ -32,33 +32,48 @@
                   "mountOneclient": false
                 }
               },
-              "name": "inout",
+              "name": "echo",
               "description": "",
-              "configParameterSpecs": [],
-              "checksum": "55b9c21e4faa04462f1b0a8252d14aa9",
-              "argumentSpecs": [
+              "configParameterSpecs": [
                 {
-                  "name": "_config",
+                  "name": "sleepDurationSec",
                   "isOptional": false,
                   "defaultValue": null,
                   "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "object"
+                    "valueConstraints": {
+                      "integersOnly": false,
+                      "allowedValues": null
+                    },
+                    "type": "number"
                   }
                 },
                 {
-                  "name": "data",
+                  "name": "exceptionProbability",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "integersOnly": false,
+                      "allowedValues": null
+                    },
+                    "type": "number"
+                  }
+                },
+                {
+                  "name": "streamResults",
                   "isOptional": false,
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {},
-                    "type": "object"
+                    "type": "boolean"
                   }
                 }
-              ]
+              ],
+              "checksum": "576c2e6ff2dac8c8c16306550adca0b9",
+              "argumentSpecs": []
             }
           },
-          "originalAtmLambdaId": "c52c69512001496b6321a84fc50390a9ch61aa"
+          "originalAtmLambdaId": "cf48ce79bb4f7be215dbb3d178873046chac27"
         }
       }
     },
@@ -70,7 +85,7 @@
           "type": "list",
           "requiresInitialContent": true,
           "name": "input",
-          "id": "afa0ddaa2d2d693d455a8b2eb0f74d5b92dac4",
+          "id": "41ab7e05e5fb41f8daf7fa034b653ba2cdced9",
           "description": "",
           "defaultInitialContent": null,
           "config": {
@@ -87,7 +102,7 @@
       "lanes": [
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "afa0ddaa2d2d693d455a8b2eb0f74d5b92dac4",
+            "storeSchemaId": "41ab7e05e5fb41f8daf7fa034b653ba2cdced9",
             "maxBatchSize": 100
           },
           "parallelBoxes": [
@@ -97,66 +112,46 @@
                   "timeSeriesStoreConfig": null,
                   "resultMappings": [],
                   "resourceSpecOverride": null,
-                  "name": "10s sleep",
+                  "name": "20s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "c52c69512001496b6321a84fc50390a9ch61aa",
-                  "lambdaConfig": {},
-                  "id": "1ea4364c5a45b69bee1208a8d5cb57615a0504",
-                  "argumentMappings": [
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": {
-                          "sleep": 10
-                        }
-                      },
-                      "argumentName": "_config"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "iteratedItem",
-                        "valueBuilderRecipe": null
-                      },
-                      "argumentName": "data"
-                    }
-                  ]
-                },
+                  "lambdaId": "cf48ce79bb4f7be215dbb3d178873046chac27",
+                  "lambdaConfig": {
+                    "streamResults": false,
+                    "sleepDurationSec": 20,
+                    "exceptionProbability": 0
+                  },
+                  "id": "e43112ac2bc483f0e40372cb397d2ce1be49f4",
+                  "argumentMappings": []
+                }
+              ],
+              "name": "Parallel box",
+              "id": "58abb981eeedc3ca70697dc5ef684ed1578c58"
+            },
+            {
+              "tasks": [
                 {
                   "timeSeriesStoreConfig": null,
                   "resultMappings": [],
                   "resourceSpecOverride": null,
-                  "name": "20s sleep",
+                  "name": "15s sleep",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "c52c69512001496b6321a84fc50390a9ch61aa",
-                  "lambdaConfig": {},
-                  "id": "5eb1a9ca5ee892ba27a00e189d2763dddd06d6",
-                  "argumentMappings": [
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": {
-                          "sleep": 20
-                        }
-                      },
-                      "argumentName": "_config"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "iteratedItem",
-                        "valueBuilderRecipe": null
-                      },
-                      "argumentName": "data"
-                    }
-                  ]
+                  "lambdaId": "cf48ce79bb4f7be215dbb3d178873046chac27",
+                  "lambdaConfig": {
+                    "streamResults": false,
+                    "sleepDurationSec": 15,
+                    "exceptionProbability": 0
+                  },
+                  "id": "eb04592c16705019b5b954c3dc5808ae873c1d",
+                  "argumentMappings": []
                 }
               ],
               "name": "Parallel box",
-              "id": "1c315a00f699a03aebd44c384c9d4287dbff40"
+              "id": "f5510a59d8629e6bf3e021994f2ca1274cce0a"
             }
           ],
           "name": "Lane1",
           "maxRetries": 0,
-          "id": "1df9718cb3ed02886ddfb72cc584400f31b188",
+          "id": "45243b8dfe82315142286d0018741bdf80cd4f",
           "dashboardSpec": null
         }
       ],
@@ -164,6 +159,6 @@
       "dashboardSpec": null
     }
   },
-  "originalAtmWorkflowSchemaId": "00eecbe3e7b65681c7df456c0843f2ecch787a",
-  "name": "temporary-workflow-with-one-box"
+  "originalAtmWorkflowSchemaId": "c709e0b4da753c9a38d6d9f3579d3dabch5bb7",
+  "name": "workflow-with-sleep-one-lane"
 }

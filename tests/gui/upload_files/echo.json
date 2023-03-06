@@ -1,0 +1,189 @@
+{
+  "summary": "",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "3c9950cb908e03277a61bf7f145a8e6cch8dbf": {
+        "1": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 1,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "value",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 100,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-echo:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": false
+                }
+              },
+              "name": "echo",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "sleepDurationSec",
+                  "isOptional": false,
+                  "defaultValue": 0,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "integersOnly": false,
+                      "allowedValues": null
+                    },
+                    "type": "number"
+                  }
+                },
+                {
+                  "name": "exceptionProbability",
+                  "isOptional": false,
+                  "defaultValue": 0,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "integersOnly": false,
+                      "allowedValues": null
+                    },
+                    "type": "number"
+                  }
+                },
+                {
+                  "name": "streamResults",
+                  "isOptional": false,
+                  "defaultValue": false,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "boolean"
+                  }
+                }
+              ],
+              "checksum": "2e427a32271712435f600e69b8e5776e",
+              "argumentSpecs": [
+                {
+                  "name": "value",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "3c9950cb908e03277a61bf7f145a8e6cch8dbf"
+        }
+      }
+    },
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 2,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
+        {
+          "type": "list",
+          "requiresInitialContent": true,
+          "name": "input",
+          "id": "c3e71bb34d2d6db9c089ad52ad8612cb6d493e",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {
+                "fileType": "ANY"
+              },
+              "type": "file"
+            }
+          }
+        },
+        {
+          "type": "list",
+          "requiresInitialContent": false,
+          "name": "output",
+          "id": "68f7c9d6757358f214ca1a95beee2228e19581",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {},
+              "type": "object"
+            }
+          }
+        }
+      ],
+      "state": "draft",
+      "lanes": [
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "c3e71bb34d2d6db9c089ad52ad8612cb6d493e",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "68f7c9d6757358f214ca1a95beee2228e19581",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "value"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "echo",
+                  "lambdaRevisionNumber": 1,
+                  "lambdaId": "3c9950cb908e03277a61bf7f145a8e6cch8dbf",
+                  "lambdaConfig": {},
+                  "id": "c2436e82972b3a1fc059868ab70eed81574357",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "value"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "36a1ce286581790f69590d99af639901a0abcb"
+            }
+          ],
+          "name": "lane 1",
+          "maxRetries": 1,
+          "id": "16ccc3eb65c151464fcb0dbb5e3e35f0c1966c",
+          "dashboardSpec": null
+        }
+      ],
+      "description": "",
+      "dashboardSpec": null
+    }
+  },
+  "originalAtmWorkflowSchemaId": "c6a6a319d2ebd1c723c42a7412b3b86bch1d37",
+  "name": "echo"
+}

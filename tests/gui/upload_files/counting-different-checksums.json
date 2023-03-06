@@ -33,7 +33,7 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/checksum-counting-oneclient:v7",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "-i",
@@ -41,12 +41,12 @@
                   "mountOneclient": true
                 }
               },
-              "name": "counting-different-checksums",
+              "name": "calculate-checksum-mounted",
               "description": "",
               "checksum": "b912fe441503d9cbad013c02d4856567",
               "argumentSpecs": [
                 {
-                  "name": "item",
+                  "name": "file",
                   "isOptional": false,
                   "defaultValue": null,
                   "dataSpec": {
@@ -57,7 +57,7 @@
                   }
                 },
                 {
-                  "name": "metadata_key",
+                  "name": "metadataKey",
                   "isOptional": false,
                   "defaultValue": null,
                   "dataSpec": {
@@ -149,14 +149,14 @@
                         "valueBuilderType": "iteratedItem",
                         "valueBuilderRecipe": null
                       },
-                      "argumentName": "item"
+                      "argumentName": "file"
                     },
                     {
                       "valueBuilder": {
                         "valueBuilderType": "const",
                         "valueBuilderRecipe": "md5_key"
                       },
-                      "argumentName": "metadata_key"
+                      "argumentName": "metadataKey"
                     },
                     {
                       "valueBuilder": {
@@ -190,14 +190,14 @@
                         "valueBuilderType": "iteratedItem",
                         "valueBuilderRecipe": null
                       },
-                      "argumentName": "item"
+                      "argumentName": "file"
                     },
                     {
                       "valueBuilder": {
                         "valueBuilderType": "const",
                         "valueBuilderRecipe": "sha256_key"
                       },
-                      "argumentName": "metadata_key"
+                      "argumentName": "metadataKey"
                     },
                     {
                       "valueBuilder": {
@@ -237,14 +237,14 @@
                         "valueBuilderType": "iteratedItem",
                         "valueBuilderRecipe": null
                       },
-                      "argumentName": "item"
+                      "argumentName": "file"
                     },
                     {
                       "valueBuilder": {
                         "valueBuilderType": "const",
                         "valueBuilderRecipe": "adler32_key"
                       },
-                      "argumentName": "metadata_key"
+                      "argumentName": "metadataKey"
                     },
                     {
                       "valueBuilder": {
@@ -296,14 +296,14 @@
                         "valueBuilderType": "iteratedItem",
                         "valueBuilderRecipe": null
                       },
-                      "argumentName": "item"
+                      "argumentName": "file"
                     },
                     {
                       "valueBuilder": {
                         "valueBuilderType": "const",
                         "valueBuilderRecipe": "sha512_key"
                       },
-                      "argumentName": "metadata_key"
+                      "argumentName": "metadataKey"
                     },
                     {
                       "valueBuilder": {
