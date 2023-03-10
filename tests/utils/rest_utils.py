@@ -15,6 +15,7 @@ from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
                    PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX,
                    TOKEN_DISPENSER_PATH_PREFIX)
 from .http_exceptions import raise_http_exception
+from requests import ConnectTimeout, ReadTimeout
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -71,15 +72,21 @@ def http_patch(ip, port, path, use_ssl=True, data=None, headers=None,
 
 def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
                  verify=False, cert=None, auth=None, data=None,
-                 default_headers=True):
+                 default_headers=True, retries=5):
     protocol = 'https' if use_ssl else 'http'
     request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
     if headers:
         request_headers.update(headers)
-    response = http_method('{0}://{1}:{2}{3}'.format(protocol, ip, port, path),
-                           verify=verify, headers=request_headers, timeout=20,
-                           cert=cert, auth=auth, data=data)
-    if 200 <= response.status_code < 300:
-        return response
-    else:
-        raise_http_exception(response)
+    try:
+        response = http_method('{0}://{1}:{2}{3}'.format(protocol, ip, port, path),
+                               verify=verify, headers=request_headers, timeout=40,
+                               cert=cert, auth=auth, data=data)
+        if 200 <= response.status_code < 300:
+            return response
+        else:
+            raise_http_exception(response)
+    except (ConnectTimeout, ReadTimeout) as t:
+        if retries > 0:
+            return http_request(http_method, ip, port, path, use_ssl, headers, verify, cert,
+                                auth, data, default_headers, retries=retries - 1)
+        raise t
