@@ -48,7 +48,7 @@ stages:
       jobs:
         - _Codetag Tracker
         - Chrome LUMA tests
-        - Chrome ACL one entry  
+        - Chrome ACL one entry
         - Chrome ACL two entries
         - Chrome QoS tests
         - Chrome access tokens
@@ -91,26 +91,26 @@ _Codetag Tracker:
       custom:
         auto: {}
         clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
   tasks:
-  - checkout:
-      path: onedata-acceptance
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script: &init-submodules
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata-acceptance
-      description: Init submodules
-  - script:
-      working-dir: onedata-acceptance
-      scripts:
-      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
-      description: Codetag Tracker
+    - checkout:
+        path: onedata-acceptance
+        force-clean-build: "true"
+        description: Checkout Default Repository
+    - script: &init-submodules
+        scripts:
+          - |-
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        working-dir: onedata-acceptance
+        description: Init submodules
+    - script:
+        working-dir: onedata-acceptance
+        scripts:
+          - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        description: Codetag Tracker
   requirements: []
   artifact-subscriptions: []
 
@@ -170,38 +170,38 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
       shared: false
       required: false
   requirements:
-  - kubeadm
+    - minikube
   artifact-subscriptions: []
 
 Chrome ACL one entry:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAOE
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_one_entry test_mixed_pkg
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_acl_one_entry test_mixed_pkg
 
 Chrome ACL two entries:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATE
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_two_entries test_mixed_pkg
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_acl_two_entries test_mixed_pkg
 
 Chrome QoS tests:
   <<: *acceptance-mixed-tests-in-chrome-job
@@ -359,7 +359,6 @@ Chrome directories remove metadata:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
     - script: *download-artifacts
@@ -374,7 +373,6 @@ Chrome directories set metadata:
   key: CDSM
   tasks:
     - script: *clear-env
-    - script: *restart-minikube
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
@@ -451,7 +449,6 @@ Chrome files remove metadata:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
     - script: *download-artifacts
@@ -466,7 +463,6 @@ Chrome files set metadata:
   key: CFSM
   tasks:
     - script: *clear-env
-    - script: *restart-minikube
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
@@ -556,31 +552,31 @@ Chrome permission POSIX multi tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPMT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_pkg
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_pkg
 
 Chrome permission POSIX tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix test_mixed_pkg
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_permission_posix test_mixed_pkg
 
 Chrome remove file tests:
   <<: *acceptance-mixed-tests-in-chrome-job
