@@ -7,9 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import yaml
-import json
 
-from tests import GUI_LOGDIR
 from tests.gui.meta_steps.oneprovider.automation import (
     choose_file_as_initial_workflow_value,
     wait_for_workflows_in_automation_subpage)
@@ -19,8 +17,7 @@ from tests.gui.steps.modals.modal import (
     choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.oneprovider.automation import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
-    confirm_workflow_to_execute, expand_first_executed_workflow_record,
-    switch_to_automation_page, check_if_task_is_opened)
+    confirm_workflow_to_execute, expand_first_executed_workflow_record)
 from tests.gui.steps.onezone.automation import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.spaces import (
@@ -402,86 +399,11 @@ def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
     popups(driver).power_select.choose_item(type)
 
 
-def write(path, text):
-    import os
-    with open(path, 'a') as f:
-        f.write(f'{text}\n\n')
-        os.utime(path, None)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_on_task_audit_log(task):
-        if not check_if_task_is_opened(task):
-            task.drag_handle.click()
-        task.audit_log()
 
 
-def get_modal_and_logs_for_task(path, task, modals, driver):
-    write(path, task.name)
-    time.sleep(2)
-    click_on_task_audit_log(task)
-    time.sleep(2)
-    modal = modals(driver).task_audit_log
-    logs = modal.logs_entry
-    return modal, logs
 
 
-def close_modal_and_task(modal, task):
-    time.sleep(2)
-    modal.x()
-    task.drag_handle.click()
 
 
-def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
-                                         browser_id, path):
-    log.click()
-    modal.copy_json()
-    audit_log = clipboard.paste(display=displays[browser_id])
-    write(path, audit_log)
-    modal.close_details()
-    write(path, '\n')
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
-                                      displays, browser_id):
-    task.drag_handle.click()
-    time.sleep(2)
-    if not check_if_task_is_opened(task):
-        task.drag_handle.click()
-    if task.status == 'Failed':
-        modal, logs = get_modal_and_logs_for_task(
-            path, task, modals, driver)
-        for log in logs:
-            if log.severity != 'Info':
-                get_audit_log_json_and_write_to_file(log, modal, clipboard,
-                                                     displays, browser_id, path)
-        close_modal_and_task(modal, task)
-
-
-def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
-                                               path, displays, browser_id):
-    for lane in lanes:
-        boxes = lane.parallel_box
-        for box in boxes:
-            tasks = box.task_list
-            for task in tasks:
-                time.sleep(0.5)
-                write_audit_logs_for_task_to_file(task, modals, driver,
-                                                  clipboard, path,
-                                                  displays, browser_id)
-
-
-@wt(parsers.parse('if workflow status is "{exp_status}" {user} of {browser_id}'
-                  ' saves audit logs for all tasks to logs'))
-def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
-                            modals, clipboard, displays):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    time.sleep(2)
-    act_status = page.workflow_visualiser.status
-    driver = selenium[browser_id]
-    if act_status == exp_status:
-        lanes = page.workflow_visualiser.workflow_lanes
-        path = GUI_LOGDIR + '/audit_logs.txt'
-        get_audit_logs_from_every_task_in_workflow(
-            lanes, modals, driver, clipboard, path, displays, browser_id)
