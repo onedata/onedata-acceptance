@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform
+from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 
@@ -83,7 +84,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
     task = box.task_list[task_name]
     if option == 'closes':
         if check_if_task_is_opened(task):
@@ -105,7 +106,7 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
     getattr(box.task_list[task_name], transform(option)).click()
 
 
@@ -115,7 +116,7 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     number = from_ordinal_number_to_int(ordinal) - 1
     workflow_visualiser.workflow_lanes[
         lane].scroll_to_first_task_in_parallel_box(number)
-    return workflow_visualiser.workflow_lanes[lane].parallel_box[number]
+    return workflow_visualiser.workflow_lanes[lane].parallel_boxes[number]
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -344,3 +345,35 @@ def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
     else:
         raise Exception(f'There is no {option} processing speed on chart with'
                         f' processing stat.')
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_task_audit_log(task):
+    if not check_if_task_is_opened(task):
+        task.drag_handle.click()
+    task.audit_log()
+
+
+def get_modal_and_logs_for_task(path, task, modals, driver):
+    append_log_to_file(path, task.name)
+    click_on_task_audit_log(task)
+    # wait a moment for audit log modal to appear
+    time.sleep(1)
+    modal = modals(driver).task_audit_log
+    logs = modal.logs_entry
+    return modal, logs
+
+
+def close_modal_and_task(modal, task):
+    modal.x()
+    task.drag_handle.click()
+
+
+def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
+                                         browser_id, path):
+    log.click()
+    modal.copy_json()
+    audit_log = clipboard.paste(display=displays[browser_id])
+    append_log_to_file(path, audit_log)
+    modal.close_details()
+    append_log_to_file(path, '\n')

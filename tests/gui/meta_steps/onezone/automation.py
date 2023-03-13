@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import yaml
-import json
 
 from tests.gui.meta_steps.oneprovider.automation import (
     choose_file_as_initial_workflow_value,
@@ -398,3 +397,13 @@ def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
 
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(type)
+
+
+
+
+
+
+
+
+
+

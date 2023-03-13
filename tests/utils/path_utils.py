@@ -70,6 +70,13 @@ def save_log_to_file(file_path, log):
     f.close()
 
 
+def append_log_to_file(path, log):
+    """Appends log to file pointed by path"""
+    with open(path, 'a') as f:
+        f.write(f'{log}\n\n')
+        os.utime(path, None)
+
+
 def get_module(name):
     """Returns module object"""
     return sys.modules[name]
