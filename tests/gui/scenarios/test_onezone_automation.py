@@ -54,13 +54,15 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.onezone.automation import *
-from tests.gui.meta_steps.oneprovider.automation import *
+from tests.gui.meta_steps.onezone.automation.create_workflow import *
+from tests.gui.meta_steps.onezone.automation.create_lambda import *
+from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 
 from tests.utils.acceptance_utils import *
 
-from tests.gui.steps.onezone.automation import *
-from tests.gui.steps.oneprovider.automation import *
+from tests.gui.steps.onezone.automation.automation_basic import *
+from tests.gui.steps.onezone.automation.workflow_creation import *
+from tests.gui.steps.oneprovider.automation.automation_basic import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *
 from tests.utils.entities_setup.inventory import *

@@ -63,7 +63,7 @@ class ParallelBox(Element):
                                  cls=Task)
 
 
-class RunIndicators(Element):
+class RunIndicator(Element):
     number = id = Label('.run-number')
     origin_run_number = Label('.origin-run-number')
 
@@ -74,7 +74,7 @@ class WorkflowLane(Element):
     parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                     cls=ParallelBox)
     latest_run_menu = Button('.lane-run-actions-trigger .menu-toggle-frame')
-    run_indicators = WebItemsSequence('.run-indicators-item', cls=RunIndicators)
+    run_indicators = WebItemsSequence('.run-indicators-item', cls=RunIndicator)
 
     def scroll_to_first_task_in_parallel_box(self, number):
         from tests.gui.utils.core import scroll_to_css_selector_bottom
