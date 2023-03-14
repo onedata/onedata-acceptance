@@ -60,6 +60,7 @@ from tests.gui.meta_steps.onezone.automation.create_task import *
 from tests.gui.meta_steps.onezone.automation.create_store import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
+from tests.gui.meta_steps.oneprovider.automation.audit_log import *
 
 from tests.utils.acceptance_utils import *
 
@@ -67,7 +68,7 @@ from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.onezone.automation.workflow_creation import *
 from tests.gui.steps.oneprovider.automation.automation_statuses import *
 from tests.gui.steps.oneprovider.automation.automation_basic import *
-from tests.gui.steps.oneprovider.automation.atm_chart_processing_stats import *
+from tests.gui.steps.oneprovider.automation.workflow_results_modals import *
 from tests.gui.steps.oneprovider.automation.workflow_run_indicators import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *

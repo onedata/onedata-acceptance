@@ -73,7 +73,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
     task = box.task_list[task_name]
     if option == 'closes':
         if check_if_task_is_opened(task):
@@ -95,7 +95,7 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
     getattr(box.task_list[task_name], transform(option)).click()
 
 

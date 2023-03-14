@@ -10,7 +10,8 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
-from tests.gui.steps.oneprovider.automation.automation_basic import switch_to_automation_page
+from tests.gui.steps.oneprovider.automation.automation_basic import (
+    switch_to_automation_page)
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -22,7 +23,7 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     number = from_ordinal_number_to_int(ordinal) - 1
     workflow_visualiser.workflow_lanes[
         lane].scroll_to_first_task_in_parallel_box(number)
-    return workflow_visualiser.workflow_lanes[lane].parallel_box[number]
+    return workflow_visualiser.workflow_lanes[lane].parallel_boxes[number]
 
 
 @wt(parsers.parse('user of {browser_id} sees "{status}" status in status '

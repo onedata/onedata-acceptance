@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-wokrflows charts with processing stats in oneprovider web GUI """
+workflow results modals in oneprovider web GUI """
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
@@ -8,10 +8,14 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from datetime import datetime
+import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.oneprovider.automation.automation_basic import (
+    check_if_task_is_opened)
 from tests.utils.bdd_utils import wt, parsers
+from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
 
 
@@ -80,4 +84,38 @@ def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
     else:
         raise Exception(f'There is no {option} processing speed on chart with'
                         f' processing stat.')
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_task_audit_log(task):
+    if not check_if_task_is_opened(task):
+        task.drag_handle.click()
+    task.audit_log()
+
+
+def get_modal_and_logs_for_task(path, task, modals, driver):
+    append_log_to_file(path, task.name)
+    click_on_task_audit_log(task)
+    # wait a moment for audit log modal to appear
+    time.sleep(1)
+    modal = modals(driver).task_audit_log
+    logs = modal.logs_entry
+    return modal, logs
+
+
+def close_modal_and_task(modal, task):
+    modal.x()
+    task.drag_handle.click()
+    # wait for task to close
+    time.sleep(1)
+
+
+def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
+                                         browser_id, path):
+    log.click()
+    modal.copy_json()
+    audit_log = clipboard.paste(display=displays[browser_id])
+    append_log_to_file(path, audit_log)
+    modal.close_details()
+    append_log_to_file(path, '\n')
 

@@ -10,12 +10,11 @@ import time
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_modal_button, go_to_path_and_return_file_name_in_modal)
-from tests.gui.steps.oneprovider.automation.atm_chart_processing_stats import (
+from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     assert_processing_chart, choose_time_resolution)
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     await_for_task_status_in_parallel_box, assert_task_status_in_parallel_box)
@@ -279,47 +278,3 @@ def open_link_and_assert_processing_stats_chart(selenium, browser_id,
                               link, ordinal)
     assert_processing_chart(browser_id, selenium, modals)
 
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
-                                      displays, browser_id, exp_status):
-    task.drag_handle.click()
-    # wait for task to open
-    time.sleep(1)
-    if not check_if_task_is_opened(task):
-        task.drag_handle.click()
-    if task.status == exp_status:
-        modal, logs = get_modal_and_logs_for_task(
-            path, task, modals, driver)
-        for log in logs:
-            if log.severity != 'Info':
-                get_audit_log_json_and_write_to_file(log, modal, clipboard,
-                                                     displays, browser_id, path)
-        close_modal_and_task(modal, task)
-
-
-def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
-                                               path, displays, browser_id,
-                                               exp_status):
-    for lane in lanes:
-        for parallel_box in lane.parallel_boxes:
-            for task in parallel_box.task_list:
-                write_audit_logs_for_task_to_file(task, modals, driver,
-                                                  clipboard, path,
-                                                  displays, browser_id,
-                                                  exp_status)
-
-
-@wt(parsers.parse('if workflow status is "{exp_status}" {user} of {browser_id}'
-                  ' saves audit logs for all tasks to logs'))
-def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
-                            modals, clipboard, displays):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    act_status = page.workflow_visualiser.status
-    driver = selenium[browser_id]
-    if act_status == exp_status:
-        lanes = page.workflow_visualiser.workflow_lanes
-        path = GUI_LOGDIR + '/audit_logs.txt'
-        get_audit_logs_from_every_task_in_workflow(
-            lanes, modals, driver, clipboard, path, displays, browser_id,
-            exp_status)
