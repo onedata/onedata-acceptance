@@ -31,7 +31,6 @@ class WorkflowLane(Element):
     add_parallel_box_button = Button('.create-parallel-box-action-trigger')
     parallel_box = WebItem('.workflow-visualiser-parallel-box ',
                            cls=ParallelBox)
-
     empty_parallel_box = WebItem('.workflow-visualiser-parallel-box '
                                  '.space-position-empty', cls=EmptyParallelBox)
 

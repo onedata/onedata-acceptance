@@ -52,6 +52,7 @@ class Task(Element):
     instance_id = Label('.instance-id-detail .truncated-string')
     status = Label('.status-detail .detail-value')
     time_series = Button('.view-task-time-series-action-trigger')
+    audit_log = Button('.view-task-audit-log-action-trigger')
 
     def get_elem_id(self):
         elem_id = self.web_elem.get_attribute('id')
@@ -71,14 +72,14 @@ class RunIndicator(Element):
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
     status = Label('.visible-run-status-label')
-    parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
-                                    cls=ParallelBox)
+    parallel_boxes = WebItemsSequence('.workflow-visualiser-parallel-box ',
+                                      cls=ParallelBox)
     latest_run_menu = Button('.lane-run-actions-trigger .menu-toggle-frame')
     run_indicators = WebItemsSequence('.run-indicators-item', cls=RunIndicator)
 
     def scroll_to_first_task_in_parallel_box(self, number):
         from tests.gui.utils.core import scroll_to_css_selector_bottom
-        elem_id = self.parallel_box[number].task_list[0].get_elem_id()
+        elem_id = self.parallel_boxes[number].task_list[0].get_elem_id()
         box_sel = f'[id={elem_id}] .items-failed-detail'
         scroll_to_css_selector_bottom(self.driver, box_sel)
 

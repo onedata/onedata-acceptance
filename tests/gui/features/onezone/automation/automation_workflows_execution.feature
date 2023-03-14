@@ -126,7 +126,7 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:v1"
+        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:dev"
         read-only: False
         arguments:
           - name: "file"
@@ -195,6 +195,7 @@ Feature: Workflows execution
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     And user of browser executes 1st revision of "Workflow1", using "dir1/file1" as initial value, in "space1" space and waits extended time for workflow to finish
+    And if workflow status is "Failed" user of browser saves audit logs for all tasks to logs
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
 
@@ -203,11 +204,13 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
+
     And user of browser executes 1st revision of "counting-different-checksums", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And if workflow status is "Failed" user of browser saves audit logs for all tasks to logs
+
     And user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-
     And user of browser clicks and presses enter on item named "dir2" in file browser
 
     Then user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file1" are alike to those counted in workflow
