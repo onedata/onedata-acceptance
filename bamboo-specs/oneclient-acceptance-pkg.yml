@@ -72,8 +72,9 @@ stages:
         - singleprovider regular file CRUD multiclient proxyio
         - singleprovider regular file stat multiclient directio
         - singleprovider regular file stat multiclient proxyio
-          # @TODO VFS-6710 fix onedata_fs tests
-          # - onedata_fs tests
+        # tests applicable only to PKG mode - not present in SRC
+        # @TODO VFS-6710 fix onedata_fs tests
+        # - onedata_fs tests
 
 authorization: &acceptance-oneclient-tests-job
   key: AUT
@@ -90,11 +91,6 @@ authorization: &acceptance-oneclient-tests-job
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
-    - script: &force-clean-repo
-        interpreter: SHELL
-        scripts:
-          - docker run -v $bamboo_build_working_directory:/build alpine sh -c 'rm -rf /build/onedata'
-        description: Force clean repo
     - checkout: &checkout
         path: onedata-acceptance
         force-clean-build: "true"
@@ -117,7 +113,7 @@ authorization: &acceptance-oneclient-tests-job
     - script: &run-acceptance-tests
         interpreter: BINSH_OR_CMDEXE
         scripts:
-          - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization IGNORE_XFAIL=1
+          - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization
         working-dir: onedata-acceptance
         description: Run acceptance oneclient tests
   final-tasks:
@@ -156,14 +152,13 @@ directory CRUD:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
 directory stat:
   <<: *acceptance-oneclient-tests-job
@@ -171,14 +166,13 @@ directory stat:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
 luma provider:
   <<: *acceptance-oneclient-tests-job
@@ -186,14 +180,13 @@ luma provider:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=600 IGNORE_XFAIL=1 test_oneclient_pkg
+          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage test_oneclient_pkg
 
 luma proxy:
   <<: *acceptance-oneclient-tests-job
@@ -201,14 +194,13 @@ luma proxy:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage IGNORE_XFAIL=1 TIMEOUT=600 test_oneclient_pkg
+          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage test_oneclient_pkg
 
 multiclient authorization:
   <<: *acceptance-oneclient-tests-job
@@ -216,14 +208,13 @@ multiclient authorization:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization test_oneclient_pkg
 
 multiprovider directory CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -231,14 +222,13 @@ multiprovider directory CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
 
 multiprovider directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -246,14 +236,13 @@ multiprovider directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider test_oneclient_pkg
 
 multiprovider directory stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -261,14 +250,13 @@ multiprovider directory stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
 
 multiprovider directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -276,14 +264,13 @@ multiprovider directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg
 
 multiprovider proxy directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -291,14 +278,13 @@ multiprovider proxy directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg
 
 multiprovider proxy directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -306,14 +292,13 @@ multiprovider proxy directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
 
 multiprovider proxy regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -321,14 +306,13 @@ multiprovider proxy regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider proxy regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -336,14 +320,13 @@ multiprovider proxy regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider proxy s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -351,14 +334,13 @@ multiprovider proxy s3 directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider proxy s3 directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -366,14 +348,13 @@ multiprovider proxy s3 directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider proxy s3 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -381,14 +362,13 @@ multiprovider proxy s3 regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider proxy s3 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -396,14 +376,13 @@ multiprovider proxy s3 regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider regular file CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -411,14 +390,13 @@ multiprovider regular file CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -426,14 +404,13 @@ multiprovider regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider regular file stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -441,14 +418,13 @@ multiprovider regular file stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -456,14 +432,13 @@ multiprovider regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_pkg
 
 multiprovider replication directio:
   <<: *acceptance-oneclient-tests-job
@@ -471,14 +446,13 @@ multiprovider replication directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg
 
 multiprovider replication proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -486,14 +460,13 @@ multiprovider replication proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg
 
 multiprovider s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -501,14 +474,13 @@ multiprovider s3 directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
 multiprovider s3 directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -516,14 +488,13 @@ multiprovider s3 directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
 multiprovider s3 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -531,14 +502,13 @@ multiprovider s3 regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
 multiprovider s3 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -546,14 +516,13 @@ multiprovider s3 regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
 
 regular file CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -561,14 +530,13 @@ regular file CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -576,14 +544,13 @@ regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
 
 regular file stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -591,14 +558,13 @@ regular file stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
 
 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -606,14 +572,13 @@ regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
 
 singleprovider directory CRUD multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -621,14 +586,13 @@ singleprovider directory CRUD multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
 singleprovider directory stat multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -636,14 +600,13 @@ singleprovider directory stat multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
 singleprovider extended attributes:
   <<: *acceptance-oneclient-tests-job
@@ -651,14 +614,13 @@ singleprovider extended attributes:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
 
 singleprovider regular file CRUD multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -666,14 +628,13 @@ singleprovider regular file CRUD multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
 singleprovider regular file CRUD multiclient proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -681,14 +642,13 @@ singleprovider regular file CRUD multiclient proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
 
 singleprovider regular file stat multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -696,14 +656,13 @@ singleprovider regular file stat multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
 
 singleprovider regular file stat multiclient proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -711,29 +670,27 @@ singleprovider regular file stat multiclient proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
 
-  # @TODO VFS-6710 fix onedata_fs tests
-  <<: *acceptance-oneclient-tests-job
-#onedata_fs tests:
-#  key: OT
-##  tasks:
-#  - script: *clear-env
-#  - script: *restart-minikube
-#  - script: *force-clean-repo
-#  - checkout: *checkout
-#  - script: *init-submodules
-#  - script: *download-artifacts
-#  - script:
-#      <<: *run-acceptance-tests
-#      scripts:
-
-#      - make test_onedata_fs
+# tests applicable only to PKG mode - not present in SRC
+# @TODO VFS-6710 fix onedata_fs tests
+# onedata_fs tests:
+#   <<: *acceptance-oneclient-tests-job
+#   key: OT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout
+#     - script: *init-submodules
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-acceptance-tests
+#         scripts:
+#           - make test_onedata_fs
 

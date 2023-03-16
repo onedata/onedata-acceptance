@@ -1,8 +1,4 @@
-ifdef IGNORE_XFAIL
-TEST_RUN := ./test_run.py --ignore-xfail
-else
 TEST_RUN := ./test_run.py
-endif
 
 ifdef ENV_FILE
 TEST_RUN := $(TEST_RUN) --env-file $(ENV_FILE)

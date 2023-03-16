@@ -6,10 +6,10 @@ plan:
   description: GUI acceptance tests using environment deployed from packages.
 # Uncomment and set the following variables when necessary
 # variables:
-# GUI_PKG_VERIFICATION: ''
-# OC_IMAGE_OVERRIDE: ''
-# OP_IMAGE_OVERRIDE: ''
-# OZ_IMAGE_OVERRIDE: ''
+# GUI_PKG_VERIFICATION: ""
+# OC_IMAGE_OVERRIDE: ""
+# OP_IMAGE_OVERRIDE: ""
+# OZ_IMAGE_OVERRIDE: ""
 repositories:
   - onedata-acceptance:
       scope: global
@@ -52,78 +52,78 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
-        - Chrome POSIX tests
-        - Chrome POSIX tests multiuser
-        - Chrome QoS storage
-        - Chrome metadata test
-        - Chrome multiprovider QoS storage
-        - Chrome multiprovider QoS tests
-        - Chrome multiprovider basic tests
-        - Chrome multiprovider multiuser tests
-        - Chrome onepanel basic tests
-        - Chrome onepanel ceph spaces
-        - Chrome onepanel deployment basic tests
-        - Chrome onepanel deployment ceph
-        - Chrome onepanel login tests
-        - Chrome onepanel members tests
-        - Chrome onepanel two hosts deployment tests
-        - Chrome oneprovider ACL basic
-        - Chrome oneprovider ACL directories privileges
-        - Chrome oneprovider ACL directories privileges create
-        - Chrome oneprovider ACL directories privileges metadata
-        - Chrome oneprovider ACL directories privileges remove
-        - Chrome oneprovider ACL files
-        - Chrome oneprovider ACL files metadata
-        - Chrome oneprovider ACL remove file
-        - Chrome oneprovider ACL subdirectories
-        - Chrome oneprovider ACL subdirectories remove
-        - Chrome oneprovider ACL subfiles
-        - Chrome oneprovider ACL subjects
-        - Chrome oneprovider archives incremental and nested
-        - Chrome oneprovider archives recall
-        - Chrome oneprovider archives tests
-        - Chrome oneprovider atm workflow execution tests
-        - Chrome oneprovider data tab files
-        - Chrome oneprovider data tab tests
-        - Chrome oneprovider datasets privileges
-        - Chrome oneprovider datasets tests
-        - Chrome oneprovider hardlinks
-        - Chrome oneprovider symlinks
-        - Chrome oneprovider upload tests
-        - Chrome onezone automations tests
-        - Chrome onezone basic tests
-        - Chrome onezone data discovery helpers
-        - Chrome onezone data discovery querying
-        - Chrome onezone data discovery tests
-        - Chrome onezone groups basic tests
-        - Chrome onezone groups multiuser single group
-        - Chrome onezone groups multiuser tests
-        - Chrome onezone harversters index metadata
-        - Chrome onezone harversters privileges add and remove
-        - Chrome onezone harvesters basic tests
-        - Chrome onezone harvesters effective privileges
-        - Chrome onezone harvesters index
-        - Chrome onezone harvesters memberships privileges
-        - Chrome onezone invite tokens
-        - Chrome onezone invite tokens with caveats
-        - Chrome onezone invite tokens with consumer caveats
-        - Chrome onezone providers basic tests
-        - Chrome onezone spaces basic tests
-        - Chrome onezone spaces memberships privileges
-        - Chrome onezone spaces memberships privileges data
-        - Chrome onezone spaces multiuser tests
-        - Chrome onezone tokens delete
-        - Chrome onezone tokens tests
-        - Chrome public shares tests
-        - Chrome qos basic
-        - Chrome shares basic tests
-        - Chrome shares handle service tests
-        - Chrome storage sync charts
-        - Chrome storage sync tests
-        - Chrome transfers cancel
-        - Chrome transfers directories
-        - Chrome transfers files
-        - Chrome transfers multi browser tests
+        - POSIX
+        - POSIX multiuser
+        - QoS storage
+        - Metadata
+        - Multiprovider QoS storage
+        - Multiprovider QoS
+        - Multiprovider basic
+        - Multiprovider multiuser
+        - Onepanel basic
+        - Onepanel ceph spaces
+        - Onepanel deployment basic
+        - Onepanel deployment ceph
+        - Onepanel login
+        - Onepanel members
+        - Onepanel two hosts deployment
+        - Oneprovider ACL basic
+        - Oneprovider ACL directories privileges
+        - Oneprovider ACL directories privileges create
+        - Oneprovider ACL directories privileges metadata
+        - Oneprovider ACL directories privileges remove
+        - Oneprovider ACL files
+        - Oneprovider ACL files metadata
+        - Oneprovider ACL remove file
+        - Oneprovider ACL subdirectories
+        - Oneprovider ACL subdirectories remove
+        - Oneprovider ACL subfiles
+        - Oneprovider ACL subjects
+        - Oneprovider archives incremental and nested
+        - Oneprovider archives recall
+        - Oneprovider archives
+        - Oneprovider atm workflow execution
+        - Oneprovider data tab files
+        - Oneprovider data tab
+        - Oneprovider datasets privileges
+        - Oneprovider datasets
+        - Oneprovider hardlinks
+        - Oneprovider symlinks
+        - Oneprovider upload
+        - Onezone automations
+        - Onezone basic
+        - Onezone data discovery helpers
+        - Onezone data discovery querying
+        - Onezone data discovery
+        - Onezone groups basic
+        - Onezone groups multiuser single group
+        - Onezone groups multiuser
+        - Onezone harversters index metadata
+        - Onezone harversters privileges add and remove
+        - Onezone harvesters basic
+        - Onezone harvesters effective privileges
+        - Onezone harvesters index
+        - Onezone harvesters memberships privileges
+        - Onezone invite tokens
+        - Onezone invite tokens with caveats
+        - Onezone invite tokens with consumer caveats
+        - Onezone providers basic
+        - Onezone spaces basic
+        - Onezone spaces memberships privileges
+        - Onezone spaces memberships privileges data
+        - Onezone spaces multiuser
+        - Onezone tokens delete
+        - Onezone tokens
+        - Public shares
+        - QoS basic
+        - Shares basic
+        - Shares handle service
+        - Storage sync charts
+        - Storage sync
+        - Transfers cancel
+        - Transfers directories
+        - Transfers files
+        - Transfers multi browser
 
 _Codetag Tracker:
   key: CDTR
@@ -155,12 +155,10 @@ _Codetag Tracker:
         scripts:
           - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
         description: Codetag Tracker
-  requirements: &requirements
-    - kubeadm
-    - onedata
+  requirements: []
   artifact-subscriptions: []
 
-Chrome POSIX tests: &acceptance-tests-in-chrome-job
+Metadata: &acceptance-tests-in-chrome-job
   key: CPT
   other: *common-opts
   tasks:
@@ -185,7 +183,7 @@ Chrome POSIX tests: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         interpreter: BINSH_OR_CMDEXE
         scripts:
-          - make SUITE=test_oneprovider_posix BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_metadata test_gui_pkg
         working-dir: onedata-acceptance
         description: Run Selenium tests
   final-tasks:
@@ -215,90 +213,11 @@ Chrome POSIX tests: &acceptance-tests-in-chrome-job
       pattern: "**/*.*"
       shared: false
       required: false
-    - name: onezone_images
-      location: onedata-acceptance/onezone_images
-      pattern: docker-dev-build-list.json
-      shared: false
-      required: false
-    - name: oneprovider_images
-      location: onedata-acceptance/oneprovider_images
-      pattern: docker-dev-build-list.json
-      shared: false
-      required: false
-  requirements: *requirements
+  requirements:
+    - minikube
   artifact-subscriptions: []
 
-Chrome POSIX tests multiuser:
-  <<: *acceptance-tests-in-chrome-job
-  key: CPTM
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_posix_multiuser BROWSER=Chrome test_gui_pkg
-
-Chrome QoS storage:
-  <<: *acceptance-tests-in-chrome-job
-  key: CQS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome test_gui_pkg
-
-Chrome metadata test:
-  <<: *acceptance-tests-in-chrome-job
-  key: MTC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_metadata BROWSER=Chrome test_gui_pkg
-
-Chrome multiprovider QoS storage:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMQS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome test_gui_pkg
-
-Chrome multiprovider QoS tests:
-  <<: *acceptance-tests-in-chrome-job
-  key: CMQT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome test_gui_pkg
-
-Chrome multiprovider basic tests:
+Multiprovider basic:
   <<: *acceptance-tests-in-chrome-job
   key: CMBT
   tasks:
@@ -310,9 +229,9 @@ Chrome multiprovider basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic test_gui_pkg
 
-Chrome multiprovider multiuser tests:
+Multiprovider multiuser:
   <<: *acceptance-tests-in-chrome-job
   key: CMMT
   tasks:
@@ -324,9 +243,37 @@ Chrome multiprovider multiuser tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_multiuser BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_multiuser test_gui_pkg
 
-Chrome onepanel basic tests:
+Multiprovider QoS storage:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMQS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage test_gui_pkg
+
+Multiprovider QoS:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMQT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos test_gui_pkg
+
+Onepanel basic:
   <<: *acceptance-tests-in-chrome-job
   key: COBT
   tasks:
@@ -338,9 +285,9 @@ Chrome onepanel basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_basic test_gui_pkg
 
-Chrome onepanel ceph spaces:
+Onepanel ceph spaces:
   <<: *acceptance-tests-in-chrome-job
   key: COCS
   tasks:
@@ -352,9 +299,9 @@ Chrome onepanel ceph spaces:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed_embedded_ceph BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_pkg
 
-Chrome onepanel deployment basic tests:
+Onepanel deployment basic:
   <<: *acceptance-tests-in-chrome-job
   key: CODBT
   tasks:
@@ -366,9 +313,9 @@ Chrome onepanel deployment basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_pkg
 
-Chrome onepanel deployment ceph:
+Onepanel deployment ceph:
   <<: *acceptance-tests-in-chrome-job
   key: CODC
   tasks:
@@ -380,9 +327,9 @@ Chrome onepanel deployment ceph:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed_embedded_ceph BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_pkg
 
-Chrome onepanel login tests:
+Onepanel login:
   <<: *acceptance-tests-in-chrome-job
   key: COLT
   tasks:
@@ -394,9 +341,9 @@ Chrome onepanel login tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_login BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_login test_gui_pkg
 
-Chrome onepanel members tests:
+Onepanel members:
   <<: *acceptance-tests-in-chrome-job
   key: COMT
   tasks:
@@ -408,9 +355,9 @@ Chrome onepanel members tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_members BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_members test_gui_pkg
 
-Chrome onepanel two hosts deployment tests:
+Onepanel two hosts deployment:
   <<: *acceptance-tests-in-chrome-job
   key: CO2HDT
   tasks:
@@ -422,9 +369,9 @@ Chrome onepanel two hosts deployment tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
 
-Chrome oneprovider ACL basic:
+Oneprovider ACL basic:
   <<: *acceptance-tests-in-chrome-job
   key: COAB
   tasks:
@@ -436,9 +383,9 @@ Chrome oneprovider ACL basic:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_basic test_gui_pkg
 
-Chrome oneprovider ACL directories privileges create:
+Oneprovider ACL directories privileges create:
   <<: *acceptance-tests-in-chrome-job
   key: COADPC
   tasks:
@@ -450,9 +397,9 @@ Chrome oneprovider ACL directories privileges create:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_dir_privileges_create test_gui_pkg
 
-Chrome oneprovider ACL directories privileges metadata:
+Oneprovider ACL directories privileges metadata:
   <<: *acceptance-tests-in-chrome-job
   key: COADPM
   tasks:
@@ -464,9 +411,9 @@ Chrome oneprovider ACL directories privileges metadata:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_dir_privileges_metadata test_gui_pkg
 
-Chrome oneprovider ACL directories privileges remove:
+Oneprovider ACL directories privileges remove:
   <<: *acceptance-tests-in-chrome-job
   key: COADPR
   tasks:
@@ -478,9 +425,9 @@ Chrome oneprovider ACL directories privileges remove:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_dir_privileges_remove test_gui_pkg
 
-Chrome oneprovider ACL directories privileges:
+Oneprovider ACL directories privileges:
   <<: *acceptance-tests-in-chrome-job
   key: COADP
   tasks:
@@ -492,23 +439,9 @@ Chrome oneprovider ACL directories privileges:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_dir_privileges test_gui_pkg
 
-Chrome oneprovider ACL files:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAF
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_files BROWSER=Chrome test_gui_pkg
-
-Chrome oneprovider ACL files metadata:
+Oneprovider ACL files metadata:
   <<: *acceptance-tests-in-chrome-job
   key: COAFM2
   tasks:
@@ -520,9 +453,23 @@ Chrome oneprovider ACL files metadata:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_files_metadata test_gui_pkg
 
-Chrome oneprovider ACL remove file:
+Oneprovider ACL files:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAF
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_acl_files test_gui_pkg
+
+Oneprovider ACL remove file:
   <<: *acceptance-tests-in-chrome-job
   key: COARF
   tasks:
@@ -534,23 +481,9 @@ Chrome oneprovider ACL remove file:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_files BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_files test_gui_pkg
 
-Chrome oneprovider ACL subdirectories:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome test_gui_pkg
-
-Chrome oneprovider ACL subdirectories remove:
+Oneprovider ACL subdirectories remove:
   <<: *acceptance-tests-in-chrome-job
   key: COASD
   tasks:
@@ -562,9 +495,23 @@ Chrome oneprovider ACL subdirectories remove:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_subdir_remove test_gui_pkg
 
-Chrome oneprovider ACL subfiles:
+Oneprovider ACL subdirectories:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_acl_subdir test_gui_pkg
+
+Oneprovider ACL subfiles:
   <<: *acceptance-tests-in-chrome-job
   key: COASF
   tasks:
@@ -576,9 +523,9 @@ Chrome oneprovider ACL subfiles:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_subfile test_gui_pkg
 
-Chrome oneprovider ACL subjects:
+Oneprovider ACL subjects:
   <<: *acceptance-tests-in-chrome-job
   key: COABS
   tasks:
@@ -590,9 +537,9 @@ Chrome oneprovider ACL subjects:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_acl_subjects test_gui_pkg
 
-Chrome oneprovider archives incremental and nested:
+Oneprovider archives incremental and nested:
   <<: *acceptance-tests-in-chrome-job
   key: COAIN
   tasks:
@@ -604,9 +551,9 @@ Chrome oneprovider archives incremental and nested:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_archives_incremental_and_nested BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_archives_incremental_and_nested test_gui_pkg
 
-Chrome oneprovider archives recall:
+Oneprovider archives recall:
   <<: *acceptance-tests-in-chrome-job
   key: COARL
   tasks:
@@ -618,9 +565,9 @@ Chrome oneprovider archives recall:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_2op_slow_file_operations BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
 
-Chrome oneprovider archives tests:
+Oneprovider archives:
   <<: *acceptance-tests-in-chrome-job
   key: COAT
   tasks:
@@ -632,9 +579,9 @@ Chrome oneprovider archives tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_archives BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_archives test_gui_pkg
 
-Chrome oneprovider atm workflow execution tests:
+Oneprovider atm workflow execution:
   <<: *acceptance-tests-in-chrome-job
   key: COAWET
   tasks:
@@ -646,9 +593,9 @@ Chrome oneprovider atm workflow execution tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
-Chrome oneprovider data tab files:
+Oneprovider data tab files:
   <<: *acceptance-tests-in-chrome-job
   key: CODTF
   tasks:
@@ -660,9 +607,9 @@ Chrome oneprovider data tab files:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_data_tab_files BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_data_tab_files test_gui_pkg
 
-Chrome oneprovider data tab tests:
+Oneprovider data tab:
   <<: *acceptance-tests-in-chrome-job
   key: CODTT
   tasks:
@@ -674,9 +621,9 @@ Chrome oneprovider data tab tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_data_tab BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_data_tab test_gui_pkg
 
-Chrome oneprovider datasets privileges:
+Oneprovider datasets privileges:
   <<: *acceptance-tests-in-chrome-job
   key: CODP
   tasks:
@@ -688,9 +635,9 @@ Chrome oneprovider datasets privileges:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_datasets_privileges BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_datasets_privileges test_gui_pkg
 
-Chrome oneprovider datasets tests:
+Oneprovider datasets:
   <<: *acceptance-tests-in-chrome-job
   key: CODT
   tasks:
@@ -702,9 +649,9 @@ Chrome oneprovider datasets tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_datasets BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_datasets test_gui_pkg
 
-Chrome oneprovider hardlinks:
+Oneprovider hardlinks:
   <<: *acceptance-tests-in-chrome-job
   key: COH
   tasks:
@@ -716,9 +663,9 @@ Chrome oneprovider hardlinks:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_hardlinks BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_hardlinks test_gui_pkg
 
-Chrome oneprovider symlinks:
+Oneprovider symlinks:
   <<: *acceptance-tests-in-chrome-job
   key: COSL
   tasks:
@@ -730,9 +677,9 @@ Chrome oneprovider symlinks:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_symlinks BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_symlinks test_gui_pkg
 
-Chrome oneprovider upload tests:
+Oneprovider upload:
   <<: *acceptance-tests-in-chrome-job
   key: COUT
   tasks:
@@ -744,9 +691,9 @@ Chrome oneprovider upload tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_upload BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_upload test_gui_pkg
 
-Chrome onezone automations tests:
+Onezone automations:
   <<: *acceptance-tests-in-chrome-job
   key: COZATT
   tasks:
@@ -758,9 +705,9 @@ Chrome onezone automations tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_automation BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_automation test_gui_pkg
 
-Chrome onezone basic tests:
+Onezone basic:
   <<: *acceptance-tests-in-chrome-job
   key: COBTT
   tasks:
@@ -772,9 +719,9 @@ Chrome onezone basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_basic BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_basic test_gui_pkg
 
-Chrome onezone data discovery helpers:
+Onezone data discovery helpers:
   <<: *acceptance-tests-in-chrome-job
   key: CODDH
   tasks:
@@ -786,9 +733,9 @@ Chrome onezone data discovery helpers:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_helpers BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_helpers test_gui_pkg
 
-Chrome onezone data discovery querying:
+Onezone data discovery querying:
   <<: *acceptance-tests-in-chrome-job
   key: CODDQ
   tasks:
@@ -800,9 +747,9 @@ Chrome onezone data discovery querying:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying test_gui_pkg
 
-Chrome onezone data discovery tests:
+Onezone data discovery:
   <<: *acceptance-tests-in-chrome-job
   key: CODDT
   tasks:
@@ -814,9 +761,9 @@ Chrome onezone data discovery tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery test_gui_pkg
 
-Chrome onezone groups basic tests:
+Onezone groups basic:
   <<: *acceptance-tests-in-chrome-job
   key: COGBT
   tasks:
@@ -828,9 +775,9 @@ Chrome onezone groups basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_groups_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_groups_basic test_gui_pkg
 
-Chrome onezone groups multiuser single group:
+Onezone groups multiuser single group:
   <<: *acceptance-tests-in-chrome-job
   key: COGMSG
   tasks:
@@ -842,9 +789,9 @@ Chrome onezone groups multiuser single group:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_groups_multiuser_single_group BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_groups_multiuser_single_group test_gui_pkg
 
-Chrome onezone groups multiuser tests:
+Onezone groups multiuser:
   <<: *acceptance-tests-in-chrome-job
   key: COGMUT
   tasks:
@@ -856,9 +803,9 @@ Chrome onezone groups multiuser tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_groups_multiuser BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_groups_multiuser test_gui_pkg
 
-Chrome onezone harversters index metadata:
+Onezone harversters index metadata:
   <<: *acceptance-tests-in-chrome-job
   key: COHIM
   tasks:
@@ -870,9 +817,9 @@ Chrome onezone harversters index metadata:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata test_gui_pkg
 
-Chrome onezone harversters privileges add and remove:
+Onezone harversters privileges add and remove:
   <<: *acceptance-tests-in-chrome-job
   key: COHPAR
   tasks:
@@ -884,9 +831,9 @@ Chrome onezone harversters privileges add and remove:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_privileges_add_remove BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_privileges_add_remove test_gui_pkg
 
-Chrome onezone harvesters basic tests:
+Onezone harvesters basic:
   <<: *acceptance-tests-in-chrome-job
   key: COHBT
   tasks:
@@ -898,9 +845,9 @@ Chrome onezone harvesters basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_basic BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_basic test_gui_pkg
 
-Chrome onezone harvesters effective privileges:
+Onezone harvesters effective privileges:
   <<: *acceptance-tests-in-chrome-job
   key: COHEP
   tasks:
@@ -912,9 +859,9 @@ Chrome onezone harvesters effective privileges:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_effective_privileges BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_effective_privileges test_gui_pkg
 
-Chrome onezone harvesters index:
+Onezone harvesters index:
   <<: *acceptance-tests-in-chrome-job
   key: COHI
   tasks:
@@ -926,9 +873,9 @@ Chrome onezone harvesters index:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index test_gui_pkg
 
-Chrome onezone harvesters memberships privileges:
+Onezone harvesters memberships privileges:
   <<: *acceptance-tests-in-chrome-job
   key: COHMP
   tasks:
@@ -940,9 +887,9 @@ Chrome onezone harvesters memberships privileges:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_memberships_privileges BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_memberships_privileges test_gui_pkg
 
-Chrome onezone invite tokens with caveats:
+Onezone invite tokens with caveats:
   <<: *acceptance-tests-in-chrome-job
   key: COITWC
   tasks:
@@ -954,9 +901,9 @@ Chrome onezone invite tokens with caveats:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_caveats BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_caveats test_gui_pkg
 
-Chrome onezone invite tokens with consumer caveats:
+Onezone invite tokens with consumer caveats:
   <<: *acceptance-tests-in-chrome-job
   key: COITWCC
   tasks:
@@ -968,9 +915,9 @@ Chrome onezone invite tokens with consumer caveats:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_consumer_caveats BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_consumer_caveats test_gui_pkg
 
-Chrome onezone invite tokens:
+Onezone invite tokens:
   <<: *acceptance-tests-in-chrome-job
   key: COIT
   tasks:
@@ -982,9 +929,9 @@ Chrome onezone invite tokens:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens test_gui_pkg
 
-Chrome onezone providers basic tests:
+Onezone providers basic:
   <<: *acceptance-tests-in-chrome-job
   key: COPBT
   tasks:
@@ -996,9 +943,9 @@ Chrome onezone providers basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_providers_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_providers_basic test_gui_pkg
 
-Chrome onezone spaces basic tests:
+Onezone spaces basic:
   <<: *acceptance-tests-in-chrome-job
   key: COSBT
   tasks:
@@ -1010,9 +957,9 @@ Chrome onezone spaces basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_spaces_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_spaces_basic test_gui_pkg
 
-Chrome onezone spaces memberships privileges data:
+Onezone spaces memberships privileges data:
   <<: *acceptance-tests-in-chrome-job
   key: COSMPD
   tasks:
@@ -1024,9 +971,9 @@ Chrome onezone spaces memberships privileges data:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_spaces_memberships_privileges_data BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_spaces_memberships_privileges_data test_gui_pkg
 
-Chrome onezone spaces memberships privileges:
+Onezone spaces memberships privileges:
   <<: *acceptance-tests-in-chrome-job
   key: COSMP
   tasks:
@@ -1038,9 +985,9 @@ Chrome onezone spaces memberships privileges:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onezone_spaces_memberships_privileges BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_onezone_spaces_memberships_privileges test_gui_pkg
 
-Chrome onezone spaces multiuser tests:
+Onezone spaces multiuser:
   <<: *acceptance-tests-in-chrome-job
   key: COSMT
   tasks:
@@ -1052,9 +999,9 @@ Chrome onezone spaces multiuser tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser test_gui_pkg
 
-Chrome onezone tokens delete:
+Onezone tokens delete:
   <<: *acceptance-tests-in-chrome-job
   key: COTD
   tasks:
@@ -1066,9 +1013,9 @@ Chrome onezone tokens delete:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens_delete BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens_delete test_gui_pkg
 
-Chrome onezone tokens tests:
+Onezone tokens:
   <<: *acceptance-tests-in-chrome-job
   key: COTT
   tasks:
@@ -1080,9 +1027,37 @@ Chrome onezone tokens tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens test_gui_pkg
 
-Chrome public shares tests:
+POSIX multiuser:
+  <<: *acceptance-tests-in-chrome-job
+  key: CPTM
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_posix_multiuser test_gui_pkg
+
+POSIX:
+  <<: *acceptance-tests-in-chrome-job
+  key: MTC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_posix test_gui_pkg
+
+Public shares:
   <<: *acceptance-tests-in-chrome-job
   key: CPST
   tasks:
@@ -1094,9 +1069,9 @@ Chrome public shares tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_public_shares BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_public_shares test_gui_pkg
 
-Chrome qos basic:
+QoS basic:
   <<: *acceptance-tests-in-chrome-job
   key: CQB
   tasks:
@@ -1108,9 +1083,23 @@ Chrome qos basic:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic test_gui_pkg
 
-Chrome shares basic tests:
+QoS storage:
+  <<: *acceptance-tests-in-chrome-job
+  key: CQS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage test_gui_pkg
+
+Shares basic:
   <<: *acceptance-tests-in-chrome-job
   key: CSBT
   tasks:
@@ -1122,9 +1111,9 @@ Chrome shares basic tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_shares_basic BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_shares_basic test_gui_pkg
 
-Chrome shares handle service tests:
+Shares handle service:
   <<: *acceptance-tests-in-chrome-job
   key: CSSC
   tasks:
@@ -1136,9 +1125,9 @@ Chrome shares handle service tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome test_gui_pkg
+          - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service test_gui_pkg
 
-Chrome storage sync charts:
+Storage sync charts:
   <<: *acceptance-tests-in-chrome-job
   key: CSSCT
   tasks:
@@ -1150,9 +1139,9 @@ Chrome storage sync charts:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_storage_sync_charts BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_storage_sync_charts test_gui_pkg
 
-Chrome storage sync tests:
+Storage sync:
   <<: *acceptance-tests-in-chrome-job
   key: CSST
   tasks:
@@ -1164,9 +1153,9 @@ Chrome storage sync tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_storage_sync BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_storage_sync test_gui_pkg
 
-Chrome transfers cancel:
+Transfers cancel:
   <<: *acceptance-tests-in-chrome-job
   key: CTC
   tasks:
@@ -1178,9 +1167,9 @@ Chrome transfers cancel:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed test_gui_pkg
 
-Chrome transfers directories:
+Transfers directories:
   <<: *acceptance-tests-in-chrome-job
   key: CTD
   tasks:
@@ -1192,9 +1181,9 @@ Chrome transfers directories:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed test_gui_pkg
 
-Chrome transfers files:
+Transfers files:
   <<: *acceptance-tests-in-chrome-job
   key: CTF
   tasks:
@@ -1206,9 +1195,9 @@ Chrome transfers files:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed test_gui_pkg
 
-Chrome transfers multi browser tests:
+Transfers multi browser:
   <<: *acceptance-tests-in-chrome-job
   key: CTMBT2
   tasks:
@@ -1220,4 +1209,4 @@ Chrome transfers multi browser tests:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed BROWSER=Chrome test_gui_pkg
+          - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed test_gui_pkg

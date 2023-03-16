@@ -46,41 +46,41 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
-        - Chrome ACL one entry
-        - Chrome ACL two entries
-        - Chrome LUMA tests
-        - Chrome QoS tests
-        - Chrome access tokens
-        - Chrome access tokens id caveats
-        - Chrome access tokens path caveats
-        - Chrome archive privileges
-        - Chrome archives tests
-        - Chrome create file tests
-        - Chrome datasets tests
-        - Chrome directories movement tests
-        - Chrome directories multi tests
-        - Chrome directories remove metadata
-        - Chrome directories set metadata
-        - Chrome directories times tests
-        - Chrome file content tests
-        - Chrome files movement tests
-        - Chrome files multi tests
-        - Chrome files remove metadata
-        - Chrome files set metadata
-        - Chrome files times tests
-        - Chrome groups basic tests
-        - Chrome nested directories create
-        - Chrome nested directories remove
-        - Chrome onepanel tests
-        - Chrome permission POSIX multi tests
-        - Chrome permission POSIX tests
-        - Chrome remove file tests
-        - Chrome rename file tests
-        - Chrome single directory tests
-        - Chrome single directory tests 2
-        - Chrome spaces basic tests
-        - Chrome storage sync
-        - Chrome tokens tests
+        - Access tokens
+        - Access tokens id caveats
+        - Access tokens path caveats
+        - ACL one entry
+        - ACL two entries
+        - Archive privileges
+        - Archives 
+        - Create file 
+        - Datasets 
+        - Directories movement 
+        - Directories multi 
+        - Directories remove metadata
+        - Directories set metadata
+        - Directories times 
+        - File content 
+        - Files movement 
+        - Files multi 
+        - Files remove metadata
+        - Files set metadata
+        - Files times 
+        - Groups basic 
+        - LUMA 
+        - Nested directories create
+        - Nested directories remove
+        - Onepanel 
+        - Permission POSIX 
+        - Permission POSIX multi 
+        - QoS 
+        - Remove file 
+        - Rename file 
+        - Single directory 
+        - Single directory 2
+        - Spaces basic 
+        - Storage sync
+        - Tokens 
 
 _Codetag Tracker:
   key: CDTR
@@ -113,48 +113,42 @@ _Codetag Tracker:
   requirements: []
   artifact-subscriptions: []
 
-Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
+Access tokens: &acceptance-mixed-tests-in-chrome-job
   key: CLT
   other: *common-opts
   tasks:
     - script: &clear-env
-        interpreter: BINSH_OR_CMDEXE
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env
     - script: &restart-minikube
-        interpreter: BINSH_OR_CMDEXE
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
     - script: &download-artifacts
-        interpreter: BINSH_OR_CMDEXE
         scripts:
           - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         working-dir: onedata-acceptance
         description: Download artifacts
     - script: &build-swaggers
-        interpreter: BINSH_OR_CMDEXE
         scripts:
           - make build_swaggers
         working-dir: onedata-acceptance
         description: Build swaggers
     - script: &run-acceptance-tests
-        interpreter: BINSH_OR_CMDEXE
         scripts:
-          - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma TIMEOUT=600 test_mixed_src
+          - make SUITE=test_access_tokens test_mixed_src
         working-dir: onedata-acceptance
         description: Run acceptance mixed tests in Chrome
   final-tasks:
-    - test-parser: &parse-test-results
+    - test-parser:
         type: junit
         ignore-time: "false"
         test-results: onedata-acceptance/test-reports/results*.xml
         description: Parse test results
-    - script: &pack-logs
-        interpreter: BINSH_OR_CMDEXE
+    - script:
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
@@ -162,78 +156,21 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
             mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
             mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
         description: Pack logs
-    - script: &clear-env-and-working-dir
-        interpreter: BINSH_OR_CMDEXE
-        scripts:
-          - curl ${bamboo.OnedataFinalTasksURL} | bash -
+    - script:
+        <<: *clear-env
         working-dir: onedata-acceptance
         description: Clear env and working dir
-  artifacts: &artifacts
+  artifacts:
     - name: report
       location: onedata-acceptance/tests/mixed/logs/
       pattern: "**/*.*"
-      shared: false
-      required: false
-    - name: onezone_images
-      location: onedata-acceptance/onezone_images
-      pattern: docker-dev-build-list.json
-      shared: false
-      required: false
-    - name: oneprovider_images
-      location: onedata-acceptance/oneprovider_images
-      pattern: docker-dev-build-list.json
       shared: false
       required: false
   requirements:
     - minikube
   artifact-subscriptions: []
 
-Chrome ACL one entry:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CAOE
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
-
-Chrome ACL two entries:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CATE
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
-
-Chrome QoS tests:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CQT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_qos TIMEOUT=600 test_mixed_src
-
-Chrome access tokens id caveats:
+Access tokens id caveats:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATIC
   tasks:
@@ -246,9 +183,9 @@ Chrome access tokens id caveats:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_src
+          - make SUITE=test_access_tokens_id_caveats test_mixed_src
 
-Chrome access tokens path caveats:
+Access tokens path caveats:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATPC
   tasks:
@@ -261,11 +198,11 @@ Chrome access tokens path caveats:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_src
+          - make SUITE=test_access_tokens_path_caveats test_mixed_src
 
-Chrome access tokens:
+ACL one entry:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CATC
+  key: CAOE
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -276,9 +213,24 @@ Chrome access tokens:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_src
+          - make SUITE=test_acl_one_entry test_mixed_src
 
-Chrome archive privileges:
+ACL two entries:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATE
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_acl_two_entries test_mixed_src
+
+Archive privileges:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAP
   tasks:
@@ -291,9 +243,9 @@ Chrome archive privileges:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_src
+          - make SUITE=test_archive_privileges test_mixed_src
 
-Chrome archives tests:
+Archives:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAT2
   tasks:
@@ -306,9 +258,9 @@ Chrome archives tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_archives TIMEOUT=600 test_mixed_src
+          - make SUITE=test_archives test_mixed_src
 
-Chrome create file tests:
+Create file:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CCFT
   tasks:
@@ -321,9 +273,9 @@ Chrome create file tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_create_file TIMEOUT=600 test_mixed_src
+          - make SUITE=test_create_file test_mixed_src
 
-Chrome datasets tests:
+Datasets:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDT
   tasks:
@@ -336,9 +288,9 @@ Chrome datasets tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_dataset TIMEOUT=600 test_mixed_src
+          - make SUITE=test_dataset test_mixed_src
 
-Chrome directories movement tests:
+Directories movement:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDMT2
   tasks:
@@ -351,9 +303,9 @@ Chrome directories movement tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_src
+          - make SUITE=test_directories_movement test_mixed_src
 
-Chrome directories multi tests:
+Directories multi:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDMT3
   tasks:
@@ -366,9 +318,9 @@ Chrome directories multi tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+          - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc test_mixed_src
 
-Chrome directories remove metadata:
+Directories remove metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDRM
   tasks:
@@ -381,9 +333,9 @@ Chrome directories remove metadata:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
+          - make SUITE=test_directories_remove_metadata test_mixed_src
 
-Chrome directories set metadata:
+Directories set metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDSM
   tasks:
@@ -396,9 +348,9 @@ Chrome directories set metadata:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
+          - make SUITE=test_directories_set_metadata test_mixed_src
 
-Chrome directories times tests:
+Directories times:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDTT
   tasks:
@@ -411,9 +363,9 @@ Chrome directories times tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directories_times TIMEOUT=600 test_mixed_src
+          - make SUITE=test_directories_times test_mixed_src
 
-Chrome file content tests:
+File content:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFCT
   tasks:
@@ -426,9 +378,9 @@ Chrome file content tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_file_content TIMEOUT=600 test_mixed_src
+          - make SUITE=test_file_content test_mixed_src
 
-Chrome files movement tests:
+Files movement:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFMT2
   tasks:
@@ -441,9 +393,9 @@ Chrome files movement tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_files_movement TIMEOUT=600 test_mixed_src
+          - make SUITE=test_files_movement test_mixed_src
 
-Chrome files multi tests:
+Files multi:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFMT3
   tasks:
@@ -456,9 +408,9 @@ Chrome files multi tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+          - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc test_mixed_src
 
-Chrome files remove metadata:
+Files remove metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFRM
   tasks:
@@ -471,9 +423,9 @@ Chrome files remove metadata:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
+          - make SUITE=test_files_remove_metadata test_mixed_src
 
-Chrome files set metadata:
+Files set metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFSM
   tasks:
@@ -486,9 +438,9 @@ Chrome files set metadata:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
+          - make SUITE=test_files_set_metadata test_mixed_src
 
-Chrome files times tests:
+Files times:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFTT
   tasks:
@@ -501,9 +453,9 @@ Chrome files times tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_files_times TIMEOUT=600 test_mixed_src
+          - make SUITE=test_files_times test_mixed_src
 
-Chrome groups basic tests:
+Groups basic:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CGBT
   tasks:
@@ -516,9 +468,24 @@ Chrome groups basic tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_src
+          - make SUITE=test_groups_basic test_mixed_src
 
-Chrome nested directories create:
+LUMA: 
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma test_mixed_src
+
+Nested directories create:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CNDC
   tasks:
@@ -531,9 +498,9 @@ Chrome nested directories create:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_src
+          - make SUITE=test_nested_directories_create test_mixed_src
 
-Chrome nested directories remove:
+Nested directories remove:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CNDR
   tasks:
@@ -546,9 +513,9 @@ Chrome nested directories remove:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_src
+          - make SUITE=test_nested_directories_remove test_mixed_src
 
-Chrome onepanel tests:
+Onepanel:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: COT
   tasks:
@@ -561,9 +528,9 @@ Chrome onepanel tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_src
+          - make SUITE=test_onepanel_basic test_mixed_src
 
-Chrome permission POSIX multi tests:
+Permission POSIX multi:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPMT
   tasks:
@@ -576,9 +543,9 @@ Chrome permission POSIX multi tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_src
 
-Chrome permission POSIX tests:
+Permission POSIX:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPT
   tasks:
@@ -591,9 +558,24 @@ Chrome permission POSIX tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
+          - make SUITE=test_permission_posix test_mixed_src
 
-Chrome remove file tests:
+QoS:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CQT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_qos test_mixed_src
+
+Remove file:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CRFT
   tasks:
@@ -606,9 +588,9 @@ Chrome remove file tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_remove_file TIMEOUT=600 test_mixed_src
+          - make SUITE=test_remove_file test_mixed_src
 
-Chrome rename file tests:
+Rename file:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CRFT1
   tasks:
@@ -621,9 +603,9 @@ Chrome rename file tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_rename_file TIMEOUT=600 test_mixed_src
+          - make SUITE=test_rename_file test_mixed_src
 
-Chrome single directory tests 2:
+Single directory 2:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSDT2
   tasks:
@@ -636,9 +618,9 @@ Chrome single directory tests 2:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_src
+          - make SUITE=test_single_directory2 test_mixed_src
 
-Chrome single directory tests:
+Single directory:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSDT
   tasks:
@@ -651,9 +633,9 @@ Chrome single directory tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_single_directory TIMEOUT=600 test_mixed_src
+          - make SUITE=test_single_directory test_mixed_src
 
-Chrome spaces basic tests:
+Spaces basic:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: STIC
   tasks:
@@ -666,9 +648,9 @@ Chrome spaces basic tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_src
+          - make SUITE=test_spaces_basic test_mixed_src
 
-Chrome storage sync:
+Storage sync:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSS
   tasks:
@@ -681,9 +663,9 @@ Chrome storage sync:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_src
+          - make SUITE=test_storage_sync test_mixed_src
 
-Chrome tokens tests:
+Tokens:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CTT
   tasks:
@@ -696,4 +678,4 @@ Chrome tokens tests:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_tokens TIMEOUT=600 test_mixed_src
+          - make SUITE=test_tokens test_mixed_src

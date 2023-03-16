@@ -109,7 +109,7 @@ authorization: &acceptance-oneclient-tests-job
     - script: &run-acceptance-tests
         interpreter: BINSH_OR_CMDEXE
         scripts:
-          - make test_oneclient_src SUITE=test_authorization  ENV_FILE=singleclient_authorization IGNORE_XFAIL=1
+          - make test_oneclient_src SUITE=test_authorization  ENV_FILE=singleclient_authorization
         working-dir: onedata-acceptance
         description: Run acceptance oneclient tests
   final-tasks:
@@ -154,7 +154,7 @@ directory CRUD:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_src
 
 directory stat:
   <<: *acceptance-oneclient-tests-job
@@ -168,7 +168,7 @@ directory stat:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_src
 
 luma provider:
   <<: *acceptance-oneclient-tests-job
@@ -182,7 +182,7 @@ luma provider:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 test_oneclient_src
+          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage test_oneclient_src
 
 luma proxy:
   <<: *acceptance-oneclient-tests-job
@@ -196,7 +196,7 @@ luma proxy:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage IGNORE_XFAIL=1 TIMEOUT=600 test_oneclient_src
+          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage test_oneclient_src
 
 multiclient authorization:
   <<: *acceptance-oneclient-tests-job
@@ -210,7 +210,7 @@ multiclient authorization:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization test_oneclient_src
 
 multiprovider directory CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -224,7 +224,7 @@ multiprovider directory CRUD directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio test_oneclient_src
 
 multiprovider directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -238,7 +238,7 @@ multiprovider directory CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider test_oneclient_src
 
 multiprovider directory stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -252,7 +252,7 @@ multiprovider directory stat directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_src
 
 multiprovider directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -266,7 +266,7 @@ multiprovider directory stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_src
 
 multiprovider proxy directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -280,7 +280,7 @@ multiprovider proxy directory CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy test_oneclient_src
 
 multiprovider proxy directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -294,7 +294,7 @@ multiprovider proxy directory stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_src
 
 multiprovider proxy regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -308,7 +308,7 @@ multiprovider proxy regular file CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_src
 
 multiprovider proxy regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -322,7 +322,7 @@ multiprovider proxy regular file stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy test_oneclient_src
 
 multiprovider proxy s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -336,7 +336,7 @@ multiprovider proxy s3 directory CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_src
 
 multiprovider proxy s3 directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -350,7 +350,7 @@ multiprovider proxy s3 directory stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_src
 
 multiprovider proxy s3 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -364,7 +364,7 @@ multiprovider proxy s3 regular file CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_src
 
 multiprovider proxy s3 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -378,7 +378,7 @@ multiprovider proxy s3 regular file stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_src
 
 multiprovider regular file CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -392,7 +392,7 @@ multiprovider regular file CRUD directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_src
 
 multiprovider regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -406,7 +406,7 @@ multiprovider regular file CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_src
 
 multiprovider regular file stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -420,7 +420,7 @@ multiprovider regular file stat directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_src
 
 multiprovider regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -434,7 +434,7 @@ multiprovider regular file stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_src
 
 multiprovider replication directio:
   <<: *acceptance-oneclient-tests-job
@@ -448,7 +448,7 @@ multiprovider replication directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_src
 
 multiprovider replication proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -462,7 +462,7 @@ multiprovider replication proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_1space IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_1space test_oneclient_src
 
 multiprovider s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -476,7 +476,7 @@ multiprovider s3 directory CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 test_oneclient_src
 
 multiprovider s3 directory stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -490,7 +490,7 @@ multiprovider s3 directory stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_src
 
 multiprovider s3 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -504,7 +504,7 @@ multiprovider s3 regular file CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_src
 
 multiprovider s3 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -518,7 +518,7 @@ multiprovider s3 regular file stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_src
 
 regular file CRUD directio:
   <<: *acceptance-oneclient-tests-job
@@ -532,7 +532,7 @@ regular file CRUD directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_src
 
 regular file CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -546,7 +546,7 @@ regular file CRUD proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_src
 
 regular file stat directio:
   <<: *acceptance-oneclient-tests-job
@@ -560,7 +560,7 @@ regular file stat directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_src
 
 regular file stat proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -574,7 +574,7 @@ regular file stat proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_src
 
 singleprovider directory CRUD multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -588,7 +588,7 @@ singleprovider directory CRUD multiclient directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_src
 
 singleprovider directory stat multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -602,7 +602,7 @@ singleprovider directory stat multiclient directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_src
 
 singleprovider extended attributes:
   <<: *acceptance-oneclient-tests-job
@@ -616,7 +616,7 @@ singleprovider extended attributes:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_src
 
 singleprovider regular file CRUD multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -630,7 +630,7 @@ singleprovider regular file CRUD multiclient directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_src
 
 singleprovider regular file CRUD multiclient proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -644,7 +644,7 @@ singleprovider regular file CRUD multiclient proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_src
 
 singleprovider regular file stat multiclient directio:
   <<: *acceptance-oneclient-tests-job
@@ -658,7 +658,7 @@ singleprovider regular file stat multiclient directio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_src
 
 singleprovider regular file stat multiclient proxyio:
   <<: *acceptance-oneclient-tests-job
@@ -672,4 +672,4 @@ singleprovider regular file stat multiclient proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_src
