@@ -26,7 +26,7 @@ def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
 
     """Create lambda according to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
             name: lambda_name
             docker image: docker image
             mount space: True/False                 ---> optional
@@ -102,7 +102,6 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
             add_parameter_into_lambda_form(
                 selenium, browser_id, oz_page, popups, conf_param_option,
                 config_param['name'], config_param['type'], ordinal(i + 1))
-
 
     if arguments:
         for i, args in enumerate(arguments):

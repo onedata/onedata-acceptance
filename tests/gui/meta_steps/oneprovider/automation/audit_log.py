@@ -37,7 +37,6 @@ def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
         close_modal_and_task(modal, task)
 
 
-
 def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
                                                path, displays, browser_id,
                                                exp_status):

@@ -28,7 +28,7 @@ def create_task_using_previously_created_lambda(browser_id, config, selenium,
 
     """Create task using lambda according to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
         where parallel box: "below"/"above"         ---> optional
         task name: task_name                        ---> optional
         arguments:                                  ---> optional

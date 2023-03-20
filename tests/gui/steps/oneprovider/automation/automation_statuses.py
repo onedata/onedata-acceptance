@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-wokrflows statuses in oneprovider web GUI """
+workflows statuses in oneprovider web GUI """
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
@@ -12,7 +12,6 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page)
-from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -119,19 +118,11 @@ def assert_status(name, actual_status, expected_status):
     assert actual_status.lower() == expected_status.lower(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
-                  '"{workflow}" workflow status bar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_status_bar(selenium, browser_id, op_container, button):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    getattr(page.workflow_visualiser, transform(button))()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) waits for workflow '
                '"(?P<workflow>.*)" to be (paused|cancelled|stopped)'))
 def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    status =  page.workflow_visualiser.status
+    status = page.workflow_visualiser.status
     while status == 'Stopping':
         time.sleep(1)
         status = page.workflow_visualiser.status

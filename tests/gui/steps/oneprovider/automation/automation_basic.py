@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-wokrflows and their execution in oneprovider web GUI """
+workflows and their execution in oneprovider web GUI """
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
@@ -58,10 +58,7 @@ def confirm_workflow_to_execute(selenium, browser_id, op_container):
 
 
 def check_if_task_is_opened(task):
-    if task.status == '':
-        return False
-    else:
-        return True
+    return task.status != ''
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task '
@@ -151,7 +148,8 @@ def assert_workflow_on_executed_workflows_list(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that "{option}" option in '
                   'data row menu in automation workflows page is disabled'))
-def assert_option_disabled_in_automation_page(selenium, browser_id, option, popups):
+def assert_option_disabled_in_automation_page(selenium, browser_id, option,
+                                              popups):
     err_msg = (f'Option {option} is not disabled in data row menu'
                f' in automation workflows page')
     disabled_options =  popups(selenium[browser_id]
@@ -168,4 +166,12 @@ def click_option_for_lane(selenium, browser_id, op_container, lane_name,
     lane = workflow_visualiser.workflow_lanes[lane_name]
     lane.latest_run_menu()
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
+                  '"{workflow}" workflow status bar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_on_status_bar(selenium, browser_id, op_container, button):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    getattr(page.workflow_visualiser, transform(button))()
 

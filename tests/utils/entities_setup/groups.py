@@ -26,7 +26,7 @@ def groups_creation_step(config, service, admin_credentials, users, hosts, group
 def groups_creation(config, service, admin_credentials, users, hosts, groups):
     """Create and configure groups according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
         group_name_1:
             owner: user_name

@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-wokrflows run indicators in oneprovider web GUI """
+workflows run indicators in oneprovider web GUI """
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"

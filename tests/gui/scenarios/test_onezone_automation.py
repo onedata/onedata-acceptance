@@ -54,7 +54,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.onezone.automation.create_workflow import *
+from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.create_lambda import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 
