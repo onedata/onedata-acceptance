@@ -264,7 +264,7 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
     click = 'clicks on'
     close = 'closes'
     button = 'X'
-    modal =  'Function pods activity'
+    modal = 'Function pods activity'
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
@@ -529,3 +529,5 @@ def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
         get_audit_logs_from_every_task_in_workflow(
             lanes, modals, driver, clipboard, path, displays, browser_id,
             exp_status)
+
+

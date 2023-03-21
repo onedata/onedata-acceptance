@@ -399,11 +399,46 @@ def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
     popups(driver).power_select.choose_item(type)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
+               ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'))
+def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
+                          task):
+    modal = 'Remove task'
+    option = 'Remove'
+
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane.parallel_box.task_list[task].menu_button()
+    popups(driver).menu_popup_with_label.menu[option]()
+    click_modal_button(selenium, browser_id, option, modal, modals)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
+               '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by adding '
+               r'following results:\n(?P<config>(.|\s)*)'))
+def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
+                        config):
+    data = yaml.load(config)
+    button = "Modify"
+    task_option = 'task'
 
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane.parallel_box.task_list[task].menu_button()
+    popups(driver).menu_popup_with_label.menu[button]()
+    # wait for task form to open
+    time.sleep(1)
 
+    for res_name, results in data.items():
+        result = page.workflows_page.task_form.results[res_name + ':']
+        for new_res in results:
+            result.add_mapping()
+            result.target_store_dropdown[-1].click()
+            popups(driver).power_select.choose_item(new_res['target store'])
 
-
+    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page,
+                                       task_option)
 
 

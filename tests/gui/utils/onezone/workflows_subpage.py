@@ -77,7 +77,7 @@ class Arguments(Element):
 
 class Results(Element):
     result_name = id = Label('.control-label')
-    target_store_dropdown = WebElement('.targetStore-field')
+    target_store_dropdown = WebElementsSequence('.targetStore-field')
     json_editor = Input('.json-editor-textarea')
     add_mapping = Button('.add-field-button')
 

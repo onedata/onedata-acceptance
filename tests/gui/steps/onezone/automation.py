@@ -190,7 +190,7 @@ def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
     page = oz_page(driver)['automation'].workflows_page.task_form
     if object_type == 'result':
         page.results[object_name + ':'].add_mapping()
-        page.results[object_name + ':'].target_store_dropdown.click()
+        page.results[object_name + ':'].target_store_dropdown[-1].click()
     elif object_type == 'argument':
         page.arguments[object_name + ':'].value_builder_dropdown.click()
     elif object_type == 'configuration parameters':
