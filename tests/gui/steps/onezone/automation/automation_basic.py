@@ -65,8 +65,8 @@ def input_new_inventory_name_into_rename_inventory_input_box(selenium,
                'confirmation button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['automation'].elements_list[
-        ''].edit_box.confirm()
+    oz_page(selenium[browser_id]
+            )['automation'].elements_list[''].edit_box.confirm()
 
 
 @wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '
