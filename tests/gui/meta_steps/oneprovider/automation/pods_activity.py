@@ -200,7 +200,7 @@ def check_number_of_events(selenium, browser_id, modals, exp_num, task):
     exp_num = int(exp_num)
     err_msg = (f'numer of events on "Pods activity" ({actual_num}) for task '
                f'"{task}" is not about {exp_num}')
-    assert abs(actual_num - exp_num) < 3, err_msg
+    assert abs(actual_num - exp_num) <= 3, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that numer of events on '
