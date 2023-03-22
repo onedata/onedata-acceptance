@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import (WebItem, WebItemsSequence,
-                                               WebElementsSequence)
+                                               WebElementsSequence, Label)
 from tests.utils.utils import repeat_failed
 from .archive_row_menu import ArchiveRowMenu
 from .consumer_caveat import ConsumerCaveat
@@ -96,6 +96,7 @@ class Popups(object):
         '.time-resolutions-dropdown .ember-power-select-option')
     workflow_initial_values = WebItem('.file-value-editor-selector-actions',
                                       cls=MenuPopupWithLabel)
+    run_info = Label('.tooltip-inner')
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

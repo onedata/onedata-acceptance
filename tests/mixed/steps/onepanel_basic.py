@@ -304,7 +304,7 @@ def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
                               onepanel, users, hosts, host, config, space_name):
     """ Support space according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
         space_name:
             provider: provider_name             --> required

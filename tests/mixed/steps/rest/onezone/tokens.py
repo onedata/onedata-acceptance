@@ -22,7 +22,7 @@ def create_token_with_config_rest(user, config, users, tokens, hosts,
                                   tmp_memory, groups, spaces):
     """Create token according to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
 
                 name: token_name
                 type: access/identity/invite
