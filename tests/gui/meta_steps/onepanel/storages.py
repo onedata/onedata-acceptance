@@ -63,7 +63,7 @@ def add_storage_in_op_panel_using_gui(selenium, browser_id, name, provider_name,
                                       config, oz_page, hosts, onepanel):
     """ Create storage according to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
 
             storage type: storage_type             --> required
             mount point: mount_point               --> required
@@ -132,7 +132,7 @@ def safely_create_storage_rest(storage_name, provider, config,
                                hosts, onepanel_credentials):
     """ Create storage according to given config.
 
-            Config format given in yaml is as follow:
+            Config format given in yaml is as follows:
 
                 storage type: storage_type             --> required
                 mount point: mount_point               --> required

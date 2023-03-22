@@ -180,7 +180,7 @@ def create_token_with_config(selenium, browser_id, config, oz_page,
                              popups, users, groups, hosts, tmp_memory):
     """Create invite token according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
             name: token_name                       ---> optional
             type: access/identity/invite
@@ -328,7 +328,7 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                groups, hosts, tmp_memory):
     """Assert token is corresponding to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
 
                 name: name_of_invite                           ---> optional
                 revoked: True/False                            ---> optional

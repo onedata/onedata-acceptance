@@ -25,7 +25,7 @@ def wt_create_luma_mappings(config, users, spaces, hosts,
                             onepanel_credentials):
     """ Create LUMA mappings according to given config.
 
-            Config format given in yaml is as follow:
+            Config format given in yaml is as follows:
 
             provider_name:
               storage_name:

@@ -58,7 +58,7 @@ def create_archive(browser_id, selenium, config, item_name, space_name,
                    displays, option, popups):
     """Create archive according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
             description: archive_description        ---> optional
             layout: plain/BagIt

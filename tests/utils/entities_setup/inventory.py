@@ -21,7 +21,7 @@ def inventories_creation(config, admin_credentials, hosts,
                          users, groups, zone_name):
     """Create and configure inventories according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
         inventory_name_1:
             owner: user_name
