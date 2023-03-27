@@ -98,7 +98,7 @@ def get_modal_and_logs_for_task(path, task, modals, driver):
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
     time.sleep(1)
-    modal = modals(driver).task_audit_log
+    modal = modals(driver).audit_log
     logs = modal.logs_entry
     return modal, logs
 

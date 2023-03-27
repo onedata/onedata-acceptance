@@ -6,15 +6,19 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import json
 import time
 
 from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
+    get_store_content)
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
-    close_modal_and_task)
+    close_modal_and_task, click_on_task_audit_log)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -62,3 +66,99 @@ def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
         get_audit_logs_from_every_task_in_workflow(
             lanes, modals, driver, clipboard, path, displays, browser_id,
             exp_status)
+
+
+@wt(parsers.parse('user of {browser_id} sees file_id, checksum and algorithm '
+                  'information in audit log in "{store_name}" store details'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
+                              modals, clipboard, displays, tmp_memory):
+
+    driver = selenium[browser_id]
+    store_type = 'object'
+
+    page = op_container(driver).automation_page.workflow_visualiser
+    store_details = json.loads(get_store_content(
+        browser_id, driver, page, modals, clipboard, displays, store_name,
+        store_type))
+
+    err_msg = (f'There is no information about algorithm, checksum or file id '
+               f'in audit log in {store_name} store details')
+    assert (store_details['algorithm'] and store_details['checksum']
+            and store_details['file_id']), err_msg
+
+    tmp_memory[f'{store_name}_store_log'] = store_details
+
+
+def get_store_audit_log(browser_id, selenium, op_container, store_name, modals,
+                        clipboard, displays, tmp_memory, store_key):
+    if store_key not in tmp_memory.keys():
+        assert_audit_log_in_store(browser_id, selenium, op_container,
+                                  store_name, modals, clipboard, displays,
+                                  tmp_memory)
+
+    return tmp_memory[store_key]
+
+
+def compare_audit_log_to_store_log(modals, driver, clipboard, displays,
+                                   browser_id, elem_name, elem_type,
+                                   store_name, selenium, op_container,
+                                   tmp_memory):
+    store_key = f'{store_name}_store_log'
+    store_audit_log = get_store_audit_log(browser_id, selenium, op_container,
+                                          store_name, modals, clipboard,
+                                          displays, tmp_memory, store_key)
+
+    modal = modals(driver).audit_log
+
+    modal.user_log.click()
+    modal.copy_json()
+    audit_log = json.loads(clipboard.paste(display=displays[browser_id]))
+
+    err_msg = (f'Audit logs for {elem_type} "{elem_name}" does not contain '
+               f'audit log for {store_name} store')
+    assert store_audit_log == audit_log['content'], err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that audit logs in task '
+                  '"{task_name}" in {ordinal} parallel box in lane '
+                  '"{lane_name}" contains same information like audit log in'
+                  ' "{store_name}" store details'))
+def assert_task_audit_log_is_like_store_audit_log(
+        selenium, browser_id, op_container, lane_name, task_name, ordinal,
+        modals, clipboard, displays, tmp_memory, store_name):
+    elem_type = 'task'
+    driver = selenium[browser_id]
+    number = from_ordinal_number_to_int(ordinal) - 1
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+
+    task = page.workflow_visualiser.workflow_lanes[
+        lane_name].parallel_boxes[number].task_list[task_name]
+
+    click_on_task_audit_log(task)
+    # wait a moment for audit log modal to appear
+    time.sleep(1)
+
+    compare_audit_log_to_store_log(modals, driver, clipboard, displays,
+                                   browser_id, task_name, elem_type,
+                                   store_name, selenium,
+                                   op_container, tmp_memory)
+    modal = modals(driver).audit_log
+    close_modal_and_task(modal, task)
+
+
+@wt(parsers.parse('user of {browser_id} sees that audit logs for "{workflow}"'
+                  ' workflow contains the same information like audit log in'
+                  ' "{store_name}" store details'))
+def assert_workflow_audit_log_contains_store_audit_log_info(
+        selenium, browser_id, op_container, modals, store_name, clipboard,
+        displays, tmp_memory, workflow):
+    elem_type = 'workflow'
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.workflow_visualiser.audit_log()
+    driver = selenium[browser_id]
+
+    compare_audit_log_to_store_log(modals, driver, clipboard, displays,
+                                   browser_id, workflow, elem_type, store_name,
+                                   selenium, op_container, tmp_memory)
+    modals(driver).audit_log.x()

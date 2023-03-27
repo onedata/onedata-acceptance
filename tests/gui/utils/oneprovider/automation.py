@@ -102,6 +102,11 @@ class WorkflowVisualiser(PageObject):
     resume = NamedButton('.pause-resume-atm-workflow-execution-action-trigger',
                          text="Resume")
     cancel = Button('.cancel-atm-workflow-execution-action-trigger')
+    audit_log = NamedButton('.btn', text="Audit log")
+
+
+class Store(PageObject):
+    name = id = Label('.store-name')
 
 
 class WorkflowExecutionPage(PageObject):
@@ -118,6 +123,8 @@ class WorkflowExecutionPage(PageObject):
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
     workflow_header = WebElement('.workflow-visualiser')
+    stores = WebItemsSequence('.workflow-visualiser-stores-list .tag-item',
+                              cls=Store)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

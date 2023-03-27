@@ -56,7 +56,7 @@ from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
-from tests.gui.meta_steps.onezone.automation.task_creation import *
+from tests.gui.meta_steps.onezone.automation.task_management import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *

@@ -124,9 +124,9 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
     page = op_container(driver).automation_page.workflow_visualiser
 
     store1_value = get_store_content(browser_id, driver, page, modals,
-                                      clipboard, displays, store1, 'list')
+                                     clipboard, displays, store1, 'list')
     store2_value = get_store_content(browser_id, driver, page, modals,
-                                      clipboard, displays, store2, 'object')
+                                     clipboard, displays, store2, 'object')
 
     assert store1_value == store2_value, (f'Value of {store1} '
                                           f'store:{store1_value} \n is not '

@@ -39,3 +39,6 @@ Feature: Workflows stores tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     And user of browser executes 1st revision of "calculate-checksums-rest", using "file1" as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees file_id, checksum and algorithm information in audit log in "results" store details
+    And user of browser sees that audit logs in task "md5" in 1st parallel box in lane "calculate-checksums" contains same information like audit log in "results" store details
+    And user of browser sees that audit logs for "calculate-checksums-rest" workflow contains the same information like audit log in "results" store details
