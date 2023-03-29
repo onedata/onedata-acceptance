@@ -541,7 +541,7 @@ Oneprovider ACL subjects:
 
 Oneprovider archives:
   <<: *acceptance-tests-in-chrome-job
-  key: COAT
+  key: COAR
   tasks:
     - script: *clear-env
     - script: *restart-minikube
