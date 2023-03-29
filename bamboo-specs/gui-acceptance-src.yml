@@ -359,7 +359,7 @@ Onepanel members:
 
 Onepanel two hosts deployment:
   <<: *acceptance-tests-in-chrome-job
-  key: COTHDT
+  key: CO2HDT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -541,7 +541,7 @@ Oneprovider ACL subjects:
 
 Oneprovider archives:
   <<: *acceptance-tests-in-chrome-job
-  key: COAT2
+  key: COAT
   tasks:
     - script: *clear-env
     - script: *restart-minikube

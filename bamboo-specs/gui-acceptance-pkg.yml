@@ -46,6 +46,7 @@ other:
         enabled: "true"
         expiryTypeArtifact: "true"
         duration: "1"
+
 stages:
   - Acceptance Test:
       manual: false
@@ -695,7 +696,7 @@ Oneprovider upload:
 
 Onezone automations:
   <<: *acceptance-tests-in-chrome-job
-  key: COZATT
+  key: COAT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -1031,7 +1032,7 @@ Onezone tokens delete:
 
 POSIX:
   <<: *acceptance-tests-in-chrome-job
-  key: MTC
+  key: CMT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -1115,7 +1116,7 @@ Shares basic:
 
 Shares handle service:
   <<: *acceptance-tests-in-chrome-job
-  key: CSSC
+  key: CSHS
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -1143,7 +1144,7 @@ Storage sync:
 
 Storage sync charts:
   <<: *acceptance-tests-in-chrome-job
-  key: CSSCT
+  key: CSSC
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -1199,7 +1200,7 @@ Transfers files:
 
 Transfers multi browser:
   <<: *acceptance-tests-in-chrome-job
-  key: CTMBT2
+  key: CTMBT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
