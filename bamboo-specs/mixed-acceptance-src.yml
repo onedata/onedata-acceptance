@@ -52,35 +52,35 @@ stages:
         - ACL one entry
         - ACL two entries
         - Archive privileges
-        - Archives 
-        - Create file 
-        - Datasets 
-        - Directories movement 
-        - Directories multi 
+        - Archives
+        - Create file
+        - Datasets
+        - Directories movement
+        - Directories multi
         - Directories remove metadata
         - Directories set metadata
-        - Directories times 
-        - File content 
-        - Files movement 
-        - Files multi 
+        - Directories times
+        - File content
+        - Files movement
+        - Files multi
         - Files remove metadata
         - Files set metadata
-        - Files times 
-        - Groups basic 
-        - LUMA 
+        - Files times
+        - Groups basic
+        - LUMA
         - Nested directories create
         - Nested directories remove
-        - Onepanel 
-        - Permission POSIX 
-        - Permission POSIX multi 
-        - QoS 
-        - Remove file 
-        - Rename file 
-        - Single directory 
+        - Onepanel
+        - Permission POSIX
+        - Permission POSIX multi
+        - QoS
+        - Remove file
+        - Rename file
+        - Single directory
         - Single directory 2
-        - Spaces basic 
+        - Spaces basic
         - Storage sync
-        - Tokens 
+        - Tokens
 
 _Codetag Tracker:
   key: CDTR
@@ -247,7 +247,7 @@ Archive privileges:
 
 Archives:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CAT2
+  key: CAT3
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -307,7 +307,7 @@ Directories movement:
 
 Directories multi:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CDMT3
+  key: CDMT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -470,7 +470,7 @@ Groups basic:
         scripts:
           - make SUITE=test_groups_basic test_mixed_src
 
-LUMA: 
+LUMA:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATC
   tasks:
@@ -530,21 +530,6 @@ Onepanel:
         scripts:
           - make SUITE=test_onepanel_basic test_mixed_src
 
-Permission POSIX multi:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CPPMT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_src
-
 Permission POSIX:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPT
@@ -559,6 +544,21 @@ Permission POSIX:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_permission_posix test_mixed_src
+
+Permission POSIX multi:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CPPMT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_src
 
 QoS:
   <<: *acceptance-mixed-tests-in-chrome-job
@@ -605,6 +605,21 @@ Rename file:
         scripts:
           - make SUITE=test_rename_file test_mixed_src
 
+Single directory:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSDI
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_single_directory test_mixed_src
+
 Single directory 2:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSDT2
@@ -620,24 +635,9 @@ Single directory 2:
         scripts:
           - make SUITE=test_single_directory2 test_mixed_src
 
-Single directory:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CSDT
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_single_directory test_mixed_src
-
 Spaces basic:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: STIC
+  key: CSBT
   tasks:
     - script: *clear-env
     - script: *restart-minikube

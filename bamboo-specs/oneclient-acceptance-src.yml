@@ -462,7 +462,7 @@ multiprovider replication proxyio:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_1space test_oneclient_src
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_src
 
 multiprovider s3 directory CRUD proxyio:
   <<: *acceptance-oneclient-tests-job
