@@ -3,12 +3,229 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "d2301029042203880a9f98fd6b33b4e8ch36a6": {
-        "4": {
+      "eb162371f485425e2c7a0a8bc3dcff2bch63dd": {
+        "6": {
           "schemaFormatVersion": 2,
           "revision": {
             "schemaFormatVersion": 2,
-            "originalRevisionNumber": 4,
+            "originalRevisionNumber": 6,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                },
+                {
+                  "relayMethod": "filePipe",
+                  "name": "stats",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "specs": [
+                        {
+                          "unit": "none",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "filesProcessed"
+                        },
+                        {
+                          "unit": "bytes",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "bytesProcessed"
+                        }
+                      ]
+                    },
+                    "type": "timeSeriesMeasurement"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "calculate-checksum-mounted",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "7da00b77933825c06db45b7b8dc9fbd7",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "eb162371f485425e2c7a0a8bc3dcff2bch63dd"
+        },
+        "7": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 7,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "calculate-checksum-mounted-no-stats",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "a112226008af1863aa6bfba129188175",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "eb162371f485425e2c7a0a8bc3dcff2bch63dd"
+        }
+      },
+      "c2bf9b1ec0458e3b529e964ffd0a73fbch6eb4": {
+        "5": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 5,
             "atmLambdaRevision": {
               "summary": "",
               "state": "draft",
@@ -64,7 +281,47 @@
               },
               "name": "calculate-checksum-rest",
               "description": "",
-              "checksum": "ce98a34b0b32d3bfc5371475f2dca540",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "c5d24977229154badb2821ff12f2ac48",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -76,35 +333,17 @@
                     },
                     "type": "file"
                   }
-                },
-                {
-                  "name": "algorithm",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                },
-                {
-                  "name": "metadataKey",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
                 }
               ]
             }
           },
-          "originalAtmLambdaId": "d2301029042203880a9f98fd6b33b4e8ch36a6"
+          "originalAtmLambdaId": "c2bf9b1ec0458e3b529e964ffd0a73fbch6eb4"
         },
-        "5": {
+        "7": {
           "schemaFormatVersion": 2,
           "revision": {
             "schemaFormatVersion": 2,
-            "originalRevisionNumber": 5,
+            "originalRevisionNumber": 7,
             "atmLambdaRevision": {
               "summary": "",
               "state": "draft",
@@ -139,182 +378,47 @@
               },
               "name": "calculate-checksum-rest-no-stats",
               "description": "",
-              "checksum": "cf7ac04c0dcabe1884aec842366ed3c2",
-              "argumentSpecs": [
-                {
-                  "name": "file",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {
-                      "fileType": "ANY"
-                    },
-                    "type": "file"
-                  }
-                },
+              "configParameterSpecs": [
                 {
                   "name": "algorithm",
                   "isOptional": false,
                   "defaultValue": null,
                   "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                },
-                {
-                  "name": "metadataKey",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                }
-              ]
-            }
-          },
-          "originalAtmLambdaId": "d2301029042203880a9f98fd6b33b4e8ch36a6"
-        }
-      },
-      "98181192b90591a333607401e309ba57ch7614": {
-        "2": {
-          "schemaFormatVersion": 2,
-          "revision": {
-            "schemaFormatVersion": 2,
-            "originalRevisionNumber": 2,
-            "atmLambdaRevision": {
-              "summary": "",
-              "state": "draft",
-              "resultSpecs": [
-                {
-                  "relayMethod": "returnValue",
-                  "name": "result",
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "object"
-                  }
-                }
-              ],
-              "resourceSpec": {
-                "memoryRequested": 104857600,
-                "memoryLimit": null,
-                "ephemeralStorageRequested": 104857600,
-                "ephemeralStorageLimit": null,
-                "cpuRequested": 0.1,
-                "cpuLimit": null
-              },
-              "preferredBatchSize": 100,
-              "operationSpec": {
-                "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
-                "dockerExecutionOptions": {
-                  "readonly": false,
-                  "oneclientOptions": "-i",
-                  "oneclientMountPoint": "/mnt/onedata",
-                  "mountOneclient": true
-                }
-              },
-              "name": "calculate-checksum-mounted",
-              "description": "",
-              "checksum": "b912fe441503d9cbad013c02d4856567",
-              "argumentSpecs": [
-                {
-                  "name": "file",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
-                    },
-                    "type": "file"
-                  }
-                },
-                {
-                  "name": "metadataKey",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                },
-                {
-                  "name": "algorithm",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                }
-              ]
-            }
-          },
-          "originalAtmLambdaId": "98181192b90591a333607401e309ba57ch7614"
-        }
-      },
-      "4c54042afdbf1df3f5182a5cefc04221ch0125": {
-        "5": {
-          "schemaFormatVersion": 2,
-          "revision": {
-            "schemaFormatVersion": 2,
-            "originalRevisionNumber": 5,
-            "atmLambdaRevision": {
-              "summary": "",
-              "state": "draft",
-              "resultSpecs": [
-                {
-                  "relayMethod": "returnValue",
-                  "name": "result",
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "object"
-                  }
-                },
-                {
-                  "relayMethod": "filePipe",
-                  "name": "stats",
-                  "dataSpec": {
-                    "valueConstraints": {
-                      "specs": [
-                        {
-                          "unit": "none",
-                          "nameMatcherType": "exact",
-                          "nameMatcher": "filesProcessed"
-                        },
-                        {
-                          "unit": "bytes",
-                          "nameMatcherType": "exact",
-                          "nameMatcher": "bytesProcessed"
-                        }
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
                       ]
                     },
-                    "type": "timeSeriesMeasurement"
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
                   }
                 }
               ],
-              "resourceSpec": {
-                "memoryRequested": 104857600,
-                "memoryLimit": null,
-                "ephemeralStorageRequested": 104857600,
-                "ephemeralStorageLimit": null,
-                "cpuRequested": 0.1,
-                "cpuLimit": null
-              },
-              "preferredBatchSize": 10,
-              "operationSpec": {
-                "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
-                "dockerExecutionOptions": {
-                  "readonly": false,
-                  "oneclientOptions": "-i",
-                  "oneclientMountPoint": "/mnt/onedata",
-                  "mountOneclient": true
-                }
-              },
-              "name": "calculate-checksum-mounted",
-              "description": "",
-              "checksum": "04ddab6f07a9d25294ffb524820aadeb",
+              "checksum": "5e875c389af8bde49bd199fbde336d51",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -326,41 +430,23 @@
                     },
                     "type": "file"
                   }
-                },
-                {
-                  "name": "algorithm",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                },
-                {
-                  "name": "metadataKey",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
                 }
               ]
             }
           },
-          "originalAtmLambdaId": "4c54042afdbf1df3f5182a5cefc04221ch0125"
+          "originalAtmLambdaId": "c2bf9b1ec0458e3b529e964ffd0a73fbch6eb4"
         }
       }
     },
     "schemaFormatVersion": 2,
-    "originalRevisionNumber": 2,
+    "originalRevisionNumber": 1,
     "atmWorkflowSchemaRevision": {
       "stores": [
         {
           "type": "treeForest",
           "requiresInitialContent": true,
           "name": "input-files",
-          "id": "6ce4c0360dce0796568877930264f9349a4298",
+          "id": "eeafaff297c9f926f1e22b387e40b5c9d74082",
           "description": "",
           "defaultInitialContent": null,
           "config": {
@@ -376,7 +462,7 @@
           "type": "list",
           "requiresInitialContent": false,
           "name": "results",
-          "id": "43f9312804aed736d2370c3160f50de08fff70",
+          "id": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
           "description": "",
           "defaultInitialContent": null,
           "config": {
@@ -391,7 +477,7 @@
       "lanes": [
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "6ce4c0360dce0796568877930264f9349a4298",
+            "storeSchemaId": "eeafaff297c9f926f1e22b387e40b5c9d74082",
             "maxBatchSize": 4
           },
           "parallelBoxes": [
@@ -447,169 +533,11 @@
                         }
                       ]
                     },
-                    "dashboardSpec": {
-                      "rootSection": {
-                        "title": {
-                          "tip": "",
-                          "content": "Task statistics"
-                        },
-                        "sections": [],
-                        "isExpandedByDefault": false,
-                        "description": "",
-                        "charts": [
-                          {
-                            "yAxes": [
-                              {
-                                "valueProvider": {
-                                  "functionName": "currentValue",
-                                  "functionArguments": {}
-                                },
-                                "unitOptions": null,
-                                "unitName": "bytesPerSec",
-                                "name": "Bytes per sec.",
-                                "minInterval": 1,
-                                "id": "bytesAxis"
-                              },
-                              {
-                                "valueProvider": {
-                                  "functionName": "currentValue",
-                                  "functionArguments": {}
-                                },
-                                "unitOptions": {
-                                  "customName": "files/s"
-                                },
-                                "unitName": "custom",
-                                "name": "Files per sec.",
-                                "minInterval": 1,
-                                "id": "filesAxis"
-                              }
-                            ],
-                            "title": {
-                              "tip": "",
-                              "content": "Processing stats"
-                            },
-                            "seriesGroupBuilders": [],
-                            "seriesBuilders": [
-                              {
-                                "builderType": "static",
-                                "builderRecipe": {
-                                  "seriesTemplate": {
-                                    "yAxisId": "bytesAxis",
-                                    "type": "line",
-                                    "name": "Bytes processed",
-                                    "id": "series1",
-                                    "groupId": null,
-                                    "dataProvider": {
-                                      "functionName": "rate",
-                                      "functionArguments": {
-                                        "timeSpanProvider": null,
-                                        "inputDataProvider": {
-                                          "functionName": "loadSeries",
-                                          "functionArguments": {
-                                            "sourceType": "external",
-                                            "sourceSpecProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "externalSourceParameters": {
-                                                    "timeSeriesNameGenerator": "bytesProcessed",
-                                                    "timeSeriesName": "bytesProcessed",
-                                                    "metricNames": [
-                                                      "sum5s",
-                                                      "sum1m",
-                                                      "sum1h"
-                                                    ]
-                                                  },
-                                                  "externalSourceName": "store"
-                                                }
-                                              }
-                                            },
-                                            "replaceEmptyParametersProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "fallbackValueProvider": {
-                                                    "functionName": "literal",
-                                                    "functionArguments": {
-                                                      "data": 0
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    "color": null
-                                  }
-                                }
-                              },
-                              {
-                                "builderType": "static",
-                                "builderRecipe": {
-                                  "seriesTemplate": {
-                                    "yAxisId": "filesAxis",
-                                    "type": "bar",
-                                    "name": "Files processed",
-                                    "id": "series2",
-                                    "groupId": null,
-                                    "dataProvider": {
-                                      "functionName": "rate",
-                                      "functionArguments": {
-                                        "timeSpanProvider": null,
-                                        "inputDataProvider": {
-                                          "functionName": "loadSeries",
-                                          "functionArguments": {
-                                            "sourceType": "external",
-                                            "sourceSpecProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "externalSourceParameters": {
-                                                    "timeSeriesNameGenerator": "filesProcessed",
-                                                    "timeSeriesName": "filesProcessed",
-                                                    "metricNames": [
-                                                      "sum5s",
-                                                      "sum1m",
-                                                      "sum1h"
-                                                    ]
-                                                  },
-                                                  "externalSourceName": "store"
-                                                }
-                                              }
-                                            },
-                                            "replaceEmptyParametersProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "fallbackValueProvider": {
-                                                    "functionName": "literal",
-                                                    "functionArguments": {
-                                                      "data": 0
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    "color": null
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ],
-                        "chartNavigation": "independent"
-                      }
-                    }
+                    "dashboardSpec": null
                   },
                   "resultMappings": [
                     {
-                      "storeSchemaId": "43f9312804aed736d2370c3160f50de08fff70",
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
                       "storeContentUpdateOptions": {
                         "type": "listStoreContentUpdateOptions",
                         "function": "append"
@@ -628,7 +556,7 @@
                             "measurementTimeSeriesNameMatcher": "bytesProcessed"
                           },
                           {
-                            "targetTimeSeriesNameGenerator": "bytesProcessed",
+                            "targetTimeSeriesNameGenerator": "filesProcessed",
                             "prefixCombiner": "overwrite",
                             "measurementTimeSeriesNameMatcherType": "exact",
                             "measurementTimeSeriesNameMatcher": "filesProcessed"
@@ -640,9 +568,13 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "md5",
-                  "lambdaRevisionNumber": 4,
-                  "lambdaId": "d2301029042203880a9f98fd6b33b4e8ch36a6",
-                  "id": "706d5abf307284bd839d198c0cc2c75d74c32b",
+                  "lambdaRevisionNumber": 5,
+                  "lambdaId": "c2bf9b1ec0458e3b529e964ffd0a73fbch6eb4",
+                  "lambdaConfig": {
+                    "metadataKey": "md5_checksum",
+                    "algorithm": "md5"
+                  },
+                  "id": "829206b6161f3ad1865841d025a451c436c788",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -650,20 +582,6 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "md5"
-                      },
-                      "argumentName": "algorithm"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "md5_checksum"
-                      },
-                      "argumentName": "metadataKey"
                     }
                   ]
                 },
@@ -671,7 +589,7 @@
                   "timeSeriesStoreConfig": null,
                   "resultMappings": [
                     {
-                      "storeSchemaId": "43f9312804aed736d2370c3160f50de08fff70",
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
                       "storeContentUpdateOptions": {
                         "type": "listStoreContentUpdateOptions",
                         "function": "append"
@@ -681,9 +599,13 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "sha256",
-                  "lambdaRevisionNumber": 5,
-                  "lambdaId": "d2301029042203880a9f98fd6b33b4e8ch36a6",
-                  "id": "223b62b2339944be6fb63ed742d3616a89a0ed",
+                  "lambdaRevisionNumber": 7,
+                  "lambdaId": "c2bf9b1ec0458e3b529e964ffd0a73fbch6eb4",
+                  "lambdaConfig": {
+                    "metadataKey": "sha256_checksum",
+                    "algorithm": "sha256"
+                  },
+                  "id": "b94126f2d8fc444bd864ceb4dcec98502278f9",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -691,26 +613,12 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha256"
-                      },
-                      "argumentName": "algorithm"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha256_checksum"
-                      },
-                      "argumentName": "metadataKey"
                     }
                   ]
                 }
               ],
               "name": "Parallel box",
-              "id": "742fbf65d7c735b3479b3fd7b2e89a85af0bae"
+              "id": "7e652779f4c8f234f53b4840273463cbd0d4fd"
             },
             {
               "tasks": [
@@ -718,7 +626,7 @@
                   "timeSeriesStoreConfig": null,
                   "resultMappings": [
                     {
-                      "storeSchemaId": "43f9312804aed736d2370c3160f50de08fff70",
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
                       "storeContentUpdateOptions": {
                         "type": "listStoreContentUpdateOptions",
                         "function": "append"
@@ -728,9 +636,13 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "adler32",
-                  "lambdaRevisionNumber": 2,
-                  "lambdaId": "98181192b90591a333607401e309ba57ch7614",
-                  "id": "1709c90b118641ffb5d1091217616859301664",
+                  "lambdaRevisionNumber": 7,
+                  "lambdaId": "eb162371f485425e2c7a0a8bc3dcff2bch63dd",
+                  "lambdaConfig": {
+                    "metadataKey": "adler32",
+                    "algorithm": "adler32"
+                  },
+                  "id": "ab2ec39ee78afa8a621baba9d7702cd78a0399",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -738,36 +650,22 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "adler32_key"
-                      },
-                      "argumentName": "metadataKey"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "adler32"
-                      },
-                      "argumentName": "algorithm"
                     }
                   ]
                 }
               ],
               "name": "Parallel box",
-              "id": "9c120ce4458baeb0c30cc8f4b60f76134de5bf"
+              "id": "a74805e5b1de4e0d1c1374b67e3576267a42f2"
             }
           ],
           "name": "calculate-checksums",
           "maxRetries": 1,
-          "id": "4d0c14438d47ceb97ebefbbec64e44b05d6b3b",
+          "id": "9abc8d71701a8434ff60a22c740ca71d0a3f5b",
           "dashboardSpec": null
         },
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "6ce4c0360dce0796568877930264f9349a4298",
+            "storeSchemaId": "eeafaff297c9f926f1e22b387e40b5c9d74082",
             "maxBatchSize": 4
           },
           "parallelBoxes": [
@@ -823,169 +721,11 @@
                         }
                       ]
                     },
-                    "dashboardSpec": {
-                      "rootSection": {
-                        "title": {
-                          "tip": "",
-                          "content": "Task statistics"
-                        },
-                        "sections": [],
-                        "isExpandedByDefault": false,
-                        "description": "",
-                        "charts": [
-                          {
-                            "yAxes": [
-                              {
-                                "valueProvider": {
-                                  "functionName": "currentValue",
-                                  "functionArguments": {}
-                                },
-                                "unitOptions": null,
-                                "unitName": "bytesPerSec",
-                                "name": "Bytes per sec.",
-                                "minInterval": 1,
-                                "id": "bytesAxis"
-                              },
-                              {
-                                "valueProvider": {
-                                  "functionName": "currentValue",
-                                  "functionArguments": {}
-                                },
-                                "unitOptions": {
-                                  "customName": "files/s"
-                                },
-                                "unitName": "custom",
-                                "name": "Files per sec.",
-                                "minInterval": 1,
-                                "id": "filesAxis"
-                              }
-                            ],
-                            "title": {
-                              "tip": "",
-                              "content": "Processing stats"
-                            },
-                            "seriesGroupBuilders": [],
-                            "seriesBuilders": [
-                              {
-                                "builderType": "static",
-                                "builderRecipe": {
-                                  "seriesTemplate": {
-                                    "yAxisId": "bytesAxis",
-                                    "type": "line",
-                                    "name": "Bytes processed",
-                                    "id": "series1",
-                                    "groupId": null,
-                                    "dataProvider": {
-                                      "functionName": "rate",
-                                      "functionArguments": {
-                                        "timeSpanProvider": null,
-                                        "inputDataProvider": {
-                                          "functionName": "loadSeries",
-                                          "functionArguments": {
-                                            "sourceType": "external",
-                                            "sourceSpecProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "externalSourceParameters": {
-                                                    "timeSeriesNameGenerator": "bytesProcessed",
-                                                    "timeSeriesName": "bytesProcessed",
-                                                    "metricNames": [
-                                                      "sum5s",
-                                                      "sum1m",
-                                                      "sum1h"
-                                                    ]
-                                                  },
-                                                  "externalSourceName": "store"
-                                                }
-                                              }
-                                            },
-                                            "replaceEmptyParametersProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "fallbackValueProvider": {
-                                                    "functionName": "literal",
-                                                    "functionArguments": {
-                                                      "data": 0
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    "color": null
-                                  }
-                                }
-                              },
-                              {
-                                "builderType": "static",
-                                "builderRecipe": {
-                                  "seriesTemplate": {
-                                    "yAxisId": "filesAxis",
-                                    "type": "bar",
-                                    "name": "Files processed",
-                                    "id": "series2",
-                                    "groupId": null,
-                                    "dataProvider": {
-                                      "functionName": "rate",
-                                      "functionArguments": {
-                                        "timeSpanProvider": null,
-                                        "inputDataProvider": {
-                                          "functionName": "loadSeries",
-                                          "functionArguments": {
-                                            "sourceType": "external",
-                                            "sourceSpecProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "externalSourceParameters": {
-                                                    "timeSeriesNameGenerator": "filesProcessed",
-                                                    "timeSeriesName": "filesProcessed",
-                                                    "metricNames": [
-                                                      "sum5s",
-                                                      "sum1m",
-                                                      "sum1h"
-                                                    ]
-                                                  },
-                                                  "externalSourceName": "store"
-                                                }
-                                              }
-                                            },
-                                            "replaceEmptyParametersProvider": {
-                                              "functionName": "literal",
-                                              "functionArguments": {
-                                                "data": {
-                                                  "fallbackValueProvider": {
-                                                    "functionName": "literal",
-                                                    "functionArguments": {
-                                                      "data": 0
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                    "color": null
-                                  }
-                                }
-                              }
-                            ]
-                          }
-                        ],
-                        "chartNavigation": "independent"
-                      }
-                    }
+                    "dashboardSpec": null
                   },
                   "resultMappings": [
                     {
-                      "storeSchemaId": "43f9312804aed736d2370c3160f50de08fff70",
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
                       "storeContentUpdateOptions": {
                         "type": "listStoreContentUpdateOptions",
                         "function": "append"
@@ -1016,9 +756,13 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "sha512",
-                  "lambdaRevisionNumber": 5,
-                  "lambdaId": "4c54042afdbf1df3f5182a5cefc04221ch0125",
-                  "id": "57b38d88e22076c790a7f503cfb9b38d2ec507",
+                  "lambdaRevisionNumber": 6,
+                  "lambdaId": "eb162371f485425e2c7a0a8bc3dcff2bch63dd",
+                  "lambdaConfig": {
+                    "metadataKey": "sha512",
+                    "algorithm": "sha512"
+                  },
+                  "id": "3844e49668ffaa3a718a34bee2a53ce8681d6a",
                   "argumentMappings": [
                     {
                       "valueBuilder": {
@@ -1026,31 +770,17 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha512"
-                      },
-                      "argumentName": "algorithm"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha512_key"
-                      },
-                      "argumentName": "metadataKey"
                     }
                   ]
                 }
               ],
               "name": "Parallel box",
-              "id": "86c4ce4d35555eeb8056aa88071c4f1780d58a"
+              "id": "e4aca3fe723a481ce6814a79f3df1312c99e84"
             }
           ],
           "name": "calculate-checksums-lane2",
           "maxRetries": 1,
-          "id": "ae44eb0586bd0106583ac7e2f178a309a365b9",
+          "id": "fac3d3e1c2084ee6c215c34ed760d22cb9c743",
           "dashboardSpec": null
         }
       ],
@@ -1058,6 +788,6 @@
       "dashboardSpec": null
     }
   },
-  "originalAtmWorkflowSchemaId": "b3cbf54e373a93704e1ffda33c22a405ch3a5e",
+  "originalAtmWorkflowSchemaId": "684a2258386ed9c7fe3547161cad5fa8chc7f0",
   "name": "checksum-counting-different-lambdas"
 }

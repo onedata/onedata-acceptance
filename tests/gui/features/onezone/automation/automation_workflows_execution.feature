@@ -225,7 +225,7 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 2nd revision of "checksum-counting-different-lambdas", using "dir1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "checksum-counting-different-lambdas", using "dir1" as initial value, in "space1" space
 
     Then user of browser sees that name of first pod in tab "Current" for task "md5" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest"
 

@@ -3,12 +3,12 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "b7e8f0318778dfadf3fdcf59a84a232bch9f34": {
-        "4": {
+      "0a6effe293494d90d28ecd7660e4176ech510a": {
+        "5": {
           "schemaFormatVersion": 2,
           "revision": {
             "schemaFormatVersion": 2,
-            "originalRevisionNumber": 4,
+            "originalRevisionNumber": 5,
             "atmLambdaRevision": {
               "summary": "",
               "state": "draft",
@@ -64,7 +64,47 @@
               },
               "name": "calculate-checksum-rest",
               "description": "",
-              "checksum": "ce98a34b0b32d3bfc5371475f2dca540",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "c5d24977229154badb2821ff12f2ac48",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -76,29 +116,11 @@
                     },
                     "type": "file"
                   }
-                },
-                {
-                  "name": "algorithm",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
-                },
-                {
-                  "name": "metadataKey",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "dataSpec": {
-                    "valueConstraints": {},
-                    "type": "string"
-                  }
                 }
               ]
             }
           },
-          "originalAtmLambdaId": "b7e8f0318778dfadf3fdcf59a84a232bch9f34"
+          "originalAtmLambdaId": "0a6effe293494d90d28ecd7660e4176ech510a"
         }
       }
     },
@@ -390,8 +412,12 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "md5",
-                  "lambdaRevisionNumber": 4,
-                  "lambdaId": "b7e8f0318778dfadf3fdcf59a84a232bch9f34",
+                  "lambdaRevisionNumber": 5,
+                  "lambdaId": "0a6effe293494d90d28ecd7660e4176ech510a",
+                  "lambdaConfig": {
+                    "metadataKey": "md5_checksum",
+                    "algorithm": "md5"
+                  },
                   "id": "6b6340cf71995551cf4954c1f818a878f723a4",
                   "argumentMappings": [
                     {
@@ -400,20 +426,6 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "md5"
-                      },
-                      "argumentName": "algorithm"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "md5_checksum"
-                      },
-                      "argumentName": "metadataKey"
                     }
                   ]
                 },
@@ -660,8 +672,12 @@
                   ],
                   "resourceSpecOverride": null,
                   "name": "sha256",
-                  "lambdaRevisionNumber": 4,
-                  "lambdaId": "b7e8f0318778dfadf3fdcf59a84a232bch9f34",
+                  "lambdaRevisionNumber": 5,
+                  "lambdaId": "0a6effe293494d90d28ecd7660e4176ech510a",
+                  "lambdaConfig": {
+                    "metadataKey": "sha256_checksum",
+                    "algorithm": "sha256"
+                  },
                   "id": "b046ed546726126def3e10c7f63a69437eba30",
                   "argumentMappings": [
                     {
@@ -670,20 +686,6 @@
                         "valueBuilderRecipe": null
                       },
                       "argumentName": "file"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha256"
-                      },
-                      "argumentName": "algorithm"
-                    },
-                    {
-                      "valueBuilder": {
-                        "valueBuilderType": "const",
-                        "valueBuilderRecipe": "sha256_checksum"
-                      },
-                      "argumentName": "metadataKey"
                     }
                   ]
                 }
@@ -702,6 +704,6 @@
       "dashboardSpec": null
     }
   },
-  "originalAtmWorkflowSchemaId": "3b35b557c6357cc0e6a349ff15d6c6aechc955",
+  "originalAtmWorkflowSchemaId": "7e426eed80119e550edb9483237e2619cha12a",
   "name": "calculate-checksums-rest"
 }
