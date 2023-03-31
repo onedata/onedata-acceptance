@@ -5,8 +5,8 @@ plan:
   name: mixed acceptance src
   description: Acceptance tests using different clients concurrently. Environment deployed from sources.
 repositories:
-- onedata-acceptance:
-    scope: global
+  - onedata-acceptance:
+      scope: global
 branches:
   create: manually
   delete:
@@ -14,11 +14,11 @@ branches:
     after-inactive-days: 30
   link-to-jira: true
 notifications:
-- events:
-  - plan-failed
-  recipients:
-  - users:
-    - plgjliput
+  - events:
+      - plan-failed
+    recipients:
+      - users:
+          - plgjliput
 labels: []
 triggers: []
 dependencies:
@@ -27,59 +27,60 @@ dependencies:
   block-strategy: none
   plans: []
 other:
-  concurrent-build-plugin: '3'
+  concurrent-build-plugin: "3"
   all-other-apps:
     custom:
       com.atlassian.bamboo.plugin.hungbuildkiller:
-        stopped.enabled: 'true'
-        add_comment_when_hung.enabled: 'true'
+        stopped.enabled: "true"
+        add_comment_when_hung.enabled: "true"
       buildExpiryConfig:
         period: weeks
-        expiryTypeBuildLog: 'true'
-        enabled: 'true'
-        expiryTypeArtifact: 'true'
-        duration: '1'
+        expiryTypeBuildLog: "true"
+        enabled: "true"
+        expiryTypeArtifact: "true"
+        duration: "1"
+
 stages:
-- Acceptance Test:
-    manual: false
-    final: false
-    jobs:
-    - _Codetag Tracker
-    - Chrome QoS tests
-    - Chrome LUMA tests
-    - Chrome create file tests
-    - Chrome storage sync
-    - Chrome ACL one entry
-    - Chrome permission POSIX multi tests
-    - Chrome spaces basic tests
-    - Chrome onepanel tests
-    - Chrome permission POSIX tests
-    - Chrome files movement tests
-    - Chrome directories movement tests
-    - Chrome files multi tests
-    - Chrome access tokens path caveats
-    - Chrome nested directories create
-    - Chrome single directory tests
-    - Chrome files set metadata
-    - Chrome remove file tests
-    - Chrome directories multi tests
-    - Chrome groups basic tests
-    - Chrome single directory tests 2
-    - Chrome archives tests
-    - Chrome archive privileges
-    - Chrome directories set metadata
-    - Chrome nested directories remove
-    - Chrome ACL two entries
-    - Chrome tokens tests
-    - Chrome access tokens
-    - Chrome file content tests
-    - Chrome files remove metadata
-    - Chrome rename file tests
-    - Chrome datasets tests
-    - Chrome files times tests
-    - Chrome access tokens id caveats
-    - Chrome directories times tests
-    - Chrome directories remove metadata
+  - Acceptance Test:
+      manual: false
+      final: false
+      jobs:
+        - _Codetag Tracker
+        - Access tokens
+        - Access tokens id caveats
+        - Access tokens path caveats
+        - ACL one entry
+        - ACL two entries
+        - Archive privileges
+        - Archives
+        - Create file
+        - Datasets
+        - Directories movement
+        - Directories multi
+        - Directories remove metadata
+        - Directories set metadata
+        - Directories times
+        - File content
+        - Files movement
+        - Files multi
+        - Files remove metadata
+        - Files set metadata
+        - Files times
+        - Groups basic
+        - LUMA
+        - Nested directories create
+        - Nested directories remove
+        - Onepanel
+        - Permission POSIX
+        - Permission POSIX multi
+        - QoS
+        - Remove file
+        - Rename file
+        - Single directory
+        - Single directory 2
+        - Spaces basic
+        - Storage sync
+        - Tokens
 
 _Codetag Tracker:
   key: CDTR
@@ -89,813 +90,592 @@ _Codetag Tracker:
       custom:
         auto: {}
         clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
   tasks:
-  - checkout: &checkout-default-repository
-      path: onedata-acceptance
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script: &init-submodules
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata-acceptance
-      description: Init submodules
-  - script:
-      working-dir: onedata-acceptance
-      scripts:
-      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
-      description: Codetag Tracker
-  requirements: &requirements
-  - minikube
+    - checkout: &checkout-default-repository
+        path: onedata-acceptance
+        force-clean-build: "true"
+        description: Checkout Default Repository
+    - script: &init-submodules
+        scripts:
+          - |-
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        working-dir: onedata-acceptance
+        description: Init submodules
+    - script:
+        working-dir: onedata-acceptance
+        scripts:
+          - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        description: Codetag Tracker
+  requirements: []
   artifact-subscriptions: []
 
-Chrome QoS tests:
-  key: CQT
-  other: *common-opts
-  tasks:
-  - script: &clear-env
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  - script: &restart-minikube
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: &download-artifacts
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata-acceptance
-      description: Download artifacts
-  - script: &build-swaggers
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - make build_swaggers
-      working-dir: onedata-acceptance
-      description: Build swaggers
-  - script: &run-acceptance-tests
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - make SUITE=test_qos TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
-  final-tasks:
-  - test-parser: &parse-test-results
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata-acceptance/test-reports/results*.xml
-      description: Parse test results
-  - script: &pack-logs
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
-        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
-        mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
-        mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
-      description: Pack logs
-  - script: &clear-env-and-working-dir
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata-acceptance
-      description: Clear env and working dir
-  artifacts: &artifacts
-  - name: report
-    location: onedata-acceptance/tests/mixed/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata-acceptance/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata-acceptance/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome LUMA tests:
+Access tokens: &acceptance-mixed-tests-in-chrome-job
   key: CLT
   other: *common-opts
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma TIMEOUT=600 test_mixed_src
+    - script: &clear-env
+        scripts:
+          - curl ${bamboo.OnedataFinalTasksURL} | bash -
+        description: Clear env
+    - script: &restart-minikube
+        scripts:
+          - sudo ${HOME}/restart_minikube.sh
+        description: Restart minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: &download-artifacts
+        scripts:
+          - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+        working-dir: onedata-acceptance
+        description: Download artifacts
+    - script: &build-swaggers
+        scripts:
+          - make build_swaggers
+        working-dir: onedata-acceptance
+        description: Build swaggers
+    - script: &run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens test_mixed_src
+        working-dir: onedata-acceptance
+        description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
+    - test-parser:
+        type: junit
+        ignore-time: "false"
+        test-results: onedata-acceptance/test-reports/results*.xml
+        description: Parse test results
+    - script:
+        scripts:
+          - |-
+            cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
+            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
+            mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
+            mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
+        description: Pack logs
+    - script:
+        <<: *clear-env
+        working-dir: onedata-acceptance
+        description: Clear env and working dir
+  artifacts:
+    - name: report
+      location: onedata-acceptance/tests/mixed/logs/
+      pattern: "**/*.*"
+      shared: false
+      required: false
+  requirements:
+    - minikube
   artifact-subscriptions: []
-Chrome create file tests:
-  key: CCFT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_create_file TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome storage sync:
-  key: CSS
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome ACL one entry:
-  key: CAOE
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-     <<: *run-acceptance-tests
-     scripts:
-     - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome permission POSIX multi tests:
-  key: CPPMT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-     <<: *run-acceptance-tests
-     scripts:
-     - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome spaces basic tests:
-  key: STIC
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome onepanel tests:
-  key: COT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome permission POSIX tests:
-  key: CPPT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-     <<: *run-acceptance-tests
-     scripts:
-     - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome files movement tests:
-  key: CFMT2
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_movement TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome directories movement tests:
-  key: CDMT2
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome files multi tests:
-  key: CFMT3
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome access tokens path caveats:
-  key: CATPC
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome nested directories create:
-  key: CNDC
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome single directory tests:
-  key: CSDT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_single_directory TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome files set metadata:
-   key: CFSM
-   other: *common-opts
-   tasks:
-   - script: *clear-env
-   - script: *restart-minikube
-   - checkout: *checkout-default-repository
-   - script: *init-submodules
-   - script: *download-artifacts
-   - script: *build-swaggers
-   - script:
-       <<: *run-acceptance-tests
-       scripts:
-       - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
-   final-tasks:
-   - test-parser: *parse-test-results
-   - script: *pack-logs
-   - script: *clear-env-and-working-dir
-   artifacts: *artifacts
-   requirements: *requirements
-   artifact-subscriptions: []
-Chrome remove file tests:
-  key: CRFT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_remove_file TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome directories multi tests:
-  key: CDMT3
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome groups basic tests:
-  key: CGBT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome single directory tests 2:
-  key: CSDT2
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome archives tests:
-  key: CAT2
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_archives TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome archive privileges:
-  key: CAP
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome directories set metadata:
-   key: CDSM
-   other: *common-opts
-   tasks:
-   - script: *clear-env
-   - script: *restart-minikube
-   - checkout: *checkout-default-repository
-   - script: *init-submodules
-   - script: *download-artifacts
-   - script: *build-swaggers
-   - script:
-       <<: *run-acceptance-tests
-       scripts:
-       - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
-   final-tasks:
-   - test-parser: *parse-test-results
-   - script: *pack-logs
-   - script: *clear-env-and-working-dir
-   artifacts: *artifacts
-   requirements: *requirements
-   artifact-subscriptions: []
-Chrome nested directories remove:
-  key: CNDR
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome ACL two entries:
-  key: CATE
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-     <<: *run-acceptance-tests
-     scripts:
-     - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome tokens tests:
-  key: CTT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_tokens TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome access tokens:
-  key: CATC
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome file content tests:
-  key: CFCT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_file_content TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome files remove metadata:
-   key: CFRM
-   other: *common-opts
-   tasks:
-   - script: *clear-env
-   - script: *restart-minikube
-   - checkout: *checkout-default-repository
-   - script: *init-submodules
-   - script: *download-artifacts
-   - script: *build-swaggers
-   - script:
-       <<: *run-acceptance-tests
-       scripts:
-       - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
-   final-tasks:
-   - test-parser: *parse-test-results
-   - script: *pack-logs
-   - script: *clear-env-and-working-dir
-   artifacts: *artifacts
-   requirements: *requirements
-   artifact-subscriptions: []
-Chrome rename file tests:
-  key: CRFT1
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_rename_file TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome datasets tests:
-  key: CDT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_dataset TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome files times tests:
-  key: CFTT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_times TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome access tokens id caveats:
+
+Access tokens id caveats:
+  <<: *acceptance-mixed-tests-in-chrome-job
   key: CATIC
-  other: *common-opts
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome directories times tests:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens_id_caveats test_mixed_src
+
+Access tokens path caveats:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens_path_caveats test_mixed_src
+
+ACL one entry:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CAOE
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_acl_one_entry test_mixed_src
+
+ACL two entries:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATE
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_acl_two_entries test_mixed_src
+
+Archive privileges:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CAP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_archive_privileges test_mixed_src
+
+Archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CAT3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_archives test_mixed_src
+
+Create file:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CCFT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_create_file test_mixed_src
+
+Datasets:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CDT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_dataset test_mixed_src
+
+Directories movement:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CDMT2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_movement test_mixed_src
+
+Directories multi:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CDMT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc test_mixed_src
+
+Directories remove metadata:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CDRM
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_remove_metadata test_mixed_src
+
+Directories set metadata:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CDSM
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_set_metadata test_mixed_src
+
+Directories times:
+  <<: *acceptance-mixed-tests-in-chrome-job
   key: CDTT
-  other: *common-opts
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_times TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome directories remove metadata:
-   key: CDRM
-   other: *common-opts
-   tasks:
-   - script: *clear-env
-   - script: *restart-minikube
-   - checkout: *checkout-default-repository
-   - script: *init-submodules
-   - script: *download-artifacts
-   - script: *build-swaggers
-   - script:
-       <<: *run-acceptance-tests
-       scripts:
-       - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
-   final-tasks:
-   - test-parser: *parse-test-results
-   - script: *pack-logs
-   - script: *clear-env-and-working-dir
-   artifacts: *artifacts
-   requirements: *requirements
-   artifact-subscriptions: []
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_times test_mixed_src
+
+File content:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFCT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_file_content test_mixed_src
+
+Files movement:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFMT2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_movement test_mixed_src
+
+Files multi:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFMT3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc test_mixed_src
+
+Files remove metadata:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFRM
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_remove_metadata test_mixed_src
+
+Files set metadata:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFSM
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_set_metadata test_mixed_src
+
+Files times:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFTT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_times test_mixed_src
+
+Groups basic:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CGBT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_groups_basic test_mixed_src
+
+LUMA:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma test_mixed_src
+
+Nested directories create:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CNDC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_nested_directories_create test_mixed_src
+
+Nested directories remove:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CNDR
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_nested_directories_remove test_mixed_src
+
+Onepanel:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: COT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_onepanel_basic test_mixed_src
+
+Permission POSIX:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CPPT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_permission_posix test_mixed_src
+
+Permission POSIX multi:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CPPMT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc test_mixed_src
+
+QoS:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CQT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_qos test_mixed_src
+
+Remove file:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CRFT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_remove_file test_mixed_src
+
+Rename file:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CRFT1
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_rename_file test_mixed_src
+
+Single directory:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSDI
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_single_directory test_mixed_src
+
+Single directory 2:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSDT2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_single_directory2 test_mixed_src
+
+Spaces basic:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSBT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_spaces_basic test_mixed_src
+
+Storage sync:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_sync test_mixed_src
+
+Tokens:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CTT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_tokens test_mixed_src
