@@ -94,7 +94,7 @@ class Popups(object):
     handle_service = WebItem('.ember-power-select-options', cls=HandleService)
     time_resolutions_list = WebElementsSequence(
         '.time-resolutions-dropdown .ember-power-select-option')
-    workflow_initial_values = WebItem('.file-value-editor-selector-actions',
+    workflow_initial_values = WebItem('.in .file-value-editor-selector-actions',
                                       cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
 

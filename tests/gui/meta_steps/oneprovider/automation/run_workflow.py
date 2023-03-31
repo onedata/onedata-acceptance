@@ -41,12 +41,33 @@ def check_if_files_were_selected(modals, driver, files):
         pass
 
 
+def get_select_option_from_initial_value_popup(option, popup_menu):
+    for elem in popup_menu:
+        if option in elem.name:
+            return elem
+
+
+def click_input_link_in_automation_page(op_container, driver):
+    try:
+        # for input store type Single Value this Button does not work
+        op_container(driver).automation_page.file_input_link.click()
+    except RuntimeError:
+        # for adding another files to input store (type List) this Button
+        # does not work because it finds two links (one for changing file,
+        # another for adding)
+        # this button is used for input store type Single Value
+        op_container(driver).automation_page.input_link.click()
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_files_modal(op_container, driver, popups, modals):
-    op_container(driver).automation_page.input_link.click()
-    option = "Select/upload files"
+    option = f"Select/upload file"
+
+    click_input_link_in_automation_page(op_container, driver)
     time.sleep(1)
-    popups(driver).workflow_initial_values.menu[option]()
+    menu_option = get_select_option_from_initial_value_popup(
+        option, popups(driver).workflow_initial_values.menu)
+    menu_option.click()
     time.sleep(1)
     # check if modal opened
     select_files_modal = modals(driver).select_files
@@ -72,9 +93,13 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
             if file.name == file_name:
                 file.clickable_field.click()
                 select_files_modal.confirm_button.click()
-                if file_name not in files[-1]:
+                # wait a moment for modal to close
+                time.sleep(0.25)
+                if file_name != files[-1].split('/')[-1]:
                     open_select_initial_files_modal(op_container, driver,
                                                     popups, modals)
+                    # wait a moment for modal to open
+                    time.sleep(0.25)
                 break
 
     check_if_files_were_selected(modals, driver, files)
@@ -100,13 +125,13 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard,
-                      displays, store_name, store_type):
+                      displays, store_name, store_type, index=0):
     page.stores_list[store_name].click()
     modal = modals(driver).store_details
     time.sleep(0.25)
     store_content_type = 'store_content_' + store_type
     store_content_list = getattr(modal, store_content_type)
-    modal.store_content_list[0].click()
+    modal.store_content_list[index].click()
     modal.copy_button()
     store_value = clipboard.paste(display=displays[browser_id])
     modal.close()

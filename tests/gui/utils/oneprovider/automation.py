@@ -114,7 +114,8 @@ class WorkflowExecutionPage(PageObject):
 
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
-    input_link = Button('.add-item-trigger')
+    input_link = Button('.file-value-editor-selector')
+    file_input_link = Button('.add-item-trigger.file-value-editor-selector')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     workflow_executions_list = WebItemsSequence(

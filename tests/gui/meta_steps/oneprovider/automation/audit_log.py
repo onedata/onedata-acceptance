@@ -13,12 +13,14 @@ from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     get_store_content)
+from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
     close_modal_and_task, click_on_task_audit_log)
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -162,3 +164,69 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
                                    browser_id, workflow, elem_type, store_name,
                                    selenium, op_container, tmp_memory)
     modals(driver).audit_log.x()
+
+
+@wt(parsers.parse('user of {browser_id} sees that number of elements in '
+                  'content in "{store_name}" store details modal is {number}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
+                                               store_name, op_container,
+                                               number):
+    driver = selenium[browser_id]
+    page = op_container(driver).automation_page.workflow_visualiser
+    page.stores_list[store_name].click()
+    modal = modals(driver).store_details
+    time.sleep(0.25)
+    actual_number = len(modal.store_content_object)
+    err_msg = (f'Expected number of elements {number} is not equal to actual '
+               f'number {actual_number} in "{store_name}" store details modal')
+
+    assert actual_number == int(number), err_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (each element with |)'
+               '"file_id" in "(?P<store_name>.*?)" store details modal '
+               '(corresponds to id of file from|is id of) "(?P<file_list>.*?)"'
+               ' in "(?P<space_name>.*?)" space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_file_id_in_store_details(browser_id, selenium, op_container,
+                                    store_name, modals, clipboard, displays,
+                                    tmp_memory, file_list, popups, oz_page,
+                                    space_name):
+
+    driver = selenium[browser_id]
+
+    page = op_container(driver).automation_page.workflow_visualiser
+    store_type = 'object'
+    files = parse_seq(file_list)
+
+    elem_num = len(modals(driver).store_details.store_content_object)
+    storage_file_ids = [
+        json.loads(get_store_content(browser_id, driver, page, modals,
+                                     clipboard, displays, store_name,
+                                     store_type, i))['file_id']
+        for i in range(elem_num)]
+
+    file_ids = [get_file_id_from_details_modal(selenium, browser_id, oz_page,
+                                               space_name, op_container,
+                                               tmp_memory, file, popups, modals,
+                                               clipboard, displays)
+                for file in files]
+
+    for storage_file_id in storage_file_ids:
+        err_msg = (f'"file_id" in "{store_name}" store details modal is not '
+                   f'id of "{files}" from "{space_name}" space')
+
+        assert storage_file_id in file_ids, err_msg
+
+    assert len(storage_file_ids) == len(file_ids), (
+        f'Number of elements in "{store_name}" store details modal does not'
+        f' match number of files given to check id')
+
+
+
+
+
+
+
+

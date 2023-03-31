@@ -12,7 +12,8 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
     wait_for_workflows_in_automation_subpage)
 from tests.gui.steps.modals.modal import (
-    _wait_for_modal_to_appear, click_modal_button)
+    _wait_for_modal_to_appear, click_modal_button,
+    choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
     confirm_workflow_to_execute, expand_first_executed_workflow_record)
@@ -98,4 +99,20 @@ def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
                                              finish)
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
+
+@wt(parsers.parse('user of {browser_id} modifies type in "{store_name}" store'
+                  ' to be "{value}" for "{workflow_name}" workflow'))
+def modify_type_in_store(selenium, browser_id, oz_page, store_name, modals,
+                         popups, value):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    page.workflows_page.workflow_visualiser.stores_list[store_name].click()
+
+    modal_name = 'Modify store'
+    dropdown_menu = 'type dropdown menu'
+    button = 'OK'
+    choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
+                                            dropdown_menu, popups,
+                                            value, modal_name)
+    click_modal_button(selenium, browser_id, button, modal_name, modals)
 

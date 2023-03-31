@@ -14,12 +14,11 @@ from ...common import Toggle
 
 class CreateNewStore(Modal):
     store_name = Input('.name-field .form-control')
-    create = Button('.btn-submit')
+    create = ok = Button('.btn-submit')
     type_dropdown_menu = WebElement('.type-field .dropdown-field-trigger')
     data_type_dropdown_menu = WebElement('.dataSpec-field '
                                          '.ember-basic-dropdown-trigger')
     user_input = Toggle('.needsUserInput-field .form-control')
-
 
     def __str__(self):
         return 'Create new store modal'

@@ -115,6 +115,7 @@ class Modals(object):
     # workflows modals
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
+    modify_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
     select_files = WebItem('.modal-dialog', cls=SelectFiles)
