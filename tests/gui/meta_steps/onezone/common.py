@@ -133,9 +133,10 @@ def wt_visit_file_browser(selenium, oz_page, providers_list, spaces_list,
 
 def search_for_members(records, member_name, parent_name, fun):
     for record in records:
-        if member_name in record.elements and parent_name in record.elements:
-            member_index = record.elements.index(member_name)
-            parent_index = record.elements.index(parent_name)
+        relations = [elem.name for elem in record.elements]
+        if member_name in relations and parent_name in relations:
+            member_index = relations.index(member_name)
+            parent_index = relations.index(parent_name)
             if member_index + 1 == parent_index:
                 if fun(record, member_index):
                     return True
