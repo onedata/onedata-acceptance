@@ -81,7 +81,7 @@ class MembersUserList(MembersList):
 
 
 class MembershipElement(PageObject):
-    name = id = Label('.record-name')
+    name = id = Label('.record-name-general')
 
 
 class MembershipRelation(PageObject):
