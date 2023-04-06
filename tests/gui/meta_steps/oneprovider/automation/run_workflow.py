@@ -47,23 +47,23 @@ def get_select_option_from_initial_value_popup(option, popup_menu):
             return elem
 
 
-def click_input_link_in_automation_page(op_container, driver):
+def click_file_input_link_in_automation_page(op_container, driver):
     try:
         # for input store type Single Value this Button does not work
-        op_container(driver).automation_page.file_input_link.click()
+        op_container(driver).automation_page.files_input_link.click()
     except RuntimeError:
         # for adding another files to input store (type List) this Button
         # does not work because it finds two links (one for changing file,
         # another for adding)
         # this button is used for input store type Single Value
-        op_container(driver).automation_page.input_link.click()
+        op_container(driver).automation_page.single_file_input_link.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_files_modal(op_container, driver, popups, modals):
     option = f"Select/upload file"
 
-    click_input_link_in_automation_page(op_container, driver)
+    click_file_input_link_in_automation_page(op_container, driver)
     time.sleep(1)
     menu_option = get_select_option_from_initial_value_popup(
         option, popups(driver).workflow_initial_values.menu)
@@ -105,6 +105,18 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
     check_if_files_were_selected(modals, driver, files)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_range_as_initial_workflow_value(selenium, browser_id, op_container,
+                                           item):
+    driver = selenium[browser_id]
+    op_container(driver).automation_page.input_link.click()
+    ranges = op_container(driver).automation_page.ranges
+
+    i = len(ranges)-1
+    for key, val in item.items():
+        setattr(ranges[i], key, str(val))
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '
                '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=180,
@@ -131,7 +143,7 @@ def get_store_content(browser_id, driver, page, modals, clipboard,
     time.sleep(0.25)
     store_content_type = 'store_content_' + store_type
     store_content_list = getattr(modal, store_content_type)
-    modal.store_content_list[index].click()
+    store_content_list[index].click()
     modal.copy_button()
     store_value = clipboard.paste(display=displays[browser_id])
     modal.close()

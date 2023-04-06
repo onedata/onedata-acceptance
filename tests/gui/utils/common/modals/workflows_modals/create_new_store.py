@@ -18,6 +18,7 @@ class CreateNewStore(Modal):
     type_dropdown_menu = WebElement('.type-field .dropdown-field-trigger')
     data_type_dropdown_menu = WebElement('.dataSpec-field '
                                          '.ember-basic-dropdown-trigger')
+    data_type_remove = Button('.dataSpec-field .remove-trigger')
     user_input = Toggle('.needsUserInput-field .form-control')
 
     def __str__(self):

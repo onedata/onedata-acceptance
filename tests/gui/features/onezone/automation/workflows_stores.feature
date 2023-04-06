@@ -49,7 +49,7 @@ Feature: Workflows stores tests
     And user of browser sees that audit logs for "calculate-checksums-rest" workflow contains the same information like audit log in "results" store details
 
 
-  Scenario Outline: User sees expected results in result store after modifying input store type to <storage_type> and executing uploaded workflow
+  Scenario Outline: User sees expected results in result store after modifying input store type to <storage_type> and executing uploaded counting checksums workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
@@ -63,7 +63,6 @@ Feature: Workflows stores tests
     Then user of browser sees that number of elements in content in "results" store details modal is <elem_num>
     And user of browser sees that each element with "file_id" in "results" store details modal corresponds to id of file from "<files_to_check_id>" in "space1" space
 
-
     Examples:
     | storage_type | files                                          | elem_num | files_to_check_id                                               |
     | Single value | file1                                          | 1        | file1                                                           |
@@ -71,6 +70,17 @@ Feature: Workflows stores tests
     | Tree forest  | dir1                                           | 5        | [dir1, dir1/file2, dir1/dir2, dir1/dir2/file3, dir1/dir2/file4] |
 
 
+  Scenario: User sees list of ranges in result store after modifying input store data type to range and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser modifies data type in "input" store to be "Range" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Range" for "echo" workflow
 
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" as initial value, in "space1" space and waits extended time for workflow to finish
+
+    Then user of browser sees following ranges "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" in content in "output" store details modal
 
 

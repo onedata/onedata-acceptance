@@ -224,6 +224,28 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
         f' match number of files given to check id')
 
 
+@wt(parsers.parse('user of {browser_id} sees following ranges "{item_list}" in'
+                  ' content in "{store_name}" store details modal'))
+def assert_ranges_in_store_details_modal(browser_id, selenium, op_container,
+                                         item_list, store_name, modals):
+    item_list = eval(item_list)
+    driver = selenium[browser_id]
+    page = op_container(driver).automation_page.workflow_visualiser
+    page.stores_list[store_name].click()
+    time.sleep(0.25)
+    modal = modals(driver).store_details
+    store_ranges = []
+    for elem in modal.store_content_list:
+        range_val = {'start': elem.range_start, 'end': elem.range_end,
+                     'step': elem.range_step}
+        store_ranges.append(range_val)
+
+    for actual, expected in zip(store_ranges, item_list):
+        for key, value in actual.items():
+            err_msg = (f'expected range {expected} does not match actual'
+                       f' {actual} in {store_name} store details modal')
+            assert value == expected[key], err_msg
+
 
 
 

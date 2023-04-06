@@ -6,11 +6,13 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import yaml
+import time
+
 
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
-    wait_for_workflows_in_automation_subpage)
+    wait_for_workflows_in_automation_subpage,
+    choose_range_as_initial_workflow_value)
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     choose_option_in_dropdown_menu_in_modal)
@@ -77,8 +79,17 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                                    tab_name)
     choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     ordinal, workflow)
-    choose_file_as_initial_workflow_value(selenium, browser_id, item_list, modals,
-                                          op_container, popups)
+
+    if 'start' in item_list:
+        item_list = eval(item_list)
+        if type(item_list) == list:
+            for item in item_list:
+                choose_range_as_initial_workflow_value(selenium, browser_id,
+                                                       op_container, item)
+    else:
+        choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
+                                              modals, op_container, popups)
+
     confirm_workflow_to_execute(selenium, browser_id, op_container)
 
 
@@ -100,19 +111,24 @@ def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
-@wt(parsers.parse('user of {browser_id} modifies type in "{store_name}" store'
-                  ' to be "{value}" for "{workflow_name}" workflow'))
-def modify_type_in_store(selenium, browser_id, oz_page, store_name, modals,
-                         popups, value):
+@wt(parsers.parse('user of {browser_id} modifies {menu} in "{store_name}" '
+                  'store to be "{value}" for "{workflow_name}" workflow'))
+def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
+                              popups, value, menu):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation']
+    dropdown_menu = f'{menu} dropdown menu'
+    button = 'OK'
+    modal_name = 'Modify store'
+
     page.workflows_page.workflow_visualiser.stores_list[store_name].click()
 
-    modal_name = 'Modify store'
-    dropdown_menu = 'type dropdown menu'
-    button = 'OK'
+    if 'data' in menu:
+        # wait a moment for modal to open
+        time.sleep(0.5)
+        modals(driver).modify_store.data_type_remove()
+
     choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             dropdown_menu, popups,
                                             value, modal_name)
     click_modal_button(selenium, browser_id, button, modal_name, modals)
-

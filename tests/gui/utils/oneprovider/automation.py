@@ -10,7 +10,8 @@ from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement)
+    WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement,
+    Input)
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -109,13 +110,20 @@ class Store(PageObject):
     name = id = Label('.store-name')
 
 
+class Range(PageObject):
+    start = Input('.start-field .text-like-field .form-control')
+    end = Input('.end-field .text-like-field .form-control')
+    step = Input('.step-field .text-like-field .form-control')
+
+
 class WorkflowExecutionPage(PageObject):
     navigation_tab = WebItemsSequence('.nav-tabs .tab-label', cls=NavigationTab)
 
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
-    input_link = Button('.file-value-editor-selector')
-    file_input_link = Button('.add-item-trigger.file-value-editor-selector')
+    input_link = Button('.add-item-trigger')
+    single_file_input_link = Button('.file-value-editor-selector')
+    files_input_link = Button('.add-item-trigger.file-value-editor-selector')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     workflow_executions_list = WebItemsSequence(
@@ -126,6 +134,7 @@ class WorkflowExecutionPage(PageObject):
     workflow_header = WebElement('.workflow-visualiser')
     stores = WebItemsSequence('.workflow-visualiser-stores-list .tag-item',
                               cls=Store)
+    ranges = WebItemsSequence('.range-editor', cls=Range)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

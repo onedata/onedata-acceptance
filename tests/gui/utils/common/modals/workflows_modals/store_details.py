@@ -24,6 +24,9 @@ class StoreDetailsObjectRow(PageObject):
 
 class StoreDetailsListRow(PageObject):
     name = id = Label('.column-name')
+    range_start = Label('.column-start')
+    range_end = Label('.column-end')
+    range_step = Label('.column-step')
 
 
 class StoreDetails(Modal):
