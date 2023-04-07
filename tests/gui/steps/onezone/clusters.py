@@ -71,6 +71,18 @@ def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
     _get_cluster_record(selenium, browser_id, oz_page, record, hosts)()
 
 
+@wt(parsers.parse('user of {browser_id} sees "{record}" subpage in '
+                  'Clusters page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_subpage_in_cluster_page(selenium, browser_id, oz_page, record,
+                                   hosts):
+    driver = selenium[browser_id]
+    page_name = oz_page(driver)['clusters'].page_name
+    record_name = hosts[record]['name']
+    err_msg = f'user does not see {record} page in Clusters page'
+    assert page_name == record_name, err_msg
+
+
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" '
                   'in the sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)

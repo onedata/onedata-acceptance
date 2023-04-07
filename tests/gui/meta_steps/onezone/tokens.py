@@ -59,6 +59,7 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
+@wt(parsers.parse('user of {browser_id} joins cluster using copied token'))
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
 @wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
 @wt(parsers.parse('user of {browser_id} joins to inventory using copied token'))
@@ -121,7 +122,6 @@ def assert_alert_while_consuming_token(selenium, browser_id, oz_page,
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
                             displays, modals):
     consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
