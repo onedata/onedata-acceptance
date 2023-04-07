@@ -244,7 +244,7 @@ def assert_ranges_in_store_details_modal(browser_id, selenium, op_container,
         for key, value in actual.items():
             err_msg = (f'expected range {expected} does not match actual'
                        f' {actual} in {store_name} store details modal')
-            assert value == expected[key], err_msg
+            assert value == str(expected[key]), err_msg
 
 
 
