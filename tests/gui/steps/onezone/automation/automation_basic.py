@@ -111,6 +111,11 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
 
 
+def upload_workflow_from_repository(selenium, browser_id, file_name, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
                '"(?P<workflow>.*)" in workflows list '
                'in inventory workflows subpage'))

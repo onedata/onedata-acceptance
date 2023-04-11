@@ -88,6 +88,11 @@ class Store(Element):
     name = id = Label('.store-name')
 
 
+class InitialValueStore(Element):
+    name = id = Label('.control-label')
+    input_link = Button('.file-value-editor-selector')
+
+
 class WorkflowVisualiser(PageObject):
     status = Label('.workflow-status-text .workflow-status')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
@@ -109,7 +114,9 @@ class WorkflowExecutionPage(PageObject):
 
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
-    input_link = Button('.add-item-trigger')
+    initial_value_store = WebItemsSequence('.inputStores-collapse '
+                                           '.inputStore-field',
+                                           cls=InitialValueStore)
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     workflow_executions_list = WebItemsSequence(

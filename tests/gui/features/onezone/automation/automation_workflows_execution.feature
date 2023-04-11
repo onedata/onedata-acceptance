@@ -300,4 +300,90 @@ Feature: Workflows execution
     And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
 
 
+  Scenario: User sees desirable files in file browser after execution of uploaded "download-files" workflow finishes
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "download-files.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "fetch.txt" to current dir
+    And user of browser sees that item named "fetch.txt" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "download-files" workflow
+    And user of browser chooses "fetch.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+
+    And user of browser sees Auditlog of task
+
+    And user of browser sees that content of "file-to-download" store is:
+      - https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
+#
+#    And user of browser sees item(s) named googlelogo_color_272x92dp.png in file browser
+
+
+  Scenario: User sees desirable exception in task auditlog after changing checksum algorithm in checksum lambda
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser modifies "md5" task in 1st parallel box in "calculate-checksums" lane by adding following results:
+        task name: "BSD"
+        arguments:
+            algorithm:
+              value : "BSD"
+            metadataKey:
+              value: "BSD_key"
+
+    And user of browser sees task named "BSD" in "calculate-checksums" lane
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "download-files" workflow
+
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees "Failed" status in status bar in workflow visualizer
+
+        #TODO
+#    And user of browser sees Exception in auditlog
+
+  Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser clicks on "Modify" button in task "echo" menu in "lane 1" lane in workflow visualizer
+
+    And user of browser confirms edition of task using "Modify" button
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser modifies "md5" task in 1st parallel box in "calculate-checksums" lane by adding following results:
+        configuration parameters:
+            exceptionProbability:
+              value : "1"
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "download-files" workflow
+
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees "Failed" status in status bar in workflow visualizer
+
+            #TODO
+#    And user of browser sees Exception in auditlog
 

@@ -63,6 +63,12 @@ def upload_file_path(file_name):
         file_name)
 
 
+def workflow_path(workflow_name):
+    """Resolve an absolute path for workflow file with name workflow_name stored in automation-examples submodule
+    """
+    return os.path.abspath(os.path.join(os.path.dirname(gui.__file__ ), '..', 'automation-examples','workflows',workflow_name))
+
+
 def strip_path(path_string, separator = '/'):
     """Strips string from whitespaces inside file path. Useful for file paths rendered
     in DOM which contains `\\n` characters in `innerText`.

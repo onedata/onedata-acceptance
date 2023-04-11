@@ -59,6 +59,25 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
+@wt(parsers.parse('user of {browser_id} uploads "{workflow}" workflow from '
+                  'automation-examples repository to "{inventory}" inventory'))
+def upload_workflow_from_automation_examples(selenium, browser_id,
+                                             oz_page, modals,
+                                             inventory, workflow,
+                                             file_name, tmp_memory):
+    driver = selenium[browser_id]
+    click_on_option_in_the_sidebar(selenium, browser_id, 'Automation', oz_page)
+    go_to_inventory_subpage(selenium, browser_id, inventory,
+                            'workflows', oz_page)
+    upload_workflow_from_repository(selenium, browser_id, file_name, oz_page)
+    _wait_for_modal_to_appear(driver, browser_id, 'Upload workflow', tmp_memory)
+    click_modal_button(selenium, browser_id, 'Apply', 'Upload workflow', modals)
+    go_to_inventory_subpage(selenium, browser_id, inventory,
+                            'workflows', oz_page)
+
+    assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
+
+
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
                   '"{workflow}", using "{item_list}" as initial value, in '
                   '"{space}" space'))
