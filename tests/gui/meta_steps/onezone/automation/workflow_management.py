@@ -74,9 +74,10 @@ def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
         str(number)].click()
 
 
-@wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}", using "{item_list}" {data_type}as initial '
-                  'value, in "{space}" space'))
+@wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
+               ' of "(?P<workflow>.*)", using "(?P<item_list>.*)" '
+               '(?P<data_type>.*)as initial value, in "(?P<space>.*)" '
+               'space'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                      ordinal, workflow, modals, item_list, popups, data_type):
     spaces = 'spaces'

@@ -59,6 +59,7 @@ def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
 
 @wt(parsers.parse('if workflow status is "{exp_status}" {user} of {browser_id}'
                   ' saves audit logs for all tasks to logs'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
                             modals, clipboard, displays):
     page = switch_to_automation_page(selenium, browser_id, op_container)

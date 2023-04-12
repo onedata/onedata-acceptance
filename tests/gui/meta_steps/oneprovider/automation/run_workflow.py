@@ -92,7 +92,7 @@ def open_initial_modal(data_type,op_container, driver, popups, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) '
-               '(?P<data_type>files|files|datasets) as initial value for '
+               '(?P<data_type>file|files|datasets) as initial value for '
                'workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
