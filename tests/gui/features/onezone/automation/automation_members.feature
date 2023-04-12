@@ -310,7 +310,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully manages workflow with manage workflows schema privilege
     # Space-owner-user uploads workflow
-    When user of space_owner_browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to edit workflow name

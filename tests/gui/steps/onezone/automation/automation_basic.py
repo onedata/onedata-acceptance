@@ -6,9 +6,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import upload_file_path
+from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -111,9 +110,13 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
 
 
-def upload_workflow_from_repository(selenium, browser_id, file_name, oz_page):
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_workflow_from_repository(selenium, browser_id, workflow_name,
+                                    oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+    workflow_name = workflow_name + '.json'
+    automation_page = oz_page(driver)['automation']
+    automation_page.upload_workflow(upload_workflow_path(workflow_name))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
@@ -257,5 +260,3 @@ def change_navigation_tab_in_workflow(selenium, browser_id, oz_page, tab_name):
 def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.revision_details.description = text
-
-

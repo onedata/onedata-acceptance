@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import pdb
 import time
 
 from selenium.common.exceptions import StaleElementReferenceException
@@ -43,28 +44,36 @@ def check_if_files_were_selected(modals, driver, files):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_files_modal(op_container, driver, popups, modals,
-                                    store_name):
+                                    amount, store_name):
+    pdb.set_trace()
     automation_page = op_container(driver).automation_page
     automation_page.initial_value_store[store_name + ':'].input_link.click()
-    option = "Select/upload files"
+    option = "Select/upload file"
+    if amount == 's':
+        option = option+'s'
     time.sleep(1)
-    popups(driver).workflow_initial_values.menu[option]()
+    a = len(popups(driver).workflow_initial_values)
+    popups(driver).workflow_initial_values[a-1].menu[option]()
     time.sleep(1)
     # check if modal opened
     select_files_modal = modals(driver).select_files
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
-               'as initial value of "(?P<store_name>.*)" store for workflow '
-               'in "Select files" modal'))@repeat_failed(timeout=WAIT_BACKEND)
+               'as initial value(?P<amount>s|) of "(?P<store_name>.*)" store '
+               'for workflow in "Select files" modal'))
+# if the input store of a workflow is array store or other type of store which
+# takes multiple input values(for example array) use 'values' to define amounts.
+# If it's single value store use 'value' in a scenario
+@repeat_failed(timeout=WAIT_BACKEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                                           modals, op_container, popups,
-                                          store_name):
+                                          amount, store_name):
     files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_select_initial_files_modal(op_container, driver, popups, modals,
-                                    store_name)
+                                    amount, store_name)
 
     for path in files:
         modal_name = 'select files'
@@ -78,7 +87,8 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                 select_files_modal.confirm_button.click()
                 if file_name not in files[-1]:
                     open_select_initial_files_modal(op_container, driver,
-                                                    popups, modals)
+                                                    popups, modals, amount,
+                                                    store_name)
                 break
 
     check_if_files_were_selected(modals, driver, files)

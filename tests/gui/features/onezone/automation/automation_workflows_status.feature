@@ -28,8 +28,7 @@ Feature: Workflow execution statuses tests
   Scenario: User sees that workflow, task, lane statuses are "Finished" after execution of uploaded "Workflow1" workflow finishes
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser executes 2nd revision of "echo", using "file1" as initial value, in "space1" space
     And user of browser awaits for status of "echo" workflow to be "Finished" maximum of 30 seconds
     Then user of browser sees that status of task "echo" in 1st parallel box in "lane 1" lane is "Finished"
@@ -52,8 +51,7 @@ Feature: Workflow execution statuses tests
   Scenario: User does not see workflow on list after removing uploaded "inout" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser executes 2nd revision of "echo", using "file1" as initial value, in "space1" space and waits extended time for workflow to finish
 
     And user of browser clicks on "Ended" tab in automation subpage

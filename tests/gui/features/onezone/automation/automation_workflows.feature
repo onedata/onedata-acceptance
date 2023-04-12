@@ -25,8 +25,7 @@ Feature: Basic workflows management
   Scenario: User sees that new workflow has been added after uploading it as json file
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser opens inventory "inventory1" workflows subpage
     Then user of browser sees "echo" in workflows list in inventory workflows subpage
 
@@ -85,8 +84,7 @@ Feature: Basic workflows management
   Scenario: User changes name of task in uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Modify" button in task "echo" menu in "lane 1" lane in workflow visualizer
     And user of browser writes "Task2" into name text field in task creation subpage
     And user of browser confirms edition of task using "Modify" button
@@ -96,8 +94,7 @@ Feature: Basic workflows management
   Scenario: User does not see task in uploaded workflow after removing it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser sees task named "echo" in "lane 1" lane
     And user of browser clicks on "Remove" button in task "echo" menu in "lane 1" lane in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove task"
@@ -105,14 +102,14 @@ Feature: Basic workflows management
 
 
   Scenario: User does not see workflow after removing it
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Remove" button in workflow "echo" menu in workflows subpage
     And user of browser clicks on "Remove" button in modal "Remove workflow"
     Then user of browser does not see "echo" in workflows list in inventory workflows subpage
 
 
   Scenario: User sees new workflow name after changing its details
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Change details" button in workflow "echo" menu in workflows subpage
     And user of browser writes "WorkflowRenamed" in name textfield of selected workflow
     And user of browser confirms edition of selected workflow details using "Save" button
@@ -120,13 +117,13 @@ Feature: Basic workflows management
 
 
   Scenario: User downloads revision workflow
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Download (json)" button from 2nd revision of "echo" workflow menu
     Then user of browser sees that "echo.json" has been downloaded
 
 
   Scenario: User sees new workflow revision after using redesign as new revision
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Redesign as new revision" button from 2nd revision of "echo" workflow menu
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
@@ -136,14 +133,14 @@ Feature: Basic workflows management
 
 
     Scenario: User does not see workflow revision after removing it
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Remove" button from 2nd revision of "echo" workflow menu
     And user of browser clicks on "Remove" button in modal "Remove workflow revision"
     Then user of browser does not see 2nd revision of "echo" workflow
 
 
   Scenario: User sees workflow in second inventory after duplicating it
-    When user of browser uploads "echo" workflow from "echo.json" file to "inventory1" inventory
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Duplicate to..." button from 2nd revision of "echo" workflow menu
     And user of browser chooses "inventory2" in dropdown menu in modal "Duplicate revision"
     And user of browser clicks on "Apply" button in modal "Duplicate revision"
