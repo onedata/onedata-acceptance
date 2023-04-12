@@ -73,15 +73,35 @@ def open_select_initial_files_modal(op_container, driver, popups, modals):
     select_files_modal = modals(driver).select_files
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
-               'as initial value for workflow in "Select files" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_select_initial_datasets_modal(op_container, driver, popups, modals):
+    option = "Select datasets"
+    op_container(driver).automation_page.input_link()
+    time.sleep(1)
+    popups(driver).workflow_dataset_initial_value.menu[option].click()
+    time.sleep(1)
+    # check if modal opened
+    select_dataset_modal = modals(driver).select_dataset
+
+
+def open_initial_modal(data_type,op_container, driver, popups, modals):
+    if 'dataset' in data_type:
+        open_select_initial_datasets_modal(op_container, driver, popups, modals)
+    else:
+        open_select_initial_files_modal(op_container, driver, popups, modals)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) '
+               '(?P<data_type>files|files|datasets) as initial value for '
+               'workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
-                                          modals, op_container, popups):
+                                          modals, op_container, popups,
+                                          data_type):
     files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(op_container, driver, popups, modals)
+    open_initial_modal(data_type,op_container, driver, popups, modals)
 
     for path in files:
         modal_name = 'select files'
@@ -96,8 +116,8 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                 # wait a moment for modal to close
                 time.sleep(0.25)
                 if file_name != files[-1].split('/')[-1]:
-                    open_select_initial_files_modal(op_container, driver,
-                                                    popups, modals)
+                    open_initial_modal(data_type,op_container, driver, popups,
+                                       modals)
                     # wait a moment for modal to open
                     time.sleep(0.25)
                 break

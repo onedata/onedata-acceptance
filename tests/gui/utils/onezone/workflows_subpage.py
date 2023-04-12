@@ -91,7 +91,8 @@ class Parameters(Element):
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
-
+    lambda_revision = WebElement('.atmLambdaRevisionNumber-field '
+                                 '.ember-power-select-trigger')
     arguments = WebItemsSequence('.argumentMappings-field '
                                  '.argumentMapping-field', cls=Arguments)
     results = WebItemsSequence('.resultMappings-field '

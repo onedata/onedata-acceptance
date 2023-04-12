@@ -96,6 +96,8 @@ class Popups(object):
         '.time-resolutions-dropdown .ember-power-select-option')
     workflow_initial_values = WebItem('.in .file-value-editor-selector-actions',
                                       cls=MenuPopupWithLabel)
+    workflow_dataset_initial_value = WebItem(
+        '.in .dataset-value-editor-selector-actions', cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
 
     def __init__(self, driver):

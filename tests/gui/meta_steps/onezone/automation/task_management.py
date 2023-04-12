@@ -11,6 +11,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
     add_another_parallel_box_to_lane,add_parallel_box_to_lane,
     add_task_to_empty_parallel_box, add_lambda_revision_to_workflow,
@@ -138,11 +139,13 @@ def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
-               '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by adding '
-               r'following results:\n(?P<config>(.|\s)*)'))
+               '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
+               r'(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)'))
 def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
-                        config):
+                        config, option):
     data = yaml.load(config)
+    results_conf = data.get('results', False)
+    lambda_conf = data.get('lambda', False)
     button = "Modify"
     task_option = 'task'
 
@@ -154,12 +157,19 @@ def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
     # wait for task form to open
     time.sleep(1)
 
-    for res_name, results in data.items():
-        result = page.workflows_page.task_form.results[res_name + ':']
-        for new_res in results:
-            result.add_mapping()
+    if lambda_conf:
+        revision = from_ordinal_number_to_int(lambda_conf[0]['revision'])
+        page.workflows_page.task_form.lambda_revision.click()
+        popups(driver).power_select.choose_item(str(revision))
+
+    if results_conf:
+        for res in results_conf:
+            [(res_name, new_res)] = res.items()
+            result = page.workflows_page.task_form.results[res_name + ':']
+            if option == 'adding':
+                result.add_mapping()
             result.target_store_dropdown[-1].click()
-            popups(driver).power_select.choose_item(new_res['target store'])
+            popups(driver).power_select.choose_item(new_res)
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page,
                                        task_option)

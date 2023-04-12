@@ -116,6 +116,10 @@ class Range(PageObject):
     step = Input('.step-field .text-like-field .form-control')
 
 
+class Number(PageObject):
+    input = Input('.text-like-field .form-control')
+
+
 class WorkflowExecutionPage(PageObject):
     navigation_tab = WebItemsSequence('.nav-tabs .tab-label', cls=NavigationTab)
 
@@ -135,6 +139,7 @@ class WorkflowExecutionPage(PageObject):
     stores = WebItemsSequence('.workflow-visualiser-stores-list .tag-item',
                               cls=Store)
     ranges = WebItemsSequence('.range-editor', cls=Range)
+    numbers = WebItemsSequence('.number-editor', cls=Number)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

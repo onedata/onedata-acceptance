@@ -10,16 +10,18 @@ import json
 import time
 
 from tests import GUI_LOGDIR
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     get_store_content)
 from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
+from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
     close_modal_and_task, click_on_task_audit_log)
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -166,17 +168,24 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     modals(driver).audit_log.x()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_store_details_modal(selenium, browser_id, op_container, modals,
+                             store_name):
+    driver = selenium[browser_id]
+    page = op_container(driver).automation_page.workflow_visualiser
+    page.stores_list[store_name].click()
+    time.sleep(0.25)
+    return modals(driver).store_details
+
+
 @wt(parsers.parse('user of {browser_id} sees that number of elements in '
                   'content in "{store_name}" store details modal is {number}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                store_name, op_container,
                                                number):
-    driver = selenium[browser_id]
-    page = op_container(driver).automation_page.workflow_visualiser
-    page.stores_list[store_name].click()
-    modal = modals(driver).store_details
-    time.sleep(0.25)
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
     actual_number = len(modal.store_content_object)
     err_msg = (f'Expected number of elements {number} is not equal to actual '
                f'number {actual_number} in "{store_name}" store details modal')
@@ -224,28 +233,67 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
         f' match number of files given to check id')
 
 
-@wt(parsers.parse('user of {browser_id} sees following ranges "{item_list}" in'
-                  ' content in "{store_name}" store details modal'))
+@wt(parsers.parse('user of {browser_id} sees following {what} '
+                  '"{item_list}" in content in "{store_name}" store details'
+                  ' modal'))
 def assert_ranges_in_store_details_modal(browser_id, selenium, op_container,
-                                         item_list, store_name, modals):
+                                         item_list, store_name, modals,
+                                         what):
     item_list = eval(item_list)
-    driver = selenium[browser_id]
-    page = op_container(driver).automation_page.workflow_visualiser
-    page.stores_list[store_name].click()
-    time.sleep(0.25)
-    modal = modals(driver).store_details
-    store_ranges = []
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+
+    elements = []
     for elem in modal.store_content_list:
-        range_val = {'start': elem.range_start, 'end': elem.range_end,
-                     'step': elem.range_step}
-        store_ranges.append(range_val)
+        if what == 'ranges':
+            val = {'start': elem.range_start, 'end': elem.range_end,
+                   'step': elem.range_step}
+        elif what == 'numbers':
+            val = elem.value
+        elements.append(val)
 
-    for actual, expected in zip(store_ranges, item_list):
-        for key, value in actual.items():
-            err_msg = (f'expected range {expected} does not match actual'
-                       f' {actual} in {store_name} store details modal')
-            assert value == str(expected[key]), err_msg
+        if what == 'ranges':
+            for actual, expected in zip(elements, item_list):
+                for key, value in actual.items():
+                    err_msg = (
+                        f'expected range {expected} does not match actual'
+                        f' {actual} in {store_name} store details modal')
+                    assert value == str(expected[key]), err_msg
 
+        elif what == 'numbers':
+            for actual in elements:
+                err_msg = (f'expected {what} {item_list} does not contain'
+                           f' {actual} in {store_name} store details modal')
+                assert int(actual) in item_list, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in in '
+                  'Store details modal for "{store_name}" store'))
+def assert_datasets_in_store_details(selenium, browser_id, op_container,
+                                     modals, store_name, item_list):
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+
+    item_list = parse_seq(item_list)
+    actual_items = [elem.name for elem in modal.store_content_list]
+    for item in item_list:
+        err_msg = f'{item} is not in Store details modal for {store_name} store'
+        assert item in actual_items, err_msg
+    modal.close()
+
+
+@wt(parsers.parse('user of {browser_id} sees dataset browser after clicking '
+                  '"{dataset_name}" in Store details modal for "{store_name}"'
+                  ' store'))
+def assert_dataset_browser_after_clicking_on_datase_in_details_modal(
+        browser_id, selenium, op_container, dataset_name, store_name, modals,
+        tmp_memory):
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    modal.store_content_list[dataset_name].dataset_name.click()
+    switch_to_last_tab(selenium, browser_id)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser='dataset browser')
 
 
 

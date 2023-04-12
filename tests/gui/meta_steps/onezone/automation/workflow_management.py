@@ -16,6 +16,7 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     choose_option_in_dropdown_menu_in_modal)
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
     confirm_workflow_to_execute, expand_first_executed_workflow_record)
@@ -62,11 +63,22 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st |2nd '
+               '|3rd |4th )revision of "(?P<workflow>.*)" in workflows list '
+               'in inventory workflows subpage'))
+def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
+                                           ordinal, workflow):
+    page = oz_page(selenium[browser_id])['automation']
+    number = from_ordinal_number_to_int(ordinal)
+    page.workflows_page.elements_list[workflow].revision_list[
+        str(number)].click()
+
+
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}", using "{item_list}" as initial value, in '
-                  '"{space}" space'))
+                  '"{workflow}", using "{item_list}" {data_type}as initial '
+                  'value, in "{space}" space'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item_list, popups):
+                     ordinal, workflow, modals, item_list, popups, data_type):
     spaces = 'spaces'
     automation_workflows = 'Automation Workflows'
     tab_name = 'Run workflow'
@@ -86,24 +98,35 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
             for item in item_list:
                 choose_range_as_initial_workflow_value(selenium, browser_id,
                                                        op_container, item)
+    elif 'numbers' in data_type:
+        # wait a moment for workflow revision to open
+        time.sleep(1)
+        items = eval(item_list)
+        driver = selenium[browser_id]
+        for number in items:
+            op_container(driver).automation_page.input_link.click()
+            numbers = op_container(driver).automation_page.numbers
+            numbers[len(numbers)-1].input = str(number)
+
     else:
         choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
-                                              modals, op_container, popups)
+                                              modals, op_container, popups,
+                                              data_type)
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
 
 
-@wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}", using "{item}" as initial value, in '
-                  '"{space}" space and waits extended time for workflow to '
-                  'finish'))
+@wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
+               ' of "(?P<workflow>.*)", using "(?P<item>.*)" '
+               '(?P<data_type>.*)as initial value, in "(?P<space>.*)" '
+               'space and waits extended time for workflow to finish'))
 def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
                               op_container, ordinal, workflow, modals, item,
-                              popups):
+                              popups, data_type):
     start = 'start'
     finish = 'finish'
     execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item, popups)
+                     ordinal, workflow, modals, item, popups, data_type)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              start)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,

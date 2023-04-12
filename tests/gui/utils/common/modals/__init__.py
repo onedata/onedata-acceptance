@@ -111,6 +111,7 @@ class Modals(object):
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+    select_dataset = WebItem('.modal-dialog', cls=SelectFiles)
 
     # workflows modals
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)

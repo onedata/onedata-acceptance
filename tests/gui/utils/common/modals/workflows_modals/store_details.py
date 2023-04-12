@@ -24,9 +24,11 @@ class StoreDetailsObjectRow(PageObject):
 
 class StoreDetailsListRow(PageObject):
     name = id = Label('.column-name')
+    dataset_name = Button('.dataset-name')
     range_start = Label('.column-start')
     range_end = Label('.column-end')
     range_step = Label('.column-step')
+    value = Label('.table-body .column-value')
 
 
 class StoreDetails(Modal):

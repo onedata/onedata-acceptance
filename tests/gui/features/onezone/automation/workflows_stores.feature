@@ -37,10 +37,10 @@ Feature: Workflows stores tests
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
     And user of browser removes "sha256" task from 1st parallel box in "calculate-checksums" lane
-    And user of browser modifies "md5" task in 1st parallel box in "calculate-checksums" lane by adding following results:
-        result:
-          - target store: "Current task system audit log"
-          - target store: "Workflow system audit log"
+    And user of browser modifies "md5" task in 1st parallel box in "calculate-checksums" lane by adding following:
+        results:
+          - result: "Current task system audit log"
+          - result: "Workflow system audit log"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     And user of browser executes 1st revision of "calculate-checksums-rest", using "file1" as initial value, in "space1" space and waits extended time for workflow to finish
@@ -83,4 +83,48 @@ Feature: Workflows stores tests
 
     Then user of browser sees following ranges "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" in content in "output" store details modal
 
+
+  Scenario: User sees list of datasets in result store after modifying input store data type to Dataset and executing uploaded echo workflow
+    When user of browser creates dataset for item "file1" in "space1"
+    And user of browser creates dataset for item "dir1/file2" in "space1"
+    And user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser modifies data type in "input" store to be "Dataset" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Dataset" for "echo" workflow
+
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "["file1", "file2"]" datasets as initial value, in "space1" space and waits extended time for workflow to finish
+
+    Then user of browser sees "["file1", "file2"]" datasets in in Store details modal for "output" store
+    And user of browser sees dataset browser after clicking "file1" in Store details modal for "output" store
+
+
+  Scenario: User sees list of numbers in result store after modifying input store and lambda data type to number and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "Number" type
+    And user of browser changes 1st result named "value" to be "Number" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies data type in "input" store to be "Number" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Number" for "echo" workflow
+
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "[1, 2, 3]" numbers as initial value, in "space1" space and waits extended time for workflow to finish
+
+    Then user of browser sees following numbers "[1, 2, 3]" in content in "output" store details modal
 
