@@ -85,6 +85,4 @@ class ClustersPage(GenericPage):
                                                   text='Modify provider details')
     gui_settings_page = WebItem('.content-clusters-gui-settings',
                                 cls=GuiSettingsPage)
-
-
-
+    page_name = Label('.header-row .one-label')

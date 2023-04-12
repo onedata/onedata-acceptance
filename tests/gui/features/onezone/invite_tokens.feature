@@ -344,8 +344,9 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 succeeds to consume token
-    Then user of browser2 sees that cluster oneprovider-1 has following privilege configuration for user user1:
+    And user of browser2 joins cluster using copied token
+    Then user of browser2 sees "oneprovider-1" subpage in Clusters page
+    And user of browser2 sees that cluster oneprovider-1 has following privilege configuration for user user1:
           privileges:
             Cluster management:
               granted: Partially
