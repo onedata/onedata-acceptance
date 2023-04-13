@@ -36,7 +36,7 @@ def get_user_space_with_name(client, space_name):
 
 def get_space_with_name(client, space_name):
     space_api = SpaceApi(client)
-    spaces = space_api.oz_spaces_list().spaces
+    spaces = space_api.list_spaces().spaces
     for sid in spaces:
         space = space_api.get_space(sid)
         if space.name == space_name:
