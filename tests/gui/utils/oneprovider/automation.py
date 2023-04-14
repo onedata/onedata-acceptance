@@ -11,7 +11,7 @@ from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement,
-    Input)
+    Input, WebElementsSequence)
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -120,6 +120,10 @@ class Number(PageObject):
     input = Input('.text-like-field .form-control')
 
 
+class String(PageObject):
+    input = Input('.form-control')
+
+
 class WorkflowExecutionPage(PageObject):
     navigation_tab = WebItemsSequence('.nav-tabs .tab-label', cls=NavigationTab)
 
@@ -140,6 +144,9 @@ class WorkflowExecutionPage(PageObject):
                               cls=Store)
     ranges = WebItemsSequence('.range-editor', cls=Range)
     numbers = WebItemsSequence('.number-editor', cls=Number)
+    booleans = WebElementsSequence('.boolean-editor')
+    number = WebItem('.number-editor', cls=Number)
+    string = WebItem('.string-editor', cls=String)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

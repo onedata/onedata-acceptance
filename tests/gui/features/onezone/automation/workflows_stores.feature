@@ -79,7 +79,7 @@ Feature: Workflows stores tests
     And user of browser modifies data type in "output" store to be "Range" for "echo" workflow
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 2nd revision of "echo", using "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 2nd revision of "echo", using "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" ranges as initial value, in "space1" space and waits extended time for workflow to finish
 
     Then user of browser sees following ranges "[{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]" in content in "output" store details modal
 
@@ -97,7 +97,7 @@ Feature: Workflows stores tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 2nd revision of "echo", using "["file1", "file2"]" datasets as initial value, in "space1" space and waits extended time for workflow to finish
 
-    Then user of browser sees "["file1", "file2"]" datasets in in Store details modal for "output" store
+    Then user of browser sees "["file1", "file2"]" datasets in Store details modal for "output" store
     And user of browser sees dataset browser after clicking "file1" in Store details modal for "output" store
 
 
@@ -127,4 +127,170 @@ Feature: Workflows stores tests
     And user of browser executes 2nd revision of "echo", using "[1, 2, 3]" numbers as initial value, in "space1" space and waits extended time for workflow to finish
 
     Then user of browser sees following numbers "[1, 2, 3]" in content in "output" store details modal
+
+
+  Scenario: User sees number in result store after modifying input store and lambda data type to number and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "Number" type
+    And user of browser changes 1st result named "value" to be "Number" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies type in "input" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "input" store to be "Number" for "echo" workflow
+    And user of browser modifies type in "output" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Number" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "111" number as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees following number "111" in content in "output" store details modal
+
+
+  Scenario: User sees numbers from range in result store after modifying output store and lambda data type to number and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "Number" type
+    And user of browser changes 1st result named "value" to be "Number" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies type in "input" store to be "Range" for "echo" workflow
+    And user of browser modifies type in "output" store to be "List" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Number" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "{'start': 1, 'end': 100,'step': 10}" range as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees following numbers "[1, 11, 21, 31, 41, 51, 61, 71, 81, 91]" in content in "output" store details modal
+
+
+  Scenario: User sees string in result store after modifying input store and lambda data type to string and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "String" type
+    And user of browser changes 1st result named "value" to be "String" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies type in "input" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "input" store to be "String" for "echo" workflow
+    And user of browser modifies type in "output" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "String" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "Sample string" string as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees following string "Sample string" in content in "output" store details modal
+
+
+  Scenario: User sees booleans in result store after modifying input store and lambda data type to boolean and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "Boolean" type
+    And user of browser changes 1st result named "value" to be "Boolean" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies data type in "input" store to be "Boolean" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Boolean" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "[true, false, true, true]" booleans as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees following booleans "[true, false, true, true]" in content in "output" store details modal
+
+
+  Scenario: User sees array of numbers in result store after modifying input store and lambda data type to array with numbers and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "Array (Number)" type
+    And user of browser changes 1st result named "value" to be "Array (Number)" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies type in "input" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "input" store to be "Array (Number)" for "echo" workflow
+    And user of browser modifies type in "output" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "Array (Number)" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "[11, 22, 33]" numbers as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees following array "[11, 22, 33]" in content in "output" store details modal
+
+
+  Scenario: User sees file in result store after modifying input store and lambda data type to file and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "File" type
+    And user of browser changes 1st result named "value" to be "File" type
+    And user of browser confirms edition of lambda using "Modify" button
+
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies type in "input" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "input" store to be "File" for "echo" workflow
+    And user of browser modifies type in "output" store to be "Single Value" for "echo" workflow
+    And user of browser modifies data type in "output" store to be "File" for "echo" workflow
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: output
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 2nd revision of "echo", using "file1" as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees "file1" file in Store details modal for "output" store
+    And user of browser sees file browser after clicking "file1" in Store details modal for "output" store
 

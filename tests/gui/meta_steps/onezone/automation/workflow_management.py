@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import json
 import time
 
 
@@ -83,6 +84,7 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
     spaces = 'spaces'
     automation_workflows = 'Automation Workflows'
     tab_name = 'Run workflow'
+    driver = selenium[browser_id]
 
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces,
                                                 space, oz_page)
@@ -92,23 +94,39 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                                    tab_name)
     choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     ordinal, workflow)
-
-    if 'start' in item_list:
+    # wait a moment for workflow revision to open
+    time.sleep(1)
+    if 'range' in data_type:
         item_list = eval(item_list)
         if type(item_list) == list:
             for item in item_list:
                 choose_range_as_initial_workflow_value(selenium, browser_id,
                                                        op_container, item)
-    elif 'numbers' in data_type:
-        # wait a moment for workflow revision to open
-        time.sleep(1)
+        else:
+            choose_range_as_initial_workflow_value(selenium, browser_id,
+                                                   op_container, item_list,
+                                                   False)
+    elif 'number' in data_type:
         items = eval(item_list)
-        driver = selenium[browser_id]
-        for number in items:
-            op_container(driver).automation_page.input_link.click()
+        if type(items) == list:
+            for number in items:
+                op_container(driver).automation_page.input_link.click()
+                numbers = op_container(driver).automation_page.numbers
+                numbers[len(numbers)-1].input = str(number)
+        else:
             numbers = op_container(driver).automation_page.numbers
-            numbers[len(numbers)-1].input = str(number)
-
+            numbers[len(numbers) - 1].input = str(item_list)
+    elif 'string' in data_type:
+        op_container(driver).automation_page.string.input = item_list
+    elif 'boolean' in data_type:
+        items = json.loads(item_list)
+        if type(items) == list:
+            for boolean in items:
+                op_container(driver).automation_page.input_link.click()
+                booleans = op_container(driver).automation_page.booleans
+                booleans[len(booleans)-1].click()
+                popups(driver).boolean_values.options[
+                    str(boolean).lower()].click()
     else:
         choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
                                               modals, op_container, popups,
@@ -152,7 +170,13 @@ def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
         time.sleep(0.5)
         modals(driver).modify_store.data_type_remove()
 
+    split_value = value.replace(')', '').split(' (')
+    new_value = split_value[0] if 'Array' in value else value
     choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             dropdown_menu, popups,
-                                            value, modal_name)
+                                            new_value, modal_name)
+    if 'Array' in value:
+        choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
+                                                dropdown_menu, popups,
+                                                split_value[1], modal_name)
     click_modal_button(selenium, browser_id, button, modal_name, modals)

@@ -127,9 +127,10 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_range_as_initial_workflow_value(selenium, browser_id, op_container,
-                                           item):
+                                           item, add_new=True):
     driver = selenium[browser_id]
-    op_container(driver).automation_page.input_link.click()
+    if add_new:
+        op_container(driver).automation_page.input_link.click()
     ranges = op_container(driver).automation_page.ranges
 
     i = len(ranges)-1

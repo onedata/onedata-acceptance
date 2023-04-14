@@ -234,41 +234,66 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
         f' match number of files given to check id')
 
 
+def check_visual_in_store_details_modal(modal, what, item_list, store_name):
+    elements = []
+
+    item_list = eval(item_list) if what != 'booleans' else json.loads(item_list)
+    if what == 'booleans':
+        actual = [elem.value for elem in modal.store_content_list]
+        err_msg = (f'Actual boolean list {actual} does not match '
+                   f'expected {item_list}')
+        assert (actual.count('true') == item_list.count(True) and
+                actual.count('false') == item_list.count(False)), err_msg
+    else:
+        for elem in modal.store_content_list:
+            if what == 'ranges':
+                for actual, expected in zip(elements, item_list):
+                    for key, value in actual.items():
+                        err_msg = (
+                            f'expected range {expected} does not match actual'
+                            f' {actual} in {store_name} store details modal')
+                        assert value == str(expected[key]), err_msg
+
+            elif what == 'numbers':
+                err_msg = (f'expected {what} {item_list} does not contain'
+                           f' {elem.value} in {store_name} store details modal')
+                assert int(elem.value) in item_list, err_msg
+
+
 @wt(parsers.parse('user of {browser_id} sees following {what} '
                   '"{item_list}" in content in "{store_name}" store details'
                   ' modal'))
-def assert_ranges_in_store_details_modal(browser_id, selenium, op_container,
-                                         item_list, store_name, modals,
-                                         what):
-    item_list = eval(item_list)
+def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
+                                           item_list, store_name, modals,
+                                           what):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
 
-    elements = []
-    for elem in modal.store_content_list:
-        if what == 'ranges':
-            val = {'start': elem.range_start, 'end': elem.range_end,
-                   'step': elem.range_step}
-        elif what == 'numbers':
-            val = elem.value
-        elements.append(val)
+    if len(modal.store_content_list) != 0:
+        check_visual_in_store_details_modal(modal, what, item_list, store_name)
+    elif what == 'array':
+        item_list = json.loads(item_list)
+        expected_num = str(len(item_list))
+        actual_num = modal.array.header.replace(')', '').split(' (')[1]
 
-        if what == 'ranges':
-            for actual, expected in zip(elements, item_list):
-                for key, value in actual.items():
-                    err_msg = (
-                        f'expected range {expected} does not match actual'
-                        f' {actual} in {store_name} store details modal')
-                    assert value == str(expected[key]), err_msg
+        assert expected_num == actual_num, (f'expected number: {expected_num}'
+                                            f' of element in array does not'
+                                            f' match actual: {actual_num}')
+        for i in range(len(item_list)):
+            actual_elem = modal.array.items[i].text
+            assert str(item_list[i]) == actual_elem, (
+                f'element {item_list[i]} does not match actual element '
+                f'{actual_elem} on {i} position in array in store details '
+                f'modal')
 
-        elif what == 'numbers':
-            for actual in elements:
-                err_msg = (f'expected {what} {item_list} does not contain'
-                           f' {actual} in {store_name} store details modal')
-                assert int(actual) in item_list, err_msg
+    else:
+        actual = modal.raw_view.replace('"', '')
+        err_msg = (f'expected {what} {item_list} does not contain'
+                   f' {actual} in {store_name} store details modal')
+        assert actual in str(item_list), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in in '
+@wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in '
                   'Store details modal for "{store_name}" store'))
 def assert_datasets_in_store_details(selenium, browser_id, op_container,
                                      modals, store_name, item_list):
@@ -283,18 +308,35 @@ def assert_datasets_in_store_details(selenium, browser_id, op_container,
     modal.close()
 
 
-@wt(parsers.parse('user of {browser_id} sees dataset browser after clicking '
-                  '"{dataset_name}" in Store details modal for "{store_name}"'
-                  ' store'))
-def assert_dataset_browser_after_clicking_on_datase_in_details_modal(
-        browser_id, selenium, op_container, dataset_name, store_name, modals,
-        tmp_memory):
+@wt(parsers.parse('user of {browser_id} sees "{file}" file in '
+                  'Store details modal for "{store_name}" store'))
+def assert_file_in_store_details(selenium, browser_id, op_container, modals,
+                                 store_name, file):
+
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    modal.store_content_list[dataset_name].dataset_name.click()
+    actual_file = modal.single_file_container.name
+
+    err_msg = f'{file} is not in Store details modal for {store_name} store'
+    assert file == actual_file, err_msg
+    modal.close()
+
+
+@wt(parsers.parse('user of {browser_id} sees {browser} after clicking '
+                  '"{name}" in Store details modal for "{store_name}"'
+                  ' store'))
+def assert_browser_after_clicking_on_item_in_details_modal(
+        browser_id, selenium, op_container, name, store_name, modals,
+        tmp_memory, browser):
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    if 'file' in browser:
+        modal.single_file_container.clickable_name()
+    else:
+        modal.store_content_list[name].dataset_name.click()
     switch_to_last_tab(selenium, browser_id)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser='dataset browser')
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                browser)
 
 
 
