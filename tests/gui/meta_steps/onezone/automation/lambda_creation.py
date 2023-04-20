@@ -157,13 +157,13 @@ def change_parameter_type_in_lambda_form(selenium, browser_id, oz_page,
     scroll_to_css_selector(driver, css_sel)
 
     split_type = type.replace(')', '').split(' (')
-    new_type = split_type[0] if 'Array' in type else type
+    new_type = split_type[0] if 'array' in type else type
 
     object_bracket.remove_element()
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(new_type)
 
-    if 'Array' in type:
+    if 'array' in type:
         object_bracket.type_dropdown.click()
         popups(driver).power_select.choose_item(split_type[1])
 

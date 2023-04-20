@@ -64,20 +64,30 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st |2nd '
-               '|3rd |4th )revision of "(?P<workflow>.*)" in workflows list '
-               'in inventory workflows subpage'))
-def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
-                                           ordinal, workflow):
-    page = oz_page(selenium[browser_id])['automation']
-    number = from_ordinal_number_to_int(ordinal)
-    page.workflows_page.elements_list[workflow].revision_list[
-        str(number)].click()
+@wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
+               ' of "(?P<workflow>.*)" and waits extended time for workflow '
+               'to finish, using (?P<data_type>.*) as initial '
+               'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
+               'space'))
+def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
+                              op_container, ordinal, workflow, modals,
+                              item_list, popups, data_type):
+    start = 'start'
+    finish = 'finish'
+
+    execute_workflow(browser_id, selenium, oz_page, space, op_container,
+                     ordinal, workflow, modals, item_list, popups, data_type)
+
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
+                                             start)
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
+                                             finish)
+    expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
-               ' of "(?P<workflow>.*)", using "(?P<item_list>.*)" '
-               '(?P<data_type>.*)as initial value, in "(?P<space>.*)" '
+               ' of "(?P<workflow>.*)", using (?P<data_type>.*) as initial '
+               'value: "(?P<item_list>.*)" in "(?P<space>.*)" '
                'space'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                      ordinal, workflow, modals, item_list, popups, data_type):
@@ -98,7 +108,7 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
     time.sleep(1)
     if 'range' in data_type:
         item_list = eval(item_list)
-        if type(item_list) == list:
+        if type(item_list) is list:
             for item in item_list:
                 choose_range_as_initial_workflow_value(selenium, browser_id,
                                                        op_container, item)
@@ -111,19 +121,19 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
         if type(items) == list:
             for number in items:
                 op_container(driver).automation_page.input_link.click()
-                numbers = op_container(driver).automation_page.numbers
+                numbers = op_container(driver).automation_page.numbers_input
                 numbers[len(numbers)-1].input = str(number)
         else:
-            numbers = op_container(driver).automation_page.numbers
+            numbers = op_container(driver).automation_page.numbers_input
             numbers[len(numbers) - 1].input = str(item_list)
     elif 'string' in data_type:
-        op_container(driver).automation_page.string.input = item_list
+        op_container(driver).automation_page.string_input.input = item_list
     elif 'boolean' in data_type:
         items = json.loads(item_list)
         if type(items) == list:
             for boolean in items:
                 op_container(driver).automation_page.input_link.click()
-                booleans = op_container(driver).automation_page.booleans
+                booleans = op_container(driver).automation_page.booleans_input
                 booleans[len(booleans)-1].click()
                 popups(driver).boolean_values.options[
                     str(boolean).lower()].click()
@@ -133,24 +143,6 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                                               data_type)
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
-               ' of "(?P<workflow>.*)", using "(?P<item>.*)" '
-               '(?P<data_type>.*)as initial value, in "(?P<space>.*)" '
-               'space and waits extended time for workflow to finish'))
-def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
-                              op_container, ordinal, workflow, modals, item,
-                              popups, data_type):
-    start = 'start'
-    finish = 'finish'
-    execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item, popups, data_type)
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
-                                             start)
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
-                                             finish)
-    expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
 @wt(parsers.parse('user of {browser_id} modifies {menu} in "{store_name}" '
@@ -171,11 +163,11 @@ def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
         modals(driver).modify_store.data_type_remove()
 
     split_value = value.replace(')', '').split(' (')
-    new_value = split_value[0] if 'Array' in value else value
+    new_value = split_value[0] if 'array' in value else value
     choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             dropdown_menu, popups,
                                             new_value, modal_name)
-    if 'Array' in value:
+    if 'array' in value:
         choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                                 dropdown_menu, popups,
                                                 split_value[1], modal_name)

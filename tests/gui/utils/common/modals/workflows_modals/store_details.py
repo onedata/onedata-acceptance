@@ -31,12 +31,12 @@ class StoreDetailsListRow(PageObject):
     value = Label('.table-body .column-value')
 
 
-class Array(PageObject):
+class ArrayView(PageObject):
     header = Label('.root-presenter-header')
     items = WebElementsSequence('.array-item .single-line-presenter')
 
 
-class File(PageObject):
+class SingleFileContainer(PageObject):
     name = id = Label('.file-name')
     clickable_name = Button('.file-name')
 
@@ -51,8 +51,9 @@ class StoreDetails(Modal):
     store_content_object = WebItemsSequence('.entries-table .data-row',
                                             cls=StoreDetailsObjectRow)
     raw_view = AceEditor('.value-container-presenter')
-    array = WebItem('.array-visual-presenter', cls=Array)
-    single_file_container = WebItem('.content-container', cls=File)
+    array_view = WebItem('.array-visual-presenter', cls=ArrayView)
+    single_file_container = WebItem('.content-container',
+                                    cls=SingleFileContainer)
 
     def __str__(self):
         return 'Store details modal'

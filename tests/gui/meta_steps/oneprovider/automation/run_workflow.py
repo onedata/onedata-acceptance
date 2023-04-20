@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import json
 import time
 
 from selenium.common.exceptions import StaleElementReferenceException
@@ -131,7 +132,7 @@ def choose_range_as_initial_workflow_value(selenium, browser_id, op_container,
     driver = selenium[browser_id]
     if add_new:
         op_container(driver).automation_page.input_link.click()
-    ranges = op_container(driver).automation_page.ranges
+    ranges = op_container(driver).automation_page.ranges_input
 
     i = len(ranges)-1
     for key, val in item.items():
@@ -157,6 +158,18 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
     assert len(page.workflow_executions_list) == 0, err
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_store_details_json(op_container, driver, browser_id, modals,
+                           clipboard, displays, store_name,  store_type):
+    page = op_container(driver).automation_page.workflow_visualiser
+    store_details = json.loads(get_store_content(
+        browser_id, driver, page, modals, clipboard, displays, store_name,
+        store_type))
+
+    return store_details
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_store_content(browser_id, driver, page, modals, clipboard,
                       displays, store_name, store_type, index=0):
     page.stores_list[store_name].click()

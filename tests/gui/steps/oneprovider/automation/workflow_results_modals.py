@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
+import json
 from datetime import datetime
 import time
 
@@ -14,6 +14,7 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened)
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
@@ -119,3 +120,56 @@ def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
     modal.close_details()
     append_log_to_file(path, '\n')
 
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_store_details_modal(selenium, browser_id, op_container, modals,
+                             store_name):
+    driver = selenium[browser_id]
+    page = op_container(driver).automation_page.workflow_visualiser
+    page.stores_list[store_name].click()
+    time.sleep(0.25)
+    return modals(driver).store_details
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def compare_datasets_in_store_details_modal(item_list, modal, store_name):
+    item_list = parse_seq(item_list)
+    actual_items = [elem.name for elem in modal.store_content_list]
+    for item in item_list:
+        err_msg = f'{item} is not in Store details modal for {store_name} store'
+        assert item in actual_items, err_msg
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def compare_booleans_in_store_details_modal(item_list, modal):
+    actual = [elem.value for elem in modal.store_content_list]
+    err_msg = (f'Actual boolean list {actual} does not match '
+               f'expected {item_list}')
+    assert (actual.count('true') == item_list.count(True) and
+            actual.count('false') == item_list.count(False)), err_msg
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def compare_string_in_store_details_modal(item_list, modal, variable_type,
+                                          store_name):
+    actual = modal.raw_view.replace('"', '')
+    err_msg = (f'expected {variable_type} {item_list} does not contain'
+               f' {actual} in {store_name} store details modal')
+    assert actual in str(item_list), err_msg
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def compare_array_in_store_details_modal(modal, item_list):
+    item_list = json.loads(item_list)
+    expected_num = str(len(item_list))
+    actual_num = modal.array_view.header.replace(')', '').split(' (')[1]
+
+    assert expected_num == actual_num, (f'expected number: {expected_num}'
+                                        f' of element in array does not'
+                                        f' match actual: {actual_num}')
+    for i in range(len(item_list)):
+        actual_elem = modal.array_view.items[i].text
+        assert str(item_list[i]) == actual_elem, (
+            f'element {item_list[i]} does not match actual element '
+            f'{actual_elem} on {i} position in array in store details '
+            f'modal')

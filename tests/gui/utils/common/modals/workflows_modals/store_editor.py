@@ -12,7 +12,7 @@ from ..modal import Modal
 from ...common import Toggle
 
 
-class CreateNewStore(Modal):
+class StoreEditor(Modal):
     store_name = Input('.name-field .form-control')
     create = ok = Button('.btn-submit')
     type_dropdown_menu = WebElement('.type-field .dropdown-field-trigger')
@@ -22,4 +22,4 @@ class CreateNewStore(Modal):
     user_input = Toggle('.needsUserInput-field .form-control')
 
     def __str__(self):
-        return 'Create new store modal'
+        return 'Store editor modal'

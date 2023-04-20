@@ -12,7 +12,7 @@ import time
 from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
-    get_store_content)
+    get_store_content, get_store_details_json)
 from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
 from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
@@ -20,7 +20,10 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
-    close_modal_and_task, click_on_task_audit_log)
+    close_modal_and_task, click_on_task_audit_log, open_store_details_modal,
+    compare_datasets_in_store_details_modal,
+    compare_booleans_in_store_details_modal,
+    compare_string_in_store_details_modal, compare_array_in_store_details_modal)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
@@ -75,17 +78,14 @@ def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
 
 @wt(parsers.parse('user of {browser_id} sees file_id, checksum and algorithm '
                   'information in audit log in "{store_name}" store details'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
                               modals, clipboard, displays, tmp_memory):
 
     driver = selenium[browser_id]
     store_type = 'object'
-
-    page = op_container(driver).automation_page.workflow_visualiser
-    store_details = json.loads(get_store_content(
-        browser_id, driver, page, modals, clipboard, displays, store_name,
-        store_type))
+    store_details = get_store_details_json(op_container, driver, browser_id,
+                                           modals, clipboard, displays,
+                                           store_name,  store_type)
 
     err_msg = (f'There is no information about algorithm, checksum or file id '
                f'in audit log in {store_name} store details')
@@ -169,19 +169,9 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     modals(driver).audit_log.x()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium, browser_id, op_container, modals,
-                             store_name):
-    driver = selenium[browser_id]
-    page = op_container(driver).automation_page.workflow_visualiser
-    page.stores_list[store_name].click()
-    time.sleep(0.25)
-    return modals(driver).store_details
-
-
 @wt(parsers.parse('user of {browser_id} sees that number of elements in '
                   'content in "{store_name}" store details modal is {number}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                store_name, op_container,
                                                number):
@@ -234,19 +224,16 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
         f' match number of files given to check id')
 
 
-def check_visual_in_store_details_modal(modal, what, item_list, store_name):
+def check_visual_in_store_details_modal(modal, variable_type, item_list,
+                                        store_name):
     elements = []
-
-    item_list = eval(item_list) if what != 'booleans' else json.loads(item_list)
-    if what == 'booleans':
-        actual = [elem.value for elem in modal.store_content_list]
-        err_msg = (f'Actual boolean list {actual} does not match '
-                   f'expected {item_list}')
-        assert (actual.count('true') == item_list.count(True) and
-                actual.count('false') == item_list.count(False)), err_msg
+    item_list = eval(item_list) if variable_type != 'booleans' else json.loads(
+        item_list)
+    if variable_type == 'booleans':
+        compare_booleans_in_store_details_modal(item_list, modal)
     else:
         for elem in modal.store_content_list:
-            if what == 'ranges':
+            if variable_type == 'ranges':
                 for actual, expected in zip(elements, item_list):
                     for key, value in actual.items():
                         err_msg = (
@@ -254,43 +241,31 @@ def check_visual_in_store_details_modal(modal, what, item_list, store_name):
                             f' {actual} in {store_name} store details modal')
                         assert value == str(expected[key]), err_msg
 
-            elif what == 'numbers':
-                err_msg = (f'expected {what} {item_list} does not contain'
-                           f' {elem.value} in {store_name} store details modal')
+            elif variable_type == 'numbers':
+                err_msg = (f'expected {variable_type} {item_list} does not '
+                           f'contain {elem.value} in {store_name} store details'
+                           f' modal')
                 assert int(elem.value) in item_list, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees following {what} '
+@wt(parsers.parse('user of {browser_id} sees following {variable_type} '
                   '"{item_list}" in content in "{store_name}" store details'
                   ' modal'))
 def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                            item_list, store_name, modals,
-                                           what):
+                                           variable_type):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
 
-    if len(modal.store_content_list) != 0:
-        check_visual_in_store_details_modal(modal, what, item_list, store_name)
-    elif what == 'array':
-        item_list = json.loads(item_list)
-        expected_num = str(len(item_list))
-        actual_num = modal.array.header.replace(')', '').split(' (')[1]
-
-        assert expected_num == actual_num, (f'expected number: {expected_num}'
-                                            f' of element in array does not'
-                                            f' match actual: {actual_num}')
-        for i in range(len(item_list)):
-            actual_elem = modal.array.items[i].text
-            assert str(item_list[i]) == actual_elem, (
-                f'element {item_list[i]} does not match actual element '
-                f'{actual_elem} on {i} position in array in store details '
-                f'modal')
+    if variable_type == 'string':
+        compare_string_in_store_details_modal(item_list, modal, variable_type,
+                                              store_name)
+    elif variable_type == 'array':
+        compare_array_in_store_details_modal(modal, item_list)
 
     else:
-        actual = modal.raw_view.replace('"', '')
-        err_msg = (f'expected {what} {item_list} does not contain'
-                   f' {actual} in {store_name} store details modal')
-        assert actual in str(item_list), err_msg
+        check_visual_in_store_details_modal(modal, variable_type, item_list,
+                                            store_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in '
@@ -299,12 +274,7 @@ def assert_datasets_in_store_details(selenium, browser_id, op_container,
                                      modals, store_name, item_list):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-
-    item_list = parse_seq(item_list)
-    actual_items = [elem.name for elem in modal.store_content_list]
-    for item in item_list:
-        err_msg = f'{item} is not in Store details modal for {store_name} store'
-        assert item in actual_items, err_msg
+    compare_datasets_in_store_details_modal(item_list, modal, store_name)
     modal.close()
 
 

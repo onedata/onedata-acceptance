@@ -175,3 +175,13 @@ def click_button_on_status_bar(selenium, browser_id, op_container, button):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     getattr(page.workflow_visualiser, transform(button))()
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st |2nd '
+               '|3rd |4th )revision of "(?P<workflow>.*)" in workflows list '
+               'in inventory workflows subpage'))
+def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
+                                           ordinal, workflow):
+    page = oz_page(selenium[browser_id])['automation']
+    number = from_ordinal_number_to_int(ordinal)
+    page.workflows_page.elements_list[workflow].revision_list[
+        str(number)].click()

@@ -110,17 +110,17 @@ class Store(PageObject):
     name = id = Label('.store-name')
 
 
-class Range(PageObject):
+class RangeInput(PageObject):
     start = Input('.start-field .text-like-field .form-control')
     end = Input('.end-field .text-like-field .form-control')
     step = Input('.step-field .text-like-field .form-control')
 
 
-class Number(PageObject):
+class NumberInput(PageObject):
     input = Input('.text-like-field .form-control')
 
 
-class String(PageObject):
+class StringInput(PageObject):
     input = Input('.form-control')
 
 
@@ -142,11 +142,11 @@ class WorkflowExecutionPage(PageObject):
     workflow_header = WebElement('.workflow-visualiser')
     stores = WebItemsSequence('.workflow-visualiser-stores-list .tag-item',
                               cls=Store)
-    ranges = WebItemsSequence('.range-editor', cls=Range)
-    numbers = WebItemsSequence('.number-editor', cls=Number)
-    booleans = WebElementsSequence('.boolean-editor')
-    number = WebItem('.number-editor', cls=Number)
-    string = WebItem('.string-editor', cls=String)
+    ranges_input = WebItemsSequence('.range-editor', cls=RangeInput)
+    numbers_input = WebItemsSequence('.number-editor', cls=NumberInput)
+    booleans_input = WebElementsSequence('.boolean-editor')
+    number_input = WebItem('.number-editor', cls=NumberInput)
+    string_input = WebItem('.string-editor', cls=StringInput)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

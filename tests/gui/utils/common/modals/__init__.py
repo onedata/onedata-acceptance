@@ -51,7 +51,7 @@ from .workflows_modals.store_details import StoreDetails
 from .workflows_modals.audit_log import AuditLog
 from .workflows_modals.task_time_series import TaskTimeSeries
 from .workflows_modals.upload_workflow import UploadWorkflow
-from .workflows_modals.create_new_store import CreateNewStore
+from .workflows_modals.store_editor import StoreEditor
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
 from .workflows_modals.select_files_directories_symlink import SelectFiles
@@ -115,8 +115,8 @@ class Modals(object):
 
     # workflows modals
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
-    create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
-    modify_store = WebItem('.modal-dialog', cls=CreateNewStore)
+    create_new_store = WebItem('.modal-dialog', cls=StoreEditor)
+    modify_store = WebItem('.modal-dialog', cls=StoreEditor)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
     select_files = WebItem('.modal-dialog', cls=SelectFiles)
