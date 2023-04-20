@@ -7,6 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from itertools import chain
+import time
+import traceback
 
 import requests
 import urllib3
@@ -86,6 +88,18 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
         else:
             raise_http_exception(response)
     except (ConnectTimeout, ReadTimeout) as t:
+        print("""
+         _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
+        | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
+        | |__| |  | |     | |  | |__) |       | |       /  \  | |    | |            | |__| | |  | |  \| | |  __   | | | |
+        |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
+        | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
+        |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
+        """)
+        traceback.print_stack()
+        print("Test will freeze for 24h to allow debuging!")
+        time.sleep(24*60*60)
+
         if retries > 0:
             return http_request(http_method, ip, port, path, use_ssl, headers, verify, cert,
                                 auth, data, default_headers, retries=retries - 1)
