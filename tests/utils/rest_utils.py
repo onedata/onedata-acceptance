@@ -97,10 +97,6 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
         |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
         """)
         traceback.print_stack()
-        print("Test will freeze for 24h to allow debuging!")
-        time.sleep(24*60*60)
-
-        if retries > 0:
-            return http_request(http_method, ip, port, path, use_ssl, headers, verify, cert,
-                                auth, data, default_headers, retries=retries - 1)
-        raise t
+        print("Test will freeze to allow debuging!")
+        while True:
+            time.sleep(365*24*60*60)
