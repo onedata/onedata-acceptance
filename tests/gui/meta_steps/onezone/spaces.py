@@ -24,6 +24,9 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.multibrowser_spaces import *
+from tests.gui.steps.onezone.space_configuration import \
+    set_space_name_in_configuration_tab, \
+    set_organization_name_in_configuration_tab, set_description_of_a_space
 from tests.gui.steps.onezone.spaces import *
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
@@ -401,3 +404,73 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, oz_page,
                                          member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} sets space configuration '
+                  'as follows:\n{config}'))
+def configure_space_manually(browser_id, config, selenium, oz_page, popups):
+    """Adjust space configuration according to given config.
+
+        Config format given in yaml is as follows:
+            space name: space_name
+            organization name: organization_name
+            tags:                           ---> optional
+              general:
+                - general-tags
+              domains:
+                - domain-tags
+            description: description
+
+
+
+        Example configuration:
+            space name: "space1"
+            organization name: "onedata"
+            tags:                           ---> optional
+              general:
+                - EU-funded
+                - big-data
+                - open-science
+              domains:
+                - science
+            description: "space advertised in marketplace"
+    """
+    _configure_space_manually(browser_id, config, selenium, oz_page)
+
+
+def _configure_space_manually(browser_id, config, selenium, oz_page):
+    data = yaml.load(config)
+    space_name = data['space name']
+    organization_name = data['organization name']
+    # tags = data.get('tags', False)
+    description = data['description']
+
+    set_space_name_in_configuration_tab(selenium, browser_id, oz_page,
+                                        space_name)
+    set_organization_name_in_configuration_tab(selenium, browser_id, oz_page,
+                                               organization_name)
+    set_description_of_a_space(selenium, browser_id, oz_page, description)
+
+#     if configuration_parameters:
+#         for i, config_param in enumerate(configuration_parameters):
+#             add_parameter_into_lambda_form(
+#                 selenium, browser_id, oz_page, popups, conf_param_option,
+#                 config_param['name'], config_param['type'], ordinal(i + 1))
+#
+#     if tags:
+#         for i, args in enumerate(tags):
+#             add_tag_in_space_configuration_tab(
+#                 selenium, browser_id, oz_page, popups, argument_option,
+#                 args['name'], args['type'], ordinal(i+1))
+#
+# def add_tag_in_space_configuration_tab(browser_id, config, selenium, oz_page, tag):
+
+@wt(parsers.parse('user of browser sees that space1 is advertised on Space Marketplace subpage and compares it with its configuration on space configuration page'))
+def assert_space_in_marketplace_and_compare_configs(browser_id, config, selenium, oz_page, popups):
+
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+
+    space_name =
+    organization_name =
+

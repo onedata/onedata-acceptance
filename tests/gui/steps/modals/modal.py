@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import pdb
 import re
 import time
 
@@ -19,7 +20,6 @@ from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
-
 
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
@@ -361,11 +361,18 @@ def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name,
         pass
 
 
+def remove_unwanted_chars_from_button_name(button):
+    unwanted_chars = ['.']
+    button = ''.join(i for i in button if not i in unwanted_chars)
+    return button
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+    button = remove_unwanted_chars_from_button_name(button)
     getattr(modal, transform(button))()
 
 
@@ -541,4 +548,14 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver,
         return file_name
     else:
         return path
+
+
+@wt(parsers.parse('user of {browser_id} accepts terms of privacy in Space '
+                  'Marketplace using checkbox in modal "Advertise space in '
+                  'the marketplace"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def switch_toggle_in_modal(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).advertise_space_in_the_marketplace
+    modal.checkbox.click()
 

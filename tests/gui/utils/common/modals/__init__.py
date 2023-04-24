@@ -14,6 +14,9 @@ from .files_modals.disable_directory_statistics import (
 from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
 from .files_modals.external_symbolic_link import ExternalSymbolicLink
 from .management_modals.change_privileges import ChangePrivilegesModal
+from .marketplace_modals.advertise_space import AdvertiseSpace
+from .marketplace_modals.advertise_space_in_the_marketplace import \
+    AdvertiseSpaceInTheMarketplace
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .files_modals.create_dir import CreateDir
 from .storage_modals.add_storage import AddStorage
@@ -59,7 +62,6 @@ from .workflows_modals.function_pods_activity import FunctionPodsActivity
 
 
 class Modals(object):
-
     # basic modals
     remove_modal = WebItem('.modal-dialog', cls=RemoveModal)
     leave_modal = WebItem('.modal-dialog', cls=LeaveElementModal)
@@ -138,6 +140,11 @@ class Modals(object):
                                           cls=EnableDirectoryStatistics)
     disable_directory_statistics = WebItem('.modal-dialog',
                                            cls=DisableDirectoryStatistics)
+
+    # marketplace modals
+    advertise_space = WebItem('.modal-dialog', cls=AdvertiseSpace)
+    advertise_space_in_the_marketplace = WebItem('.modal-dialog',
+                                                 cls=AdvertiseSpaceInTheMarketplace)
 
     def __init__(self, driver):
         self.driver = driver
