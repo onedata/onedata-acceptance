@@ -147,45 +147,75 @@ Qnthack - terminate build:
                 # further building and testing as the code has not changed yet
                 bamboo.buildNumber: '3'
 
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
+  tasks:
+    - checkout: &checkout-default-repository
+        path: onedata-acceptance
+        force-clean-build: "true"
+        description: Checkout Default Repository
+    - script: &run-script
+        interpreter: SHELL
+        scripts:
+          - |-
+            cd onedata-acceptance
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        description: Init submodules
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[4-9]|.{2,}'
+    - script: &run-script-working-dir
+        <<: *run-script
+        scripts:
+          - |-
+            echo ${bamboo.planRepository.branchName}
+            make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        working-dir: onedata-acceptance
+        description: Codetag Tracker
+  requirements: []
+  artifact-subscriptions: []
+
 authorization: &acceptance-oneclient-tests-job
   key: AUT
   other:
     clean-working-dir: true
   tasks:
-    - script: &run-script #&clear-env
-        interpreter: SHELL
+    - script: &clear-env
+        <<: *run-script
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env
-        conditions:
-          - variable:
-              matches:
-                bamboo.buildNumber: '[4-9]|.{2,}'
     - script: &restart-minikube
         <<: *run-script
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
-    - checkout: &checkout-default-repository
-        path: onedata-acceptance
-        force-clean-build: "true"
-        description: Checkout Default Repository
+    - checkout: *checkout-default-repository
     - script: &init-submodules
-        <<: *run-script
+        <<: *run-script-working-dir
         scripts:
           - |-
             git remote set-url origin ${bamboo.repository.git.repositoryUrl}
             git remote -v
             make submodules
-        working-dir: onedata-acceptance
         description: Init submodules
         conditions:
           - variable:
               matches:
                 bamboo.buildNumber: '[2-9]|.{2,}'
     - script: &quarantine-hack-pull-surefire
-        <<: *run-script
-        working-dir: onedata-acceptance
+        <<: *run-script-working-dir
         scripts:
           - |-
             #!/bin/bash
@@ -217,13 +247,12 @@ authorization: &acceptance-oneclient-tests-job
           - variable:
               matches:
                 bamboo.buildNumber: '2|3'
-    - script: &run-script-working-dir
-        <<: *run-script
+    - script: &download-artifacts
+        <<: *run-script-working-dir
         scripts:
           - |-
             echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
             one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-        working-dir: onedata-acceptance
         description: Download artifacts
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
