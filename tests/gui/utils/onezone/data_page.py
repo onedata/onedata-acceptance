@@ -16,6 +16,8 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
+from .space_configuration_subpage import SpaceConfigurationPage
+from .space_marketplace import SpaceMarketplacePage
 
 
 class Space(Element):
@@ -42,6 +44,8 @@ class Space(Element):
                                        text='Harvesters, Discovery')
     automation_workflows = NamedButton('.one-list-level-2 .item-header',
                                         text='Automation Workflows')
+    configuration = NamedButton('.one-list-level-2 .item-header',
+                                        text='Configuration')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -194,6 +198,9 @@ class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
 
+    marketplace_button = Button('.one-sidebar-toolbar-button '
+                                 '.oneicon-cart')
+
     spaces_header_list = WebItemsSequence('.sidebar-spaces '
                                           'li.one-list-item.clickable '
                                           '.item-header', cls=Space)
@@ -210,6 +217,8 @@ class DataPage(GenericPage):
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
+    configuration_page = WebItem('.main-content', cls=SpaceConfigurationPage)
+    space_marketplace_page = WebItem('main-content', cls=SpaceMarketplacePage)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
