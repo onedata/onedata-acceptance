@@ -133,11 +133,11 @@ stages:
         - Transfers directories
         - Transfers files
         - Transfers multi browser
-  - Qnthack - rerun:
-      manual: false
-      final: true
-      jobs:
-        - Qnthack - rerun
+  # - Qnthack - rerun:
+  #     manual: false
+  #     final: true
+  #     jobs:
+  #       - Qnthack - rerun
 
 Qnthack - copy quarantine:
   key: COPQU
