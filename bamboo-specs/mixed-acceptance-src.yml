@@ -849,3 +849,24 @@ Tokens:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_tokens test_mixed_src
+
+
+Qnthack - rerun:
+  key: ZREQN
+  description: Rerun
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script:
+        description: Rerun plan to finish quarantine copying
+        scripts:
+          # The script which requests the next build of a plan resides on the bamboo server.
+          # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/run-build.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+          # The script is run indirectly by the CGI script used in the curl command.
+          - curl 10.87.23.72:3080/cgi-bin/run-build?${bamboo.planKey}
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+    - script: *always-successful
+  artifact-subscriptions: []
