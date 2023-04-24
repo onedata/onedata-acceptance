@@ -4,6 +4,9 @@ plan:
   key: MAOPT
   name: mixed acceptance pkg
   description: Acceptance tests using different clients concurrently. Environment deployed from packages.
+variables:
+  quarantineSourcePlan: VFS-MAOPT
+  quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:
       scope: global
@@ -42,6 +45,12 @@ other:
         duration: "1"
 
 stages:
+  - Qnthack - copy quarantine:
+      manual: false
+      final: false
+      jobs:
+        - Qnthack - copy quarantine
+        - Qnthack - terminate build
   - Acceptance Test:
       manual: false
       final: false
@@ -82,6 +91,67 @@ stages:
         - Spaces basic
         - Storage sync
         - Tokens
+  - Qnthack - rerun:
+      manual: false
+      final: true
+      jobs:
+        - Qnthack - rerun
+
+Qnthack - copy quarantine:
+  key: COPQU
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        buildHangingConfig.enabled: 'false'
+  tasks:
+    - checkout: &fake-checkout
+        conditions:
+          - variable:
+              exists: fake.var
+    - script: &quarantine-hack-run-script-on-third-build
+        interpreter: BINSH_OR_CMDEXE
+        scripts:
+          - |-
+            # The script which copies the quarantined test cases resides on the bamboo server.
+            # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/quarantine-copy.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+            # The script is run indirectly by the CGI script used in the curl command.
+            echo curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+            curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+        description: Copy quarantined test cases
+        conditions:
+          - variable:
+              matches:
+                # copy quarantine is run on build 3,4,5 just in case the expected numbering has been
+                # disturbed by early branch pushing or manual plan branch running 
+                bamboo.buildNumber: '[3-5]'
+    - script: &always-successful
+        interpreter: BINSH_OR_CMDEXE
+        description: Always successful
+        scripts:
+          - true
+
+Qnthack - terminate build:
+  key: TERMB
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script: *always-successful
+    - script:
+        <<: *quarantine-hack-run-script-on-third-build
+        scripts:
+          - |-
+            echo Terminating build...
+            false
+        description: Terminate build
+        conditions:
+          - variable:
+              matches:
+                # Terminate build for build number 3.
+                # When normal undisturbed flow takes place there is no sense in
+                # further building and testing as the code has not changed yet
+                bamboo.buildNumber: '3'
 
 _Codetag Tracker:
   key: CDTR
@@ -98,18 +168,26 @@ _Codetag Tracker:
         path: onedata-acceptance
         force-clean-build: "true"
         description: Checkout Default Repository
-    - script: &init-submodules
+    - script: &run-script
+        interpreter: SHELL
         scripts:
           - |-
+            cd onedata-acceptance
             git remote set-url origin ${bamboo.repository.git.repositoryUrl}
             git remote -v
             make submodules
-        working-dir: onedata-acceptance
         description: Init submodules
-    - script:
-        working-dir: onedata-acceptance
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[4-9]|.{2,}'
+    - script: &run-script-working-dir
+        <<: *run-script
         scripts:
-          - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+          - |-
+            echo ${bamboo.planRepository.branchName}
+            make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        working-dir: onedata-acceptance
         description: Codetag Tracker
   requirements: []
   artifact-subscriptions: []
@@ -119,29 +197,71 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
   other: *common-opts
   tasks:
     - script: &clear-env
+        <<: *run-script
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env
     - script: &restart-minikube
+        <<: *run-script
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
     - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: &download-artifacts
+    - script: &init-submodules
+        <<: *run-script
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[2-9]|.{2,}'
+    - script: &quarantine-hack-pull-surefire
+        <<: *run-script-working-dir
         scripts:
-          - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-        working-dir: onedata-acceptance
+          - |-
+            #!/bin/bash
+            ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
+            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            let c=3
+            while : ; do
+                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                    --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                    --artifact-name ${ARTIFACT}
+                tar zxf ${ARTIFACT}
+                if [ -f test-reports/results*.xml ]; then
+                    break
+                else
+                    let c=$c-1
+                    if [[ $c < 0 ]]; then
+                        echo "Giving up... The surefire file 'results.xml' could not be pulled. Does it exist in the develop?" >&2
+                        break
+                    fi
+                    echo "The surefire file 'results.xml' could not be pulled, retrying in 30 seconds..." >&2
+                    sleep 30
+                fi
+            done
+            touch test-reports/results*.xml
+        description: Pull surefire artifact and unpack it
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2|3'
+    - script: &download-artifacts
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml            
+            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &build-swaggers
+        <<: *run-script-working-dir
         scripts:
           - make build_swaggers
-        working-dir: onedata-acceptance
         description: Build swaggers
     - script: &run-acceptance-tests
+        <<: *run-script-working-dir
         scripts:
           - make SUITE=test_access_tokens test_mixed_pkg
-        working-dir: onedata-acceptance
         description: Run acceptance mixed tests in Chrome
   final-tasks:
     - test-parser:
@@ -150,6 +270,21 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
         test-results: onedata-acceptance/test-reports/results*.xml
         description: Parse test results
     - script:
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            #!/bin/bash
+            ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
+            tar czf ${ARTIFACT} test-reports/results*.xml
+            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+        description: Pack and push surefire artifact
+    - script:
+        <<: *run-script
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
@@ -158,8 +293,9 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
             mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
         description: Pack logs
     - script:
-        <<: *clear-env
-        working-dir: onedata-acceptance
+        <<: *run-script-working-dir
+        scripts:
+          - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env and working dir
   artifacts:
     - name: report
@@ -179,6 +315,7 @@ Access tokens id caveats:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -194,6 +331,7 @@ Access tokens path caveats:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -209,6 +347,7 @@ ACL one entry:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -224,6 +363,7 @@ ACL two entries:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -239,6 +379,7 @@ Archive privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -254,6 +395,7 @@ Archives:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -269,6 +411,7 @@ Create file:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -284,6 +427,7 @@ Datasets:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -299,6 +443,7 @@ Directories movement:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -314,6 +459,7 @@ Directories multi:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -329,6 +475,7 @@ Directories remove metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -344,6 +491,7 @@ Directories set metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -359,6 +507,7 @@ Directories times:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -374,6 +523,7 @@ File content:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -389,6 +539,7 @@ Files movement:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -404,6 +555,7 @@ Files multi:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -419,6 +571,7 @@ Files remove metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -434,6 +587,7 @@ Files set metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -449,6 +603,7 @@ Files times:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -464,6 +619,7 @@ Groups basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -479,6 +635,7 @@ LUMA:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -494,6 +651,7 @@ Nested directories create:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -509,6 +667,7 @@ Nested directories remove:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -524,6 +683,7 @@ Onepanel:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -539,6 +699,7 @@ Permission POSIX:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -554,6 +715,7 @@ Permission POSIX multi:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -569,6 +731,7 @@ QoS:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -584,6 +747,7 @@ Remove file:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -599,6 +763,7 @@ Rename file:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -614,6 +779,7 @@ Single directory:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -629,6 +795,7 @@ Single directory 2:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -644,6 +811,7 @@ Spaces basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -659,6 +827,7 @@ Storage sync:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
@@ -674,6 +843,7 @@ Tokens:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script: *build-swaggers
     - script:
