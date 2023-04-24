@@ -12,15 +12,15 @@ import time
 
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
-    wait_for_workflows_in_automation_subpage,
-    choose_range_as_initial_workflow_value)
+    wait_for_workflows_in_automation_subpage)
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     choose_option_in_dropdown_menu_in_modal)
-from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
     confirm_workflow_to_execute, expand_first_executed_workflow_record)
+from tests.gui.steps.oneprovider.automation.initial_values import (
+    choose_range_as_initial_workflow_value)
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.automation.workflow_creation import (

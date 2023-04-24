@@ -13,7 +13,7 @@ import time
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation.automation_basic import (
-    check_if_task_is_opened)
+    check_if_task_is_opened, get_workflow_visualizer_page)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
@@ -111,6 +111,7 @@ def close_modal_and_task(modal, task):
     time.sleep(1)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
                                          browser_id, path):
     log.click()
@@ -125,7 +126,7 @@ def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
 def open_store_details_modal(selenium, browser_id, op_container, modals,
                              store_name):
     driver = selenium[browser_id]
-    page = op_container(driver).automation_page.workflow_visualiser
+    page = get_workflow_visualizer_page(op_container, driver)
     page.stores_list[store_name].click()
     time.sleep(0.25)
     return modals(driver).store_details
@@ -173,3 +174,13 @@ def compare_array_in_store_details_modal(modal, item_list):
             f'element {item_list[i]} does not match actual element '
             f'{actual_elem} on {i} position in array in store details '
             f'modal')
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_store_content(modal, store_type, index, clipboard, displays,
+                      browser_id):
+    store_content_type = 'store_content_' + store_type
+    store_content_list = getattr(modal, store_content_type)
+    store_content_list[index].click()
+    modal.copy_button()
+    return clipboard.paste(display=displays[browser_id])

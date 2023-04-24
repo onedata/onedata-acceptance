@@ -57,6 +57,7 @@ from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
+from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 
 from tests.utils.acceptance_utils import *
 

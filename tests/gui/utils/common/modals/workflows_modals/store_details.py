@@ -29,6 +29,7 @@ class StoreDetailsListRow(PageObject):
     range_end = Label('.column-end')
     range_step = Label('.column-step')
     value = Label('.table-body .column-value')
+    path = Label('.column-path .value-container')
 
 
 class ArrayView(PageObject):

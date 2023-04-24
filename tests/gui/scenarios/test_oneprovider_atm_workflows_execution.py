@@ -60,6 +60,7 @@ from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.onezone.automation.task_management import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
+from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
 from tests.gui.meta_steps.oneprovider.automation.audit_log import *
 

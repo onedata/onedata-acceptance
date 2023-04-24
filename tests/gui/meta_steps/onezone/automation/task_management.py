@@ -124,7 +124,6 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
                ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
                           task):
     modal = 'Remove task'

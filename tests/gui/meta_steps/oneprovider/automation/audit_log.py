@@ -10,14 +10,14 @@ import json
 import time
 
 from tests import GUI_LOGDIR
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
-    get_store_content, get_store_details_json)
+from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
+    get_store_details_json, open_modal_and_get_store_content)
 from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
 from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
-    check_if_task_is_opened, switch_to_automation_page)
+    check_if_task_is_opened, switch_to_automation_page,
+    get_workflow_visualizer_page)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
     close_modal_and_task, click_on_task_audit_log, open_store_details_modal,
@@ -30,7 +30,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
                                       displays, browser_id, exp_status):
     task.drag_handle.click()
@@ -62,7 +61,6 @@ def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
 
 @wt(parsers.parse('if workflow status is "{exp_status}" {user} of {browser_id}'
                   ' saves audit logs for all tasks to logs'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
                             modals, clipboard, displays):
     page = switch_to_automation_page(selenium, browser_id, op_container)
@@ -171,7 +169,6 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
 
 @wt(parsers.parse('user of {browser_id} sees that number of elements in '
                   'content in "{store_name}" store details modal is {number}'))
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                store_name, op_container,
                                                number):
@@ -188,23 +185,21 @@ def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                '"file_id" in "(?P<store_name>.*?)" store details modal '
                '(corresponds to id of file from|is id of) "(?P<file_list>.*?)"'
                ' in "(?P<space_name>.*?)" space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_file_id_in_store_details(browser_id, selenium, op_container,
                                     store_name, modals, clipboard, displays,
                                     tmp_memory, file_list, popups, oz_page,
                                     space_name):
-
     driver = selenium[browser_id]
 
-    page = op_container(driver).automation_page.workflow_visualiser
+    page = get_workflow_visualizer_page(op_container, driver)
     store_type = 'object'
     files = parse_seq(file_list)
 
     elem_num = len(modals(driver).store_details.store_content_object)
     storage_file_ids = [
-        json.loads(get_store_content(browser_id, driver, page, modals,
-                                     clipboard, displays, store_name,
-                                     store_type, i))['file_id']
+        json.loads(open_modal_and_get_store_content(
+            browser_id, driver, page, modals, clipboard, displays, store_name,
+            store_type, i))['file_id']
         for i in range(elem_num)]
 
     file_ids = [get_file_id_from_details_modal(selenium, browser_id, oz_page,
@@ -227,11 +222,16 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
 def check_visual_in_store_details_modal(modal, variable_type, item_list,
                                         store_name):
     elements = []
-    item_list = eval(item_list) if variable_type != 'booleans' else json.loads(
-        item_list)
     if variable_type == 'booleans':
+        item_list = json.loads(item_list)
         compare_booleans_in_store_details_modal(item_list, modal)
+    elif variable_type == 'boolean':
+        err_msg = (f'{modal.raw_view} in store details modal does not match'
+                   f' expected {item_list}')
+        assert modal.raw_view == item_list, err_msg
     else:
+        item_list = eval(item_list) if variable_type != 'files' else parse_seq(
+            item_list)
         for elem in modal.store_content_list:
             if variable_type == 'ranges':
                 for actual, expected in zip(elements, item_list):
@@ -247,10 +247,24 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list,
                            f' modal')
                 assert int(elem.value) in item_list, err_msg
 
+            elif variable_type == 'files':
+                err_msg = (f'expected {variable_type} {item_list} does not '
+                           f'contain {elem.path} in {store_name} store details'
+                           f' modal')
+                assert elem.path in item_list, err_msg
+            elif variable_type == 'strings':
+                err_msg = (f'expected {variable_type} {item_list} does not '
+                           f'contain {elem.value} in {store_name} store details'
+                           f' modal')
+                assert eval(elem.value) in item_list, err_msg
+            else:
+                raise Exception(f'this {variable_type} is not handled in this'
+                                f' function')
 
-@wt(parsers.parse('user of {browser_id} sees following {variable_type} '
-                  '"{item_list}" in content in "{store_name}" store details'
-                  ' modal'))
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees following '
+               '(?P<variable_type>.*) "(?P<item_list>.*?)" in content in'
+               ' "(?P<store_name>.*?)" store details modal'))
 def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                            item_list, store_name, modals,
                                            variable_type):

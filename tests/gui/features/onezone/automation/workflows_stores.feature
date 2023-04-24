@@ -84,7 +84,7 @@ Feature: Workflows stores tests
 
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
-    And user of browser modifies data type in "input" store to be "<store_data_type>" for "echo" workflow
+    And user of browser modifies data type in "input" store to be "<input_data_type>" for "echo" workflow
     And user of browser modifies type in "input" store to be "<input_store_type>" for "echo" workflow
     And user of browser modifies data type in "output" store to be "<lambda_data>" for "echo" workflow
     And user of browser modifies type in "output" store to be "<output_store_type>" for "echo" workflow
@@ -98,15 +98,19 @@ Feature: Workflows stores tests
     Then user of browser sees following <output_type> "<output_value>" in content in "output" store details modal
 
     Examples:
-    | input_type | output_type | input_store_type | output_store_type | store_data_type| lambda_data   | initial_value                      | output_value                            |
-    | number     | numbers     | List             | List              | Number         | Number        | [1, 2, 3]                          | [1, 2, 3]                               |
-    | number     | number      | Single Value     | Single Value      | Number         | Number        |111                                 | 111                                     |
-    | range      | numbers     | Range            | List              | Number         | Number        | {'start': 1, 'end': 100,'step': 10}| [1, 11, 21, 31, 41, 51, 61, 71, 81, 91] |
-    | string     | string      | Single Value     | Single Value      | String         | String        | Sample string                      | Sample string                           |
-    | booleans   | booleans    | List             | List              | Boolean        | Boolean       |[true, false, true, true]           | [true, false, true, true]               |
-    | numbers    | array       | Single Value     | Single Value      | Array (Number) | Array (Number)|[11, 22, 33]                        | [11, 22, 33]                            |
-    | ranges     | ranges      | List             | List              | Range          | Object        | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]|
-    | ranges     | ranges      | List             | List              | Range          | Range         | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}]|
+    | lambda_data   | input_data_type| input_store_type | output_store_type | input_type | output_type | initial_value                      | output_value                            |
+    | Number        | Number         | List             | List              | number     | numbers     | [1, 2, 3]                          | [1, 2, 3]                               |
+    | Number        | Number         | Single Value     | Single Value      | number     | number      | 111                                | 111                                     |
+    | Number        | Number         | Range            | List              | range      | numbers     | {'start': 1, 'end': 100,'step': 10}| [1, 11, 21, 31, 41, 51, 61, 71, 81, 91] |
+    | String        | String         | Single Value     | Single Value      | string     | string      | Sample string                      | Sample string                           |
+    | Boolean       | Boolean        | List             | List              | booleans   | booleans    | [true, false, true, true]          | [true, false, true, true]               |
+    | Array (Number)| Array (Number) | Single Value     | Single Value      | numbers    | array       | [11, 22, 33]                       | [11, 22, 33]                            |
+    | Object        | Range          | List             | List              | ranges     | ranges      | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}] |
+    | Range         | Range          | List             | List              | ranges     | ranges      | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}] |
+    | File          | File           | Tree forest      | List              | files      | files       | dir1                               | [ /space1/dir1, /space1/dir1/file2, /space1/dir1/dir2, /space1/dir1/dir2/file3, /space1/dir1/dir2/file4] |
+    | Number        | Number         | Range            | Single Value      | range      | number      | {'start': 5, 'end': 50,'step': 5}  | 45                                     |
+    | Boolean       | Boolean        | List             | Single Value      | booleans   | boolean     | [true, false, false, true]         | true                                   |
+    | String        | String         | Single Value     | List              | string     | strings    | Sample string                      | ["Sample string"]                        |
 
 
   Scenario: User sees list of datasets in result store after modifying input store data type to Dataset and executing uploaded echo workflow

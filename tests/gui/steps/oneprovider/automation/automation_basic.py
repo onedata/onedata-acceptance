@@ -17,6 +17,13 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe, click_option_in_popup_labeled_menu)
 
 
+# this step is created to avoid using repeat_failed in metasteps
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_workflow_visualizer_page(op_container, driver):
+    page = op_container(driver).automation_page.workflow_visualiser
+    return page
+
+
 def switch_to_automation_page(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     return op_container(selenium[browser_id]).automation_page
