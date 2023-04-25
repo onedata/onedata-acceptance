@@ -12,6 +12,8 @@ from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page)
+from tests.gui.steps.oneprovider.automation.automation_statuses import (
+    get_status_from_workflow_visualizer)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
     close_modal_and_task)
@@ -54,7 +56,7 @@ def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
 def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
                             modals, clipboard, displays):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    act_status = page.workflow_visualiser.status
+    act_status = get_status_from_workflow_visualizer(page)
     driver = selenium[browser_id]
     if act_status == exp_status:
         lanes = page.workflow_visualiser.workflow_lanes
