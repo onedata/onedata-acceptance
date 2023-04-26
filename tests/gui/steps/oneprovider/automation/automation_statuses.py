@@ -18,8 +18,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_status_from_workflow_visualizer(page):
-    act_status = page.workflow_visualiser.status
-    return act_status
+    return page.workflow_visualiser.status
 
 
 def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
