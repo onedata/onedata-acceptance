@@ -13,7 +13,7 @@ import time
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation.automation_basic import (
-    check_if_task_is_opened, get_workflow_visualizer_page)
+    check_if_task_is_opened, get_op_workflow_visualizer_page)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
@@ -118,15 +118,13 @@ def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
     modal.copy_json()
     audit_log = clipboard.paste(display=displays[browser_id])
     append_log_to_file(path, audit_log)
-    modal.close_details()
-    append_log_to_file(path, '\n')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_store_details_modal(selenium, browser_id, op_container, modals,
                              store_name):
     driver = selenium[browser_id]
-    page = get_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(op_container, driver)
     page.stores_list[store_name].click()
     time.sleep(0.25)
     return modals(driver).store_details
@@ -151,12 +149,12 @@ def compare_booleans_in_store_details_modal(item_list, modal):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_string_in_store_details_modal(item_list, modal, variable_type,
+def compare_string_in_store_details_modal(item, modal, variable_type,
                                           store_name):
     actual = modal.raw_view.replace('"', '')
-    err_msg = (f'expected {variable_type} {item_list} does not contain'
+    err_msg = (f'expected {variable_type} {item} does not contain'
                f' {actual} in {store_name} store details modal')
-    assert actual in str(item_list), err_msg
+    assert actual == str(item), err_msg
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

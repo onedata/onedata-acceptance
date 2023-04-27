@@ -16,3 +16,6 @@ class Options(PageObject):
 
 class BooleanValues(PageObject):
     options = WebItemsSequence('.option-container', cls=Options)
+
+    def __str__(self):
+        return 'Boolean values'

@@ -16,6 +16,11 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_status_from_workflow_visualizer(page):
+    return page.workflow_visualiser.status
+
+
 def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser

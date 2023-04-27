@@ -14,7 +14,7 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_modal_button, go_to_path_and_return_file_name_in_modal)
 from tests.gui.steps.oneprovider.automation.initial_values import (
-    check_if_files_were_selected, open_select_initial_datasets_modal,
+    check_if_select_files_modal_disappeared, open_select_initial_datasets_modal,
     open_select_initial_files_modal)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution)
@@ -65,7 +65,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                     time.sleep(0.25)
                 break
 
-    check_if_files_were_selected(modals, driver, files)
+    check_if_select_files_modal_disappeared(modals, driver, files)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '

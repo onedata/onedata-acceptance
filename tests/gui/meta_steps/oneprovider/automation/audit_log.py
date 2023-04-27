@@ -17,7 +17,9 @@ from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page,
-    get_workflow_visualizer_page)
+    get_op_workflow_visualizer_page)
+from tests.gui.steps.oneprovider.automation.automation_statuses import (
+    get_status_from_workflow_visualizer)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task, get_audit_log_json_and_write_to_file,
     close_modal_and_task, click_on_task_audit_log, open_store_details_modal,
@@ -27,6 +29,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
+from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
 
 
@@ -44,6 +47,9 @@ def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
             if log.severity != 'Info':
                 get_audit_log_json_and_write_to_file(log, modal, clipboard,
                                                      displays, browser_id, path)
+                modal.close_details()
+                append_log_to_file(path, '\n')
+
         close_modal_and_task(modal, task)
 
 
@@ -64,7 +70,7 @@ def get_audit_logs_from_every_task_in_workflow(lanes, modals, driver, clipboard,
 def save_audit_logs_to_logs(selenium, browser_id, op_container, exp_status,
                             modals, clipboard, displays):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    act_status = page.workflow_visualiser.status
+    act_status = get_status_from_workflow_visualizer(page)
     driver = selenium[browser_id]
     if act_status == exp_status:
         lanes = page.workflow_visualiser.workflow_lanes
@@ -191,7 +197,7 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
                                     space_name):
     driver = selenium[browser_id]
 
-    page = get_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(op_container, driver)
     store_type = 'object'
     files = parse_seq(file_list)
 
@@ -221,7 +227,6 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
 
 def check_visual_in_store_details_modal(modal, variable_type, item_list,
                                         store_name):
-    elements = []
     if variable_type == 'booleans':
         item_list = json.loads(item_list)
         compare_booleans_in_store_details_modal(item_list, modal)
@@ -234,32 +239,25 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list,
             item_list)
         for elem in modal.store_content_list:
             if variable_type == 'ranges':
-                for actual, expected in zip(elements, item_list):
-                    for key, value in actual.items():
-                        err_msg = (
-                            f'expected range {expected} does not match actual'
-                            f' {actual} in {store_name} store details modal')
-                        assert value == str(expected[key]), err_msg
-
-            elif variable_type == 'numbers':
-                err_msg = (f'expected {variable_type} {item_list} does not '
-                           f'contain {elem.value} in {store_name} store details'
-                           f' modal')
-                assert int(elem.value) in item_list, err_msg
-
+                expected = {'start': int(elem.range_start),
+                            'end': int(elem.range_end),
+                            'step': int(elem.range_step)}
+            elif variable_type == 'range_objects':
+                expected = {'start': int(elem.objects_sequence[1].text),
+                            'end': int(elem.objects_sequence[0].text),
+                            'step': int(elem.objects_sequence[2].text)}
             elif variable_type == 'files':
-                err_msg = (f'expected {variable_type} {item_list} does not '
-                           f'contain {elem.path} in {store_name} store details'
-                           f' modal')
-                assert elem.path in item_list, err_msg
-            elif variable_type == 'strings':
-                err_msg = (f'expected {variable_type} {item_list} does not '
-                           f'contain {elem.value} in {store_name} store details'
-                           f' modal')
-                assert eval(elem.value) in item_list, err_msg
+                expected = elem.path
+            elif variable_type == 'strings' or variable_type == 'numbers':
+                expected = eval(elem.value)
             else:
                 raise Exception(f'this {variable_type} is not handled in this'
                                 f' function')
+
+            err_msg = (f'expected {variable_type} {item_list} does not '
+                       f'contain {expected} in {store_name} store details'
+                       f' modal')
+            assert expected in item_list, err_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees following '
@@ -321,9 +319,3 @@ def assert_browser_after_clicking_on_item_in_details_modal(
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 browser)
-
-
-
-
-
-

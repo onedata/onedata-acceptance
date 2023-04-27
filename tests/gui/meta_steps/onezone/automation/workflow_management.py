@@ -18,7 +18,8 @@ from tests.gui.steps.modals.modal import (
     choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
-    confirm_workflow_to_execute, expand_first_executed_workflow_record)
+    confirm_workflow_to_execute, expand_first_executed_workflow_record,
+    get_input_element)
 from tests.gui.steps.oneprovider.automation.initial_values import (
     choose_range_as_initial_workflow_value)
 from tests.gui.steps.onezone.automation.automation_basic import *
@@ -118,10 +119,10 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                                                    False)
     elif 'number' in data_type:
         items = eval(item_list)
-        if type(items) == list:
+        if type(items) is list:
             for number in items:
-                op_container(driver).automation_page.input_link.click()
-                numbers = op_container(driver).automation_page.numbers_input
+                numbers = get_input_element(op_container, driver,
+                                            'numbers_input')
                 numbers[len(numbers)-1].input = str(number)
         else:
             numbers = op_container(driver).automation_page.numbers_input
@@ -130,10 +131,10 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
         op_container(driver).automation_page.string_input.input = item_list
     elif 'boolean' in data_type:
         items = json.loads(item_list)
-        if type(items) == list:
+        if type(items) is list:
             for boolean in items:
-                op_container(driver).automation_page.input_link.click()
-                booleans = op_container(driver).automation_page.booleans_input
+                booleans = get_input_element(op_container, driver,
+                                             'booleans_input')
                 booleans[len(booleans)-1].click()
                 popups(driver).boolean_values.options[
                     str(boolean).lower()].click()
@@ -150,12 +151,12 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
 def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
                               popups, value, menu):
     driver = selenium[browser_id]
-    page = oz_page(driver)['automation']
     dropdown_menu = f'{menu} dropdown menu'
     button = 'OK'
     modal_name = 'Modify store'
 
-    page.workflows_page.workflow_visualiser.stores_list[store_name].click()
+    page = get_oz_workflow_visualizer(oz_page, driver)
+    page.stores_list[store_name].click()
 
     if 'data' in menu:
         # wait a moment for modal to open

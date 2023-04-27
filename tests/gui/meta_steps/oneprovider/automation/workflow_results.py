@@ -22,7 +22,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_task_in_lane, click_on_link_in_task_box,
-    get_workflow_visualizer_page)
+    get_op_workflow_visualizer_page)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -31,7 +31,7 @@ from tests.gui.utils.common.count_checksums import *
 
 def get_store_details_json(op_container, driver, browser_id, modals,
                            clipboard, displays, store_name,  store_type):
-    page = get_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(op_container, driver)
     store_details = json.loads(open_modal_and_get_store_content(
         browser_id, driver, page, modals, clipboard, displays, store_name,
         store_type))
@@ -58,7 +58,7 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
 
-    page = get_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(op_container, driver)
 
     store1_value = open_modal_and_get_store_content(
         browser_id, driver, page, modals, clipboard, displays, store1, 'list')

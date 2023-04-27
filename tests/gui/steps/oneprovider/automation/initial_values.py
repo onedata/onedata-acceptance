@@ -20,13 +20,13 @@ def choose_range_as_initial_workflow_value(selenium, browser_id, op_container,
         op_container(driver).automation_page.input_link.click()
     ranges = op_container(driver).automation_page.ranges_input
 
-    i = len(ranges)-1
+    last_index = len(ranges)-1
     for key, val in item.items():
-        setattr(ranges[i], key, str(val))
+        setattr(ranges[last_index], key, str(val))
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_files_were_selected(modals, driver, files):
+def check_if_select_files_modal_disappeared(modals, driver, files):
     try:
         modals(driver).select_files
         raise Exception(f'Files: {files} as initial value for workflow was '
@@ -46,7 +46,7 @@ def open_select_initial_files_modal(op_container, driver, popups, modals):
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    select_files_modal = modals(driver).select_files
+    modals(driver).select_files
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -57,7 +57,7 @@ def open_select_initial_datasets_modal(op_container, driver, popups, modals):
     popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    select_dataset_modal = modals(driver).select_dataset
+    modals(driver).select_dataset
 
 
 def get_select_option_from_initial_value_popup(option, popup_menu):

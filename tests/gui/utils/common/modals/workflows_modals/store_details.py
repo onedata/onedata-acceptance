@@ -28,6 +28,7 @@ class StoreDetailsListRow(PageObject):
     range_start = Label('.column-start')
     range_end = Label('.column-end')
     range_step = Label('.column-step')
+    objects_sequence = WebElementsSequence('.column-object-property')
     value = Label('.table-body .column-value')
     path = Label('.column-path .value-container')
 
