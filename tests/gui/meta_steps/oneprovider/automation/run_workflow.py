@@ -89,17 +89,16 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
 
 @wt(parsers.parse('user of {browser_id} awaits for status of task "{task}" in '
                   '{ordinal} parallel box in "{lane}" lane to be '
-                  '"{expected_status}" maximum of {seconds} seconds'))
+                  '"{expected_status}"'))
 def await_for_task_status(selenium, browser_id, op_container, lane,
-                          task, ordinal, expected_status, seconds):
+                          task, ordinal, expected_status):
     click = 'clicks on'
     close = 'closes'
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
     await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
-                                          lane, task, ordinal, expected_status,
-                                          seconds)
+                                          lane, task, ordinal, expected_status)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
 
