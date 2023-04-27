@@ -111,8 +111,6 @@ Feature: Workflow execution statuses tests
 
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
     And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Active"
-    And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using "file1" as initial value, in "space1" space
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Active"
     And user of browser clicks "Pause" button on "workflow-with-sleep-one-lane" workflow status bar
     And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Paused"
     And user of browser clicks "Resume" button on "workflow-with-sleep-one-lane" workflow status bar
