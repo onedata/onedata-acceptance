@@ -4,6 +4,9 @@ plan:
   key: OAS
   name: oneclient acceptance src
   description: oneclient acceptance tests using environment deployed from sources
+variables:
+  quarantineSourcePlan: VFS-OAS
+  quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:
       scope: global
@@ -27,11 +30,19 @@ other:
     custom.com.atlassian.bamboo.plugin.hungbuildkiller:
       stopped.enabled: "true"
       add_comment_when_hung.enabled: "true"
+
 stages:
+  - Qnthack - copy quarantine:
+      manual: false
+      final: false
+      jobs:
+        - Qnthack - copy quarantine
+        - Qnthack - terminate build
   - Acceptance Test:
       manual: false
       final: false
       jobs:
+        - _Codetag Tracker
         - authorization
         - directory CRUD
         - directory stat
@@ -71,6 +82,106 @@ stages:
         - singleprovider regular file CRUD multiclient proxyio
         - singleprovider regular file stat multiclient directio
         - singleprovider regular file stat multiclient proxyio
+  - Qnthack - rerun:
+      manual: false
+      final: true
+      jobs:
+        - Qnthack - rerun
+
+Qnthack - copy quarantine:
+  key: COPQU
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        buildHangingConfig.enabled: 'false'
+  tasks:
+    - checkout: &fake-checkout
+        conditions:
+          - variable:
+              exists: fake.var
+    - script: &quarantine-hack-run-script-on-third-build
+        interpreter: BINSH_OR_CMDEXE
+        scripts:
+          - |-
+            # The script which copies the quarantined test cases resides on the bamboo server.
+            # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/quarantine-copy.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+            # The script is run indirectly by the CGI script used in the curl command.
+            echo curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+            curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+        description: Copy quarantined test cases
+        conditions:
+          - variable:
+              matches:
+                # copy quarantine is run on build 3,4,5 just in case the expected numbering has been
+                # disturbed by early branch pushing or manual plan branch running 
+                bamboo.buildNumber: '[3-5]'
+    - script: &always-successful
+        interpreter: BINSH_OR_CMDEXE
+        description: Always successful
+        scripts:
+          - true
+
+Qnthack - terminate build:
+  key: TERMB
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script: *always-successful
+    - script:
+        <<: *quarantine-hack-run-script-on-third-build
+        scripts:
+          - |-
+            echo Terminating build...
+            false
+        description: Terminate build
+        conditions:
+          - variable:
+              matches:
+                # Terminate build for build number 3.
+                # When normal undisturbed flow takes place there is no sense in
+                # further building and testing as the code has not changed yet
+                bamboo.buildNumber: '3'
+
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
+  tasks:
+    - checkout: &checkout-default-repository
+        path: onedata-acceptance
+        force-clean-build: "true"
+        description: Checkout Default Repository
+    - script: &run-script
+        interpreter: SHELL
+        scripts:
+          - |-
+            cd onedata-acceptance
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        description: Init submodules
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[4-9]|.{2,}'
+    - script: &run-script-working-dir
+        <<: *run-script
+        scripts:
+          - |-
+            echo ${bamboo.planRepository.branchName}
+            make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        working-dir: onedata-acceptance
+        description: Codetag Tracker
+  requirements: []
+  artifact-subscriptions: []
 
 authorization: &acceptance-oneclient-tests-job
   key: AUT
@@ -78,39 +189,72 @@ authorization: &acceptance-oneclient-tests-job
     clean-working-dir: true
   tasks:
     - script: &clear-env
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env
     - script: &restart-minikube
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
-    - checkout: &checkout
-        path: onedata-acceptance
-        force-clean-build: "true"
-        description: Checkout Default Repository
+    - checkout: *checkout-default-repository
     - script: &init-submodules
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
         scripts:
           - |-
             git remote set-url origin ${bamboo.repository.git.repositoryUrl}
             git remote -v
             make submodules
-        working-dir: onedata-acceptance
         description: Init submodules
-    - script: &download-artifacts
-        interpreter: SHELL
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[2-9]|.{2,}'
+    - script: &quarantine-hack-pull-surefire
+        <<: *run-script-working-dir
         scripts:
-          - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-        working-dir: onedata-acceptance
+          - |-
+            #!/bin/bash
+            ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
+            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            let c=3
+            while : ; do
+                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                    --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                    --artifact-name ${ARTIFACT}
+                tar zxf ${ARTIFACT}
+                if [ -f test-reports/results*.xml ]; then
+                    break
+                else
+                    let c=$c-1
+                    if [[ $c < 0 ]]; then
+                        echo "Giving up... The surefire file 'results.xml' could not be pulled. Does it exist in the develop?" >&2
+                        break
+                    fi
+                    echo "The surefire file 'results.xml' could not be pulled, retrying in 30 seconds..." >&2
+                    sleep 30
+                fi
+            done
+            touch test-reports/results*.xml
+        description: Pull surefire artifact and unpack it
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2|3'
+    - script: &download-artifacts
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         description: Download artifacts
     - script: &run-acceptance-tests
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
         scripts:
           - make test_oneclient_src SUITE=test_authorization  ENV_FILE=singleclient_authorization
-        working-dir: onedata-acceptance
         description: Run acceptance oneclient tests
   final-tasks:
     - test-parser:
@@ -119,7 +263,21 @@ authorization: &acceptance-oneclient-tests-job
         test-results: onedata-acceptance/test-reports/results*.xml
         description: Parse test results
     - script:
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            #!/bin/bash
+            ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
+            tar czf ${ARTIFACT} test-reports/results*.xml
+            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+        description: Pack and push surefire artifact
+    - script:
+        <<: *run-script
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
@@ -128,10 +286,9 @@ authorization: &acceptance-oneclient-tests-job
             tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
         description: Pack logs
     - script:
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
-        working-dir: onedata-acceptance
         description: Clear env and working dir
   artifacts:
     - name: test_logs.tar.gz
@@ -146,11 +303,14 @@ directory CRUD:
   <<: *acceptance-oneclient-tests-job
   key: DC
   tasks:
-    - script: *clear-env
+    - script: &clear-env
+        <<: *run-script
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
-    - script: *download-artifacts
+    - script: *quarantine-hack-pull-surefire
+    - script: &download-artifacts
+        <<: *run-script-working-dir
     - script:
         <<: *run-acceptance-tests
         scripts:
@@ -162,8 +322,9 @@ directory stat:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -176,8 +337,9 @@ luma provider:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -190,8 +352,9 @@ luma proxy:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -204,8 +367,9 @@ multiclient authorization:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -218,8 +382,9 @@ multiprovider directory CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -232,8 +397,9 @@ multiprovider directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -246,8 +412,9 @@ multiprovider directory stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -260,8 +427,9 @@ multiprovider directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -274,8 +442,9 @@ multiprovider proxy directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -288,8 +457,9 @@ multiprovider proxy directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -302,8 +472,9 @@ multiprovider proxy regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -316,8 +487,9 @@ multiprovider proxy regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -330,8 +502,9 @@ multiprovider proxy s3 directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -344,8 +517,9 @@ multiprovider proxy s3 directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -358,8 +532,9 @@ multiprovider proxy s3 regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -372,8 +547,9 @@ multiprovider proxy s3 regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -386,8 +562,9 @@ multiprovider regular file CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -400,8 +577,9 @@ multiprovider regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -414,8 +592,9 @@ multiprovider regular file stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -428,8 +607,9 @@ multiprovider regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -442,8 +622,9 @@ multiprovider replication directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -456,8 +637,9 @@ multiprovider replication proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -470,8 +652,9 @@ multiprovider s3 directory CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -484,8 +667,9 @@ multiprovider s3 directory stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -498,8 +682,9 @@ multiprovider s3 regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -512,8 +697,9 @@ multiprovider s3 regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -526,8 +712,9 @@ regular file CRUD directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -540,8 +727,9 @@ regular file CRUD proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -554,8 +742,9 @@ regular file stat directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -568,8 +757,9 @@ regular file stat proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -582,8 +772,9 @@ singleprovider directory CRUD multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -596,8 +787,9 @@ singleprovider directory stat multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -610,8 +802,9 @@ singleprovider extended attributes:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -624,8 +817,9 @@ singleprovider regular file CRUD multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -638,8 +832,9 @@ singleprovider regular file CRUD multiclient proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -652,8 +847,9 @@ singleprovider regular file stat multiclient directio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
@@ -666,10 +862,32 @@ singleprovider regular file stat multiclient proxyio:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - checkout: *checkout
+    - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_src
+
+
+Qnthack - rerun:
+  key: ZREQN
+  description: Rerun
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script:
+        description: Rerun plan to finish quarantine copying
+        scripts:
+          # The script which requests the next build of a plan resides on the bamboo server.
+          # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/run-build.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+          # The script is run indirectly by the CGI script used in the curl command.
+          - curl 10.87.23.72:3080/cgi-bin/run-build?${bamboo.planKey}
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+    - script: *always-successful
+  artifact-subscriptions: []
