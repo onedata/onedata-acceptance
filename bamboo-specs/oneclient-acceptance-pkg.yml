@@ -307,8 +307,7 @@ directory CRUD:
   <<: *acceptance-oneclient-tests-job
   key: DC
   tasks:
-    - script: &clear-env
-        <<: *run-script
+    - script: *clear-env
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
