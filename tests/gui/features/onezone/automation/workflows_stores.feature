@@ -70,7 +70,7 @@ Feature: Workflows stores tests
     | Tree forest  | dir1                                           | 5        | [dir1, dir1/file2, dir1/dir2, dir1/dir2/file3, dir1/dir2/file4] |
 
 
-  Scenario Outline: User sees <store_type> of <store_data_type> in result store after modifying input store and lambda data type to <store_data_type> and executing uploaded echo workflow
+  Scenario Outline: User sees <output_store_type> of <output_type> in result store after modifying input store and lambda data type and executing uploaded echo workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
