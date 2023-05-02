@@ -121,7 +121,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
                                                  popups, DATASET_BROWSER)
-        data = yaml.load(config)
+        data = yaml.load(config, yaml.Loader)
 
         description = data.get('description', False)
         layout = data['layout']

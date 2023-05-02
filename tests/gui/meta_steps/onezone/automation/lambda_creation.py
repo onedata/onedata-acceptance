@@ -72,7 +72,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     result_option = 'result'
     option = 'lambda'
 
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     name = data['name']
     docker_image = data['docker image']
     read_only = data.get('read-only', True)

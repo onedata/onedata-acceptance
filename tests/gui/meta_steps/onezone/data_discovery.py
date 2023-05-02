@@ -40,7 +40,7 @@ def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
 
 
 def assert_files(selenium, browser_id, data_discovery, config, spaces):
-    expected_data = yaml.load(config)
+    expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     _assert_elem_num_equals(expected_data, data_dict)
     for file in expected_data:
@@ -119,7 +119,7 @@ def _assert_unexpected_properties_of_files(unexpected, actual, spaces):
                   'files in data discovery page:\n{config}'))
 def assert_not_files_properties(selenium, browser_id, data_discovery, config,
                                 spaces):
-    unexpected_data = yaml.load(config)
+    unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     for file in unexpected_data:
         _assert_unexpected_properties_of_files(unexpected_data[file],
@@ -174,7 +174,7 @@ def assert_number_of_files_on_data_disc(selenium, browser_id, data_discovery,
 @wt(parsers.parse('user of {browser_id} chooses following properties to '
                   'filter on data discovery page:\n{config}'))
 def choose_properties_to_filter(selenium, browser_id, config, data_discovery):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     _parse_data(data, data_discovery, selenium, browser_id)
 
 
@@ -210,7 +210,7 @@ def _parse_data(data, data_discovery, selenium, browser_id):
                   'following files:\n{config}'))
 def compare_files_with_curl(browser_id, tmp_memory, config):
     curl_res = tmp_memory[browser_id]['curl result']
-    expected_data = yaml.load(config)
+    expected_data = yaml.load(config, yaml.Loader)
 
     query_curl_data = curl_res['hits']['hits']
     curl_dict = _curl_data_to_dict(query_curl_data)

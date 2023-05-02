@@ -69,7 +69,7 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
     res_type = 'result'
     conf_param_option = 'configuration parameters'
     option = 'task'
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     arguments = data.get('arguments', False)
     results = data.get('results', False)
     task_name = data.get('task name', False)
