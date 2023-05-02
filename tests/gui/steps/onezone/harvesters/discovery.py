@@ -35,11 +35,12 @@ def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
     oz_page(driver)['discovery'].create_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{name}" has {option} the'
-                  ' {list_type} list in the sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
+               ' (?P<option>.*) the (?P<list_type>harvesters|automation) '
+               'list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
-                                              name, option, list_type):
+def check_element_exists_on_sidebar_list(selenium, browser_id, oz_page,
+                                         name, option, list_type):
     driver = selenium[browser_id]
     list_type = 'discovery' if list_type == 'harvesters' else list_type
     if option.startswith('appeared'):
