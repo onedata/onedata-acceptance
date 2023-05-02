@@ -26,9 +26,11 @@ from tests.utils.utils import repeat_failed
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
 def users_creation_with_cleanup_step(host, config, admin_credentials,
-                                     onepanel_credentials, hosts, users, rm_users):
-    users_db, zone_hostname = users_creation_with_cleanup(host, yaml.load(config), admin_credentials,
-                                                          onepanel_credentials, hosts, users, rm_users)
+                                     onepanel_credentials, hosts, users,
+                                     rm_users):
+    users_db, zone_hostname = users_creation_with_cleanup(
+        host, yaml.load(config, yaml.Loader), admin_credentials,
+        onepanel_credentials, hosts, users, rm_users)
 
     yield
 
