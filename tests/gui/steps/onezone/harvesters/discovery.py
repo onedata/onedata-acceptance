@@ -35,19 +35,19 @@ def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
     oz_page(driver)['discovery'].create_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{harvester_name}" '
-                  'has {option} the harvesters list in the sidebar'))
+@wt(parsers.parse('user of {browser_id} sees that "{name}" has {option} the'
+                  ' {list_type} list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
-                                              harvester_name, option):
+                                              name, option, list_type):
     driver = selenium[browser_id]
-
+    list_type = 'discovery' if list_type == 'harvesters' else list_type
     if option.startswith('appeared'):
-        assert harvester_name in oz_page(driver)['discovery'].elements_list, \
-            'harvester "{}" not found'.format(harvester_name)
+        assert name in oz_page(driver)[list_type].elements_list, \
+            f'"{name}" not found on {list_type} list'
     else:
-        assert harvester_name not in oz_page(driver)['discovery'].elements_list, \
-            'harvester "{}" found'.format(harvester_name)
+        assert name not in oz_page(driver)[list_type].elements_list, \
+            f'"{name}" found on {list_type} list'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '

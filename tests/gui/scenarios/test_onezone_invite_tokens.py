@@ -71,6 +71,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *
+from tests.utils.entities_setup.inventory import *
 
 
 @fixture(scope='module')
@@ -79,3 +80,4 @@ def screens():
 
 
 scenarios('../features/onezone/invite_tokens.feature')
+scenarios('../features/onezone/invite_to_atm_tokens.feature')

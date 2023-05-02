@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import upload_file_path
+from tests.gui.utils.generic import upload_file_path, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -254,3 +254,9 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page.workflows_page.revision_details.description = text
 
 
+def click_on_option_of_inventory_on_left_sidebar_menu(selenium, browser_id,
+                                                      inventory_name, option,
+                                                      oz_page):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['automation'].elements_list[inventory_name],
+            transform(option)).click()

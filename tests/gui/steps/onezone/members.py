@@ -13,6 +13,8 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
+from tests.gui.steps.onezone.automation.automation_basic import \
+    click_on_option_of_inventory_on_left_sidebar_menu
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_of_harvester_on_left_sidebar_menu)
@@ -26,7 +28,7 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery',
-                         'automation': 'automation'}
+                         'automation': 'automation', 'inventory': 'automation'}
 
 
 def _change_to_tab_name(element):
@@ -754,7 +756,7 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
                                      name, config, oz_page, onepanel, target,
                                      hosts):
     list_type = target + 's'
-    option = where + 's'
+    option = where + 's' if where != 'inventory' else 'automation'
     option2 = 'Members'
 
     data = yaml.load(config, yaml.Loader)
@@ -770,6 +772,11 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
     elif where == 'harvester':
         click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                           item_name, option2,
+                                                          oz_page)
+    elif where == 'inventory':
+        click_on_option_of_inventory_on_left_sidebar_menu(selenium, browser_id,
+                                                          item_name,
+                                                          option2,
                                                           oz_page)
     elif where == 'group':
         go_to_group_subpage(selenium, browser_id, item_name, option2.lower(),
