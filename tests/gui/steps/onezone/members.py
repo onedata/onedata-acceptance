@@ -759,7 +759,7 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
     option = where + 's' if where != 'inventory' else 'automation'
     option2 = 'Members'
 
-    data = yaml.load(config, yaml.Loader)
+    data = yaml.load(config)
     privileges = data['privileges']
 
     if where != 'cluster':

@@ -39,7 +39,7 @@ def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, 
     elif test_type == 'gui' and env_file_name:
         env_file_path = f'tests/gui/environments/{env_file_name}.yaml'
         with open(env_file_path, 'r') as f:
-            if yaml.load(f, yaml.Loader).get('openfaas', False):
+            if yaml.load(f).get('openfaas', False):
                 add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
                 add_image_to_images_cfg(
                     openfaas_pod_status_monitor_image,
@@ -404,7 +404,7 @@ def resolve_image(service):
     branch_config_path = os.path.join(os.getcwd(), 'branchConfig.yaml')
     try:
         with open(branch_config_path, 'r') as branch_config_file:
-            branch_config = yaml.load(branch_config_file, yaml.Loader)
+            branch_config = yaml.load(branch_config_file)
             fallback_branch = branch_config['default']
             fallback_tag = get_branch_tag(fallback_branch)
             service_branch = branch_config['images'][service]

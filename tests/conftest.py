@@ -223,7 +223,7 @@ def env_description_abs_path(request, env_description_file):
 @pytest.fixture(scope='session')
 def env_desc(env_description_abs_path):
     with open(env_description_abs_path, 'r') as env_desc_file:
-        return yaml.load(env_desc_file, yaml.Loader)
+        return yaml.load(env_desc_file)
 
 
 @pytest.fixture(scope='session')

@@ -162,7 +162,7 @@ def _process_curl_output(output, page):
                   'following config:\n{config}'))
 def assert_curl_result_with_config(browser_id, tmp_memory, config):
     curl_res = tmp_memory[browser_id]['curl result']
-    expected_data = yaml.load(config, yaml.Loader)
+    expected_data = yaml.load(config)
 
     for key, val in expected_data.items():
         assert curl_res[_camel_transform(key)] == val, (f'{key}: {val} not '

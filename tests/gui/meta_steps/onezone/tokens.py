@@ -236,7 +236,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     click_create_custom_token(selenium, browser_id, oz_page)
 
-    data = yaml.load(config, yaml.Loader)
+    data = yaml.load(config)
     name = data.get('name', False)
     token_type = data['type']
     invite_type = data.get('invite type', False)
@@ -386,7 +386,7 @@ def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
 
 def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, creation=False):
-    data = yaml.load(config, yaml.Loader)
+    data = yaml.load(config)
     token_name = data.get('name', False)
     revoked = data.get('revoked', False)
     token_type = data.get('type', False)

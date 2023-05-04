@@ -197,7 +197,7 @@ def recall_archive_details_in_op(client, user, config, name, tmp_memory,
                                  space_name, spaces):
 
     client_lower = client.lower()
-    data = yaml.load(config, yaml.Loader)
+    data = yaml.load(config)
     if client_lower == 'web gui':
         recalled_archive_details_in_op_gui(user, name, tmp_memory, data,
                                            modals, selenium)

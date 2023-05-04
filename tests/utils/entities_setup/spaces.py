@@ -26,7 +26,7 @@ from tests.utils.utils import repeat_failed
                      'Onezone service:\n{config}'))
 def create_and_configure_spaces_step(config, zone_host, admin_credentials, onepanel_credentials, hosts,
                                 users, groups, storages, spaces):
-    create_and_configure_spaces(yaml.load(config, yaml.Loader), zone_host, admin_credentials, onepanel_credentials, hosts,
+    create_and_configure_spaces(yaml.load(config), zone_host, admin_credentials, onepanel_credentials, hosts,
                                 users, groups, storages, spaces)
 
 

@@ -243,7 +243,7 @@ def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
 
 def assert_progress_of_recall_in_op_rest(user, name, space_name, host,
                                          hosts, users, config):
-    data = yaml.load(config, yaml.Loader)
+    data = yaml.load(config)
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_api = ArchiveApi(client)
     path = f'{space_name}/{name}'
