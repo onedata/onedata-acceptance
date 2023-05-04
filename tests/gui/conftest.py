@@ -272,6 +272,10 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
     if recording != 'none':
         # add timestamp to video name
         file_name = '{}.{}'.format(request.node.name, int(time()))
+
+        # for len(file_name) > 180 ffmpeg is not starting
+        file_name = file_name[:180] if len(file_name) > 180 else file_name
+
         ffmpeg_proc, movies = start_recording(movie_dir, file_name, xvfb,
                                               screen_width, screen_height,
                                               mosaic_filter)

@@ -564,3 +564,28 @@ def click_and_press_enter_with_content_check(browser_id, item_name, content,
     browser.data[item_name].click_and_enter()
 
     has_downloaded_file_content(browser_id, item_name, content, tmpdir)
+
+
+def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
+                                   op_container, tmp_memory, file_name, popups,
+                                   modals, clipboard, displays):
+    option_in_space = 'Files'
+    option_in_menu = 'Information'
+
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
+    if '/' in file_name:
+        go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
+                                     file_name, op_container)
+        file_name = file_name.split('/')[-1]
+
+    modal_name = 'Directory details' if 'dir' in file_name else 'File details'
+    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_menu, popups)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    click_modal_button(selenium, browser_id, 'file_id', modal_name, modals)
+    return clipboard.paste(display=displays[browser_id])
