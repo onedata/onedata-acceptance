@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Button, NamedButton, \
-    WebItemsSequence, Label
+from tests.gui.utils.core.web_elements import (
+    Button, WebItemsSequence, Label, AceEditor, WebItem, WebElementsSequence)
 from tests.gui.utils.onezone.generic_page import Element
 from ..modal import Modal
 
@@ -24,6 +24,23 @@ class StoreDetailsObjectRow(PageObject):
 
 class StoreDetailsListRow(PageObject):
     name = id = Label('.column-name')
+    dataset_name = Button('.dataset-name')
+    range_start = Label('.column-start')
+    range_end = Label('.column-end')
+    range_step = Label('.column-step')
+    objects_sequence = WebElementsSequence('.column-object-property')
+    value = Label('.table-body .column-value')
+    path = Label('.column-path .value-container')
+
+
+class ArrayView(PageObject):
+    header = Label('.root-presenter-header')
+    items = WebElementsSequence('.array-item .single-line-presenter')
+
+
+class SingleFileContainer(PageObject):
+    name = id = Label('.file-name')
+    clickable_name = Button('.file-name')
 
 
 class StoreDetails(Modal):
@@ -35,6 +52,10 @@ class StoreDetails(Modal):
                                           cls=StoreDetailsListRow)
     store_content_object = WebItemsSequence('.entries-table .data-row',
                                             cls=StoreDetailsObjectRow)
+    raw_view = AceEditor('.value-container-presenter')
+    array_view = WebItem('.array-visual-presenter', cls=ArrayView)
+    single_file_container = WebItem('.content-container',
+                                    cls=SingleFileContainer)
 
     def __str__(self):
         return 'Store details modal'

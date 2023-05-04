@@ -115,7 +115,7 @@ Feature: Workflows execution
     And user of browser writes "Workflow1_revision1" in description textfield in workflow Details tab
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    And user of browser executes 1st revision of "Workflow1", using "dir1" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "Workflow1" and waits extended time for workflow to finish, using directory as initial value: "dir1" in "space1" space
     And user of browser sees "Finished" status in status bar in workflow visualizer
     Then user of browser sees that content of "input" store is the same as content of "output" store
 
@@ -194,7 +194,7 @@ Feature: Workflows execution
               target store: "output-store"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    And user of browser executes 1st revision of "Workflow1", using "dir1/file1" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "Workflow1" and waits extended time for workflow to finish, using file as initial value: "dir1/file1" in "space1" space
     And if workflow status is "Failed" user of browser saves audit logs for all tasks to logs
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
@@ -205,7 +205,7 @@ Feature: Workflows execution
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
-    And user of browser executes 1st revision of "counting-different-checksums", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "counting-different-checksums" and waits extended time for workflow to finish, using directory as initial value: "dir2" in "space1" space
     And if workflow status is "Failed" user of browser saves audit logs for all tasks to logs
 
     And user of browser sees "Finished" status in status bar in workflow visualizer
@@ -225,7 +225,7 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "checksum-counting-different-lambdas", using "dir1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "checksum-counting-different-lambdas", using directory as initial value: "dir1" in "space1" space
 
     Then user of browser sees that name of first pod in tab "Current" for task "md5" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest"
 
@@ -280,7 +280,7 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "calculate-checksums-rest", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "calculate-checksums-rest" and waits extended time for workflow to finish, using directory as initial value: "dir2" in "space1" space
     And user of browser sees "Finished" status in status bar in workflow visualizer
 
     Then user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane

@@ -10,7 +10,8 @@ from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement)
+    WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement,
+    Input, WebElementsSequence)
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -102,6 +103,25 @@ class WorkflowVisualiser(PageObject):
     resume = NamedButton('.pause-resume-atm-workflow-execution-action-trigger',
                          text="Resume")
     cancel = Button('.cancel-atm-workflow-execution-action-trigger')
+    audit_log = NamedButton('.btn', text="Audit log")
+
+
+class Store(PageObject):
+    name = id = Label('.store-name')
+
+
+class RangeInput(PageObject):
+    start = Input('.start-field .text-like-field .form-control')
+    end = Input('.end-field .text-like-field .form-control')
+    step = Input('.step-field .text-like-field .form-control')
+
+
+class NumberInput(PageObject):
+    input = Input('.text-like-field .form-control')
+
+
+class StringInput(PageObject):
+    input = Input('.form-control')
 
 
 class WorkflowExecutionPage(PageObject):
@@ -110,6 +130,8 @@ class WorkflowExecutionPage(PageObject):
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
     input_link = Button('.add-item-trigger')
+    single_file_input_link = Button('.file-value-editor-selector')
+    files_input_link = Button('.add-item-trigger.file-value-editor-selector')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     workflow_executions_list = WebItemsSequence(
@@ -118,6 +140,13 @@ class WorkflowExecutionPage(PageObject):
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
     workflow_header = WebElement('.workflow-visualiser')
+    stores = WebItemsSequence('.workflow-visualiser-stores-list .tag-item',
+                              cls=Store)
+    ranges_input = WebItemsSequence('.range-editor', cls=RangeInput)
+    numbers_input = WebItemsSequence('.number-editor', cls=NumberInput)
+    booleans_input = WebElementsSequence('.boolean-editor')
+    number_input = WebItem('.number-editor', cls=NumberInput)
+    string_input = WebItem('.string-editor', cls=StringInput)
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(
