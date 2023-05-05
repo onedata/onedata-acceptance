@@ -62,7 +62,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(selenium,
                                                              browser_id, text,
                                                              oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.elements_list[''].edit_box.value = text
+    page.elements_list[0].edit_box.value = text
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms inventory rename with '
@@ -70,7 +70,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(selenium,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id]
-            )['automation'].elements_list[''].edit_box.confirm()
+            )['automation'].elements_list[0].edit_box.confirm()
 
 
 @wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '

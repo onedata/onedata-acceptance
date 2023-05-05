@@ -17,7 +17,7 @@ Feature: Management of invite to atm tokens in Onezone GUI
 
     And initial inventories configuration in "onezone" Onezone service:
           inventory1:
-              owner: admin
+            owner: admin
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
