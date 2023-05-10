@@ -19,6 +19,7 @@ class LambdaParameter(PageObject):
     name = WebItem('.entryName-field .text-like-field', cls=InputBox)
     type_dropdown = WebElement('.entryDataSpec-field '
                                '.ember-power-select-trigger')
+    remove_element = Button('.remove-trigger')
 
 
 class LambdaParameters(PageObject):

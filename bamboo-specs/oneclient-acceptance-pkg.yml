@@ -312,8 +312,7 @@ directory CRUD:
     - checkout: *checkout-default-repository
     - script: *init-submodules
     - script: *quarantine-hack-pull-surefire
-    - script: &download-artifacts
-        <<: *run-script-working-dir
+    - script: *download-artifacts
     - script:
         <<: *run-acceptance-tests
         scripts:

@@ -90,7 +90,7 @@ Feature: Workflow cancelling and pausing tests
               value: 10
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
     And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
@@ -115,7 +115,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
     And user of browser awaits for status of "Lane1" lane to be "Finished"
@@ -145,7 +145,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser sees that status of "Lane1" lane in "workflow-with-sleep" is "Preparing"
     And user of browser clicks "<stop_button>" button on "workflow-with-sleep" workflow status bar
@@ -174,7 +174,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
     And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
@@ -201,7 +201,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-one-box", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 
     And user of browser clicks "Pause" button on "workflow-with-one-box" workflow status bar
     And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
@@ -227,7 +227,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-one-box", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active"
     And user of browser clicks "Pause" button on "workflow-with-one-box" workflow status bar
