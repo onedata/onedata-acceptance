@@ -18,7 +18,7 @@ class MenuItem(PageObject):
 
 
 class MenuPopupWithLabel(PageObject):
-    menu = WebItemsSequence('ul li', cls=MenuItem)
+    menu = WebItemsSequence('ul li:not(.separator)', cls=MenuItem)
 
     def __str__(self):
         return 'Menu popup with label'
