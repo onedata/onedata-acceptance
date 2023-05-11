@@ -23,3 +23,8 @@ class MenuPopupWithLabel(PageObject):
     def __str__(self):
         return 'Menu popup with label'
 
+    def scroll_to_bottom(self):
+        option_len = len(self.menu)
+        self.driver.execute_script('arguments[0].scrollIntoView();',
+                                   self.menu[option_len-1].web_elem)
+

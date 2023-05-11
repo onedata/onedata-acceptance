@@ -45,7 +45,7 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
 
   Scenario Outline: Read directory metadata
     When user of space_owner_browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
-    And user of space_owner_browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+    And user of space_owner_browser sets "dir1" directory ACL <privileges> privileges for <subject_type> <subject_name>
     Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
 
     Examples:

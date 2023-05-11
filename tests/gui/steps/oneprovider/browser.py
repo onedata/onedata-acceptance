@@ -201,6 +201,8 @@ def _choose_menu(selenium, browser_id, which_browser, popups):
         return popups(selenium[browser_id]).data_row_menu
 
 
+@wt(parsers.parse('user of {browser_id} can click "{option}" option '
+                  'in data row menu in {which_browser}'))
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
                   'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)

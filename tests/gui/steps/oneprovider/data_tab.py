@@ -79,40 +79,6 @@ def click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory):
     getattr(file_browser, transform(button)).click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
-                  'is in selection menu on file browser page'))
-@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
-                  'are in selection menu on file browser page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
-                                           tmp_memory, popups):
-    driver = selenium[browser_id]
-    file_browser = tmp_memory[browser_id]['file_browser']
-    file_browser.selection_menu_button()
-
-    menu = popups(driver).menu_popup.menu
-    for btn in parse_seq(btn_list):
-        assert btn in menu, (
-            '{} should be in selection menu but is not'.format(btn))
-
-
-@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
-                  'is not in selection menu on file browser page'))
-@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
-                  'are not in selection menu on file browser page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
-                                               tmp_memory, popups):
-    driver = selenium[browser_id]
-    file_browser = tmp_memory[browser_id]['file_browser']
-    file_browser.selection_menu_button()
-
-    menu = popups(driver).menu_popup.menu
-    for btn in parse_seq(btn_list):
-        assert btn not in menu, (
-            '{} should not be in selection menu'.format(btn))
-
-
 @wt(parsers.parse('user of {browser_id} changes current working directory '
                   'to {path} using breadcrumbs'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -521,7 +487,22 @@ def choose_option_from_selection_menu(browser_id, selenium, option, popups,
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.selection_menu_button()
-    popups(driver).menu_popup.menu[option].click()
+    popups(driver).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} chooses {option} option from file '
+                  'menu for "{file_name}" on file browser page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_for_file_from_selection_menu(browser_id, selenium, option,
+                                               popups, tmp_memory, file_name):
+    driver = selenium[browser_id]
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.data[file_name].menu_button()
+    try:
+        popups(driver).menu_popup.menu[option].click()
+    except RuntimeError:
+        popups(driver).menu_popup.scroll_to_bottom()
+        popups(driver).menu_popup.menu[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that upload file failed'))

@@ -65,7 +65,7 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser
-    And user of browser_user1 sees that Quality of Service option is not in selection menu on file browser page
+    And user of browser_user1 cannot click "Quality of Service" option in data row menu in file browser
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -74,4 +74,7 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
             privilege subtypes:
               View QoS: True
 
-    Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
+    And user of browser_user1 refreshes site
+    And user of browser_user1 sees file browser in files tab in Oneprovider page
+    And user of browser_user1 clicks on menu for "dir1" file in file browser
+    Then user of browser_user1 can click "Quality of Service" option in data row menu in file browser
