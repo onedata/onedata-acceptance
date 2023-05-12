@@ -22,7 +22,7 @@ Feature: Quality of Service tests using single storage and single browser in One
 
   Scenario: User sees QoS file status and entries after adding QoS requirements to file
     When user of browser opens file browser for "space1" space
-    And user of browser chooses Quality of Service option from file menu for "file1" on file browser page
+    And user of browser chooses "Quality of Service" option from file menu for "file1" on file list
     And user of browser clicks on "Add Requirement" button in QoS panel
     And user of browser clicks "enter as text" label in QoS panel
     And user of browser writes "geo=PL" into expression text field in QoS panel
@@ -31,7 +31,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser clicks on "Save" button in QoS panel
     And user of browser clicks on "X" button in modal "File details"
     Then user of browser sees QoS status tag for "file1" in file browser
-    And user of browser chooses Quality of Service option from file menu for "file1" on file browser page
+    And user of browser chooses "Quality of Service" option from file menu for "file1" on file list
     And user of browser sees [geo = "PL"] QoS requirement in QoS panel
 
 

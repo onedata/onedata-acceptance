@@ -13,15 +13,24 @@ from tests.gui.utils.core.web_elements import WebItemsSequence, Label
 class Options(PageObject):
     name = id = Label('.one-label')
 
+    def disabled_or_enabled(self):
+        return 'disabled' if 'disabled' in \
+                             self.web_elem.get_attribute('class') else 'enabled'
+
 
 class DataRowMenu(PageObject):
-    options = WebItemsSequence('.file-actions.dropdown-menu a.clickable',
+    options = WebItemsSequence('.file-actions.dropdown-menu li:not(.separator)',
                                cls=Options)
 
     def choose_option(self, name):
         if name not in self.options:
             self.scroll_to_bottom()
         self.options[name].click()
+
+    def return_option(self, name):
+        if name not in self.options:
+            self.scroll_to_bottom()
+        return self.options[name]
 
     def scroll_to_bottom(self):
         option_len = len(self.options)

@@ -490,19 +490,16 @@ def choose_option_from_selection_menu(browser_id, selenium, option, popups,
     popups(driver).menu_popup_with_label.menu[option].click()
 
 
-@wt(parsers.parse('user of {browser_id} chooses {option} option from file '
-                  'menu for "{file_name}" on file browser page'))
+@wt(parsers.parse('user of {browser_id} chooses "{option}" option from file '
+                  'menu for "{file_name}" on file list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_file_from_selection_menu(browser_id, selenium, option,
                                                popups, tmp_memory, file_name):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.data[file_name].menu_button()
-    try:
-        popups(driver).menu_popup.menu[option].click()
-    except RuntimeError:
-        popups(driver).menu_popup.scroll_to_bottom()
-        popups(driver).menu_popup.menu[option].click()
+    menu = popups(driver).menu_popup
+    menu.choose_option(option)
 
 
 @wt(parsers.parse('user of {browser_id} sees that upload file failed'))
