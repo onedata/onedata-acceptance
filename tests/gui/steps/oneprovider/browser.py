@@ -224,14 +224,13 @@ def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
 @wt(parsers.parse('user of {browser_id} sees that "{option}" option is '
                   '{option_state} in opened item menu in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_element_disabled_or_enabled_in_data_row_menu(selenium, browser_id,
-                                                        option, popups,
-                                                        option_state):
+def assert_option_state_in_data_row_menu(selenium, browser_id, option, popups,
+                                         option_state):
     err_msg = (f'{option} option is not {option_state} in opened item menu'
                f' in file browser')
     menu = popups(selenium[browser_id]).data_row_menu
     menu_option = menu.return_option(option)
-    assert menu_option.disabled_or_enabled() == option_state, err_msg
+    assert menu_option.get_state() == option_state, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '

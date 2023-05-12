@@ -13,7 +13,7 @@ from tests.gui.utils.core.web_elements import WebItemsSequence, Label
 class Options(PageObject):
     name = id = Label('.one-label')
 
-    def disabled_or_enabled(self):
+    def get_state(self):
         return 'disabled' if 'disabled' in \
                              self.web_elem.get_attribute('class') else 'enabled'
 
