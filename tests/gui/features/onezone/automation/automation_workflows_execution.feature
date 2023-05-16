@@ -128,13 +128,14 @@ Feature: Workflows execution
         name: "checksum-counting-oneclient"
         docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:dev"
         read-only: False
-        arguments:
-          - name: "file"
-            type: File
+        configuration parameters:
           - name: "metadataKey"
             type: String
           - name: "algorithm"
             type: String
+        arguments:
+          - name: "file"
+            type: File
         results:
           - name: "result"
             type: Object
@@ -163,15 +164,16 @@ Feature: Workflows execution
 
     # User creates task using previously created lambda
     And user of browser creates task using 1st revision of "checksum-counting-oneclient" lambda in "Lane1" lane with following configuration:
-        arguments:
-            file:
-              value builder: "Iterated item"
+        configuration parameters:
             metadataKey:
               value builder: "Constant value"
               value: "md5_key"
             algorithm:
               value builder: "Constant value"
               value: "md5"
+        arguments:
+            file:
+              value builder: "Iterated item"
         results:
             result:
               target store: "output-store"
@@ -180,15 +182,16 @@ Feature: Workflows execution
     And user of browser creates another task using 1st revision of "checksum-counting-oneclient" lambda in "Lane1" lane with following configuration:
         where parallel box: "below"
         task name: "Second lambda task"
-        arguments:
-            file:
-              value builder: "Iterated item"
+        configuration parameters:
             metadataKey:
               value builder: "Constant value"
               value: "sha256_key"
             algorithm:
               value builder: "Constant value"
               value: "sha256"
+        arguments:
+            file:
+              value builder: "Iterated item"
         results:
             result:
               target store: "output-store"
@@ -275,7 +278,7 @@ Feature: Workflows execution
     And user of browser sees that numer of events on "Pods activity" list for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane is about 18
 
 
-  Scenario: User checks time series charts after execution of uploaded "counting-different-checksums" workflow
+  Scenario: User checks time series charts after execution of uploaded "calculate-checksums-rest" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
