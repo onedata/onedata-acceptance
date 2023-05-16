@@ -29,7 +29,7 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
-    assert_not_click_option_in_data_row_menu)
+    assert_option_state_in_data_row_menu)
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
     write_description_in_create_archive_modal,
@@ -102,6 +102,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
                     displays, option, popups, follow_symbolic_links=True):
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
+    option_state = 'disabled'
     try:
         op_container(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:
@@ -164,9 +165,9 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
             # wait for "archive id copied to clipboard" message to disappear
             time.sleep(5)
     elif option == 'fails':
-        assert_not_click_option_in_data_row_menu(selenium, browser_id,
-                                                 option_in_data_row_menu,
-                                                 DATASET_BROWSER, popups)
+        assert_option_state_in_data_row_menu(selenium, browser_id,
+                                             option_in_data_row_menu, popups,
+                                             option_state, DATASET_BROWSER)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -230,6 +231,7 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
     option_in_menu = 'Delete archive'
     text = 'I understand that data of the archive will be lost'
     button_name = 'Delete archive'
+    option_state = 'disabled'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)
@@ -246,9 +248,9 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
         click_modal_button(selenium, browser_id, button_name,
                            option_in_menu, modals)
     elif option == 'fails':
-        assert_not_click_option_in_data_row_menu(selenium, browser_id,
-                                                 button_name,
-                                                 ARCHIVE_BROWSER, popups)
+        assert_option_state_in_data_row_menu(selenium, browser_id,
+                                             button_name, popups,
+                                             option_state, ARCHIVE_BROWSER)
 
 
 def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,
