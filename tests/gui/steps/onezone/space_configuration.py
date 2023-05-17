@@ -93,7 +93,18 @@ def set_description_of_a_space(selenium, browser_id, oz_page, description):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_tag_in_space_configuration_tab(browser_id, selenium, oz_page, tag):
+def add_tag_in_space_configuration_tab(browser_id, config, selenium, oz_page, popups, tag_type, tag):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
-    page.editor_description_mode.click()
+    page.space_tags_editor.click()
+    page.space_tags_editor.add_tag.click()
+
+    popups(driver).general_button.click()
+    popups(driver).general_button.search_bar.value == tag
+    popups(driver).tags_list[tag].click()
+    popups(driver).general_button.search_bar.clear()
+
+    page.space_tags_editor.add_tag.save_button
+
+
+

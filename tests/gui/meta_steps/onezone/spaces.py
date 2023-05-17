@@ -442,7 +442,7 @@ def _configure_space_manually(browser_id, config, selenium, oz_page):
     data = yaml.load(config)
     space_name = data['space name']
     organization_name = data['organization name']
-    # tags = data.get('tags', False)
+    tags = data.get('tags', False)
     description = data['description']
 
     set_space_name_in_configuration_tab(selenium, browser_id, oz_page,
@@ -451,22 +451,48 @@ def _configure_space_manually(browser_id, config, selenium, oz_page):
                                                organization_name)
     set_description_of_a_space(selenium, browser_id, oz_page, description)
 
-#     if configuration_parameters:
-#         for i, config_param in enumerate(configuration_parameters):
-#             add_parameter_into_lambda_form(
-#                 selenium, browser_id, oz_page, popups, conf_param_option,
-#                 config_param['name'], config_param['type'], ordinal(i + 1))
-#
-#     if tags:
-#         for i, args in enumerate(tags):
-#             add_tag_in_space_configuration_tab(
-#                 selenium, browser_id, oz_page, popups, argument_option,
-#                 args['name'], args['type'], ordinal(i+1))
-#
-# def add_tag_in_space_configuration_tab(browser_id, config, selenium, oz_page, tag):
+    if tags:
+        if general:
+            for tag in general:
+                add_tag_in_space_configuration_tab(selenium, browser_id, oz_page,"general", tag)
+       if domains:
+           for tag in domains:
+               add_tag_in_space_configuration_tab(selenium, browser_id, oz_page,"domain",tag)
 
-@wt(parsers.parse('user of browser sees that space1 is advertised on Space Marketplace subpage and compares it with its configuration on space configuration page'))
-def assert_space_in_marketplace_and_compare_configs(browser_id, config, selenium, oz_page, popups):
+
+
+@wt(parsers.parse('And user of browser sees that space1 is advertised on Space Marketplace subpage with following parameters:\n{config}'))
+def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, space_name):
+    """Adjust space configuration according to given config.
+
+        Config format given in yaml is as follows:
+            space name: space_name
+            organization name: organization_name
+            tags:                           ---> optional
+              general:
+                - general-tags
+              domains:
+                - domain-tags
+            description: description
+
+
+
+        Example configuration:
+            space name: "space1"
+            organization name: "onedata"
+            tags:                           ---> optional
+              general:
+                - EU-funded
+                - big-data
+                - open-science
+              domains:
+                - science
+            description: "space advertised in marketplace"
+    """
+
+    _assert_space_in_marketplace_with_config
+
+def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, space_name):
 
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page

@@ -26,7 +26,7 @@ class SpaceTagsEditor(PageObject):
 class SpaceConfigurationPage(PageObject):
     space_name = WebItem('.space-name', cls=EditBox)
     organization_name = WebItem('.organization-name', cls=EditBox)
-    space_tags_editor = WebItem('.space-tags .one-label', cls=SpaceTagsEditor)
+    space_tags_editor = WebItem('.space-tags', cls=SpaceTagsEditor)
 
     preview_description_mode = Button('.btn-description-view')
     editor_description_mode = Button('.btn-description-edit')

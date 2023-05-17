@@ -44,7 +44,18 @@ Feature: Basic management of Space Marketplace
 #    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
     And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
     And user of browser clicks "View in Marketplace" button on space configuration page
-    And user of browser sees that space1 is advertised on Space Marketplace subpage and compares it with its configuration on space configuration page
+    And user of browser sees that space1 is advertised on Space Marketplace subpage with following parameters:
+        space name: "space1"
+        tags:
+          - archival
+          - big-data
+          - science
+          - type: File
+        organization name: "onedata"
+        creation time: current
+        providers:
+          - oneprovider-1
+        description: "Example of a space avertised in a Marketplace"
 
 
 
