@@ -1,5 +1,4 @@
-"""Utils and fixtures to facilitate operations on Create new store for
-workflow modal.
+"""Utils and fixtures to facilitate operations on Advertise space modal.
 """
 
 __author__ = "Rafał Widziszewski"

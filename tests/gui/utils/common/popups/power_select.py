@@ -16,7 +16,7 @@ class PowerSelect(PageObject):
 
     def choose_item(self, property_name):
         for item in self.items:
-            if item.text == property_name:
+            if item.text.lower() == property_name.lower():
                 item.click()
                 return
 

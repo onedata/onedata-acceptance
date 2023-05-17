@@ -6,8 +6,12 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 import yaml
 
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
     add_another_parallel_box_to_lane,add_parallel_box_to_lane,
     add_task_to_empty_parallel_box, add_lambda_revision_to_workflow,
@@ -15,6 +19,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     choose_option_in_dropdown_menu_in_task_page, write_text_into_editor_bracket,
     confirm_lambda_creation_or_edition)
 from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates (?P<which>|another )task '
@@ -115,3 +120,55 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
                 res_name, res_type)
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<task>.*)" task'
+               ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'))
+def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
+                          task):
+    modal = 'Remove task'
+    option = 'Remove'
+
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane.parallel_box.task_list[task].menu_button()
+    popups(driver).menu_popup_with_label.menu[option]()
+    click_modal_button(selenium, browser_id, option, modal, modals)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) modifies "(?P<task>.*)" task in '
+               '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane by '
+               r'(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)'))
+def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
+                        config, option):
+    data = yaml.load(config)
+    results_conf = data.get('results', False)
+    lambda_conf = data.get('lambda', False)
+    button = "Modify"
+    task_option = 'task'
+
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
+    lane.parallel_box.task_list[task].menu_button()
+    popups(driver).menu_popup_with_label.menu[button]()
+    # wait for task form to open
+    time.sleep(1)
+
+    if lambda_conf:
+        revision = from_ordinal_number_to_int(lambda_conf[0]['revision'])
+        page.workflows_page.task_form.lambda_revision.click()
+        popups(driver).power_select.choose_item(str(revision))
+
+    if results_conf:
+        for res in results_conf:
+            [(res_name, new_res)] = res.items()
+            result = page.workflows_page.task_form.results[res_name + ':']
+            if option == 'adding':
+                result.add_mapping()
+            result.target_store_dropdown[-1].click()
+            popups(driver).power_select.choose_item(new_res)
+
+    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page,
+                                       task_option)

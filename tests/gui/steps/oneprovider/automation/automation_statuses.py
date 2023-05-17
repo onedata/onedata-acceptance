@@ -16,6 +16,11 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_status_from_workflow_visualizer(page):
+    return page.workflow_visualiser.status
+
+
 def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
@@ -43,19 +48,14 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
     assert_status(task, actual_status, expected_status)
 
 
+@repeat_failed(interval=1, timeout=90, exceptions=AssertionError)
 def await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
-                                          lane, task, ordinal, expected_status,
-                                          seconds):
+                                          lane, task, ordinal, expected_status):
     box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
-    t_end = time.time() + int(seconds)
-    while time.time() < t_end:
-        actual_status = box.task_list[task].status
-        if actual_status.lower() == expected_status.lower():
-            break
-    else:
-        raise Exception(f'After awaiting for task "{task}" for {seconds} '
-                        f'seconds its status ({actual_status}) is not '
-                        f'{expected_status} as expected')
+    actual_status = box.task_list[task].status
+    err_msg = (f'After awaiting for task "{task}" its status ({actual_status})'
+               f' is not {expected_status} as expected')
+    assert actual_status.lower() == expected_status.lower(), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
@@ -78,20 +78,15 @@ def get_status(page, option, name):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
-               ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
-               ' maximum of (?P<seconds>.*) seconds'))
+               ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'))
+@repeat_failed(interval=1, timeout=120, exceptions=AssertionError)
 def await_for_lane_workflow_status(selenium, browser_id, op_container,
-                                   expected_status, name, seconds, option):
+                                   expected_status, name, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    t_end = time.time() + int(seconds)
-    while time.time() < t_end:
-        actual_status = get_status(page, option, name)
-        if actual_status.lower() == expected_status.lower():
-            break
-    else:
-        raise Exception(f'After awaiting for {option} "{name}" for'
-                        f' {seconds} seconds its status is not '
-                        f'{expected_status} as expected')
+    actual_status = get_status(page, option, name)
+    err_msg = (f'After awaiting for {option} "{name}" its'
+               f' status is not {expected_status} as expected')
+    assert actual_status.lower() == expected_status.lower(), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
@@ -102,12 +97,11 @@ def assert_status_of_workflow_if_needed_wait_for_stopping_status(
     page = switch_to_automation_page(selenium, browser_id, op_container)
     time.sleep(0.5)
     actual_status = page.workflow_visualiser.status
-    if expected_status == 'Stopping' and  actual_status == 'Active':
-        seconds = 20
+    if expected_status == 'Stopping' and actual_status == 'Active':
         option = 'workflow'
         actual_status = await_for_lane_workflow_status(
             selenium, browser_id, op_container, expected_status, workflow,
-            seconds, option)
+            option)
 
     assert_status(workflow, actual_status, expected_status)
 

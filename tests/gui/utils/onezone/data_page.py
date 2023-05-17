@@ -12,7 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
                                                WebItem, WebElement,
-                                               WebElementsSequence)
+                                               WebElementsSequence, Icon)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -219,7 +219,7 @@ class DataPage(GenericPage):
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
     configuration_page = WebItem('.main-content', cls=SpaceConfigurationPage)
-    space_marketplace_page = WebItem('main-content', cls=SpaceMarketplacePage)
+    space_marketplace_page = WebItem('.main-content', cls=SpaceMarketplacePage)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

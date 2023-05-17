@@ -54,11 +54,13 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
-from tests.gui.meta_steps.onezone.automation.task_creation import *
+from tests.gui.meta_steps.onezone.automation.task_management import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
+from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
 from tests.gui.meta_steps.oneprovider.automation.audit_log import *
 
@@ -86,3 +88,4 @@ scenarios('../features/onezone/automation/automation_workflows_status.feature')
 scenarios('../features/onezone/automation/'
           'workflows_pausing_and_cancelling.feature')
 scenarios('../features/onezone/automation/rerun_workflow.feature')
+scenarios('../features/onezone/automation/workflows_stores.feature')

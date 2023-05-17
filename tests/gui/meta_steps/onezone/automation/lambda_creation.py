@@ -141,6 +141,33 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd '
+               '|4th )(?P<option>argument|result|configuration parameters) '
+               'named "(?P<name>.*)" to be "(?P<type>.*)" type'))
+def change_parameter_type_in_lambda_form(selenium, browser_id, oz_page,
+                                         popups, option, type, ordinal):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].lambdas_page.form
+    subpage = getattr(page, transform(option))
+
+    ordinal = '1st' if not ordinal else ordinal
+    bracket_name = 'bracket_' + ordinal.strip()
+    object_bracket = getattr(subpage, bracket_name)
+    css_sel = '#' + object_bracket.name.web_elem.get_attribute('id')
+    scroll_to_css_selector(driver, css_sel)
+
+    split_type = type.replace(')', '').split(' (')
+    new_type = split_type[0] if 'array' in type else type
+
+    object_bracket.remove_element()
+    object_bracket.type_dropdown.click()
+    popups(driver).power_select.choose_item(new_type)
+
+    if 'array' in type:
+        object_bracket.type_dropdown.click()
+        popups(driver).power_select.choose_item(split_type[1])
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) adds '
                '(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result'
                '|configuration parameters) named "(?P<name>.*)" '

@@ -214,7 +214,7 @@ Feature: Basic datasets operations
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    Then user of browser cannot click "Reattach" option in data row menu in dataset browser
+    Then user of browser sees that "Reattach" option is disabled in opened item menu in dataset browser
 
 
   Scenario: User sees dataset in detached tab after deleting directory
@@ -240,7 +240,7 @@ Feature: Basic datasets operations
     And user of browser clicks and presses enter on item named "dir2" in file browser
 
     And user of browser clicks on menu for "dir3" directory in file browser
-    Then user of browser cannot click "Delete" option in data row menu in file browser
+    Then user of browser sees that "Delete" option is disabled in opened item menu in file browser
 
 
   Scenario: User sees data protection tag in dataset modal for hardlink of data protected file

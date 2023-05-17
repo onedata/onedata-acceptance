@@ -10,6 +10,7 @@ from tests.gui.utils.core.web_elements import (WebItem, WebItemsSequence,
                                                WebElementsSequence, Label)
 from tests.utils.utils import repeat_failed
 from .archive_row_menu import ArchiveRowMenu
+from .boolean_values import BooleanValues
 from .consumer_caveat import ConsumerCaveat
 from .data_row_menu import DataRowMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
@@ -25,6 +26,7 @@ from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
 from .shares_row_menu import SharesRowMenu
 from .chart_statistics import ChartStatistics
+from .spaces_tags import SpacesTags
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
@@ -92,11 +94,15 @@ class Popups(object):
     shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
     chart_statistics = WebItem('.chart-tooltip', cls=ChartStatistics)
     handle_service = WebItem('.ember-power-select-options', cls=HandleService)
+    boolean_values = WebItem('.ember-power-select-options', cls=BooleanValues)
     time_resolutions_list = WebElementsSequence(
         '.time-resolutions-dropdown .ember-power-select-option')
-    workflow_initial_values = WebItem('.file-value-editor-selector-actions',
+    workflow_initial_values = WebItem('.in .file-value-editor-selector-actions',
                                       cls=MenuPopupWithLabel)
+    workflow_dataset_initial_value = WebItem(
+        '.in .dataset-value-editor-selector-actions', cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
+    spaces_tags = WebItem('.space-tags-selector', cls=SpacesTags)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

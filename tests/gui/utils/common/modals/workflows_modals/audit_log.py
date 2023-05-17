@@ -9,7 +9,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import (WebItemsSequence, Label, Button)
+from tests.gui.utils.core.web_elements import (WebItemsSequence, Label, Button,
+                                               WebElement)
 
 
 class LogsEntry(PageObject):
@@ -17,14 +18,15 @@ class LogsEntry(PageObject):
     severity = Label('.severity-name')
 
 
-class TaskAuditLog(Modal):
+class AuditLog(Modal):
     logs_entry = WebItemsSequence('.audit-log-table-entry', cls=LogsEntry)
+    user_log = WebElement('.user-log-content-cell')
     x = Button('.close')
 
     copy_json = Button('.copy-link')
     close_details = Button('.close-details')
 
     def __str__(self):
-        return 'Task audit log modal'
+        return 'Audit log modal'
 
 

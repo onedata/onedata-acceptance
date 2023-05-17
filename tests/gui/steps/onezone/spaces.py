@@ -388,7 +388,7 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
-               '(?P<toggle>.*) toggle on space configuration page'))
+               '(?P<toggle>.*) toggle1 on space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
                                       op_container, option):

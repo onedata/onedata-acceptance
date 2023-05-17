@@ -31,3 +31,26 @@ def assert_marketplace_icon_in_space_sidebar(selenium, browser_id,  oz_page,
     assert oz_page(driver)['data'].elements_list[space_name].advertised_icon, \
         err_msg
 
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_organization_name_in_space_marketplace(selenium, browser_id,  oz_page,space_name, organization_name):
+    driver = selenium[browser_id]
+    err_msg = "Space: {space_name} does not have {organization_name}"
+    assert oz_page(driver)['data'].elements_list[space_name].advertised_icon, \
+        err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_creation_time_in_space_marketplace(selenium, browser_id,  oz_page,space_name, description):
+    driver = selenium[browser_id]
+    err_msg = "Space: {space_name} does not have {description}"
+    assert oz_page(driver)['data'].elements_list[space_name].advertised_icon, \
+        err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_description_in_space_marketplace(selenium, browser_id,  oz_page,space_name, description):
+    driver = selenium[browser_id]
+    err_msg = "Space: {space_name} does not have {description}"
+    assert oz_page(driver)['data'].elements_list[space_name].advertised_icon, \
+        err_msg

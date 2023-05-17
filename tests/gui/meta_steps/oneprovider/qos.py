@@ -9,9 +9,10 @@ from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_panel, click_panel_button)
 from tests.gui.steps.oneprovider.data_tab import (
-    choose_option_from_selection_menu, assert_browser_in_tab_in_op)
+    assert_browser_in_tab_in_op,
+    choose_option_for_file_from_selection_menu)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_on_item_in_file_browser, click_on_status_tag_for_file_in_file_browser)
+    click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser,
     assert_not_status_tag_for_file_in_browser)
@@ -35,9 +36,8 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     expression_field = 'expression'
     details_modal = 'Details modal'
 
-    click_on_item_in_file_browser(browser_id, item_name, tmp_memory)
-    choose_option_from_selection_menu(browser_id, selenium, qos_option, popups,
-                                      tmp_memory)
+    choose_option_for_file_from_selection_menu(browser_id, selenium, qos_option,
+                                               popups, tmp_memory, item_name)
     click_panel_button(selenium, browser_id, add_button, panel, modals)
     click_enter_as_text_link(selenium, browser_id, modals)
     write_name_into_text_field_in_panel(selenium, browser_id, expression,

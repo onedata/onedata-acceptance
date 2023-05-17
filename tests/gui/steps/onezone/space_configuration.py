@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import json
+import pdb
 
 from tests.gui.conftest import WAIT_FRONTEND
 
@@ -32,7 +33,7 @@ def assert_advertise_in_marketplace_toggle(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
-               '"Advertise in Marketplace" toggle1 on space configuration page'))
+               '"Advertise in Marketplace" toggle on space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def advertise_space_on_space_configuration_page(browser_id, selenium, oz_page,
                                                 option):
@@ -93,16 +94,17 @@ def set_description_of_a_space(selenium, browser_id, oz_page, description):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_tag_in_space_configuration_tab(browser_id, config, selenium, oz_page, popups, tag_type, tag):
+def add_tag_in_space_configuration_tab(selenium, browser_id,  oz_page, popups, tag_type, tag):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
     page.space_tags_editor.click()
     page.space_tags_editor.add_tag.click()
 
-    popups(driver).general_button.click()
-    popups(driver).general_button.search_bar.value == tag
-    popups(driver).tags_list[tag].click()
-    popups(driver).general_button.search_bar.clear()
+    popups(driver).spaces_tags.general_button.click()
+    pdb.set_trace()
+    popups(driver).spaces_tags.search_bar.value == tag
+    popups(driver).spaces_tags.tags_list[tag].click()
+    popups(driver).spaces_tags.search_bar.clear()
 
     page.space_tags_editor.add_tag.save_button
 
