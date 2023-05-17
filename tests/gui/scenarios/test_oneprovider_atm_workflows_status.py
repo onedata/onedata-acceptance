@@ -1,9 +1,9 @@
-"""This module contains tests suite for executing workflows using
+"""This module contains tests suite for workflows statuses using
 Oneprovider GUI.
 """
 
-__author__ = "Rafał Widziszewski"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -82,5 +82,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/'
-          'automation_workflows_execution.feature')
+scenarios('../features/onezone/automation/automation_workflows_status.feature')

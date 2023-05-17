@@ -1,9 +1,10 @@
-"""This module contains tests suite for executing workflows using
-Oneprovider GUI.
+"""This module contains tests suite for automation management concerning
+automation members and privileges using Onezone GUI and multiple browsers
+ instances.
 """
 
 __author__ = "Rafał Widziszewski"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -54,24 +55,16 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
-from tests.gui.meta_steps.onezone.automation.task_management import *
-from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
-from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
-from tests.gui.meta_steps.oneprovider.automation.audit_log import *
 
 from tests.utils.acceptance_utils import *
 
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.onezone.automation.workflow_creation import *
-from tests.gui.steps.oneprovider.automation.automation_statuses import *
 from tests.gui.steps.oneprovider.automation.automation_basic import *
-from tests.gui.steps.oneprovider.automation.workflow_results_modals import *
-from tests.gui.steps.oneprovider.automation.workflow_run_indicators import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *
 from tests.utils.entities_setup.inventory import *
@@ -79,8 +72,9 @@ from tests.utils.entities_setup.inventory import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
+scenarios('../features/onezone/automation/automation_members.feature')
 scenarios('../features/onezone/automation/'
-          'automation_workflows_execution.feature')
+          'automation_effective_privileges.feature')

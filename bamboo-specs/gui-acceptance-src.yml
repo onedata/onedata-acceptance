@@ -74,6 +74,7 @@ stages:
         - Onepanel two hosts deployment
         - Oneprovider ACL basic
         - Oneprovider ACL directories privileges
+        - Oneprovider ACL directories privileges change and upload
         - Oneprovider ACL directories privileges create
         - Oneprovider ACL directories privileges metadata
         - Oneprovider ACL directories privileges remove
@@ -88,6 +89,10 @@ stages:
         - Oneprovider archives incremental and nested
         - Oneprovider archives recall
         - Oneprovider atm workflow execution
+        - Oneprovider atm workflows stores
+        - Oneprovider atm rerun workflow
+        - Oneprovider atm workflows pausing and cancelling
+        - Oneprovider atm workflows status
         - Oneprovider data tab
         - Oneprovider data tab files
         - Oneprovider datasets
@@ -96,6 +101,7 @@ stages:
         - Oneprovider symlinks
         - Oneprovider upload
         - Onezone automations
+        - Onezone automations members and privileges
         - Onezone basic
         - Onezone data discovery
         - Onezone data discovery helpers
@@ -538,6 +544,21 @@ Oneprovider ACL directories privileges:
         scripts:
           - make SUITE=test_oneprovider_acl_dir_privileges test_gui_src
 
+Oneprovider ACL directories privileges change and upload:
+  <<: *acceptance-tests-in-chrome-job
+  key: COADPCU
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_acl_dir_privileges_change_and_upload test_gui_src
+
 Oneprovider ACL directories privileges create:
   <<: *acceptance-tests-in-chrome-job
   key: COADPC
@@ -748,6 +769,66 @@ Oneprovider atm workflow execution:
         scripts:
           - make ENV_FILE=1oz_1op_openfaas SUITE=test_oneprovider_atm_workflows_execution test_gui_src
 
+Oneprovider atm workflows stores:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Oneprovider atm rerun workflow:
+  <<: *acceptance-tests-in-chrome-job
+  key: COARW
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_rerun_workflow ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Oneprovider atm workflows pausing and cancelling:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Oneprovider atm workflows status:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_src
+
 Oneprovider data tab:
   <<: *acceptance-tests-in-chrome-job
   key: CODTT
@@ -867,6 +948,21 @@ Onezone automations:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onezone_automation test_gui_src
+
+Onezone automations members and privileges:
+  <<: *acceptance-tests-in-chrome-job
+  key: COATMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onezone_automation_members_and_privileges test_gui_src
 
 Onezone basic:
   <<: *acceptance-tests-in-chrome-job
