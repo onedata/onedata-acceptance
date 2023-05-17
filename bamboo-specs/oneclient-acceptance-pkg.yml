@@ -5,7 +5,7 @@ plan:
   name: oneclient acceptance pkg
   description: oneclient acceptance tests using environment deployed from packages
 variables:
-  quarantineSourcePlan: VFS-OAP
+  quarantineSourcePlan: ODSRV-OAP
   quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:

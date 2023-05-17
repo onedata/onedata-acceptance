@@ -5,7 +5,7 @@ plan:
   name: mixed acceptance pkg
   description: Acceptance tests using different clients concurrently. Environment deployed from packages.
 variables:
-  quarantineSourcePlan: VFS-MAOPT
+  quarantineSourcePlan: ODSRV-MAOPT
   quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:

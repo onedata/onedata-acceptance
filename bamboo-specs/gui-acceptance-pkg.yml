@@ -10,7 +10,7 @@ variables:
 # OC_IMAGE_OVERRIDE: ""
 # OP_IMAGE_OVERRIDE: ""
 # OZ_IMAGE_OVERRIDE: ""
-  quarantineSourcePlan: VFS-GAPT
+  quarantineSourcePlan: ODSRV-GAPT
   quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:
