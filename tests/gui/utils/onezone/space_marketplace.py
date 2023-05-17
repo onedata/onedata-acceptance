@@ -33,6 +33,7 @@ class Marketplace(PageObject):
     configure_space = Button('.configure-space-link')
 
     show_description_button = Button('.expand-btn')
+    description = Label('.marketplace-space-description')
 
 
 class SpaceMarketplacePage(PageObject):

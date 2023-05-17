@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import json
+import pdb
 
 from tests.gui.conftest import WAIT_FRONTEND
 
@@ -32,7 +33,7 @@ def assert_advertise_in_marketplace_toggle(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
-               '"Advertise in Marketplace" toggle1 on space configuration page'))
+               '"Advertise in Marketplace" toggle on space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def advertise_space_on_space_configuration_page(browser_id, selenium, oz_page,
                                                 option):
@@ -48,9 +49,8 @@ def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
     driver = selenium[browser_id]
     contact_email = oz_page(driver)['data'].configuration_page.contact_email
     contact_email.click()
-    assert 'oneicon-checkbox-empty' in contact_email
 
-#    'oneicon-checkbox-empty'
+    assert email_address in contact_email.text
 
 
 @wt(parsers.parse('user of browser clicks "View in Marketplace" button on '
@@ -93,18 +93,19 @@ def set_description_of_a_space(selenium, browser_id, oz_page, description):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_tag_in_space_configuration_tab(browser_id, config, selenium, oz_page, popups, tag_type, tag):
+def add_tags_in_space_configuration_tab(selenium, browser_id,  oz_page, popups,
+                                        tag_type, tags):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
     page.space_tags_editor.click()
     page.space_tags_editor.add_tag.click()
+    getattr(popups(driver).spaces_tags, tag_type).click()
 
-    popups(driver).general_button.click()
-    popups(driver).general_button.search_bar.value == tag
-    popups(driver).tags_list[tag].click()
-    popups(driver).general_button.search_bar.clear()
+    for tag in tags:
+        popups(driver).spaces_tags.search_bar = tag
+        popups(driver).spaces_tags.tags_list[tag].click()
 
-    page.space_tags_editor.add_tag.save_button
+    page.space_tags_editor.save_button.click()
 
 
 

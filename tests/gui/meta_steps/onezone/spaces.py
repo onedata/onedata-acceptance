@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import pdb
+
 from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.tokens import (
     consume_received_token)
@@ -20,13 +22,19 @@ from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
 from tests.gui.steps.onezone.groups import (
     go_to_group_subpage)
+from tests.gui.steps.onezone.marketplace import \
+    assert_organization_name_in_space_marketplace, \
+    assert_description_in_space_marketplace, \
+    assert_creation_time_in_space_marketplace, \
+    assert_tags_in_space_marketplace, assert_support_in_space_marketplace
 from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.space_configuration import \
     set_space_name_in_configuration_tab, \
-    set_organization_name_in_configuration_tab, set_description_of_a_space
+    set_organization_name_in_configuration_tab, set_description_of_a_space, \
+    add_tags_in_space_configuration_tab
 from tests.gui.steps.onezone.spaces import *
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
@@ -435,10 +443,10 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
                 - science
             description: "space advertised in marketplace"
     """
-    _configure_space_manually(browser_id, config, selenium, oz_page)
+    _configure_space_manually(browser_id, config, selenium, oz_page, popups)
 
 
-def _configure_space_manually(browser_id, config, selenium, oz_page):
+def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
     data = yaml.load(config)
     space_name = data['space name']
     organization_name = data['organization name']
@@ -452,51 +460,63 @@ def _configure_space_manually(browser_id, config, selenium, oz_page):
     set_description_of_a_space(selenium, browser_id, oz_page, description)
 
     if tags:
-        if general:
-            for tag in general:
-                add_tag_in_space_configuration_tab(selenium, browser_id, oz_page,"general", tag)
-       if domains:
-           for tag in domains:
-               add_tag_in_space_configuration_tab(selenium, browser_id, oz_page,"domain",tag)
+        if tags['general']:
+            add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
+                                                popups, 'general',
+                                                tags['general'])
+        if tags['domains']:
+            add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
+                                                popups, 'domains',
+                                                tags['domains'])
 
 
+@wt(parsers.parse('user of {browser_id} sees advertised space '
+                  'on Space Marketplace '
+                  'subpage with following parameters:\n{config}'))
+def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page,
+                                            config):
+    """Assert space advertised in marketplace according to given config.
+        space name: "space1"
+        tags:
+          - archival
+          - big-data
+          - science
+        organization name: "onedata"
+        creation time: current
+        providers:
+          - oneprovider-1
+        description: "Example of a space avertised in a Marketplace"
 
-@wt(parsers.parse('And user of browser sees that space1 is advertised on Space Marketplace subpage with following parameters:\n{config}'))
-def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, space_name):
-    """Adjust space configuration according to given config.
-
-        Config format given in yaml is as follows:
-            space name: space_name
-            organization name: organization_name
-            tags:                           ---> optional
-              general:
-                - general-tags
-              domains:
-                - domain-tags
-            description: description
-
-
-
-        Example configuration:
-            space name: "space1"
-            organization name: "onedata"
-            tags:                           ---> optional
-              general:
-                - EU-funded
-                - big-data
-                - open-science
-              domains:
-                - science
-            description: "space advertised in marketplace"
     """
 
-    _assert_space_in_marketplace_with_config
+    _assert_space_in_marketplace_with_config(browser_id, config, selenium,
+                                             oz_page)
 
-def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, space_name):
 
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
+def _assert_space_in_marketplace_with_config(browser_id, config, selenium,
+                                             oz_page):
+    data = yaml.load(config)
+    space_name = data['space name']
 
-    space_name =
-    organization_name =
+    organization_name = data['organization name']
+    creation_time = data['creation time']
+    tags = data.get('tags', False)
+    providers = data.get('providers', False)
+    description = data['description']
 
+    assert_organization_name_in_space_marketplace(selenium, browser_id, oz_page,
+                                                  space_name, organization_name)
+
+    if tags:
+        assert_tags_in_space_marketplace(selenium, browser_id, oz_page,
+                                         space_name,
+                                         tags)
+
+    assert_creation_time_in_space_marketplace(selenium, browser_id, oz_page,
+                                              space_name, creation_time)
+
+    assert_support_in_space_marketplace(selenium, browser_id, oz_page,
+                                               space_name, providers)
+
+    assert_description_in_space_marketplace(selenium, browser_id, oz_page,
+                                            space_name, description)

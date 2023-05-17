@@ -20,6 +20,7 @@ from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 
 
 class Inventory(Element):
+    name = id = Label('.item-name')
     menu = Button('.atm-inventory-menu-trigger')
     workflows = NamedButton('.one-list-level-2 .item-header', text='Workflows')
     lambdas = NamedButton('.one-list-level-2 .item-header', text='Lambdas')
@@ -33,7 +34,6 @@ class AutomationDetailsPage(PageObject):
     add_new_workflow = NamedButton('.btn', text='Add new workflow')
 
     add_new_lambda = NamedButton('.btn', text='Add new lambda')
-
 
 
 class AutomationPage(GenericPage):

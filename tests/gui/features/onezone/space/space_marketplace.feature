@@ -23,7 +23,6 @@ Feature: Basic management of Space Marketplace
     And user of browser chooses "space1" in spaces dropdown menu in modal "Advertise space"
     And user of browser clicks on "Configure..." button in modal "Advertise space"
     And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
-
     And user of browser sets space configuration as follows:
         space name: "space1"
         organization name: "onedata"
@@ -33,28 +32,26 @@ Feature: Basic management of Space Marketplace
             - big-data
           domains:
             - science
-            - type: File
         description: "Example of a space avertised in a Marketplace"
 
-    And user of browser checks "Advertise in Marketplace" toggle1 on space configuration page
+    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
     And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
     And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
     And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
     And user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
-#    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
+    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
     And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
     And user of browser clicks "View in Marketplace" button on space configuration page
-    And user of browser sees that space1 is advertised on Space Marketplace subpage with following parameters:
+    And user of browser sees advertised space on Space Marketplace subpage with following parameters:
         space name: "space1"
         tags:
           - archival
           - big-data
           - science
-          - type: File
         organization name: "onedata"
         creation time: current
         providers:
-          - oneprovider-1
+          - dev-oneprovider-krakow
         description: "Example of a space avertised in a Marketplace"
 
 

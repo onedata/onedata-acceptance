@@ -29,7 +29,7 @@ class _FileBrowser(PageObject):
     refresh_button = Button('.toolbar-buttons .file-action-refresh')
     place_hard_link_button = Button('.toolbar-buttons .oneicon-text-link')
     place_symbolic_link_button = Button('.toolbar-buttons .oneicon-shortcut')
-    selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
+    selection_menu_button = Button('.one-pill-button-actions-trigger')
     paste_button = Button('.toolbar-buttons .oneicon-browser-paste')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)

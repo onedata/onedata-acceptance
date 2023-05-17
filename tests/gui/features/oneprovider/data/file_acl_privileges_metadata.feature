@@ -45,7 +45,7 @@ Feature: ACL files privileges metadata tests using single browser in Oneprovider
 
   Scenario Outline: Read files metadata
     When user of space_owner_browser succeeds to write "file1" file basic metadata: "attr=val" in "space1"
-    And user of space_owner_browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+    And user of space_owner_browser sets "file1" file ACL <privileges> privileges for <subject_type> <subject_name>
     Then user of browser_user1 <result> to read "file1" file basic metadata: "attr=val" in "space1"
 
     Examples:

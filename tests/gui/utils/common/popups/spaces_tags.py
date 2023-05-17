@@ -8,20 +8,20 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Button, \
-    WebItem
-from tests.gui.utils.onezone.common import InputBox
+    WebItem, Input
+from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
 
-class TagsList(PageObject):
+class Tag(PageObject):
     name = id = Label('.tag-label')
 
 
 class SpacesTags(PageObject):
-    general_button = Button('.category-selector .btn-general')
-    domains_button = Button('.category-selector .btn-domains')
-    search_bar = WebItem('.filter-tags-input', cls=InputBox)
+    general = Button('.category-selector .btn-general')
+    domains = Button('.category-selector .btn-domains')
+    search_bar = Input('.filter-tags-input')
 
-    tags_list = WebItemsSequence('.tags-container', cls=TagsList)
+    tags_list = WebItemsSequence('.tags-container .selector-item', cls=Tag)
 
     def __str__(self):
         return 'Spaces tags'
