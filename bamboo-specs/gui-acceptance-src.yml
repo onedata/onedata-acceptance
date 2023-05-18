@@ -66,9 +66,7 @@ stages:
         - Multiprovider QoS
         - Multiprovider QoS storage
         - Onepanel basic
-        - Onepanel ceph spaces
         - Onepanel deployment basic
-        - Onepanel deployment ceph
         - Onepanel login
         - Onepanel members
         - Onepanel two hosts deployment
@@ -424,21 +422,6 @@ Onepanel basic:
         scripts:
           - make SUITE=test_onepanel_basic test_gui_src
 
-Onepanel ceph spaces:
-  <<: *acceptance-tests-in-chrome-job
-  key: COCS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_src
-
 Onepanel deployment basic:
   <<: *acceptance-tests-in-chrome-job
   key: CODBT
@@ -453,21 +436,6 @@ Onepanel deployment basic:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_src
-
-Onepanel deployment ceph:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_src
 
 Onepanel login:
   <<: *acceptance-tests-in-chrome-job
