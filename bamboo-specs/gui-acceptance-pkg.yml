@@ -89,7 +89,7 @@ stages:
         - Oneprovider archives recall
         - Oneprovider atm workflow execution
         - Oneprovider atm workflows stores
-        - Oneprovider atm rerun workflow
+        - Oneprovider atm stores basic
         - Oneprovider atm workflows pausing and cancelling
         - Oneprovider atm workflows status
         - Oneprovider data tab
@@ -753,9 +753,9 @@ Oneprovider atm workflows stores:
         scripts:
           - make SUITE=test_oneprovider_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
-Oneprovider atm rerun workflow:
+Oneprovider atm stores basic:
   <<: *acceptance-tests-in-chrome-job
-  key: COARW
+  key: COASB
   tasks:
     - script: *clear-env
     - script: *restart-minikube
@@ -766,7 +766,7 @@ Oneprovider atm rerun workflow:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_oneprovider_atm_rerun_workflow ENV_FILE=1oz_1op_openfaas test_gui_pkg
+          - make SUITE=test_oneprovider_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
 Oneprovider atm workflows pausing and cancelling:
   <<: *acceptance-tests-in-chrome-job
