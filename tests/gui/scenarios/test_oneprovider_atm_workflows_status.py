@@ -83,3 +83,4 @@ def screens():
 
 
 scenarios('../features/onezone/automation/automation_workflows_status.feature')
+scenarios('../features/onezone/automation/rerun_workflow.feature')

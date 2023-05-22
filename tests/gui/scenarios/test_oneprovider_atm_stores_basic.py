@@ -82,4 +82,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/rerun_workflow.feature')
+scenarios('../features/onezone/automation/workflow_stores_basic.feature')
