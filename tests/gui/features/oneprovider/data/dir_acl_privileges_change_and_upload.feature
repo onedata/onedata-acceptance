@@ -1,4 +1,4 @@
-Feature: ACL directories privileges metadata tests using single browser in Oneprovider GUI
+Feature: ACL directories privileges tests on changing directory and uploading to directory using multiple browsers in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |
@@ -32,23 +32,24 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
-  Scenario Outline: Write metadata to directory
+  Scenario Outline: Upload file to directory
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
+    Then user of browser_user1 <result> to upload "20B-0.txt" to "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                         |
-    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
-    | fails    |  all except [metadata:write metadata]               |
-    | succeeds |  all except [metadata:read metadata]                |
+    | result   |  privileges                                                 |
+    | succeeds |  [data:list files, data:add files, data:traverse directory] |
+    | fails    |  all except [data:add files]                                |
+    | fails    |  all except [data:traverse directory]                       |
 
 
-  Scenario Outline: Read directory metadata
-    When user of space_owner_browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
-    And user of space_owner_browser sets "dir1" directory ACL <privileges> privileges for <subject_type> <subject_name>
-    Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
+  Scenario Outline: Change directory ACL
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to change "dir1" ACL for <subject_name> in "space1"
 
     Examples:
-    | result   |  privileges                            |
-    | succeeds |  [metadata:read metadata]              |
-    | fails    |  all except [metadata:read metadata]   |
+    | result   |  privileges                   |
+    | succeeds |  [acl]                        |
+    | fails    |  all except [acl:change acl]  |
+
+

@@ -34,7 +34,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
-    Then user of browser_user1 cannot click "Create archive" option in data row menu in dataset browser
+    Then user of browser_user1 sees that "Create archive" option is disabled in opened item menu in dataset browser
 
 
   Scenario: User fails to create dataset if he does not have manage datasets privilege
@@ -66,8 +66,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
-    And user of browser_user1 clicks "Detach" option in data row menu in dataset browser
-    Then user of browser_user1 sees that "Detach Dataset" modal has not appeared
+    Then user of browser_user1 sees that "Detach" option is disabled in opened item menu in dataset browser
 
 
   Scenario: User fails to enable write protection for dataset if he does not have manage datasets privilege
@@ -99,8 +98,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
-    And user of browser_user1 clicks "Remove" option in data row menu in dataset browser
-    Then user of browser_user1 sees that "Remove Selected Dataset" modal has not appeared
+    Then user of browser_user1 sees that "Remove" option is disabled in opened item menu in dataset browser
 
 
   Scenario: User successfully creates dataset if he has manage datasets privilege

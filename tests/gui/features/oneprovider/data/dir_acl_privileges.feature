@@ -1,4 +1,4 @@
-Feature: ACL directories privileges tests using single browser in Oneprovider GUI
+Feature: ACL directories privileges tests using multiple browsers in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |
@@ -32,17 +32,6 @@ Feature: ACL directories privileges tests using single browser in Oneprovider GU
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
-  Scenario Outline: Upload file to directory
-    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to upload "20B-0.txt" to "dir1" in "space1"
-
-    Examples:
-    | result   |  privileges                                                 |
-    | succeeds |  [data:list files, data:add files, data:traverse directory] |
-    | fails    |  all except [data:add files]                                |
-    | fails    |  all except [data:traverse directory]                       |
-
-
   Scenario Outline: Rename directory
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to rename "dir1" to "new_name" in "space1"
@@ -61,15 +50,4 @@ Feature: ACL directories privileges tests using single browser in Oneprovider GU
     | result   |  privileges                   |
     | succeeds |  [acl:read acl]               |
     | fails    |  all except [acl:read acl]    |
-
-
-  Scenario Outline: Change directory ACL
-    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to change "dir1" ACL for <subject_name> in "space1"
-
-    Examples:
-    | result   |  privileges                   |
-    | succeeds |  [acl]                        |
-    | fails    |  all except [acl:change acl]  |
-
 

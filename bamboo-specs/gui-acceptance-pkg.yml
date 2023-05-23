@@ -5,11 +5,13 @@ plan:
   name: gui acceptance pkg
   description: GUI acceptance tests using environment deployed from packages.
 # Uncomment and set the following variables when necessary
-# variables:
+variables:
 # GUI_PKG_VERIFICATION: ""
 # OC_IMAGE_OVERRIDE: ""
 # OP_IMAGE_OVERRIDE: ""
 # OZ_IMAGE_OVERRIDE: ""
+  quarantineSourcePlan: ODSRV-GAPT
+  quarantineSourceBranch: develop
 repositories:
   - onedata-acceptance:
       scope: global
@@ -48,6 +50,12 @@ other:
         duration: "1"
 
 stages:
+  - Qnthack - copy quarantine:
+      manual: false
+      final: false
+      jobs:
+        - Qnthack - copy quarantine
+        - Qnthack - terminate build
   - Acceptance Test:
       manual: false
       final: false
@@ -59,14 +67,13 @@ stages:
         - Multiprovider QoS
         - Multiprovider QoS storage
         - Onepanel basic
-        - Onepanel ceph spaces
         - Onepanel deployment basic
-        - Onepanel deployment ceph
         - Onepanel login
         - Onepanel members
         - Onepanel two hosts deployment
         - Oneprovider ACL basic
         - Oneprovider ACL directories privileges
+        - Oneprovider ACL directories privileges change and upload
         - Oneprovider ACL directories privileges create
         - Oneprovider ACL directories privileges metadata
         - Oneprovider ACL directories privileges remove
@@ -81,6 +88,10 @@ stages:
         - Oneprovider archives incremental and nested
         - Oneprovider archives recall
         - Oneprovider atm workflow execution
+        - Oneprovider atm workflows stores
+        - Oneprovider atm stores basic
+        - Oneprovider atm workflows pausing and cancelling
+        - Oneprovider atm workflows status
         - Oneprovider data tab
         - Oneprovider data tab files
         - Oneprovider datasets
@@ -89,6 +100,7 @@ stages:
         - Oneprovider symlinks
         - Oneprovider upload
         - Onezone automations
+        - Onezone automations members and privileges
         - Onezone basic
         - Onezone data discovery
         - Onezone data discovery helpers
@@ -125,6 +137,67 @@ stages:
         - Transfers directories
         - Transfers files
         - Transfers multi browser
+  - Qnthack - rerun:
+      manual: false
+      final: true
+      jobs:
+        - Qnthack - rerun
+
+Qnthack - copy quarantine:
+  key: COPQU
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        buildHangingConfig.enabled: 'false'
+  tasks:
+    - checkout: &fake-checkout
+        conditions:
+          - variable:
+              exists: fake.var
+    - script: &quarantine-hack-run-script-on-third-build
+        interpreter: BINSH_OR_CMDEXE
+        scripts:
+          - |-
+            # The script which copies the quarantined test cases resides on the bamboo server.
+            # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/quarantine-copy.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+            # The script is run indirectly by the CGI script used in the curl command.
+            echo curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+            curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+        description: Copy quarantined test cases
+        conditions:
+          - variable:
+              matches:
+                # copy quarantine is run on build 3,4,5 just in case the expected numbering has been
+                # disturbed by early branch pushing or manual plan branch running 
+                bamboo.buildNumber: '[3-5]'
+    - script: &always-successful
+        interpreter: BINSH_OR_CMDEXE
+        description: Always successful
+        scripts:
+          - true
+
+Qnthack - terminate build:
+  key: TERMB
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script: *always-successful
+    - script:
+        <<: *quarantine-hack-run-script-on-third-build
+        scripts:
+          - |-
+            echo Terminating build...
+            false
+        description: Terminate build
+        conditions:
+          - variable:
+              matches:
+                # Terminate build for build number 3.
+                # When normal undisturbed flow takes place there is no sense in
+                # further building and testing as the code has not changed yet
+                bamboo.buildNumber: '3'
 
 _Codetag Tracker:
   key: CDTR
@@ -141,20 +214,26 @@ _Codetag Tracker:
         path: onedata-acceptance
         force-clean-build: "true"
         description: Checkout Default Repository
-    - script: &init-submodules
-        interpreter: BINSH_OR_CMDEXE
+    - script: &run-script
+        interpreter: SHELL
         scripts:
           - |-
+            cd onedata-acceptance
             git remote set-url origin ${bamboo.repository.git.repositoryUrl}
             git remote -v
             make submodules
-        working-dir: onedata-acceptance
         description: Init submodules
-    - script:
-        interpreter: BINSH_OR_CMDEXE
-        working-dir: onedata-acceptance
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[4-9]|.{2,}'
+    - script: &run-script-working-dir
+        <<: *run-script
         scripts:
-          - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+          - |-
+            echo ${bamboo.planRepository.branchName}
+            make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        working-dir: onedata-acceptance
         description: Codetag Tracker
   requirements: []
   artifact-subscriptions: []
@@ -164,28 +243,66 @@ Metadata: &acceptance-tests-in-chrome-job
   other: *common-opts
   tasks:
     - script: &clear-env
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env
     - script: &restart-minikube
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
     - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: &download-artifacts
-        interpreter: BINSH_OR_CMDEXE
+    - script: &init-submodules
+        <<: *run-script
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[2-9]|.{2,}'
+    - script: &quarantine-hack-pull-surefire
+        <<: *run-script-working-dir
         scripts:
-          - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-        working-dir: onedata-acceptance
+          - |-
+            #!/bin/bash
+            ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
+            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            let c=3
+            while : ; do
+                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                    --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                    --artifact-name ${ARTIFACT}
+                tar zxf ${ARTIFACT}
+                if [ -f test-reports/results*.xml ]; then
+                    break
+                else
+                    let c=$c-1
+                    if [[ $c < 0 ]]; then
+                        echo "Giving up... The surefire file 'results.xml' could not be pulled. Does it exist in the develop?" >&2
+                        break
+                    fi
+                    echo "The surefire file 'results.xml' could not be pulled, retrying in 30 seconds..." >&2
+                    sleep 30
+                fi
+            done
+            touch test-reports/results*.xml
+        description: Pull surefire artifact and unpack it
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2|3'
+    - script: &download-artifacts
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &run-selenium-tests
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
         scripts:
           - make SUITE=test_metadata test_gui_pkg
-        working-dir: onedata-acceptance
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -194,7 +311,21 @@ Metadata: &acceptance-tests-in-chrome-job
         test-results: onedata-acceptance/test-reports/results*.xml
         description: Parse test results
     - script:
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            #!/bin/bash
+            ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
+            tar czf ${ARTIFACT} test-reports/results*.xml
+            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+        description: Pack and push surefire artifact
+    - script:
+        <<: *run-script
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/gui/logs
@@ -203,10 +334,9 @@ Metadata: &acceptance-tests-in-chrome-job
             mv onedata-acceptance/tests/gui/logs/gui_report/images.yaml onedata-acceptance/tests/gui/logs
         description: Pack logs
     - script:
-        interpreter: BINSH_OR_CMDEXE
+        <<: *run-script-working-dir
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
-        working-dir: onedata-acceptance
         description: Clear env and working dir
   artifacts:
     - name: report
@@ -226,6 +356,7 @@ Multiprovider basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -240,6 +371,7 @@ Multiprovider multiuser:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -254,6 +386,7 @@ Multiprovider QoS:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -268,6 +401,7 @@ Multiprovider QoS storage:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -282,25 +416,12 @@ Onepanel basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_basic test_gui_pkg
-
-Onepanel ceph spaces:
-  <<: *acceptance-tests-in-chrome-job
-  key: COCS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_pkg
 
 Onepanel deployment basic:
   <<: *acceptance-tests-in-chrome-job
@@ -310,25 +431,12 @@ Onepanel deployment basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_pkg
-
-Onepanel deployment ceph:
-  <<: *acceptance-tests-in-chrome-job
-  key: CODC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed_embedded_ceph test_gui_pkg
 
 Onepanel login:
   <<: *acceptance-tests-in-chrome-job
@@ -338,6 +446,7 @@ Onepanel login:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -352,6 +461,7 @@ Onepanel members:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -366,6 +476,7 @@ Onepanel two hosts deployment:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -380,6 +491,7 @@ Oneprovider ACL basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -394,11 +506,27 @@ Oneprovider ACL directories privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_acl_dir_privileges test_gui_pkg
+
+Oneprovider ACL directories privileges change and upload:
+  <<: *acceptance-tests-in-chrome-job
+  key: COADPCU
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_acl_dir_privileges_change_and_upload test_gui_pkg
 
 Oneprovider ACL directories privileges create:
   <<: *acceptance-tests-in-chrome-job
@@ -408,6 +536,7 @@ Oneprovider ACL directories privileges create:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -422,6 +551,7 @@ Oneprovider ACL directories privileges metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -436,6 +566,7 @@ Oneprovider ACL directories privileges remove:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -450,6 +581,7 @@ Oneprovider ACL files:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -464,6 +596,7 @@ Oneprovider ACL files metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -478,6 +611,7 @@ Oneprovider ACL remove file:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -492,6 +626,7 @@ Oneprovider ACL subdirectories:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -506,6 +641,7 @@ Oneprovider ACL subdirectories remove:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -520,6 +656,7 @@ Oneprovider ACL subfiles:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -534,6 +671,7 @@ Oneprovider ACL subjects:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -548,6 +686,7 @@ Oneprovider archives:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -562,6 +701,7 @@ Oneprovider archives incremental and nested:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -576,6 +716,7 @@ Oneprovider archives recall:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -590,11 +731,72 @@ Oneprovider atm workflow execution:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Oneprovider atm workflows stores:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Oneprovider atm stores basic:
+  <<: *acceptance-tests-in-chrome-job
+  key: COASB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Oneprovider atm workflows pausing and cancelling:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Oneprovider atm workflows status:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
 Oneprovider data tab:
   <<: *acceptance-tests-in-chrome-job
@@ -604,6 +806,7 @@ Oneprovider data tab:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -618,6 +821,7 @@ Oneprovider data tab files:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -632,6 +836,7 @@ Oneprovider datasets:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -646,6 +851,7 @@ Oneprovider datasets privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -660,6 +866,7 @@ Oneprovider hardlinks:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -674,6 +881,7 @@ Oneprovider symlinks:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -688,6 +896,7 @@ Oneprovider upload:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -702,11 +911,27 @@ Onezone automations:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onezone_automation test_gui_pkg
+
+Onezone automations members and privileges:
+  <<: *acceptance-tests-in-chrome-job
+  key: COATMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onezone_automation_members_and_privileges test_gui_pkg
 
 Onezone basic:
   <<: *acceptance-tests-in-chrome-job
@@ -716,6 +941,7 @@ Onezone basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -730,6 +956,7 @@ Onezone data discovery:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -744,6 +971,7 @@ Onezone data discovery helpers:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -758,6 +986,7 @@ Onezone data discovery querying:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -772,6 +1001,7 @@ Onezone groups basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -786,6 +1016,7 @@ Onezone groups multiuser:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -800,6 +1031,7 @@ Onezone groups multiuser single group:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -814,6 +1046,7 @@ Onezone harvesters basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -828,6 +1061,7 @@ Onezone harvesters effective privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -842,6 +1076,7 @@ Onezone harvesters index:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -856,6 +1091,7 @@ Onezone harvesters index metadata:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -870,6 +1106,7 @@ Onezone harvesters memberships privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -884,6 +1121,7 @@ Onezone harvesters privileges add and remove:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -898,6 +1136,7 @@ Onezone invite tokens:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -912,6 +1151,7 @@ Onezone invite tokens with caveats:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -926,6 +1166,7 @@ Onezone invite tokens with consumer caveats:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -940,6 +1181,7 @@ Onezone providers basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -954,6 +1196,7 @@ Onezone spaces basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -968,6 +1211,7 @@ Onezone spaces memberships privileges:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -982,6 +1226,7 @@ Onezone spaces memberships privileges data:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -996,6 +1241,7 @@ Onezone spaces multiuser:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1010,6 +1256,7 @@ Onezone tokens:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1024,6 +1271,7 @@ Onezone tokens delete:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1038,6 +1286,7 @@ POSIX:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1052,6 +1301,7 @@ POSIX multiuser:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1066,6 +1316,7 @@ Public shares:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1080,6 +1331,7 @@ QoS basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1094,6 +1346,7 @@ QoS storage:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1108,6 +1361,7 @@ Shares basic:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1122,6 +1376,7 @@ Shares handle service:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1136,6 +1391,7 @@ Storage sync:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1150,6 +1406,7 @@ Storage sync charts:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1164,6 +1421,7 @@ Transfers cancel:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1178,6 +1436,7 @@ Transfers directories:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1192,6 +1451,7 @@ Transfers files:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
@@ -1206,8 +1466,29 @@ Transfers multi browser:
     - script: *restart-minikube
     - checkout: *checkout-default-repository
     - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
     - script:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed test_gui_pkg
+
+Qnthack - rerun:
+  key: ZREQN
+  description: Rerun
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script:
+        description: Rerun plan to finish quarantine copying
+        scripts:
+          # The script which requests the next build of a plan resides on the bamboo server.
+          # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/run-build.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+          # The script is run indirectly by the CGI script used in the curl command.
+          - curl 10.87.23.72:3080/cgi-bin/run-build?${bamboo.planKey}
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+    - script: *always-successful
+  artifact-subscriptions: []

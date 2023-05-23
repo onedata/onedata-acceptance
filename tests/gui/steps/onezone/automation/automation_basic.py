@@ -7,7 +7,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import upload_file_path, upload_workflow_path
+from tests.gui.utils.generic import (upload_file_path, upload_workflow_path,
+                                     transform)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -18,6 +19,10 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_automation_button_in_sidebar(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id])['automation'].create_automation()
+
+
+def get_oz_workflow_visualizer(oz_page, driver):
+    return oz_page(driver)['automation'].workflows_page.workflow_visualiser
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into inventory name '
@@ -57,7 +62,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(selenium,
                                                              browser_id, text,
                                                              oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.elements_list[''].edit_box.value = text
+    page.elements_list[0].edit_box.value = text
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms inventory rename with '
@@ -65,7 +70,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(selenium,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id]
-            )['automation'].elements_list[''].edit_box.confirm()
+            )['automation'].elements_list[0].edit_box.confirm()
 
 
 @wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '
@@ -260,3 +265,11 @@ def change_navigation_tab_in_workflow(selenium, browser_id, oz_page, tab_name):
 def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.revision_details.description = text
+
+
+def click_on_option_of_inventory_on_left_sidebar_menu(selenium, browser_id,
+                                                      inventory_name, option,
+                                                      oz_page):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['automation'].elements_list[inventory_name],
+            transform(option)).click()

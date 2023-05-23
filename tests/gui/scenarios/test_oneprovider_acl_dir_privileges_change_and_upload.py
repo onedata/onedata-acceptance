@@ -1,10 +1,10 @@
 """This module contains tests suite for ACL privileges operations
-on creating directories using Oneprovider GUI and multiple
+on changing and uploading to directories using Oneprovider GUI and multiple
 browser instance.
 """
 
 __author__ = "Katarzyna Such"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -45,4 +45,5 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/dir_acl_privileges_create.feature')
+scenarios('../features/oneprovider/data/'
+          'dir_acl_privileges_change_and_upload.feature')

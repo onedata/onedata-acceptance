@@ -90,10 +90,10 @@ Feature: Workflow cancelling and pausing tests
               value: 10
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 40 seconds
+    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
+    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
     And user of browser clicks "Pause" button on "workflow-with-sleep" workflow status bar
     And user of browser sees that status of "workflow-with-sleep" workflow is "Stopping"
     And user of browser waits for workflow "workflow-with-sleep" to be paused
@@ -115,11 +115,11 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
-    And user of browser awaits for status of "Lane1" lane to be "Finished" maximum of 80 seconds
-    And user of browser awaits for status of "Lane2" lane to be "Active" maximum of 30 seconds
+    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
+    And user of browser awaits for status of "Lane1" lane to be "Finished"
+    And user of browser awaits for status of "Lane2" lane to be "Active"
 
     And user of browser clicks "<stop_button>" button on "workflow-with-sleep" workflow status bar
     And user of browser sees that status of "workflow-with-sleep" workflow is "Stopping"
@@ -145,7 +145,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser sees that status of "Lane1" lane in "workflow-with-sleep" is "Preparing"
     And user of browser clicks "<stop_button>" button on "workflow-with-sleep" workflow status bar
@@ -174,10 +174,10 @@ Feature: Workflow cancelling and pausing tests
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
-    And user of browser executes 1st revision of "workflow-with-sleep", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 30 seconds
+    And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
+    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
 
     And user of browser sees that status of "workflow-with-sleep" workflow is "Active"
     And user of browser clicks "Cancel" button on "workflow-with-sleep" workflow status bar
@@ -201,10 +201,10 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-one-box", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 
     And user of browser clicks "Pause" button on "workflow-with-one-box" workflow status bar
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused" maximum of 10 seconds
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Paused"
     And user of browser sees that status of "workflow-with-one-box" workflow is "Paused"
 
@@ -227,15 +227,15 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-one-box", using "file1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active" maximum of 10 seconds
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active"
     And user of browser clicks "Pause" button on "workflow-with-one-box" workflow status bar
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused" maximum of 10 seconds
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Stopping" maximum of 10 seconds
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Stopping"
     And user of browser clicks "Cancel" button on "workflow-with-one-box" workflow status bar
 
-    Then user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled" maximum of 10 seconds
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled" maximum of 10 seconds
+    Then user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
     And user of browser sees that status of "workflow-with-one-box" workflow is "Cancelled"

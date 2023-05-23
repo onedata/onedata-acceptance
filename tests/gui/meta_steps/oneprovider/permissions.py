@@ -12,6 +12,8 @@ from tests.gui.steps.modals.details_modal import (assert_tab_in_modal,
                                                   assert_posix_tab_in_panel)
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser)
+from tests.gui.steps.oneprovider.data_tab import \
+    choose_option_for_file_from_selection_menu
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.data import (
     assert_browser_in_tab_in_op, choose_option_from_selection_menu,
@@ -128,15 +130,21 @@ def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups):
 
 
 def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
-                                     priv, name, modals):
+                                     priv, name, modals, path=None):
     option = 'Permissions'
     modal_name = 'Details modal'
     button = 'Save'
     close_button = 'X'
     panel = 'Edit permissions'
+    path = parse_seq(path)
 
-    choose_option_from_selection_menu(browser_id, selenium, option, popups,
-                                      tmp_memory)
+    if path and len(path) == 1:
+        choose_option_for_file_from_selection_menu(browser_id, selenium, option,
+                                                   popups, tmp_memory,
+                                                   path[0])
+    else:
+        choose_option_from_selection_menu(browser_id, selenium, option, popups,
+                                          tmp_memory)
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
@@ -144,19 +152,19 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sets selected items ACL '
-               '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*)'))
-def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
-                                                    name, op_container,
-                                                    tmp_memory, popups, oz_page,
-                                                    modals):
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sets "(?P<item_name>.*)" '
+               '(directory|file) ACL (?P<priv>.*) privileges for'
+               ' (?P<type>.*) (?P<name>.*)'))
+def grant_acl_privileges_to_selected_in_filebrowser(
+        selenium, browser_id, priv, name, op_container, tmp_memory, popups,
+        oz_page, modals, item_name):
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
-                                     priv, name, modals)
+                                     priv, name, modals, item_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL '
                '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) '
                'in "(?P<space>.*)"'))
 def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
@@ -177,7 +185,7 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                 tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
-                                     priv, name, modals)
+                                     priv, name, modals, path)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'

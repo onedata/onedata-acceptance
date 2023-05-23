@@ -211,14 +211,17 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
     menu.choose_option(option)
 
 
-@wt(parsers.parse('user of {browser_id} cannot click "{option}" option '
-                  'in data row menu in {which_browser}'))
+@wt(parsers.parse('user of {browser_id} sees that "{option}" option is '
+                  '{option_state} in opened item menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
-                                             which_browser, popups):
-    err_msg = f'user can click on option {option}'
+def assert_option_state_in_data_row_menu(selenium, browser_id, option, popups,
+                                         option_state, which_browser):
+    err_msg = (f'{option} option is not {option_state} in opened item menu'
+               f' in file browser')
+
     menu = _choose_menu(selenium, browser_id, which_browser, popups)
-    assert not menu.choose_option(option), err_msg
+    menu_option = menu.return_option(option)
+    assert menu_option.get_state() == option_state, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
