@@ -115,7 +115,7 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 * `--xvfb` - starts Xvfb, a virtual display server, that makes tests headless (without opening local browser window)
 * `--xvfb-recording=<all|none|failed>` - optional, record all or none or failed tests
   as movies and save them to `<logdir>/movies`
-* `--env-file=1oz_1op_not_deployed_embedded_ceph` - specifies `env_file` that will be used to start deployment if there is no active deployment 
+* `--env-file=1oz_1op_not_deployed` - specifies `env_file` that will be used to start deployment if there is no active deployment 
 * `--local` - uses locally installed testing toolkit instead of dockerized one
 * `--no-pull` - prevents from downloading docker images (by default all tests scenarios force pulling docker
    images even if they are already present on host machine.)
