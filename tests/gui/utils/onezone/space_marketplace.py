@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on space Marketplace in Onezone GUI
+"""Utils and fixtures to facilitate operations on Space Marketplace in Onezone GUI
 """
 
 __author__ = "Rafał Widziszewski"

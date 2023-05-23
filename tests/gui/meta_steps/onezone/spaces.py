@@ -44,8 +44,7 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
 
     for space_name in parse_seq(space_list):
-        click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, user,
-                                                              oz_page)
+        click_button_on_spaces_sidebar_menu(selenium, user, oz_page)
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)
         confirm_create_new_space(selenium, user, option, oz_page)
@@ -428,7 +427,6 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
             description: description
 
 
-
         Example configuration:
             space name: "space1"
             organization name: "onedata"
@@ -441,10 +439,10 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
                 - science
             description: "space advertised in marketplace"
     """
-    _configure_space_manually(browser_id, config, selenium, oz_page)
+    _configure_space_manually(browser_id, config, selenium, oz_page, popups)
 
 
-def _configure_space_manually(browser_id, config, selenium, oz_page):
+def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
     data = yaml.load(config)
     space_name = data['space name']
     organization_name = data['organization name']

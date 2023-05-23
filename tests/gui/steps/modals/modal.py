@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import pdb
 import re
 import time
 
@@ -20,6 +19,7 @@ from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
+
 
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}

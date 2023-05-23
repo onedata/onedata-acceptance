@@ -40,9 +40,11 @@ def assert_organization_name_in_space_marketplace(selenium, browser_id, oz_page,
                                                   organization_name):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].space_marketplace_page
-    err_msg = "Advertised space: {space_name} does not have:{organization_name} displayed"
+    marketplace = page.marketplaces_list[space_name]
+    err_msg = f'Advertised space: {space_name} does not have:' \
+              f'{organization_name} displayed'
 
-    assert organization_name in page.marketplaces_list[space_name].organization_name, err_msg
+    assert organization_name in marketplace.organization_name, err_msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -53,7 +55,8 @@ def assert_tags_in_space_marketplace(selenium, browser_id, oz_page, space_name,
     tags_list = page.marketplaces_list[space_name].tags_list
 
     for tag in tags:
-        assert tag in tags_list, f'Advertised space: {space_name} does not have tag: {tag}'
+        assert tag in tags_list, f'Advertised space: {space_name} ' \
+                                 f'does not have tag: {tag}'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -69,28 +72,33 @@ def assert_creation_time_in_space_marketplace(selenium, browser_id, oz_page,
         given_date = day + " " + month + " " + year
 
     page = oz_page(driver)['data'].space_marketplace_page
-    err_msg = "Advertised space: {space_name} does not have right creation time displayed"
+    marketplace = page.marketplaces_list[space_name]
+    err_msg = f'Advertised space: {space_name} does not have ' \
+              f'right creation time displayed'
 
-    assert given_date in page.marketplaces_list[space_name].creation_time, err_msg
+    assert given_date in marketplace.creation_time, err_msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_support_in_space_marketplace(selenium, browser_id, oz_page, space_name, support):
+def assert_support_in_space_marketplace(selenium, browser_id, oz_page,
+                                        space_name, support):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].space_marketplace_page
-    space_support = page.marketplaces_list[space_name].tags_list
+    space_support = page.marketplaces_list[space_name].space_support
 
     for provider in support:
-        pdb.set_trace()
-        assert provider in space_support, f'Advertised space: {space_name} does not have tag: {provider} as support'
+        assert provider in space_support, \
+            f'Advertised space: {space_name} does not have ' \
+            f'provider: {provider} as support'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_description_in_space_marketplace(selenium, browser_id, oz_page,
-                                            space_name, description, modals):
+                                            space_name, description):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].space_marketplace_page
     marketplace = page.marketplaces_list[space_name]
-    err_msg = "Advertised space: {space_name} does not have right description displayed"
+    err_msg = f'Advertised space: {space_name} does not ' \
+              f'have right description displayed'
 
     assert description in marketplace.description, err_msg
