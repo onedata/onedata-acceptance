@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import pdb
-
 from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.tokens import (
     consume_received_token)
@@ -443,10 +441,10 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
                 - science
             description: "space advertised in marketplace"
     """
-    _configure_space_manually(browser_id, config, selenium, oz_page, popups)
+    _configure_space_manually(browser_id, config, selenium, oz_page)
 
 
-def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
+def _configure_space_manually(browser_id, config, selenium, oz_page):
     data = yaml.load(config)
     space_name = data['space name']
     organization_name = data['organization name']

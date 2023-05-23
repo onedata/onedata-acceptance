@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import pdb
 from datetime import date
 
 from tests.gui.conftest import WAIT_FRONTEND
