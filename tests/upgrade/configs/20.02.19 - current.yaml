@@ -2,9 +2,9 @@ scenarios:  # names of files in `environments/scenarios` directory without .yaml
   - 1op
   - 2op
 initialVersions:
-  onezone: 20.02.9
-  oneprovider: 20.02.9
-  oneclient: 20.02.9
+  onezone: 20.02.19
+  oneprovider: 20.02.19
+  oneclient: 20.02.19
 targetVersions:
   onezone: default
   oneprovider: default
