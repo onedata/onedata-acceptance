@@ -7,6 +7,10 @@
 ---
 !include 'gui-acceptance-src-perm.yml'
 ---
+!include 'gui-acceptance-pkg.yml'
+---
+!include 'gui-acceptance-pkg-perm.yml'
+---
 !include 'mixed-acceptance-src.yml'
 ---
 !include 'mixed-acceptance-src-perm.yml'
@@ -18,3 +22,7 @@
 !include 'oneclient-acceptance-src.yml'
 ---
 !include 'oneclient-acceptance-src-perm.yml'
+---
+!include 'mixed-acceptance-pkg.yml'
+---
+!include 'mixed-acceptance-pkg-perm.yml'
