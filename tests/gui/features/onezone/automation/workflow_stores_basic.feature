@@ -33,8 +33,7 @@ Feature: Workflows stores tests
   Scenario Outline: User sees <output_store_type> of <output_type> in result store after modifying input store and lambda data type and executing uploaded echo workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser clicks on "Create new revision" in "echo"

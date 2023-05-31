@@ -145,8 +145,10 @@ def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
     data = yaml.load(config)
     results_conf = data.get('results', False)
     lambda_conf = data.get('lambda', False)
+    configuration_parameters = data.get('configuration parameters', False)
     button = "Modify"
     task_option = 'task'
+    conf_param_option = 'configuration parameters'
 
     driver = selenium[browser_id]
     page = oz_page(driver)['automation']
@@ -169,6 +171,15 @@ def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
                 result.add_mapping()
             result.target_store_dropdown[-1].click()
             popups(driver).power_select.choose_item(new_res)
+
+    if configuration_parameters:
+        for param_name, param in configuration_parameters.items():
+            choose_option_in_dropdown_menu_in_task_page(
+                selenium, browser_id, oz_page, popups, param['value builder'],
+                param_name, conf_param_option)
+            write_text_into_editor_bracket(selenium, browser_id, oz_page,
+                                           param['value'], param_name,
+                                           conf_param_option)
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page,
                                        task_option)

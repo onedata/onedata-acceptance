@@ -12,6 +12,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.url import _open_url
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, get_op_workflow_visualizer_page)
 from tests.gui.utils.generic import parse_seq
@@ -182,3 +183,28 @@ def get_store_content(modal, store_type, index, clipboard, displays,
     store_content_list[index].click()
     modal.copy_button()
     return clipboard.paste(display=displays[browser_id])
+
+
+@wt(parsers.parse('user of {browser_id} opens "{option}" URL from '
+                  '"{store_name}" store in browser\'s location bar'))
+def open_url_from_store_content(browser_id, option, store_name, selenium,
+                                modals, op_container, clipboard, displays):
+
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    modal.store_content_list[0].click()
+    modal.copy_button()
+    items = json.loads(clipboard.paste(display=displays[browser_id]))
+    modal.close()
+
+    url = items[option]
+    _open_url(selenium, browser_id, url)
+
+
+@wt(parsers.parse('user of {browser_id} sees image named "{image_name}" '
+                  'in browser'))
+def assert_image_in_browser(browser_id, selenium, image_name):
+    driver = selenium[browser_id]
+    url = driver.find_elements_by_css_selector('img')[0].get_attribute('src')
+    err_msg = f'{image_name} is not visible in browser'
+    assert image_name in url, err_msg

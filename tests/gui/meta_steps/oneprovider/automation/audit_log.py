@@ -8,6 +8,9 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import json
 import time
+from datetime import date
+
+import yaml
 
 from tests import GUI_LOGDIR
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
@@ -17,7 +20,8 @@ from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page,
-    get_op_workflow_visualizer_page)
+    get_op_workflow_visualizer_page, click_on_task_in_lane,
+    click_on_link_in_task_box)
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     get_status_from_workflow_visualizer)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
@@ -319,3 +323,81 @@ def assert_browser_after_clicking_on_item_in_details_modal(
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 browser)
+
+
+def check_if_element_and_compare_to_expected(elem, items, option, store_name):
+    if elem:
+        assert elem == items[option], (
+            f"{option}: {items[option]} in store {store_name} does not"
+            f" match expected {elem}")
+
+
+@wt(parsers.parse('user of {browser_id} sees that content of "{store_name}"'
+                  ' store is:\n{config}'))
+def assert_content_of_store(selenium, browser_id, op_container, modals,
+                            store_name, config, clipboard, displays):
+
+    options_to_check = ['formatName', 'isExtensionMatchingFormat', 'fileName',
+                        'mimeType', 'sourceUrl']
+    data = yaml.load(config)
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    modal.store_content_list[0].click()
+    modal.copy_button()
+    items = json.loads(clipboard.paste(display=displays[browser_id]))
+
+    for option in options_to_check:
+        elem = data.get(option, False)
+        check_if_element_and_compare_to_expected(elem, items, option,
+                                                 store_name)
+    modal.close()
+
+
+@wt(parsers.parse('user of {browser_id} sees that audit logs in task'
+                  ' "{task_name}" in {ordinal} parallel box in lane '
+                  '"{lane_name}" contains following information:\n{config}'))
+def assert_content_of_task_audit_log(config, selenium, browser_id,
+                                     op_container, lane_name, task_name,
+                                     ordinal, modals, clipboard, displays):
+    click = 'click'
+    link = 'Audit log'
+    driver = selenium[browser_id]
+
+    data = yaml.load(config)
+    timestamp = data.get('timestamp', False)
+    src = data.get('source', False)
+    severity = data.get('severity', False)
+    content = data.get('content', False)
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
+                              task_name, link, ordinal)
+    # wait a moment for modal to open
+    time.sleep(1)
+    modal = modals(driver).audit_log
+    modal.logs_entry[0].click()
+    modal.copy_json()
+    items = json.loads(clipboard.paste(display=displays[browser_id]))
+
+    if timestamp:
+        assert date.fromtimestamp(items['timestamp']/1000) == date.today(), (
+            f'Date in audit log for "{task_name} task is not today as expected')
+    if src:
+        assert src == items['source'], (
+            f'Source "{src}" in audit log for "{task_name}" task is '
+            f'not "{items["source"]}" as expected')
+    if severity:
+        assert severity == items['severity'], (
+            f'Severity "{severity}" in audit log for "{task_name}" task is '
+            f'not "{items["severity"]}" as expected')
+    if content:
+        assert content['status'] == items['content']['status'], (
+            f'Status: "{content["status"]}" in audit log for "{task_name}" '
+            f'task is not "{ items["content"]["status"]}" as expected')
+        assert content['fetchFileName'] == items['content']['fetchFileName'], (
+            f'Fetch file name: "{content["status"]}" in audit log for '
+            f'"{task_name}" task is not "{items["content"]["fetchFileName"]}"'
+            f' as expected')
+
+    modal.x()

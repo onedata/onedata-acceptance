@@ -164,8 +164,8 @@ def assert_option_disabled_in_automation_page(selenium, browser_id, option,
                                               popups):
     err_msg = (f'Option {option} is not disabled in data row menu'
                f' in automation workflows page')
-    disabled_options =  popups(selenium[browser_id]
-                               ).workflow_menu.disabled_options
+    disabled_options = popups(selenium[browser_id]
+                              ).workflow_menu.disabled_options
     assert option in disabled_options, err_msg
 
 
@@ -191,6 +191,7 @@ def click_button_on_status_bar(selenium, browser_id, op_container, button):
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<ordinal>|1st|2nd'
                '|3rd|4th) revision of "(?P<workflow>.*)" in workflows list '
                'in inventory workflows subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
                                            ordinal, workflow):
     page = oz_page(selenium[browser_id])['automation']
