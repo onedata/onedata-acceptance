@@ -37,7 +37,7 @@ def _parse_tabs_list(tabs):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<button_name>Create space|Marketplace) button in '
+               '(?P<button_name>Create space|"Marketplace") button in '
                'spaces sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_spaces_sidebar_menu(selenium, browser_id, button_name,
@@ -388,7 +388,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
-               '(?P<toggle>.*) toggle in providers settings on providers page'))
+               '(?P<toggle>.*) toggle in selected provider settings '
+               'on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
                                       op_container, option):

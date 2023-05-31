@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in " \
 import yaml
 
 
-from tests.gui.steps.modals.modal import ( click_modal_button,
-    write_name_into_text_field_in_modal, switch_toggle_in_modal,
-    choose_option_in_dropdown_menu_in_modal)
+from tests.gui.steps.modals.modal import (click_modal_button,
+                                          write_name_into_text_field_in_modal, check_checkbox_in_modal,
+                                          choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_store_button)
 from tests.utils.bdd_utils import wt, parsers
@@ -66,6 +66,6 @@ def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
     choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             data_type_dropdown_menu, popups,
                                             data_type_dropdown, modal_name)
-    switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
-                           option, modal_name)
+    check_checkbox_in_modal(selenium, browser_id, modals, toggle_name,
+                            option, modal_name)
     click_modal_button(selenium, browser_id, button, modal_name, modals)

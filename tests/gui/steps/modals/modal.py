@@ -361,18 +361,12 @@ def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name,
         pass
 
 
-def remove_unwanted_chars_from_button_name(button):
-    unwanted_chars = ['.']
-    button = ''.join(i for i in button if not i in unwanted_chars)
-    return button
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
-    button = remove_unwanted_chars_from_button_name(button)
+    button = button.replace('.', '')
     getattr(modal, transform(button))()
 
 
@@ -554,7 +548,7 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver,
                   'Marketplace using checkbox in modal "Advertise space in '
                   'the marketplace"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_modal(selenium, browser_id, modals):
+def check_checkbox_in_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
