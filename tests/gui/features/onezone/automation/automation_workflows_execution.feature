@@ -125,7 +125,7 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:dev"
+        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:v1"
         read-only: False
         configuration parameters:
           - name: "metadataKey"
