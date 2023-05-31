@@ -9,17 +9,14 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import NamedButton, WebItemsSequence, \
     Label, Button
-
-
-class SpaceTag(PageObject):
-    name = id = Label('.tag-label')
+from tests.gui.utils.onezone.space_configuration_subpage import SpaceTag
 
 
 class SpaceSupportItem(PageObject):
     text = id = Label('.text')
 
 
-class Marketplace(PageObject):
+class MarketplaceSpace(PageObject):
     space_name = id = Label('.space-name .item-name')
     tags_list = WebItemsSequence('.tags-input .tag-item', cls=SpaceTag)
     access_info = Label('.access-info-head-container')
@@ -39,6 +36,6 @@ class Marketplace(PageObject):
 class SpaceMarketplacePage(PageObject):
     advertise_space_button = NamedButton('.one-button',
                                          text='Advertise your space')
-    marketplaces_list = WebItemsSequence('.spaces-marketplace-list '
-                                         '.spaces-marketplace-item',
-                                         cls=Marketplace)
+    spaces_marketplace_list = WebItemsSequence('.spaces-marketplace-list '
+                                               '.spaces-marketplace-item',
+                                               cls=MarketplaceSpace)

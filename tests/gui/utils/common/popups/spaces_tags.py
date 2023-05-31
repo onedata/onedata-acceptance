@@ -8,8 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Button, \
-    WebItem, Input
-from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+     Input
 
 
 class Tag(PageObject):

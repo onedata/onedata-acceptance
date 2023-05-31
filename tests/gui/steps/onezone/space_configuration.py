@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-spaces configuration  in onezone web GUI.
+spaces configuration in onezone web GUI.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -41,6 +41,15 @@ def advertise_space_on_space_configuration_page(browser_id, selenium, oz_page,
     getattr(page.advertise_toggle, option)()
 
 
+@wt(parsers.parse('user of {browser_id} clicks "View in Marketplace" link on '
+                  'space configuration page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_on_space_configuration_page(browser_id, selenium, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+    page.marketplace_link.click()
+
+
 @wt(parsers.parse('user of {browser_id} sees "{email_address}" in marketplace '
                   'contact e-mail address text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -52,23 +61,13 @@ def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
     assert email_address in contact_email.text
 
 
-@wt(parsers.parse('user of browser clicks "View in Marketplace" button on '
-                  'space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_space_configuration_page(browser_id, selenium, oz_page):
+def set_space_data_in_configuration_tab(selenium, browser_id, oz_page, data_type, data_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
-    page.marketplace_link.click()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def set_space_name_in_configuration_tab(selenium, browser_id, oz_page,
-                                        space_name):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
-    page.space_name.click()
-    page.space_name.value = space_name
-    page.space_name.confirm()
+    page = getattr(oz_page(driver)['data'].configuration_page, data_type)
+    page.click()
+    page.value = data_name
+    page.confirm()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

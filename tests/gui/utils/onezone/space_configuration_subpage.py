@@ -1,4 +1,5 @@
-"""Utils and fixtures to facilitate operations on space configuration tab in Onezone GUI
+"""Utils and fixtures to facilitate operations on space configuration tab
+in Onezone GUI
 """
 
 __author__ = "Rafał Widziszewski"

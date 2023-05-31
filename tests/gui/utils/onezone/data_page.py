@@ -44,9 +44,9 @@ class Space(Element):
     harvesters_discovery = NamedButton('.one-list-level-2 .item-header',
                                        text='Harvesters, Discovery')
     automation_workflows = NamedButton('.one-list-level-2 .item-header',
-                                        text='Automation Workflows')
+                                       text='Automation Workflows')
     configuration = NamedButton('.one-list-level-2 .item-header',
-                                        text='Configuration')
+                                text='Configuration')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -200,7 +200,7 @@ class DataPage(GenericPage):
                                  '.oneicon-add-filled')
 
     marketplace_button = Button('.one-sidebar-toolbar-button '
-                                 '.oneicon-cart')
+                                '.oneicon-cart')
 
     spaces_header_list = WebItemsSequence('.sidebar-spaces '
                                           'li.one-list-item.clickable '
@@ -242,4 +242,3 @@ class DataPage(GenericPage):
                     return
         else:
             raise RuntimeError(f'{name} space not found')
-
