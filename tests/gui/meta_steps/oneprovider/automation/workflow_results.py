@@ -51,24 +51,24 @@ def open_modal_and_get_store_content(browser_id, driver, page, modals,
     return store_value
 
 
-@wt(parsers.parse('user of {browser_id} sees that content of "{store1}" store '
-                  'is the same as content of "{store2}" store'))
+@wt(parsers.parse('user of {browser_id} sees that "{option}" in "{store2}" '
+                  'store is the same as in "{store1}" store'))
 def compare_store_contents(selenium, browser_id, op_container, store1,
-                           store2, modals, clipboard, displays):
+                           store2, modals, clipboard, displays, option):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
 
     page = get_op_workflow_visualizer_page(op_container, driver)
 
-    store1_value = open_modal_and_get_store_content(
-        browser_id, driver, page, modals, clipboard, displays, store1, 'list')
-    store2_value = open_modal_and_get_store_content(
-        browser_id, driver, page, modals, clipboard, displays, store2, 'object')
+    store1_value = json.loads(open_modal_and_get_store_content(
+        browser_id, driver, page, modals, clipboard, displays, store1, 'list'))
+    store2_value = json.loads(open_modal_and_get_store_content(
+        browser_id, driver, page, modals, clipboard, displays, store2,
+        'object'))
 
-    assert store1_value == store2_value, (f'Value of {store1} '
-                                          f'store:{store1_value} \n is not '
-                                          f'equal to value of {store2} '
-                                          f'store:{store2_value}')
+    assert store1_value[option] == store2_value[option], (
+        f'"{option}" in {store2} store:{store2_value[option]} \n is not '
+        f'equal to "{option}" {store1} store:{store1_value[option]}')
 
 
 @wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
