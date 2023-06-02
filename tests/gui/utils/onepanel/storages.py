@@ -126,4 +126,8 @@ class StorageContentPage(PageObject):
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
                 err_msg = f'{record.name} is not expanded after being clicked'
                 assert record.is_expanded(), err_msg
+                break
+        else:
+            raise Exception(f'Cannot click on {storage_name} Modify button '
+                            f'because storage is not visible on page.')
 
