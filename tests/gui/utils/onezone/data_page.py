@@ -218,8 +218,7 @@ class DataPage(GenericPage):
 
     tab_name = Label('.header-row')
 
-    current_provider = Label('.current-oneprovider-bar .oneprovider-name '
-                             '.tab-name')
+    current_provider = Label('.current-oneprovider-bar .record-name-general')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     error_header = Label('.content-info-content-container h1')
