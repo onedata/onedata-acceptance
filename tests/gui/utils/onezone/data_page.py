@@ -178,7 +178,7 @@ class SpaceProvidersPage(PageObject):
 
 
 class _Provider(PageObject):
-    name = id = Label('.tab-name')
+    name = id = Label('.record-name-general')
 
 
 class DatasetHeader(PageObject):
