@@ -41,7 +41,8 @@ def parse_url(url):
 
 
 def go_to_relative_url(selenium, relative_url):
-    new_url = RE_URL.match(selenium.current_url).group('base_url') + relative_url
+    new_url = RE_URL.match(selenium.current_url).group(
+        'base_url') + relative_url
     selenium.get(new_url)
 
 
@@ -55,7 +56,8 @@ def parse_seq(seq, pattern=None, separator=None, default=str):
 
 
 def upload_file_path(file_name):
-    """Resolve an absolute path for file with name file_name stored in upload_files dir
+    """Resolve an absolute path for file with name file_name stored
+    in upload_files dir
     """
     return os.path.join(
         os.path.dirname(os.path.abspath(gui.__file__)),
@@ -64,13 +66,17 @@ def upload_file_path(file_name):
 
 
 def upload_workflow_path(workflow_name):
-    """Resolve an absolute path for workflow file with name workflow_name stored in automation-examples submodule
+    """Resolve an absolute path for workflow file with name workflow_name
+     stored in automation-examples submodule
     """
-    return os.path.abspath(os.path.join(os.path.dirname(gui.__file__ ), '..','..', 'automation-examples','workflows',workflow_name))
+    return os.path.abspath(os.path.join(
+        os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+        'workflows', workflow_name))
 
 
 def strip_path(path_string, separator = '/'):
-    """Strips string from whitespaces inside file path. Useful for file paths rendered
+    """Strips string from whitespaces inside file path. Useful for file
+     paths rendered
     in DOM which contains `\\n` characters in `innerText`.
     """
     return separator.join(
@@ -130,13 +136,16 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
     if not web_elem.is_displayed():
         web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO VFS-7484 make optional sleep and localize only those tests that need it or find better alternative
-        # currently checking if elem is enabled not always work (probably after striping disabled from web elem
+        # TODO VFS-7484 make optional sleep and localize only those tests
+        #  that need it or find better alternative
+        # currently checking if elem is enabled not always work
+        # (probably after striping disabled from web elem
         # elem is not immediately clickable)
         if delay:
             sleep(delay if isinstance(delay, float) else 0.25)
         action = ActionChains(driver)
-        action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
+        action.move_to_element(web_elem).click_and_hold(web_elem).release(
+            web_elem)
         action.perform()
     else:
         with suppress(TypeError):

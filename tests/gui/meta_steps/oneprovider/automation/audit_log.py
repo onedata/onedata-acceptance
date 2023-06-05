@@ -11,6 +11,7 @@ import time
 from datetime import date
 
 import yaml
+from selenium.common.exceptions import StaleElementReferenceException
 
 from tests import GUI_LOGDIR
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
@@ -34,7 +35,6 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
-from tests.utils.utils import repeat_failed
 
 
 def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
@@ -325,20 +325,31 @@ def assert_browser_after_clicking_on_item_in_details_modal(
                                 browser)
 
 
-def check_if_element_and_compare_to_expected(elem, items, option, store_name):
+def check_if_element_and_compare_to_expected(
+        elem, items, option, store_name, selenium, browser_id, oz_page,
+        op_container, tmp_memory, popups, modals, clipboard, displays):
     if elem:
-        assert elem == items[option], (
-            f"{option}: {items[option]} in store {store_name} does not"
-            f" match expected {elem}")
+        if option == 'fileId':
+            elem_file_id = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, elem['space'], op_container,
+                tmp_memory, elem['id'], popups, modals, clipboard, displays)
+            assert elem_file_id == items[option], (
+                f"{option}: {items[option]} in store {store_name} does not"
+                f" match expected {elem_file_id}")
+        else:
+            assert elem == items[option], (
+                f"{option}: {items[option]} in store {store_name} does not"
+                f" match expected {elem}")
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of "{store_name}"'
                   ' store is:\n{config}'))
 def assert_content_of_store(selenium, browser_id, op_container, modals,
-                            store_name, config, clipboard, displays):
+                            store_name, config, clipboard, displays, oz_page,
+                            tmp_memory, popups):
 
-    options_to_check = ['formatName', 'isExtensionMatchingFormat', 'fileName',
-                        'mimeType', 'sourceUrl']
+    options_to_check = ['mimeType', 'formatName', 'isExtensionMatchingFormat',
+                        'fileName', 'extensions', 'sourceUrl', 'fileId']
     data = yaml.load(config)
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
@@ -348,9 +359,13 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
 
     for option in options_to_check:
         elem = data.get(option, False)
-        check_if_element_and_compare_to_expected(elem, items, option,
-                                                 store_name)
-    modal.close()
+        check_if_element_and_compare_to_expected(
+            elem, items, option, store_name, selenium, browser_id, oz_page,
+            op_container, tmp_memory, popups, modals, clipboard, displays)
+    try:
+        modal.close()
+    except StaleElementReferenceException:
+        pass
 
 
 @wt(parsers.parse('user of {browser_id} sees that audit logs in task'

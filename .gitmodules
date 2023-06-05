@@ -24,4 +24,4 @@
     branch = develop
 [submodule "automation-examples"]
 	path = automation-examples
-	url = ssh://git@git.onedata.org:7999/vfs/automation-examples.git
+	url = ../automation-examples.git

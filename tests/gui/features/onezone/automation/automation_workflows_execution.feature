@@ -301,6 +301,22 @@ Feature: Workflows execution
     And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
 
 
+  Scenario: User sees desirable exception in task auditlog after executing "detect-file-formats" workflow using directory as input
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser executes 1st revision of "detect-file-formats", using file as initial value: "dir1" in "space1" space
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    And user of browser sees that audit logs in task "detect-file-format" in 1st parallel box in lane "l1" contains following information:
+        timestamp: today
+        severity: error
+        description: Failed to process batch of items.
+
+
   Scenario: User sees output store content in store after execution of uploaded "detect-file-formats" workflow finishes
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -319,9 +335,12 @@ Feature: Workflows execution
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     And user of browser sees that content of "formats" store is:
+        mimeType: text/plain
         formatName: Python script, ASCII text executable
         isExtensionMatchingFormat: false
         fileName: test.py
+        fileId: {"id": "test.py", "space": "space1"}
+        extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl"]
 
 
   Scenario: User sees output store content in store after execution of uploaded "detect-file-mime-formats" workflow finishes
@@ -344,6 +363,7 @@ Feature: Workflows execution
     And user of browser sees that content of "files-format" store is:
         fileName: test.py
         mimeType: text/x-python
+        fileId: {"id": "test.py", "space": "space1"}
 
 
   Scenario: User sees desirable files in file browser after execution of uploaded "download-files" workflow finishes
@@ -377,7 +397,7 @@ Feature: Workflows execution
     And user of browser sees that content of "files-to-download" store is:
       sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
     And user of browser opens "sourceUrl" URL from "files-to-download" store in browser's location bar
-    Then user of browser sees image named "googlelogo_color_272x92dp.png" in browser
+    And user of browser sees image named "googlelogo_color_272x92dp.png" in browser
 
 
   Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda
@@ -406,4 +426,5 @@ Feature: Workflows execution
     And user of browser sees that audit logs in task "echo" in 1st parallel box in lane "lane 1" contains following information:
         timestamp: today
         severity: error
-        description: Lambda exception occurred during item processing
+        description: Lambda exception occurred during item processing.
+
