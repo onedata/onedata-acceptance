@@ -315,6 +315,21 @@ Feature: Workflows execution
         timestamp: today
         severity: error
         description: Failed to process batch of items.
+        content:
+          reason:
+            id: atmTaskArgMappingFailed
+            details:
+              specificError:
+                id: atmDataValueConstraintUnverified
+                details:
+                  valueConstraints:
+                      fileType: REG
+                  value:
+                    file_id: {"id": "dir1", "space": "space1"}
+                  type: file
+                description: Provided value doesn't meet the constraints (see details).
+              argument: file
+            description: Failed to map automation task execution argument "file" (see details).
 
 
   Scenario: User sees output store content in store after execution of uploaded "detect-file-formats" workflow finishes
@@ -426,5 +441,11 @@ Feature: Workflows execution
     And user of browser sees that audit logs in task "echo" in 1st parallel box in lane "lane 1" contains following information:
         timestamp: today
         severity: error
-        description: Lambda exception occurred during item processing.
+        content:
+          reason: Random exception
+          item:
+            file_id: {"id": "dir1", "space": "space1"}
+          description: Lambda exception occurred during item processing.
+
+
 

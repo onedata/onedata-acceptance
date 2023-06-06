@@ -373,7 +373,8 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
                   '"{lane_name}" contains following information:\n{config}'))
 def assert_content_of_task_audit_log(config, selenium, browser_id,
                                      op_container, lane_name, task_name,
-                                     ordinal, modals, clipboard, displays):
+                                     ordinal, modals, clipboard, displays,
+                                     popups, tmp_memory, oz_page):
     click = 'click'
     link = 'Audit log'
     driver = selenium[browser_id]
@@ -407,12 +408,49 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
             f'Severity "{severity}" in audit log for "{task_name}" task is '
             f'not "{items["severity"]}" as expected')
     if content:
-        assert content['status'] == items['content']['status'], (
-            f'Status: "{content["status"]}" in audit log for "{task_name}" '
-            f'task is not "{ items["content"]["status"]}" as expected')
-        assert content['fetchFileName'] == items['content']['fetchFileName'], (
-            f'Fetch file name: "{content["status"]}" in audit log for '
-            f'"{task_name}" task is not "{items["content"]["fetchFileName"]}"'
-            f' as expected')
+        reason = content.get('reason', False)
+        status = content.get('status', False)
+        fetch_file_name = content.get('fetchFileName', False)
+        item = content.get('item', False)
+        description = content.get('description', False)
 
-    modal.x()
+        if reason:
+            if not isinstance(reason, str):
+                file_id = reason['details']['specificError']['details'][
+                    'value']['file_id']
+                reason['details']['specificError']['details']['value'][
+                    'file_id'] = get_file_id_from_details_modal(
+                    selenium, browser_id, oz_page, file_id['space'],
+                    op_container, tmp_memory, file_id['id'], popups, modals,
+                    clipboard, displays)
+            assert reason == items['content']['reason'], (
+                f'Reason: "{reason}" in audit log for "{task_name}" '
+                f'task is not "{items["content"]["reason"]}" as expected')
+        if status:
+            assert status == items['content']['status'], (
+                f'Status: "{status}" in audit log for "{task_name}" '
+                f'task is not "{ items["content"]["status"]}" as expected')
+        if fetch_file_name:
+            assert fetch_file_name == items['content'][
+                'fetchFileName'], (f'Fetch file name: "{fetch_file_name}" in '
+                                   f'audit log for "{task_name}" task is not '
+                                   f'"{items["content"]["fetchFileName"]}"'
+                                   f' as expected')
+        if item:
+            file_id = item['file_id']
+            item['file_id'] = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, file_id['space'],
+                op_container, tmp_memory, file_id['id'], popups, modals,
+                clipboard, displays)
+            assert item == items['content']['item'], (
+                f'Item: "{reason}" in audit log for "{task_name}" '
+                f'task is not "{items["content"]["item"]}" as expected')
+        if description:
+            assert description == items['content']['description'], (
+                f'Status: "{description}" in audit log for "{task_name}" task '
+                f'is not "{ items["content"]["description"]}" as expected')
+
+    try:
+        modal.x()
+    except StaleElementReferenceException:
+        pass
