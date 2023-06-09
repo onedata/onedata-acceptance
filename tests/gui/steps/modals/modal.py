@@ -548,7 +548,7 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver,
                   'Marketplace using checkbox in modal "Advertise space in '
                   'the marketplace"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_checkbox_in_modal(selenium, browser_id, modals):
+def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()

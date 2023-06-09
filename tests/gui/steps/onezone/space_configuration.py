@@ -57,8 +57,10 @@ def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
     driver = selenium[browser_id]
     contact_email = oz_page(driver)['data'].configuration_page.contact_email
     contact_email.click()
+    err_msg = f'Email address {contact_email.text} displayed in on space ' \
+              f'configuration page, does not match expected {contact_email}'
 
-    assert email_address in contact_email.text
+    assert email_address in contact_email.text, err_msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -68,16 +70,6 @@ def set_space_data_in_configuration_tab(selenium, browser_id, oz_page, data_type
     page.click()
     page.value = data_name
     page.confirm()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def set_organization_name_in_configuration_tab(selenium, browser_id, oz_page,
-                                               organization_name):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
-    page.organization_name.click()
-    page.organization_name.value = organization_name
-    page.organization_name.confirm()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

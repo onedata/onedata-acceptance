@@ -117,7 +117,7 @@ Feature: Workflows execution
 
     And user of browser executes 1st revision of "Workflow1" and waits extended time for workflow to finish, using directory as initial value: "dir1" in "space1" space
     And user of browser sees "Finished" status in status bar in workflow visualizer
-    Then user of browser sees that content of "input" store is the same as content of "output" store
+    Then user of browser sees that "file_id" in "output" store is the same as in "input" store
 
 
   Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
@@ -126,7 +126,7 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:dev"
+        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:v1"
         read-only: False
         configuration parameters:
           - name: "metadataKey"

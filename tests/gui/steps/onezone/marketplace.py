@@ -47,8 +47,7 @@ def assert_organization_name_in_space_marketplace(selenium, browser_id, oz_page,
 
     space = get_space_from_marketplace_list(selenium, browser_id, oz_page,
                                             space_name)
-    err_msg = f'Advertised space: {space_name} does not have:' \
-              f'{organization_name} displayed'
+    err_msg = f'Organization name {space.organization_name} displayed in advertised space: {space_name}, does not match expected {organization_name}'
 
     assert organization_name in space.organization_name, err_msg
 
@@ -59,8 +58,7 @@ def assert_tags_in_space_marketplace(selenium, browser_id, oz_page, space_name,
     space = get_space_from_marketplace_list(selenium, browser_id, oz_page,
                                             space_name)
     for tag in tags:
-        assert tag in space.tags_list, f'Advertised space: {space_name} ' \
-                                        f'does not have tag: {tag}'
+        assert tag in space.tags_list, f'Tag {tag} in not displayed in tags list in advertised space: {space_name}'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -76,8 +74,8 @@ def assert_creation_time_in_space_marketplace(selenium, browser_id, oz_page,
 
     space = get_space_from_marketplace_list(selenium, browser_id, oz_page,
                                             space_name)
-    err_msg = f'Advertised space: {space_name} does not have ' \
-              f'right creation time displayed'
+
+    err_msg = f'Creation time {space.creation_time} displayed in advertised space: {space_name}, does not match expected {given_date}'
 
     assert given_date in space.creation_time, err_msg
 
@@ -88,9 +86,7 @@ def assert_support_in_space_marketplace(selenium, browser_id, oz_page,
     space = get_space_from_marketplace_list(selenium, browser_id, oz_page,
                                             space_name)
     for provider in support:
-        assert provider in space.space_support, \
-            f'Advertised space: {space_name} does not have ' \
-            f'provider: {provider} as support'
+        assert provider in space.space_support, f'Provider {provider} in not displayed in providers list in advertised space: {space_name}'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -98,7 +94,7 @@ def assert_description_in_space_marketplace(selenium, browser_id, oz_page,
                                             space_name, description):
     space = get_space_from_marketplace_list(selenium, browser_id, oz_page,
                                             space_name)
-    err_msg = f'Advertised space: {space_name} does not ' \
-              f'have right description displayed'
+
+    err_msg = f'Description {space.description} displayed in advertised space: {space_name}, does not match expected {description}'
 
     assert description in space.description, err_msg

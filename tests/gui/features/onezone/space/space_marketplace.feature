@@ -53,15 +53,3 @@ Feature: Basic management of Space Marketplace
         providers:
           - dev-oneprovider-krakow
         description: "Example of a space avertised in a Marketplace"
-
-
-
-
-
-
-
-
-
-
-
-

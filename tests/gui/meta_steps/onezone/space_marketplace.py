@@ -82,16 +82,28 @@ def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
 def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page,
                                             config):
     """Assert space advertised in marketplace according to given config.
+
+        Config format given in yaml is as follows:
+        space name: space_name
+        tags:                               ---> optional
+          - tag
+        organization name: organization_name
+        creation time: date                (DD-Mon-YYYY)
+        providers:
+          - provider_name
+        description: description
+
+        Example configuration:
         space name: "space1"
         tags:
           - archival
           - big-data
           - science
         organization name: "onedata"
-        creation time: current
+        creation time: "05 Mar 2023" or "current"
         providers:
-          - oneprovider-1
-        description: "Example of a space avertised in a Marketplace"
+          - dev-oneprovider-krakow
+        description: "Example of a space advertised in a Marketplace"
 
     """
 
@@ -119,9 +131,9 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium,
 
     assert_creation_time_in_space_marketplace(selenium, browser_id, oz_page,
                                               space_name, creation_time)
-
-    assert_support_in_space_marketplace(selenium, browser_id, oz_page,
-                                        space_name, providers)
+    if providers:
+        assert_support_in_space_marketplace(selenium, browser_id, oz_page,
+                                            space_name, providers)
 
     assert_description_in_space_marketplace(selenium, browser_id, oz_page,
                                             space_name, description)
