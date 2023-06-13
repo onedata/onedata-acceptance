@@ -23,8 +23,8 @@ class MarketplaceSpace(PageObject):
 
     organization_name = Label('.organization-name')
     creation_time = Label('.creation-time .creation-time-text')
-    space_support = WebItemsSequence('.space-item-support-list .support-item',
-                                     cls=SpaceSupportItem)
+    providers_list = WebItemsSequence('.space-item-support-list .support-item',
+                                      cls=SpaceSupportItem)
 
     visit_space = Button('.visit-space-link')
     configure_space = Button('.configure-space-link')

@@ -10,10 +10,8 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 
 from tests.gui.steps.onezone.marketplace import \
-    assert_organization_name_in_space_marketplace, \
-    assert_description_in_space_marketplace, \
-    assert_creation_time_in_space_marketplace, \
-    assert_tags_in_space_marketplace, assert_support_in_space_marketplace
+    assert_element_in_space_marketplace, \
+    assert_elements_list_in_space_marketplace
 from tests.gui.steps.onezone.space_configuration import \
     set_space_data_in_configuration_tab, \
     set_description_of_a_space, \
@@ -122,18 +120,22 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium,
     providers = data.get('providers', False)
     description = data['description']
 
-    assert_organization_name_in_space_marketplace(selenium, browser_id, oz_page,
-                                                  space_name, organization_name)
+    assert_element_in_space_marketplace(selenium, browser_id, oz_page,
+                                        space_name, 'organization name',
+                                        organization_name)
 
     if tags:
-        assert_tags_in_space_marketplace(selenium, browser_id, oz_page,
-                                         space_name, tags)
+        assert_elements_list_in_space_marketplace(selenium, browser_id, oz_page,
+                                                  space_name, 'tag', tags)
 
-    assert_creation_time_in_space_marketplace(selenium, browser_id, oz_page,
-                                              space_name, creation_time)
+    assert_element_in_space_marketplace(selenium, browser_id, oz_page,
+                                        space_name, 'creation time',
+                                        creation_time)
+
     if providers:
-        assert_support_in_space_marketplace(selenium, browser_id, oz_page,
-                                            space_name, providers)
+        assert_elements_list_in_space_marketplace(selenium, browser_id, oz_page,
+                                                  space_name,'provider',
+                                                  providers)
 
-    assert_description_in_space_marketplace(selenium, browser_id, oz_page,
-                                            space_name, description)
+    assert_element_in_space_marketplace(selenium, browser_id, oz_page,
+                                        space_name, 'description', description)
