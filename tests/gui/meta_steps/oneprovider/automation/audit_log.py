@@ -325,21 +325,20 @@ def assert_browser_after_clicking_on_item_in_details_modal(
                                 browser)
 
 
-def check_if_element_and_compare_to_expected(
+def compare_to_expected_if_element_exist_for_store(
         elem, items, option, store_name, selenium, browser_id, oz_page,
         op_container, tmp_memory, popups, modals, clipboard, displays):
     if elem:
         if option == 'fileId':
-            elem_file_id = get_file_id_from_details_modal(
-                selenium, browser_id, oz_page, elem['space'], op_container,
-                tmp_memory, elem['id'], popups, modals, clipboard, displays)
-            assert elem_file_id == items[option], (
-                f"{option}: {items[option]} in store {store_name} does not"
-                f" match expected {elem_file_id}")
-        else:
-            assert elem == items[option], (
-                f"{option}: {items[option]} in store {store_name} does not"
-                f" match expected {elem}")
+            file_info = elem.split(' - ')[1].replace(')', '').split('/')
+            elem = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, file_info[0], op_container,
+                tmp_memory, file_info[1], popups, modals, clipboard,
+                displays)
+
+        assert elem == items[option], (
+            f"{option}: {items[option]} in store {store_name} does not"
+            f" match expected {elem}")
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of "{store_name}"'
@@ -359,13 +358,84 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
 
     for option in options_to_check:
         elem = data.get(option, False)
-        check_if_element_and_compare_to_expected(
+        compare_to_expected_if_element_exist_for_store(
             elem, items, option, store_name, selenium, browser_id, oz_page,
             op_container, tmp_memory, popups, modals, clipboard, displays)
     try:
         modal.close()
     except StaleElementReferenceException:
         pass
+
+
+def compare_to_expected_if_elem_exist_audit_log(data, label, actual_items,
+                                                task_name):
+    expected = data.get(label, False)
+    if expected:
+        actual = actual_items[label]
+        if label == 'timestamp':
+            expected = date.today()
+            actual = date.fromtimestamp(actual_items['timestamp'] / 1000)
+
+        assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
+                                                       task_name)
+
+
+def assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
+                                                   task_name):
+    assert expected == actual, (
+        f'{label} "{actual}" in audit log for "{task_name}" task is '
+        f'not "{expected}" as expected')
+
+
+def compare_content_reason_of_task_audit_log(
+        reason, actual_reason, selenium, browser_id, oz_page, op_container,
+        tmp_memory, popups, modals, clipboard, displays, task_name):
+    if 'contains' in reason:
+        reason_data = yaml.load(
+            reason.split(' - ')[1].replace('])', ']'))
+        for reason_elem in reason_data:
+            assert reason_elem in actual_reason, (
+                f'Reason: "{reason}" in audit log for "{task_name}" '
+                f'task does not contain "{actual_reason}" as expected')
+    else:
+        if not isinstance(reason, str):
+            placeholder_file_id = reason['details'][
+                'specificError']['details']['value']['file_id']
+            placeholder_file_id = placeholder_file_id.split(
+                ' - ')[1].replace(')', '').split('/')
+            reason['details']['specificError']['details']['value'][
+                'file_id'] = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, placeholder_file_id[0],
+                op_container, tmp_memory, placeholder_file_id[1],
+                popups, modals, clipboard, displays)
+        assert_elements_of_task_audit_log_are_the_same(reason, actual_reason,
+                                                       'Reason', task_name)
+
+
+def compare_content_of_task_audit_log(
+        content, actual_content, task_name, selenium, browser_id, oz_page,
+        op_container, tmp_memory, popups, modals, clipboard, displays):
+    expected_identical = ['status', 'fetchFileName', 'description']
+    reason = content.get('reason', False)
+    item = content.get('item', False)
+
+    for label in expected_identical:
+        compare_to_expected_if_elem_exist_audit_log(content, label,
+                                                    actual_content, task_name)
+    if reason:
+        compare_content_reason_of_task_audit_log(
+            reason, actual_content['reason'], selenium, browser_id,
+            oz_page, op_container, tmp_memory, popups, modals, clipboard,
+            displays, task_name)
+    if item:
+        file_id = item['file_id'].split(' - ')[1].replace(
+            ')', '').split('/')
+        item['file_id'] = get_file_id_from_details_modal(
+            selenium, browser_id, oz_page, file_id[0],
+            op_container, tmp_memory, file_id[1], popups, modals,
+            clipboard, displays)
+        assert_elements_of_task_audit_log_are_the_same(
+            item, actual_content['item'], 'Item', task_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees that audit logs in task'
@@ -375,14 +445,11 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
                                      op_container, lane_name, task_name,
                                      ordinal, modals, clipboard, displays,
                                      popups, tmp_memory, oz_page):
+    expected_identical = ['source', 'severity', 'timestamp']
     click = 'click'
     link = 'Audit log'
     driver = selenium[browser_id]
-
     data = yaml.load(config)
-    timestamp = data.get('timestamp', False)
-    src = data.get('source', False)
-    severity = data.get('severity', False)
     content = data.get('content', False)
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
@@ -394,61 +461,17 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     modal = modals(driver).audit_log
     modal.logs_entry[0].click()
     modal.copy_json()
-    items = json.loads(clipboard.paste(display=displays[browser_id]))
+    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
 
-    if timestamp:
-        assert date.fromtimestamp(items['timestamp']/1000) == date.today(), (
-            f'Date in audit log for "{task_name} task is not today as expected')
-    if src:
-        assert src == items['source'], (
-            f'Source "{src}" in audit log for "{task_name}" task is '
-            f'not "{items["source"]}" as expected')
-    if severity:
-        assert severity == items['severity'], (
-            f'Severity "{severity}" in audit log for "{task_name}" task is '
-            f'not "{items["severity"]}" as expected')
+    for label in expected_identical:
+        compare_to_expected_if_elem_exist_audit_log(data, label, actual_items,
+                                                    task_name)
+
     if content:
-        reason = content.get('reason', False)
-        status = content.get('status', False)
-        fetch_file_name = content.get('fetchFileName', False)
-        item = content.get('item', False)
-        description = content.get('description', False)
-
-        if reason:
-            if not isinstance(reason, str):
-                file_id = reason['details']['specificError']['details'][
-                    'value']['file_id']
-                reason['details']['specificError']['details']['value'][
-                    'file_id'] = get_file_id_from_details_modal(
-                    selenium, browser_id, oz_page, file_id['space'],
-                    op_container, tmp_memory, file_id['id'], popups, modals,
-                    clipboard, displays)
-            assert reason == items['content']['reason'], (
-                f'Reason: "{reason}" in audit log for "{task_name}" '
-                f'task is not "{items["content"]["reason"]}" as expected')
-        if status:
-            assert status == items['content']['status'], (
-                f'Status: "{status}" in audit log for "{task_name}" '
-                f'task is not "{ items["content"]["status"]}" as expected')
-        if fetch_file_name:
-            assert fetch_file_name == items['content'][
-                'fetchFileName'], (f'Fetch file name: "{fetch_file_name}" in '
-                                   f'audit log for "{task_name}" task is not '
-                                   f'"{items["content"]["fetchFileName"]}"'
-                                   f' as expected')
-        if item:
-            file_id = item['file_id']
-            item['file_id'] = get_file_id_from_details_modal(
-                selenium, browser_id, oz_page, file_id['space'],
-                op_container, tmp_memory, file_id['id'], popups, modals,
-                clipboard, displays)
-            assert item == items['content']['item'], (
-                f'Item: "{reason}" in audit log for "{task_name}" '
-                f'task is not "{items["content"]["item"]}" as expected')
-        if description:
-            assert description == items['content']['description'], (
-                f'Status: "{description}" in audit log for "{task_name}" task '
-                f'is not "{ items["content"]["description"]}" as expected')
+        compare_content_of_task_audit_log(
+            content, actual_items['content'], task_name, selenium, browser_id,
+            oz_page, op_container, tmp_memory, popups, modals, clipboard,
+            displays)
 
     try:
         modal.x()

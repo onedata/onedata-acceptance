@@ -199,12 +199,3 @@ def open_url_from_store_content(browser_id, option, store_name, selenium,
 
     url = items[option]
     _open_url(selenium, browser_id, url)
-
-
-@wt(parsers.parse('user of {browser_id} sees image named "{image_name}" '
-                  'in browser'))
-def assert_image_in_browser(browser_id, selenium, image_name):
-    driver = selenium[browser_id]
-    url = driver.find_elements_by_css_selector('img')[0].get_attribute('src')
-    err_msg = f'{image_name} is not visible in browser'
-    assert image_name in url, err_msg
