@@ -1,5 +1,5 @@
-"""Utils and fixtures to facilitate operations on Advertise space
-in the marketplace modal.
+"""Utils and fixtures to facilitate operations on advertise space
+in the Marketplace modal.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -17,4 +17,4 @@ class AdvertiseSpaceInTheMarketplace(Modal):
     proceed = Button('.proceed-btn')
 
     def __str__(self):
-        return 'Advertise Space in the Marketplace modal'
+        return 'Advertise space in the Marketplace modal'

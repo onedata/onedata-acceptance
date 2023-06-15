@@ -32,7 +32,7 @@ Feature: Basic management of Space Marketplace
             - big-data
           domains:
             - science
-        description: "Example of a space avertised in a Marketplace"
+        description: "Example of a space advertised in a Marketplace"
 
     And user of browser checks "Advertise in Marketplace" toggle on space configuration page
     And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
@@ -52,4 +52,4 @@ Feature: Basic management of Space Marketplace
         creation time: current
         providers:
           - dev-oneprovider-krakow
-        description: "Example of a space avertised in a Marketplace"
+        description: "Example of a space advertised in a Marketplace"

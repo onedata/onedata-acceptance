@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import pdb
 from datetime import date
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -30,7 +29,7 @@ def click_button_in_marketplace_subpage(selenium, browser_id, oz_page):
 def assert_marketplace_icon_in_space_sidebar(selenium, browser_id, oz_page,
                                              space_name):
     driver = selenium[browser_id]
-    err_msg = "Space: {space_name} does not have marketplace indicator visible"
+    err_msg = f"Space: {space_name} does not have marketplace indicator visible"
 
     assert oz_page(driver)['data'].elements_list[space_name].advertised_icon, \
         err_msg
@@ -77,7 +76,7 @@ def assert_elements_list_in_space_marketplace(selenium, browser_id, oz_page,
     elements_list = getattr(space, transform(element_type+"s_list"))
 
     for element in elements_data_list:
-        assert element in elements_list, f'{name_of_element}: {element} in' \
+        assert element in elements_list, f'{name_of_element}: {element} is' \
                                          f' not displayed in {element_type}s' \
                                          f' list in advertised ' \
                                          f'space: {space_name}'

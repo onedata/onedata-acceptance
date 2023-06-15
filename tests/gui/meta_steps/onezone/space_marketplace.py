@@ -52,26 +52,33 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
 
 def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
     data = yaml.load(config)
-    space_name = data['space name']
-    organization_name = data['organization name']
+
+    space_name_option = 'space name'
+    organization_name_option = 'organization name'
+    general_option = 'general'
+    domains_option = 'domains'
+
+    space_name = data[space_name_option]
+    organization_name = data[organization_name_option]
     tags = data.get('tags', False)
     description = data['description']
 
     set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
-                                        'space_name', space_name)
+                                        space_name_option, space_name)
     set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
-                                        'organization_name', organization_name)
+                                        organization_name_option,
+                                        organization_name)
     set_description_of_a_space(selenium, browser_id, oz_page, description)
 
     if tags:
-        if tags['general']:
+        if tags[general_option]:
             add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
-                                                popups, 'general',
-                                                tags['general'])
-        if tags['domains']:
+                                                popups, general_option,
+                                                tags[general_option])
+        if tags[domains_option]:
             add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
-                                                popups, 'domains',
-                                                tags['domains'])
+                                                popups, domains_option,
+                                                tags[domains_option])
 
 
 @wt(parsers.parse('user of {browser_id} sees advertised space '
@@ -112,16 +119,21 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page,
 def _assert_space_in_marketplace_with_config(browser_id, config, selenium,
                                              oz_page):
     data = yaml.load(config)
-    space_name = data['space name']
 
-    organization_name = data['organization name']
-    creation_time = data['creation time']
+    space_name_option = 'space name'
+    organization_name_option = 'organization name'
+    creation_time_option = 'creation time'
+    description_option = 'description'
+
+    space_name = data[space_name_option]
+    organization_name = data[organization_name_option]
+    creation_time = data[creation_time_option]
     tags = data.get('tags', False)
     providers = data.get('providers', False)
-    description = data['description']
+    description = data[description_option]
 
     assert_element_in_space_marketplace(selenium, browser_id, oz_page,
-                                        space_name, 'organization name',
+                                        space_name, organization_name_option,
                                         organization_name)
 
     if tags:
@@ -129,13 +141,14 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium,
                                                   space_name, 'tag', tags)
 
     assert_element_in_space_marketplace(selenium, browser_id, oz_page,
-                                        space_name, 'creation time',
+                                        space_name, creation_time_option,
                                         creation_time)
 
     if providers:
         assert_elements_list_in_space_marketplace(selenium, browser_id, oz_page,
-                                                  space_name,'provider',
+                                                  space_name, 'provider',
                                                   providers)
 
     assert_element_in_space_marketplace(selenium, browser_id, oz_page,
-                                        space_name, 'description', description)
+                                        space_name, description_option,
+                                        description)

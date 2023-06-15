@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on Advertise space modal.
+"""Utils and fixtures to facilitate operations on advertise space modal.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -15,4 +15,4 @@ class AdvertiseSpace(Modal):
     spaces_dropdown_menu = WebElement('.spaces-dropdown-trigger')
 
     def __str__(self):
-        return 'Advertise Space modal'
+        return 'Advertise space modal'

@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import json
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.generic import transform
 
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -57,15 +58,17 @@ def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
     driver = selenium[browser_id]
     contact_email = oz_page(driver)['data'].configuration_page.contact_email
     contact_email.click()
-    err_msg = f'Email address {contact_email.text} displayed in on space ' \
-              f'configuration page, does not match expected {contact_email}'
+    err_msg = f'Email address {contact_email.text} displayed on space ' \
+              f'configuration page, does not match expected {email_address}'
 
     assert email_address in contact_email.text, err_msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_space_data_in_configuration_tab(selenium, browser_id, oz_page, data_type, data_name):
+def set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
+                                        data_type, data_name):
     driver = selenium[browser_id]
+    data_type = transform(data_type)
     page = getattr(oz_page(driver)['data'].configuration_page, data_type)
     page.click()
     page.value = data_name
