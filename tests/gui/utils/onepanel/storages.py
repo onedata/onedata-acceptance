@@ -119,7 +119,7 @@ class StorageContentPage(PageObject):
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')
 
-    @repeat_failed(timeout=15)
+    @repeat_failed(timeout=30)
     def click_modify_button_of_storage(self, driver, storage_name):
         for index, record in enumerate(self.storages):
             if record.name == storage_name:

@@ -55,14 +55,14 @@ Feature: Workflow cancelling and pausing tests
         task name: "1s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 1
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane1" lane with following configuration:
         where parallel box: "below"
         task name: "10s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
 
     And user of browser clicks on create lane button on the right side of latest created lane of workflow visualizer
@@ -72,21 +72,21 @@ Feature: Workflow cancelling and pausing tests
         task name: "1s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 1
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane2" lane with following configuration:
         where parallel box: "below"
         task name: "10s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane2" lane with following configuration:
         where parallel box: "below"
         task name: "5s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
