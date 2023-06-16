@@ -44,7 +44,7 @@ Feature: Size statistics tests
 
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser clicks on "oneprovider-1" provider on providers page
-    And user of browser unchecks size statistics toggle on space configuration page
+    And user of browser unchecks size statistics toggle in selected provider settings on providers page
     And user of browser clicks on "Disable" button in modal "Disable directory statistics"
 
     And user of browser clicks "Files" of "space1" space in the sidebar

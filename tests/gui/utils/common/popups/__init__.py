@@ -26,6 +26,7 @@ from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
 from .shares_row_menu import SharesRowMenu
 from .chart_statistics import ChartStatistics
+from .spaces_tags import SpacesTags
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
@@ -101,6 +102,7 @@ class Popups(object):
     workflow_dataset_initial_value = WebItem(
         '.in .dataset-value-editor-selector-actions', cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
+    spaces_tags = WebItem('.space-tags-selector', cls=SpacesTags)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

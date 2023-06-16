@@ -36,13 +36,15 @@ def _parse_tabs_list(tabs):
     return tabs
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Create space button '
-                  'in spaces sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               '"(?P<button_name>Create space|Marketplace)" button in '
+               'spaces sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, browser_id,
-                                                          oz_page):
+def click_button_on_spaces_sidebar_menu(selenium, browser_id, button_name,
+                                        oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].create_space_button()
+    button_name = transform(button_name) + "_button"
+    getattr(oz_page(driver)['data'], button_name).click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {button_name} button '
@@ -385,7 +387,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
-               '(?P<toggle>.*) toggle on space configuration page'))
+               '(?P<toggle>.*) toggle in selected provider settings '
+               'on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
                                       op_container, option):
