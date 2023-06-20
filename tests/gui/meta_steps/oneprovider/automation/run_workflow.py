@@ -76,6 +76,23 @@ def choose_file_as_initial_workflow_value_for_store(
                                                data_type, op_container, popups)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<expected_err_msg>.*)" '
+               'message while choosing "(?P<dir_name>.*)" directory as initial '
+               'value for workflow in "Select files" modal'))
+def fails_to_choose_directory_as_initial_workflow_value(
+        selenium, browser_id, dir_name, modals, op_container, popups,
+        expected_err_msg):
+    data_type = 'directory'
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+    open_initial_modal(data_type, op_container, driver, popups, modals)
+    modals(driver).select_files.files[dir_name].click()
+    actual_err_msg = modals(driver).select_files.error_msg
+    assert actual_err_msg == expected_err_msg, (
+        f'User does not see expected error: "{expected_err_msg}" while trying to'
+        f' set "{dir_name}" as initial value for workflow')
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) '
                '(?P<data_type>file|files|datasets) as initial value for '
                'workflow in "Select files" modal'))

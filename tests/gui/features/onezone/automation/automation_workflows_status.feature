@@ -39,7 +39,7 @@ Feature: Workflow execution statuses tests
   Scenario: User sees that lane, task and workflow statuses are "Preparing", "Pending" and "Active" in turn, during execution of uploaded "workflow-with-sleep-one-lane" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
     Then user of browser sees that status of "Lane1" lane in "Workflow1" is "Preparing"
@@ -67,7 +67,7 @@ Feature: Workflow execution statuses tests
   Scenario: User can not remove uploaded "workflow-with-sleep" workflow while it is still running
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
@@ -80,7 +80,7 @@ Feature: Workflow execution statuses tests
   Scenario: User resume workflow execution after pausing execution of created workflow while lane had preparing status
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
 
@@ -104,7 +104,7 @@ Feature: Workflow execution statuses tests
   Scenario: User resume workflow execution after pausing execution of uploaded workflow while first task had active status
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space

@@ -88,7 +88,7 @@ stages:
         - Oneprovider archives incremental and nested
         - Oneprovider archives recall
         - Oneprovider atm workflow execution
-        - Oneprovider atm workflows example
+        - Oneprovider automation-examples workflows
         - Oneprovider atm workflows stores
         - Oneprovider atm stores basic
         - Oneprovider atm workflows pausing and cancelling
@@ -739,7 +739,7 @@ Oneprovider atm workflow execution:
         scripts:
           - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
-Oneprovider atm workflows example:
+Oneprovider automation-examples workflows:
   <<: *acceptance-tests-in-chrome-job
   key: COAWEX
   tasks:
@@ -752,7 +752,7 @@ Oneprovider atm workflows example:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_oneprovider_atm_workflows_example test_gui_pkg
+          - make ENV_FILE=1oz_1op_openfaas SUITE=test_oneprovider_automation_examples_workflows_tests test_gui_pkg
 
 Oneprovider atm workflows stores:
   <<: *acceptance-tests-in-chrome-job

@@ -191,14 +191,18 @@ def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
     assert actual_number == int(number), err_msg
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that each element from list '
+               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space '
+               '(?P<option>corresponds to two) instances of the element with '
+               '"file_id" in "(?P<store_name>.*?)" store details modal'))
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that (each element with |)'
                '"file_id" in "(?P<store_name>.*?)" store details modal '
-               '(corresponds to id of file from|is id of) "(?P<file_list>.*?)"'
-               ' in "(?P<space_name>.*?)" space'))
+               '(?P<option>corresponds to id of file from|is id of) '
+               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space'))
 def assert_file_id_in_store_details(browser_id, selenium, op_container,
                                     store_name, modals, clipboard, displays,
                                     tmp_memory, file_list, popups, oz_page,
-                                    space_name):
+                                    space_name, option):
     driver = selenium[browser_id]
 
     page = get_op_workflow_visualizer_page(op_container, driver)
@@ -224,9 +228,14 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
 
         assert storage_file_id in file_ids, err_msg
 
-    assert len(storage_file_ids) == len(file_ids), (
-        f'Number of elements in "{store_name}" store details modal does not'
-        f' match number of files given to check id')
+    if 'two' in option:
+        assert len(storage_file_ids) == 2*len(file_ids), (
+            f'Number of elements in "{store_name}" store details modal does not'
+            f' match twice number of files given to check id')
+    else:
+        assert len(storage_file_ids) == len(file_ids), (
+            f'Number of elements in "{store_name}" store details modal does not'
+            f' match number of files given to check id')
 
 
 def check_visual_in_store_details_modal(modal, variable_type, item_list,
@@ -330,7 +339,7 @@ def compare_to_expected_if_element_exist_for_store(
         op_container, tmp_memory, popups, modals, clipboard, displays):
     if elem:
         if option == 'fileId':
-            file_info = elem.split(' - ')[1].replace(')', '').split('/')
+            file_info = elem.split(' ')[1].replace(')', '').split('/')
             elem = get_file_id_from_details_modal(
                 selenium, browser_id, oz_page, file_info[0], op_container,
                 tmp_memory, file_info[1], popups, modals, clipboard,
@@ -392,7 +401,7 @@ def compare_content_reason_of_task_audit_log(
         tmp_memory, popups, modals, clipboard, displays, task_name):
     if 'contains' in reason:
         reason_data = yaml.load(
-            reason.split(' - ')[1].replace('])', ']'))
+            reason.split('contains ')[1].replace('])', ']'))
         for reason_elem in reason_data:
             assert reason_elem in actual_reason, (
                 f'Reason: "{reason}" in audit log for "{task_name}" '
@@ -402,7 +411,7 @@ def compare_content_reason_of_task_audit_log(
             placeholder_file_id = reason['details'][
                 'specificError']['details']['value']['file_id']
             placeholder_file_id = placeholder_file_id.split(
-                ' - ')[1].replace(')', '').split('/')
+                ' ')[1].replace(')', '').split('/')
             reason['details']['specificError']['details']['value'][
                 'file_id'] = get_file_id_from_details_modal(
                 selenium, browser_id, oz_page, placeholder_file_id[0],
@@ -428,7 +437,7 @@ def compare_content_of_task_audit_log(
             oz_page, op_container, tmp_memory, popups, modals, clipboard,
             displays, task_name)
     if item:
-        file_id = item['file_id'].split(' - ')[1].replace(
+        file_id = item['file_id'].split(' ')[1].replace(
             ')', '').split('/')
         item['file_id'] = get_file_id_from_details_modal(
             selenium, browser_id, oz_page, file_id[0],

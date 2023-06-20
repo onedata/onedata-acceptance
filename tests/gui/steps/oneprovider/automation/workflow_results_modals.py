@@ -175,12 +175,23 @@ def compare_array_in_store_details_modal(modal, item_list):
             f'modal')
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def open_raw_view_for_elem(store_content_list, index, modal):
+    for _ in range(10):
+        store_content_list[index].click()
+        if modal.raw_view != '':
+            break
+    else:
+        raise Exception(f'Did not manage to open raw view for '
+                        f'{index} element in store content list')
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_store_content(modal, store_type, index, clipboard, displays,
                       browser_id):
     store_content_type = 'store_content_' + store_type
     store_content_list = getattr(modal, store_content_type)
-    store_content_list[index].click()
+    open_raw_view_for_elem(store_content_list, index, modal)
     modal.copy_button()
     return clipboard.paste(display=displays[browser_id])
 

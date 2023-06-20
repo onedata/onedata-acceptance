@@ -142,13 +142,13 @@ def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
                r'(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)'))
 def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
                         config, option):
+    conf_param_option = 'configuration parameters'
     data = yaml.load(config)
     results_conf = data.get('results', False)
     lambda_conf = data.get('lambda', False)
-    configuration_parameters = data.get('configuration parameters', False)
+    configuration_parameters = data.get(conf_param_option, False)
     button = "Modify"
     task_option = 'task'
-    conf_param_option = 'configuration parameters'
 
     driver = selenium[browser_id]
     page = oz_page(driver)['automation']

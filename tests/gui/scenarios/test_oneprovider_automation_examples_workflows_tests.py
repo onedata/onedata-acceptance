@@ -83,4 +83,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/automation_examples.feature')
+scenarios('../features/onezone/automation'
+          '/automation_examples_workflows.feature')
