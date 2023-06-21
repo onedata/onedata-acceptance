@@ -38,6 +38,8 @@ from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
+from tests.gui.steps.onezone.marketplace import *
+from tests.gui.steps.onezone.space_configuration import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -58,6 +60,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.onezone.space_marketplace import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.shares import *
@@ -76,3 +79,4 @@ scenarios('../features/onezone/space/create_new_space.feature')
 scenarios('../features/onezone/space/multispace.feature')
 scenarios('../features/onezone/space/spaces_memberships.feature')
 scenarios('../features/onezone/space/spaces_effective_privileges.feature')
+scenarios('../features/onezone/space/space_marketplace.feature')

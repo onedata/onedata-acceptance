@@ -366,6 +366,7 @@ def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+    button = button.replace('.', '')
     getattr(modal, transform(button))()
 
 
@@ -541,4 +542,14 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver,
         return file_name
     else:
         return path
+
+
+@wt(parsers.parse('user of {browser_id} accepts terms of privacy in Space '
+                  'Marketplace using checkbox in modal "Advertise space in '
+                  'the marketplace"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).advertise_space_in_the_marketplace
+    modal.checkbox.click()
 

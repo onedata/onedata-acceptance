@@ -33,10 +33,10 @@ from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
+    button = 'Create space'
 
     for space_name in parse_seq(space_list):
-        click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, user,
-                                                              oz_page)
+        click_button_on_spaces_sidebar_menu(selenium, user, button, oz_page)
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)
         confirm_create_new_space(selenium, user, option, oz_page)
@@ -401,3 +401,5 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, oz_page,
                                          member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
+
+
