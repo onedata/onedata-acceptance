@@ -274,8 +274,8 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees following '
-               '(?P<variable_type>.*) "(?P<item_list>.*?)" in content in'
-               ' "(?P<store_name>.*?)" store details modal'))
+               '(?P<variable_type>.*?) represented by "(?P<item_list>.*?)" in '
+               'content in "(?P<store_name>.*?)" store details modal'))
 def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                            item_list, store_name, modals,
                                            variable_type):

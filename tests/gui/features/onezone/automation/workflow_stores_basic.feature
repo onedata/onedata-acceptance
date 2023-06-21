@@ -54,7 +54,7 @@ Feature: Workflows stores tests
           - value: output
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 2nd revision of "echo" and waits extended time for workflow to finish, using <input_type> as initial value: "<initial_value>" in "space1" space
-    Then user of browser sees following <output_type> "<output_value>" in content in "output" store details modal
+    Then user of browser sees following <output_type> represented by "<output_value>" in content in "output" store details modal
 
     Examples:
     | input_store_type | input_store_data_type | output_store_type | output_store_data_type | input_type | output_type   | initial_value                       | output_value                            |

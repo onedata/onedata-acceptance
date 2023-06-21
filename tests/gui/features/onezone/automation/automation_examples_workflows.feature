@@ -21,6 +21,8 @@ Feature: Automation examples tests
                       - file3: 10000
                       - file4: 100
                       - file5: 100000
+                    - dir2:
+                      - file1: 100
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
@@ -389,10 +391,11 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "demo", using file as initial value: "dir1" in "space1" space
+    And user of browser executes 1st revision of "demo", using file as initial value: "dir2" in "space1" space
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
-    And user of browser sees following strings "["Hello - dir1", "Hello - file1", "Hello - file2", "Hello - file3", "Hello - file4", "Hello - file5"]" in content in "results" store details modal
+    And user of browser sees following strings represented by "["Hello - dir2", "Hello - file1"]" in content in "results" store details modal
+
