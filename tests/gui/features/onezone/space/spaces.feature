@@ -101,8 +101,6 @@ Feature: Basic management of spaces
 
   Scenario: User can leave the space which was owned by them and was its only user
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
-    And user of space_owner_browser clicks show view expand button in space members subpage header
-    And user of space_owner_browser clicks effective view mode in space members subpage
     And user of space_owner_browser sees 1 user in space members subpage
     And user of space_owner_browser sees [you, owner, direct] status labels for "space-owner-user" user in space members subpage
 
