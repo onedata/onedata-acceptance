@@ -278,16 +278,16 @@ Feature: Automation examples tests
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    And user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
         timestamp: today
-        severity: error
-        source: system
+        source: user
+        severity: info
         content:
-          reason: $(contains ["ValueError", "too many values to unpack (expected 3)"])
-          item:
-            file_id:  $(resolve_id space1/whitespaces_fetch.txt)
-          description: Lambda exception occurred during item processing.
+            status: Found  1 files to be downloaded.
+            fetchFileName: whitespaces_fetch.txt
+    And user of browser sees that content of "files-to-download" store is:
+      sourceUrl: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
 
 
   Scenario: User sees desirable "Active" workflow status before 10s pass in task auditlog after changing sleepDurationSec in echo lambda
@@ -356,9 +356,9 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "<workflow_name>" workflow from automation-examples repository to "inventory1" inventory
     And user of browser executes 1st revision of "<workflow_name>" and waits extended time for workflow to finish, using directory as initial value: "dir1" in "space1" space
-    And user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
 
-    Then user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
+    And user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that value of last column on chart with processing stats is bigger than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
@@ -375,7 +375,7 @@ Feature: Automation examples tests
     And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
-    Then user of browser sees that number of elements in content in "results" store details modal is 12
+    And user of browser sees that number of elements in content in "results" store details modal is 12
     And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" space corresponds to two instances of the element with "file_id" in "results" store details modal
 
     Examples:

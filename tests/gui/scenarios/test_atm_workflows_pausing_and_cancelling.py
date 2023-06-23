@@ -1,4 +1,4 @@
-"""This module contains tests suite for rerunning workflow using
+"""This module contains tests suite for pausing and cancelling workflows using
 Oneprovider GUI.
 """
 
@@ -82,4 +82,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/workflow_stores_basic.feature')
+scenarios('../features/atm/workflows_pausing_and_cancelling.feature')

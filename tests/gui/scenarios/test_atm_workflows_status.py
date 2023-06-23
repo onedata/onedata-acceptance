@@ -1,4 +1,4 @@
-"""This module contains tests suite for example workflows using
+"""This module contains tests suite for workflows statuses using
 Oneprovider GUI.
 """
 
@@ -59,7 +59,6 @@ from tests.gui.meta_steps.onezone.automation.workflow_management import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.onezone.automation.task_management import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
-from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
@@ -83,5 +82,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation'
-          '/automation_examples_workflows.feature')
+scenarios('../features/atm/automation_workflows_status.feature')
+scenarios('../features/atm/rerun_workflow.feature')

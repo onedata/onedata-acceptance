@@ -1,4 +1,4 @@
-"""This module contains tests suite for workflows statuses using
+"""This module contains tests suite for workflows stores using
 Oneprovider GUI.
 """
 
@@ -82,5 +82,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/automation_workflows_status.feature')
-scenarios('../features/onezone/automation/rerun_workflow.feature')
+scenarios('../features/atm/workflows_stores.feature')

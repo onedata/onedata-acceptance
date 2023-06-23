@@ -30,7 +30,8 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     close_modal_and_task, click_on_task_audit_log, open_store_details_modal,
     compare_datasets_in_store_details_modal,
     compare_booleans_in_store_details_modal,
-    compare_string_in_store_details_modal, compare_array_in_store_details_modal)
+    compare_string_in_store_details_modal, compare_array_in_store_details_modal,
+    check_number_of_elements_in_store_details_modal)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
@@ -184,11 +185,7 @@ def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                number):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    actual_number = len(modal.store_content_object)
-    err_msg = (f'Expected number of elements {number} is not equal to actual '
-               f'number {actual_number} in "{store_name}" store details modal')
-
-    assert actual_number == int(number), err_msg
+    check_number_of_elements_in_store_details_modal(modal, number, store_name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that each element from list '

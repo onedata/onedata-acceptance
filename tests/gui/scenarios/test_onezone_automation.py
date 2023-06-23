@@ -74,6 +74,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/automation/automation_basics.feature')
-scenarios('../features/onezone/automation/automation_lambdas.feature')
-scenarios('../features/onezone/automation/automation_workflows.feature')
+scenarios('../features/atm/onezone/automation_basics.feature')
+scenarios('../features/atm/onezone/automation_lambdas.feature')
+scenarios('../features/atm/onezone/automation_workflows.feature')

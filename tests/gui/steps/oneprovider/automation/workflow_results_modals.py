@@ -179,8 +179,12 @@ def compare_array_in_store_details_modal(modal, item_list):
 def open_raw_view_for_elem(store_content_list, index, modal):
     for _ in range(10):
         store_content_list[index].click()
-        if modal.raw_view != '':
-            break
+        try:
+            if modal.raw_view != '':
+                break
+        except AttributeError:
+            if modal.single_file_container.name != '':
+                break
     else:
         raise Exception(f'Did not manage to open raw view for '
                         f'{index} element in store content list')
@@ -210,3 +214,12 @@ def open_url_from_store_content(browser_id, option, store_name, selenium,
 
     url = items[option]
     _open_url(selenium, browser_id, url)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_number_of_elements_in_store_details_modal(modal, number, store_name):
+    actual_number = len(modal.store_content_object)
+    err_msg = (f'Expected number of elements {number} is not equal to actual '
+               f'number {actual_number} in "{store_name}" store details modal')
+
+    assert actual_number == int(number), err_msg
