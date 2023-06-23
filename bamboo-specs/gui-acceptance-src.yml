@@ -60,6 +60,12 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
+        - automation-examples workflows
+        - Atm stores basic
+        - Atm workflow execution
+        - Atm workflows pausing and cancelling
+        - Atm workflows status
+        - Atm workflows stores
         - Metadata
         - Multiprovider basic
         - Multiprovider multiuser
@@ -131,12 +137,6 @@ stages:
         - Transfers directories
         - Transfers files
         - Transfers multi browser
-        - Atm workflow execution
-        - Automation-examples workflows
-        - Atm workflows stores
-        - Atm stores basic
-        - Atm workflows pausing and cancelling
-        - Atm workflows status
   - Qnthack - rerun:
       manual: false
       final: true
@@ -238,8 +238,8 @@ _Codetag Tracker:
   requirements: []
   artifact-subscriptions: []
 
-Metadata: &acceptance-tests-in-chrome-job
-  key: CPT
+automation-examples workflows: &acceptance-tests-in-chrome-job
+  key: COAWEX
   other: *common-opts
   tasks:
     - script: &clear-env
@@ -302,7 +302,7 @@ Metadata: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make SUITE=test_metadata test_gui_src
+          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests test_gui_src
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -347,6 +347,95 @@ Metadata: &acceptance-tests-in-chrome-job
   requirements:
     - minikube
   artifact-subscriptions: []
+
+Atm stores basic:
+  <<: *acceptance-tests-in-chrome-job
+  key: COASB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Atm workflow execution:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWET
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_openfaas SUITE=test_atm_workflows_execution test_gui_src
+
+Atm workflows pausing and cancelling:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Atm workflows status:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Atm workflows stores:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Metadata:
+  <<: *acceptance-tests-in-chrome-job
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_metadata test_gui_src
 
 Multiprovider basic:
   <<: *acceptance-tests-in-chrome-job
@@ -1397,96 +1486,6 @@ Transfers multi browser:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed test_gui_src
-
-Atm workflow execution:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWET
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_atm_workflows_execution test_gui_src
-
-Automation-examples workflows:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWEX
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests test_gui_src
-
-Atm workflows stores:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_src
-
-Atm stores basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_src
-
-Atm workflows pausing and cancelling:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWPC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_src
-
-Atm workflows status:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_src
 
 Qnthack - rerun:
   key: ZREQN
