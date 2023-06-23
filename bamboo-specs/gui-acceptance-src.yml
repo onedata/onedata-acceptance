@@ -425,6 +425,7 @@ Atm workflows stores:
 
 Metadata:
   <<: *acceptance-tests-in-chrome-job
+  key: CPT
   tasks:
     - script: *clear-env
     - script: *restart-minikube
