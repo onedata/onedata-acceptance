@@ -278,7 +278,7 @@ Feature: Automation examples tests
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    And user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
         timestamp: today
         source: user
