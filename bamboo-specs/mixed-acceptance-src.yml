@@ -1,4 +1,4 @@
- >version: 2
+version: 2
 plan:
   project-key: VFS
   key: MAOST
