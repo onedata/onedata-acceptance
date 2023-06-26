@@ -33,8 +33,7 @@ Feature: Workflows stores tests
   Scenario Outline: User sees <output_store_type> of <output_type> in result store after modifying input store and lambda data type and executing uploaded echo workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser clicks on "Create new revision" in "echo"
@@ -55,7 +54,7 @@ Feature: Workflows stores tests
           - value: output
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 2nd revision of "echo" and waits extended time for workflow to finish, using <input_type> as initial value: "<initial_value>" in "space1" space
-    Then user of browser sees following <output_type> "<output_value>" in content in "output" store details modal
+    Then user of browser sees following <output_type> represented by "<output_value>" in content in "output" store details modal
 
     Examples:
     | input_store_type | input_store_data_type | output_store_type | output_store_data_type | input_type | output_type   | initial_value                       | output_value                            |

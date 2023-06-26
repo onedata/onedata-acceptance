@@ -8,6 +8,10 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import json
 import time
+from datetime import date
+
+import yaml
+from selenium.common.exceptions import StaleElementReferenceException
 
 from tests import GUI_LOGDIR
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
@@ -17,7 +21,8 @@ from tests.gui.steps.common.url import switch_to_last_tab
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, switch_to_automation_page,
-    get_op_workflow_visualizer_page)
+    get_op_workflow_visualizer_page, click_on_task_in_lane,
+    click_on_link_in_task_box)
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
     get_status_from_workflow_visualizer)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
@@ -25,12 +30,12 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     close_modal_and_task, click_on_task_audit_log, open_store_details_modal,
     compare_datasets_in_store_details_modal,
     compare_booleans_in_store_details_modal,
-    compare_string_in_store_details_modal, compare_array_in_store_details_modal)
+    compare_string_in_store_details_modal, compare_array_in_store_details_modal,
+    check_number_of_elements_in_store_details_modal)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
-from tests.utils.utils import repeat_failed
 
 
 def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
@@ -180,21 +185,21 @@ def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                number):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    actual_number = len(modal.store_content_object)
-    err_msg = (f'Expected number of elements {number} is not equal to actual '
-               f'number {actual_number} in "{store_name}" store details modal')
-
-    assert actual_number == int(number), err_msg
+    check_number_of_elements_in_store_details_modal(modal, number, store_name)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that each element from list '
+               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space '
+               '(?P<option>corresponds to two) instances of the element with '
+               '"file_id" in "(?P<store_name>.*?)" store details modal'))
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that (each element with |)'
                '"file_id" in "(?P<store_name>.*?)" store details modal '
-               '(corresponds to id of file from|is id of) "(?P<file_list>.*?)"'
-               ' in "(?P<space_name>.*?)" space'))
+               '(?P<option>corresponds to id of file from|is id of) '
+               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space'))
 def assert_file_id_in_store_details(browser_id, selenium, op_container,
                                     store_name, modals, clipboard, displays,
                                     tmp_memory, file_list, popups, oz_page,
-                                    space_name):
+                                    space_name, option):
     driver = selenium[browser_id]
 
     page = get_op_workflow_visualizer_page(op_container, driver)
@@ -220,9 +225,14 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
 
         assert storage_file_id in file_ids, err_msg
 
-    assert len(storage_file_ids) == len(file_ids), (
-        f'Number of elements in "{store_name}" store details modal does not'
-        f' match number of files given to check id')
+    if 'two' in option:
+        assert len(storage_file_ids) == 2*len(file_ids), (
+            f'Number of elements in "{store_name}" store details modal does not'
+            f' match twice number of files given to check id')
+    else:
+        assert len(storage_file_ids) == len(file_ids), (
+            f'Number of elements in "{store_name}" store details modal does not'
+            f' match number of files given to check id')
 
 
 def check_visual_in_store_details_modal(modal, variable_type, item_list,
@@ -261,8 +271,8 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees following '
-               '(?P<variable_type>.*) "(?P<item_list>.*?)" in content in'
-               ' "(?P<store_name>.*?)" store details modal'))
+               '(?P<variable_type>.*?) represented by "(?P<item_list>.*?)" in '
+               'content in "(?P<store_name>.*?)" store details modal'))
 def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                            item_list, store_name, modals,
                                            variable_type):
@@ -319,3 +329,157 @@ def assert_browser_after_clicking_on_item_in_details_modal(
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 browser)
+
+
+def compare_to_expected_if_element_exist_for_store(
+        elem, items, option, store_name, selenium, browser_id, oz_page,
+        op_container, tmp_memory, popups, modals, clipboard, displays):
+    if elem:
+        if option == 'fileId':
+            file_info = elem.split(' ')[1].replace(')', '').split('/')
+            elem = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, file_info[0], op_container,
+                tmp_memory, file_info[1], popups, modals, clipboard,
+                displays)
+
+        assert elem == items[option], (
+            f"{option}: {items[option]} in store {store_name} does not"
+            f" match expected {elem}")
+
+
+@wt(parsers.parse('user of {browser_id} sees that content of "{store_name}"'
+                  ' store is:\n{config}'))
+def assert_content_of_store(selenium, browser_id, op_container, modals,
+                            store_name, config, clipboard, displays, oz_page,
+                            tmp_memory, popups):
+
+    options_to_check = ['mimeType', 'formatName', 'isExtensionMatchingFormat',
+                        'fileName', 'extensions', 'sourceUrl', 'fileId']
+    data = yaml.load(config)
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    modal.store_content_list[0].click()
+    modal.copy_button()
+    items = json.loads(clipboard.paste(display=displays[browser_id]))
+
+    for option in options_to_check:
+        elem = data.get(option, False)
+        compare_to_expected_if_element_exist_for_store(
+            elem, items, option, store_name, selenium, browser_id, oz_page,
+            op_container, tmp_memory, popups, modals, clipboard, displays)
+    try:
+        modal.close()
+    except StaleElementReferenceException:
+        pass
+
+
+def compare_to_expected_if_elem_exist_audit_log(data, label, actual_items,
+                                                task_name):
+    expected = data.get(label, False)
+    if expected:
+        actual = actual_items[label]
+        if label == 'timestamp':
+            expected = date.today()
+            actual = date.fromtimestamp(actual_items['timestamp'] / 1000)
+
+        assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
+                                                       task_name)
+
+
+def assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
+                                                   task_name):
+    assert expected == actual, (
+        f'{label} "{actual}" in audit log for "{task_name}" task is '
+        f'not "{expected}" as expected')
+
+
+def compare_content_reason_of_task_audit_log(
+        reason, actual_reason, selenium, browser_id, oz_page, op_container,
+        tmp_memory, popups, modals, clipboard, displays, task_name):
+    if 'contains' in reason:
+        reason_data = yaml.load(
+            reason.split('contains ')[1].replace('])', ']'))
+        for reason_elem in reason_data:
+            assert reason_elem in actual_reason, (
+                f'Reason: "{reason}" in audit log for "{task_name}" '
+                f'task does not contain "{actual_reason}" as expected')
+    else:
+        if not isinstance(reason, str):
+            placeholder_file_id = reason['details'][
+                'specificError']['details']['value']['file_id']
+            placeholder_file_id = placeholder_file_id.split(
+                ' ')[1].replace(')', '').split('/')
+            reason['details']['specificError']['details']['value'][
+                'file_id'] = get_file_id_from_details_modal(
+                selenium, browser_id, oz_page, placeholder_file_id[0],
+                op_container, tmp_memory, placeholder_file_id[1],
+                popups, modals, clipboard, displays)
+        assert_elements_of_task_audit_log_are_the_same(reason, actual_reason,
+                                                       'Reason', task_name)
+
+
+def compare_content_of_task_audit_log(
+        content, actual_content, task_name, selenium, browser_id, oz_page,
+        op_container, tmp_memory, popups, modals, clipboard, displays):
+    expected_identical = ['status', 'fetchFileName', 'description']
+    reason = content.get('reason', False)
+    item = content.get('item', False)
+
+    for label in expected_identical:
+        compare_to_expected_if_elem_exist_audit_log(content, label,
+                                                    actual_content, task_name)
+    if reason:
+        compare_content_reason_of_task_audit_log(
+            reason, actual_content['reason'], selenium, browser_id,
+            oz_page, op_container, tmp_memory, popups, modals, clipboard,
+            displays, task_name)
+    if item:
+        file_id = item['file_id'].split(' ')[1].replace(
+            ')', '').split('/')
+        item['file_id'] = get_file_id_from_details_modal(
+            selenium, browser_id, oz_page, file_id[0],
+            op_container, tmp_memory, file_id[1], popups, modals,
+            clipboard, displays)
+        assert_elements_of_task_audit_log_are_the_same(
+            item, actual_content['item'], 'Item', task_name)
+
+
+@wt(parsers.parse('user of {browser_id} sees that audit logs in task'
+                  ' "{task_name}" in {ordinal} parallel box in lane '
+                  '"{lane_name}" contains following information:\n{config}'))
+def assert_content_of_task_audit_log(config, selenium, browser_id,
+                                     op_container, lane_name, task_name,
+                                     ordinal, modals, clipboard, displays,
+                                     popups, tmp_memory, oz_page):
+    expected_identical = ['source', 'severity', 'timestamp']
+    click = 'click'
+    link = 'Audit log'
+    driver = selenium[browser_id]
+    data = yaml.load(config)
+    content = data.get('content', False)
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
+                              task_name, link, ordinal)
+    # wait a moment for modal to open
+    time.sleep(1)
+    modal = modals(driver).audit_log
+    modal.logs_entry[0].click()
+    modal.copy_json()
+    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
+
+    for label in expected_identical:
+        compare_to_expected_if_elem_exist_audit_log(data, label, actual_items,
+                                                    task_name)
+
+    if content:
+        compare_content_of_task_audit_log(
+            content, actual_items['content'], task_name, selenium, browser_id,
+            oz_page, op_container, tmp_memory, popups, modals, clipboard,
+            displays)
+
+    try:
+        modal.x()
+    except StaleElementReferenceException:
+        pass

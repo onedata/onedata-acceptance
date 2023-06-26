@@ -209,3 +209,12 @@ def refresh_webapp(selenium, browser_id):
 def switch_to_last_tab(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.window(driver.window_handles[-1])
+
+
+@wt(parsers.parse('user of {browser_id} sees image named "{image_name}" '
+                  'in browser'))
+def assert_image_in_browser(browser_id, selenium, image_name):
+    driver = selenium[browser_id]
+    url = driver.find_elements_by_css_selector('img')[0].get_attribute('src')
+    err_msg = f'{image_name} is not visible in browser'
+    assert image_name in url, err_msg

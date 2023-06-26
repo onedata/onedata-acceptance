@@ -6,9 +6,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import upload_file_path, transform
+from tests.gui.utils.generic import (upload_file_path, upload_workflow_path,
+                                     transform)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -113,6 +113,15 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
 def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+
+
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_workflow_from_repository(selenium, browser_id, workflow_name,
+                                    oz_page):
+    driver = selenium[browser_id]
+    workflow_name = workflow_name + '.json'
+    automation_page = oz_page(driver)['automation']
+    automation_page.upload_workflow(upload_workflow_path(workflow_name))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '

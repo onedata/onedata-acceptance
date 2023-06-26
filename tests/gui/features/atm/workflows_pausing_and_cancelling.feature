@@ -55,14 +55,14 @@ Feature: Workflow cancelling and pausing tests
         task name: "1s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 1
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane1" lane with following configuration:
         where parallel box: "below"
         task name: "10s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
 
     And user of browser clicks on create lane button on the right side of latest created lane of workflow visualizer
@@ -72,21 +72,21 @@ Feature: Workflow cancelling and pausing tests
         task name: "1s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 1
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane2" lane with following configuration:
         where parallel box: "below"
         task name: "10s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
     And user of browser creates another task using 1st revision of "echo" lambda in "Lane2" lane with following configuration:
         where parallel box: "below"
         task name: "5s sleep"
         configuration parameters:
             sleepDurationSec:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: 10
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
@@ -113,7 +113,7 @@ Feature: Workflow cancelling and pausing tests
   Scenario Outline: User sees status "<status>" in "Lane2" after stopping execution of uploaded "workflow-with-sleep" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
@@ -143,7 +143,7 @@ Feature: Workflow cancelling and pausing tests
   Scenario Outline: User sees status "<status>" in "Lane1" after stopping execution of uploaded "workflow-with-sleep" workflow while "Lane1" had "Preparing" status
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
@@ -171,7 +171,7 @@ Feature: Workflow cancelling and pausing tests
   Scenario: User sees status "Cancelled" in "Lane1" and "Unscheduled" in "Lane2" after cancelling execution of uploaded "workflow-with-sleep" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
@@ -199,7 +199,7 @@ Feature: Workflow cancelling and pausing tests
   Scenario: User sees that workflow is cancelled after cancelling workflow that is paused
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 
@@ -225,7 +225,7 @@ Feature: Workflow cancelling and pausing tests
   Scenario: User sees that tasks are cancelled after cancelling workflow while task was pausing
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow-with-one-box.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-one-box", using file as initial value: "file1" in "space1" space
 

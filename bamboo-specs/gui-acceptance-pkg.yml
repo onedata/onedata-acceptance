@@ -61,6 +61,12 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
+        - automation-examples workflows
+        - Atm stores basic
+        - Atm workflow execution
+        - Atm workflows pausing and cancelling
+        - Atm workflows status
+        - Atm workflows stores
         - Metadata
         - Multiprovider basic
         - Multiprovider multiuser
@@ -87,11 +93,6 @@ stages:
         - Oneprovider archives
         - Oneprovider archives incremental and nested
         - Oneprovider archives recall
-        - Oneprovider atm workflow execution
-        - Oneprovider atm workflows stores
-        - Oneprovider atm stores basic
-        - Oneprovider atm workflows pausing and cancelling
-        - Oneprovider atm workflows status
         - Oneprovider data tab
         - Oneprovider data tab files
         - Oneprovider datasets
@@ -238,8 +239,8 @@ _Codetag Tracker:
   requirements: []
   artifact-subscriptions: []
 
-Metadata: &acceptance-tests-in-chrome-job
-  key: CPT
+automation-examples workflows: &acceptance-tests-in-chrome-job
+  key: COAWEX
   other: *common-opts
   tasks:
     - script: &clear-env
@@ -302,7 +303,7 @@ Metadata: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make SUITE=test_metadata test_gui_pkg
+          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests test_gui_pkg
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -346,7 +347,97 @@ Metadata: &acceptance-tests-in-chrome-job
       required: false
   requirements:
     - minikube
-  artifact-subscriptions: []
+  artifact-subscriptions: [ ]
+
+Atm stores basic:
+  <<: *acceptance-tests-in-chrome-job
+  key: COASB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Atm workflow execution:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWET
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Atm workflows pausing and cancelling:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWPC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Atm workflows status:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Atm workflows stores:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Metadata:
+  <<: *acceptance-tests-in-chrome-job
+  key: CPT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &run-selenium-tests
+        <<: *run-script-working-dir
+        scripts:
+          - make SUITE=test_metadata test_gui_pkg
 
 Multiprovider basic:
   <<: *acceptance-tests-in-chrome-job
@@ -722,81 +813,6 @@ Oneprovider archives recall:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
-
-Oneprovider atm workflow execution:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWET
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Oneprovider atm workflows stores:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Oneprovider atm stores basic:
-  <<: *acceptance-tests-in-chrome-job
-  key: COASB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_atm_stores_basic ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Oneprovider atm workflows pausing and cancelling:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWPC
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_atm_workflows_pausing_and_cancelling ENV_FILE=1oz_1op_openfaas test_gui_pkg
-
-Oneprovider atm workflows status:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAWST
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_atm_workflows_status ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
 Oneprovider data tab:
   <<: *acceptance-tests-in-chrome-job

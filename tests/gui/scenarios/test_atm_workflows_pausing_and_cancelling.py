@@ -82,5 +82,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation/'
-          'workflows_pausing_and_cancelling.feature')
+scenarios('../features/atm/workflows_pausing_and_cancelling.feature')

@@ -22,3 +22,6 @@
 	path = one_env
 	url = ../one-env.git
     branch = develop
+[submodule "automation-examples"]
+	path = automation-examples
+	url = ../automation-examples.git

@@ -89,6 +89,11 @@ class Store(Element):
     name = id = Label('.store-name')
 
 
+class InitialValueStore(Element):
+    name = id = Label('.control-label')
+    input_link = Button('.file-value-editor-selector')
+
+
 class WorkflowVisualiser(PageObject):
     status = Label('.workflow-status-text .workflow-status')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
@@ -129,6 +134,9 @@ class WorkflowExecutionPage(PageObject):
 
     available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
                                                ' .list-entry', cls=Workflow)
+    initial_value_store = WebItemsSequence('.inputStores-collapse '
+                                           '.inputStore-field',
+                                           cls=InitialValueStore)
     input_link = Button('.add-item-trigger')
     single_file_input_link = Button('.file-value-editor-selector')
     files_input_link = Button('.add-item-trigger.file-value-editor-selector')

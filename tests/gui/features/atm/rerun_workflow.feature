@@ -28,7 +28,7 @@ Feature: Workflow rerun tests
   Scenario: User sees lane run indicators and statuses after rerunning workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "checksum-counting-different-lambdas", using file as initial value: "file1" in "space1" space
     And user of browser awaits for status of "checksum-counting-different-lambdas" workflow to be "Active"

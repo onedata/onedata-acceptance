@@ -12,6 +12,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.url import _open_url
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, get_op_workflow_visualizer_page)
 from tests.gui.utils.generic import parse_seq
@@ -174,11 +175,51 @@ def compare_array_in_store_details_modal(modal, item_list):
             f'modal')
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def open_raw_view_for_elem(store_content_list, index, modal):
+    for _ in range(10):
+        store_content_list[index].click()
+        try:
+            if modal.raw_view != '':
+                break
+        except AttributeError:
+            if modal.single_file_container.name != '':
+                break
+    else:
+        raise Exception(f'Did not manage to open raw view for '
+                        f'{index} element in store content list')
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_store_content(modal, store_type, index, clipboard, displays,
                       browser_id):
     store_content_type = 'store_content_' + store_type
     store_content_list = getattr(modal, store_content_type)
-    store_content_list[index].click()
+    open_raw_view_for_elem(store_content_list, index, modal)
     modal.copy_button()
     return clipboard.paste(display=displays[browser_id])
+
+
+@wt(parsers.parse('user of {browser_id} opens "{option}" URL from '
+                  '"{store_name}" store in browser\'s location bar'))
+def open_url_from_store_content(browser_id, option, store_name, selenium,
+                                modals, op_container, clipboard, displays):
+
+    modal = open_store_details_modal(selenium, browser_id, op_container,
+                                     modals, store_name)
+    modal.store_content_list[0].click()
+    modal.copy_button()
+    items = json.loads(clipboard.paste(display=displays[browser_id]))
+    modal.close()
+
+    url = items[option]
+    _open_url(selenium, browser_id, url)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_number_of_elements_in_store_details_modal(modal, number, store_name):
+    actual_number = len(modal.store_content_object)
+    err_msg = (f'Expected number of elements {number} is not equal to actual '
+               f'number {actual_number} in "{store_name}" store details modal')
+
+    assert actual_number == int(number), err_msg

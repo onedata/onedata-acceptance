@@ -142,9 +142,11 @@ def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
                r'(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)'))
 def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
                         config, option):
+    conf_param_option = 'configuration parameters'
     data = yaml.load(config)
     results_conf = data.get('results', False)
     lambda_conf = data.get('lambda', False)
+    configuration_parameters = data.get(conf_param_option, False)
     button = "Modify"
     task_option = 'task'
 
@@ -169,6 +171,15 @@ def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
                 result.add_mapping()
             result.target_store_dropdown[-1].click()
             popups(driver).power_select.choose_item(new_res)
+
+    if configuration_parameters:
+        for param_name, param in configuration_parameters.items():
+            choose_option_in_dropdown_menu_in_task_page(
+                selenium, browser_id, oz_page, popups, param['value builder'],
+                param_name, conf_param_option)
+            write_text_into_editor_bracket(selenium, browser_id, oz_page,
+                                           param['value'], param_name,
+                                           conf_param_option)
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page,
                                        task_option)
