@@ -57,7 +57,6 @@ Feature: Harvesters effective privileges
             granted: False
           Space management:
             granted: False
-    And user of browser_admin clicks show view expand button in harvester members subpage header
     And user of browser_admin clicks effective view mode in harvester members subpage
     And user of browser_admin clicks "child_group_1" group in "harvester1" harvester members groups list
     Then user of browser_admin sees following privileges of "child_group_1" group in harvester members subpage:
@@ -98,7 +97,6 @@ Feature: Harvesters effective privileges
             granted: False
           Space management:
             granted: True
-    And user of browser_admin clicks show view expand button in harvester members subpage header
     And user of browser_admin clicks effective view mode in harvester members subpage
     And user of browser_admin clicks "user2" user in "harvester1" harvester members users list
     Then user of browser_admin sees following privileges of "user2" user in harvester members subpage:
@@ -137,7 +135,6 @@ Feature: Harvesters effective privileges
             granted: False
           Space management:
             granted: False
-    And user of browser_admin clicks show view expand button in harvester members subpage header
     And user of browser_admin clicks effective view mode in harvester members subpage
     And user of browser_admin clicks "child_group_2" group in "harvester1" harvester members groups list
     Then user of browser_admin sees following privileges of "child_group_2" group in harvester members subpage:
@@ -176,7 +173,6 @@ Feature: Harvesters effective privileges
             granted: False
           Space management:
             granted: False
-    And user of browser_admin clicks show view expand button in harvester members subpage header
     And user of browser_admin clicks effective view mode in harvester members subpage
     And user of browser_admin clicks "user3" user in "harvester1" harvester members users list
     Then user of browser_admin sees following privileges of "user3" user in harvester members subpage:

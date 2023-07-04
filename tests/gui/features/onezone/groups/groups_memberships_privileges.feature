@@ -94,7 +94,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -114,7 +113,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -136,7 +134,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Remove child group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -250,7 +247,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list

@@ -82,7 +82,6 @@ Feature: Spaces effective privileges
               Remove group: False
           Harvester management:
             granted: False
-    And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "child_group1" group in "space1" space members groups list
     Then user of browser sees following privileges of "child_group1" group in space members subpage:
@@ -117,7 +116,6 @@ Feature: Spaces effective privileges
             granted: False
           Harvester management:
             granted: True
-    And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "user2" user in "space1" space members users list
     Then user of browser sees following privileges of "user2" user in space members subpage:
@@ -155,7 +153,6 @@ Feature: Spaces effective privileges
             granted: False
           Support management:
             granted: True
-    And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "child_group2" group in "space1" space members groups list
     Then user of browser sees following privileges of "child_group2" group in space members subpage:
@@ -193,7 +190,6 @@ Feature: Spaces effective privileges
             granted: False
           Support management:
             granted: True
-    And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "user3" user in "space1" space members users list
     Then user of browser sees following privileges of "user3" user in space members subpage:

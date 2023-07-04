@@ -80,7 +80,6 @@ Feature: Basic management of group privileges for spaces in Onezone GUI
             granted: False
 
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
-    And user of browser_user1 clicks show view expand button in space members subpage header
     And user of browser_user1 clicks memberships view mode in space members subpage
     And user of browser_user1 clicks "group2" group in "space2" space members groups list
     And user of browser_user1 clicks on "group2" member relation menu button to "space2" space
