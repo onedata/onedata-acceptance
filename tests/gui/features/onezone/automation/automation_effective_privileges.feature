@@ -78,6 +78,8 @@ Feature: Inventories effective privileges
             granted: False
           User management:
             granted: False
+    And user of browser clicks show view expand button in automation members subpage header
+    And user of browser clicks effective view mode in automation members subpage
     And user of browser clicks "child_group1" group in "inventory1" automation members groups list
     Then user of browser sees following privileges of "child_group1" group in automation members subpage:
           Inventory management:
@@ -103,6 +105,8 @@ Feature: Inventories effective privileges
             granted: False
           Schema management:
             granted: True
+    And user of browser clicks show view expand button in automation members subpage header
+    And user of browser clicks effective view mode in automation members subpage
     And user of browser clicks "user2" user in "inventory1" automation members users list
     Then user of browser sees following privileges of "user2" user in automation members subpage:
           Inventory management:
@@ -126,6 +130,8 @@ Feature: Inventories effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser clicks show view expand button in automation members subpage header
+    And user of browser clicks effective view mode in automation members subpage
     And user of browser clicks "child_group2" group in "inventory1" automation members groups list
     Then user of browser sees following privileges of "child_group2" group in automation members subpage:
           Inventory management:
@@ -149,6 +155,8 @@ Feature: Inventories effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser clicks show view expand button in automation members subpage header
+    And user of browser clicks effective view mode in automation members subpage
     And user of browser clicks "user3" user in "inventory1" automation members users list
     Then user of browser sees following privileges of "user3" user in automation members subpage:
           Inventory management:

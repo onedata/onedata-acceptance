@@ -77,6 +77,8 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
+    And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks "child_group1" group in "grandparent_group" group members groups list
     Then user of browser sees following privileges of "child_group1" group in group members subpage:
           User management:
@@ -106,6 +108,8 @@ Feature: Groups effective privileges
             granted: False
           Cluster management:
             granted: False
+    And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks "user2" user in "grandparent_group" group members users list
     Then user of browser sees following privileges of "user2" user in group members subpage:
           Group hierarchy management:
@@ -139,6 +143,8 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
+    And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks "child_group2" group in "grandparent_group" group members groups list
     Then user of browser sees following privileges of "child_group2" group in group members subpage:
           Group hierarchy management:
@@ -174,6 +180,8 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
+    And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks "user3" user in "grandparent_group" group members users list
     Then user of browser sees following privileges of "user3" user in group members subpage:
           Group hierarchy management:

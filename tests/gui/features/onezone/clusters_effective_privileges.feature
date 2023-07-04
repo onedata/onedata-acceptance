@@ -46,6 +46,8 @@ Feature: Clusters effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser_admin clicks show view expand button in cluster members subpage header
+    And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "child_group1" group in "oneprovider-1" cluster members groups list
     Then user of browser_admin sees following privileges of "child_group1" group in cluster members subpage:
           Cluster management:
@@ -74,6 +76,8 @@ Feature: Clusters effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser_admin clicks show view expand button in cluster members subpage header
+    And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "user2" user in "oneprovider-1" cluster members users list
     Then user of browser_admin sees following privileges of "user2" user in cluster members subpage:
           Cluster management:
@@ -101,6 +105,8 @@ Feature: Clusters effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser_admin clicks show view expand button in cluster members subpage header
+    And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "child_group2" group in "oneprovider-1" cluster members groups list
     Then user of browser_admin sees following privileges of "child_group2" group in cluster members subpage:
           Cluster management:
@@ -128,6 +134,8 @@ Feature: Clusters effective privileges
             granted: False
           Group management:
             granted: True
+    And user of browser_admin clicks show view expand button in cluster members subpage header
+    And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "user3" user in "oneprovider-1" cluster members users list
     Then user of browser_admin sees following privileges of "user3" user in cluster members subpage:
           Cluster management:

@@ -95,6 +95,7 @@ Feature: Basic management of groups privileges in Onezone GUI
 
     And user of browser opens group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks on "group4" member relation menu button to "group1" group
@@ -114,6 +115,7 @@ Feature: Basic management of groups privileges in Onezone GUI
 
     And user of browser opens group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sees 2 membership rows in space memberships mode
@@ -135,6 +137,7 @@ Feature: Basic management of groups privileges in Onezone GUI
 
     And user of browser opens group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sees 2 membership rows in space memberships mode
@@ -248,6 +251,7 @@ Feature: Basic management of groups privileges in Onezone GUI
 
     And user of browser opens group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
+    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks on "group4" member relation menu button to "group1" group
