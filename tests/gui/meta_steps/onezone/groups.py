@@ -112,7 +112,6 @@ def _select_mode_view_in_members_subpage(selenium, user, oz_page,
     subpage = 'members'
 
     go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_show_view_option(selenium, user, oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, direct_selector,
                                        oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, mode_selector,
