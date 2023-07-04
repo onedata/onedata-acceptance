@@ -35,6 +35,7 @@ class SelectFiles(Modal):
                                '.upload-drop-zone-container')
     confirm_button = Button('.submit-selection-btn')
     files = WebItemsSequence('.fb-table-tbody .data-row', cls=Files)
+    error_msg = Label('.selection-validation-error')
 
     def __str__(self):
         return 'Select files, directories or symlinks modal'

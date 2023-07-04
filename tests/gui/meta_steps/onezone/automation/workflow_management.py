@@ -65,6 +65,26 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
+@wt(parsers.parse('user of {browser_id} uploads "{workflow}" workflow from '
+                  'automation-examples repository to "{inventory}" inventory'))
+def upload_workflow_from_automation_examples(selenium, browser_id,
+                                             oz_page, modals,
+                                             inventory, workflow, tmp_memory):
+    option = 'Automation'
+    subpage = 'workflows'
+    modal = 'Upload workflow'
+    button = 'Apply'
+    driver = selenium[browser_id]
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page)
+    upload_workflow_from_repository(selenium, browser_id, workflow, oz_page)
+    _wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page)
+    assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) executes (?P<ordinal>.*) revision'
                ' of "(?P<workflow>.*)" and waits extended time for workflow '
                'to finish, using (?P<data_type>.*) as initial '

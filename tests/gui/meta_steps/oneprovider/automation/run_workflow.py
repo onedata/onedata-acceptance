@@ -35,17 +35,9 @@ def open_initial_modal(data_type, op_container, driver, popups, modals):
         open_select_initial_files_modal(op_container, driver, popups, modals)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) '
-               '(?P<data_type>file|files|datasets) as initial value for '
-               'workflow in "Select files" modal'))
-def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
-                                          modals, op_container, popups,
-                                          data_type):
+def select_initial_items_for_workflow_in_modal(file_list, modals, driver,
+                                               data_type, op_container, popups):
     files = parse_seq(file_list)
-    switch_to_iframe(selenium, browser_id)
-    driver = selenium[browser_id]
-    open_initial_modal(data_type, op_container, driver, popups, modals)
-
     for path in files:
         modal_name = 'select files'
         file_name = go_to_path_and_return_file_name_in_modal(path, modals,
@@ -66,6 +58,53 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                 break
 
     check_if_select_files_modal_disappeared(modals, driver, files)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file as '
+               'initial value of "(?P<store_name>.*)" store for workflow in '
+               '"Select files" modal'))
+def choose_file_as_initial_workflow_value_for_store(
+        selenium, browser_id, file_list, modals, op_container, popups,
+        store_name):
+    data_type = 'file'
+
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+    open_select_initial_files_modal(op_container, driver, popups, modals,
+                                    store_name)
+    select_initial_items_for_workflow_in_modal(file_list, modals, driver,
+                                               data_type, op_container, popups)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<expected_err_msg>.*)" '
+               'message while choosing "(?P<dir_name>.*)" directory as initial '
+               'value for workflow in "Select files" modal'))
+def fails_to_choose_directory_as_initial_workflow_value(
+        selenium, browser_id, dir_name, modals, op_container, popups,
+        expected_err_msg):
+    data_type = 'directory'
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+    open_initial_modal(data_type, op_container, driver, popups, modals)
+    modals(driver).select_files.files[dir_name].click()
+    actual_err_msg = modals(driver).select_files.error_msg
+    assert actual_err_msg == expected_err_msg, (
+        f'User does not see expected error: "{expected_err_msg}" while trying to'
+        f' set "{dir_name}" as initial value for workflow')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) '
+               '(?P<data_type>file|files|datasets) as initial value for '
+               'workflow in "Select files" modal'))
+def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
+                                          modals, op_container, popups,
+                                          data_type):
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+    open_initial_modal(data_type, op_container, driver, popups, modals)
+
+    select_initial_items_for_workflow_in_modal(file_list, modals, driver,
+                                               data_type, op_container, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '

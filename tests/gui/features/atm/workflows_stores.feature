@@ -33,8 +33,8 @@ Feature: Workflows stores tests
   Scenario: User sees results for task, workflow and in result store after modifying task by adding result mapping in uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "calculate-checksums-rest" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser clicks on 1st revision of "calculate-checksums-rest" in workflows list in inventory workflows subpage
 
     And user of browser removes "sha256" task from 1st parallel box in "calculate-checksums" lane
     And user of browser modifies "md5" task in 1st parallel box in "calculate-checksums" lane by adding following:
@@ -52,8 +52,8 @@ Feature: Workflows stores tests
   Scenario Outline: User sees expected results in result store after modifying input store type to <storage_type> and executing uploaded counting checksums workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "calculate-checksums-rest" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser clicks on 1st revision of "calculate-checksums-rest" in workflows list in inventory workflows subpage
     And user of browser removes "sha256" task from 1st parallel box in "calculate-checksums" lane
 
     And user of browser modifies type in "input-files" store to be "<storage_type>" for "calculate-checksums-rest" workflow
@@ -75,8 +75,9 @@ Feature: Workflows stores tests
     And user of browser creates dataset for item "dir1/file2" in "space1"
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+
     And user of browser modifies data type in "input" store to be "Dataset" for "echo" workflow
     And user of browser modifies data type in "output" store to be "Dataset" for "echo" workflow
 
@@ -90,8 +91,8 @@ Feature: Workflows stores tests
   Scenario: User sees file in result store after modifying input store and lambda data type to file and executing uploaded echo workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
 
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser clicks on "Create new revision" in "echo"

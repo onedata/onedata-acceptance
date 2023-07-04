@@ -36,10 +36,11 @@ def check_if_select_files_modal_disappeared(modals, driver, files):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(op_container, driver, popups, modals):
+def open_select_initial_files_modal(op_container, driver, popups, modals,
+                                    store_name=False):
     option = f"Select/upload file"
 
-    click_file_input_link_in_automation_page(op_container, driver)
+    click_file_input_link_in_automation_page(op_container, driver, store_name)
     time.sleep(1)
     menu_option = get_select_option_from_initial_value_popup(
         option, popups(driver).workflow_initial_values.menu)
@@ -66,14 +67,18 @@ def get_select_option_from_initial_value_popup(option, popup_menu):
             return elem
 
 
-def click_file_input_link_in_automation_page(op_container, driver):
-    try:
-        # for input store type Single Value this Button does not work
-        op_container(driver).automation_page.files_input_link.click()
-    except RuntimeError:
-        # for adding another files to input store (type List) this Button
-        # does not work because it finds two links (one for changing file,
-        # another for adding)
-        # this button is used for input store type Single Value
-        op_container(driver).automation_page.single_file_input_link.click()
+def click_file_input_link_in_automation_page(op_container, driver, store_name):
+    if store_name:
+        op_container(driver).automation_page.initial_value_store[
+            store_name + ':'].input_link.click()
+    else:
+        try:
+            # for input store type Single Value this Button does not work
+            op_container(driver).automation_page.files_input_link.click()
+        except RuntimeError:
+            # for adding another files to input store (type List) this Button
+            # does not work because it finds two links (one for changing file,
+            # another for adding)
+            # this button is used for input store type Single Value
+            op_container(driver).automation_page.single_file_input_link.click()
 

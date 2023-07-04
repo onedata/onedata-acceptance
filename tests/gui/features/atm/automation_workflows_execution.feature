@@ -35,8 +35,7 @@ Feature: Workflows execution
   Scenario: User sees desirable pods statuses after execution of uploaded "echo" workflow finishes
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "echo.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
@@ -166,10 +165,10 @@ Feature: Workflows execution
     And user of browser creates task using 1st revision of "checksum-counting-oneclient" lambda in "Lane1" lane with following configuration:
         configuration parameters:
             metadataKey:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: "md5_key"
             algorithm:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: "md5"
         arguments:
             file:
@@ -184,10 +183,10 @@ Feature: Workflows execution
         task name: "Second lambda task"
         configuration parameters:
             metadataKey:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: "sha256_key"
             algorithm:
-              value builder: "Constant value"
+              value builder: "Custom value"
               value: "sha256"
         arguments:
             file:
@@ -205,7 +204,7 @@ Feature: Workflows execution
   Scenario: User sees that different checksums are well counted after execution of uploaded "counting-different-checksums" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/counting-different-checksums.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
 
     And user of browser executes 1st revision of "counting-different-checksums" and waits extended time for workflow to finish, using directory as initial value: "dir2" in "space1" space
@@ -226,7 +225,7 @@ Feature: Workflows execution
   Scenario: User checks "Pods activity" events after checksum-counting-different-lambdas workflow execution
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "checksum-counting-different-lambdas", using directory as initial value: "dir1" in "space1" space
 
@@ -276,31 +275,6 @@ Feature: Workflows execution
          - 'message that contains: "calculate-checksum-mounted" + "Started container"'
          - 'message that contains: "calculate-checksum-mounted" + "Created container"'
     And user of browser sees that numer of events on "Pods activity" list for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane is about 18
-
-
-  Scenario: User checks time series charts after execution of uploaded "calculate-checksums-rest" workflow
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "calculate-checksums-rest" and waits extended time for workflow to finish, using directory as initial value: "dir2" in "space1" space
-    And user of browser sees "Finished" status in status bar in workflow visualizer
-
-    Then user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that value of last column on chart with processing stats is bigger than zero
-    And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
-    And user of browser clicks on "X" button in modal "Task time series"
-    And user of browser closes task "md5" in 1st parallel box in "calculate-checksums" lane in workflow visualizer
-
-    And user of browser sees chart with processing stats after opening "Time series" link for task "sha256" in 1st parallel box in "calculate-checksums" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that value of last column on chart with processing stats is bigger than zero
-    And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
 
 
 

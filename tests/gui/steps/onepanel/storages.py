@@ -55,7 +55,12 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
                                                      storage, onepanel):
-    onepanel(selenium[browser_id]).content.storages.storages[storage].expand()
+    storage_item = onepanel(selenium[browser_id]
+                            ).content.storages.storages[storage]
+    storage_item.expand()
+
+    if not storage_item.is_expanded():
+        raise Exception(f'did not manage to expand storage {storage}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
@@ -95,7 +100,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 
 @wt(parsers.parse('user of {browser_id} clicks on "Modify" button for '
                   '"{name}" storage record in Storages page in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_modify_storage_in_onepanel(selenium, browser_id, name,
                                      onepanel):
     driver = selenium[browser_id]
