@@ -8,21 +8,31 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button
+from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
+    WebElement
 
 
 class PrivilegeRow(PageObject):
     name = id = Label('.node-text')
     toggle = Toggle('.one-way-toggle')
+    tmp = WebElement('.one-checkbox-base')
 
     def expand(self):
         self.web_elem.click()
 
-    def activate(self):
-        self.toggle.check()
+    def activate(self, driver):
+        if not self.toggle.is_checked():
+            driver.execute_script(
+                "document.querySelector('.col-content').scrollTo(0, 0)")
+            elem_class = self.tmp.get_attribute('class').split(' ')[0]
+            driver.find_element_by_css_selector('.' + elem_class).click()
 
-    def deactivate(self):
-        self.toggle.uncheck()
+    def deactivate(self, driver):
+        if self.toggle.is_checked():
+            driver.execute_script(
+                "document.querySelector('.col-content').scrollTo(0, 0)")
+            elem_class = self.tmp.get_attribute('class').split(' ')[0]
+            driver.find_element_by_css_selector('.' + elem_class).click()
 
     def assert_privilege_granted(self, granted):
         if granted == "Partially":
@@ -35,11 +45,11 @@ class PrivilegeRow(PageObject):
             msg = f'{self.name} should not be granted but it is'
             assert self.toggle.is_unchecked(), msg
 
-    def set_privilege(self, granted):
+    def set_privilege(self, driver, granted):
         if granted:
-            self.activate()
+            self.activate(driver)
         else:
-            self.deactivate()
+            self.deactivate(driver)
 
 
 class PrivilegeGroup(PageObject):
@@ -177,10 +187,11 @@ class PrivilegeTree(PageObject):
             privilege_row.expand()
             for sub_name, sub_granted in sub_privileges.items():
                 sub_row = privilege_row.get_sub_privilege_row(sub_name)
-                sub_row.set_privilege(sub_granted)
+                sub_row.set_privilege(driver, sub_granted)
             privilege_row.collapse(driver)
         else:
-            privilege_row.get_sub_privilege_row(name).set_privilege(granted)
+            privilege_row.get_sub_privilege_row(name).set_privilege(driver,
+                                                                    granted)
 
     def set_all_true(self):
         for priv_group in self.privilege_groups:
