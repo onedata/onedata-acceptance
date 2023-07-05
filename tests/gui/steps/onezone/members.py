@@ -615,10 +615,15 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
     option = option.lower() + '_button'
     member_type = member_type + 's'
     page = _find_members_page(onepanel, oz_page, driver, where)
+    page.close_member(driver)
 
-    members_list = getattr(page, member_type)
-    header = members_list.items[member_name].header
-    getattr(header, option).click()
+    if option == "Save":
+        driver.find_element_by_css_selector(
+            '.list-header-row .save-btn').click()
+    else:
+        members_list = getattr(page, member_type)
+        header = members_list.items[member_name].header
+        getattr(header, option).click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status '
