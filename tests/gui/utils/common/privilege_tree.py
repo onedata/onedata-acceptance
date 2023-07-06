@@ -20,19 +20,25 @@ class PrivilegeRow(PageObject):
     def expand(self):
         self.web_elem.click()
 
-    def activate(self, driver):
+    def activate_with_scrolling(self, driver):
         if not self.toggle.is_checked():
             driver.execute_script(
                 "document.querySelector('.col-content').scrollTo(0, 0)")
             elem_class = self.tmp.get_attribute('class').split(' ')[0]
             driver.find_element_by_css_selector('.' + elem_class).click()
 
-    def deactivate(self, driver):
+    def activate(self):
+        self.toggle.check()
+
+    def deactivate_with_scrolling(self, driver):
         if self.toggle.is_checked():
             driver.execute_script(
                 "document.querySelector('.col-content').scrollTo(0, 0)")
             elem_class = self.tmp.get_attribute('class').split(' ')[0]
             driver.find_element_by_css_selector('.' + elem_class).click()
+
+    def deactivate(self):
+        self.toggle.uncheck()
 
     def assert_privilege_granted(self, granted):
         if granted == "Partially":
@@ -45,11 +51,15 @@ class PrivilegeRow(PageObject):
             msg = f'{self.name} should not be granted but it is'
             assert self.toggle.is_unchecked(), msg
 
-    def set_privilege(self, driver, granted):
-        if granted:
-            self.activate(driver)
+    def set_privilege(self, driver, granted, with_scroll=False):
+        if granted and with_scroll:
+            self.activate_with_scrolling(driver)
+        elif granted:
+            self.activate()
+        elif with_scroll:
+            self.deactivate_with_scrolling(driver)
         else:
-            self.deactivate(driver)
+            self.deactivate()
 
 
 class PrivilegeGroup(PageObject):
@@ -150,7 +160,8 @@ class PrivilegeTree(PageObject):
             privilege_row.collapse(driver)
         privilege_row.assert_privilege_granted(granted)
 
-    def set_privileges(self, selenium, browser_id, privileges):
+    def set_privileges(self, selenium, browser_id, privileges,
+                       with_scroll=False):
         """Set privileges according to given config.
         For this method only dict should be passed!
 
@@ -171,14 +182,16 @@ class PrivilegeTree(PageObject):
             User management:
               granted: False
         """
-        self._set_privileges(selenium, browser_id, privileges)
+        self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
-    def _set_privileges(self, selenium, browser_id, privileges):
+    def _set_privileges(self, selenium, browser_id, privileges,
+                        with_scroll=False):
         for privilege_name, privilege_group in privileges.items():
-            self._set_privilege_group(selenium, browser_id , privilege_group,
-                                      privilege_name)
+            self._set_privilege_group(selenium, browser_id, privilege_group,
+                                      privilege_name, with_scroll)
 
-    def _set_privilege_group(self, selenium, browser_id, group, name):
+    def _set_privilege_group(self, selenium, browser_id, group, name,
+                             with_scroll=False):
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group['granted']
@@ -187,7 +200,7 @@ class PrivilegeTree(PageObject):
             privilege_row.expand()
             for sub_name, sub_granted in sub_privileges.items():
                 sub_row = privilege_row.get_sub_privilege_row(sub_name)
-                sub_row.set_privilege(driver, sub_granted)
+                sub_row.set_privilege(driver, sub_granted, with_scroll)
             privilege_row.collapse(driver)
         else:
             privilege_row.get_sub_privilege_row(name).set_privilege(driver,
