@@ -604,7 +604,7 @@ def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     tree.assert_privileges(selenium, browser_id, privileges)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Cancel) '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Discard) '
                'button for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -612,18 +612,12 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               oz_page, where, member_name,
                                               member_type, onepanel):
     driver = selenium[browser_id]
-    option = option.lower() + '_button'
-    member_type = member_type + 's'
+    option_selector = f'.{option.lower()}-btn'
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
 
-    if option == "Save":
-        driver.find_element_by_css_selector(
-            '.list-header-row .save-btn').click()
-    else:
-        members_list = getattr(page, member_type)
-        header = members_list.items[member_name].header
-        getattr(header, option).click()
+    driver.find_element_by_css_selector(
+        '.list-header-row ' + option_selector).click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status '

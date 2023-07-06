@@ -20,22 +20,8 @@ class PrivilegeRow(PageObject):
     def expand(self):
         self.web_elem.click()
 
-    def activate_with_scrolling(self, driver):
-        if not self.toggle.is_checked():
-            driver.execute_script(
-                "document.querySelector('.col-content').scrollTo(0, 0)")
-            elem_class = self._checkbox.get_attribute('class').split(' ')[0]
-            driver.find_element_by_css_selector('.' + elem_class).click()
-
     def activate(self):
         self.toggle.check()
-
-    def deactivate_with_scrolling(self, driver):
-        if self.toggle.is_checked():
-            driver.execute_script(
-                "document.querySelector('.col-content').scrollTo(0, 0)")
-            elem_class = self._checkbox.get_attribute('class').split(' ')[0]
-            driver.find_element_by_css_selector('.' + elem_class).click()
 
     def deactivate(self):
         self.toggle.uncheck()
@@ -52,14 +38,18 @@ class PrivilegeRow(PageObject):
             assert self.toggle.is_unchecked(), msg
 
     def set_privilege(self, driver, granted, with_scroll=False):
-        if granted and with_scroll:
-            self.activate_with_scrolling(driver)
-        elif granted:
-            self.activate()
-        elif with_scroll:
-            self.deactivate_with_scrolling(driver)
+        if with_scroll:
+            if (self.toggle.is_checked() and not granted) or (
+                    not self.toggle.is_checked() and granted):
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                elem_class = self._checkbox.get_attribute('class').split(' ')[0]
+                driver.find_element_by_css_selector('.' + elem_class).click()
         else:
-            self.deactivate()
+            if granted:
+                self.activate()
+            else:
+                self.deactivate()
 
 
 class PrivilegeGroup(PageObject):
