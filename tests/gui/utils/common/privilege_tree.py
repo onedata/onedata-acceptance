@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
 class PrivilegeRow(PageObject):
     name = id = Label('.node-text')
     toggle = Toggle('.one-way-toggle')
-    tmp = WebElement('.one-checkbox-base')
+    _checkbox = WebElement('.one-checkbox-base')
 
     def expand(self):
         self.web_elem.click()
@@ -24,7 +24,7 @@ class PrivilegeRow(PageObject):
         if not self.toggle.is_checked():
             driver.execute_script(
                 "document.querySelector('.col-content').scrollTo(0, 0)")
-            elem_class = self.tmp.get_attribute('class').split(' ')[0]
+            elem_class = self._checkbox.get_attribute('class').split(' ')[0]
             driver.find_element_by_css_selector('.' + elem_class).click()
 
     def activate(self):
@@ -34,7 +34,7 @@ class PrivilegeRow(PageObject):
         if self.toggle.is_checked():
             driver.execute_script(
                 "document.querySelector('.col-content').scrollTo(0, 0)")
-            elem_class = self.tmp.get_attribute('class').split(' ')[0]
+            elem_class = self._checkbox.get_attribute('class').split(' ')[0]
             driver.find_element_by_css_selector('.' + elem_class).click()
 
     def deactivate(self):
