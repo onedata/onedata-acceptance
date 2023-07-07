@@ -152,7 +152,7 @@ def assert_workflow_on_executed_workflows_list(selenium, browser_id,
     workflow_executions_list = page.workflow_executions_list
     if option == 'does not see':
         err_msg = f'Workflow: {workflow} is on workflow executions list'
-        assert not workflow in workflow_executions_list, err_msg
+        assert workflow not in workflow_executions_list, err_msg
     else:
         err_msg = f'Workflow: {workflow} is not on workflow executions list'
         assert workflow in workflow_executions_list, err_msg

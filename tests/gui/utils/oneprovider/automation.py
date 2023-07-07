@@ -16,7 +16,7 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class ExecutionRecord(PageObject):
-    name = id = Label('.cell-name')
+    name = id = Label('.cell-name .item-name')
     inventory = Label('.cell-inventory')
     status_icon = Icon('.cell-status')
     menu_button = Button('.cell-actions')
