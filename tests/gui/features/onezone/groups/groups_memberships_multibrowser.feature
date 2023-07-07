@@ -64,7 +64,6 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
               Leave parent group: True
 
     And user of browser1 opens group "group4" members subpage
-    And user of browser1 clicks show view expand button in group members subpage header
     And user of browser1 clicks effective view mode in group members subpage
     And user of browser1 clicks memberships view mode in group members subpage
     And user of browser1 clicks "user1" user in "group4" group members users list

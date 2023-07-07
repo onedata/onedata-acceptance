@@ -56,16 +56,6 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
     return getattr(page, list_type).items[member_name].privilege_tree
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
-               '(?P<where>space|group|cluster|harvester|automation) members'
-               ' subpage header'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
-    driver = selenium[browser_id]
-    page = _find_members_page(onepanel, oz_page, driver, where)
-    page.show_view_option()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) clicks '
                '(?P<mode>direct|effective|privileges|memberships) view mode '
                'in (?P<where>space|group|cluster|harvester|automation) '
@@ -533,7 +523,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
         privileges = yaml.load(config)
         tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                                   member_type_new, member_name)
-        tree.set_privileges(selenium, browser_id, privileges)
+        tree.set_privileges(selenium, browser_id, privileges, True)
         click_button_on_element_header_in_members(selenium, browser_id, option,
                                                   oz_page, where, member_name,
                                                   member_type, onepanel)
@@ -614,7 +604,7 @@ def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     tree.assert_privileges(selenium, browser_id, privileges)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Cancel) '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Discard) '
                'button for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -622,13 +612,12 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               oz_page, where, member_name,
                                               member_type, onepanel):
     driver = selenium[browser_id]
-    option = option.lower() + '_button'
-    member_type = member_type + 's'
+    option_selector = f'.{option.lower()}-btn'
     page = _find_members_page(onepanel, oz_page, driver, where)
+    page.close_member(driver)
 
-    members_list = getattr(page, member_type)
-    header = members_list.items[member_name].header
-    getattr(header, option).click()
+    driver.find_element_by_css_selector(
+        '.list-header-row ' + option_selector).click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status '

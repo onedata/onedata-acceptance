@@ -64,13 +64,11 @@ Feature: Multi Browser basic management of spaces ownership
 
   Scenario: Effective user who gets ownership becomes direct user
     When user of space_owner_browser clicks "Members" of "space2" space in the sidebar
-    And user of space_owner_browser clicks show view expand button in space members subpage header
     And user of space_owner_browser clicks effective view mode in space members subpage
 
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
 
     And user of browser1 clicks "Members" of "space2" space in the sidebar
-    And user of browser1 clicks show view expand button in space members subpage header
     And user of browser1 clicks effective view mode in space members subpage
 
     Then user of browser1 sees [you, owner, direct] status labels for "user1" user in space members subpage

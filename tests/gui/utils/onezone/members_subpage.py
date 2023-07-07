@@ -112,7 +112,6 @@ class MembersPage(PageObject):
     groups = WebItem('.group-list', cls=MembersList)
     users = WebItem('.user-list', cls=MembersUserList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
-    show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')
     memberships_button = NamedButton('.mode-selector button', text='Memberships')
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
