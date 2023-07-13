@@ -613,9 +613,8 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               member_type, onepanel):
     driver = selenium[browser_id]
     option_selector = f'.{option.lower()}-btn'
-    page = _find_members_page(onepanel, oz_page, driver, where)
-    page.close_member(driver)
 
+    driver.execute_script("window.scrollBy(0,0)")
     driver.find_element_by_css_selector(
         '.list-header-row ' + option_selector).click()
 
