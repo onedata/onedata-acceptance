@@ -119,7 +119,12 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
 def upload_workflow_from_repository(selenium, browser_id, workflow_name,
                                     oz_page):
     driver = selenium[browser_id]
-    workflow_name = workflow_name + '.json'
+    workflows_in_directories = [
+        'detect-file-formats', 'detect-file-mime-formats', 'download-files']
+
+    workflow_name = (workflow_name + '.json'
+                     ) if workflow_name not in workflows_in_directories else (
+            workflow_name + '/' + workflow_name + '.json')
     automation_page = oz_page(driver)['automation']
     automation_page.upload_workflow(upload_workflow_path(workflow_name))
 
