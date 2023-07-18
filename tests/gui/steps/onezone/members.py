@@ -27,6 +27,7 @@ from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from selenium.common.exceptions import NoSuchElementException
 
 MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery',
                          'automation': 'automation', 'inventory': 'automation'}
@@ -608,7 +609,7 @@ def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
 @wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Discard) '
                'button for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+# @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               oz_page, where, member_name,
                                               member_type, onepanel):
@@ -617,9 +618,18 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
 
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
-    time.sleep(1)
-    driver.find_element_by_css_selector(
-        '.list-header-row ' + option_selector).click()
+    click_on_button_on_members_page(driver,
+                                    '.list-header-row ' + option_selector)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_button_on_members_page(driver, selector):
+    driver.find_element_by_css_selector(selector).click()
+    try:
+        driver.find_element_by_css_selector(selector)
+        raise Exception('Button is still on members page')
+    except NoSuchElementException:
+        pass
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status '
