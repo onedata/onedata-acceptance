@@ -381,7 +381,7 @@ def compare_to_expected_if_elem_exist_audit_log(data, label, actual_items,
         if label == 'timestamp':
             expected = date.today()
             actual = date.fromtimestamp(actual_items['timestamp'] / 1000)
-
+        expected = expected.lower() if label == 'severity' else expected
         assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
                                                        task_name)
 
@@ -422,15 +422,17 @@ def compare_content_of_task_audit_log(
         content, actual_content, task_name, selenium, browser_id, oz_page,
         op_container, tmp_memory, popups, modals, clipboard, displays):
     expected_identical = ['status', 'fetchFileName', 'description']
-    reason = content.get('reason', False)
-    item = content.get('item', False)
+    actual_details = actual_content.get('details', False)
+    details = content.get('details', False)
+    reason = details.get('reason', False) if details else False
+    item = details.get('item', False) if details else False
 
     for label in expected_identical:
         compare_to_expected_if_elem_exist_audit_log(content, label,
                                                     actual_content, task_name)
     if reason:
         compare_content_reason_of_task_audit_log(
-            reason, actual_content['reason'], selenium, browser_id,
+            reason, actual_details['reason'], selenium, browser_id,
             oz_page, op_container, tmp_memory, popups, modals, clipboard,
             displays, task_name)
     if item:
@@ -441,7 +443,7 @@ def compare_content_of_task_audit_log(
             op_container, tmp_memory, file_id[1], popups, modals,
             clipboard, displays)
         assert_elements_of_task_audit_log_are_the_same(
-            item, actual_content['item'], 'Item', task_name)
+            item, actual_details['item']['value'], 'Item', task_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees that audit logs in task'
@@ -457,6 +459,8 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     driver = selenium[browser_id]
     data = yaml.load(config)
     content = data.get('content', False)
+    severity = data.get('severity', False)
+    source = data.get('source', False)
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, click)
@@ -465,7 +469,12 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     # wait a moment for modal to open
     time.sleep(1)
     modal = modals(driver).audit_log
-    modal.logs_entry[0].click()
+    if severity == 'Error':
+        modal.logs_entry[severity].click()
+    elif source == 'user':
+        modal.user_log.click()
+    else:
+        modal.logs_entry[0].click()
     modal.copy_json()
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
 
@@ -475,9 +484,9 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
 
     if content:
         compare_content_of_task_audit_log(
-            content, actual_items['content'], task_name, selenium, browser_id,
-            oz_page, op_container, tmp_memory, popups, modals, clipboard,
-            displays)
+            content, actual_items['content'], task_name, selenium,
+            browser_id, oz_page, op_container, tmp_memory, popups, modals,
+            clipboard, displays)
 
     try:
         modal.x()
