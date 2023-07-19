@@ -14,8 +14,8 @@ from tests.gui.utils.core.web_elements import (WebItemsSequence, Label, Button,
 
 
 class LogsEntry(PageObject):
+    severity = id = Label('.severity-name')
     description = Label('.description-cell')
-    severity = Label('.severity-name')
 
 
 class AuditLog(Modal):

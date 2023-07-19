@@ -58,25 +58,25 @@ Feature: Automation examples tests
         extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl"]
 
 
-  Scenario: User sees desirable information about "asd.qwe" in "files-format" store after execution of uploaded "detect-file-formats" workflow finishes
+  Scenario: User sees desirable information about "lorem_ipsum.enl" in "files-format" store after execution of uploaded "detect-file-formats" workflow finishes
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/asd.qwe" to current dir
-    And user of browser sees that item named "asd.qwe" has appeared in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "automation/lorem_ipsum.enl" to current dir
+    And user of browser sees that item named "lorem_ipsum.enl" has appeared in file browser
 
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-formats" and waits extended time for workflow to finish, using file as initial value: "asd.qwe" in "space1" space
+    And user of browser executes 1st revision of "detect-file-formats" and waits extended time for workflow to finish, using file as initial value: "lorem_ipsum.enl" in "space1" space
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that content of "formats" store is:
         mimeType: text/plain
         formatName: ASCII text
         isExtensionMatchingFormat: false
-        fileName: asd.qwe
-        fileId: $(resolve_id space1/asd.qwe)
+        fileName: lorem_ipsum.enl
+        fileId: $(resolve_id space1/lorem_ipsum.enl)
         extensions: [".txt", ".bat", ".c", ".h", ".ksh", ".pl"]
 
 
@@ -115,23 +115,23 @@ Feature: Automation examples tests
         fileId: $(resolve_id space1/test.py)
 
 
-  Scenario: User sees desirable information about "asd.qwe" in "files-format" store after execution of uploaded "detect-file-mime-formats" workflow finishes
+  Scenario: User sees desirable information about "lorem_ipsum.enl" in "files-format" store after execution of uploaded "detect-file-mime-formats" workflow finishes
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/asd.qwe" to current dir
-    And user of browser sees that item named "asd.qwe" has appeared in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "automation/lorem_ipsum.enl" to current dir
+    And user of browser sees that item named "lorem_ipsum.enl" has appeared in file browser
 
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-mime-formats" and waits extended time for workflow to finish, using file as initial value: "asd.qwe" in "space1" space
+    And user of browser executes 1st revision of "detect-file-mime-formats" and waits extended time for workflow to finish, using file as initial value: "lorem_ipsum.enl" in "space1" space
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that content of "files-format" store is:
-        fileName: asd.qwe
+        fileName: lorem_ipsum.enl
         mimeType: unknown
-        fileId: $(resolve_id space1/asd.qwe)
+        fileId: $(resolve_id space1/lorem_ipsum.enl)
 
 
   Scenario: User sees desirable error message in modal after trying to choose directory as initial value for "detect-file-mime-formats" workflow
@@ -250,12 +250,13 @@ Feature: Automation examples tests
     Then user of browser sees "Failed" status in status bar in workflow visualizer
     And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
         timestamp: today
-        severity: error
+        severity: Error
         source: system
         content:
-          reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
-          item:
-            file_id:  $(resolve_id space1/incorrect_fetch.txt)
+          details:
+            reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
+            item:
+              file_id:  $(resolve_id space1/incorrect_fetch.txt)
           description: Lambda exception occurred during item processing.
 
 
@@ -343,11 +344,12 @@ Feature: Automation examples tests
     Then user of browser sees "Failed" status in status bar in workflow visualizer
     And user of browser sees that audit logs in task "echo" in 1st parallel box in lane "lane 1" contains following information:
         timestamp: today
-        severity: error
+        severity: Error
         content:
-          reason: Random exception
-          item:
-            file_id:  $(resolve_id space1/dir1)
+          details:
+            reason: Random exception
+            item:
+              file_id:  $(resolve_id space1/dir1)
           description: Lambda exception occurred during item processing.
 
 
