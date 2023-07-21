@@ -1,0 +1,40 @@
+Feature: Files tab operations with empty file browser
+
+
+  Background:
+    Given initial users configuration in "onezone" Onezone service:
+            - space-owner-user
+    And initial spaces configuration in "onezone" Onezone service:
+        space1:
+            owner: space-owner-user
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+                - oneprovider-2:
+                    storage: posix
+                    size: 1000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                    - dir1:
+                        - file1: 11111
+                        - file2: 22222
+                        - file3: 33333
+    And user opened browser window
+    And user of browser opened onezone page
+    And user of browser logged as space-owner-user to Onezone service
+
+
+  Scenario: User checks directory's data distribution
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Data distribution" option in data row menu in file browser
+    And user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
+    And user of browser sees that data distribution for dev-oneprovider-paris is at 0%
+    And user of browser sees that size distribution for dev-oneprovider-krakow is "15 B"
+    Then user of browser sees that size distribution for dev-oneprovider-paris is "0 B"

@@ -44,6 +44,9 @@ class _DataDistributionRecord(PageObject):
     distribution = WebItem('.chunks-container', cls=_Chunk)
     menu_button = Button('.one-pill-button-actions-trigger')
 
+    percentage_label = Label('.percentage-text')
+    size_label = Label('.size-label')
+
     def __str__(self):
         return 'provider record for "{item}" in ' \
                '{parent}'.format(item=self.name, parent=self.parent)
