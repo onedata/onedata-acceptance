@@ -34,7 +34,6 @@ def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts,
      - Cluster Worker
      - Cluster Manager
      - Primary Cluster Manager
-     - Ceph
     """
     _setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts,
                  modals)
@@ -173,58 +172,6 @@ def _parse_provider(provider_name, provider_domain):
     provider_for_domain = re.match(r'/domain of (.+)/',
                                    provider_domain).group(1)
     return provider_for_name, provider_for_domain
-
-
-@wt(parsers.parse('user of {brwoser_id} deploys Ceph with following '
-                  'configuration:\n{config}'))
-def setup_ceph_config(selenium, browser_id, onepanel, config, modals, popups):
-    """
-    Manager And Monitor: True/False
-    OSDs:          - only with Manager&Monitor enabled
-      - 1.5 GiB
-      - 2 GiB      - takes one or two OSDs
-    """
-    _setup_ceph_config(selenium, browser_id, onepanel, config, modals, popups)
-
-
-def _setup_ceph_config(selenium, browser_id, onepanel, configuration, modals,
-                       popups):
-    config = yaml.load(configuration)
-    manager_and_monitor = config.get('Manager And Monitor', False)
-    if manager_and_monitor:
-        enable_manager_and_monitor_toggle_in_ceph_config_step(selenium,
-                                                              browser_id,
-                                                              onepanel)
-        osds = config['OSDs']
-        osd1, osd2 = _unpack_osds(osds)
-        first_number = 'first'
-        _set_osd_of_number(selenium, browser_id, osd1, first_number, onepanel,
-                           popups)
-        if osd2:
-            second_number = 'second'
-            _set_osd_of_number(selenium, browser_id, osd2, second_number,
-                               onepanel, popups)
-    deploy_button = 'Deploy'
-    step = 'Ceph configuration step'
-    wt_click_on_btn_in_deployment_step(selenium, browser_id, deploy_button,
-                                       step, onepanel)
-    wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals)
-
-
-def _unpack_osds(osds):
-    if len(osds) == 1:
-        return osds[0], None
-    return osds[0], osds[1]
-
-
-def _set_osd_of_number(selenium, browser_id, size, number, onepanel, popups):
-    osd_button = 'Add OSD'
-    step = 'Ceph configuration step'
-    wt_click_on_btn_in_deployment_step(selenium, browser_id, osd_button, step,
-                                       onepanel)
-    [size_number, size_unit] = size.split()
-    type_osd_size_to_input(selenium, number, size_number, browser_id, onepanel)
-    choose_osd_unit(selenium, number, size_unit, browser_id, onepanel, popups)
 
 
 @wt(parsers.parse('user of {browser_id} adds storage in step 5 of deployment '

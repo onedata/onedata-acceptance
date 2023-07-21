@@ -80,38 +80,6 @@ def wt_type_second_host_to_in_box_in_deployment_step(selenium, browser_id,
     setattr(step, transform(input_box), text)
 
 
-@wt(parsers.parse('user of {browser_id} enables "Manager & Monitor" toggle in '
-                  'Ceph configuration step of deployment process in Onepanel'))
-def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium,
-                                                          browser_id, onepanel):
-    step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
-    step.manager_and_monitor.check()
-
-
-# this function only works with "first" and "second" number as these are the
-# only planned possibilities in tests
-@wt(parsers.parse('user of {browser_id} types "{size}" to {number} OSD size '
-                  'input box in Ceph configuration step of deployment process '
-                  'in Onepanel'))
-def type_osd_size_to_input(selenium, number, size: str, browser_id, onepanel):
-    step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
-    osd_index = 0 if number == 'first' else 1
-    step.osds[osd_index].size = size
-
-
-# this function only works with "first" and "second" number as these are the
-# only planned possibilities in tests
-@wt(parsers.parse('user of {browser_id} sets "{unit}" as size unit of {number} '
-                  'OSD in Ceph configuration step of deployment process in '
-                  'Onepanel'))
-def choose_osd_unit(selenium, number, unit, browser_id, onepanel, popups):
-    driver = selenium[browser_id]
-    step = onepanel(driver).content.deployment.cephconfiguration
-    osd_index = 0 if number == 'first' else 1
-    step.osds[osd_index].unit_selector()
-    popups(driver).dropdown.options[unit].click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.+?) types '
                '(?P<property>name|hostname) of "(?P<alias>.+?)" '
                '(zone|provider) to (?P<input_box>.+?) field in '
@@ -129,13 +97,12 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button '
                'in (?P<step>step 1|step 2|step 3|web cert step|'
-               'Ceph configuration step|step 5|last step) of '
+               'step 5|last step) of '
                'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
     driver = selenium[browser_id]
-    step = step.rstrip('step') if 'Ceph configuration' in step else step
     step = getattr(onepanel(driver).content.deployment,
                    step.lower().replace(' ', ''))
     getattr(step, transform(btn)).click()
@@ -291,7 +258,7 @@ def wt_check_skip_storage_detection_in_deployment_step5(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
-               'in (?P<form>POSIX|Embedded Ceph) form in step 5 of '
+               'in (?P<form>POSIX) form in step 5 of '
                'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
@@ -302,7 +269,7 @@ def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX|Embedded Ceph) form '
+               '(?P<input_box>.*?) field in (?P<form>POSIX) form '
                'in step 5 of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, text, form,
