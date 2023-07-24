@@ -14,6 +14,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.onezone.space_configuration import set_description_of_a_space
 
 SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
               "datasets_archives", "providers", "members",
@@ -215,6 +216,50 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
     driver = selenium[browser_id]
     spaces = oz_page(driver)['data'].elements_list
     assert space_name not in spaces, 'space "{}" found'.format(space_name)
+
+
+@wt(parsers.parse('user of {browser_id} checks whether'
+                  ' can configure space "{space_name}"'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def check_privileges_for_space_configuration(selenium, browser_id,
+                                             space_name, oz_page):
+    driver = selenium[browser_id]
+    assert(oz_page(driver)['data'].space_privileges_label
+           == 'READ-ONLY', "error no READ-ONLY")
+
+
+@wt(parsers.parse('user of {browse_id} checks whether '
+                  'can toggle advertise option'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def check_whether_can_toggle_advertise(selenium, browser_id,
+                                       space_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+    page.move_to_toggle(driver)
+
+    toggle_info = oz_page(driver)['data'].toggle_label
+    assert(toggle_info, 'Insufficient privileges '
+                        '(requires "modify space" and'
+                        '"manage" in Marketplace'
+                        'privileges in this space).')
+
+
+@wt(parsers.parse('user of {browser_user} changes organization name of "{space_name}"'
+                  ' in space configuration subpage'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def change_org_name_in_space_conf(selenium, browser_id, oz_page, space_name):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+    page.organization_name.click()
+    page.organization_name.value = 'org_name1'
+    page.organization_name.confirm.click()
+
+
+@wt(parsers.parse('user of {browser_id} changes organization description of "{space1}"'
+                  ' in space configuration subpage'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def change_org_desc_in_space_conf(selenium, browser_id, oz_page, space_name):
+    set_description_of_a_space(selenium, browser_id, oz_page, 'some description')
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} number of supporting '
