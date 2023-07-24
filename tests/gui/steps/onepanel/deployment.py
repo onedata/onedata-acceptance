@@ -97,8 +97,7 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button '
                'in (?P<step>step 1|step 2|step 3|web cert step|'
-               'step 5|last step) of '
-               'deployment process in Onepanel'))
+               'step 5|last step) of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
