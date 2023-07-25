@@ -41,6 +41,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.archives import *
 from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.transfers import *
 
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.modals.details_modal import *
@@ -51,13 +52,15 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.transfers import *
+
 
 from . import BROWSER
 
 from tests.utils.acceptance_utils import *
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenarios('../features/oneprovider/data/dir_data_distribution.feature')

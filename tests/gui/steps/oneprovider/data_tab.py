@@ -608,8 +608,9 @@ def download_file_with_network_throttling(selenium, browser_id, item_name,
     click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                              tmp_memory, op_container)
 
+
 @wt(parsers.parse('user of {browser_id} sees that data distribution for {provider} is at {percentage}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_data_distribution_for_provider1(selenium, browser_id, provider, percentage, modals):
     driver = selenium[browser_id]
     percentage_label = modals(driver).details_modal.data_distribution.providers[provider].percentage_label
