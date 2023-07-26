@@ -15,7 +15,9 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.modal import click_modal_button
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.modals.details_modal import click_on_context_menu_item
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op,\
+    choose_option_from_selection_menu
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
@@ -181,6 +183,73 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory):
         _select_files(browser, selector, item_list)
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_up()
+
+
+@wt(parsers.parse('user of {browser_id} deletes first "{n}" files'
+                  ' with step "{step_size}" from file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def delete_files_with_given_step_from_file_browser(browser_id, n, step_size,
+                                                   tmp_memory, selenium, popups,
+                                                   modals):
+    n = int(n)
+    step_size = int(step_size)
+    assert n >= step_size, f'number of files to delete {n} must be at lest' \
+                           f' equal to step size {step_size}'
+    assert step_size > 0, f'step size {step_size} must be greater than 0'
+    deleted_files = 0
+    while deleted_files + step_size <= n:
+        select_first_n_files(browser_id, step_size, tmp_memory)
+        choose_option_from_selection_menu(browser_id, selenium, "Delete",
+                                          popups, tmp_memory)
+        click_modal_button(selenium, browser_id, "Yes", "Delete modal", modals)
+        deleted_files += step_size
+    else:
+        if deleted_files < n:
+            if n - deleted_files == 1:
+                browser = tmp_memory[browser_id]['file_browser']
+                time.sleep(0.5)
+                file_names = browser.names_of_visible_elems()
+                file_name = file_names[0]
+                write_to_jump_input(browser_id, tmp_memory, file_name)
+                click_on_context_menu_item(selenium, browser_id, popups,
+                                           file_name, tmp_memory, 'Delete')
+                click_modal_button(selenium, browser_id, "Yes", "Delete modal",
+                                   modals)
+                deleted_files += 1
+            else:
+                select_first_n_files(browser_id, n - deleted_files, tmp_memory)
+                choose_option_from_selection_menu(browser_id, selenium,
+                                                  "Delete", popups, tmp_memory)
+                click_modal_button(selenium, browser_id, "Yes", "Delete modal",
+                                   modals)
+                deleted_files += (n - deleted_files)
+    assert deleted_files == n, f'deleted {deleted_files} files instead of {n}'
+
+
+@wt(parsers.parse('user of {browser_id} selects first "{n}" files from'
+                  ' file browser with pressed ctrl'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_first_n_files(browser_id, n, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    n = int(n)
+    with browser.select_files() as selector:
+        selector.ctrl_or_cmd_down()
+        selected_files = []
+        visible_files = browser.names_of_visible_elems()
+        new_files = [f for f in visible_files if f]
+        err_msg = f'there are {len(new_files)} files in file browser' \
+                  f' should be at least {n}'
+        assert len(new_files) >= n, err_msg
+        while len(new_files) > n:
+            new_files.pop()
+        for new_file in new_files:
+            item = browser.data[new_file]
+            if not item.is_selected():
+                selector.select(item)
+                selected_files.append(new_file)
+        err_msg = (f'There are {len(selected_files)} selected files in'
+                   f' file browser when should be {n}')
+        assert len(selected_files) == n, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} deselects {item_list} '

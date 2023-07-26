@@ -72,6 +72,7 @@ def screens():
     return [0, 1]
 
 
+scenarios('../features/oneprovider/data/file-list-polling.feature')
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
