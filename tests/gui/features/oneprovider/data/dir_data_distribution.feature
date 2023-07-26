@@ -20,8 +20,8 @@ Feature: Data distribution operations for directories
                 directory tree:
                     - dir1:
                         - file1: 11111
-                        - file2: 22222
-                        - file3: 33333
+                        - file2: 11111
+                        - file3: 11111
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
@@ -34,22 +34,22 @@ Feature: Data distribution operations for directories
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
+    Then user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
     And user of browser sees that data distribution for dev-oneprovider-paris is at 0%
     And user of browser sees that size distribution for dev-oneprovider-krakow is "15 B"
-    Then user of browser sees that size distribution for dev-oneprovider-paris is "0 B"
+    And user of browser sees that size distribution for dev-oneprovider-paris is "0 B"
 
 
-  Scenario: User check's directory's data distribution change on file replication
+  Scenario: User checks directory's data distribution change for oneprovider-2 on file replication
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser replicates "file1" to provider "oneprovider-2"
-    And user of browser clicks on "dir1" menu on breadcrumbs on file browser
-    And user of browser clicks "Data distribution" option in directory breadcrumbs menu
-    And user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
+    And user of browser clicks on menu on breadcrumbs on file browser
+    And user of browser clicks "Data distribution" option in menu popup
+    Then user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
     And user of browser sees that data distribution for dev-oneprovider-paris is at 33%
     And user of browser sees that size distribution for dev-oneprovider-krakow is "15 B"
-    Then user of browser sees that size distribution for dev-oneprovider-paris is "5 B"
+    And user of browser sees that size distribution for dev-oneprovider-paris is "5 B"
