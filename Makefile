@@ -155,4 +155,4 @@ clean_swaggers:
 
 
 codetag-tracker:
-	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=./automation-examples/
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=./automation-examples/.pylintrc
