@@ -619,7 +619,7 @@ def toggle_size_statistics_for_providers(selenium, browser_id, modals):
 
 @wt(parsers.parse('user of {browser_id} sees that logical size for {provider}'
                   ' is "{size}"'))
-@repeat_failed(WAIT_FRONTEND)
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
                                     provider, size):
     driver = selenium[browser_id]
@@ -632,8 +632,8 @@ def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that physical size for {provider}'
                   ' is "{size}"'))
-@repeat_failed(WAIT_FRONTEND)
-def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
+def check_physical_size_for_provider(selenium, hosts, modals, browser_id,
                                     provider, size):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
@@ -646,7 +646,7 @@ def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
 @wt(parsers.parse('user of {browser_id} sees that error message for {provider}'
                   ' is "{message}"'))
 @repeat_failed(WAIT_FRONTEND)
-def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
+def check_error_cell_for_provider(selenium, hosts, modals, browser_id,
                                     provider, message):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
@@ -654,3 +654,17 @@ def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
         .providers[provider_name].error_cell
     assert message == error_cell, f"Error message should be '{message}' " \
                                   f"for provider {provider_name}!"
+
+
+@wt(parsers.parse('user of {browser_id} sees that {provider} contains '
+                  '"{contains}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_contains_for_provider(selenium, hosts, modals, browser_id,
+                                    provider, contains):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    provider_contains = modals(driver).details_modal.size_statistics\
+        .providers[provider_name].contains
+    assert provider_contains == contains, f"Provider {provider} contains " \
+                                          f"{provider_contains} instead of " \
+                                          f"{contains} "
