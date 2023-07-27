@@ -512,7 +512,16 @@ def wait_for_provider_online(provider, hosts, users):
 
 
 @given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
-def stop_providers(hosts, provider_list):
+def given_stop_providers(hosts, provider_list):
+    _stop_providers(hosts, provider_list)
+
+
+@wt(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
+def when_stop_providers(hosts, provider_list):
+    _stop_providers(hosts, provider_list)
+
+
+def _stop_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']
         run_onenv_command('service', ['stop', pod_name])

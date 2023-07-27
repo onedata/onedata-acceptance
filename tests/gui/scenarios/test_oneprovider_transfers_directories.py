@@ -60,6 +60,7 @@ def screens():
     return [0]
 
 
-# scenarios('../features/oneprovider/transfers/transfers_directory.feature')
+scenarios('../features/oneprovider/transfers/transfers_directory.feature')
 scenarios('../features/oneprovider/data/dir_stats_per_provider.feature')
+scenarios('../features/oneprovider/multiprovider/stop_provider.feature')
 

@@ -1,4 +1,4 @@
-Feature: Data distribution operations for directories
+Feature: Directories size statistics for providers
 
 
   Background:
@@ -123,3 +123,21 @@ Feature: Data distribution operations for directories
     And user of browser sees that oneprovider-1 contains "12 files, 3 directories"
     And user of browser sees that oneprovider-2 contains "12 files, 3 directories"
 
+
+  Scenario: User checks space's size stats - provider1 full, provider2 empty, both providers' stats enabled, provider2 stops
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser clicks on menu on breadcrumbs on file browser
+    And user of browser clicks "Information" option in menu popup
+    And user of browser clicks on "Size stats" navigation tab in "Directory Details" modal
+    And user of browser clicks "Show statistics per provider" button on Size stats modal
+    Then user of browser sees that logical size for oneprovider-1 is "60 B"
+    And user of browser sees that logical size for oneprovider-2 is "60 B"
+    And user of browser sees that physical size for oneprovider-1 is "60 B"
+    And user of browser sees that physical size for oneprovider-2 is "0 B"
+    And user of browser sees that oneprovider-1 contains "12 files, 3 directories"
+    And user of browser sees that oneprovider-2 contains "12 files, 3 directories"
+    And providers named oneprovider-2 is stopped
+    And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
