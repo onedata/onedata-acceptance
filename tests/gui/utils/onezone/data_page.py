@@ -210,8 +210,6 @@ class DataPage(GenericPage):
                                      'li.one-list-item.clickable.resource-item',
                                      cls=Space)
 
-    confirmation_label = Label('.header-row .one-label.truncated-string.truncate')
-    toggle_label = Label('.tooltip .tooltip-inner')
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
@@ -223,8 +221,6 @@ class DataPage(GenericPage):
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
     configuration_page = WebItem('.main-content', cls=SpaceConfigurationPage)
     space_marketplace_page = WebItem('.main-content', cls=SpaceMarketplacePage)
-
-    space_privileges_label = Label('.label.label-warning')
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

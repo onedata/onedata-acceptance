@@ -43,6 +43,8 @@ class SpaceConfigurationPage(PageObject):
     contact_email = WebElement('.contact-email')
     marketplace_link = Button('.view-in-marketplace-link')
 
+    header_label_warning = Label('.label.label-warning')
 
     def move_to_toggle(self, driver):
-        ActionChains(driver).move_to_element(self.advertise_toggle_web).perform()
+        ActionChains(driver).move_to_element(self.advertise_toggle_web)\
+            .perform()

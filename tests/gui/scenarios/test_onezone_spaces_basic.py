@@ -61,7 +61,6 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.space_marketplace import *
-from tests.gui.steps.onezone.space_configuration import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.shares import *
@@ -81,4 +80,4 @@ scenarios('../features/onezone/space/multispace.feature')
 scenarios('../features/onezone/space/spaces_memberships.feature')
 scenarios('../features/onezone/space/spaces_effective_privileges.feature')
 scenarios('../features/onezone/space/space_marketplace.feature')
-scenarios('../features/onezone/space/check_manage_in_marketplace_privileges.feature')
+scenarios('../features/onezone/space/marketplace_privileges_management.feature')
