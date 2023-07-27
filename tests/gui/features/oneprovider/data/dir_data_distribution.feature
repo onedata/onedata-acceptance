@@ -34,10 +34,10 @@ Feature: Data distribution operations for directories
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    Then user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
-    And user of browser sees that data distribution for dev-oneprovider-paris is at 0%
-    And user of browser sees that size distribution for dev-oneprovider-krakow is "15 B"
-    And user of browser sees that size distribution for dev-oneprovider-paris is "0 B"
+    Then user of browser sees that data distribution for oneprovider-1 is at 100%
+    And user of browser sees that data distribution for oneprovider-2 is at 0%
+    And user of browser sees that size distribution for oneprovider-1 is "15 B"
+    And user of browser sees that size distribution for oneprovider-2 is "0 B"
 
 
   Scenario: User checks directory's data distribution change for oneprovider-2 on file replication
@@ -49,7 +49,7 @@ Feature: Data distribution operations for directories
     And user of browser replicates "file1" to provider "oneprovider-2"
     And user of browser clicks on menu on breadcrumbs on file browser
     And user of browser clicks "Data distribution" option in menu popup
-    Then user of browser sees that data distribution for dev-oneprovider-krakow is at 100%
-    And user of browser sees that data distribution for dev-oneprovider-paris is at 33%
-    And user of browser sees that size distribution for dev-oneprovider-krakow is "15 B"
-    And user of browser sees that size distribution for dev-oneprovider-paris is "5 B"
+    Then user of browser sees that data distribution for oneprovider-1 is at 100%
+    And user of browser sees that data distribution for oneprovider-2 is at 33%
+    And user of browser sees that size distribution for oneprovider-1 is "15 B"
+    And user of browser sees that size distribution for oneprovider-2 is "5 B"

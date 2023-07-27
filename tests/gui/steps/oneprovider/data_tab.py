@@ -614,22 +614,25 @@ def download_file_with_network_throttling(selenium, browser_id, item_name,
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_data_distribution_percentage_for_provider(selenium, browser_id,
                                                     provider, percentage,
-                                                    modals):
+                                                    modals, hosts):
     driver = selenium[browser_id]
+    provider = hosts[provider]['name']
     data_distribution = modals(driver).details_modal.data_distribution
     percentage_label = data_distribution.providers[provider].percentage_label
     assert percentage_label == percentage, f"Data distribution at " \
                                            f"{percentage_label} instead " \
-                                           f"of {percentage}!"
+                                           f"of {percentage} for provider " \
+                                           f"{provider}!"
 
 
 @wt(parsers.parse('user of {browser_id} sees that size distribution for'
                   ' {provider} is "{size}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_data_distribution_size_for_provider(selenium, browser_id, provider,
-                                              size, modals):
+                                              size, modals, hosts):
     driver = selenium[browser_id]
+    provider = hosts[provider]['name']
     data_distribution = modals(driver).details_modal.data_distribution
     size_label = data_distribution.providers[provider].size_label
     assert size_label == size, f"Data distribution at {size_label} instead " \
-                               f"of {size}!"
+                               f"of {size} for provider {provider}!"
