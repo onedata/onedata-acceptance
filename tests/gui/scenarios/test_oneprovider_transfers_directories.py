@@ -46,6 +46,7 @@ from tests.gui.steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
@@ -59,5 +60,6 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/transfers/transfers_directory.feature')
+# scenarios('../features/oneprovider/transfers/transfers_directory.feature')
+scenarios('../features/oneprovider/data/dir_stats_per_provider.feature')
 

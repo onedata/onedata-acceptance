@@ -607,3 +607,50 @@ def download_file_with_network_throttling(selenium, browser_id, item_name,
 
     click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                              tmp_memory, op_container)
+
+
+@wt(parsers.parse('user of browser clicks "Show statistics per provider" button'
+                  ' on Size stats modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def toggle_size_statistics_for_providers(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modals(driver).details_modal.size_statistics.toggle_statistics()
+
+
+@wt(parsers.parse('user of {browser_id} sees that logical size for {provider}'
+                  ' is "{size}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
+                                    provider, size):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    logical_size = modals(driver).details_modal.size_statistics\
+        .providers[provider_name].logical_size
+    assert size == logical_size, f"Logical size is {logical_size} instead of " \
+                                 f"{size} for provider {provider_name}!"
+
+
+@wt(parsers.parse('user of {browser_id} sees that physical size for {provider}'
+                  ' is "{size}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
+                                    provider, size):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    physical_size = modals(driver).details_modal.size_statistics\
+        .providers[provider_name].physical_size
+    assert size == physical_size, f"Physical size is {physical_size} instead " \
+                                  f"of {size} for provider {provider_name}!"
+
+
+@wt(parsers.parse('user of {browser_id} sees that error message for {provider}'
+                  ' is "{message}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
+                                    provider, message):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    error_cell = modals(driver).details_modal.size_statistics\
+        .providers[provider_name].error_cell
+    assert message == error_cell, f"Error message should be '{message}' " \
+                                  f"for provider {provider_name}!"
