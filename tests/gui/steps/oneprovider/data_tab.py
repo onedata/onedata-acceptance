@@ -619,10 +619,9 @@ def check_data_distribution_percentage_for_provider(selenium, browser_id,
     provider = hosts[provider]['name']
     data_distribution = modals(driver).details_modal.data_distribution
     percentage_label = data_distribution.providers[provider].percentage_label
-    assert percentage_label == percentage, f"Data distribution at " \
-                                           f"{percentage_label} instead " \
-                                           f"of {percentage} for provider " \
-                                           f"{provider}!"
+    assert percentage_label == percentage, (
+        f"Data distribution at {percentage_label} instead of {percentage}"
+        f" for provider {provider}!")
 
 
 @wt(parsers.parse('user of {browser_id} sees that size distribution for'

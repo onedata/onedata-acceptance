@@ -91,8 +91,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                   'breadcrumbs on {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
-                                                       which_browser=
-                                                       'file browser'):
+                              which_browser='file browser'):
     driver = selenium[browser_id]
     breadcrumbs = getattr(op_container(driver),
                           transform(which_browser)).breadcrumbs
