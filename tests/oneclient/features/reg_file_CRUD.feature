@@ -139,3 +139,21 @@ Feature: Regular_file_CRUD
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
     And user1 restarts oneprovider oneprovider-krakow
     Then user1 reads "TEST TEXT ONEDATA" from file space1/dir1/dir2/file1
+
+
+  Scenario: Restart provider network for short time with active oneclient connection
+    When user1 creates directory and parents [space1/dir1/dir2]
+    And user1 creates regular files [space1/dir1/dir2/file1]
+    And user1 sees [file1] in space1/dir1/dir2
+    And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
+    And user1 stops network on oneprovider oneprovider-krakow for 15 seconds
+    Then user1 reads "TEST TEXT ONEDATA" from file space1/dir1/dir2/file1
+
+
+  Scenario: Restart provider network for long time with active oneclient connection
+    When user1 creates directory and parents [space1/dir1/dir2]
+    And user1 creates regular files [space1/dir1/dir2/file1]
+    And user1 sees [file1] in space1/dir1/dir2
+    And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
+    And user1 stops network on oneprovider oneprovider-krakow for 130 seconds
+    Then user1 reads "TEST TEXT ONEDATA" from file space1/dir1/dir2/file1
