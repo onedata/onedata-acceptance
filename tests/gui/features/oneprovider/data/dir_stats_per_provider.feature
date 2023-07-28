@@ -74,7 +74,6 @@ Feature: Directories size statistics for providers
     And user of browser clicks "Information" option in menu popup
     And user of browser clicks on "Size stats" navigation tab in "Directory Details" modal
     And user of browser clicks "Show statistics per provider" button on Size stats modal
-#    And trace
     Then user of browser sees that logical size for oneprovider-1 is "60 B"
     And user of browser sees that physical size for oneprovider-1 is "60 B"
     And user of browser sees that oneprovider-1 contains "12 files, 3 directories"
@@ -82,7 +81,6 @@ Feature: Directories size statistics for providers
 
   Scenario: User checks space's size stats - provider1 - 60 B, provider2 - 40 B, both providers' stats enabled
     When user of browser clicks "space1" on the spaces list in the sidebar
-#    And trace
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser clicks on "oneprovider-2" provider on providers page
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -96,7 +94,6 @@ Feature: Directories size statistics for providers
     And user of browser clicks "Information" option in menu popup
     And user of browser clicks on "Size stats" navigation tab in "Directory Details" modal
     And user of browser clicks "Show statistics per provider" button on Size stats modal
-#    And trace
     Then user of browser sees that logical size for oneprovider-1 is "100 B"
     And user of browser sees that logical size for oneprovider-1 is "100 B"
     And user of browser sees that physical size for oneprovider-1 is "60 B"
