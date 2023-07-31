@@ -9,6 +9,10 @@ __license__ = ("This software is released under the MIT license cited in "
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 
+from tests.gui.steps.common.miscellaneous import \
+    click_option_in_popup_labeled_menu
+from tests.gui.steps.modals.details_modal import \
+    click_on_navigation_tab_in_modal
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
@@ -587,3 +591,50 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, 'file_id', modal_name, modals)
     return clipboard.paste(display=displays[browser_id])
+
+
+@wt(parsers.parse("user of {browser_id} opens size statistics per provider view"
+                  " by breadcrumbs menu"))
+def go_to_size_statistics_per_provider_by_breadcrumbs(selenium, modals, popups,
+                                                      op_container, browser_id):
+    click_on_breadcrumbs_menu(selenium, browser_id, op_container,
+                              'file browser')
+    click_option_in_popup_labeled_menu(selenium, browser_id, "Information",
+                                       popups)
+    click_on_navigation_tab_in_modal(selenium, browser_id, "Size stats", modals,
+                                     "Directory Details")
+    expand_size_statistics_for_providers(selenium, browser_id, modals)
+
+
+    # @wt(parsers.parse('user of {browser_id} clicks on menu on '
+    #                   'breadcrumbs on {which_browser}'))
+    # @repeat_failed(timeout=WAIT_FRONTEND)
+    # def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
+    #                               which_browser=
+    #                               'file browser'):
+    #     driver = selenium[browser_id]
+    #     breadcrumbs = getattr(op_container(driver),
+    #                           transform(which_browser)).breadcrumbs
+    #     breadcrumbs.menu.click()
+
+    # @wt(parsers.parse(
+    #     'user of {browser_id} clicks "{option}" option in menu popup'))
+    # def click_option_in_popup_labeled_menu(selenium, browser_id, option,
+    #                                        popups):
+    #     driver = selenium[browser_id]
+    #     popups(driver).menu_popup_with_label.menu[option]()
+    # @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
+    #                'navigation tab in "(?P<modal>.*)" modal'))
+    # @repeat_failed(timeout=WAIT_FRONTEND)
+    # def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
+    #                                      modal):
+    #     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal))
+    #     tab = modal.navigation[tab_name]
+    #     tab.web_elem.click()
+    # @wt(parsers.parse(
+    #     'user of browser clicks "Show statistics per provider" button'
+    #     ' on Size stats modal'))
+    # @repeat_failed(timeout=WAIT_FRONTEND)
+    # def toggle_size_statistics_for_providers(selenium, browser_id, modals):
+    #     driver = selenium[browser_id]
+    #     modals(driver).details_modal.size_statistics.toggle_statistics()

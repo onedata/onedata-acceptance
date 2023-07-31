@@ -365,9 +365,9 @@ def network_throttling_upload(driver):
     upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency = 5,
-        download_throughput = 500 * 1024,
-        upload_throughput = float(upload_kb) / 8 * 1024)
+        latency=5,
+        download_throughput=500 * 1024,
+        upload_throughput=float(upload_kb) / 8 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -408,7 +408,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -589,12 +589,13 @@ def click_file_browser_button(browser_id, button, tmp_memory):
 
 
 def network_throttling_download(driver):
-    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+    download_kb = (
+                          GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency = 5,
-        download_throughput = float(download_kb) / 8 * 1024,
-        upload_throughput = 500 * 1024)
+        latency=5,
+        download_throughput=float(download_kb) / 8 * 1024,
+        upload_throughput=500 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} downloads item named "{item_name}" '
@@ -612,59 +613,49 @@ def download_file_with_network_throttling(selenium, browser_id, item_name,
 @wt(parsers.parse('user of browser clicks "Show statistics per provider" button'
                   ' on Size stats modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def toggle_size_statistics_for_providers(selenium, browser_id, modals):
+def expand_size_statistics_for_providers(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    modals(driver).details_modal.size_statistics.toggle_statistics()
+    modals(driver).details_modal.size_statistics.expand_stats_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that logical size for {provider}'
-                  ' is "{size}"'))
+@wt(parsers.parse('user of {browser_id} sees that {size_type} for {provider}'
+                  ' is "{expected_size}"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_logical_size_for_provider(selenium, hosts, modals, browser_id,
-                                    provider, size):
+def check_size_for_provider(selenium, hosts, modals, browser_id, size_type,
+                            provider, expected_size):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    logical_size = modals(driver).details_modal.size_statistics\
-        .providers[provider_name].logical_size
-    assert size == logical_size, f"Logical size is {logical_size} instead of " \
-                                 f"{size} for provider {provider_name}!"
+    size = getattr(modals(driver).details_modal.size_statistics
+                   .dir_stats_row_per_provider[provider_name],
+                   transform(size_type))
 
-
-@wt(parsers.parse('user of {browser_id} sees that physical size for {provider}'
-                  ' is "{size}"'))
-@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_physical_size_for_provider(selenium, hosts, modals, browser_id,
-                                    provider, size):
-    driver = selenium[browser_id]
-    provider_name = hosts[provider]['name']
-    physical_size = modals(driver).details_modal.size_statistics\
-        .providers[provider_name].physical_size
-    assert size == physical_size, f"Physical size is {physical_size} instead " \
-                                  f"of {size} for provider {provider_name}!"
+    assert size == expected_size, (
+        f"{size_type} is {size} instead of {expected_size} for provider "
+        f"{provider_name}!")
 
 
 @wt(parsers.parse('user of {browser_id} sees that error message for {provider}'
                   ' is "{message}"'))
 @repeat_failed(WAIT_FRONTEND)
 def check_error_cell_for_provider(selenium, hosts, modals, browser_id,
-                                    provider, message):
+                                  provider, message):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    error_cell = modals(driver).details_modal.size_statistics\
-        .providers[provider_name].error_cell
-    assert message == error_cell, f"Error message should be '{message}' " \
-                                  f"for provider {provider_name}!"
+    error_cell = modals(driver).details_modal.size_statistics \
+        .dir_stats_row_per_provider[provider_name].error_cell
+    assert message == error_cell, (f"Error message should be '{message}' "
+                                   f"for provider {provider_name}!")
 
 
-@wt(parsers.parse('user of {browser_id} sees that {provider} contains '
-                  '"{contains}"'))
+@wt(parsers.parse('user of {browser_id} sees that {provider} content is '
+                  '"{content}"'))
 @repeat_failed(WAIT_FRONTEND)
-def check_contains_for_provider(selenium, hosts, modals, browser_id,
-                                    provider, contains):
+def check_content_for_provider(selenium, hosts, modals, browser_id,
+                               provider, content):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    provider_contains = modals(driver).details_modal.size_statistics\
-        .providers[provider_name].contains
-    assert provider_contains == contains, f"Provider {provider} contains " \
-                                          f"{provider_contains} instead of " \
-                                          f"{contains} "
+    provider_content = modals(driver).details_modal.size_statistics \
+        .dir_stats_row_per_provider[provider_name].content
+    assert provider_content == content, (
+        f"Provider {provider} content is {provider_content} instead "
+        f"of {content}!")
