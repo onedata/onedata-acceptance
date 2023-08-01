@@ -13,6 +13,7 @@ import yaml
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.shares import get_file_id_by_rest
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.http_exceptions import (
     HTTPNotFound, HTTPError, HTTPBadRequest, HTTPForbidden)
@@ -384,6 +385,16 @@ def create_empty_file(path, users, user, provider, hosts):
     http_put(ip=hosts[provider]['hostname'], port=OP_REST_PORT,
              path='/cdmi/' + path, headers={'X-Auth-Token': users[user].token},
              auth=None, data=None)
+
+
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     'directories "{dir_list}" with names sorted alphabetically'
+                     ' supported by "{provider}" provider'))
+def create_files_names_alphabetically_with_dir_list(user, number, dir_list,
+                                                    provider, users, hosts):
+    for dir_path in parse_seq(dir_list):
+        create_files_names_alphabetically(number, dir_path, users, user,
+                                          provider, hosts)
 
 
 @given(parsers.parse('using REST, {user} creates {number} empty files in '

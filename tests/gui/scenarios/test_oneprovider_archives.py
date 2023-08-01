@@ -49,6 +49,7 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.archives import *
+from tests.gui.steps.oneprovider.archives_audit import *
 from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import *
 
@@ -74,4 +75,4 @@ def screens():
 
 scenarios('../features/oneprovider/data/archive_basic.feature')
 scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
-
+scenarios('../features/oneprovider/data/archive_audit_logs.feature')
