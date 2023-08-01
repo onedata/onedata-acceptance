@@ -604,37 +604,3 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(selenium, modals, popups,
     click_on_navigation_tab_in_modal(selenium, browser_id, "Size stats", modals,
                                      "Directory Details")
     expand_size_statistics_for_providers(selenium, browser_id, modals)
-
-
-    # @wt(parsers.parse('user of {browser_id} clicks on menu on '
-    #                   'breadcrumbs on {which_browser}'))
-    # @repeat_failed(timeout=WAIT_FRONTEND)
-    # def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
-    #                               which_browser=
-    #                               'file browser'):
-    #     driver = selenium[browser_id]
-    #     breadcrumbs = getattr(op_container(driver),
-    #                           transform(which_browser)).breadcrumbs
-    #     breadcrumbs.menu.click()
-
-    # @wt(parsers.parse(
-    #     'user of {browser_id} clicks "{option}" option in menu popup'))
-    # def click_option_in_popup_labeled_menu(selenium, browser_id, option,
-    #                                        popups):
-    #     driver = selenium[browser_id]
-    #     popups(driver).menu_popup_with_label.menu[option]()
-    # @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<tab_name>.*)" '
-    #                'navigation tab in "(?P<modal>.*)" modal'))
-    # @repeat_failed(timeout=WAIT_FRONTEND)
-    # def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
-    #                                      modal):
-    #     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal))
-    #     tab = modal.navigation[tab_name]
-    #     tab.web_elem.click()
-    # @wt(parsers.parse(
-    #     'user of browser clicks "Show statistics per provider" button'
-    #     ' on Size stats modal'))
-    # @repeat_failed(timeout=WAIT_FRONTEND)
-    # def toggle_size_statistics_for_providers(selenium, browser_id, modals):
-    #     driver = selenium[browser_id]
-    #     modals(driver).details_modal.size_statistics.toggle_statistics()
