@@ -103,4 +103,45 @@ def add_tags_in_space_configuration_tab(selenium, browser_id,  oz_page, popups,
     page.space_tags_editor.save_button.click()
 
 
+@wt(parsers.parse('user of {browser_id} sees "{label_info}" header label'
+                  ' in configuration space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_header_info_in_space_configuration(selenium, browser_id, label_info,
+                                             oz_page):
+    driver = selenium[browser_id]
+    header_label_message = oz_page(driver)[
+        'data'].configuration_page.header_label_warning
+    err_msg = (f"expected {label_info} header label"
+               f" instead of {header_label_message}")
+    assert header_label_message == str(label_info), err_msg
 
+
+@wt(parsers.parse('user of {browse_id} sees "{message_type}" message after '
+                  'hovering over "{toggle_name}" toggle'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_message_after_hovering_toggle(selenium, browser_id, message_type,
+                                        toggle_name, oz_page, popups):
+    messages_dict = {'Insufficient privileges': 'Insufficient privileges '
+                                                '(requires "modify space" and '
+                                                '"manage in Marketplace" '
+                                                'privileges in this space).'
+                     }
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+    page.move_to_toggle(driver)
+    toggle_info = popups(driver).toggle_label
+    expected_message = messages_dict[message_type]
+    err_msg = (f'expected {expected_message} info to be visible instead of '
+               f'{toggle_info} after hovering over toggle {toggle_name}')
+    assert toggle_info == messages_dict[message_type], err_msg
+
+
+@wt(parsers.parse('user of {browser_user} changes organization name for '
+                  '"{org_name}" in space configuration subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_org_name_in_space_conf(selenium, browser_id, oz_page, org_name):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].configuration_page
+    page.organization_name.click()
+    page.organization_name.value = str(org_name)
+    page.organization_name.confirm.click()

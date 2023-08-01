@@ -14,7 +14,6 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.onezone.space_configuration import set_description_of_a_space
 
 SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
               "datasets_archives", "providers", "members",
@@ -216,49 +215,6 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
     driver = selenium[browser_id]
     spaces = oz_page(driver)['data'].elements_list
     assert space_name not in spaces, 'space "{}" found'.format(space_name)
-
-
-@wt(parsers.parse('user of {browser_id} sees "{label_info}" header label'
-                  ' in configuration space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def check_header_info_in_space_configuration(selenium, browser_id, label_info,
-                                             oz_page):
-    driver = selenium[browser_id]
-    header_label_message = oz_page(driver)['data'].configuration_page.\
-        header_label_warning
-    assert header_label_message == str(label_info),\
-        f"expected {label_info} header label instead of {header_label_message}"
-
-
-@wt(parsers.parse('user of {browse_id} sees "{message_type}" message after '
-                  'hovering on "{toggle_name}"'
-                  ' toggle'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def check_message_after_hovering_toggle(selenium, browser_id, message_type,
-                                        toggle_name, oz_page, popups):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
-    page.move_to_toggle(driver)
-    messages_dict = {'Insufficient privileges': 'Insufficient privileges '
-                                                '(requires "modify space" and '
-                                                '"manage in Marketplace" '
-                                                'privileges in this space).'
-                     }
-    toggle_info = popups(driver).toggle_label
-    err_msg = f'expected {messages_dict[message_type]} info instead of ' \
-              f'{toggle_info} after hovering toggle {toggle_name}'
-    assert toggle_info == messages_dict[message_type], err_msg
-
-
-@wt(parsers.parse('user of {browser_user} changes organization name for '
-                  '"{org_name}" in space configuration subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_org_name_in_space_conf(selenium, browser_id, oz_page, org_name):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data'].configuration_page
-    page.organization_name.click()
-    page.organization_name.value = str(org_name)
-    page.organization_name.confirm.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} number of supporting '

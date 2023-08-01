@@ -210,7 +210,6 @@ class DataPage(GenericPage):
                                      'li.one-list-item.clickable.resource-item',
                                      cls=Space)
 
-
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
