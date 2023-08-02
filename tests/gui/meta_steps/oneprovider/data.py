@@ -587,3 +587,44 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, 'file_id', modal_name, modals)
     return clipboard.paste(display=displays[browser_id])
+
+
+def delete_first_n_files(browser_id, n, tmp_memory, selenium, popups,
+                         modals):
+    select_first_n_files(browser_id, n, tmp_memory)
+    choose_option_from_selection_menu(browser_id, selenium, "Delete",
+                                      popups, tmp_memory)
+    click_modal_button(selenium, browser_id, "Yes", "Delete modal", modals)
+
+
+@wt(parsers.parse('user of {browser_id} deletes first "{n}" files'
+                  ' with step "{step_size}" from file browser'))
+def delete_files_with_given_step_from_file_browser(browser_id, n: int,
+                                                   step_size: int, tmp_memory,
+                                                   selenium, popups, modals):
+    assert n >= step_size, (f'number of files to delete {n} must be at least'
+                            f' equal to step size {step_size}')
+    assert step_size > 0, f'step size {step_size} must be greater than 0'
+    deleted_files = 0
+    while deleted_files + step_size <= n:
+        delete_first_n_files(browser_id, step_size, tmp_memory, selenium,
+                             popups, modals)
+        deleted_files += step_size
+    else:
+        if deleted_files < n:
+            if n - deleted_files == 1:
+                browser = tmp_memory[browser_id]['file_browser']
+                time.sleep(0.5)
+                file_names = browser.names_of_visible_elems()
+                file_name = file_names[0]
+                write_to_jump_input(browser_id, tmp_memory, file_name)
+                click_on_context_menu_item(selenium, browser_id, popups,
+                                           file_name, tmp_memory, 'Delete')
+                click_modal_button(selenium, browser_id, "Yes", "Delete modal",
+                                   modals)
+                deleted_files += 1
+            else:
+                delete_first_n_files(browser_id, n - deleted_files, tmp_memory,
+                                     selenium, popups, modals)
+                deleted_files += (n - deleted_files)
+    assert deleted_files == n, f'deleted {deleted_files} files instead of {n}'
