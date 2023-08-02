@@ -16,7 +16,7 @@ import urllib3
 from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
                    PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX,
                    TOKEN_DISPENSER_PATH_PREFIX)
-from .http_exceptions import raise_http_exception
+from .http_exceptions import raise_http_exception, HTTPServiceUnavailable
 from requests import ConnectTimeout, ReadTimeout
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -87,7 +87,14 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
             return response
         else:
             raise_http_exception(response)
-    except (ConnectTimeout, ReadTimeout) as t:
+    except HTTPServiceUnavailable as e:
+        if retries > 0:
+            time.sleep(5.0)
+            return http_request(http_method, ip, port, path, use_ssl, headers,
+                                verify, cert, auth, data,
+                                default_headers, retries-1)
+        raise e
+    except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable) as t:
         print("""
          _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
         | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
@@ -97,6 +104,6 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
         |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
         """)
         traceback.print_stack()
-        print("Test will freeze to allow debuging!")
+        print("Test will freeze to allow debugging!")
         while True:
             time.sleep(365*24*60*60)
