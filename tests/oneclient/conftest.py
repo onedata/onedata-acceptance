@@ -65,6 +65,7 @@ def setup_luma(users_config, users, admin_credentials, hosts):
 
     add_spaces_luma_mapping(admin_credentials, local_feed_luma_storages, spaces)
 
+
 def unmount_all_clients_and_purge_spaces(users):
     for user in users.values():
         for client in user.clients.values():
