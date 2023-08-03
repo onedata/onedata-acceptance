@@ -185,8 +185,8 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory):
         selector.ctrl_or_cmd_up()
 
 
-@wt(parsers.parse('user of {browser_id} selects first "{n}" files from'
-                  ' file browser with pressed ctrl'))
+@wt(parsers.parse('user of {browser_id} selects first "{num_files_to_select}"'
+                  ' files from file browser with pressed ctrl'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_first_n_files(browser_id, num_files_to_select: int, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
