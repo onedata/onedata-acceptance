@@ -14,6 +14,7 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform, parse_seq
+from datetime import datetime
 import re
 
 
@@ -97,3 +98,45 @@ def assert_date_at_field_in_archive_audit_log(browser_id, option, field_name,
         raise Exception('Empty pattern')
     assert pattern.fullmatch(actual_message), f"message at field is" \
                                               f" {actual_message}"
+
+
+def parse_time(str_time):
+    n = len(str_time)
+    if str_time[n-2:n] == 'ms':
+        return int(str_time[:n-2])
+    elif str_time[n-1] == 's':
+        return float(str_time[:n-1]) * 1000
+    else:
+        raise Exception('wrong time unit')
+
+
+@wt(parsers.parse('user of {browser_id} sees decreasing times' 
+                  ' in archive audit log'))
+def assert_decreasing_creation_times(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_audit_log
+    names = modal.info_of_visible_elems('name')
+    new_names = names
+    checked_names = []
+    last_time = 1000000000
+    last_dtime = datetime.strptime('1 Feb 9999 1:1:1.1', '%d %b %Y %H:%M:%S.%f')
+    while new_names:
+        names = modal.info_of_visible_elems('name')
+        new_names = []
+        creation_duration_times = modal.info_of_visible_elems('creation_'
+                                                              'duration_time')
+        creation_end_time = modal.info_of_visible_elems('creation_end_time')
+        for index, name in enumerate(names):
+            if name not in checked_names:
+                current_time = parse_time(creation_duration_times[index])
+                assert current_time <= last_time, 'error'
+                current_dtime = datetime.strptime(creation_end_time[index] +
+                                                  '000', '%d %b %Y %H:%M:%S.%f')
+                assert current_dtime <= last_dtime, 'error'
+                last_dtime = current_dtime
+                checked_names.append(name)
+                new_names.append(name)
+                last_time = current_time
+        modal.scroll_by_press_space()
+
+

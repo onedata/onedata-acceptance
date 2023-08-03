@@ -40,7 +40,7 @@ class ArchiveAuditLog(Modal):
     _bottom_of_visible_fragment = WebElement('.bottom-shadow-keeper')
     scroll_bar = WebElement('.table-scrollable-container .ps__rail-y')
 
-    info_dict = {'creation_time': 0,
+    info_dict = {'creation_end_time': 0,
                  'name': 1,
                  'info_message': 2,
                  'creation_duration_time': 3}
@@ -64,7 +64,6 @@ class ArchiveAuditLog(Modal):
         index = self.info_dict[option]
         files = self._data
         names = [f.text.split('\n') for f in files]
-        print(names)
         elems_info = []
         for name in names:
             if len(name) > 3:

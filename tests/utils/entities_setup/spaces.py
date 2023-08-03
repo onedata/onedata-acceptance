@@ -397,6 +397,19 @@ def create_files_names_alphabetically_with_dir_list(user, number, dir_list,
                                           provider, hosts)
 
 
+@given(parsers.parse('using REST, {user} creates empty file in '
+                     '"{path}" in "{levels}" nested dirs supported by '
+                     '"{provider}" provider'))
+def create_empty_file_in_nested_directory(user, path, provider, levels: int,
+                                          users, hosts):
+    file_path = f'{path}'
+    for i in range(levels):
+        file_path += f'/dir{i}'
+        create_empty_file(file_path+'/', users, user, provider, hosts)
+    file_path += '/file_1'
+    create_empty_file(file_path, users, user, provider, hosts)
+
+
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
                      '"{path}" with names sorted alphabetically supported by '
                      '"{provider}" provider'))
