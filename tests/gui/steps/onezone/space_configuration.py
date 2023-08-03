@@ -117,7 +117,8 @@ def check_header_info_in_space_configuration(selenium, browser_id, label_info,
 
 
 @wt(parsers.parse('user of {browse_id} sees "{message_type}" message after '
-                  'hovering over "{toggle_name}" toggle'))
+                  'hovering over "{toggle_name}" toggle in '
+                  'configuration space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_message_after_hovering_toggle(selenium, browser_id, message_type,
                                         toggle_name, oz_page, popups):
