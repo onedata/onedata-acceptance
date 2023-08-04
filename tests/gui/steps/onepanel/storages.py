@@ -26,7 +26,7 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX|Embedded Ceph) form '
+               '(?P<input_box>.*?) field in (?P<form>POSIX) form '
                'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_storages_page_op_panel(selenium, browser_id, text,

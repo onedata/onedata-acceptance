@@ -61,12 +61,12 @@ For some tests you should specify `--env-file` - see
 [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
 Otherwise, the default one will be used.
 
-Example that starts a deployment using `1oz_1op_not_deployed_embedded_ceph.yaml`
+Example that starts a deployment using `1oz_1op_not_deployed_2_nodes.yaml`
 and then runs tests on it:
 ```
-./test_run.py -t tests/gui/scenarios/test_onepanel_deployment_ceph.py \
+./test_run.py -t tests/gui/scenarios/test_onepanel_deployment_with_2_hosts.py \
     -i onedata/acceptance_gui:latest --test-type gui --driver=Chrome --xvfb \
-    --env-file=1oz_1op_not_deployed_embedded_ceph --no-clean
+    --env-file=1oz_1op_not_deployed_2_nodes --no-clean
 ```
 
 ## Running tests using a locally installed testing toolkit
