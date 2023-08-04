@@ -92,3 +92,13 @@ def test_delete_copied_after_read(env_description_file):
 @scenario('Restart provider with active oneclient connection')
 def test_provider_restart(env_description_file):
     pass
+
+
+@scenario('Restart provider network for short time with active oneclient connection')
+def test_network_restart_short(env_description_file):
+    pass
+
+
+@scenario('Restart provider network for long time with active oneclient connection')
+def test_network_restart_long(env_description_file):
+    pass
