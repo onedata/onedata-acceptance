@@ -120,8 +120,8 @@ def check_header_info_in_space_configuration(selenium, browser_id, label_info,
                   'hovering over "{toggle_name}" toggle in '
                   'configuration space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_message_after_hovering_toggle(selenium, browser_id, message_type,
-                                        toggle_name, oz_page, popups):
+def check_message_after_hovering_over_toggle(selenium, browser_id, message_type,
+                                             toggle_name, oz_page, popups):
     messages_dict = {'Insufficient privileges': 'Insufficient privileges '
                                                 '(requires "modify space" and '
                                                 '"manage in Marketplace" '

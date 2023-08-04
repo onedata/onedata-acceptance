@@ -12,7 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
                                                WebItem, WebElement,
-                                               WebElementsSequence, Icon, Input)
+                                               WebElementsSequence, Icon)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
