@@ -88,7 +88,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu on '
-                  'breadcrumbs on {which_browser}'))
+                  'breadcrumbs in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
                               which_browser='file browser'):

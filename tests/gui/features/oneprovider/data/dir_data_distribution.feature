@@ -40,14 +40,14 @@ Feature: Data distribution operations for directories
     And user of browser sees that size distribution for oneprovider-2 is "0 B"
 
 
-  Scenario: User checks directory's data distribution change for oneprovider-2 on file replication
+  Scenario: User checks directory's data distribution change for oneprovider-2 after file replication
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser replicates "file1" to provider "oneprovider-2"
-    And user of browser clicks on menu on breadcrumbs on file browser
+    And user of browser clicks on menu on breadcrumbs in file browser
     And user of browser clicks "Data distribution" option in menu popup
     Then user of browser sees that data distribution for oneprovider-1 is at 100%
     And user of browser sees that data distribution for oneprovider-2 is at 33%
