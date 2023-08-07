@@ -600,46 +600,31 @@ def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,
     click_modal_button(selenium, browser_id, modal_option, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} deletes first "{num_files_to_delete}" '
-                  'files with step "{step_size}" from file browser'))
-def delete_files_with_given_step_from_file_browser(browser_id,
-                                                   num_files_to_delete: int,
-                                                   step_size: int, tmp_memory,
-                                                   selenium, popups, modals):
-    browser = tmp_memory[browser_id]['file_browser']
-    option_to_select = "Delete"
-    modal = "Delete modal"
-    modal_option = "Yes"
+@wt(parsers.parse('user of {browser_id} deletes first {num_files_to_delete} '
+                  'files from current directory'))
+def delete_first_n_files_from_current_dir(browser_id, num_files_to_delete: int,
+                                          tmp_memory, selenium, popups, modals):
     err_msg = (f'number of files to delete {num_files_to_delete} must be'
-               f' at least equal to step size {step_size}')
-    assert num_files_to_delete >= step_size, err_msg
-    assert step_size > 0, f'step size {step_size} must be greater than 0'
+               f' greater than 1')
+    assert num_files_to_delete > 1, err_msg
     deleted_files = 0
-    while deleted_files + step_size <= num_files_to_delete:
-        delete_first_n_files(browser_id, step_size, tmp_memory, selenium,
+    fixed_step = 9
+    # When single file is selected selection menu is not visible,
+    # so function delete_first_n_files cannot be used, so we avoid
+    # deleting exactly one file
+    if num_files_to_delete % fixed_step == 1:
+        delete_first_n_files(browser_id, 2, tmp_memory, selenium,
                              popups, modals)
-        deleted_files += step_size
+        deleted_files += 2
+    while deleted_files + fixed_step <= num_files_to_delete:
+        delete_first_n_files(browser_id, fixed_step, tmp_memory, selenium,
+                             popups, modals)
+        deleted_files += fixed_step
     else:
-        if deleted_files < num_files_to_delete:
-            # When single file is selected selection menu is not visible,
-            # so function delete_first_n_files cannot be used, to delete single
-            # file context menu must be used. Context menu must be visible on
-            # the page so this is why write_to_jump_input is used
-            if num_files_to_delete - deleted_files == 1:
-                time.sleep(0.5)
-                file_names = browser.names_of_visible_elems()
-                file_name = file_names[0]
-                write_to_jump_input(browser_id, tmp_memory, file_name)
-                click_on_context_menu_item(selenium, browser_id, popups,
-                                           file_name, tmp_memory,
-                                           option_to_select)
-                click_modal_button(selenium, browser_id, modal_option, modal,
-                                   modals)
-                deleted_files += 1
-            else:
-                delete_first_n_files(browser_id, num_files_to_delete -
-                                     deleted_files, tmp_memory, selenium,
-                                     popups, modals)
-                deleted_files += (num_files_to_delete - deleted_files)
+        if num_files_to_delete - deleted_files > 0:
+            delete_first_n_files(browser_id, num_files_to_delete -
+                                 deleted_files, tmp_memory, selenium,
+                                 popups, modals)
+            deleted_files += (num_files_to_delete - deleted_files)
     err_msg = f'deleted {deleted_files} files instead of {num_files_to_delete}'
     assert deleted_files == num_files_to_delete, err_msg
