@@ -58,7 +58,8 @@ def click_button_in_navigation_tab(selenium, browser_id, op_container,
 def choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     ordinal, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    page.available_workflow_list[workflow].revision_list[ordinal[:-2]].click()
+    revision = int(ordinal[:-2]) - 1
+    page.available_workflow_list[workflow].revision_list[revision].click()
 
 
 @wt(parsers.parse('user of {browser_id} confirms workflow execution '
