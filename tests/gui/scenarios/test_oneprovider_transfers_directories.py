@@ -60,4 +60,5 @@ def screens():
 
 
 scenarios('../features/oneprovider/transfers/transfers_directory.feature')
+scenarios('../features/oneprovider/data/dir_data_distribution.feature')
 
