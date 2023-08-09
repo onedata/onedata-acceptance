@@ -608,7 +608,7 @@ def delete_first_n_files_from_current_dir(browser_id, num_files_to_delete: int,
                f' greater than 1')
     assert num_files_to_delete > 1, err_msg
     deleted_files = 0
-    fixed_step = 9
+    fixed_step = 5
     # When single file is selected selection menu is not visible,
     # so function delete_first_n_files cannot be used, so we avoid
     # deleting exactly one file
