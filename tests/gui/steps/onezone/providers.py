@@ -521,6 +521,11 @@ def when_stop_providers(hosts, provider_list):
     _stop_providers(hosts, provider_list)
 
 
+@wt(parsers.re('providers? named (?P<provider_list>.*?) (is|are) started'))
+def when_stop_providers(hosts, provider_list):
+    start_providers(hosts, provider_list)
+
+
 def _stop_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']

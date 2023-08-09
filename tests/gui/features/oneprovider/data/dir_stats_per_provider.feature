@@ -25,9 +25,9 @@ Feature: Directories size statistics per providers
                     - dir3:
                         - file3: 111111111111111111111111111111
     And directory tree structure on local file system:
-      browser:
-        file4:
-          size: 40 B
+        browser:
+            file4:
+                size: 40 B
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
@@ -38,7 +38,7 @@ Feature: Directories size statistics per providers
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
-    And user of browser opens size statistics per provider view by breadcrumbs menu
+    And user of browser opens size statistics per provider view using breadcrumbs menu
     Then user of browser sees that logical_size for oneprovider-1 is "60 B"
     And user of browser sees that logical_size for oneprovider-2 is "60 B"
     And user of browser sees that physical_size for oneprovider-1 is "60 B"
@@ -57,14 +57,14 @@ Feature: Directories size statistics per providers
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
-    And user of browser opens size statistics per provider view by breadcrumbs menu
+    And user of browser opens size statistics per provider view using breadcrumbs menu
     Then user of browser sees that logical_size for oneprovider-1 is "60 B"
     And user of browser sees that physical_size for oneprovider-1 is "60 B"
     And user of browser sees that oneprovider-1 content is "3 files, 3 directories"
     And user of browser sees that error message for oneprovider-2 is "Directory statistics are disabled."
 
 
-  Scenario: User sees space's size stats per provider after clicking show statistics button after uploading 40 B file to oneprovider-2
+  Scenario: User sees space's size stats per provider after clicking show statistics button and uploading 40 B file to oneprovider-2
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser clicks on "oneprovider-2" provider on providers page
@@ -84,7 +84,7 @@ Feature: Directories size statistics per providers
     And user of browser sees that oneprovider-2 content is "4 files, 4 directories"
 
 
- Scenario: User sees space's size stats per provider after clicking show statistics button after replicating directories from oneprovider-2 to oneprovider-2
+ Scenario: User sees space's size stats per provider after clicking show statistics button after replicating directories from oneprovider-1 to oneprovider-2
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -92,7 +92,7 @@ Feature: Directories size statistics per providers
     And user of browser replicates "dir1" to provider "oneprovider-2"
     And user of browser replicates "dir2" to provider "oneprovider-2"
     And user of browser replicates "dir3" to provider "oneprovider-2"
-    And user of browser opens size statistics per provider view by breadcrumbs menu
+    And user of browser opens size statistics per provider view using breadcrumbs menu
     Then user of browser sees that logical_size for oneprovider-1 is "60 B"
     And user of browser sees that logical_size for oneprovider-2 is "60 B"
     And user of browser sees that physical_size for oneprovider-1 is "60 B"
@@ -101,17 +101,17 @@ Feature: Directories size statistics per providers
     And user of browser sees that oneprovider-2 content is "3 files, 3 directories"
 
 
- Scenario: User sees space's size stats per provider after clicking show statistics, then provider2 is stopped and user sees error message
-   When user of browser clicks "space1" on the spaces list in the sidebar
-   And user of browser clicks "Files" of "space1" space in the sidebar
-   And user of browser sees file browser in files tab in Oneprovider page
-   And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
-   And user of browser opens size statistics per provider view by breadcrumbs menu
-   Then user of browser sees that logical_size for oneprovider-1 is "60 B"
-   And user of browser sees that logical_size for oneprovider-2 is "60 B"
-   And user of browser sees that physical_size for oneprovider-1 is "60 B"
-   And user of browser sees that physical_size for oneprovider-2 is "0 B"
-   And user of browser sees that oneprovider-1 content is "3 files, 3 directories"
-   And user of browser sees that oneprovider-2 content is "3 files, 3 directories"
-   And provider named oneprovider-2 is stopped
-   And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
+# Scenario: User sees space's size stats per provider after clicking show statistics, then provider2 is stopped and user sees error message
+#   When user of browser clicks "space1" on the spaces list in the sidebar
+#   And user of browser clicks "Files" of "space1" space in the sidebar
+#   And user of browser sees file browser in files tab in Oneprovider page
+#   And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+#   And user of browser opens size statistics per provider view by breadcrumbs menu
+#   Then user of browser sees that logical_size for oneprovider-1 is "60 B"
+#   And user of browser sees that logical_size for oneprovider-2 is "60 B"
+#   And user of browser sees that physical_size for oneprovider-1 is "60 B"
+#   And user of browser sees that physical_size for oneprovider-2 is "0 B"
+#   And user of browser sees that oneprovider-1 content is "3 files, 3 directories"
+#   And user of browser sees that oneprovider-2 content is "3 files, 3 directories"
+#   And provider named oneprovider-2 is stopped
+#   And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."

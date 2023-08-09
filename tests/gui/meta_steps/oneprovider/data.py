@@ -594,13 +594,15 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
 
 
 @wt(parsers.parse("user of {browser_id} opens size statistics per provider view"
-                  " by breadcrumbs menu"))
+                  " using breadcrumbs menu"))
 def go_to_size_statistics_per_provider_by_breadcrumbs(selenium, modals, popups,
                                                       op_container, browser_id):
-    click_on_breadcrumbs_menu(selenium, browser_id, op_container,
-                              'file browser')
-    click_option_in_popup_labeled_menu(selenium, browser_id, "Information",
-                                       popups)
-    click_on_navigation_tab_in_modal(selenium, browser_id, "Size stats", modals,
-                                     "Directory Details")
+    browser = "file browser"
+    option = "Information"
+    tab_name = "Size stats"
+    modal = "Directory Details"
+    click_on_breadcrumbs_menu(selenium, browser_id, op_container, browser)
+    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+    click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
+                                     modal)
     expand_size_statistics_for_providers(selenium, browser_id, modals)
