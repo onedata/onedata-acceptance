@@ -24,9 +24,6 @@ Feature: Operations when current provider stops
     And user of browser logged as space-owner-user to Onezone service
 
 
-
-
-
   Scenario: User sees space's size stats per provider after clicking show statistics, then oneprovider-2 is stopped and user sees error message
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -41,12 +38,13 @@ Feature: Operations when current provider stops
     And user of browser sees that oneprovider-2 content is "1 file, 1 directory"
     And provider named oneprovider-2 is stopped
     And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
-#    And provider named oneprovider-2 is started
-#    And user of browser waits until provider "oneprovider-2" goes online on providers map
+
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser waits until provider "oneprovider-2" goes online on providers map
 
 
   Scenario: User switches to oneprovider-2 after oneprovider-1 has been stopped
-#    And provider named oneprovider-2 is started
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -56,6 +54,3 @@ Feature: Operations when current provider stops
     And user of browser clicks on Choose other Oneprovider on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
-
-
-
