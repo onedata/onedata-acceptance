@@ -25,6 +25,14 @@ class SpaceTagsEditor(PageObject):
     save_button = Button('.save-icon')
 
 
+class MarketplaceContactEmail(PageObject):
+    name = WebElement('.marketplaceContactEmail-field')
+
+    save_icon = Button('.save-icon')
+    edit_icon = Button('.edit-icon')
+    cancel_icon = Button('.cancel-icon')
+
+
 class SpaceConfigurationPage(PageObject):
     space_name = WebItem('.space-name', cls=EditBox)
     organization_name = WebItem('.organization-name', cls=EditBox)
@@ -40,7 +48,7 @@ class SpaceConfigurationPage(PageObject):
 
     advertise_toggle = Toggle('.advertised-toggle')
     advertise_toggle_web = WebElement('.advertised-toggle')
-    contact_email = WebElement('.contact-email')
+    contact_email = WebItem('.contact-email', cls=MarketplaceContactEmail)
     marketplace_link = Button('.view-in-marketplace-link')
 
     header_label_warning = Label('.label.label-warning')
