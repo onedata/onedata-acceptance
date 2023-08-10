@@ -365,9 +365,9 @@ def network_throttling_upload(driver):
     upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency=5,
-        download_throughput=500 * 1024,
-        upload_throughput=float(upload_kb) / 8 * 1024)
+        latency = 5,
+        download_throughput = 500 * 1024,
+        upload_throughput = float(upload_kb) / 8 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -408,7 +408,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_BACKEND * 2)
+@repeat_failed(timeout=WAIT_BACKEND*2)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -592,9 +592,9 @@ def network_throttling_download(driver):
     download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency=5,
-        download_throughput=float(download_kb) / 8 * 1024,
-        upload_throughput=500 * 1024)
+        latency = 5,
+        download_throughput = float(download_kb) / 8 * 1024,
+        upload_throughput = 500 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} downloads item named "{item_name}" '
@@ -607,6 +607,34 @@ def download_file_with_network_throttling(selenium, browser_id, item_name,
 
     click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                              tmp_memory, op_container)
+
+
+@wt(parsers.parse('user of {browser_id} sees that data distribution for '
+                  '{provider} is at {percentage}'))
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
+def check_data_distribution_percentage_for_provider(selenium, browser_id,
+                                                    provider, percentage,
+                                                    modals, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    data_distribution = modals(driver).details_modal.data_distribution
+    percentage_label = data_distribution.providers[provider].percentage_label
+    assert percentage_label == percentage, (
+        f"Data distribution at {percentage_label} instead of {percentage}"
+        f" for provider {provider}!")
+
+
+@wt(parsers.parse('user of {browser_id} sees that size distribution for'
+                  ' {provider} is "{size}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_data_distribution_size_for_provider(selenium, browser_id, provider,
+                                              size, modals, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    data_distribution = modals(driver).details_modal.data_distribution
+    size_label = data_distribution.providers[provider].size_label
+    assert size_label == size, f"Data distribution at {size_label} instead " \
+                               f"of {size} for provider {provider}!"
 
 
 @wt(parsers.parse('user of browser clicks "Show statistics per provider" button'

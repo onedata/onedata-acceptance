@@ -103,6 +103,7 @@ class Popups(object):
         '.in .dataset-value-editor-selector-actions', cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
     spaces_tags = WebItem('.space-tags-selector', cls=SpacesTags)
+    toggle_label = Label('.tooltip .tooltip-inner')
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

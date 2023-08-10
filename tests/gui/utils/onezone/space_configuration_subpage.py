@@ -12,6 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import  WebItem, Label, \
     WebItemsSequence, Button, AceEditor, WebElement
 from tests.gui.utils.onezone.common import EditBox
+from selenium.webdriver import ActionChains
 
 
 class SpaceTag(PageObject):
@@ -38,5 +39,12 @@ class SpaceConfigurationPage(PageObject):
     save_button = Button('.btn-primary')
 
     advertise_toggle = Toggle('.advertised-toggle')
+    advertise_toggle_web = WebElement('.advertised-toggle')
     contact_email = WebElement('.contact-email')
     marketplace_link = Button('.view-in-marketplace-link')
+
+    header_label_warning = Label('.label.label-warning')
+
+    def move_to_toggle(self, driver):
+        ActionChains(driver).move_to_element(self.advertise_toggle_web)\
+            .perform()
