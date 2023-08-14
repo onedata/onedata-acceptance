@@ -42,7 +42,7 @@ Feature: Workflows stores tests
     And user of browser confirms edition of lambda using "Modify" button
 
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser modifies data type in "input" store to be "<input_store_data_type>" for "echo" workflow
     And user of browser modifies type in "input" store to be "<input_store_type>" for "echo" workflow
     And user of browser modifies data type in "output" store to be "<output_store_data_type>" for "echo" workflow
@@ -53,7 +53,7 @@ Feature: Workflows stores tests
         results:
           - value: output
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 2nd revision of "echo" and waits extended time for workflow to finish, using <input_type> as initial value: "<initial_value>" in "space1" space
+    And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using <input_type> as initial value: "<initial_value>" in "space1" space
     Then user of browser sees following <output_type> represented by "<output_value>" in content in "output" store details modal
 
     Examples:
