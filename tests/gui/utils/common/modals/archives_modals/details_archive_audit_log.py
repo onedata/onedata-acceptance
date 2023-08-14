@@ -7,15 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-import time
-from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Input, Label, Button,\
-    WebElementsSequence, WebItemsSequence, WebElement
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
 class DetailsArchiveAuditLog(Modal):

@@ -9,32 +9,32 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import transform, parse_seq
+from tests.gui.utils.generic import parse_seq
 from datetime import datetime
 import re
 
 
-@wt(parsers.parse('user of {browser_id} sees no empty "{options}" info of '
-                  'first "{number}" files and dirs in archive audit log'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees no empty field(s)? '
+               '"(?P<fields>( |.)*)" of first (?P<number>.*) files and dirs in'
+               ' archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_first_no_empty_options(selenium, modals, browser_id,
-                                            options, number):
+                                            fields, number: int):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
-    options = parse_seq(options)
+    fields = parse_seq(fields)
     checked_elems = []
     visible_elems = modal.info_of_visible_elems('name')
     new_elems = visible_elems
     elems_count = len(new_elems)
     while new_elems:
-        for option in options:
-            elems_to_check = modal.info_of_visible_elems(option)
+        for field in fields:
+            elems_to_check = modal.info_of_visible_elems(field)
             for elem in elems_to_check:
-                assert elem != '', f'empty {option} field in elem {elem}'
+                assert elem != '', f'empty {field} field in elem {elem}'
         modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
         visible_elems = modal.info_of_visible_elems('name')
@@ -43,8 +43,8 @@ def assert_number_of_first_no_empty_options(selenium, modals, browser_id,
             if elem not in checked_elems:
                 new_elems.append(elem)
                 elems_count += 1
-    assert elems_count == int(number), f"checked first {elems_count} instead " \
-                                       f"of {number}"
+    assert elems_count == number, (f'there are {elems_count} items instead'
+                                   f' of {number}')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on item "{item_name}" in '
@@ -57,16 +57,41 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals,
     modal.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{message}" in field '
+@wt(parsers.re('user of (?P<browser_id>.*) sees that items? '
+               '"(?P<items>( |.)*)" (is|are) visible in archive audit log'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_presence_of_items_in_archive_audit_log(browser_id, items, modals,
+                                                  selenium):
+    driver = selenium[browser_id]
+    visible_items = modals(driver).archive_audit_log.data
+    for item in parse_seq(items):
+        assert item in visible_items,  (f'item {item} is not visible in archive'
+                                        f' audit log')
+
+
+@wt(parsers.parse('user of {browser_id} sees that {number} items '
+                  'are visible in archive audit log'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_items_in_archive_audit_log(browser_id, number: int, modals,
+                                                selenium):
+    driver = selenium[browser_id]
+    visible_items = modals(driver).archive_audit_log.data
+    assert number == len(visible_items), (f'there is {len(visible_items)} '
+                                          f'items visible instead of {number} '
+                                          f'in archive audit log')
+
+
+@wt(parsers.parse('user of {browser_id} sees message "{message}" at field '
                   '"{field_name}" in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_message_at_field_in_archive_audit_log(browser_id, field_name,
                                                  modals, message, selenium):
     driver = selenium[browser_id]
     modal = modals(driver).details_audit_log
-    actual_message = getattr(modal, field_name)
-    assert actual_message == message, f"expected {message} instead of  " \
-                                      f"{actual_message} message"
+    visible_message = getattr(modal, field_name)
+    assert visible_message == message, (f'expected {message} instead of '
+                                        f'{visible_message} message, at field '
+                                        f'{field_name}')
 
 
 @wt(parsers.parse('user of {browser_id} closes details in archive audit log'))
@@ -76,28 +101,29 @@ def close_details_in_archive_audit_log(browser_id, modals, selenium):
     modals(driver).details_audit_log.close.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees message pattern "{option}" in '
+@wt(parsers.parse('user of {browser_id} sees message type "{mes_type}" at '
                   'field "{field_name}" in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_date_at_field_in_archive_audit_log(browser_id, option, field_name,
+def assert_date_at_field_in_archive_audit_log(browser_id, mes_type, field_name,
                                               modals, selenium):
     driver = selenium[browser_id]
     modal = modals(driver).details_audit_log
-    actual_message = getattr(modal, field_name)
+    visible_message = getattr(modal, field_name)
     pattern = None
-    if option == 'date':
+    if mes_type == 'date':
         pattern = re.compile(r"\d\d? [A-Z][a-z][a-z]? \d\d\d\d \d\d:\d\d:\d\d\."
                              r"\d\d\d")
-    elif option == 'file_id':
+    elif mes_type == 'file_id':
         pattern = re.compile(r"([A-Z]|[0-9])*")
-    elif option == 'time_taken':
+    elif mes_type == 'time_taken':
         pattern = re.compile(r"\d*(\.\d*)?(ms|s|min|h)")
-    elif option == "location_path":
+    elif mes_type == "location_path":
         pattern = re.compile(r"/.*")
     else:
-        raise Exception('Empty pattern')
-    assert pattern.fullmatch(actual_message), f"message at field is" \
-                                              f" {actual_message}"
+        raise Exception('Empty pattern, unknown this message type')
+    err_msg = (f'message at field is {visible_message}, which does not'
+               f' correspond to the type {mes_type}')
+    assert pattern.fullmatch(visible_message), err_msg
 
 
 def parse_time(str_time):
@@ -113,30 +139,34 @@ def parse_time(str_time):
 @wt(parsers.parse('user of {browser_id} sees decreasing times' 
                   ' in archive audit log'))
 def assert_decreasing_creation_times(browser_id, selenium, modals):
+    item_name = 'name'
+    creation_time = 'time'
+    time_taken = 'time_taken'
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
-    names = modal.info_of_visible_elems('name')
+    names = modal.info_of_visible_elems(item_name)
     new_names = names
     checked_names = []
     last_time = 1000000000
-    last_dtime = datetime.strptime('1 Feb 9999 1:1:1.1', '%d %b %Y %H:%M:%S.%f')
+    last_dtime = datetime.strptime('1 Dec 9999 1:1:1.1', '%d %b %Y %H:%M:%S.%f')
     while new_names:
-        names = modal.info_of_visible_elems('name')
+        names = modal.info_of_visible_elems(item_name)
         new_names = []
-        creation_duration_times = modal.info_of_visible_elems('creation_'
-                                                              'duration_time')
-        creation_end_time = modal.info_of_visible_elems('creation_end_time')
+        creation_duration_times = modal.info_of_visible_elems(time_taken)
+        creation_end_time = modal.info_of_visible_elems(creation_time)
         for index, name in enumerate(names):
             if name not in checked_names:
                 current_time = parse_time(creation_duration_times[index])
-                assert current_time <= last_time, 'error'
+                err_msg = (f'time {last_time} following {current_time} is not '
+                           f'smaller')
+                assert current_time <= last_time, err_msg
                 current_dtime = datetime.strptime(creation_end_time[index] +
                                                   '000', '%d %b %Y %H:%M:%S.%f')
-                assert current_dtime <= last_dtime, 'error'
+                err_msg = (f'date time {last_time} following {current_time} is '
+                           f'not smaller')
+                assert current_dtime <= last_dtime, err_msg
                 last_dtime = current_dtime
                 checked_names.append(name)
                 new_names.append(name)
                 last_time = current_time
         modal.scroll_by_press_space()
-
-

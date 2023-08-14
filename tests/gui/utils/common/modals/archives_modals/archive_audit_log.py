@@ -8,10 +8,9 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 import time
-from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Input, Label, Button,\
-    WebElementsSequence, WebItemsSequence, WebElement
+from tests.gui.utils.core.web_elements import Label, WebElementsSequence,\
+    WebItemsSequence, WebElement
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.base import PageObject
@@ -39,34 +38,28 @@ class ArchiveAuditLog(Modal):
     data = WebItemsSequence('.table-entry.data-row', cls=FilesLog)
     _bottom_of_visible_fragment = WebElement('.bottom-shadow-keeper')
     scroll_bar = WebElement('.table-scrollable-container .ps__rail-y')
-
-    info_dict = {'creation_end_time': 0,
-                 'name': 1,
-                 'info_message': 2,
-                 'creation_duration_time': 3}
-    _elems_extra_info = {}
-
     time_taken = Label('.property-value.time-taken-text')
+    info_dict = {'time': 0,
+                 'name': 1,
+                 'event_message': 2,
+                 'time_taken': 3}
 
     def scroll_by_press_space(self):
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def gather_extra_info(self, elems):
-        for elem in elems:
-            if not self._elems_extra_info[elem[self.info_dict['name']]]:
-                self._elems_extra_info[elem[self.info_dict['name']]] = [elem]
-            else:
-                self._elems_extra_info[elem[self.info_dict['name']]].append(elem)
-
     def info_of_visible_elems(self, option):
-# creation time | name | event message | creation duration time
+        # order in dict
+        #  0   |  1   |      2        |     3
+        # time | name | event message | time taken
         index = self.info_dict[option]
         files = self._data
         names = [f.text.split('\n') for f in files]
         elems_info = []
         for name in names:
             if len(name) > 3:
+                # when file`s name repeats, annotation @... is added to
+                # another column
                 if len(name) == 5:
                     name[1] += name[2]
                     name[2] = name[3]
