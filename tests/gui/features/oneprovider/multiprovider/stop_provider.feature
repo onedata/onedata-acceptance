@@ -27,9 +27,7 @@ Feature: Operations when current provider stops
   Scenario: User sees space's size stats per provider after clicking show statistics, then oneprovider-2 is stopped and user sees error message
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
-    And user of browser opens size statistics per provider view using breadcrumbs menu
+    And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     Then user of browser sees that logical_size for oneprovider-1 is "5 B"
     And user of browser sees that logical_size for oneprovider-2 is "5 B"
     And user of browser sees that physical_size for oneprovider-1 is "5 B"
