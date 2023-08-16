@@ -49,9 +49,6 @@ class DirStatsRowPerProvider(PageObject):
     physical_size = Label('.physical-size-value')
     error_cell = Label('.error-cell')
 
-    def __str__(self):
-        return f'provider record for "{self.name}" in {self.parent}'
-
 
 class SizeStatistics(PageObject):
     tab = Button('.nav-link-size')

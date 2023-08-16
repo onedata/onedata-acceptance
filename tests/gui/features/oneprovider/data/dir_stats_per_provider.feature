@@ -84,7 +84,7 @@ Feature: Directories size statistics per providers
     And user of browser sees that oneprovider-2 content is "4 files, 4 directories"
 
 
- Scenario: User sees space's size stats per provider after clicking show statistics button after replicating directories from oneprovider-1 to oneprovider-2
+ Scenario: User sees space's size stats per provider after clicking show statistics button and replicating directories from oneprovider-1 to oneprovider-2
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
