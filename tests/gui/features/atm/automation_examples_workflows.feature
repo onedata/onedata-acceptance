@@ -393,7 +393,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 2nd revision of "demo", using file as initial value: "dir2" in "space1" space
+    And user of browser executes 1st revision of "demo", using file as initial value: "dir2" in "space1" space
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
