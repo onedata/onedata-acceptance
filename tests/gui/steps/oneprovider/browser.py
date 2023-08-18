@@ -95,7 +95,7 @@ def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
     driver = selenium[browser_id]
     breadcrumbs = getattr(op_container(driver),
                           transform(which_browser)).breadcrumbs
-    breadcrumbs.menu.click()
+    breadcrumbs.menu_button()
 
 
 def _get_items_list_from_browser(selenium, browser_id, tmp_memory,

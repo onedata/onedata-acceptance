@@ -24,7 +24,7 @@ class _Breadcrumbs(PageObject):
                                     '.fb-breadcrumbs-dir-name',
                                     cls=ButtonWithTextPageObject)
     space_root = Button('.fb-breadcrumbs-dir-root')
-    menu = Button(".fb-breadcrumbs-current-dir-button")
+    menu_button = Button(".fb-breadcrumbs-current-dir-button")
 
     def __str__(self):
         return 'Breadcrumbs({path}) in {parent}'.format(path=self.pwd(),

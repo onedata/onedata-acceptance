@@ -635,3 +635,54 @@ def check_data_distribution_size_for_provider(selenium, browser_id, provider,
     size_label = data_distribution.providers[provider].size_label
     assert size_label == size, f"Data distribution at {size_label} instead " \
                                f"of {size} for provider {provider}!"
+
+
+@wt(parsers.parse('user of browser clicks "Show statistics per provider" button'
+                  ' on Size stats modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_size_statistics_for_providers(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modals(driver).details_modal.size_statistics.expand_stats_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees that {size_type} for {provider}'
+                  ' is "{expected_size}"'))
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
+def check_size_for_provider(selenium, hosts, modals, browser_id, size_type,
+                            provider, expected_size):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    size = getattr(modals(driver).details_modal.size_statistics
+                   .dir_stats_row_per_provider[provider_name],
+                   transform(size_type))
+
+    assert size == expected_size, (
+        f"{size_type} is {size} instead of {expected_size} for provider "
+        f"{provider_name}!")
+
+
+@wt(parsers.parse('user of {browser_id} sees that error message for {provider}'
+                  ' is "{message}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_error_cell_for_provider(selenium, hosts, modals, browser_id,
+                                  provider, message):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    error_cell = modals(driver).details_modal.size_statistics \
+        .dir_stats_row_per_provider[provider_name].error_cell
+    assert message == error_cell, (f"Error message should be '{message}' "
+                                   f"for provider {provider_name}!")
+
+
+@wt(parsers.parse('user of {browser_id} sees that {provider} content is '
+                  '"{content}"'))
+@repeat_failed(WAIT_FRONTEND)
+def check_content_for_provider(selenium, hosts, modals, browser_id,
+                               provider, content):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    provider_content = modals(driver).details_modal.size_statistics \
+        .dir_stats_row_per_provider[provider_name].content
+    assert provider_content == content, (
+        f"Provider {provider} content is {provider_content} instead "
+        f"of {content}!")
