@@ -57,12 +57,10 @@ def click_button_on_space_configuration_page(browser_id, selenium, oz_page):
 def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
     driver = selenium[browser_id]
     contact_email = oz_page(driver)['data'].configuration_page.contact_email
-    contact_email.edit_icon()
-    err_msg = f'Email address {contact_email.name.text} displayed on space ' \
+    err_msg = f'Email address {contact_email.name} displayed on space ' \
               f'configuration page, does not match expected {email_address}'
 
-    assert email_address in contact_email.name.text, err_msg
-    contact_email.cancel_icon()
+    assert email_address in contact_email.name, err_msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

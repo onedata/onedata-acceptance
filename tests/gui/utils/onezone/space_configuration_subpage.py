@@ -26,7 +26,7 @@ class SpaceTagsEditor(PageObject):
 
 
 class MarketplaceContactEmail(PageObject):
-    name = WebElement('.marketplaceContactEmail-field')
+    name = Label('.one-label')
 
     save_icon = Button('.save-icon')
     edit_icon = Button('.edit-icon')
