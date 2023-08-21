@@ -296,7 +296,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
         configuration parameters:
             sleepDurationSec:
@@ -306,7 +306,7 @@ Feature: Automation examples tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 2nd revision of "echo" workflow
+    And user of browser chooses to run 1st revision of "echo" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
 
     And user of browser confirms workflow execution by clicking "Run workflow" button
@@ -393,7 +393,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 2nd revision of "demo", using file as initial value: "dir2" in "space1" space
+    And user of browser executes 1st revision of "demo", using file as initial value: "dir2" in "space1" space
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
