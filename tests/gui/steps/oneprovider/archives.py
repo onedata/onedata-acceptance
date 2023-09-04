@@ -326,3 +326,17 @@ def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
     assert text == copied, err_msg
 
 
+@wt(parsers.parse('user of {browser_id} writes "{text}" into edit '
+                  'description in Details Archive modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_in_description_input(browser_id, modals, text, selenium):
+    driver = selenium[browser_id]
+    modals(driver).archive_details.description = text
+    modals(driver).archive_details.save_modification.click()
+
+
+@wt(parsers.parse('user of {browser_id} closes Details Archive modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_archive_details(browser_id, modals, selenium):
+    driver = selenium[browser_id]
+    modals(driver).archive_details.x.click()
