@@ -1,5 +1,5 @@
 #!/usr/bin/env escript
-%%! -name archive_mock@test_env
+%%! -name archive_verification_mock@test_env
 
 -export([main/1]).
 

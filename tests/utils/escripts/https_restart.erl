@@ -1,5 +1,5 @@
 #!/usr/bin/env escript
-%%! -name oc_test@test_env
+%%! -name http_restart@test_env
 
 -export([main/1]).
 
