@@ -31,19 +31,19 @@ def restart_network(name, stop_time, hosts):
 
 # NOTE: because of underlying escript implementation this step currently works only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re('Archive verification is mocked on (?P<name>.*) Oneprovider to fail'))
-def mock_archive_verification(name, stop_time, hosts):
+def mock_archive_verification(name, hosts):
     pod_name = hosts[service_name_to_alias_mapping(name)]['pod-name']
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command('cp', ['tests/utils/escripts/escript_utils.erl', f'{pod_name}:/tmp/escript_utils.erl'])
     run_kubectl_command('cp', ['tests/utils/escripts/archive_verification_mock.escript', f'{pod_name}:/tmp/archive_verification_mock.escript'])
-    run_kubectl_command('exec', [pod_name, '--', '/tmp/archive_verification_mock.escript', stop_time])
+    run_kubectl_command('exec', [pod_name, '--', '/tmp/archive_verification_mock.escript'])
 
 
 # NOTE: because of underlying escript implementation this step currently works only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re('Archive verification is unmocked on (?P<name>.*) Oneprovider'))
-def unmock_archive_verification(name, stop_time, hosts):
+def unmock_archive_verification(name, hosts):
     pod_name = hosts[service_name_to_alias_mapping(name)]['pod-name']
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command('cp', ['tests/utils/escripts/escript_utils.erl', f'{pod_name}:/tmp/escript_utils.erl'])
     run_kubectl_command('cp', ['tests/utils/escripts/archive_verification_unmock.escript', f'{pod_name}:/tmp/archive_verification_unmock.escript'])
-    run_kubectl_command('exec', [pod_name, '--', '/tmp/archive_verification_unmock.escript', stop_time])
+    run_kubectl_command('exec', [pod_name, '--', '/tmp/archive_verification_unmock.escript'])
