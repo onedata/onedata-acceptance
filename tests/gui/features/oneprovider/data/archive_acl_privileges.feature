@@ -16,7 +16,7 @@ Feature: Archives privileges test
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 1000000
+                    size: 10000000
             storage:
                 defaults:
                     provider: oneprovider-1
@@ -24,9 +24,10 @@ Feature: Archives privileges test
                     - dir1:
                       - file1
     And directory tree structure on local file system:
+          browser_user1:
+            dir2:
             file1MiB.txt:
               size: 1 MiB
-
 
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
@@ -55,4 +56,8 @@ Feature: Archives privileges test
 
 
   Scenario: User successfully cancels archive its own archive
-    When trace
+    When user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
+#    And user of browser_user1 sees file browser in files tab in Oneprovider page
+#    And user of browser_user1 uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
+    And trace
