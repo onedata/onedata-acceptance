@@ -63,6 +63,8 @@ from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
 from tests.gui.meta_steps.onepanel.spaces import *
 
+from tests.oneclient.steps.environment_steps import *
+
 from . import BROWSER
 
 from tests.utils.acceptance_utils import *

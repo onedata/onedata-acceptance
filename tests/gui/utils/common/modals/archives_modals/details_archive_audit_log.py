@@ -25,6 +25,7 @@ class DetailsArchiveAuditLog(Modal):
     file_id = Input('.entry-info-row-archived-item-file-id .clipboard-input')
     source_item_absolute_location = Input('.entry-info-row-source-item-absolute'
                                           '-location .clipboard-input')
+    archived_item_location_path = Button('.file-path.file-path-base')
     close = Button('.close-details')
 
     def __str__(self):

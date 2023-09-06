@@ -57,6 +57,17 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals,
     modal.click()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on top item in '
+                  'archive audit log'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_top_item_in_archive_audit_log(browser_id, modals,
+                                           selenium):
+    driver = selenium[browser_id]
+    print(modals(driver).archive_audit_log.data)
+    modal = modals(driver).archive_audit_log.data[0]
+    modal.click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees that items? '
                '"(?P<items>( |.)*)" (is|are) visible in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -76,7 +87,7 @@ def assert_number_of_items_in_archive_audit_log(browser_id, number: int, modals,
                                                 selenium):
     driver = selenium[browser_id]
     visible_items = modals(driver).archive_audit_log.data
-    assert number == len(visible_items), (f'there is {len(visible_items)} '
+    assert number == len(visible_items), (f'there are {len(visible_items)} '
                                           f'items visible instead of {number} '
                                           f'in archive audit log')
 
@@ -104,8 +115,8 @@ def close_details_in_archive_audit_log(browser_id, modals, selenium):
 @wt(parsers.parse('user of {browser_id} sees message type "{mes_type}" at '
                   'field "{field_name}" in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_date_at_field_in_archive_audit_log(browser_id, mes_type, field_name,
-                                              modals, selenium):
+def assert_pattern_at_field_in_archive_audit_log(browser_id, mes_type,
+                                                 field_name, modals, selenium):
     driver = selenium[browser_id]
     modal = modals(driver).details_audit_log
     visible_message = getattr(modal, field_name)
@@ -170,3 +181,14 @@ def assert_decreasing_creation_times(browser_id, selenium, modals):
                 new_names.append(name)
                 last_time = current_time
         modal.scroll_by_press_space()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on field '
+                  '"{field_name}" in details in archive audit log'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_field_in_details_archive_audit_log(browser_id, field_name,
+                                                modals, selenium):
+    driver = selenium[browser_id]
+    modal = modals(driver).details_audit_log
+    elem_to_click = getattr(modal, field_name)
+    elem_to_click.click()
