@@ -84,3 +84,4 @@ def screens():
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/upload_files.feature')
 scenarios('../features/oneprovider/multiprovider/providers_world_map.feature')
+scenarios('../features/oneprovider/multiprovider/stop_provider.feature')

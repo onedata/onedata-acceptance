@@ -12,6 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import  WebItem, Label, \
     WebItemsSequence, Button, AceEditor, WebElement
 from tests.gui.utils.onezone.common import EditBox
+from selenium.webdriver import ActionChains
 
 
 class SpaceTag(PageObject):
@@ -22,6 +23,14 @@ class SpaceTagsEditor(PageObject):
     tags = WebItemsSequence('.tag-item', cls=SpaceTag)
     add_tag = Button('.tag-creator-trigger')
     save_button = Button('.save-icon')
+
+
+class MarketplaceContactEmail(PageObject):
+    name = Label('.one-label')
+
+    save_icon = Button('.save-icon')
+    edit_icon = Button('.edit-icon')
+    cancel_icon = Button('.cancel-icon')
 
 
 class SpaceConfigurationPage(PageObject):
@@ -38,5 +47,12 @@ class SpaceConfigurationPage(PageObject):
     save_button = Button('.btn-primary')
 
     advertise_toggle = Toggle('.advertised-toggle')
-    contact_email = WebElement('.contact-email')
+    advertise_toggle_web = WebElement('.advertised-toggle')
+    contact_email = WebItem('.contact-email', cls=MarketplaceContactEmail)
     marketplace_link = Button('.view-in-marketplace-link')
+
+    header_label_warning = Label('.label.label-warning')
+
+    def move_to_toggle(self, driver):
+        ActionChains(driver).move_to_element(self.advertise_toggle_web)\
+            .perform()
