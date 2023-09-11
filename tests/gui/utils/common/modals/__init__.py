@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from .archives_modals.archive_details import ArchiveDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
+from .archives_modals.cancel_archive import CancelArchive
 from .files_modals.disable_directory_statistics import (
     DisableDirectoryStatistics)
 from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
@@ -108,6 +109,7 @@ class Modals(object):
     cancel_recall = WebItem('.cancel-recall-modal .modal-dialog',
                             cls=CancelRecall)
     archive_details = WebItem('.modal-dialog', cls=ArchiveDetails)
+    cancel_archive = WebItem('.modal-content', cls=CancelArchive)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)

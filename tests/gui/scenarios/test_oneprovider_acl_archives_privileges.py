@@ -66,3 +66,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/archive_acl_privileges.feature')
+scenarios('../features/oneprovider/data/archive_cancel_acl_privileges.feature')

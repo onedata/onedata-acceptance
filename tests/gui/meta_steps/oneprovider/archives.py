@@ -370,3 +370,13 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                 assert value <= expected_value, err_msg
             else:
                 assert value == expected_value, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{option}" on cancel archive'
+                  ' creation modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_on_cancel_archive_modal(selenium, browser_id, modals, option):
+    driver = selenium[browser_id]
+    modal = modals(driver).cancel_archive
+    btn = getattr(modal, option.lower())
+    btn.click()
