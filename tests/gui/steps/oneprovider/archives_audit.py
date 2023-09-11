@@ -1,20 +1,21 @@
 """This module contains gherkin steps to run acceptance tests featuring
-archives in oneprovider web GUI.
+archives audit logs in oneprovider web GUI.
 """
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import yaml
 import time
+import re
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq
 from datetime import datetime
-import re
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees no empty field(s)? '
@@ -63,7 +64,6 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals,
 def click_on_top_item_in_archive_audit_log(browser_id, modals,
                                            selenium):
     driver = selenium[browser_id]
-    print(modals(driver).archive_audit_log.data)
     modal = modals(driver).archive_audit_log.data[0]
     modal.click()
 
@@ -98,7 +98,7 @@ def assert_number_of_items_in_archive_audit_log(browser_id, number: int, modals,
 def assert_message_at_field_in_archive_audit_log(browser_id, field_name,
                                                  modals, message, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).details_audit_log
+    modal = modals(driver).details_archive_audit_log
     visible_message = getattr(modal, field_name)
     assert visible_message == message, (f'expected {message} instead of '
                                         f'{visible_message} message, at field '
@@ -109,7 +109,54 @@ def assert_message_at_field_in_archive_audit_log(browser_id, field_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_details_in_archive_audit_log(browser_id, modals, selenium):
     driver = selenium[browser_id]
-    modals(driver).details_audit_log.close.click()
+    modals(driver).details_archive_audit_log.close()
+
+
+@wt(parsers.parse('user of {browser_id} sees that details for archived '
+                  'item in archive audit log are as follow:\n{config}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_details_for_archived_item(browser_id, config, modals, selenium):
+    """
+    Config format given in yaml:
+    Possible fields, each of them is optional
+        event_message
+        relative_location
+        start_time
+        end_time
+        time_taken
+        archived_item_absolute_location
+        file_id
+        source_item_absolute_location
+    Configuration to each field can be passed in 2 ways:
+        [field_name]: text
+        or
+        [field_name]:
+          type: date/file_id/time_taken/location_path
+
+    Example:
+    event_message: Directory archivisation finished.
+    start_time:
+      type: date
+    end_time:
+      type: date
+    """
+    _check_details_for_archived_item(browser_id, config, modals, selenium)
+
+
+def _check_details_for_archived_item(browser_id, config, modals, selenium):
+    data = yaml.load(config)
+
+    for field in data.keys():
+        if isinstance(data[field], dict):
+            mes_type = data[field]['type']
+            assert_pattern_at_field_in_archive_audit_log(browser_id, mes_type,
+                                                         field, modals,
+                                                         selenium)
+        else:
+            message = data[field]
+            assert_message_at_field_in_archive_audit_log(browser_id, field,
+                                                         modals, message,
+                                                         selenium)
 
 
 @wt(parsers.parse('user of {browser_id} sees message type "{mes_type}" at '
@@ -118,7 +165,7 @@ def close_details_in_archive_audit_log(browser_id, modals, selenium):
 def assert_pattern_at_field_in_archive_audit_log(browser_id, mes_type,
                                                  field_name, modals, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).details_audit_log
+    modal = modals(driver).details_archive_audit_log
     visible_message = getattr(modal, field_name)
     pattern = None
     if mes_type == 'date':
@@ -189,6 +236,6 @@ def assert_decreasing_creation_times(browser_id, selenium, modals):
 def click_on_field_in_details_archive_audit_log(browser_id, field_name,
                                                 modals, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).details_audit_log
+    modal = modals(driver).details_archive_audit_log
     elem_to_click = getattr(modal, field_name)
     elem_to_click.click()
