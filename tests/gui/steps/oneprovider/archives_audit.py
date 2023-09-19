@@ -21,8 +21,8 @@ from datetime import datetime
                '(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and '
                'directories in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_first_no_empty_options(selenium, modals, browser_id,
-                                            fields, number: int):
+def assert_number_of_first_no_empty_column_content(selenium, modals, fields,
+                                                   browser_id, number: int):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     fields = parse_seq(fields)
