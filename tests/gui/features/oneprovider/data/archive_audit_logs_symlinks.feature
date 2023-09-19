@@ -58,7 +58,7 @@ Feature: Archive audit logs symbolic links
     And user of browser sees that exactly 8 items are visible in archive audit log
     And user of browser sees that 8 first logs contain events about archivisation finished of files, directories or symbolic links in archive audit log
     And user of browser clicks on item "symlink-file2" in archive audit log
-    And user of browser sees that details for archived item in archive audit log are as follow:
+    Then user of browser sees that details for archived item in archive audit log are as follow:
         Event: Symbolic link archivisation finished.
         Relative location: dir-root-1/symlink-dir-root-2/dir-internal-2/symlink-file2
         Source item absolute location: /space1/dir-root-2/dir-internal-2/symlink-file2

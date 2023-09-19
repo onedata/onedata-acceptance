@@ -75,7 +75,7 @@ Feature: Archive audit logs
 
     # check logs about file creation
     And user of browser clicks on item "file1" in archive audit log
-    And user of browser sees that details for archived item in archive audit log are as follow:
+    Then user of browser sees that details for archived item in archive audit log are as follow:
         Event: Regular file archivisation finished.
         Relative location: dir4/file1
         Started at:
