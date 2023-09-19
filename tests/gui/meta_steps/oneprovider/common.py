@@ -14,13 +14,14 @@ from tests.gui.steps.oneprovider_common import (
 from tests.gui.steps.oneprovider.data_tab import (
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,
-    click_button_from_file_browser_menu_bar)
+    click_button_from_file_browser_menu_bar, click_file_browser_button)
 from tests.gui.steps.oneprovider.file_browser import (
     confirm_create_new_directory)
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
     click_option_in_data_row_menu_in_browser,
-    click_menu_for_elem_in_browser)
+    click_menu_for_elem_in_browser,
+    click_and_press_enter_on_item_in_browser)
 from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, wt_click_on_confirmation_btn_in_modal,
     write_name_into_text_field_in_modal, click_modal_button)
@@ -176,3 +177,21 @@ def open_modal_on_tab(selenium, browser_id, filename, popups, tmp_memory,
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
+
+
+@wt(parsers.parse('user of {browser_id} creates symbolic link '
+                  'of "{item_name}" placed in "{path}" directory on '
+                  '{which_browser}'))
+def create_symbolic_link(browser_id, item_name, path, tmp_memory, selenium,
+                         op_container, popups, which_browser):
+    option = 'Create symbolic link'
+    button = 'Place symbolic link'
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups, which_browser)
+    if path:
+        for item in path.split('/'):
+            click_and_press_enter_on_item_in_browser(selenium, browser_id, item,
+                                                     tmp_memory, op_container)
+    click_file_browser_button(browser_id, button, tmp_memory)

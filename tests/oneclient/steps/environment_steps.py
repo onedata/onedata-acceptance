@@ -31,7 +31,7 @@ def restart_network(name, stop_time, hosts):
 
 # NOTE: because of underlying escript implementation this step currently works only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re('Archive verification is mocked on (?P<name>.*) Oneprovider to fail'))
-def mock_archive_verification(name, hosts):
+def mock_archive_verification(name, hosts, run_unmock):
     pod_name = hosts[service_name_to_alias_mapping(name)]['pod-name']
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command('cp', ['tests/utils/escripts/escript_utils.erl', f'{pod_name}:/tmp/escript_utils.erl'])

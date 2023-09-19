@@ -20,10 +20,10 @@ Feature: Archive audit logs
                   - dir4:
                     - file1
                     - file2
-                  - dir_nested
 
-    And using REST, user1 creates 100 empty files in directories "[space1/dir1/dir2, space1/dir1/dir3]" with names sorted alphabetically supported by "oneprovider-1" provider
-    And using REST, user1 creates empty file in "space1/dir_nested" in "20" nested dirs supported by "oneprovider-1" provider
+    And using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] with names sorted alphabetically supported by "oneprovider-1" provider
+    And using REST, user1 creates a path with 20 nested directories named "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
+    And using REST, user1 creates "file_20" file in the last of 20 nested directories "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
@@ -40,7 +40,7 @@ Feature: Archive audit logs
     And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    Then user of browser sees no empty fields "[time, time_taken]" of first 203 files and dirs in archive audit log
+    Then user of browser sees no empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
 
 
   Scenario: User sees details about archived file or directory
@@ -58,48 +58,64 @@ Feature: Archive audit logs
     # check logs about directory creation
     And user of browser clicks on item "dir4" in archive audit log
     And user of browser sees that details for archived item in archive audit log are as follow:
-        event_message: Directory archivisation finished.
-        relative_location: dir4
-        start_time:
+        Event: Directory archivisation finished.
+        Relative location: dir4
+        Started at:
           type: date
-        end_time:
+        Finished at:
           type: date
-        time_taken:
+        Time taken:
           type: time_taken
-        archived_item_absolute_location:
+        Archived item absolute location:
           type: location_path
-        file_id:
+        File ID:
           type: file_id
-        source_item_absolute_location: /space1/dir4
-    And user of browser closes details in archive audit log
+        Source item absolute location: /space1/dir4
+    And user of browser closes "Details archive audit log" modal
 
     # check logs about file creation
     And user of browser clicks on item "file1" in archive audit log
     And user of browser sees that details for archived item in archive audit log are as follow:
-        event_message: Regular file archivisation finished.
-        relative_location: dir4/file1
-        start_time:
+        Event: Regular file archivisation finished.
+        Relative location: dir4/file1
+        Started at:
           type: date
-        end_time:
+        Finished at:
           type: date
-        time_taken:
+        Time taken:
           type: time_taken
-        archived_item_absolute_location:
+        Archived item absolute location:
           type: location_path
-        file_id:
+        File ID:
           type: file_id
-        source_item_absolute_location: /space1/dir4/file1
+        Source item absolute location: /space1/dir4/file1
 
 
   Scenario: User sees logs about nested dirs in correct order after creating archive
     When user of browser opens file browser for "space1" space
-    And user of browser creates dataset for item "dir_nested" in "space1"
+    And user of browser creates dataset for item "dir_0" in "space1"
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser succeeds to create archive for item "dir_nested" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir_0" in "space1" with following configuration:
         description: nested archive
         layout: plain
     And user of browser waits for "Preserved" state for archive with description "nested archive" in archive browser
+
     And user of browser clicks on menu for archive with description: "nested archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    Then user of browser sees decreasing times in archive audit log
+    And user of browser sees logs about directories or files ordered ascendingly by name index with prefix dir_ or file_ in archive audit log
+    And user of browser closes "Archive audit log" modal
+
+    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    And user of browser sees entries ordered from newest to oldest in column "Time" in archive audit log
+    And user of browser closes "Archive audit log" modal
+
+    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    And user of browser sees that 21 first logs contain events about archivisation finished of files, directories or symbolic links in archive audit log
+    And user of browser closes "Archive audit log" modal
+
+    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    Then user of browser sees entries ordered from newest to oldest in column "Time taken" in archive audit log

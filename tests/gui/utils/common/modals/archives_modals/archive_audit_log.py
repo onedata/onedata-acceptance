@@ -2,7 +2,7 @@
 """
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import time
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Label, WebElementsSequence,\
-    WebItemsSequence, WebElement
+    WebItemsSequence, WebElement, Button
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.base import PageObject
@@ -19,6 +19,7 @@ from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 class FilesLog(PageObject, BrowserRow):
     name = id = Label('.file-name')
+    event = Label('.message-text')
     clickable_field = WebElement('.file-name')
 
     def click_and_enter(self):
@@ -33,16 +34,13 @@ class FilesLog(PageObject, BrowserRow):
 
 
 class ArchiveAuditLog(Modal):
-    file_creation_time = Label('.timestamp-cell')
     _data = WebElementsSequence('.table-entry.data-row')
     data = WebItemsSequence('.table-entry.data-row', cls=FilesLog)
-    _bottom_of_visible_fragment = WebElement('.bottom-shadow-keeper')
-    scroll_bar = WebElement('.table-scrollable-container .ps__rail-y')
-    time_taken = Label('.property-value.time-taken-text')
-    info_dict = {'time': 0,
-                 'name': 1,
-                 'event_message': 2,
-                 'time_taken': 3}
+    info_dict = {'Time': 0,
+                 'File': 1,
+                 'Event': 2,
+                 'Time taken': 3}
+    x = Button('.close')
 
     def scroll_by_press_space(self):
         action = ActionChains(self.driver)
@@ -50,8 +48,8 @@ class ArchiveAuditLog(Modal):
 
     def info_of_visible_elems(self, option):
         # order in dict
-        #  0   |  1   |      2        |     3
-        # time | name | event message | time taken
+        #  0   |  1   |   2   |     3
+        # Time | File | Event | Time taken
         index = self.info_dict[option]
         files = self._data
         names = [f.text.split('\n') for f in files]

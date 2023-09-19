@@ -387,27 +387,33 @@ def create_empty_file(path, users, user, provider, hosts):
              auth=None, data=None)
 
 
-@given(parsers.parse('using REST, {user} creates {number} empty files in '
-                     'directories "{dir_list}" with names sorted alphabetically'
-                     ' supported by "{provider}" provider'))
-def create_files_names_alphabetically_with_dir_list(user, number, dir_list,
-                                                    provider, users, hosts):
-    for dir_path in parse_seq(dir_list):
-        create_files_names_alphabetically(number, dir_path, users, user,
-                                          provider, hosts)
+@given(parsers.parse('using REST, {user} creates a path with {number} '
+                     'nested directories named "{name}" in "{path}" '
+                     'supported by "{provider}" provider'))
+def create_nested_directory(user, path, provider, number: int, name, users,
+                            hosts):
+    names_list = name.split('/')
+    min_index = int(names_list[0].split("_")[1])
+    name_prefix = names_list[0].split("_")[0]
+    nested_path = f'{path}'
+    for i in range(min_index, min_index + number, 1):
+        nested_path += f'/{name_prefix}_{i}'
+        create_empty_file(nested_path+'/', users, user, provider, hosts)
 
 
-@given(parsers.parse('using REST, {user} creates empty file in '
-                     '"{path}" in "{levels}" nested dirs supported by '
-                     '"{provider}" provider'))
-def create_empty_file_in_nested_directory(user, path, provider, levels: int,
-                                          users, hosts):
-    file_path = f'{path}'
-    for i in range(levels):
-        file_path += f'/dir{i}'
-        create_empty_file(file_path+'/', users, user, provider, hosts)
-    file_path += '/file_1'
-    create_empty_file(file_path, users, user, provider, hosts)
+@given(parsers.parse('using REST, {user} creates "{file_name}" file in the '
+                     'last of {number} nested directories "{dir_name}" in '
+                     '"{path}" supported by "{provider}" provider'))
+def create_file_in_nested_directory(user, path, provider, number: int, name,
+                                    file_name, users, hosts):
+    names_list = name.split('/')
+    min_index = int(names_list[0].split("_")[1])
+    name_prefix = names_list[0].split("_")[0]
+    nested_path = f'{path}'
+    for i in range(min_index, min_index + number, 1):
+        nested_path += f'/{name_prefix}_{i}'
+    nested_path += f'/{file_name}'
+    create_empty_file(nested_path, users, user, provider, hosts)
 
 
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
@@ -419,6 +425,16 @@ def create_files_names_alphabetically(number, path, users, user, provider,
         num = str(i+1).rjust(3, '0')
         file_path = f'{path}/file_{num}'
         create_empty_file(file_path, users, user, provider, hosts)
+
+
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     'directories {dir_list} with names sorted alphabetically '
+                     'supported by "{provider}" provider'))
+def create_files_names_alphabetically_with_dir_list(user, number, dir_list,
+                                                    provider, users, hosts):
+    for dir_path in parse_seq(dir_list):
+        create_files_names_alphabetically(number, dir_path, users, user,
+                                          provider, hosts)
 
 
 def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
