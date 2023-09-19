@@ -21,7 +21,7 @@ Feature: Archive audit logs
                     - file1
                     - file2
 
-    And using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] with names sorted alphabetically supported by "oneprovider-1" provider
+    And using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] named file_001, file_002, ..., file_N supported by "oneprovider-1" provider
     And using REST, user1 creates a path with 20 nested directories named "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
     And using REST, user1 creates "file_20" file in the last of 20 nested directories "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
     And user opened browser window

@@ -417,6 +417,9 @@ def create_file_in_nested_directory(user, path, provider, number: int, name,
 
 
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     '"{path}" named file_001, file_002, ..., '
+                     'file_N supported by "{provider}" provider'))
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
                      '"{path}" with names sorted alphabetically supported by '
                      '"{provider}" provider'))
 def create_files_names_alphabetically(number, path, users, user, provider,
@@ -427,6 +430,9 @@ def create_files_names_alphabetically(number, path, users, user, provider,
         create_empty_file(file_path, users, user, provider, hosts)
 
 
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     'directories {dir_list} named file_001, file_002, ...,'
+                     ' file_N supported by "{provider}" provider'))
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
                      'directories {dir_list} with names sorted alphabetically '
                      'supported by "{provider}" provider'))
