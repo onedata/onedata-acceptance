@@ -6,19 +6,20 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.oneprovider.data_tab import \
-    assert_file_browser_in_files_tab_in_op
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, write_name_into_text_field_in_modal,
     click_modal_button, click_share_info_icon_in_share_directory_modal,
-    click_icon_in_share_directory_modal)
+    click_icon_in_share_directory_modal, write_name_into_text_field_in_panel,
+    click_panel_button)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser,
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.browser import (
+    click_menu_for_elem_in_browser,
+    click_option_in_data_row_menu_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{share_name}" share of'
@@ -27,14 +28,14 @@ from tests.gui.steps.oneprovider.shares import *
                   ' "{item_name}" directory'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
-                 modals):
+                 modals, popups):
     option = 'Share'
     modal_name = 'Share directory'
     button = 'Create'
 
-    click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name,
                                         modal_name, modals)
@@ -42,7 +43,7 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single share '
-                  'view of "{item_name}" using modal icon'))
+                  'view of "{item_name}" using "Shared" tag'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                     op_container, tmp_memory, item_name):
@@ -53,8 +54,8 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                                  item_name, tmp_memory)
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                items_browser)
     is_selected_share_named(selenium, browser_id, share_name, op_container)
 
 
@@ -63,25 +64,25 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_another_share(selenium, browser_id, share_name, modals):
     button = 'Create another share'
-    modal_name = 'Share directory'
+    modal_name = 'Shares'
     create_button = 'Create'
 
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
-    write_name_into_text_field_in_modal(selenium, browser_id, share_name,
+    click_panel_button(selenium, browser_id, button, modal_name, modals)
+    write_name_into_text_field_in_panel(selenium, browser_id, share_name,
                                         modal_name, modals)
-    click_modal_button(selenium, browser_id, create_button, modal_name, modals)
+    click_panel_button(selenium, browser_id, create_button, modal_name, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes current share'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_current_share(selenium, browser_id, op_container, modals,
-                         tmp_memory):
+                         tmp_memory, popups):
     option = 'Remove'
     modal_name = 'Remove share'
     button = 'Remove'
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_share_row_menu(selenium, browser_id, option, modals)
+    click_option_in_share_row_menu(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
@@ -91,13 +92,13 @@ def remove_current_share(selenium, browser_id, op_container, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
                                     op_container, tmp_memory):
-    option = 'Shares'
+    option = 'Shares, Open Data'
     items_browser = 'shares_browser'
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, items_browser)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single '
@@ -120,9 +121,9 @@ def open_single_share_view_by_sidebar(selenium, browser_id, share_name,
 def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
                                    share_name, item_name, tmp_memory, modals,
                                    displays, clipboard):
-    modal_name = "Share directory"
+    modal_name = 'Details modal'
     item_type = 'URL'
-    button = 'Close'
+    button = 'X'
 
     copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                       tmp_memory)
@@ -135,7 +136,7 @@ def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
                   'share of "{item_name}"'))
 def copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                       tmp_memory):
-    modal_name = 'Share directory'
+    modal_name = 'Shares'
     icon_name = 'copy'
     status_type = 'shared'
 
@@ -149,14 +150,13 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                   ' in single share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_share_from_single_view(selenium, browser_id, new_name, op_container,
-                                  modals, tmp_memory):
+                                  modals, tmp_memory, popups):
     option = 'Rename'
     modal_name = 'Rename share'
     button = 'Rename'
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_data_row_menu_in_share_file_browser(selenium, browser_id,
-                                                        option, modals)
+    click_option_in_share_row_menu(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
                                         modal_name, modals)

@@ -1,5 +1,5 @@
-"""This module contains tests suite for basic quality of service management
-using multiple provider instances and multiple browser instance.
+"""This module contains tests generally related with quality of service,
+using multiple providers instances and multiple browsers instance.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -12,10 +12,10 @@ import pytest
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.rest.cdmi import *
-from tests.gui.steps.rest.env_up.users import *
-from tests.gui.steps.rest.env_up.groups import *
-from tests.gui.steps.rest.env_up.spaces import *
-from tests.gui.steps.rest.env_up.harvesters import *
+from tests.utils.entities_setup.users import *
+from tests.utils.entities_setup.groups import *
+from tests.utils.entities_setup.spaces import *
+from tests.utils.entities_setup.harvesters import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -36,7 +36,6 @@ from tests.gui.steps.onepanel.storages import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
@@ -55,8 +54,9 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
 from tests.gui.steps.oneprovider.qos import *
+from tests.gui.steps.oneprovider.browser import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *
@@ -81,9 +81,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
 scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
-scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
-scenarios('../features/oneprovider/data/qos.feature')
+

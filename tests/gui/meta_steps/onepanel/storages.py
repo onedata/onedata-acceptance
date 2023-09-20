@@ -16,7 +16,7 @@ from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.onepanel.common import (
     wt_click_on_subitem_for_item, wt_click_on_btn_in_content)
 from tests.gui.steps.onepanel.storages import (
@@ -63,7 +63,7 @@ def add_storage_in_op_panel_using_gui(selenium, browser_id, name, provider_name,
                                       config, oz_page, hosts, onepanel):
     """ Create storage according to given config.
 
-        Config format given in yaml is as follow:
+        Config format given in yaml is as follows:
 
             storage type: storage_type             --> required
             mount point: mount_point               --> required
@@ -132,7 +132,7 @@ def safely_create_storage_rest(storage_name, provider, config,
                                hosts, onepanel_credentials):
     """ Create storage according to given config.
 
-            Config format given in yaml is as follow:
+            Config format given in yaml is as follows:
 
                 storage type: storage_type             --> required
                 mount point: mount_point               --> required

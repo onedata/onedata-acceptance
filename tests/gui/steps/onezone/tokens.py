@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import (
     WAIT_BACKEND, WAIT_FRONTEND)
 from tests.gui.utils.generic import transform
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
@@ -97,12 +97,12 @@ def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '
                   'from dropdown on tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def select_member_from_dropdown(selenium, browser_id, member_name, modals,
+def select_member_from_dropdown(selenium, browser_id, member_name, popups,
                                 oz_page):
     driver = selenium[browser_id]
 
     oz_page(driver)['tokens'].expand_dropdown()
-    modals(driver).dropdown.options[member_name].click()
+    popups(driver).dropdown.options[member_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create token" button '
@@ -414,3 +414,17 @@ def choose_token_template(selenium, browser_id, template, oz_page):
     driver = selenium[browser_id]
     tokens_page = oz_page(driver)['tokens']
     getattr(tokens_page, f'{transform(template)}_template').click()
+
+
+@wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
+                  'tokens page'))
+def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
+    alert = oz_page(selenium[browser_id])['tokens'].alert
+    assert text in alert, f'{text} does not match alert: {alert}'
+
+
+@given(parsers.parse('{sender} sends {item_type} to {receiver}'))
+def given_send_copied_item_to_other_user(sender, receiver, item_type,
+                                         tmp_memory):
+    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
+        tmp_memory[sender][item_type]

@@ -6,7 +6,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
           imported storage: true
 
     And users opened [browser1, browser2] browsers' windows
@@ -55,7 +55,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     # confirm import of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     Then user of browser2 sees that the file structure in file browser is as follow:
            - dir2:
@@ -76,7 +75,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Scan interval [s]: 1
 
     # confirm update of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
@@ -118,7 +116,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # confirm update of files
     And user of browser2 opens file browser for "space1" space
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
@@ -132,7 +129,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 removes dir2/dir21 from provider's storage mount point
     And user of browser2 removes dir2/file1.txt from provider's storage mount point
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
@@ -164,7 +160,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # check content of imported file
     And user of browser2 opens file browser for "space1" space
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
@@ -189,9 +184,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Detect deletions: false
 
     # confirm update of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
-
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir21:
@@ -205,8 +198,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser2 is idle for 10 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir2" in file browser
-    And user of browser2 double clicks on item named "file1.txt" in file browser
+    And user of browser2 clicks and presses enter on item named "dir2" in file browser
+    And user of browser2 clicks and presses enter on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "2222234"
 
 
@@ -231,7 +224,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # check content of imported file
     And user of browser2 opens file browser for "space1" space
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
@@ -257,7 +249,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Scan interval [s]: 1
 
     # confirm update of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
 
     Then user of browser2 sees that the file structure in file browser is as follow:
@@ -270,11 +261,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # files in gui are not updated after local changes
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
-
     And user of browser2 is idle for 10 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir2" in file browser
-    And user of browser2 double clicks on item named "file1.txt" in file browser
+    And user of browser2 clicks and presses enter on item named "dir2" in file browser
+    And user of browser2 clicks and presses enter on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "22222"
 
 
@@ -316,7 +306,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     # confirm update of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
@@ -331,7 +320,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 removes dir2/dir21 from provider's storage mount point
     And user of browser2 removes dir2/file1.txt from provider's storage mount point
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in files tab in Oneprovider page
 
@@ -366,7 +354,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     # confirm update of files
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
@@ -392,7 +379,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     Then user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
@@ -430,7 +416,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:

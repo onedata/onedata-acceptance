@@ -24,7 +24,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
 
@@ -45,7 +45,7 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser sees that "space1" has appeared on the spaces list in the sidebar
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Providers of "space1" in the sidebar
+    And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     And user of space_owner_browser sees "pro1" is on the providers list
     And user of space_owner_browser sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1"
 
@@ -63,9 +63,9 @@ Feature: Provider management in Onepanel GUI
 
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Providers of "space1" in the sidebar
+    And user of space_owner_browser clicks "Providers" of "space1" space in the sidebar
     And user of space_owner_browser sees "oneprovider-1" is on the providers list
-    And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service
+    And user of browser_emergency deregisters provider in "oneprovider-1" Oneprovider panel service
     And user of space_owner_browser is idle for 8 seconds
 
     # send registration token
@@ -87,7 +87,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency selects POSIX from storage selector in step 5 of deployment process in Onepanel
     And user of browser_emergency types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
 
-    And user of browser_emergency types "/volumes/persistence/storage" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
+    And user of browser_emergency types "/volumes/posix" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
     And user of browser_emergency clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser_emergency sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of browser_emergency clicks on Finish button in step 5 of deployment process in Onepanel
@@ -98,7 +98,7 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser sees that there is no supporting provider "oneprovider-1" for space named "space1"
     And user of space_owner_browser creates space "helloworld"
     And user of space_owner_browser generates space support token for space "helloworld" and sends it to user of browser_emergency
-    And using web gui, admin supports "helloworld" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    And user of browser_emergency supports "helloworld" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
             size: 10000000
 
@@ -107,7 +107,7 @@ Feature: Provider management in Onepanel GUI
 
     And user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "helloworld" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "helloworld" in the sidebar
+    And user of space_owner_browser clicks "Files" of "helloworld" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
 

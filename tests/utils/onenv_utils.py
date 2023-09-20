@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import re
 import sys
-import pty
 import collections
 import subprocess as sp
 
@@ -122,7 +121,7 @@ def helm_init_cmd(client_only=None):
 
 def get_kube_client():
     urllib3.disable_warnings()
-    config.load_kube_config()
+    config.load_kube_config(config_file=os.path.join(os.path.expanduser('~'), '.kube', 'config'))
     kube = client.CoreV1Api()
     return kube
 

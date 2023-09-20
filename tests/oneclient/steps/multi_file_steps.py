@@ -13,18 +13,14 @@ import re
 import json
 import stat as stat_lib
 import subprocess as sp
+import time
 
-import pytest
 import jsondiff
 
 from tests.utils.acceptance_utils import (list_parser, make_arg_list,
                                           compare, time_attr)
 from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
-from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
-                                      chmod, touch, setxattr, getxattr,
-                                      removexattr, listxattr, get_all_xattr,
-                                      clear_xattr, client_run_cmd)
 from tests.utils.onenv_utils import cmd_exec
 
 
@@ -37,7 +33,7 @@ def create_base(user, files, client_node, users, should_fail=False):
         path = client.absolute_path(file_name)
 
         def condition():
-            create_file(client, path)
+            client.create_file(path)
         assert_generic(client.perform, should_fail, condition)
 
 
@@ -72,7 +68,7 @@ def stat_present(user, path, files, client_node, users):
 
     def condition():
         for f in files:
-            stat(client, os.path.join(path, f))
+            client.stat(os.path.join(path, f))
 
     assert_(client.perform, condition)
 
@@ -86,7 +82,7 @@ def ls_present(user, files, path, client_node, users):
     files = list_parser(files)
 
     def condition():
-        listed_files = ls(client, path)
+        listed_files = client.ls(path)
         for file in files:
             assert file in listed_files, "File {} not in listed files".format(file)
 
@@ -100,7 +96,7 @@ def ls_empty(directory, user, client_node, users):
     dir_path = client.absolute_path(directory)
 
     def condition():
-        assert len(ls(client, dir_path)) == 0
+        assert len(client.ls(dir_path)) == 0
 
     assert_(client.perform, condition)
 
@@ -115,8 +111,9 @@ def ls_children(user, parent_dir, lower: int, upper: int, client_node, users):
     files_num = upper - lower
 
     def condition():
-        listed_files = ls(client, path)
-        assert len(listed_files) == files_num, "Listed {} files instead of expected {}".format(len(listed_files), files_num)
+        listed_files = client.ls(path)
+        assert len(listed_files) == files_num, "Listed {} files instead of expected {}".format(
+            len(listed_files), files_num)
         for i in range(lower, upper):
             assert str(i) in listed_files, "File {} not in listed files".format(str(i))
 
@@ -130,9 +127,12 @@ def mv_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(mv, should_fail, client, src, dest)
+        client.mv(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)'
@@ -148,9 +148,12 @@ def rename_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(osrename, should_fail, client, src, dest)
+        client.osrename(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to rename (?P<file1>.*) to '
@@ -171,7 +174,8 @@ def stat_absent(user, path, files, client_node, users):
         for f in files:
             p = os.path.join(path, f)
             try:
-                stat(client, p)
+                client.stat(p)
+                raise Exception(f'Failed: There is item {f}')
             except FileNotFoundError as exc_info:
                 assert p in exc_info.filename
 
@@ -187,7 +191,8 @@ def ls_absent(user, files, path, client_node, users):
     files = list_parser(files)
 
     def condition():
-        listed_files = ls(client, path)
+        time.sleep(1)
+        listed_files = client.ls(path)
         for file in files:
             assert file not in listed_files, "File {} is in files list".format(file)
 
@@ -202,14 +207,14 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
     cmd = 'mv {0} {1}'.format(src, dest)
 
     def condition():
-        def fun():
-            ret = client_run_cmd(client, cmd, error=True)
-            if ret != 0:
-                raise OSError("Command ended with exit code {}".format(ret))
+        ret = client.run_cmd(cmd, error=True)
+        if ret != 0:
+            raise OSError("Command ended with exit code {}".format(ret))
 
-        assert_expected_failure(fun, should_fail)
-
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*) '
@@ -226,9 +231,12 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
         path = client.absolute_path(file)
 
         def condition():
-            assert_expected_failure(rm, should_fail, client, path)
+            client.rm(path)
 
-        assert_(client.perform, condition)
+        if should_fail:
+            assert_expected_failure(condition)
+        else:
+            assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes files (?P<files>.*) on '
@@ -252,7 +260,7 @@ def check_size(user, file, size, client_node, users):
     size = int(size)
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         assert stat_result.st_size == size
 
     assert_(client.perform, condition)
@@ -271,7 +279,7 @@ def check_type(user, file, file_type, client_node, users):
         stat_method = 'S_ISDIR'
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         assert getattr(stat_lib, stat_method)(stat_result.st_mode)
 
     assert_(client.perform, condition)
@@ -286,7 +294,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
     def condition():
         cmd = 'stat --format=%F {}'.format(file_path)
-        stat_file_type = client_run_cmd(client, cmd, output=True)
+        stat_file_type = client.run_cmd(cmd, output=True)
         assert stat_file_type.strip() == file_type
 
     assert_(client.perform, condition)
@@ -302,7 +310,7 @@ def check_mode(user, file, mode, client_node, users):
     mode = int(mode, 8)
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         assert stat_lib.S_IMODE(stat_result.st_mode) == mode
 
     assert_(client.perform, condition)
@@ -315,7 +323,7 @@ def change_mode_base(user, file, mode, client_node, users, should_fail=False):
     file_path = client.absolute_path(file)
 
     def condition():
-        chmod(client, mode, file_path)
+        client.chmod(mode, file_path)
 
     assert_generic(client.perform, should_fail, condition)
 
@@ -346,7 +354,7 @@ def check_time(user, time1, time2, comparator, file, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
         t2 = getattr(stat_result, attr2)
         assert compare(t1, t2, comparator)
@@ -364,9 +372,9 @@ def check_files_time(user, time1, time2, comparator, file, file2,
     file2_path = client.absolute_path(file2)
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
-        stat_result2 = stat(client, file2_path)
+        stat_result2 = client.stat(file2_path)
         t2 = getattr(stat_result2, attr2)
         assert compare(t1, t2, comparator)
 
@@ -388,7 +396,7 @@ def cmp_time_to_previous(user, time1, comparator, file1, file2,
     recorded_stats = client.file_stats[client.absolute_path(file2)]
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr)
         t2 = getattr(recorded_stats, attr)
         assert compare(t1, t2, comparator)
@@ -406,7 +414,7 @@ def touch_file_base(user, files, client_node, users, should_fail=False):
 
         def condition():
             try:
-                touch(client, file_path)
+                client.touch(file_path)
             except OSError:
                 return True if should_fail else False
             else:
@@ -436,13 +444,12 @@ def set_xattr(user, file, name, value, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        value_bytes = None
         if isinstance(value, str):
             value_bytes = value.encode('utf-8')
         else:
             value_bytes = value
 
-        setxattr(client, file_path, name, value_bytes)
+        client.setxattr(file_path, name, value_bytes)
 
     assert_(client.perform, condition)
 
@@ -455,7 +462,7 @@ def remove_all_xattr(user, file, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        clear_xattr(client, file_path)
+        client.clear_xattr(file_path)
 
     assert_(client.perform, condition)
 
@@ -468,7 +475,7 @@ def remove_xattr(user, file, name, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        removexattr(client, file_path, name)
+        client.removexattr(file_path, name)
 
     assert_(client.perform, condition)
 
@@ -481,7 +488,7 @@ def check_xattr_exists(user, file, name, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        xattrs = listxattr(client, file_path)
+        xattrs = client.listxattr(file_path)
         assert name in xattrs
 
     assert_(client.perform, condition)
@@ -495,7 +502,7 @@ def check_xattr_doesnt_exist(user, file, name, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        xattrs = listxattr(client, file_path)
+        xattrs = client.listxattr(file_path)
         assert name not in xattrs
 
     assert_(client.perform, condition)
@@ -510,8 +517,7 @@ def check_string_xattr(user, file, name, value, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        xattr_value = getxattr(client, file_path, name)
-        value_utf = None
+        xattr_value = client.getxattr(file_path, name)
         if isinstance(value, str):
             value_utf = value.encode('utf-8')
         else:
@@ -531,7 +537,7 @@ def check_numeric_xattr(user, file, name, value, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        xattr_value = getxattr(client, file_path, name)
+        xattr_value = client.getxattr(file_path, name)
         assert float(xattr_value) == float(value)
 
     assert_(client.perform, condition)
@@ -546,7 +552,7 @@ def check_json_xattr(user, file, name, value, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        xattr_value = getxattr(client, file_path, name)
+        xattr_value = client.getxattr(file_path, name)
         assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}
 
     assert_(client.perform, condition)
@@ -559,7 +565,7 @@ def record_stats(user, files, client_node, users):
 
     for file_ in list_parser(files):
         file_path = client.absolute_path(file_)
-        client.file_stats[file_path] = stat(client, file_path)
+        client.file_stats[file_path] = client.stat(file_path)
 
 
 def get_metadata(user, path, client_node, users):
@@ -567,7 +573,7 @@ def get_metadata(user, path, client_node, users):
     client = user.clients[client_node]
     file_path = client.absolute_path(path)
 
-    xattr_value = get_all_xattr(client, file_path)
+    xattr_value = client.get_all_xattr(file_path)
     return xattr_value
 
 
@@ -582,7 +588,7 @@ def assert_file_ownership(user, path, res, uid, gid, client_node, users):
     gid = int(gid)
 
     def condition():
-        stat_result = stat(client, file_path)
+        stat_result = client.stat(file_path)
         if res == 'equal':
             wrong_id_fmt = ('Expected owner\'s {} of file {} to be {}, '
                             'but found {}')

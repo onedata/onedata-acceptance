@@ -19,7 +19,6 @@ class HostRecord(PageObject):
     cluster_worker = Toggle('.one-way-toggle[data-option=clusterWorker]')
     cluster_manager = Toggle('.one-way-toggle[data-option=clusterManager]')
     primary_cluster_manager = Toggle('.one-way-toggle[data-option=primaryClusterManager]')
-    ceph = Toggle('.one-way-toggle[data-option=ceph]')
 
     def __str__(self):
         return '{} record in {}'.format(self.name, self.parent)

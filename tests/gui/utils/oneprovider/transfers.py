@@ -13,10 +13,10 @@ from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                Icon, WebItemsSequence,
                                                ButtonWithTextPageObject,
-                                               WebItem)
+                                               WebItem, Button)
 
-TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
-                      'evicting', 'scheduled', 'enqueued']
+TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed',
+                      'replicating', 'evicting', 'scheduled', 'enqueued']
 TransferTypeList = ['migration', 'replication', 'eviction']
 
 
@@ -25,6 +25,7 @@ class TransferRecord(PageObject):
     username = Label('td:nth-of-type(2)')
     destination = Label('td:nth-of-type(3)')
     status_icon = Icon('.cell-status')
+    menu_button = Button('.cell-actions')
     type_icon = Icon('.cell-type')
     icon = Icon('.transfer-file-icon')
 
@@ -60,7 +61,7 @@ class TransferRecord(PageObject):
 
 
 class TransferRecordHistory(TransferRecord):
-    transferred = Label('td:nth-of-type(6)')
+    replicated = Label('.replicated-bytes')
     total_files = Label('td:nth-of-type(7)')
 
 
@@ -101,6 +102,8 @@ class _TransfersTab(PageObject):
                                      cls=TransferRecordActive)
     _waiting_list = WebItemsSequence('.col-waiting-transfers tr.data-row',
                                      cls=TransferRecordHistory)
+    _transfers_list_for_certain_file = WebItemsSequence(
+        '.transfers-table-container .transfer-row', cls=TransferRecord)
 
     @property
     def ongoing(self):
@@ -116,6 +119,10 @@ class _TransfersTab(PageObject):
     def waiting(self):
         self['waiting'].click()
         return self._waiting_list
+
+    @property
+    def certain_file(self):
+        return self._transfers_list_for_certain_file
 
     def __getitem__(self, name):
         for tab in self.tabs:

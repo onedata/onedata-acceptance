@@ -11,12 +11,13 @@ import re
 import yaml
 import pytest
 
-from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, LOGDIRS)
+from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, ENTITIES_CONFIG_DIR, LOGDIRS)
+from tests.utils import CLIENT_POD_LOGS_DIR
+from tests.utils.user_utils import AdminUser
 from tests.utils.environment_utils import start_environment, clean_env
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
-from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.user_utils import AdminUser
+from tests.utils import onenv_utils
 
 
 def pytest_addoption(parser):
@@ -43,10 +44,10 @@ def pytest_addoption(parser):
                                                         'to use in tests')
     parser.addoption('--oc-image', action='store', help='oneclient image'
                                                         'to use in tests')
-    parser.addoption('--luma-image', action='store', help='luma image'
-                                                          'to use in tests')
     parser.addoption('--rest-cli-image', action='store',
                      help='rest cli image to use in tests')
+    parser.addoption('--openfaas-pod-status-monitor-image', action='store',
+                     help='OpenFaaS pod status monitor image to use in tests')
     parser.addoption('--sources', action='store_true',
                      help='If present run environment using sources')
 
@@ -56,6 +57,14 @@ def pytest_addoption(parser):
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')
 
+    group.addoption('--admin', default=['admin', 'password'], nargs=2,
+                    help='admin credentials in form: -u username password',
+                    metavar=('username', 'password'), dest='admin')
+    group.addoption('--preserve-users', action='store_true',
+                    help='If set users created in previous tests will not be '
+                         'removed if their names collide with the names '
+                         'of users that will be created in current test. '
+                         'Instead such a test will be skipped.')
     group.addoption('--add-test-domain', action='store_true',
                     help='If set test domain is added to /etc/hosts')
 
@@ -112,9 +121,42 @@ def test_config(request):
 
 
 @pytest.fixture(scope='session')
+def entities_config(request, env_desc):
+    file_name = env_desc.get('entities_config')
+    config_dir_path = ENTITIES_CONFIG_DIR.get(get_test_type(request))
+    config_path = os.path.join(config_dir_path, file_name)
+    with open(config_path) as config_file:
+        return yaml.load(config_file)
+
+
+@pytest.fixture(autouse=True)
+def onepanel_credentials(users, hosts, emergency_passphrase):
+    creds = users['onepanel'] = AdminUser(
+        hosts['onezone']['hostname'], 'onepanel', emergency_passphrase)
+    return creds
+
+
+@pytest.fixture(autouse=True)
+def emergency_passphrase(users, hosts):
+    zone_pod_name = hosts['onezone']['pod-name']
+    zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
+    passphrase = onenv_utils.get_env_variable(zone_pod,
+                                              'ONEPANEL_EMERGENCY_PASSPHRASE')
+    return passphrase
+
+
+@pytest.fixture(autouse=True)
+def admin_credentials(request, users, hosts):
+    admin_username, admin_password = request.config.getoption('admin')
+    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'], admin_username,
+                                                   admin_password)
+    return admin_user
+
+
+@pytest.fixture(scope='session')
 def users():
     """Dictionary with users credentials"""
-    return {'admin': AdminUser('admin', 'password')}
+    return {}
 
 
 @pytest.fixture()
@@ -164,6 +206,11 @@ def tokens():
     """Dict to use to store information about tokens, e.g. {'token1': {
     'token_id': HGS2783GYIS, 'token': HDSGUFGJY875381FGJFSU}}"""
     return {}
+
+
+@pytest.fixture
+def rm_users(request):
+    return not request.config.getoption('--preserve-users')
 
 
 @pytest.fixture(scope='session')
@@ -229,9 +276,9 @@ def start_test_env(request, test_type, env_desc, hosts, users, env_description_a
     scenario_path = ''
     if test_type in ['gui']:
         scenario_path = env_description_abs_path
-    elif test_type == 'mixed':
+    elif test_type in ['oneclient', 'mixed']:
         scenario_path = scenario_abs_path(request, env_desc)
-    elif test_type in ['oneclient', 'onedata_fs', 'performance', 'upgrade']:
+    elif test_type in ['onedata_fs', 'performance', 'upgrade']:
         scenario_path = scenario_abs_path(request, env_desc)
         patch = env_desc.get('patch')
         patch_dir_path = PATCHES_DIR.get(get_test_type(request))
@@ -259,7 +306,7 @@ def get_test_type(request):
     return request.config.getoption('test_type')
 
 
-def export_logs(request, env_description_abs_path=None):
+def export_logs(request, env_description_abs_path=None, logdir_prefix=''):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
@@ -276,8 +323,10 @@ def export_logs(request, env_description_abs_path=None):
         latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
         logdir_path = os.path.join(logdir_path, latest_logdir)
 
-    run_onenv_command('export', [logdir_path, '-c', '/tmp/oc_logs'],
-                      fail_with_error=False)
+    if logdir_prefix:
+        dirpath, name = os.path.split(logdir_path)
+        logdir_path = os.path.join(dirpath, logdir_prefix + '.' + name)
+    onenv_utils.run_onenv_command('export', [logdir_path, '-c', CLIENT_POD_LOGS_DIR], fail_with_error=False)
 
 
 def extract_timestamp(filename):

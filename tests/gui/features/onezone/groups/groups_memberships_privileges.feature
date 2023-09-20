@@ -35,10 +35,10 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser sees following privileges of "group2" group in space members subpage:
           User management:
             granted: False
+    And user of browser clicks "group2" group in "group1" group members groups list
     And user of browser sets following privileges for "group2" group in space members subpage:
           User management:
             granted: True
-    And user of browser clicks Save button for "group2" group in group members subpage
     And user of browser clicks "group2" group in "group1" group members groups list
     Then user of browser sees following privileges of "group2" group in space members subpage:
           User management:
@@ -51,9 +51,11 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser sees following privileges of "user1" user in space members subpage:
           User management:
             granted: True
+    And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: False
+    And user of browser clicks "user1" user in "group1" group members users list
     Then user of browser sees following privileges of "user1" user in space members subpage:
           User management:
             granted: False
@@ -70,7 +72,6 @@ Feature: Basic management of groups privileges in Onezone GUI
             granted: Partially
             privilege subtypes:
               View privileges: False
-    And user of browser refreshes site
     And user of browser clicks "user2" user in "group1" group members users list
     Then user of browser sees Insufficient privileges alert for "user2" user in group members subpage
 
@@ -93,7 +94,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -113,7 +113,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -135,7 +134,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Remove child group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -249,7 +247,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list

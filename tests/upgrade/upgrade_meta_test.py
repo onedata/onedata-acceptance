@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import os
 import tests.upgrade.tests.oneclient_CRUD as oneclient_CRUD
 
 

@@ -13,7 +13,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import (close_modal, click_modal_button)
+from tests.gui.steps.modals.modal import (close_modal, click_modal_button)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.harvesters.discovery import (
@@ -33,10 +33,10 @@ from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
+    button = 'Create space'
 
     for space_name in parse_seq(space_list):
-        click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, user,
-                                                              oz_page)
+        click_button_on_spaces_sidebar_menu(selenium, user, button, oz_page)
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)
         confirm_create_new_space(selenium, user, option, oz_page)
@@ -324,8 +324,8 @@ def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
                   'dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
-                                    harvester_name, tmp_memory, modals):
-    option = 'Harvesters'
+                                    harvester_name, tmp_memory, modals, popups):
+    option = 'Harvesters, Discovery'
     button_name = 'add one of harvesters'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
@@ -342,7 +342,7 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       harvester_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -375,7 +375,7 @@ def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
                                          member, oz_page, onepanel, popups)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
-                                                      element)
+                                                      element, popups)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
@@ -401,3 +401,5 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, oz_page,
                                          member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
+
+

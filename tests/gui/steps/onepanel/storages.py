@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -25,7 +26,7 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX|Local Ceph) form '
+               '(?P<input_box>.*?) field in (?P<form>POSIX) form '
                'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_storages_page_op_panel(selenium, browser_id, text,
@@ -54,7 +55,12 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
                                                      storage, onepanel):
-    onepanel(selenium[browser_id]).content.storages.storages[storage].expand()
+    storage_item = onepanel(selenium[browser_id]
+                            ).content.storages.storages[storage]
+    storage_item.expand()
+
+    if not storage_item.is_expanded():
+        raise Exception(f'did not manage to expand storage {storage}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
@@ -94,6 +100,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 
 @wt(parsers.parse('user of {browser_id} clicks on "Modify" button for '
                   '"{name}" storage record in Storages page in Onepanel'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_modify_storage_in_onepanel(selenium, browser_id, name,
                                      onepanel):
     driver = selenium[browser_id]
@@ -172,8 +179,8 @@ def assert_number_storages_with_same_name(selenium, browser_id, name,
     driver = selenium[browser_id]
     storages_list = onepanel(driver).content.storages.storages
     filtered = [storage for storage in storages_list if
-                storage.name.split('#')[0] == name]
-    ids = [s.name.split('#')[1] for s in filtered]
+                storage.name.split(CONFLICT_NAME_SEPARATOR)[0] == name]
+    ids = [s.name.split(CONFLICT_NAME_SEPARATOR)[1] for s in filtered]
     assert len(filtered) == number, (
         f'{name} not visible {number} times on storages list')
     assert check_ids_different(ids), f'IDs are not different, {ids}'

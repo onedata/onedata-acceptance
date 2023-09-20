@@ -12,7 +12,6 @@ from tests.gui.utils.core.web_elements import (WebItem, Label, WebElement,
                                                Button)
 from tests.gui.utils.common.common import OnePage, BaseContent
 from tests.gui.utils.onezone.members_subpage import MembersPage
-from .ceph import CephContentPage
 from .clusters import ClustersSidebar, WelcomePage
 from .deployment import Deployment
 from .nodes import NodesContentPage
@@ -40,7 +39,6 @@ class Content(BaseContent):
     deployment = WebItem(_main_content, cls=Deployment)
     nodes = WebItem(_main_content, cls=NodesContentPage)
     provider = WebItem(_main_content, cls=ProviderContentPage)
-    ceph = WebItem(_main_content, cls=CephContentPage)
     storages = WebItem(_main_content, cls=StorageContentPage)
     spaces = WebItem(_main_content, cls=SpacesContentPage)
     members = WebItem(_main_content, cls=MembersPage)

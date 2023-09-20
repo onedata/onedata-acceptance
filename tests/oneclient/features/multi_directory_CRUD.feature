@@ -2,8 +2,7 @@ Feature: Multi_directory_CRUD
 
   Background:
     Given oneclients [client11, client21]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
 
     
@@ -14,6 +13,27 @@ Feature: Multi_directory_CRUD
     And user2 can stat [dir1, dir2, dir3] in space1 on client21
     Then user1 sees [dir1, dir2, dir3] in space1 on client11
     And user2 sees [dir1, dir2, dir3] in space1 on client21
+
+
+  Scenario: Clean everything after creating directory and hidden directory
+    When user1 creates directories [space1/dir1, space1/dir2, space1/dir3] on client11
+    And user1 can stat [dir1, dir2, dir3] in space1 on client11
+    And user2 can stat [dir1, dir2, dir3] in space1 on client21
+    And user1 sees [dir1, dir2, dir3] in space1 on client11
+    And user2 sees [dir1, dir2, dir3] in space1 on client21
+    And user2 creates directories [space1/.dir4] on client21
+    # waiting for synchronization and not listing directory is intentional
+    # we want to purge spaces without listing or stating hidden directory
+    And user1 is idle for 10 seconds
+    And user1 purges all spaces on client11
+    Then user1 can't stat [dir1, dir2, dir3] in space1 on client11
+    And user2 can't stat [dir1, dir2, dir3] in space1 on client21
+    And user1 doesn't see [dir1, dir2, dir3] in space1 on client11
+    And user2 doesn't see [dir1, dir2, dir3] in space1 on client21
+    And user1 can't stat [.dir4] in space1 on client11
+    And user2 can't stat [.dir4] in space1 on client21
+    And user1 doesn't see [.dir4] in space1 on client11
+    And user2 doesn't see [.dir4] in space1 on client21
 
 
   Scenario: Fail to rename someone's directory without write permission on parent

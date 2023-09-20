@@ -28,42 +28,39 @@ Feature: Basic file management operations
 
   Scenario: User successfully pastes file copied from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
-    And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects "file_d1_2" items from file browser with pressed ctrl
-    And user of browser chooses Copy option from selection menu on file browser page
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser chooses "Copy" option from file menu for "file_d1_2" on file list
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks "Paste" button from file browser menu bar
     Then user of browser sees item(s) named file_d1_2 in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees item(s) named file_d1_2 in file browser
 
 
   Scenario: User successfully pastes file cut from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
-    And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects "file_d1_2" items from file browser with pressed ctrl
-    And user of browser chooses Cut option from selection menu on file browser page
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser chooses "Cut" option from file menu for "file_d1_2" on file list
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks "Paste" button from file browser menu bar
     Then user of browser sees item(s) named file_d1_2 in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser does not see any item(s) named file_d1_2 in file browser
 
 
   Scenario: User fails to paste file to where it was copied from
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
-    And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects "file1" items from file browser with pressed ctrl
-    And user of browser chooses Copy option from selection menu on file browser page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser chooses "Copy" option from file menu for "file1" on file list
     And user of browser clicks "Paste" button from file browser menu bar
 
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
@@ -71,12 +68,11 @@ Feature: Basic file management operations
 
   Scenario: User fails to paste copied file to directory with identical file
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser selects "file1" items from file browser with pressed ctrl
-    And user of browser chooses Copy option from selection menu on file browser page
+    And user of browser chooses "Copy" option from file menu for "file1" on file list
 
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
 
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
@@ -84,49 +80,47 @@ Feature: Basic file management operations
 
   Scenario: Space owner can copy file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Permissions" in context menu for "dir1"
+    And user of browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser selects "POSIX" permission type in edit permissions panel
+    And user of browser sets "677" permission code in edit permissions panel
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file2" directory in file browser
     And user of browser clicks "Copy" option in data row menu in file browser
 
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
-    And user of browser clicks file browser refresh button
 
     Then user of browser sees item(s) named file2 in file browser
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser sees item(s) named file2 in file browser
 
 
   Scenario: Space owner can move file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Permissions" in context menu for "dir1"
+    And user of browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser selects "POSIX" permission type in edit permissions panel
+    And user of browser sets "677" permission code in edit permissions panel
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file3" directory in file browser
     And user of browser clicks "Cut" option in data row menu in file browser
 
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
-    And user of browser clicks file browser refresh button
 
     Then user of browser sees item(s) named file3 in file browser
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser does not see any item(s) named file3 in file browser

@@ -7,6 +7,9 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
+from selenium.common.exceptions import TimeoutException
 from tests.gui.meta_steps.onezone.tokens import (
     consume_token_from_copied_token)
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
@@ -15,12 +18,15 @@ from tests.utils.bdd_utils import given
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.clusters import (
-    click_on_record_in_clusters_menu, click_cluster_menu_button)
+    click_on_record_in_clusters_menu, click_cluster_menu_button,
+    click_button_in_gui_settings_page,
+    click_option_of_record_in_the_sidebar, write_input_in_gui_settings_page,
+    remove_notification_in_gui_settings_page)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
-from tests.gui.steps.modal import click_modal_button, close_modal
+from tests.gui.steps.modals.modal import click_modal_button, close_modal
 
 
 @wt(parsers.parse('user of {browser_id} invites user of {browser} '
@@ -80,7 +86,7 @@ def change_privilege_config_in_cluster(selenium, browser_id, oz_page,
                   '"{cluster_name}" cluster'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
-                         group_name, cluster_name, popups):
+                         group_name, cluster_name, popups, tmp_memory):
     sidebar = 'CLUSTERS'
     menu_option = 'Members'
     sub_item = 'Add one of your groups'
@@ -89,7 +95,7 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     where = 'cluster'
     member = 'groups'
     element_type = 'group'
-
+    modal_name = 'add one of your groups'
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
                                      cluster_name, hosts)
@@ -98,9 +104,19 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     click_on_option_in_members_list_menu(selenium, browser_id, sub_item,
                                          where, member, oz_page,
                                          onepanel, popups)
+    for _ in range(5):
+        try:
+            wt_wait_for_modal_to_appear(selenium, browser_id, modal_name,
+                                        tmp_memory)
+            break
+        except TimeoutException:
+            click_on_option_in_members_list_menu(selenium, browser_id, sub_item,
+                                                 where, member, oz_page,
+                                                 onepanel, popups)
+
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 
 
@@ -121,10 +137,55 @@ def no_member_in_parent(selenium, browser_id, member_name, member_type, name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(selenium, browser_id, provider, oz_page, hosts,
                         popups, tmp_memory, clipboard, displays):
-    option = 'Copy cluster ID'
+    option = 'Copy ID'
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
                                      hosts)
     click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)
     click_option_in_popup_text_menu(selenium, browser_id, option, popups)
     cluster_id = clipboard.paste(display=displays[browser_id])
     tmp_memory[provider]['cluster id'] = cluster_id
+
+
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<operation>removes) '
+               '"(?P<text>.*)" text from (?P<kind_of_agreement>.*) in GUI'
+               ' settings page of "(?P<record>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<operation>sets) '
+               '(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings page'
+               ' of "(?P<record>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_gui_settings(selenium, browser_id, oz_page, record, hosts,
+                     kind_of_agreement, text, operation):
+    menu = 'Clusters'
+    option = 'GUI settings'
+    box = kind_of_agreement + ' input'
+    button = 'save ' + kind_of_agreement
+    click_on_option_in_the_sidebar(selenium, browser_id, menu, oz_page)
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
+                                     hosts)
+    click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
+    click_button_in_gui_settings_page(selenium, browser_id, oz_page,
+                                      kind_of_agreement)
+    if operation == 'sets':
+        write_input_in_gui_settings_page(selenium, browser_id, oz_page, box,
+                                         text)
+    else:
+        remove_notification_in_gui_settings_page(selenium, browser_id, oz_page,
+                                                 kind_of_agreement)
+    click_button_in_gui_settings_page(selenium, browser_id, oz_page,
+                                      button)
+    # wait for save button to be clicked
+    time.sleep(0.1)
+
+
+@wt(parsers.parse('user of {browser_id} inserts {kind_of_agreement} link in '
+                  'cookie consent notification in GUI settings page of '
+                  '"{record}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def insert_setting_link(selenium, browser_id, oz_page, kind_of_agreement):
+    link = 'insert ' + kind_of_agreement + ' link'
+    button = 'save cookie consent notification'
+    click_button_in_gui_settings_page(selenium, browser_id, oz_page,
+                                      link)
+    click_button_in_gui_settings_page(selenium, browser_id, oz_page,
+                                      button)
+

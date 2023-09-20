@@ -7,14 +7,12 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-import os
 import errno
 import subprocess as sp
 
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
-from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
 from tests.utils.utils import assert_generic, assert_, assert_expected_failure
 
 
@@ -27,8 +25,12 @@ def create_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(mkdir, should_fail, client, path)
-        assert_(client.perform, condition)
+            client.mkdir(path)
+
+        if should_fail:
+            assert_expected_failure(condition)
+        else:
+            assert_(client.perform, condition)
 
 
 @when(parsers.re('(?P<user>\w+) creates directories (?P<dirs>.*)\son '
@@ -48,7 +50,7 @@ def create_parents(user, paths, client_node, users):
         dir_path = client.absolute_path(path)
 
         def condition():
-            mkdir(client, dir_path, recursive=True)
+            client.mkdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -68,9 +70,12 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(rmdir, should_fail, client, path)
+            client.rmdir(path)
 
-        assert_(client.perform, condition)
+        if should_fail:
+            assert_expected_failure(condition)
+        else:
+            assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) on '
@@ -85,6 +90,33 @@ def fail_to_delete_empty(user, dirs, client_node, users):
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
+def purge_all_spaces(client):
+    try:
+        spaces = client.list_spaces()
+        for space in spaces:
+            space_path = client.absolute_path(space)
+            try:
+                client.rm(path=space_path, recursive=True)
+            except FileNotFoundError:
+                pass
+            except OSError as e:
+                # ignore EACCES errors during cleaning
+                if e.errno == errno.EACCES:
+                    pass
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("Error during cleaning up spaces: {}".format(e))
+        raise e
+
+
+@wt(parsers.re('(?P<user>\w+) purges all spaces on (?P<client_node>.*)'))
+def purge_all_user_spaces(user, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    purge_all_spaces(client)
+
+
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on '
                '(?P<client_node>.*)'))
 def delete_non_empty(user, dirs, client_node, users):
@@ -96,7 +128,7 @@ def delete_non_empty(user, dirs, client_node, users):
         path = client.absolute_path(dir)
 
         def condition():
-            rm(client, path, recursive=True, force=True)
+            client.rm(path, recursive=True, force=True)
 
         assert_(client.perform, condition)
 
@@ -112,7 +144,7 @@ def delete_parents(user, paths, client_node, users):
         dir_path = client.absolute_path(path)
 
         def condition():
-            rmdir(client, dir_path, recursive=True)
+            client.rmdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -125,7 +157,7 @@ def list_dirs_base(user, dir, client_node, users, should_fail=False):
 
     def condition():
         try:
-            content = ls(client, path=path)
+            content = client.ls(path=path)
             path_content.extend(content)
         except OSError as ex:
             if ex.errno == errno.EPERM:
@@ -158,7 +190,7 @@ def copy_dir(user, dir1, dir2, client_node, users):
     dest_path = client.absolute_path(dir2)
 
     def condition():
-        cp(client, src_path, dest_path, recursive=True)
+        client.cp(src_path, dest_path, recursive=True)
 
     assert_(client.perform, condition)
 

@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import json
 from datetime import datetime
 from functools import partial
 
@@ -14,15 +13,14 @@ import pytest
 import yaml
 
 from tests.gui.utils.generic import parse_seq
-from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
-from tests.mixed.cdmi_client.rest import ApiException as CdmiException
-from tests.mixed.oneprovider_client import BasicFileOperationsApi
-from tests.mixed.oneprovider_client import FilePathResolutionApi
-from tests.mixed.oneprovider_client.api_client import ApiException
-from tests.mixed.oneprovider_client.rest import ApiException as OPException
+from cdmi_client import ContainerApi, DataObjectApi
+from cdmi_client.rest import ApiException as CdmiException
+from oneprovider_client import BasicFileOperationsApi
+from oneprovider_client import FilePathResolutionApi
+from oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
-from tests.mixed.utils.data import (
-    check_files_tree, create_content, assert_ace, get_acl_metadata)
+from tests.mixed.utils.data import (check_files_tree, create_content,
+                                    assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
 
@@ -122,20 +120,50 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
         do_api.delete_data_object(path)
 
 
+def remove_file_using_token_in_op_rest(user, users, host, hosts, path, result,
+                                       tmp_memory):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_cdmi(user, users, hosts[host]['hostname'],
+                           access_token=access_token)
+    do_api = DataObjectApi(client)
+    if result == 'fails':
+        with pytest.raises(CdmiException,
+                           message='Removing file did not fail'):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
+
+
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(client)
     for path in parse_seq(path_list):
         path = '{}/{}'.format(space, path)
+        check_if_item_exists_or_not_exists(result, path, client, file_api)
 
-        if result == 'fails':
-            with pytest.raises(OPException, 
-                               message='There is item {}'.format(path)):
-                file_id = _lookup_file_id(path, client)
-                file_api.list_children(file_id)
-        else:
-            file_id = _lookup_file_id(path, client)
-            file_api.list_children(file_id)
+
+def see_item_in_op_rest_using_token(user, name, space, host,
+                                    tmp_memory, users, hosts, result):
+    path = f'{space}/{name}'
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_provider(user, users, hosts[host]['hostname'],
+                               access_token=access_token)
+    file_api = BasicFileOperationsApi(client)
+    check_if_item_exists_or_not_exists(result, path, client, file_api)
+
+
+def check_if_item_id_in_items(path, client, file_api):
+    file_id = _lookup_file_id(path, client)
+    file_api.list_children(file_id)
+
+
+def check_if_item_exists_or_not_exists(result, path, client, file_api):
+    if result == 'fails':
+        with pytest.raises(OPException,
+                           message=f'There is item {path}'):
+            check_if_item_id_in_items(path, client, file_api)
+    else:
+        check_if_item_id_in_items(path, client, file_api)
 
 
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 
@@ -178,72 +206,6 @@ def grant_acl_privileges_in_op_rest(user, users, host, hosts, cdmi, path, priv,
     client.write_metadata(path, {'cdmi_acl': acl})
 
 
-def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, 
-                               val):
-    client = cdmi(hosts[host]['hostname'], users[user].token)
-    metadata = client.read_metadata(path)['metadata']
-    if tab_name.lower() == 'basic':
-        (attr, val) = val.split('=')
-        assert attr in metadata, f'{path} has no {attr} {tab_name} metadata'
-        assert val == metadata[attr], (f'{path} has no {attr} = {val} '
-                                       f'{tab_name}')
-    else:        
-        metadata = metadata[f'onedata_{tab_name.lower()}']
-        if 'onedata_base64' in metadata:
-            import base64
-            metadata = metadata['onedata_base64']
-            metadata = base64.b64decode(metadata.encode('ascii')).decode(
-                'ascii')
-
-        if tab_name.lower() == 'json':
-            assert val == json.dumps(metadata), (f'{path} has no {val} {tab_name} '
-                                                 f'metadata but "{metadata}"')
-        else:
-            assert val == metadata, (f'{path} has no {val} {tab_name} '
-                                     f'metadata but "{metadata}"')
-
-
-def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, 
-                            val):
-    client = cdmi(hosts[host]['hostname'], users[user].token)
-    if tab_name == 'basic':
-        (attr, val) = val.split('=')
-    else:
-        attr = 'onedata_{}'.format(tab_name.lower())
-        if tab_name.lower() == 'json':
-            val = json.loads(val)
-    client.write_metadata(path, {attr: val})
-    
-
-def remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, path):
-    client = cdmi(hosts[host]['hostname'], users[user].token)
-    client.write_metadata(path, {})
-
-
-def assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, path, 
-                                       tab_name, val):
-    client = cdmi(hosts[host]['hostname'], users[user].token)
-    metadata = client.read_metadata(path)['metadata']
-    if tab_name == 'basic':
-        attr, val = val.split('=')
-    else:
-        attr = 'onedata_{}'.format(tab_name.lower())
-    try:
-        metadata = metadata[attr]
-    except KeyError:
-        pass
-    else:
-        if tab_name.lower() == 'json':
-            val = json.loads(val)
-            for key in val:
-                assert (key not in metadata or
-                        metadata[key] != val[key]), ('There is {} {} metadata'
-                                                     .format(val, tab_name))
-        else:
-            assert val != metadata, 'There is {} {} metadata'.format(val, 
-                                                                     tab_name)
-
-
 def write_to_file_in_op_rest(user, users, host, hosts, cdmi, path,
                              text, offset=0):
     client = cdmi(hosts[host]['hostname'], users[user].token)
@@ -265,6 +227,17 @@ def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path,
 def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user,
                          users):
     client = cdmi(hosts[host]['hostname'], users[user].token)
+    if result == 'fails':
+        with pytest.raises(HTTPError):
+            client.move_item(src_path, dst_path)
+    else:
+        client.move_item(src_path, dst_path)
+
+
+def move_item_in_op_rest_using_token(src_path, dst_path, result, host, hosts,
+                                     user, users, tmp_memory, cdmi):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = cdmi(hosts[host]['hostname'], access_token)
     if result == 'fails':
         with pytest.raises(HTTPError):
             client.move_item(src_path, dst_path)
@@ -302,35 +275,49 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
     file_id = _lookup_file_id(path, user_client_op)
 
     if result == 'fails':
-        with pytest.raises(ApiException):
+        with pytest.raises(OPException):
             file_api.set_attr(file_id, attribute={'mode': perm})
     else:
         file_api.set_attr(file_id, attribute={'mode': perm})
 
 
-def assert_files_time_relation_in_op_rest(path, path2, time1_name, time2_name,
-                                          comparator, host, hosts, user,
-                                          users, cdmi):
+def get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                 time_name):
     client = cdmi(hosts[host]['hostname'], users[user].token)
-    metadata1 = client.read_metadata(path)['metadata']
-    metadata2 = client.read_metadata(path2)['metadata']
-    attr1 = time_attr(time1_name, 'cdmi')
-    attr2 = time_attr(time2_name, 'cdmi')
+    metadata = client.read_metadata(path)['metadata']
+    attr = time_attr(time_name, 'cdmi')
     date_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
     try:
-        time1 = datetime.strptime(metadata1[attr1], date_fmt)
-        time2 = datetime.strptime(metadata2[attr2], date_fmt)
+        time = datetime.strptime(metadata[attr], date_fmt)
     except KeyError as ex:
-        assert False, 'File {} has no {} metadata'.format(path, ex.args[0])
+        raise Exception(f'File {path} has no {ex.args[0]} metadata')
 
-    assert compare(time1, time2, comparator), ('Time comparison failed. \n'
-                                               'Time1: {} = {} \n'
-                                               'Time2: {} = {} \n'
-                                               'Comparator: {}'
-                                               .format(time1_name, time1,
-                                                       time2_name, time2,
-                                                       comparator))
+    return time
+
+
+def compare_file_time_with_copied_time_in_op_rest(path, user, users, cdmi, host,
+                                                  hosts, time_name1, time2,
+                                                  comparator, time_name2):
+    time1 = get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                         time_name1)
+    err_msg = (f'Time comparison failed. \nTime1: {time_name1} = {time1} \n'
+               f'Time2: {time_name2} = {time2} \nComparator: {comparator}')
+    assert compare(time1, time2, comparator), err_msg
+
+
+def assert_files_time_relation_in_op_rest(path, path2, time1_name, time2_name,
+                                          comparator, host, hosts, user,
+                                          users, cdmi):
+    time1 = get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                         time1_name)
+    time2 = get_time_for_file_in_op_rest(path2, user, users, cdmi, host, hosts,
+                                         time2_name)
+
+    err_msg = (f'Time comparison failed. \nTime1: {time1_name} = {time1} \n'
+               f'Time2: {time2_name} = {time2} \nComparator: {comparator}')
+
+    assert compare(time1, time2, comparator), err_msg
 
 
 def assert_time_relation_in_op_rest(path, time1_name, time2_name,

@@ -60,6 +60,13 @@ class MembersItemRow(PageObject):
     def has_status_label(self, name):
         return any(x.text == name for x in self.status_labels)
 
+    def is_opened(self):
+        return 'active' in self.web_elem.get_attribute('class')
+
+
+class MembersUsersItemRow(MembersItemRow):
+    name = id = Label('.record-name-general')
+
 
 class MembersList(PageObject):
     header = WebItem('li.list-header-row', cls=MembersHeaderRow)
@@ -68,8 +75,13 @@ class MembersList(PageObject):
     generate_token = NamedButton('a', text='generate an invitation token')
 
 
+class MembersUserList(MembersList):
+    items = WebItemsSequence('.one-collapsible-list-item',
+                             cls=MembersUsersItemRow)
+
+
 class MembershipElement(PageObject):
-    name = id = Label('.record-name')
+    name = id = Label('.record-name-general')
 
 
 class MembershipRelation(PageObject):
@@ -98,9 +110,8 @@ class InvitationTokenArea(PageObject):
 
 class MembersPage(PageObject):
     groups = WebItem('.group-list', cls=MembersList)
-    users = WebItem('.user-list', cls=MembersList)
+    users = WebItem('.user-list', cls=MembersUserList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
-    show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')
     memberships_button = NamedButton('.mode-selector button', text='Memberships')
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
@@ -108,3 +119,10 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement('.alert.forbidden')
     bulk_edit_button = NamedButton('.btn', text='Bulk edit')
+
+    def close_member(self, driver):
+        driver.execute_script("window.scrollBy(0,0)")
+        driver.find_element_by_css_selector('.member-item '
+                                            '.one-collapsible-list-item-header'
+                                            '.opened').click()
+

@@ -16,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Label, WebItemsSequence, WebItem,
-                                               Button)
+                                               Button, Input)
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
@@ -27,9 +27,9 @@ class _FileBrowser(PageObject):
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
     upload_files_button = Button('.toolbar-buttons .browser-upload')
     refresh_button = Button('.toolbar-buttons .file-action-refresh')
-    hardlink_button = Button('.toolbar-buttons .oneicon-text-link')
-    symlink_button = Button('.toolbar-buttons .oneicon-shortcut')
-    selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
+    place_hard_link_button = Button('.toolbar-buttons .oneicon-text-link')
+    place_symbolic_link_button = Button('.toolbar-buttons .oneicon-shortcut')
+    selection_menu_button = Button('.one-pill-button-actions-trigger')
     paste_button = Button('.toolbar-buttons .oneicon-browser-paste')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
@@ -38,9 +38,12 @@ class _FileBrowser(PageObject):
     browser_msg_header = Label('.content-info-content-container h1')
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
-    _bottom = WebElement('.table-bottom-spacing')
+    _bottom_of_visible_fragment = WebElement('.table-bottom-spacing')
+    error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
+    header = WebElement('.file-browser-head-container')
+    jump_input = Input('.jump-input')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
@@ -53,9 +56,10 @@ class _FileBrowser(PageObject):
         else:
             return True
 
-    def scroll_to_bottom(self):
+    def scroll_visible_fragment(self):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
-                                   self.web_elem, self._bottom)
+                                   self.web_elem,
+                                   self._bottom_of_visible_fragment)
 
     def names_of_visible_elems(self):
         files = self._data
@@ -65,10 +69,10 @@ class _FileBrowser(PageObject):
     @contextmanager
     def select_files(self):
         from platform import system as get_system
-        
+
         ctrl_or_cmd_key = \
             Keys.COMMAND if get_system() == 'Darwin' else Keys.LEFT_CONTROL
-        
+
         action = ActionChains(self.driver)
 
         action.shift_down = lambda: action.key_down(Keys.LEFT_SHIFT)
@@ -88,6 +92,10 @@ class _FileBrowser(PageObject):
         """
         with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
             elem.send_keys(files)
+
+    def click_on_background(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.header, 0, 0).click().perform()
 
 
 FileBrowser = partial(WebItem, cls=_FileBrowser)

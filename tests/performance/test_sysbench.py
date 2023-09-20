@@ -6,18 +6,11 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.utils.docker_utils import run_cmd
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import generate_configs, performance
-from tests.utils.client_utils import rm, mkdtemp, mount_client, CLIENT_CONF
 
 REPEATS = 1
 SUCCESS_RATE = 100
-
-DIRECT_IO_CLIENT_CONF = CLIENT_CONF('user1', '/home/user1/onedata', 
-                                    'oneclient-1', 'client11', 'token')
-PROXY_IO_CLIENT_CONF = CLIENT_CONF('user2', '/home/user2/onedata', 
-                                   'oneclient-2', 'client21', 'token')
 
 
 class TestSysbench(AbstractPerformanceTest):
@@ -84,13 +77,12 @@ class TestSysbench(AbstractPerformanceTest):
            'Threads number: {threads} '
            'Total Size: {total_size} '
            'Mode: {mode}'))
-    def test_sysbench(self, request, hosts, users, clients, env_desc, params):
-        user_proxy = PROXY_IO_CLIENT_CONF.user
-        user_directio = DIRECT_IO_CLIENT_CONF.user
-        client_directio = mount_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
-                                       request, users, env_desc)
-        client_proxy = mount_client(PROXY_IO_CLIENT_CONF, clients, hosts,
-                                    request, users, env_desc)
+    def test_sysbench(self, hosts, users, env_desc, params):
+        user_directio = 'user1'
+        user_proxy = 'user2'
+        client_directio = users[user_directio].mount_client(
+            'oneclient-1', 'client11', hosts, env_desc)
+        client_proxy = users[user_proxy].mount_client('oneclient-2', 'client21', hosts, env_desc)
 
         threads = params['threads']['value']
         files_number = params['files_number']['value']
@@ -102,11 +94,9 @@ class TestSysbench(AbstractPerformanceTest):
         time = params['time']['value']
         file_block_size = params['file_block_size']['value']
 
-        dir_path_directio = mkdtemp(client_directio,
-                                    dir=client_directio.absolute_path('space1'))
+        dir_path_directio = client_directio.mkdtemp(dir=client_directio.absolute_path('space1'))
 
-        dir_path_proxy = mkdtemp(client_proxy,
-                                 dir=client_proxy.absolute_path('space1'))
+        dir_path_proxy = client_proxy.mkdtemp(dir=client_proxy.absolute_path('space1'))
 
 
         print('\n################################## DIRECT-IO client (%s) ##################################\n'%(mode))
@@ -123,10 +113,8 @@ class TestSysbench(AbstractPerformanceTest):
                               events, report_interval, time,
                               file_block_size, dir_path_proxy)
 
-
-
-        rm(client_directio, dir_path_directio, recursive=True, force=True)
-        rm(client_proxy, dir_path_proxy, recursive=True, force=True)
+        client_directio.rm(dir_path_directio, recursive=True, force=True)
+        client_proxy.rm(dir_path_proxy, recursive=True, force=True)
 
 
 ################################################################################
@@ -187,7 +175,8 @@ def sysbench(threads, total_size, file_number, mode, validate,
     cmd = sysbench_command(threads, total_size, file_number, mode,
                            validate, events, report_interval, time,
                            file_block_size, type, dir)
-    return run_cmd(user, client.docker_id, [cmd], output=output)
+
+    return client.run_cmd(cmd, output=output)
 
 
 def sysbench_command(threads, total_size, file_number, mode, validate,

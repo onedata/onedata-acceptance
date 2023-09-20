@@ -8,7 +8,7 @@ Feature: LUMA local feed acceptance tests with imported storage
     And there are no spaces of user1 in "onezone" Onezone service
     And there is "luma_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
           LUMA feed: local
           imported storage: true
     And there is following users configuration in storage's mount point:
@@ -39,8 +39,7 @@ Feature: LUMA local feed acceptance tests with imported storage
             upload_file.txt:
               size: 1 MiB
     And oneclients [client1, client2]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-1] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-1] respectively,
       using [token, token] by [user1, user2]
     And opened browsers with [user1, user2] signed in to [onezone, onezone] service
 
@@ -65,12 +64,12 @@ Feature: LUMA local feed acceptance tests with imported storage
     And using web GUI, user1 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
     And using web GUI, user1 uploads local file "upload_file.txt" to "space1"
 
-    Then using web GUI, user1 sees that user1 is owner of "file_user1.txt"
+    Then using web GUI, user1 sees that "user1 (user1)" is owner of "file_user1.txt"
 
     And using web GUI, user2 succeeds to see item named "file_user1.txt" in "space1" in oneprovider-1
     And using web GUI, user2 succeeds to see item named "file_user2.txt" in "space1" in oneprovider-1
     And using web GUI, user2 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
-    And using web GUI, user2 sees that user2 is owner of "file_user2.txt"
+    And using web GUI, user2 sees that "user2 (user2)" is owner of "file_user2.txt"
 
     And using oneclient1, user1 sees that owner's UID and GID for "file_user1.txt" in space "space1" are equal to 7001 and 3013 respectively
     And using oneclient1, user1 sees that owner's UID and GID for "file_user2.txt" in space "space1" are equal to 7002 and 3013 respectively

@@ -55,7 +55,7 @@ class SpaceSupportForm(PageObject):
     storage_import_configuration = WebItem('.import-configuration-section',
                                            cls=StorageImportConfiguration)
 
-    support_space = Button('.btn.ready')
+    support_space = Button('.btn-primary')
 
 
 class SpaceInfo(PageObject):
@@ -153,6 +153,7 @@ class SelectiveCleaningRecord(PageObject):
     dropdown_button = Button('.ember-power-select-trigger')
     dropdown = WebItemsSequence('li.ember-power-select-option',
                                 cls=ButtonWithTextPageObject)
+    value_limit = Label('.ember-power-select-selected-item')
 
 
 class AutoCleaning(PageObject):

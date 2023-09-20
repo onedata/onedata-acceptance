@@ -1,0 +1,300 @@
+{
+  "summary": "",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "c115d4f269333804452fafeb8c53f912chd5ac": {
+        "3": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 3,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 100,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "calculate-checksum-mounted",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "c8008fc466e6f99a9182912c29baa34f",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "c115d4f269333804452fafeb8c53f912chd5ac"
+        }
+      }
+    },
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
+        {
+          "type": "treeForest",
+          "requiresInitialContent": true,
+          "name": "input-files",
+          "id": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {
+                "fileType": "ANY"
+              },
+              "type": "file"
+            }
+          }
+        },
+        {
+          "type": "list",
+          "requiresInitialContent": false,
+          "name": "output-store",
+          "id": "d3db29a555cd445cde95225c7548288e62a484",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {},
+              "type": "object"
+            }
+          }
+        }
+      ],
+      "state": "draft",
+      "lanes": [
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "md5",
+                  "lambdaRevisionNumber": 3,
+                  "lambdaId": "c115d4f269333804452fafeb8c53f912chd5ac",
+                  "lambdaConfig": {
+                    "metadataKey": "md5_key",
+                    "algorithm": "md5"
+                  },
+                  "id": "06f031a7ebfac01dd9c4682dd98a0eaab47363",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                },
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha256",
+                  "lambdaRevisionNumber": 3,
+                  "lambdaId": "c115d4f269333804452fafeb8c53f912chd5ac",
+                  "lambdaConfig": {
+                    "metadataKey": "sha256_key",
+                    "algorithm": "sha256"
+                  },
+                  "id": "a1668c76befac8e5e076593c7111f8c24ad31b",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "19e8befbd8728df10467361a88756e925e23da"
+            },
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "adler32",
+                  "lambdaRevisionNumber": 3,
+                  "lambdaId": "c115d4f269333804452fafeb8c53f912chd5ac",
+                  "lambdaConfig": {
+                    "metadataKey": "adler32_key",
+                    "algorithm": "adler32"
+                  },
+                  "id": "32c8db074af0de232ba661aa33edb7ab6c4767",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "9793a79ede4d279427d3e06dc93f3dece990b8"
+            }
+          ],
+          "name": "lane1",
+          "maxRetries": 0,
+          "id": "9135929d48d34b10ca1642bcac26392dfa865e",
+          "dashboardSpec": null
+        },
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha512",
+                  "lambdaRevisionNumber": 3,
+                  "lambdaId": "c115d4f269333804452fafeb8c53f912chd5ac",
+                  "lambdaConfig": {
+                    "metadataKey": "sha512_key",
+                    "algorithm": "sha512"
+                  },
+                  "id": "0f7d1cd95e5ec2707dbb282fc01568f0a7ed0e",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "4912a1827e74f0c11047ec90933930370d0e4e"
+            }
+          ],
+          "name": "lane2",
+          "maxRetries": 0,
+          "id": "c369e6b1efa38f3d0ac4c0d07837c2aa20cc97",
+          "dashboardSpec": null
+        }
+      ],
+      "description": "",
+      "dashboardSpec": null
+    }
+  },
+  "originalAtmWorkflowSchemaId": "9b6f83c4bc281078b45aa88d64b0bb81cha626",
+  "name": "counting-different-checksums"
+}

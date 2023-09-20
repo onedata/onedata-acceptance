@@ -6,12 +6,12 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.utils.docker_utils import pull_docker_image_with_retries
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.path_utils import get_default_image_for_service
+from bamboos.docker.images_branch_config import resolve_image
+from bamboos.docker.environment.docker import pull_image_with_retries
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
-from tests.utils.client_utils import fusermount, mount_client
+from tests.conftest import export_logs
 
 
 class UpgradeTest:
@@ -39,9 +39,12 @@ class UpgradeTestsController:
     def add_test(self, name, setup, verify):
         self.__tests_list.append(UpgradeTest(name, setup, verify))
 
-    def mount_client(self, client_conf):
-        return mount_client(client_conf, self.clients, self.hosts,
-                            self.request, self.users, self.env_desc, clean_mountpoint=False)
+    def mount_client(self, username, client_host_alias, client_instance):
+        client = self.users[username].mount_client(
+            client_host_alias, client_instance, self.hosts, self.env_desc, opts=[])
+        if client:
+            return client
+        raise RuntimeError("Error when mounting oneclient")
 
     def run_tests(self):
         admin_user = self.users['admin']
@@ -59,16 +62,17 @@ class UpgradeTestsController:
     def __run_setup(self, test):
         test.run_setup(self)
         self.__unmount_clients()
+        export_logs(self.request, self.env_description_abs_path, 'before_upgrade')
 
     def __run_verify(self, test):
         test.run_verify(self)
         self.__unmount_clients()
 
     def __unmount_clients(self):
-        for client in self.clients.keys():
-            fusermount(self.clients[client], self.clients[client].mount_path,
-                       unmount=True, lazy=True)
-        self.clients.clear()
+        for user in self.users.values():
+            for client in user.clients.values():
+                client.unmount()
+            user.clients.clear()
 
 
 def upgrade_service(service_name, admin_user, hosts, version):
@@ -96,16 +100,16 @@ def run_upgrade_command(pod_name, service, version):
 
 def prepare_image_upgrade_command(service, version):
     if version == 'default':
-        image = get_default_image_for_service(service)
+        image = resolve_image(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
-    pull_docker_image_with_retries(image)
+    pull_image_with_retries(image)
     return ['-i', image]
 
 
 def prepare_sources_upgrade_command(service, version):
     image = "docker.onedata.org/{}-dev:{}".format(service, version['sources']['baseImage'])
-    pull_docker_image_with_retries(image)
+    pull_image_with_retries(image)
     components = []
     for component in version['sources']['components']:
         components.append('--{}'.format(component))

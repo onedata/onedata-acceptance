@@ -1,0 +1,1109 @@
+{
+  "summary": "",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "cd4777b5e861d8fe3035df5efb2d08bbchdffe": {
+        "6": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 6,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                },
+                {
+                  "relayMethod": "filePipe",
+                  "name": "stats",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "specs": [
+                        {
+                          "unit": "none",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "filesProcessed"
+                        },
+                        {
+                          "unit": "bytes",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "bytesProcessed"
+                        }
+                      ]
+                    },
+                    "type": "timeSeriesMeasurement"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "calculate-checksum-mounted",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "7da00b77933825c06db45b7b8dc9fbd7",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "cd4777b5e861d8fe3035df5efb2d08bbchdffe"
+        },
+        "7": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 7,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "calculate-checksum-mounted-no-stats",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "a112226008af1863aa6bfba129188175",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "cd4777b5e861d8fe3035df5efb2d08bbchdffe"
+        }
+      },
+      "3faea3010f3d2193602b756ec11f6aaachd836": {
+        "5": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 5,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                },
+                {
+                  "relayMethod": "filePipe",
+                  "name": "stats",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "specs": [
+                        {
+                          "unit": "none",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "filesProcessed"
+                        },
+                        {
+                          "unit": "bytes",
+                          "nameMatcherType": "exact",
+                          "nameMatcher": "bytesProcessed"
+                        }
+                      ]
+                    },
+                    "type": "timeSeriesMeasurement"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": false
+                }
+              },
+              "name": "calculate-checksum-rest",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "c5d24977229154badb2821ff12f2ac48",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "3faea3010f3d2193602b756ec11f6aaachd836"
+        },
+        "7": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 7,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 10,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": false
+                }
+              },
+              "name": "calculate-checksum-rest-no-stats",
+              "description": "",
+              "configParameterSpecs": [
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": [
+                        "adler32",
+                        "blake2b",
+                        "blake2s",
+                        "md5",
+                        "sha1",
+                        "sha224",
+                        "sha256",
+                        "sha384",
+                        "sha512",
+                        "sha3_224",
+                        "sha3_256",
+                        "sha3_384",
+                        "sha3_512",
+                        "shake_128",
+                        "shake_256"
+                      ]
+                    },
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "metadataKey",
+                  "isOptional": false,
+                  "defaultValue": "",
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "allowedValues": null
+                    },
+                    "type": "string"
+                  }
+                }
+              ],
+              "checksum": "5e875c389af8bde49bd199fbde336d51",
+              "argumentSpecs": [
+                {
+                  "name": "file",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "3faea3010f3d2193602b756ec11f6aaachd836"
+        }
+      }
+    },
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
+        {
+          "type": "treeForest",
+          "requiresInitialContent": true,
+          "name": "input-files",
+          "id": "eeafaff297c9f926f1e22b387e40b5c9d74082",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {
+                "fileType": "ANY"
+              },
+              "type": "file"
+            }
+          }
+        },
+        {
+          "type": "list",
+          "requiresInitialContent": false,
+          "name": "results",
+          "id": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {},
+              "type": "object"
+            }
+          }
+        }
+      ],
+      "state": "draft",
+      "lanes": [
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "eeafaff297c9f926f1e22b387e40b5c9d74082",
+            "maxBatchSize": 4
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": {
+                    "timeSeriesCollectionSchema": {
+                      "timeSeriesSchemas": [
+                        {
+                          "unit": "bytesPerSec",
+                          "nameGeneratorType": "exact",
+                          "nameGenerator": "bytesProcessed",
+                          "metrics": {
+                            "sum5s": {
+                              "retention": 1440,
+                              "resolution": 5,
+                              "aggregator": "sum"
+                            },
+                            "sum1m": {
+                              "retention": 1440,
+                              "resolution": 60,
+                              "aggregator": "sum"
+                            },
+                            "sum1h": {
+                              "retention": 1440,
+                              "resolution": 3600,
+                              "aggregator": "sum"
+                            }
+                          }
+                        },
+                        {
+                          "unit": "countsPerSec",
+                          "nameGeneratorType": "exact",
+                          "nameGenerator": "filesProcessed",
+                          "metrics": {
+                            "sum5s": {
+                              "retention": 1440,
+                              "resolution": 5,
+                              "aggregator": "sum"
+                            },
+                            "sum1m": {
+                              "retention": 1440,
+                              "resolution": 60,
+                              "aggregator": "sum"
+                            },
+                            "sum1h": {
+                              "retention": 1440,
+                              "resolution": 3600,
+                              "aggregator": "sum"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "dashboardSpec": {
+                      "rootSection": {
+                        "title": {
+                          "tip": "",
+                          "content": "Task statistics"
+                        },
+                        "sections": [],
+                        "isExpandedByDefault": false,
+                        "description": "",
+                        "charts": [
+                          {
+                            "yAxes": [
+                              {
+                                "valueProvider": {
+                                  "functionName": "currentValue",
+                                  "functionArguments": {}
+                                },
+                                "unitOptions": null,
+                                "unitName": "bytesPerSec",
+                                "name": "Bytes per sec.",
+                                "minInterval": 1,
+                                "id": "bytesAxis"
+                              },
+                              {
+                                "valueProvider": {
+                                  "functionName": "currentValue",
+                                  "functionArguments": {}
+                                },
+                                "unitOptions": {
+                                  "customName": "files/s"
+                                },
+                                "unitName": "custom",
+                                "name": "Files per sec.",
+                                "minInterval": 1,
+                                "id": "filesAxis"
+                              }
+                            ],
+                            "title": {
+                              "tip": "",
+                              "content": "Processing stats"
+                            },
+                            "seriesGroupBuilders": [],
+                            "seriesBuilders": [
+                              {
+                                "builderType": "static",
+                                "builderRecipe": {
+                                  "seriesTemplate": {
+                                    "yAxisId": "bytesAxis",
+                                    "type": "line",
+                                    "name": "Bytes processed",
+                                    "id": "series1",
+                                    "groupId": null,
+                                    "dataProvider": {
+                                      "functionName": "rate",
+                                      "functionArguments": {
+                                        "timeSpanProvider": null,
+                                        "inputDataProvider": {
+                                          "functionName": "loadSeries",
+                                          "functionArguments": {
+                                            "sourceType": "external",
+                                            "sourceSpecProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "externalSourceParameters": {
+                                                    "timeSeriesNameGenerator": "bytesProcessed",
+                                                    "timeSeriesName": "bytesProcessed",
+                                                    "metricNames": [
+                                                      "sum5s",
+                                                      "sum1m",
+                                                      "sum1h"
+                                                    ]
+                                                  },
+                                                  "externalSourceName": "store"
+                                                }
+                                              }
+                                            },
+                                            "replaceEmptyParametersProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "fallbackValueProvider": {
+                                                    "functionName": "literal",
+                                                    "functionArguments": {
+                                                      "data": 0
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "color": null
+                                  }
+                                }
+                              },
+                              {
+                                "builderType": "static",
+                                "builderRecipe": {
+                                  "seriesTemplate": {
+                                    "yAxisId": "filesAxis",
+                                    "type": "bar",
+                                    "name": "Files processed",
+                                    "id": "series2",
+                                    "groupId": null,
+                                    "dataProvider": {
+                                      "functionName": "rate",
+                                      "functionArguments": {
+                                        "timeSpanProvider": null,
+                                        "inputDataProvider": {
+                                          "functionName": "loadSeries",
+                                          "functionArguments": {
+                                            "sourceType": "external",
+                                            "sourceSpecProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "externalSourceParameters": {
+                                                    "timeSeriesNameGenerator": "filesProcessed",
+                                                    "timeSeriesName": "filesProcessed",
+                                                    "metricNames": [
+                                                      "sum5s",
+                                                      "sum1m",
+                                                      "sum1h"
+                                                    ]
+                                                  },
+                                                  "externalSourceName": "store"
+                                                }
+                                              }
+                                            },
+                                            "replaceEmptyParametersProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "fallbackValueProvider": {
+                                                    "functionName": "literal",
+                                                    "functionArguments": {
+                                                      "data": 0
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "color": null
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "chartNavigation": "independent"
+                      }
+                    }
+                  },
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    },
+                    {
+                      "storeSchemaId": "CURRENT_TASK_TIME_SERIES",
+                      "storeContentUpdateOptions": {
+                        "type": "timeSeriesStoreContentUpdateOptions",
+                        "dispatchRules": [
+                          {
+                            "targetTimeSeriesNameGenerator": "bytesProcessed",
+                            "prefixCombiner": "overwrite",
+                            "measurementTimeSeriesNameMatcherType": "exact",
+                            "measurementTimeSeriesNameMatcher": "bytesProcessed"
+                          },
+                          {
+                            "targetTimeSeriesNameGenerator": "filesProcessed",
+                            "prefixCombiner": "overwrite",
+                            "measurementTimeSeriesNameMatcherType": "exact",
+                            "measurementTimeSeriesNameMatcher": "filesProcessed"
+                          }
+                        ]
+                      },
+                      "resultName": "stats"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "md5",
+                  "lambdaRevisionNumber": 5,
+                  "lambdaId": "3faea3010f3d2193602b756ec11f6aaachd836",
+                  "lambdaConfig": {
+                    "metadataKey": "md5_checksum",
+                    "algorithm": "md5"
+                  },
+                  "id": "829206b6161f3ad1865841d025a451c436c788",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                },
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha256",
+                  "lambdaRevisionNumber": 7,
+                  "lambdaId": "3faea3010f3d2193602b756ec11f6aaachd836",
+                  "lambdaConfig": {
+                    "metadataKey": "sha256_checksum",
+                    "algorithm": "sha256"
+                  },
+                  "id": "b94126f2d8fc444bd864ceb4dcec98502278f9",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "7e652779f4c8f234f53b4840273463cbd0d4fd"
+            },
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "adler32",
+                  "lambdaRevisionNumber": 7,
+                  "lambdaId": "cd4777b5e861d8fe3035df5efb2d08bbchdffe",
+                  "lambdaConfig": {
+                    "metadataKey": "adler32",
+                    "algorithm": "adler32"
+                  },
+                  "id": "ab2ec39ee78afa8a621baba9d7702cd78a0399",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "a74805e5b1de4e0d1c1374b67e3576267a42f2"
+            }
+          ],
+          "name": "calculate-checksums",
+          "maxRetries": 1,
+          "id": "9abc8d71701a8434ff60a22c740ca71d0a3f5b",
+          "dashboardSpec": null
+        },
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "eeafaff297c9f926f1e22b387e40b5c9d74082",
+            "maxBatchSize": 4
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": {
+                    "timeSeriesCollectionSchema": {
+                      "timeSeriesSchemas": [
+                        {
+                          "unit": "bytesPerSec",
+                          "nameGeneratorType": "exact",
+                          "nameGenerator": "bytesProcessed",
+                          "metrics": {
+                            "sum5s": {
+                              "retention": 1440,
+                              "resolution": 5,
+                              "aggregator": "sum"
+                            },
+                            "sum1m": {
+                              "retention": 1440,
+                              "resolution": 60,
+                              "aggregator": "sum"
+                            },
+                            "sum1h": {
+                              "retention": 1440,
+                              "resolution": 3600,
+                              "aggregator": "sum"
+                            }
+                          }
+                        },
+                        {
+                          "unit": "countsPerSec",
+                          "nameGeneratorType": "exact",
+                          "nameGenerator": "filesProcessed",
+                          "metrics": {
+                            "sum5s": {
+                              "retention": 1440,
+                              "resolution": 5,
+                              "aggregator": "sum"
+                            },
+                            "sum1m": {
+                              "retention": 1440,
+                              "resolution": 60,
+                              "aggregator": "sum"
+                            },
+                            "sum1h": {
+                              "retention": 1440,
+                              "resolution": 3600,
+                              "aggregator": "sum"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "dashboardSpec": {
+                      "rootSection": {
+                        "title": {
+                          "tip": "",
+                          "content": "Task statistics"
+                        },
+                        "sections": [],
+                        "isExpandedByDefault": false,
+                        "description": "",
+                        "charts": [
+                          {
+                            "yAxes": [
+                              {
+                                "valueProvider": {
+                                  "functionName": "currentValue",
+                                  "functionArguments": {}
+                                },
+                                "unitOptions": null,
+                                "unitName": "bytesPerSec",
+                                "name": "Bytes per sec.",
+                                "minInterval": 1,
+                                "id": "bytesAxis"
+                              },
+                              {
+                                "valueProvider": {
+                                  "functionName": "currentValue",
+                                  "functionArguments": {}
+                                },
+                                "unitOptions": {
+                                  "customName": "files/s"
+                                },
+                                "unitName": "custom",
+                                "name": "Files per sec.",
+                                "minInterval": 1,
+                                "id": "filesAxis"
+                              }
+                            ],
+                            "title": {
+                              "tip": "",
+                              "content": "Processing stats"
+                            },
+                            "seriesGroupBuilders": [],
+                            "seriesBuilders": [
+                              {
+                                "builderType": "static",
+                                "builderRecipe": {
+                                  "seriesTemplate": {
+                                    "yAxisId": "bytesAxis",
+                                    "type": "line",
+                                    "name": "Bytes processed",
+                                    "id": "series1",
+                                    "groupId": null,
+                                    "dataProvider": {
+                                      "functionName": "rate",
+                                      "functionArguments": {
+                                        "timeSpanProvider": null,
+                                        "inputDataProvider": {
+                                          "functionName": "loadSeries",
+                                          "functionArguments": {
+                                            "sourceType": "external",
+                                            "sourceSpecProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "externalSourceParameters": {
+                                                    "timeSeriesNameGenerator": "bytesProcessed",
+                                                    "timeSeriesName": "bytesProcessed",
+                                                    "metricNames": [
+                                                      "sum5s",
+                                                      "sum1m",
+                                                      "sum1h"
+                                                    ]
+                                                  },
+                                                  "externalSourceName": "store"
+                                                }
+                                              }
+                                            },
+                                            "replaceEmptyParametersProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "fallbackValueProvider": {
+                                                    "functionName": "literal",
+                                                    "functionArguments": {
+                                                      "data": 0
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "color": null
+                                  }
+                                }
+                              },
+                              {
+                                "builderType": "static",
+                                "builderRecipe": {
+                                  "seriesTemplate": {
+                                    "yAxisId": "filesAxis",
+                                    "type": "bar",
+                                    "name": "Files processed",
+                                    "id": "series2",
+                                    "groupId": null,
+                                    "dataProvider": {
+                                      "functionName": "rate",
+                                      "functionArguments": {
+                                        "timeSpanProvider": null,
+                                        "inputDataProvider": {
+                                          "functionName": "loadSeries",
+                                          "functionArguments": {
+                                            "sourceType": "external",
+                                            "sourceSpecProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "externalSourceParameters": {
+                                                    "timeSeriesNameGenerator": "filesProcessed",
+                                                    "timeSeriesName": "filesProcessed",
+                                                    "metricNames": [
+                                                      "sum5s",
+                                                      "sum1m",
+                                                      "sum1h"
+                                                    ]
+                                                  },
+                                                  "externalSourceName": "store"
+                                                }
+                                              }
+                                            },
+                                            "replaceEmptyParametersProvider": {
+                                              "functionName": "literal",
+                                              "functionArguments": {
+                                                "data": {
+                                                  "fallbackValueProvider": {
+                                                    "functionName": "literal",
+                                                    "functionArguments": {
+                                                      "data": 0
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "color": null
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "chartNavigation": "independent"
+                      }
+                    }
+                  },
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "1c9ba90e59d00a36e91713ca7ee8b38dd119a5",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    },
+                    {
+                      "storeSchemaId": "CURRENT_TASK_TIME_SERIES",
+                      "storeContentUpdateOptions": {
+                        "type": "timeSeriesStoreContentUpdateOptions",
+                        "dispatchRules": [
+                          {
+                            "targetTimeSeriesNameGenerator": "bytesProcessed",
+                            "prefixCombiner": "overwrite",
+                            "measurementTimeSeriesNameMatcherType": "exact",
+                            "measurementTimeSeriesNameMatcher": "bytesProcessed"
+                          },
+                          {
+                            "targetTimeSeriesNameGenerator": "filesProcessed",
+                            "prefixCombiner": "overwrite",
+                            "measurementTimeSeriesNameMatcherType": "exact",
+                            "measurementTimeSeriesNameMatcher": "filesProcessed"
+                          }
+                        ]
+                      },
+                      "resultName": "stats"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha512",
+                  "lambdaRevisionNumber": 6,
+                  "lambdaId": "cd4777b5e861d8fe3035df5efb2d08bbchdffe",
+                  "lambdaConfig": {
+                    "metadataKey": "sha512",
+                    "algorithm": "sha512"
+                  },
+                  "id": "3844e49668ffaa3a718a34bee2a53ce8681d6a",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "file"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "e4aca3fe723a481ce6814a79f3df1312c99e84"
+            }
+          ],
+          "name": "calculate-checksums-lane2",
+          "maxRetries": 1,
+          "id": "fac3d3e1c2084ee6c215c34ed760d22cb9c743",
+          "dashboardSpec": null
+        }
+      ],
+      "description": "",
+      "dashboardSpec": null
+    }
+  },
+  "originalAtmWorkflowSchemaId": "a048559981b32a29a160c751a93ed5d5che2ce",
+  "name": "checksum-counting-different-lambdas"
+}

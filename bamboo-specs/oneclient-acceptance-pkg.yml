@@ -1,0 +1,920 @@
+version: 2
+plan:
+  project-key: ODSRV
+  key: OAP
+  name: oneclient acceptance pkg
+  description: oneclient acceptance tests using environment deployed from packages
+variables:
+  quarantineSourcePlan: ODSRV-OAP
+  quarantineSourceBranch: develop
+repositories:
+  - onedata-acceptance:
+      scope: global
+branches:
+  create:
+    for-new-branch: release/.*
+  delete:
+    after-deleted-days: 7
+    after-inactive-days: 30
+  link-to-jira: true
+notifications: []
+labels: []
+triggers: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: "3"
+  all-other-apps:
+    custom.com.atlassian.bamboo.plugin.hungbuildkiller:
+      stopped.enabled: "true"
+      add_comment_when_hung.enabled: "true"
+
+stages:
+  - Qnthack - copy quarantine:
+      manual: false
+      final: false
+      jobs:
+        - Qnthack - copy quarantine
+        - Qnthack - terminate build
+  - Acceptance Test:
+      manual: false
+      final: false
+      jobs:
+        - _Codetag Tracker
+        - authorization
+        - directory CRUD
+        - directory stat
+        - luma provider
+        - luma proxy
+        - multiclient authorization
+        - multiprovider directory CRUD directio
+        - multiprovider directory CRUD proxyio
+        - multiprovider directory stat directio
+        - multiprovider directory stat proxyio
+        - multiprovider proxy directory CRUD proxyio
+        - multiprovider proxy directory stat proxyio
+        - multiprovider proxy regular file CRUD proxyio
+        - multiprovider proxy regular file stat proxyio
+        - multiprovider proxy s3 directory CRUD proxyio
+        - multiprovider proxy s3 directory stat proxyio
+        - multiprovider proxy s3 regular file CRUD proxyio
+        - multiprovider proxy s3 regular file stat proxyio
+        - multiprovider regular file CRUD directio
+        - multiprovider regular file CRUD proxyio
+        - multiprovider regular file stat directio
+        - multiprovider regular file stat proxyio
+        - multiprovider replication directio
+        - multiprovider replication proxyio
+        - multiprovider s3 directory CRUD proxyio
+        - multiprovider s3 directory stat proxyio
+        - multiprovider s3 regular file CRUD proxyio
+        - multiprovider s3 regular file stat proxyio
+        - regular file CRUD directio
+        - regular file CRUD proxyio
+        - regular file stat directio
+        - regular file stat proxyio
+        - singleprovider directory CRUD multiclient directio
+        - singleprovider directory stat multiclient directio
+        - singleprovider extended attributes
+        - singleprovider regular file CRUD multiclient directio
+        - singleprovider regular file CRUD multiclient proxyio
+        - singleprovider regular file stat multiclient directio
+        - singleprovider regular file stat multiclient proxyio
+        # tests applicable only to PKG mode - not present in SRC
+        # @TODO VFS-6710 fix onedata_fs tests
+        # - onedata_fs tests
+  - Qnthack - rerun:
+      manual: false
+      final: true
+      jobs:
+        - Qnthack - rerun
+
+Qnthack - copy quarantine:
+  key: COPQU
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        buildHangingConfig.enabled: 'false'
+  tasks:
+    - checkout: &fake-checkout
+        conditions:
+          - variable:
+              exists: fake.var
+    - script: &quarantine-hack-run-script-on-third-build
+        interpreter: BINSH_OR_CMDEXE
+        scripts:
+          - |-
+            # The script which copies the quarantined test cases resides on the bamboo server.
+            # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/quarantine-copy.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+            # The script is run indirectly by the CGI script used in the curl command.
+            echo curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+            curl 10.87.23.72:3080/cgi-bin/quarantine-copy?${bamboo.quarantineSourcePlan}+${bamboo.planKey}
+        description: Copy quarantined test cases
+        conditions:
+          - variable:
+              matches:
+                # copy quarantine is run on build 3,4,5 just in case the expected numbering has been
+                # disturbed by early branch pushing or manual plan branch running 
+                bamboo.buildNumber: '[3-5]'
+    - script: &always-successful
+        interpreter: BINSH_OR_CMDEXE
+        description: Always successful
+        scripts:
+          - true
+
+Qnthack - terminate build:
+  key: TERMB
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script: *always-successful
+    - script:
+        <<: *quarantine-hack-run-script-on-third-build
+        scripts:
+          - |-
+            echo Terminating build...
+            false
+        description: Terminate build
+        conditions:
+          - variable:
+              matches:
+                # Terminate build for build number 3.
+                # When normal undisturbed flow takes place there is no sense in
+                # further building and testing as the code has not changed yet
+                bamboo.buildNumber: '3'
+
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
+  tasks:
+    - checkout: &checkout-default-repository
+        path: onedata-acceptance
+        force-clean-build: "true"
+        description: Checkout Default Repository
+    - script: &run-script
+        interpreter: SHELL
+        scripts:
+          - |-
+            cd onedata-acceptance
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        description: Init submodules
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[4-9]|.{2,}'
+    - script: &run-script-working-dir
+        <<: *run-script
+        scripts:
+          - |-
+            echo ${bamboo.planRepository.branchName}
+            make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+        working-dir: onedata-acceptance
+        description: Codetag Tracker
+  requirements: []
+  artifact-subscriptions: []
+
+authorization: &acceptance-oneclient-tests-job
+  key: AUT
+  other:
+    clean-working-dir: true
+  tasks:
+    - script: &clear-env
+        <<: *run-script
+        scripts:
+          - curl ${bamboo.OnedataFinalTasksURL} | bash -
+        description: Clear env
+    - script: &restart-minikube
+        <<: *run-script
+        scripts:
+          - sudo ${HOME}/restart_minikube.sh
+        description: Restart minikube
+    - checkout: *checkout-default-repository
+    - script: &init-submodules
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        description: Init submodules
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '[2-9]|.{2,}'
+    - script: &quarantine-hack-pull-surefire
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            #!/bin/bash
+            ARTIFACT="surefire_${bamboo_shortJobName// /_}.tar.gz"
+            echo ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            let c=3
+            while : ; do
+                ./bamboos/artifacts/pull_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                    --username ${bamboo.artifactRepoUsername} --branch ${bamboo.quarantineSourceBranch} --plan ${bamboo.planRepository.name} \
+                    --artifact-name ${ARTIFACT}
+                tar zxf ${ARTIFACT}
+                if [ -f test-reports/results*.xml ]; then
+                    break
+                else
+                    let c=$c-1
+                    if [[ $c < 0 ]]; then
+                        echo "Giving up... The surefire file 'results.xml' could not be pulled. Does it exist in the develop?" >&2
+                        break
+                    fi
+                    echo "The surefire file 'results.xml' could not be pulled, retrying in 30 seconds..." >&2
+                    sleep 30
+                fi
+            done
+            touch test-reports/results*.xml
+        description: Pull surefire artifact and unpack it
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2|3'
+    - script: &download-artifacts
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+        description: Download artifacts
+    - script: &run-acceptance-tests
+        <<: *run-script-working-dir
+        scripts:
+          - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization
+        description: Run acceptance oneclient tests
+  final-tasks:
+    - test-parser:
+        type: junit
+        ignore-time: "false"
+        test-results: onedata-acceptance/test-reports/results*.xml
+        description: Parse test results
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - |-
+            #!/bin/bash
+            ARTIFACT=surefire_${bamboo_shortJobName// /_}.tar.gz
+            tar czf ${ARTIFACT} test-reports/results*.xml
+            echo ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+            ./bamboos/artifacts/push_artifact.py --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} \
+                --username ${bamboo.artifactRepoUsername} --branch ${bamboo.planRepository.branchName} --plan ${bamboo.planRepository.name} \
+                --artifact-name ${ARTIFACT}
+        description: Pack and push surefire artifact
+    - script:
+        <<: *run-script
+        scripts:
+          - |-
+            cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
+            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+            mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
+            tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
+        description: Pack logs
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - curl ${bamboo.OnedataFinalTasksURL} | bash -
+        description: Clear env and working dir
+  artifacts:
+    - name: test_logs.tar.gz
+      pattern: test_logs.tar.gz
+      shared: false
+      required: false
+  requirements:
+    - minikube
+  artifact-subscriptions: []
+
+directory CRUD:
+  <<: *acceptance-oneclient-tests-job
+  key: DC
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+directory stat:
+  <<: *acceptance-oneclient-tests-job
+  key: DS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+luma provider:
+  <<: *acceptance-oneclient-tests-job
+  key: LP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage test_oneclient_pkg
+
+luma proxy:
+  <<: *acceptance-oneclient-tests-job
+  key: LPR
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage test_oneclient_pkg
+
+multiclient authorization:
+  <<: *acceptance-oneclient-tests-job
+  key: MA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization test_oneclient_pkg
+
+multiprovider directory CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio test_oneclient_pkg
+
+multiprovider directory CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider test_oneclient_pkg
+
+multiprovider directory stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio test_oneclient_pkg
+
+multiprovider directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider test_oneclient_pkg
+
+multiprovider proxy directory CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPDCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy test_oneclient_pkg
+
+multiprovider proxy directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy test_oneclient_pkg
+
+multiprovider proxy regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider proxy regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider proxy s3 directory CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSDCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider proxy s3 directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider proxy s3 regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider proxy s3 regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MPSRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider regular file CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider regular file stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_pkg
+
+multiprovider replication directio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env test_oneclient_pkg
+
+multiprovider replication proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MRP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio test_oneclient_pkg
+
+multiprovider s3 directory CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSDCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
+
+multiprovider s3 directory stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSDSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
+
+multiprovider s3 regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 test_oneclient_pkg
+
+multiprovider s3 regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: MSRFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 test_oneclient_pkg
+
+regular file CRUD directio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+regular file CRUD proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFCP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
+
+regular file stat directio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio test_oneclient_pkg
+
+regular file stat proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: RFSP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
+
+singleprovider directory CRUD multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SDCMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+
+singleprovider directory stat multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SDSMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+
+singleprovider extended attributes:
+  <<: *acceptance-oneclient-tests-job
+  key: SEA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio test_oneclient_pkg
+
+singleprovider regular file CRUD multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+
+singleprovider regular file CRUD multiclient proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFCMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
+
+singleprovider regular file stat multiclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio test_oneclient_pkg
+
+singleprovider regular file stat multiclient proxyio:
+  <<: *acceptance-oneclient-tests-job
+  key: SRFSMP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
+
+# tests applicable only to PKG mode - not present in SRC
+# @TODO VFS-6710 fix onedata_fs tests
+# onedata_fs tests:
+#   <<: *acceptance-oneclient-tests-job
+#   key: OT
+#   tasks:
+#     - script: *clear-env
+#     - script: *restart-minikube
+#     - checkout: *checkout-default-repository
+#     - script: *init-submodules
+#     - script: *quarantine-hack-pull-surefire
+#     - script: *download-artifacts
+#     - script:
+#         <<: *run-acceptance-tests
+#         scripts:
+#           - make test_onedata_fs
+
+
+Qnthack - rerun:
+  key: ZREQN
+  description: Rerun
+  other: *common-opts
+  tasks:
+    - checkout: *fake-checkout
+    - script:
+        description: Rerun plan to finish quarantine copying
+        scripts:
+          # The script which requests the next build of a plan resides on the bamboo server.
+          # For more details about the script look at https://git.onedata.org/projects/VFS/repos/bamboos/browse/bamboo-server/run-build.sh?at=refs%2Fheads%2Ffeature%2FVFS-9519-auto-quarantine-test-cases-for-new-branches
+          # The script is run indirectly by the CGI script used in the curl command.
+          - |-
+            STATUS=`curl -s -w "%{http_code}" -o /tmp/run-build.body 10.87.23.72:3080/cgi-bin/run-build?${bamboo_planKey}`
+            cat /tmp/run-build.body
+            rm /tmp/run-build.body
+            if [ ${STATUS} != "200" ]; then
+              exit 1
+            else
+              exit 0
+            fi
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+    - script: *always-successful
+  artifact-subscriptions: []

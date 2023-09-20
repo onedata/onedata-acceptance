@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-multiple provider instances and multiple browser instance.
+multiple provider instances and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -12,9 +12,9 @@ import pytest
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.rest.cdmi import *
-from tests.gui.steps.rest.env_up.users import *
-from tests.gui.steps.rest.env_up.groups import *
-from tests.gui.steps.rest.env_up.spaces import *
+from tests.utils.entities_setup.users import *
+from tests.utils.entities_setup.groups import *
+from tests.utils.entities_setup.spaces import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -34,7 +34,6 @@ from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
@@ -52,8 +51,9 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
+from tests.gui.steps.oneprovider.browser import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *
@@ -62,7 +62,6 @@ from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.common import *
 
-from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.provider import *
 

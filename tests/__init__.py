@@ -23,7 +23,7 @@ UTILS_DIR = os.path.join(TEST_DIR, 'utils')
 ONECLIENT_DIR = os.path.join(TEST_DIR, 'oneclient')
 ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
 ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
-ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
+ONECLIENT_ENTITIES_CONFIG_DIR = os.path.join(ONECLIENT_ENV_DIR, 'entities_config')
 ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, 'logs')
 
 ONEDATA_FS_DIR = os.path.join(TEST_DIR, 'onedata_fs')
@@ -104,18 +104,11 @@ SCENARIO_DIRS = {
 }
 
 PATCHES_DIR = {
-    'oneclient': ONECLIENT_PATCHES_DIR,
     'onedata_fs': ONEDATA_FS_PATCHES_DIR,
     'performance': PERFORMANCE_PATCHES_DIR,
     'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
 
-IMAGES_CFG_PATHS = {
-    'onezone': 'onezone_images/docker-dev-build-list.json',
-    'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
-    'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
-    'luma': 'luma_images/luma-docker-build-report.json',
-    'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
+ENTITIES_CONFIG_DIR = {
+    'oneclient': ONECLIENT_ENTITIES_CONFIG_DIR
 }
-
-ARTIFACTS_DIR = 'artifacts_dir'

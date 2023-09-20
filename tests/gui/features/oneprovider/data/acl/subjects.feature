@@ -41,13 +41,12 @@ Feature: ACL basic subjects tests in Oneprovider GUI
 
     And opened browser with space-owner-user signed in to "onezone" service
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks once on item named "file1" in file browser
-    And user of browser clicks on menu for "file1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "ACL" permission type in edit permissions modal
+    And user of browser clicks on "Permissions" in context menu for "file1"
+    And user of browser sees that "File details" modal is opened on "Permissions" tab
+    And user of browser selects "ACL" permission type in edit permissions panel
     Then user of browser sees that [user1, user2, user3] are in subject list in ACL record
     And user of browser sees that [group1, group2, group3] are in subject list in ACL record
 
@@ -130,17 +129,15 @@ Feature: ACL basic subjects tests in Oneprovider GUI
 
     And opened [space_owner_browser, browser_user3] with [space-owner-user, user3] signed in to [Onezone, Onezone] service
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks once on item named "file1" in file browser
-
-    And user of space_owner_browser clicks on menu for "file1" directory in file browser
-    And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
-    And user of space_owner_browser sees that "Edit permissions" modal has appeared
-    And user of space_owner_browser selects "ACL" permission type in edit permissions modal
+    And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
+    And user of space_owner_browser sees that "File details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "ACL" permission type in edit permissions panel
     And user of space_owner_browser adds ACE with <child_privileges> privileges set for group group3
     And user of space_owner_browser adds ACE with <parent_privileges> privileges set for group group1
-    And user of space_owner_browser clicks "Save" confirmation button in displayed modal
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
     Then user of browser_user3 <result> to remove "file1" in "space1"
 
     Examples:

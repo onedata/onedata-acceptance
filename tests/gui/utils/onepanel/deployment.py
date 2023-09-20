@@ -62,28 +62,6 @@ class SetupIP(PageObject):
         return str(self.parent)
 
 
-class OSD(PageObject):
-    size = Input('input.size-number-input')
-    unit_selector = Button('.size-unit-select-group '
-                           '.ember-power-select-trigger')
-    mib_button = NamedButton('.ember-power-select-option', text='MiB')
-    gib_button = NamedButton('.ember-power-select-option', text='GiB')
-    tib_button = NamedButton('.ember-power-select-option', text='TiB')
-    pib_button = NamedButton('.ember-power-select-option', text='PiB')
-
-    def choose_unit(self, unit):
-        self.unit_selector()
-        getattr(self, f"{unit.lower()}_button")()
-
-
-class CephConfig(PageObject):
-    manager_and_monitor = Toggle('.manager-monitor-section '
-                                 '.one-way-toggle-control')
-    add_osd = NamedButton('.btn-info', text='Add OSD')
-    osds = WebItemsSequence('.osd-form', cls=OSD)
-    deploy = NamedButton('.spin-button-label', text='Deploy')
-
-
 class SetupDNS(PageObject):
     perform_check = Button('.btn-perform-dns-check')
     proceed = Button('.btn-dns-proceed')
@@ -125,7 +103,6 @@ class Deployment(PageObject):
     step2 = WebItem(_deployment_step_css, cls=Step2)
     setup_dns = WebItem(_deployment_step_css, cls=SetupDNS)
     setup_ip = WebItem(_deployment_step_css, cls=SetupIP)
-    cephconfiguration = WebItem(_deployment_step_css, cls=CephConfig)
     webcertstep = WebItem(_deployment_step_css, cls=StepWebCert)
     step5 = WebItem(_deployment_step_css, cls=Step5)
     laststep = WebItem(_deployment_step_css, cls=LastStep)

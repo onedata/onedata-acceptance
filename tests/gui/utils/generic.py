@@ -41,25 +41,46 @@ def parse_url(url):
 
 
 def go_to_relative_url(selenium, relative_url):
-    new_url = RE_URL.match(selenium.current_url).group('base_url') + relative_url
+    new_url = RE_URL.match(selenium.current_url).group(
+        'base_url') + relative_url
     selenium.get(new_url)
 
 
-def parse_seq(seq, pattern=None, default=str):
+def parse_seq(seq, pattern=None, separator=None, default=str):
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     else:
+        separator = ',' if separator is None else separator
         return [default(el.strip().strip('"'))
-                for el in seq.strip('[]').split(',') if el != '']
+                for el in seq.strip('[]').split(separator) if el != '']
 
 
 def upload_file_path(file_name):
-    """Resolve an absolute path for file with name file_name stored in upload_files dir
+    """Resolve an absolute path for file with name file_name stored
+    in upload_files dir
     """
     return os.path.join(
         os.path.dirname(os.path.abspath(gui.__file__)),
         'upload_files',
         file_name)
+
+
+def upload_workflow_path(workflow_name):
+    """Resolve an absolute path for workflow file with name workflow_name
+     stored in automation-examples submodule
+    """
+    return os.path.abspath(os.path.join(
+        os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+        'workflows', workflow_name))
+
+
+def strip_path(path_string, separator = '/'):
+    """Strips string from whitespaces inside file path. Useful for file
+     paths rendered
+    in DOM which contains `\\n` characters in `innerText`.
+    """
+    return separator.join(
+        [path_item.strip() for path_item in path_string.split(separator)])
 
 
 @contextmanager
@@ -106,9 +127,7 @@ def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
         if item.text.lower() == text.lower():
             return item
     else:
-        with suppress(TypeError):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        raise RuntimeError(f'Css element wtih "{text}" text not found')
 
 
 def click_on_web_elem(driver, web_elem, err_msg, delay=True):
@@ -117,13 +136,16 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
     if not web_elem.is_displayed():
         web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO VFS-7484 make optional sleep and localize only those tests that need it or find better alternative
-        # currently checking if elem is enabled not always work (probably after striping disabled from web elem
+        # TODO VFS-7484 make optional sleep and localize only those tests
+        #  that need it or find better alternative
+        # currently checking if elem is enabled not always work
+        # (probably after striping disabled from web elem
         # elem is not immediately clickable)
         if delay:
             sleep(delay if isinstance(delay, float) else 0.25)
         action = ActionChains(driver)
-        action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
+        action.move_to_element(web_elem).click_and_hold(web_elem).release(
+            web_elem)
         action.perform()
     else:
         with suppress(TypeError):
@@ -163,7 +185,7 @@ def nth(seq, idx):
 @contextmanager
 def redirect_display(new_display):
     """Replace DISPLAY environment variable with new value"""
-    old_display = os.environ.get('DISPLAY', None)
+    old_display = os.environ.get('DISPLAY', 'DUMMY_DISPLAY')
     os.environ['DISPLAY'] = new_display
     try:
         yield

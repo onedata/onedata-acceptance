@@ -9,9 +9,6 @@ import inspect
 import os
 import sys
 import time
-import json
-
-from tests import IMAGES_CFG_PATHS, ARTIFACTS_DIR
 
 
 def config_file(relative_file_path):
@@ -28,7 +25,7 @@ def config_file(relative_file_path):
 
 
 def get_file_name(file_path):
-    """Returns name of file, basing on file_path.
+    """Returns name of file, based on file_path.
     Name is acquired by removing parent directories from file_path and stripping
     extension.
     i.e. get_file_name("dir1/dir2/file.py") will return "file"
@@ -73,6 +70,13 @@ def save_log_to_file(file_path, log):
     f.close()
 
 
+def append_log_to_file(path, log):
+    """Appends log to file pointed by path"""
+    with open(path, 'a') as f:
+        f.write(f'{log}\n\n')
+        os.utime(path, None)
+
+
 def get_module(name):
     """Returns module object"""
     return sys.modules[name]
@@ -111,15 +115,3 @@ def escape_path(path):
 def get_first_path_element(path):
     """Returns first element in path"""
     return next(elem for elem in path.split(os.path.sep) if elem)
-
-
-def get_default_image_for_service(service):
-    """Returns service image from file in ARTIFACTS_DIR"""
-    file_path = IMAGES_CFG_PATHS[service]
-    abs_file_path = os.path.join(ARTIFACTS_DIR, file_path)
-    try:
-        with open(abs_file_path, 'r') as images_cfg_file:
-            image = json.load(images_cfg_file).get('git-commit')
-            return image
-    except FileNotFoundError:
-        return None

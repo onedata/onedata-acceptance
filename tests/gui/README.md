@@ -1,133 +1,166 @@
-Important notes
-===============
+# GUI acceptance tests
 
-- Currently the highest supported version of Firefox is 46.0.x - v47 is not supported due to incompatibility
-with build-in selenium Firefox driver
-
+Acceptance tests using a web browser and Selenium - automated software that
+simulates user actions performed on a website.
 
 
-GUI acceptance/BDD tests
-========================
+# Development
 
-GUI acceptance/BDD test can be run in few ways using ``./test_run.py``:
- 1. Headless tests inside Pod on new Onedata environment
- 2. Tests using existing Onedata installation or starting new preserving Onedata installation after tests 
-    1. Headless tests inside Pod
-    2. Non-headless tests on local machine
+Please read this document before you start writing or modifying any tests.
 
 
-# 1. Headless with automatic one-env environment set up
+# Running tests using Makefile
 
-Using this method, the Onedata environment will be set up automatically with OZ and OP (for details see ``environments``
-dir with configurations). Setting up environment can take some time.
-
-Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui -i onedata/gui_builder:latest --test-type gui --driver=Chrome
+make ENV_FILE=$ENV SUITE=$SUITE test_gui
 ```
 
-Used parameters:
+Commands for exact tests suites can be found in
+[bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
 
-* ``-t tests/gui`` - standard ``./test_run.py`` parameter to set the test cases path to gui tests
-* ``-i onedata/gui_builder:latest`` - use Docker image with dependencied for GUI tests (i.a. Xvfb, Selenium, Firefox, Chrome)
-* ``--test-type gui`` - set the test type use by core Onedata test helpers to differ from "cucumber" tests etc.
-* ``--driver=<Firefox|Chrome>`` - set the browser to test in (will be launched in headless mode)
-* ``--self-contained-html`` - optional, if used generated report will be contained in 1 html file
-* ``--firefox-logs`` - optional, if used and driver is Firefox generated report will contain console logs from browser
-* ``--xvfb`` - starts xvfb, necessary if used with headless tests
-* ``--xvfb-recording=<all|none|failed>`` - optional, record all or none or failed tests as movies and save them to <logdir>/movies
-* ``--no-mosaic-filter`` - optional, if set videos of tests using multiple browsers will be recorded as different video for each browser (mosaic video created by default) 
-* ``--sources`` - optional, if set starts Onedata environment using sources. Sources have to be located in appropriate directories.
+For more information about running tests using `make`, see 
+**Running acceptance tests** section in the main [README](../../README.md).
 
-
-# 2. Tests using existing Onedata installation
-
-
-Using this method, existing Onedata installation will be used.
-
-To start Onedata installation navigate to one_env directory and run
- ```
- ./onenv up -f ../tests/gui/environments/<env_file>
- ```
-Where ``env_file`` is one of the yamls describing the environment.
-
-2.1. Headless tests inside Pod
------------------------------------------------------
-
-Example: (invoke from onedata repo root dir)
+**Example:**
+QoS basic tests on automatic Onedata deployment using a dockerized testing toolkit
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --no-clean --xvfb --xvfb-recording=failed
+make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic OPTS="--no-clean --no-pull" test_gui
 ```
+**Note:** Onedata deployment does not have to be started in order to run
+tests using `make` (it will start automatically).
 
-New parameters:
+**Known issue**: flag `--local` won't work, because `make` by default is using 
+`--xvfb` flag, and they need to be mutually exclusive.
+<!--- TODO VFS-9881 delete the above note after making --local and --xvfb flags mutually exclusive in Makefile -->
 
-* ``--no-clean`` - prevents deleting environment after tests
 
-2.2. Non-headless using local machine (BDD)
------------------------------------------------------
+# Running tests using test_run (advanced)
 
-These tests will be run using ``py.test`` runner on local machine.
-Required Python packages to install (e.g. using ``pip install``) are listed
-in requirement file: `tests/gui/requirements.txt`
+The test_run.py command is essentially invoked by Makefile, but using it directly
+allows better parameterization and overcoming of some known issues.
 
-A handy oneliner to install Python dependencies (invoke from repo root):
+**Note:** all examples use the `--no-clean` option, make sure to remove it if you
+require a fresh deployment every run.
+
+## Running tests using a dockerized testing toolkit
+
 ```
-pip install -r tests/gui/requirements.txt
+./test_run.py -t tests/gui -i onedata/acceptance_gui:latest --test-type gui \
+    --driver=Chrome --xvfb --no-clean
 ```
 
-Additional applications required in system:
+The Onedata deployment will be set up automatically with a Onezone and Oneprovider
+(for details see `environments` dir with configurations). Setting up the deployment
+can take some time.
 
-* xclip (Linux) or pbcopy (OSX)
+We recommend using `onedata/acceptance_gui:latest` testing docker image 
+when working on branches based on the `develop` branch. To run older versions, 
+use the image defined as default in `Makefile`.
 
-A browser selected for tests (with ``--driver``) should be also installed.
+For some tests you should specify `--env-file` - see 
+[bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
+Otherwise, the default one will be used.
 
-Example for Linux: (invoke from onedata repo root dir)
+Example that starts a deployment using `1oz_1op_not_deployed_2_nodes.yaml`
+and then runs tests on it:
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --update-etc-hosts --xvfb --xvfb-recording=failed
+./test_run.py -t tests/gui/scenarios/test_onepanel_deployment_with_2_hosts.py \
+    -i onedata/acceptance_gui:latest --test-type gui --driver=Chrome --xvfb \
+    --env-file=1oz_1op_not_deployed_2_nodes --no-clean
 ```
 
-Example for OSX: (invoke from onedata repo root dir)
+## Running tests using a locally installed testing toolkit
+
+Acceptance tests using Selenium (GUI, Mixed) can be run with `--local` flag to
+use the locally installed testing toolkit.
+
+Running test this way greatly helps with debug because you can observe the test 
+happening "live" in your browser. 
+<!--- TODO VFS-10023 write about automatic setup on local machine -->
+
+### Prerequisites
+
+* **Python 3.8:**
+  we recommend using Python 3.8. Python 3.7 and Python 3.6 are also supported.
+
+* **required Python packages:** [tests/gui/requirements.txt](requirements.txt).
+  To install Python dependencies run (invoke from repo root):
+   ```
+   pip3 install -r tests/gui/requirements.txt
+   ```
+  On Ubuntu 22.04 this won't work on default Python 3.10, a version 3.8
+  must be installed on the side.
+
+* **Google Chrome:**
+  currently, only Google Chrome is used and well tested.
+  You can use other browsers on your own risk.
+
+* **xclip**
+
+* **chromedriver:**
+  you can install the Google Chrome `chromedriver` in suitable
+  version for it from: https://chromedriver.chromium.org/downloads.
+
+  **Note:** `chromedriver` have to be located in $PATH and named `chromedriver`.
+
+### Known issues
+
+There is a problem with automatic Onedata deployment setup for tests which
+are using local machine. With `--local` flag, `pytest` is run differently than
+on docker (have different options). Until this is fixed, *a Onedata deployment 
+has to be ready in order to run tests locally*.
+
+The manual start of Onedata deployment is described in the following
+document: [one-env guide](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md).
+
+**Note:** the one-env environment that is set up should be accessible via hostnames
+(eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
+of Onezone in your browser before starting tests.
+Command `./onenv hosts` (invoke from repo `one-env` root) add entries
+in `/etc/hosts`. For more information see **Starting Onedata deployment** section in
+[one-env](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md).
+
+### Examples
+
+The `--local` flag indicates that the tests should be started using locally 
+installed testing toolkit.
+
+```bash
+./test_run.py -t tests/gui --test-type gui --driver=Chrome --local --no-clean
 ```
-/test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --no-xvfb
+
+To run a single test case:
+
+```bash
+./test_run.py -t tests/gui/scenarios/test_onezone_basic.py --test-type gui -vvv \ 
+    --timeout 5 --reruns 0 --reruns-delay 0 --local --no-clean --driver=Chrome \ 
+    -k test_onezone_login_page_renders_with_proper_title
 ```
 
-New parameters:
-
-* ``--local`` - starts tests on host instead of starting them in pod.
-* ``--update-etc-hosts`` - adds entries to ``/etc/hosts`` for all pods in deployment. When using this option script has to be run with root privileges.   
-* ``--add-test-domain`` - when running tests on local machine option for adding entries to ``/etc/hosts`` is turned off by default. This may
-cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``--add-test-domain`` option or add entries manually.
+**Note:** the `--update-etc-hosts` flag will add entries in `/etc/hosts` when the 
+deployment is ready.
 
 
-Test reports
-============
+# Test reports
 
 The test report in HTML format with embedded screenshots of browser in failed test will be saved to:
-``<onedata_repo_root>/tests/gui/logs/report.<time_stamp>/report.html``
+`<onedata_repo_root>/tests/gui/logs/report.<time_stamp>/report.html`
 
+# Taking screenshots
 
-Taking screenshots
-==================
-
-For some purposes, taking screenshots can be required in time of test run.
+For some purposes, taking screenshots can be required at the time of test run.
 
 In steps of scenarios simply use:
-```
+```python
 driver.get_screenshot_as_file('/tmp/some-screenshot.png')
 ```
 where driver is instance of Selenium WebDriver
 
-Development
-===========
+## Fixtures and pytest plugins overrides
 
-Please read these section before you start writing or modifying GUI tests.
-
-Fixtures and pytest plugins overrides
-=====================================
-
-* The default configuration of ``pytest-selenium-multi`` for sensitive URLs is inverted:
+* The default configuration of `pytest-selenium-multi` for sensitive URLs is inverted:
 all tests are considered *non-destructive by default*.
-You can add a ``@pytest.mark.destructive`` mark to test scenario to mark test as destructive.
+You can add a ```@pytest.mark.destructive``` mark to test scenario to mark test as destructive.
 
-* The ``sensitive_url`` fixture has module scope, because we start new environment for each module
-(so it could have different ``base_url's``)
+* The `sensitive_url` fixture has module scope, because we start new environment for each module
+(so it could have different `base_url's`)

@@ -50,9 +50,9 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
         groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
                                         group))
         if option == 'does not see':
-            assert groups_count == 0, 'group "{}" found'.format(group)
+            assert groups_count == 0, f'group "{group}" found'
         else:
-            assert groups_count == 1, 'group "{}" not found'.format(group)
+            assert groups_count == 1, f'group "{group}" not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -167,26 +167,18 @@ def click_on_group_trigger(selenium, browser_id, oz_page, group_name, relation):
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '
                   'in group hierarchy menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
+def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option,
+                                            popups):
     driver = selenium[browser_id]
-    modals(driver).group_hierarchy_menu.options[option].click()
-
-
-@wt(parsers.parse('user of {browser_id} clicks on "{option}" '
-                  'in group hierarchy tab popup menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_hierarchy_tab_popup_menu(selenium, browser_id,
-                                                      option, popups):
-    driver = selenium[browser_id]
-    popups(driver).menu_popup_with_text.menu[option].click()
+    popups(driver).group_hierarchy_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '
                   'in relation menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
+def click_on_option_in_relation_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
-    modals(driver).relation_menu.options[option].click()
+    popups(driver).relation_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{group_name}" '

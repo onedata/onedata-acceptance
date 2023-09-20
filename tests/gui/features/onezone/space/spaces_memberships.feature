@@ -36,8 +36,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
   Scenario: User removes relation between group and space (direct)
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
-    And user of space_owner_browser clicks show view expand button in space members subpage header
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks effective view mode in space members subpage
     And user of space_owner_browser clicks memberships view mode in space members subpage
     And user of space_owner_browser clicks "space-owner-user" user in "space1" space members users list
@@ -52,7 +51,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
   Scenario: User removes relation between group and space (effect)
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space2" space in the sidebar
     And user of space_owner_browser clicks "group2" group in "space2" space members groups list
     And user of space_owner_browser sets following privileges for "group2" group in space members subpage:
             Group management:
@@ -62,8 +61,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
 
     And user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Members of "space2" in the sidebar
-    And user of browser1 clicks show view expand button in space members subpage header
+    And user of browser1 clicks "Members" of "space2" space in the sidebar
     And user of browser1 clicks effective view mode in space members subpage
     And user of browser1 clicks memberships view mode in space members subpage
     And user of browser1 clicks "user1" user in "space2" space members users list
@@ -76,8 +74,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
   Scenario: User leaves the space in members subpage
     When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space3" on the spaces list in the sidebar
-    And user of browser1 clicks Members of "space3" in the sidebar
-    And user of browser1 clicks show view expand button in space members subpage header
+    And user of browser1 clicks "Members" of "space3" space in the sidebar
     And user of browser1 clicks effective view mode in space members subpage
     And user of browser1 clicks memberships view mode in space members subpage
     And user of browser1 clicks "user1" user in "space3" space members users list

@@ -5,37 +5,48 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import re
+
 from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
                                                WebItem, WebElement,
-                                               WebElementsSequence)
+                                               WebElementsSequence, Icon)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
+from .space_configuration_subpage import SpaceConfigurationPage
+from .space_marketplace import SpaceMarketplacePage
 
 
 class Space(Element):
     name = id = Label('.one-label')
     support_size = Label('.status-toolbar-icon:first-of-type')
     supporting_providers_number = Label('.status-toolbar-icon:last-of-type')
+    advertised_icon = Icon('.oneicon-cart-checked')
     home_icon = WebElement('.status-toolbar-icon:first-of-type span')
 
     overview = NamedButton('.one-list-level-2 .item-header',
                            text='Overview')
     files = NamedButton('.one-list-level-2 .item-header',
                         text='Files')
-    shares = NamedButton('.one-list-level-2 .item-header',
-                         text='Shares')
+    shares_open_data = NamedButton('.one-list-level-2 .item-header',
+                                   text='Shares, Open Data')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
+    datasets_archives = NamedButton('.one-list-level-2 .item-header',
+                                    text='Datasets, Archives')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
-    harvesters = NamedButton('.one-list-level-2 .item-header',
-                             text='Harvesters')
+    harvesters_discovery = NamedButton('.one-list-level-2 .item-header',
+                                       text='Harvesters, Discovery')
+    automation_workflows = NamedButton('.one-list-level-2 .item-header',
+                                       text='Automation Workflows')
+    configuration = NamedButton('.one-list-level-2 .item-header',
+                                text='Configuration')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -61,6 +72,7 @@ class Provider(Element):
     id = name = Label('.one-label')
     support = Label('.outer-text')
     menu_button = Button('.provider-menu-toggle')
+    information_button = Button('.oneicon-provider')
 
 
 class SpaceInfoTile(PageObject):
@@ -77,7 +89,7 @@ class SpaceMembersTile(PageObject):
 
 
 class ProvidersMap(Element):
-    providers = WebElementsSequence('.circle')
+    providers = WebElementsSequence('.one-atlas-point')
 
     def click_provider(self, provider_name, driver):
         for prov in self.providers:
@@ -95,6 +107,19 @@ class ProvidersMap(Element):
             name = driver.find_element_by_css_selector('.tooltip-inner').text
             if name == provider_name:
                 return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+    def get_provider_horizontal_position(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                style = prov.get_attribute('style')
+                position = re.search(r'left:\s*(\d+\.*\d*)px', style).group(1)
+                position = float(position)
+
+                return position
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
 
@@ -145,31 +170,45 @@ class GetSupportPage(PageObject):
     token_textarea = Label('.active textarea')
     copy = Button('.request-support-tab .copy-btn')
     forbidden_alert = WebElement('.error')
+    insufficient_privileges = Label('.text-center .col-xs-12')
 
 
 class SpaceProvidersPage(PageObject):
     providers_list = WebItemsSequence('.space-providers-list '
                                       'li.one-collapsible-list-item',
                                       cls=Provider)
-    add_support = NamedButton('button', text='Add support')
+    add_support = Button('.btn-add-support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
     map = WebItem('.space-providers-atlas', cls=ProvidersMap)
 
 
 class _Provider(PageObject):
-    name = id = Label('a .tab-name')
+    name = id = Label('.record-name-general')
+
+
+class DatasetHeader(PageObject):
+    detached = Button('.btn-effecitve')
+    attached = Button('.select-attached-datasets-btn')
+
+
+class ArchiveHeader(PageObject):
+    back_to_dataset_page = Button('.content-back-arrow-icon')
 
 
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
 
+    marketplace_button = Button('.one-sidebar-toolbar-button '
+                                '.oneicon-cart')
+
     spaces_header_list = WebItemsSequence('.sidebar-spaces '
                                           'li.one-list-item.clickable '
                                           '.item-header', cls=Space)
 
     elements_list = WebItemsSequence('.sidebar-spaces '
-                                     'li.one-list-item.clickable', cls=Space)
+                                     'li.one-list-item.clickable.resource-item',
+                                     cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
@@ -178,6 +217,9 @@ class DataPage(GenericPage):
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
+    dataset_header = WebItem('.main-content', cls=DatasetHeader)
+    configuration_page = WebItem('.main-content', cls=SpaceConfigurationPage)
+    space_marketplace_page = WebItem('.main-content', cls=SpaceMarketplacePage)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
@@ -186,7 +228,16 @@ class DataPage(GenericPage):
 
     tab_name = Label('.header-row')
 
-    current_provider = Label('.current-oneprovider-name')
+    current_provider = Label('.current-oneprovider-bar .record-name-general')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     error_header = Label('.content-info-content-container h1')
+
+    def choose_space(self, name):
+        for space in self.elements_list:
+            if space.name == name or space.name == '':
+                space.click()
+                if space.name == name:
+                    return
+        else:
+            raise RuntimeError(f'{name} space not found')

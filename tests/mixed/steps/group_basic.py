@@ -7,9 +7,14 @@ __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import json
+
+from tests import OZ_REST_PORT
 from tests.mixed.steps.rest.onezone.group_management import *
 from tests.mixed.utils.common import NoSuchClientException
 from tests.gui.meta_steps.onezone.groups import *
+from tests.utils.http_exceptions import HTTPUnauthorized
+from tests.utils.rest_utils import http_post, get_zone_rest_path
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) creates groups? '
@@ -23,6 +28,34 @@ def create_groups(client, user, group_list, host, hosts, request,
         create_groups_using_op_gui(selenium, user, group_list, oz_page)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
+
+
+@wt(parsers.re(r'(?P<user>\w+) creates group '
+               '"(?P<group_name>.*)" using REST using received token in '
+               '"(?P<host>.*)" Onezone service'))
+def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
+    group_type = 'team'
+    zone_hostname = hosts[host]['hostname']
+    token = tmp_memory[user]['mailbox'].get('token', None)
+    data = {'X-Auth-Token': token}
+    group_properties = {'name': group_name, 'type': group_type}
+    response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
+                         path=get_zone_rest_path('user', 'groups'),
+                         headers=data,
+                         data=json.dumps(group_properties))
+
+
+@wt(parsers.re(r'(?P<user>\w+) fails to create group "(?P<group_name>.*)" '
+               r'using REST using received token in "(?P<host>.*)" Onezone'
+               r' service'))
+def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
+    try:
+        create_groups_with_token(user, group_name, host, tmp_memory, hosts)
+        raise Exception('function: create_groups_with_token worked but it '
+                        'should not')
+    except HTTPUnauthorized as err:
+        if err.status_code == 404:
+            pass
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees( that)?'

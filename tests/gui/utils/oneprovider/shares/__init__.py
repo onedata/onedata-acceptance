@@ -44,8 +44,9 @@ class SharesOptions(PageObject):
 
 class SharesContentPage(PageObject):
     no_shares_msg = Label('.content-info-content-container')
-    name = Label('.fb-breadcrumbs-dir-root .truncate ')
-    shares_browser = WebItemsSequence('.one-collapsible-list .list-header-row', cls=SharesOptions)
+    name = Label('.file-browser .fb-breadcrumbs-dir > .truncate')
+    shares_browser = WebItemsSequence('.one-collapsible-list .list-header-row',
+                                      cls=SharesOptions)
     path = Breadcrumbs('.share-header-path')
     url = Input('.clipboard-input.form-control')
     copy_icon = Button('.copy-btn-icon')
@@ -56,7 +57,7 @@ class SharesContentPage(PageObject):
     description_tab = Button('.nav-link-description')
     create_description = Button('.btn-content-info')
     description_input = Input('.code-textarea')
-    save_description = Button('.btn.ready')
+    save_description = Button('.btn-primary')
     switch_editor_markdown = Button('.btn-switch-editor-mode')
     editor_mode = Label('.btn-switch-editor-mode .text')
     link_type_selector = Button('.share-link-type-selector-trigger')

@@ -13,7 +13,7 @@ Feature: Basic spaces management utilities using onepanel
 
     # receive support token
     And user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Providers of "space1" in the sidebar
+    And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 clicks Add support button on providers page
     And user of browser1 clicks Copy button on Add support page
     And user of browser1 sees an info notify with text matching to: .*copied.*
@@ -35,7 +35,7 @@ Feature: Basic spaces management utilities using onepanel
 
     # confirm support of space
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Providers of "space1" in the sidebar
+    And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 sees "oneprovider-1" is on the providers list
 
     Examples:
@@ -54,7 +54,7 @@ Feature: Basic spaces management utilities using onepanel
 #    # assert space existence and support
 #    And user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
 #    And user of browser1 clicks "space1" on the spaces list in the sidebar
-#    And user of browser1 clicks Providers of "space1" in the sidebar
+#    And user of browser1 clicks "Providers" of "space1" space in the sidebar
 #    And user of browser1 sees "oneprovider-1" is on the providers list
 #    And user of browser1 sees that length of providers list of "space1" equals "1"
 #
@@ -71,7 +71,7 @@ Feature: Basic spaces management utilities using onepanel
 #
 #    # confirm lack of support for space
 #    Then user of browser1 clicks "space1" on the spaces list in the sidebar
-#    And user of browser1 clicks Providers of "space1" in the sidebar
+#    And user of browser1 clicks "Providers" of "space1" space in the sidebar
 #    And user of browser1 sees that length of providers list of "space1" equals "0"
 #
 #    Examples:
@@ -91,7 +91,7 @@ Feature: Basic spaces management utilities using onepanel
     # assert space existence and support
     And user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Providers of "space1" in the sidebar
+    And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 sees "oneprovider-1" is on the providers list
     And user of browser1 sees that length of providers list of "space1" equals "1"
 

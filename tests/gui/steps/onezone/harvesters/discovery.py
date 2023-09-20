@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -33,19 +35,20 @@ def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
     oz_page(driver)['discovery'].create_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{harvester_name}" '
-                  'has {option} the harvesters list in the sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
+               ' (?P<option>.*) the (?P<list_type>harvesters|automation) '
+               'list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
-                                              harvester_name, option):
+def check_element_exists_on_sidebar_list(selenium, browser_id, oz_page,
+                                         name, option, list_type):
     driver = selenium[browser_id]
-
+    list_type = 'discovery' if list_type == 'harvesters' else list_type
     if option.startswith('appeared'):
-        assert harvester_name in oz_page(driver)['discovery'].elements_list, \
-            'harvester "{}" not found'.format(harvester_name)
+        assert name in oz_page(driver)[list_type].elements_list, \
+            f'"{name}" not found on {list_type} list'
     else:
-        assert harvester_name not in oz_page(driver)['discovery'].elements_list, \
-            'harvester "{}" found'.format(harvester_name)
+        assert name not in oz_page(driver)[list_type].elements_list, \
+            f'"{name}" found on {list_type} list'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -147,13 +150,18 @@ def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
-                                                      element):
+                                                      element, popups):
     driver = selenium[browser_id]
-    modal_name = 'add_one_of_{}s'.format(element)
-
-    add_one_of_elements_modal = getattr(modals(driver), modal_name)
-    add_one_of_elements_modal.expand_dropdown()
-    modals(driver).dropdown.options[element_name].click()
+    modal_name = 'add_one_of_elements'
+    for _ in range(10):
+        try:
+            add_one_of_elements_modal = getattr(modals(driver), modal_name)
+            add_one_of_elements_modal.expand_dropdown()
+            popups(driver).dropdown.options[element_name].click()
+        except RuntimeError:
+            time.sleep(0.5)
+            continue
+        break
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '

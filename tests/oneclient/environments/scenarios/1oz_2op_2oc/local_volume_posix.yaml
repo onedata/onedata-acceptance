@@ -1,0 +1,54 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-2op-local-volume"
+
+# Determines if oneclients should start.
+oneclients: true
+
+spaces: false
+
+storages:
+  - local-volume
+  - posix
+
+os-config:
+  cfg1: &cfg1
+    users:
+      - space_owner
+      - user1
+      - user2
+    groups:
+      space1:
+        - user1
+        - user2
+      space2:
+        - user1
+        - user2
+      fuse:
+        - user1
+        - user2
+  services:
+    oneprovider-1: *cfg1
+    oneprovider-2: *cfg1
+    oneclient: *cfg1
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+
+  oneclient:
+    users: []
+    wait_for_oneprovider:
+      enabled: false
+
+oneprovider-2:
+  batchConfig:
+    createUsers: false
+
+  oneclient:
+    users: []
+    wait_for_oneprovider:
+      enabled: false

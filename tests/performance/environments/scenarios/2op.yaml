@@ -1,40 +1,8 @@
 # Name of the scenario to run
 scenario: "scenario-1oz-2op"
 
-# Determines if onedata components should be started from pre-compiled sources
-# or pre-installed packages inside dockers. When enabled, sources are expected
-# to be found in CWD (from where the 'up' script was run) or one dir above.
-sources: false
-
-# Onezone image to use. Note that if 'sources' option is enabled, it must
-# be based off onedata/worker image (it contains all the machinery to run the
-# application from sources).
-onezoneImage: "docker.onedata.org/onezone-dev:develop"
-
-# Oneprovider image to use. Note that if 'sources' option is enabled, it must
-# be based off onedata/worker image.
-oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
-
-# Determines if luma should start.
-luma: false
-
-# Determines if onedata rest client should start.
-onedataCli: false
-
 # Determines if oneclients should start.
 oneclients: true
-
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-b08da46791"
-
-# Onedata rest client image to use.
-onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
-
-# Luma image to use.
-lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
-
-# When enabled, onezoneImage and oneproviderImage will be pulled before every
-# deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: true
 
 spaces: false
 

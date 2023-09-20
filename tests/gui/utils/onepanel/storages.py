@@ -17,6 +17,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence, Label, NamedButton, Input, WebItem, WebElement, Button,
     WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox
+from tests.utils.utils import repeat_failed
 
 
 class POSIX(PageObject):
@@ -27,19 +28,11 @@ class POSIX(PageObject):
     read_only = Toggle('.toggle-field-posix-readonly')
 
 
-class LocalCeph(PageObject):
-    storage_name = Input('input.field-generic-name')
-    imported_storage = Toggle('.toggle-field-generic-importedStorage')
-    number_of_copies = Input('input.field-localceph-copiesNumber')
-    timeout = Input('input.field-localceph-timeout')
-
-
 class StorageAddForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')
     skip_storage_detection = Toggle('.toggle-field-generic-skipStorageDetection')
     add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
-    local_ceph = WebItem('form', cls=LocalCeph)
 
 
 class POSIXEditorKeyValue(PageObject):
@@ -118,8 +111,15 @@ class StorageContentPage(PageObject):
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')
 
+    @repeat_failed(timeout=30)
     def click_modify_button_of_storage(self, driver, storage_name):
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
+                err_msg = f'{record.name} is not expanded after being clicked'
+                assert record.is_expanded(), err_msg
+                break
+        else:
+            raise Exception(f'Cannot click on {storage_name} Modify button '
+                            f'because storage is not visible on page.')
 

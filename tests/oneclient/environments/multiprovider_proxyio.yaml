@@ -1,5 +1,5 @@
 scenario: "1oz_2op_2oc/local_volume.yaml"
-patch: "2op/2user_local_volume.yaml"
+entities_config: "2op/2user_local_volume.yaml"
 
 
 oneclient:

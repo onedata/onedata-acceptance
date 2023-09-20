@@ -2,8 +2,7 @@ Feature: Multi_regular_file_CRUD
 
   Background:
     Given oneclients [client11, client21]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
 
 
@@ -115,6 +114,18 @@ Feature: Multi_regular_file_CRUD
     Then user1 reads "TEST TEXT ONEDATA" from file space1/file1 on client11
     And size of user1's space1/file1 is 17 bytes on client11
     And size of user2's space1/file1 is 17 bytes on client21
+
+
+  Scenario: Read right after write by other client while file is open
+    When user1 creates regular files [space1/file1] on client11
+    And user2 sees [file1] in space1 on client21
+    And user1 opens space1/file1 with mode r+ on client11
+    And user1 writes "TEST TEXT ONEDATA" to previously opened space1/file1 on client11
+    And user2 opens space1/file1 with mode r+ on client21
+    And user2 reads "TEST TEXT ONEDATA" from previously opened file space1/file1 on client21
+    And user2 sets current file position at offset 0 in previously opened space1/file1 on client21
+    And user2 writes "NEW LINE" to previously opened space1/file1 on client21
+    Then user1 reads "NEW LINET ONEDATA" from previously opened file space1/file1 on client11
 
 
   Scenario: Fail to read regular file without read permission

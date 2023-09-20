@@ -24,8 +24,7 @@ Feature: Directories multiclient tests
                     storage: posix
                     size: 1000000
     And oneclients [client1, client2]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
     And opened browser with [user1, user2] signed in to [onezone, onezone] service
 

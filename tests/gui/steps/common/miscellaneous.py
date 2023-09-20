@@ -24,7 +24,7 @@ from tests.utils.bdd_utils import given, wt, parsers
 def _enter_text(input_box, text):
     input_box.clear()
     input_box.send_keys(text)
-    if input_box.get_attribute('value') != text:
+    if input_box.get_attribute('value') != text and input_box.text != text:
         raise RuntimeError('entering "{}" to input box failed'.format(text))
 
 

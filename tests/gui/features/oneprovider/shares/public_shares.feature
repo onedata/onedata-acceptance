@@ -26,7 +26,7 @@ Feature: Basic operations on public shares in file browser
     And using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 
 
-  Scenario: User views and downloads files from public interface of share shared from another user from "Share directory" modal
+  Scenario: User views and downloads files from public interface of share shared from another user using "Share directory" modal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
@@ -37,18 +37,18 @@ Feature: Basic operations on public shares in file browser
     # find and download file2
     And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
     And user of browser1 sees file browser on share's public interface
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-    And user of browser1 double clicks on item named "dir2" in file browser
+    And user of browser1 clicks and presses enter on item named "dir2" in file browser
     And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
-    And user of browser1 double clicks on item named "file2" in file browser
+    And user of browser1 clicks and presses enter on item named "file2" in file browser
     Then user of browser1 sees that content of downloaded file "file2" is equal to: "22222"
 
 
   Scenario: User sees public URLs of share are equal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser copies share URL of "share_dir1" share of "dir1"
-    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using modal icon
+    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
     Then user of space_owner_browser sees that share's URL is the same as URL from clipboard
 
 
@@ -76,9 +76,12 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser opens "share_dir1" single share view of space "space1" using sidebar
     And user of space_owner_browser removes current share
 
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
+    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the file browser
     And user of browser1 refreshes site
 
-    Then user of browser1 sees "The resource could not be found" error
+    Then user of browser1 sees "Share not found" error
 
 
   Scenario: User sees new files in share's public interface after owner added them to shared directory
@@ -88,13 +91,13 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees file browser on share's public interface
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 does not see any item(s) named "20B-0.txt" in file browser
 
     # upload dir1/20B-0.txt
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser1 clicks file browser refresh button
+    And user of browser1 clicks "Refresh" button from file browser menu bar
     And user of browser1 sees file browser on share's public interface
     Then user of browser1 sees item(s) named "20B-0.txt" in file browser
 
@@ -106,7 +109,7 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees file browser on share's public interface
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 sees item(s) named "file1" in file browser
 
 
@@ -121,7 +124,7 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 refreshes site
     Then user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees file browser on share's public interface
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 sees item(s) named "file1" in file browser
 
 
@@ -138,3 +141,30 @@ Feature: Basic operations on public shares in file browser
     Then user of browser1 sees that curl result matches following config:
            name: share_dir1
            file type: dir
+
+
+  Scenario: User fails to download a file in shared directory when the file has "000" POSIX permissions
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
+
+    # Space owner user set posix of file1 to 000
+    And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
+    And user of space_owner_browser sees that "File details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
+    And user of space_owner_browser sets "000" permission code in edit permissions panel
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
+    And user of space_owner_browser clicks on "X" button in modal "File details"
+
+    # Space owner user hands over shared directory
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
+    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
+
+    # User fails to download file1
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "file1" in file browser
+    Then user of browser1 sees that error modal with text "Starting file download failed" appeared
