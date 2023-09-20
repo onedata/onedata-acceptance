@@ -194,8 +194,8 @@ def assert_pattern_at_field_in_archive_audit_log(browser_id, mes_type,
     driver = selenium[browser_id]
     modal = modals(driver).details_archive_audit_log
     visible_message = getattr(modal, field_name)
-    patterns = {'date': re.compile(r"\d\d? [A-Z][a-z][a-z]? \d\d\d\d \d\d:\d\d:"
-                                   r"\d\d\.\d\d\d"),
+    patterns = {'date': re.compile(r"\d\d? [A-Z][a-z][a-z]? \d\d\d\d \d\d?:"
+                                   r"\d\d:\d\d\.\d\d\d"),
                 'file_id': re.compile(r"([A-Z]|[0-9])*"),
                 'time_taken': re.compile(r"\d*(\.\d*)?(ms|s|min|h)"),
                 'location_path': re.compile(r"/.*")
