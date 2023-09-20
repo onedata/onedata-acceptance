@@ -12,6 +12,7 @@ from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
 class ArchiveDetails(Modal):
+    creator = Label('.creator-field .record-name')
     archive_id = Input('.archiveId-field .clipboard-input')
     description = Input('.description-field .form-control')
     layout = Label('.layout-field .field-component')

@@ -340,3 +340,22 @@ def write_in_description_input(browser_id, modals, text, selenium):
 def close_archive_details(browser_id, modals, selenium):
     driver = selenium[browser_id]
     modals(driver).archive_details.x.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees creator column for archive '
+                  'with description "{description}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_presence_of_creator_column(browser_id, tmp_memory, description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_with_description(browser, description)
+    creator = archive.creator
+    assert creator is not None
+
+
+@wt(parsers.parse('user of {browser_id} sees creator field in '
+                  'details archive'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_presence_of_creator_in_archive_details(browser_id, modals, selenium):
+    driver = selenium[browser_id]
+    creator = modals(driver).archive_details.creator
+    assert creator is not None

@@ -3,7 +3,7 @@ on archives using Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
