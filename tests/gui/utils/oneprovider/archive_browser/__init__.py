@@ -21,6 +21,8 @@ class _ArchiveBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.archive-browser .fb-breadcrumbs')
     create_archive = Button('.hidden-xs .toolbar-buttons '
                             '.oneicon-browser-archive-add')
+    create_archive_web = WebElement('.hidden-xs .toolbar-buttons '
+                                    '.oneicon-browser-archive-add')
     empty_dir_msg = Label('.empty-dir-text')
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
@@ -36,6 +38,10 @@ class _ArchiveBrowser(PageObject):
     def click_on_background(self):
         ActionChains(self.driver).move_to_element_with_offset(
             self.header, 0, 0).click().perform()
+
+    def move_to_elem(self, driver, elem):
+        element = getattr(self, elem+'_web')
+        ActionChains(driver).move_to_element(element).perform()
 
 
 ArchiveBrowser = partial(WebItem, cls=_ArchiveBrowser)

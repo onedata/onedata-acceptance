@@ -154,6 +154,8 @@ def assert_base_archive_description(browser_id, tmp_memory, base_description,
                                                             item_base_archive)
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  'archive browser'))
 @wt(parsers.parse('user of browser clicks on {button} button in '
                   'archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -359,3 +361,23 @@ def assert_presence_of_creator_in_archive_details(browser_id, modals, selenium):
     driver = selenium[browser_id]
     creator = modals(driver).archive_details.creator
     assert creator is not None
+
+
+@wt(parsers.parse('user of {browser_id} hovers over "{button}" button in '
+                  'archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def hover_over_button_in_archive_browser(browser_id, tmp_memory, selenium,
+                                         button):
+    browser = tmp_memory[browser_id]['archive_browser']
+    driver = selenium[browser_id]
+    browser.move_to_elem(driver, transform(button))
+
+
+@wt(parsers.parse('user of {browser_id} hovers over "{option}" option '
+                  'in data row menu in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def hover_over_option_in_data_row_menu_in_browser(selenium, browser_id, popups,
+                                                  option):
+    driver = selenium[browser_id]
+    menu = popups(selenium[browser_id]).archive_row_menu
+    menu.move_to_option(driver, option)

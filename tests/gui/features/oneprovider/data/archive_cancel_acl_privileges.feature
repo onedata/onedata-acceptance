@@ -72,7 +72,7 @@ Feature: Archives cancel privileges test
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Cancel archivization" option in data row menu in archive browser
     And user of browser_user1 clicks "Yes" on cancel archive creation modal
-    And user of browser_user1 sees that item "dir1" has 0 archives
+    Then user of browser_user1 sees that item "dir1" has 0 archives
 
 
     Scenario: User cannot cancel creation another user archive archive without manage archives privilege
@@ -103,5 +103,6 @@ Feature: Archives cancel privileges test
         layout: plain
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
-    And user of browser_user1 hovers over "cancel" option in data row menu in archive browser and sees insufficient privileges message
+    And user of browser_user1 hovers over "cancel" option in data row menu in archive browser
+    Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege
 

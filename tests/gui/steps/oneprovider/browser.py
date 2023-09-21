@@ -222,21 +222,24 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
     menu.choose_option(option)
 
 
-@wt(parsers.parse('user of {browser_id} hovers over "{option}" option '
-                  'in data row menu in archive browser and sees insufficient '
-                  'privileges message'))
+@wt(parsers.parse('user of {browser_id} sees popup message about insufficient '
+                  'privileges requiring "{privilege}" privilege'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def hover_over_option_in_data_row_menu_in_browser(selenium, browser_id, popups,
-                                                  option):
+def assert_popup_insufficient_privileges_message(browser_id, privilege, popups,
+                                                 selenium):
     driver = selenium[browser_id]
-    menu = popups(selenium[browser_id]).archive_row_menu
-    menu.move_to_option(driver, option)
     toggle_info = popups(driver).toggle_label
-    message = (f'Insufficient privileges (requires "manage archives"'
-               ' privilege in this space for non‑owned archives).')
-    err_msg = (f'expected {message} info to be visible instead of '
-               f'{toggle_info} after hovering over option {option}')
-    assert toggle_info == message, err_msg
+    message_dict = {
+        'manage archives':
+            'Insufficient privileges (requires "manage archives" privilege in '
+            'this space for non‑owned archives).',
+        'create archives':
+            'Insufficient privileges (requires "create archives" privilege in '
+            'this space).'
+    }
+    err_msg = (f'expected {message_dict[privilege]} info to be visible instead '
+               f'of {toggle_info}')
+    assert toggle_info == message_dict[privilege], err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{option}" option is '
