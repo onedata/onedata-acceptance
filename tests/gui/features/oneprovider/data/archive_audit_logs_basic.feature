@@ -40,7 +40,7 @@ Feature: Archive audit logs
     And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    Then user of browser sees no empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
+    Then user of browser sees non empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
 
 
   Scenario: User sees details about archived file or directory
@@ -104,18 +104,12 @@ Feature: Archive audit logs
     And user of browser clicks on menu for archive with description: "nested archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
     And user of browser sees logs about directories or files ordered ascendingly by name index with prefix dir_ or file_ in archive audit log
-    And user of browser closes "Archive audit log" modal
 
-    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
-    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    And user of browser scrolls to top in archive audit log
     And user of browser sees entries ordered from newest to oldest in column "Time" in archive audit log
-    And user of browser closes "Archive audit log" modal
 
-    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
-    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    And user of browser scrolls to top in archive audit log
     And user of browser sees that 21 first logs contain events about archivisation finished of files, directories or symbolic links in archive audit log
-    And user of browser closes "Archive audit log" modal
 
-    And user of browser clicks on menu for archive with description: "nested archive" in archive browser
-    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    And user of browser scrolls to top in archive audit log
     Then user of browser sees entries ordered from newest to oldest in column "Time taken" in archive audit log

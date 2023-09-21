@@ -424,6 +424,10 @@ def create_file_in_nested_directory(user, path, provider, number: int, name,
                      '"{provider}" provider'))
 def create_files_names_alphabetically(number, path, users, user, provider,
                                       hosts):
+    """
+    Second step name (... names sorted alphabetically ...) is deprecated
+    use the first one
+    """
     for i in range(int(number)):
         num = str(i+1).rjust(3, '0')
         file_path = f'{path}/file_{num}'

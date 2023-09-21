@@ -46,6 +46,11 @@ class ArchiveAuditLog(Modal):
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
+    def scroll_to_top(self):
+        self.driver.execute_script("document.querySelector('.audit-log-browser "
+                                   ".table-scrollable-container')"
+                                   ".scrollTo(0, 0)")
+
     def info_of_visible_elems(self, option):
         # order in dict
         #  0   |  1   |   2   |     3

@@ -54,9 +54,16 @@ Feature: Archive audit logs symbolic links
     And user of browser waits for "Preserved" state for archive with description "symlinks archive" in archive browser
     And user of browser clicks on menu for archive with description: "symlinks archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees that items ["dir-root-1", "symlink-dir-root-2", "file2", "dir-internal-2", "symlink-file2", "file1", "dir-internal-1", "symlink-file1"] are visible in archive audit log
+    And user of browser sees that entries in archive audit log contain following:
+        dir-root-1: Directory archivisation finished.
+        symlink-dir-root-2: Directory archivisation finished.
+        file2: Regular file archivisation finished.
+        dir-internal-2: Directory archivisation finished.
+        symlink-file2: Symbolic link archivisation finished.
+        file1: Regular file archivisation finished.
+        dir-internal-1: Directory archivisation finished.
+        symlink-file1: Symbolic link archivisation finished.
     And user of browser sees that exactly 8 items are visible in archive audit log
-    And user of browser sees that 8 first logs contain events about archivisation finished of files, directories or symbolic links in archive audit log
     And user of browser clicks on item "symlink-file2" in archive audit log
     Then user of browser sees that details for archived item in archive audit log are as follow:
         Event: Symbolic link archivisation finished.
@@ -64,7 +71,7 @@ Feature: Archive audit logs symbolic links
         Source item absolute location: /space1/dir-root-2/dir-internal-2/symlink-file2
 
 
-    Scenario: User sees log entries correctly describing events for archivisation with disabled "Follow symbolic links" option
+  Scenario: User sees log entries correctly describing events for archivisation with disabled "Follow symbolic links" option
     When user of browser opens file browser for "space1" space
 
     # create symlinks in dir-root-1
@@ -92,6 +99,10 @@ Feature: Archive audit logs symbolic links
     And user of browser waits for "Preserved" state for archive with description "symlinks archive2" in archive browser
     And user of browser clicks on menu for archive with description: "symlinks archive2" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees that items ["dir-root-1", "file1", "dir-internal-1", "symlink-file1", "symlink-dir-root-2"] are visible in archive audit log
-    And user of browser sees that exactly 5 items are visible in archive audit log
-    Then user of browser sees that 5 first logs contain events about archivisation finished of files, directories or symbolic links in archive audit log
+    And user of browser sees that entries in archive audit log contain following:
+        dir-root-1: Directory archivisation finished.
+        symlink-dir-root-2: Symbolic link archivisation finished.
+        file1: Regular file archivisation finished.
+        dir-internal-1: Directory archivisation finished.
+        symlink-file1: Symbolic link archivisation finished.
+    Then user of browser sees that exactly 5 items are visible in archive audit log

@@ -17,12 +17,12 @@ from tests.gui.utils.generic import parse_seq, transform
 from datetime import datetime
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees no empty '
+@wt(parsers.re('user of (?P<browser_id>.*) sees non empty '
                '(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and '
                'directories in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_first_no_empty_column_content(selenium, modals, fields,
-                                                   browser_id, number: int):
+def assert_number_of_first_non_empty_column_content(selenium, modals, fields,
+                                                    browser_id, number: int):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     fields = parse_seq(fields)
@@ -82,6 +82,33 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, modals,
     assert log_count == number
 
 
+@wt(parsers.parse('user of {browser_id} sees that entries in archive audit log '
+                  'contain following:\n{config}'))
+def check_entries_in_archive_audit_log(browser_id, config, selenium, modals):
+    """
+    There are only checked visible entries (without scrolling)
+    There can be more entries than given (no error)
+    Config format given in yaml:
+        File: Event
+    Example:
+        file1: Regular file archivisation finished.
+        dir1: Directory archivisation finished.
+    """
+    _check_entries_in_archive_audit_log(browser_id, config, selenium, modals)
+
+
+def _check_entries_in_archive_audit_log(browser_id, config, selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_audit_log
+    visible_logs = modal.data
+    data = yaml.load(config)
+    for item in data.keys():
+        err_msg = (f'there is no visible log: {item}: {data[item]} in archive '
+                   f'audit log')
+        assert (item in visible_logs
+                and data[item] == visible_logs[item].event), err_msg
+
+
 @wt(parsers.parse('user of {browser_id} clicks on item "{item_name}" in '
                   'archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -97,18 +124,6 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals,
 def click_on_top_item_in_archive_audit_log(browser_id, modals,
                                            selenium):
     click_on_item_in_archive_audit_log(browser_id, 0, modals, selenium)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees that items? '
-               '(?P<items>( |.)*) (is|are) visible in archive audit log'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_presence_of_items_in_archive_audit_log(browser_id, items, modals,
-                                                  selenium):
-    driver = selenium[browser_id]
-    visible_items = modals(driver).archive_audit_log.data
-    for item in parse_seq(items):
-        assert item in visible_items,  (f'item {item} is not visible in archive'
-                                        f' audit log')
 
 
 @wt(parsers.parse('user of {browser_id} sees that exactly {number} items '
@@ -292,6 +307,8 @@ def assert_ascending_file_or_dir_names(browser_id, selenium, modals):
         modal.scroll_by_press_space()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on link for field '
+                  '"{field_name}" in details in archive audit log'))
 @wt(parsers.parse('user of {browser_id} clicks on field '
                   '"{field_name}" in details in archive audit log'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -301,3 +318,11 @@ def click_on_field_in_details_archive_audit_log(browser_id, field_name,
     modal = modals(driver).details_archive_audit_log
     elem_to_click = getattr(modal, transform(field_name))
     elem_to_click.click()
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to top in archive audit log'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_audit_log
+    modal.scroll_to_top()

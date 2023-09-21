@@ -42,7 +42,7 @@ Feature: Archive audit logs, archive creation failure
     And user of browser waits for "Failed" state for archive with description "too big archive" in archive browser
     And user of browser clicks on menu for archive with description: "too big archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees no empty ["Time", "Time taken"] fields of first 2 files and directories in archive audit log
+    And user of browser sees non empty ["Time", "Time taken"] fields of first 2 files and directories in archive audit log
     And user of browser clicks on item "file_1.txt" in archive audit log
     And user of browser sees that details for archived item in archive audit log are as follow:
         Event: Regular file archivisation failed. No space left on device.
