@@ -20,7 +20,6 @@ from datetime import datetime
 @wt(parsers.re('user of (?P<browser_id>.*) sees non empty '
                '(?P<fields>( |.)*) field(s)? of first (?P<number>.*) files and '
                'directories in archive audit log'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_first_non_empty_column_content(selenium, modals, fields,
                                                     browser_id, number: int):
     driver = selenium[browser_id]
@@ -50,7 +49,6 @@ def assert_number_of_first_non_empty_column_content(selenium, modals, fields,
 @wt(parsers.parse('user of {browser_id} sees that {number} first logs contain '
                   'events about archivisation finished of files, directories '
                   'or symbolic links in archive audit log'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_n_logs_about_archivisation_finished(browser_id, number: int, modals,
                                                selenium):
     driver = selenium[browser_id]
@@ -235,7 +233,6 @@ def parse_time(str_time):
 
 @wt(parsers.parse('user of {browser_id} sees entries ordered from newest to'
                   ' oldest in column "{column_name}" in archive audit log'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_decreasing_creation_times_in_archives_audit_log(browser_id,
                                                            column_name,
                                                            selenium, modals):
@@ -281,7 +278,6 @@ def assert_decreasing_creation_times_in_archives_audit_log(browser_id,
 @wt(parsers.parse('user of {browser_id} sees logs about directories or files '
                   'ordered ascendingly by name index with prefix dir_ or file_ '
                   'in archive audit log'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_ascending_file_or_dir_names(browser_id, selenium, modals):
     item_name = 'File'
     driver = selenium[browser_id]
