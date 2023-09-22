@@ -75,7 +75,7 @@ Feature: Archives cancel privileges test
     Then user of browser_user1 sees that item "dir1" has 0 archives
 
 
-    Scenario: User cannot cancel creation another user archive archive without manage archives privilege
+  Scenario: User cannot cancel creation another user archive archive without manage archives privilege
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

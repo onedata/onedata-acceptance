@@ -40,7 +40,7 @@ class _ArchiveBrowser(PageObject):
             self.header, 0, 0).click().perform()
 
     def move_to_elem(self, driver, elem):
-        element = getattr(self, elem+'_web')
+        element = getattr(self, elem + '_web')
         ActionChains(driver).move_to_element(element).perform()
 
 

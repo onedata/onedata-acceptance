@@ -48,15 +48,7 @@ Feature: Archives privileges test
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description in Details Archive modal
-
-#    And user of space_owner_browser clicks "Datasets, Archives" of "space1" space in the sidebar
-#    And user of space_owner_browser sees dataset browser in datasets tab in Oneprovider page
-#    And user of space_owner_browser clicks on dataset for "dir1" in dataset browser
-#    And user of space_owner_browser sees archive browser in archives tab in Oneprovider page
-#    And user of space_owner_browser clicks on menu for archive with description: "new description" in archive browser
-#    And user of space_owner_browser clicks "Properties" option in data row menu in archive browser
-#    And user of space_owner_browser sees archive description: "new description" in Archive details modal
+    Then user of browser_user1 writes "new description" into edit description and saves it, in details archive modal
 
 
   Scenario: User cannot modify another user archive without privilege manage archives
@@ -93,7 +85,6 @@ Feature: Archives privileges test
               View archives: True
               Create archives: True
 
-
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
@@ -115,7 +106,7 @@ Feature: Archives privileges test
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description in Details Archive modal
+    Then user of browser_user1 writes "new description" into edit description and saves it, in details archive modal
 
 
   Scenario: User successfully removes another user archive with privilege remove archives
@@ -139,11 +130,7 @@ Feature: Archives privileges test
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Delete archive" option in data row menu in archive browser
     And user of browser_user1 writes "I understand that data of the archive will be lost" into confirmation input in Delete archive modal
-    And user of browser_user1 clicks on "Delete archive" button in modal "Delete archive"
-
-#    And user of space_owner_browser clicks "Datasets, Archives" of "space1" space in the sidebar
-#    And user of space_owner_browser sees dataset browser in datasets tab in Oneprovider page
-#    And user of space_owner_browser sees that item "dir1" has 0 archives
+    Then user of browser_user1 clicks on "Delete archive" button in modal "Delete archive"
 
 
   Scenario: User of browser sees Creator column in archive browser and Creator field in archive details
@@ -154,7 +141,7 @@ Feature: Archives privileges test
     And user of space_owner_browser sees creator column for archive with description "first archive"
     And user of space_owner_browser clicks on menu for archive with description: "first archive" in archive browser
     And user of space_owner_browser clicks "Properties" option in data row menu in archive browser
-    Then user of space_owner_browser sees creator field in details archive
+    Then user of space_owner_browser sees creator field in archive details
 
 
   Scenario: User of browser cannot create archive, when there is no archives in archive browser, without privilege create archives
@@ -195,14 +182,3 @@ Feature: Archives privileges test
     And user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
-
-
-#    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-#          Dataset & archive management:
-#            granted: Partially
-#            privilege subtypes:
-#              Manage datasets: False
-#              View archives: True
-#              Create archives: False
-#              Manage archives: False
-#              Remove archives: False
