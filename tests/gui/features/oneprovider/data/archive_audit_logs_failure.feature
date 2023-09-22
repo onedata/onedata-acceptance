@@ -28,7 +28,7 @@ Feature: Archive audit logs, archive creation failure
                     size: 1 MiB
 
 
-  Scenario: User sees logs about unsuccessful file archivisation
+  Scenario: User sees logs about unsuccessful file archivisation after creating too big archive
     When user of browser opens file browser for "space1" space
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir

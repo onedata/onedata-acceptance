@@ -280,5 +280,6 @@ def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
     driver = selenium[browser_id]
     browser = op_container(driver).archive_file_browser
     item_size = browser.data[item_name].size
-    err_msg = 'displayed size {} for {} does not match expected {}'
-    assert size == item_size, err_msg.format(item_size, item_name, size)
+    err_msg = (f'displayed size {item_size} for {item_name} does not '
+               f'match expected {size}')
+    assert size == item_size, err_msg

@@ -16,10 +16,10 @@ Feature: Archive audit logs symbolic links
                 directory tree:
                   - dir-root-1:
                     - file1: 111
-                    - dir-internal-1:
+                    - dir-internal-1
                   - dir-root-2:
                     - file2: 222
-                    - dir-internal-2:
+                    - dir-internal-2
 
     And user opened browser window
     And user of browser opened onezone page

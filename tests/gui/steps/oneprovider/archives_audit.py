@@ -47,7 +47,7 @@ def assert_number_of_first_non_empty_column_content(selenium, modals, fields,
 
 
 @wt(parsers.parse('user of {browser_id} sees that {number} first logs contain '
-                  'events about archivisation finished of files, directories '
+                  'events about finished archivisation of files, directories '
                   'or symbolic links in archive audit log'))
 def assert_n_logs_about_archivisation_finished(browser_id, number: int, modals,
                                                selenium):
@@ -233,9 +233,8 @@ def parse_time(str_time):
 
 @wt(parsers.parse('user of {browser_id} sees entries ordered from newest to'
                   ' oldest in column "{column_name}" in archive audit log'))
-def assert_decreasing_creation_times_in_archives_audit_log(browser_id,
-                                                           column_name,
-                                                           selenium, modals):
+def assert_decreasing_creation_times_in_archives_audit_log(
+        browser_id, column_name, selenium, modals):
     err_msg = (f'column name {column_name} is expected to be Time or Time '
                f'taken')
     assert column_name in ['Time', 'Time taken'], err_msg

@@ -417,17 +417,10 @@ def create_file_in_nested_directory(user, path, provider, number: int, name,
 
 
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
-                     '"{path}" named file_001, file_002, ..., '
-                     'file_N supported by "{provider}" provider'))
-@given(parsers.parse('using REST, {user} creates {number} empty files in '
-                     '"{path}" with names sorted alphabetically supported by '
-                     '"{provider}" provider'))
+                     '"{path}" named "file_001", "file_002", ..., '
+                     '"file_N" supported by "{provider}" provider'))
 def create_files_names_alphabetically(number, path, users, user, provider,
                                       hosts):
-    """
-    Second step name (... names sorted alphabetically ...) is deprecated
-    use the first one
-    """
     for i in range(int(number)):
         num = str(i+1).rjust(3, '0')
         file_path = f'{path}/file_{num}'
@@ -435,11 +428,8 @@ def create_files_names_alphabetically(number, path, users, user, provider,
 
 
 @given(parsers.parse('using REST, {user} creates {number} empty files in '
-                     'directories {dir_list} named file_001, file_002, ...,'
-                     ' file_N supported by "{provider}" provider'))
-@given(parsers.parse('using REST, {user} creates {number} empty files in '
-                     'directories {dir_list} with names sorted alphabetically '
-                     'supported by "{provider}" provider'))
+                     'directories {dir_list} named "file_001", "file_002", ...,'
+                     ' "file_N" supported by "{provider}" provider'))
 def create_files_names_alphabetically_with_dir_list(user, number, dir_list,
                                                     provider, users, hosts):
     for dir_path in parse_seq(dir_list):
