@@ -179,6 +179,6 @@ Feature: Archives privileges test
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
-    And user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
+    Then user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain

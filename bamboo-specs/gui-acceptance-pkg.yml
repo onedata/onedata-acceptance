@@ -77,6 +77,7 @@ stages:
         - Onepanel login
         - Onepanel members
         - Onepanel two hosts deployment
+        - Oneprovider ACL archives privileges
         - Oneprovider ACL basic
         - Oneprovider ACL directories privileges
         - Oneprovider ACL directories privileges change and upload
@@ -573,6 +574,21 @@ Onepanel two hosts deployment:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
+
+Oneprovider ACL archives privileges:
+  <<: *acceptance-tests-in-chrome-job
+  key: GHRFB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_acl_archives_privileges ENV_FILE=1oz_2op_slow_file_operations test_gui_src
 
 Oneprovider ACL basic:
   <<: *acceptance-tests-in-chrome-job
