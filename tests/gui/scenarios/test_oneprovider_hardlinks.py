@@ -35,17 +35,22 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.members import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.browser import *
+
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.qos import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.archives import *
+from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.metadata import *
@@ -54,8 +59,20 @@ from tests.gui.meta_steps.oneprovider.qos import *
 
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.modals.details_modal import *
+
 from tests.gui.steps.oneprovider_common import *
+
+from tests.gui.meta_steps.oneprovider.permissions import *
+from tests.gui.meta_steps.oneprovider.metadata import *
+from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.qos import *
+
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.archives import *
 
 from tests.utils.acceptance_utils import *
 
@@ -65,6 +82,6 @@ def screens():
     return [0]
 
 
-# scenarios('../features/oneprovider/data/hardlinks.feature')
-# scenarios('../features/oneprovider/data/symlinks.feature')
+scenarios('../features/oneprovider/data/hardlinks.feature')
+scenarios('../features/oneprovider/data/symlinks.feature')
 scenarios('../features/oneprovider/data/hardlinks_and_symlinks_multi.feature')
