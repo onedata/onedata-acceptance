@@ -63,7 +63,8 @@ class _FileBrowser(PageObject):
 
     def names_of_visible_elems(self):
         files = self._data
-        names = [f.text.split('\n')[0] for f in files]
+        names = [f.text.split('\n')[0] for f in files
+                 if len(f.text.split('\n')) > 1]
         return names
 
     @contextmanager
