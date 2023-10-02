@@ -54,7 +54,7 @@ Feature: Archive audit logs symbolic links
     And user of browser waits for "Preserved" state for archive with description "symlinks archive" in archive browser
     And user of browser clicks on menu for archive with description: "symlinks archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees that entries in archive audit log contain following:
+    Then user of browser sees that entries in archive audit log contain following File and Event data:
         dir-root-1: Directory archivisation finished.
         symlink-dir-root-2: Directory archivisation finished.
         file2: Regular file archivisation finished.
@@ -65,7 +65,7 @@ Feature: Archive audit logs symbolic links
         symlink-file1: Symbolic link archivisation finished.
     And user of browser sees that exactly 8 items are visible in archive audit log
     And user of browser clicks on item "symlink-file2" in archive audit log
-    Then user of browser sees that details for archived item in archive audit log are as follow:
+    And user of browser sees that details for archived item in archive audit log are as follow:
         Event: Symbolic link archivisation finished.
         Relative location: dir-root-1/symlink-dir-root-2/dir-internal-2/symlink-file2
         Source item absolute location: /space1/dir-root-2/dir-internal-2/symlink-file2
@@ -99,10 +99,10 @@ Feature: Archive audit logs symbolic links
     And user of browser waits for "Preserved" state for archive with description "symlinks archive2" in archive browser
     And user of browser clicks on menu for archive with description: "symlinks archive2" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees that entries in archive audit log contain following:
+    Then user of browser sees that entries in archive audit log contain following File and Event data:
         dir-root-1: Directory archivisation finished.
         symlink-dir-root-2: Symbolic link archivisation finished.
         file1: Regular file archivisation finished.
         dir-internal-1: Directory archivisation finished.
         symlink-file1: Symbolic link archivisation finished.
-    Then user of browser sees that exactly 5 items are visible in archive audit log
+    And user of browser sees that exactly 5 items are visible in archive audit log

@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from .archives_modals.archive_details import ArchiveDetails
 from .archives_modals.archive_audit_log import ArchiveAuditLog
-from .archives_modals.details_archive_audit_log import DetailsArchiveAuditLog
+from .archives_modals.audit_log_entry_details import AuditLogEntryDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
 from .files_modals.disable_directory_statistics import (
@@ -111,8 +111,8 @@ class Modals(object):
                             cls=CancelRecall)
     archive_details = WebItem('.modal-dialog', cls=ArchiveDetails)
     archive_audit_log = WebItem('.modal-dialog', cls=ArchiveAuditLog)
-    details_archive_audit_log = WebItem('.details-container',
-                                        cls=DetailsArchiveAuditLog)
+    audit_log_entry_details = WebItem('.details-container',
+                                      cls=AuditLogEntryDetails)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)

@@ -22,12 +22,6 @@ class FilesLog(PageObject, BrowserRow):
     event = Label('.message-text')
     clickable_field = WebElement('.file-name')
 
-    def click_and_enter(self):
-        time.sleep(0.1)
-        ActionChains(self.driver).click(self.clickable_field).perform()
-        self.wait_for_selected()
-        ActionChains(self.driver).key_down(Keys.ENTER).perform()
-
     def click(self):
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
@@ -51,14 +45,14 @@ class ArchiveAuditLog(Modal):
                                    ".table-scrollable-container')"
                                    ".scrollTo(0, 0)")
 
-    def info_of_visible_elems(self, option):
+    def get_files_data(self, option):
         # order in dict
         #  0   |  1   |   2   |     3
         # Time | File | Event | Time taken
         index = self.info_dict[option]
         files = self._data
         names = [f.text.split('\n') for f in files]
-        elems_info = []
+        files_data = []
         for name in names:
             if len(name) > 3:
                 # when file`s name repeats, annotation @... is added to
@@ -67,8 +61,8 @@ class ArchiveAuditLog(Modal):
                     name[1] += name[2]
                     name[2] = name[3]
                     name.pop()
-                elems_info.append(name[index])
-        return elems_info
+                files_data.append(name[index])
+        return files_data
 
     def __str__(self):
         return 'Archive audit log'

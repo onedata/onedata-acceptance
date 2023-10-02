@@ -40,7 +40,7 @@ Feature: Archive audit logs
     And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    Then user of browser sees non empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
+    Then user of browser sees non-empty ["Time", "Time taken"] fields of first 203 files and directories in archive audit log
 
 
   Scenario: User sees details about archived file or directory
@@ -71,11 +71,11 @@ Feature: Archive audit logs
         File ID:
           type: file_id
         Source item absolute location: /space1/dir4
-    And user of browser closes "Details archive audit log" modal
+    And user of browser closes "Audit log entry details" panel
 
     # check logs about file creation
     And user of browser clicks on item "file1" in archive audit log
-    Then user of browser sees that details for archived item in archive audit log are as follow:
+    And user of browser sees that details for archived item in archive audit log are as follow:
         Event: Regular file archivisation finished.
         Relative location: dir4/file1
         Started at:
@@ -106,10 +106,10 @@ Feature: Archive audit logs
     Then user of browser sees logs about directories or files ordered ascendingly by name index with prefix dir_ or file_ in archive audit log
 
     And user of browser scrolls to top in archive audit log
-    Then user of browser sees entries ordered from newest to oldest in column "Time" in archive audit log
+    And user of browser sees entries ordered from newest to oldest in column "Time" in archive audit log
 
     And user of browser scrolls to top in archive audit log
-    Then user of browser sees that 21 first logs contain events about finished archivisation of files, directories or symbolic links in archive audit log
+    And user of browser sees that 21 first logs contain events about finished archivisation of files, directories or symbolic links in archive audit log
 
     And user of browser scrolls to top in archive audit log
-    Then user of browser sees entries ordered from newest to oldest in column "Time taken" in archive audit log
+    And user of browser sees entries ordered from newest to oldest in column "Time taken" in archive audit log

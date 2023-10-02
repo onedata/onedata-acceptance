@@ -521,16 +521,34 @@ def create_symlinks_of_file(selenium, browser_id, file_name, space,
                                  option, button)
 
 
-def _create_link_in_file_browser(selenium, browser_id, file_name, space,
-                                 tmp_memory, oz_page, op_container, popups,
-                                 option, button):
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
-                      space)
+@wt(parsers.parse('user of {browser_id} creates symbolic link of "{file_name}" '
+                  'placed in "{path}" directory on {which_browser}'))
+def create_symlinks_of_file_with_path(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, path):
+    option = 'Create symbolic link'
+    button = 'Place symbolic link'
+
+    _create_link_in_file_browser(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, option, button, path=path,
+        go_to_file_browser=False)
+
+
+def _create_link_in_file_browser(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, option, button, path=None,
+        go_to_file_browser=True):
+    if go_to_file_browser:
+        go_to_filebrowser(selenium, browser_id, oz_page, op_container,
+                          tmp_memory, space)
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
                                                    file_name, space, tmp_memory,
                                                    oz_page, op_container)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
+    if path:
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     click_file_browser_button(browser_id, button, tmp_memory)
 
 

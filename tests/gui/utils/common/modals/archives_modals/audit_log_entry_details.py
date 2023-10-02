@@ -1,5 +1,5 @@
-"""Utils and fixtures to facilitate operations on details archive audit log
-modal.
+"""Utils and fixtures to facilitate operations on audit log entry details
+panel.
 """
 
 __author__ = "Wojciech Szmelich"
@@ -12,7 +12,7 @@ from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
-class DetailsArchiveAuditLog(Modal):
+class AuditLogEntryDetails(Modal):
     event = Label('.event-message')
     relative_location = Input('.entry-info-row-relative-location '
                               '.clipboard-input')
@@ -29,4 +29,4 @@ class DetailsArchiveAuditLog(Modal):
     close = Button('.close-details')
 
     def __str__(self):
-        return 'Details archive audit log'
+        return 'Audit log entry details'
