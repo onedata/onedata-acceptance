@@ -1,4 +1,4 @@
-Feature: Archives cancel privileges test
+Feature: Archives cancel test
 
 
   Background:
@@ -57,7 +57,6 @@ Feature: Archives cancel privileges test
     And user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
-
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Dataset & archive management:
@@ -71,11 +70,11 @@ Feature: Archives cancel privileges test
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Cancel archivization" option in data row menu in archive browser
-    And user of browser_user1 clicks "Yes" on cancel archive creation modal
+    And user of browser_user1 clicks on "Yes" button in modal "Cancel archive"
     Then user of browser_user1 sees that item "dir1" has 0 archives
 
 
-  Scenario: User cannot cancel creation another user archive archive without manage archives privilege
+  Scenario: User cannot cancel creation another user archive without manage archives privilege
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -103,6 +102,6 @@ Feature: Archives cancel privileges test
         layout: plain
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
-    And user of browser_user1 hovers over "cancel" option in data row menu in archive browser
+    And user of browser_user1 hovers over "Cancel archivisation" option in data row menu in archive browser
     Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege
 

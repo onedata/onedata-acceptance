@@ -23,9 +23,9 @@ class Options(PageObject):
 class ArchiveRowMenu(PageObject):
     options = WebItemsSequence('.left-top .file-actions.dropdown-menu '
                                'li:not(.separator)', cls=Options)
-    cancel_web = WebElement('.file-action-cancel')
-    edit_web = WebElement('.file-action-editDescription')
-    delete_web = WebElement('.file-action-delete')
+    cancel_archivisation_web = WebElement('.file-action-cancel')
+    edit_description_web = WebElement('.file-action-editDescription')
+    delete_archive_web = WebElement('.file-action-delete')
 
     def choose_option(self, name):
         if name not in self.options:

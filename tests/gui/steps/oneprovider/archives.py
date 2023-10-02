@@ -156,8 +156,6 @@ def assert_base_archive_description(browser_id, tmp_memory, base_description,
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
                   'archive browser'))
-@wt(parsers.parse('user of browser clicks on {button} button in '
-                  'archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id, tmp_memory, button):
     browser = tmp_memory[browser_id]['archive_browser']
@@ -187,7 +185,7 @@ def click_menu_for_archive(browser_id, tmp_memory, description):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
-                  'input in Delete Archive modal'))
+                  'input in "Delete Archive" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_in_confirmation_input(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
@@ -329,7 +327,8 @@ def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into edit '
-                  'description and saves it, in details archive modal'))
+                  'description and successfully saves it, in details archive '
+                  'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_in_description_input(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
@@ -373,4 +372,4 @@ def hover_over_option_in_data_row_menu_in_browser(selenium, browser_id, popups,
                                                   option):
     driver = selenium[browser_id]
     menu = popups(selenium[browser_id]).archive_row_menu
-    menu.move_to_option(driver, option)
+    menu.move_to_option(driver, transform(option))

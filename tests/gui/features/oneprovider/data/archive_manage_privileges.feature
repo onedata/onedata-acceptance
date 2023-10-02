@@ -48,7 +48,8 @@ Feature: Archives privileges test
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description and saves it, in details archive modal
+    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in details archive modal
+    And user of browser_user1 sees that 1st archive in archive browser has description: "new description"
 
 
   Scenario: User cannot modify another user archive without privilege manage archives
@@ -70,7 +71,7 @@ Feature: Archives privileges test
     And user of browser_user1 clicks on dataset for "dir1" in dataset browser
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
-    And user of browser_user1 hovers over "edit" option in data row menu in archive browser
+    And user of browser_user1 hovers over "Edit description" option in data row menu in archive browser
     Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege
 
 
@@ -106,7 +107,8 @@ Feature: Archives privileges test
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description and saves it, in details archive modal
+    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in details archive modal
+    And user of browser_user1 sees that 1st archive in archive browser has description: "new description"
 
 
   Scenario: User successfully removes another user archive with privilege remove archives
@@ -129,8 +131,9 @@ Feature: Archives privileges test
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Delete archive" option in data row menu in archive browser
-    And user of browser_user1 writes "I understand that data of the archive will be lost" into confirmation input in Delete archive modal
-    Then user of browser_user1 clicks on "Delete archive" button in modal "Delete archive"
+    And user of browser_user1 writes "I understand that data of the archive will be lost" into confirmation input in "Delete archive" modal
+    And user of browser_user1 clicks on "Delete archive" button in modal "Delete archive"
+    Then user of browser_user1 sees that item "dir1" has 0 archives
 
 
   Scenario: User of browser sees Creator column in archive browser and Creator field in archive details
@@ -138,13 +141,13 @@ Feature: Archives privileges test
     And user of space_owner_browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
-    And user of space_owner_browser sees creator column for archive with description "first archive"
+    Then user of space_owner_browser sees creator column for archive with description "first archive"
     And user of space_owner_browser clicks on menu for archive with description: "first archive" in archive browser
     And user of space_owner_browser clicks "Properties" option in data row menu in archive browser
-    Then user of space_owner_browser sees creator field in archive details
+    And user of space_owner_browser sees creator field in archive details
 
 
-  Scenario: User of browser cannot create archive, when there is no archives in archive browser, without privilege create archives
+  Scenario: User of browser cannot create archive, when there is no archives in archive browser, without "create archives" privilege
     When user of space_owner_browser creates dataset for item "dir1" in "space1"
     And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -160,8 +163,8 @@ Feature: Archives privileges test
     And user of browser_user1 clicks on dataset for "dir1" in dataset browser
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 hovers over "Create archive" button in archive browser
-    And user of browser_user1 sees popup message about insufficient privileges requiring "create archives" privilege
-    Then user of browser_user1 sees that page with text "NO ARCHIVES" appeared in archive browser
+    Then user of browser_user1 sees popup message about insufficient privileges requiring "create archives" privilege
+    And user of browser_user1 sees that page with text "NO ARCHIVES" appeared in archive browser
 
 
   Scenario: User successfully creates archive without manage datasets privilege
@@ -182,3 +185,4 @@ Feature: Archives privileges test
     Then user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
+    And user of browser_user1 sees that item "dir1" has 1 archive

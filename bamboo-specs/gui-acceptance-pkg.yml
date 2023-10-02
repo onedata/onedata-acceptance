@@ -77,7 +77,6 @@ stages:
         - Onepanel login
         - Onepanel members
         - Onepanel two hosts deployment
-        - Oneprovider ACL archives privileges
         - Oneprovider ACL basic
         - Oneprovider ACL directories privileges
         - Oneprovider ACL directories privileges change and upload
@@ -93,6 +92,7 @@ stages:
         - Oneprovider ACL subjects
         - Oneprovider archives
         - Oneprovider archives incremental and nested
+        - Oneprovider archives privileges
         - Oneprovider archives recall
         - Oneprovider data tab
         - Oneprovider data tab files
@@ -575,21 +575,6 @@ Onepanel two hosts deployment:
         scripts:
           - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
 
-Oneprovider ACL archives privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: GHRFB
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_acl_archives_privileges ENV_FILE=1oz_2op_slow_file_operations test_gui_src
-
 Oneprovider ACL basic:
   <<: *acceptance-tests-in-chrome-job
   key: COAB
@@ -814,6 +799,21 @@ Oneprovider archives incremental and nested:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_archives_incremental_and_nested test_gui_pkg
+
+Oneprovider archives privileges:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAAP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_archives_privileges ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
 
 Oneprovider archives recall:
   <<: *acceptance-tests-in-chrome-job

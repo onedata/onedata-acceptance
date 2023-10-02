@@ -56,7 +56,7 @@ Feature: Basic archives operations
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Delete archive" option in data row menu in archive browser
-    And user of browser writes "I understand that data of the archive will be lost" into confirmation input in Delete archive modal
+    And user of browser writes "I understand that data of the archive will be lost" into confirmation input in "Delete archive" modal
     And user of browser clicks on "Delete archive" button in modal "Delete archive"
     Then user of browser sees that page with text "NO ARCHIVES" appeared in archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
