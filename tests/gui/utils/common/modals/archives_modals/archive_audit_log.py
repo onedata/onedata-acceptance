@@ -28,8 +28,8 @@ class FilesLog(PageObject, BrowserRow):
 
 
 class ArchiveAuditLog(Modal):
-    _data = WebElementsSequence('.table-entry.data-row')
-    data = WebItemsSequence('.table-entry.data-row', cls=FilesLog)
+    _data_row = WebElementsSequence('.table-entry.data-row')
+    data_row = WebItemsSequence('.table-entry.data-row', cls=FilesLog)
     info_dict = {'Time': 0,
                  'File': 1,
                  'Event': 2,
@@ -45,24 +45,23 @@ class ArchiveAuditLog(Modal):
                                    ".table-scrollable-container')"
                                    ".scrollTo(0, 0)")
 
-    def get_files_data(self, option):
+    def get_rows_of_column(self, option):
         # order in dict
         #  0   |  1   |   2   |     3
         # Time | File | Event | Time taken
         index = self.info_dict[option]
-        files = self._data
-        names = [f.text.split('\n') for f in files]
-        files_data = []
-        for name in names:
-            if len(name) > 3:
+        rows_data = self._data_row
+        all_rows = [f.text.split('\n') for f in rows_data]
+        rows = []
+        for row in all_rows:
+            if len(row) > 3:
                 # when file`s name repeats, annotation @... is added to
                 # another column
-                if len(name) == 5:
-                    name[1] += name[2]
-                    name[2] = name[3]
-                    name.pop()
-                files_data.append(name[index])
-        return files_data
+                if len(row) == 5:
+                    row[1] += row[2]
+                    row.pop(2)
+                rows.append(row[index])
+        return rows
 
     def __str__(self):
         return 'Archive audit log'

@@ -106,10 +106,10 @@ Feature: Archive audit logs
     Then user of browser sees logs about directories or files ordered ascendingly by name index with prefix dir_ or file_ in archive audit log
 
     And user of browser scrolls to top in archive audit log
-    And user of browser sees entries ordered from newest to oldest in column "Time" in archive audit log
+    And user of browser sees entries ordered from latest to oldest in column "Time" in archive audit log
 
     And user of browser scrolls to top in archive audit log
     And user of browser sees that 21 first logs contain events about finished archivisation of files, directories or symbolic links in archive audit log
 
     And user of browser scrolls to top in archive audit log
-    And user of browser sees entries ordered from newest to oldest in column "Time taken" in archive audit log
+    And user of browser sees entries ordered from shortest to longest times in column "Time taken" in archive audit log

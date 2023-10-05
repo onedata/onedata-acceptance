@@ -48,14 +48,14 @@ Feature: Archive audit logs, archive creation failure
         Event: Regular file archivisation failed. No space left on device.
         Time taken:
           type: time_taken
-    And user of browser clicks on field "File" in details in archive audit log
+    And user of browser clicks on link for field "File" in details in archive audit log
     And user of browser sees that item named "file_1.txt" is of 0 B size in archive file browser
 
 
   Scenario: User sees error message about file verification failure
     When user of browser opens file browser for "space1" space
     And user of browser creates dataset for item "dir2" in "space1"
-    And user mocks Archive verifiction on oneprovider-krakow Oneprovider to fail
+    And user mocks archive verifiction on oneprovider-krakow Oneprovider to fail
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser tries to create archive for item "dir2" in "space1" with following configuration:

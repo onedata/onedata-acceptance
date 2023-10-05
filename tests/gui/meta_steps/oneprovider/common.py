@@ -176,5 +176,3 @@ def open_modal_on_tab(selenium, browser_id, filename, popups, tmp_memory,
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
-
-
