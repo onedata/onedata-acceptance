@@ -24,8 +24,16 @@ from bamboos.docker.environment import docker
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 
-def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, op_image=None,
-                      rest_cli_image=None, openfaas_pod_status_monitor_image=None, oc_image=None, pull=True):
+def get_images_option(
+        test_type='oneclient', env_file_name=None,
+        oz_image=None,
+        op_image=None,
+        oc_image=None,
+        rest_cli_image=None,
+        openfaas_pod_status_monitor_image=None,
+        openfaas_lambda_result_streamer_image=None,
+        pull=True
+):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
         return ''
@@ -47,13 +55,19 @@ def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, 
                     '--openfaas-pod-status-monitor-image',
                     images_cfg, pull
                 )
+                add_image_to_images_cfg(
+                    openfaas_lambda_result_streamer_image,
+                    'openfaas-lambda-result-streamer',
+                    '--openfaas-lambda-result-streamer-image',
+                    images_cfg, pull
+                )
     return ' + '.join(images_cfg)
 
 
 def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
     if not image:
         image = resolve_image(service_name)
-    print('\n[INFO] Using image {} for service {}'.format(image, service_name))
+    print('[INFO] Using image {} for service {}'.format(image, service_name))
     if pull:
         docker.pull_image_with_retries(image)
     images_cfg.append("['{}={}']".format(option, image))
@@ -201,6 +215,13 @@ def main():
         dest='openfaas_pod_status_monitor_image')
 
     parser.add_argument(
+        '--openfaas-lambda-result-streamer', '-si',
+        action='store',
+        help='OpenFaaS lambda result streamer image to use in tests',
+        default=None,
+        dest='openfaas_lambda_result_streamer_image')
+
+    parser.add_argument(
         '--update-etc-hosts', '-uh',
         action='store_true',
         help='If present adds entries to /etc/hosts on host machine for all zone '
@@ -277,6 +298,7 @@ sys.exit(ret)
         oc_image=args.oc_image,
         rest_cli_image=args.rest_cli_image,
         openfaas_pod_status_monitor_image=args.openfaas_pod_status_monitor_image,
+        openfaas_lambda_result_streamer_image=args.openfaas_lambda_result_streamer_image,
         pull=not args.no_pull
     )
 
@@ -395,7 +417,8 @@ SERVICE_TO_IMAGE = {
     'oneprovider': 'docker.onedata.org/oneprovider-dev',
     'oneclient': 'docker.onedata.org/oneclient-dev',
     'rest-cli': 'docker.onedata.org/rest-cli',
-    'openfaas-pod-status-monitor': 'docker.onedata.org/openfaas-pod-status-monitor'
+    'openfaas-pod-status-monitor': 'docker.onedata.org/openfaas-pod-status-monitor',
+    'openfaas-lambda-result-streamer': 'docker.onedata.org/openfaas-lambda-result-streamer'
 }
 
 
