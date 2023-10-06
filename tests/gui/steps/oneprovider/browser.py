@@ -230,10 +230,10 @@ def assert_popup_insufficient_privileges_message(browser_id, privilege, popups,
     driver = selenium[browser_id]
     toggle_info = popups(driver).toggle_label
     message_dict = {
-        'manage archives':
+        'Manage archives':
             'Insufficient privileges (requires "manage archives" privilege in '
             'this space for non‑owned archives).',
-        'create archives':
+        'Create archives':
             'Insufficient privileges (requires "create archives" privilege in '
             'this space).'
     }

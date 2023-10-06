@@ -373,3 +373,20 @@ def hover_over_option_in_data_row_menu_in_browser(selenium, browser_id, popups,
     driver = selenium[browser_id]
     menu = popups(selenium[browser_id]).archive_row_menu
     menu.move_to_option(driver, transform(option))
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>does not see|sees) link "(?P<link>.*?)" '
+                  'in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_creation_link(browser_id, res, link, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    if res == 'does not see':
+        try:
+            visible_link = getattr(browser, transform(link))
+            raise Exception(f'link {visible_link} is visible in archive browser')
+        except RuntimeError:
+            pass
+    elif res == 'sees':
+        _ = getattr(browser, transform(link))
+
+

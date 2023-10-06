@@ -23,6 +23,7 @@ class _ArchiveBrowser(PageObject):
                             '.oneicon-browser-archive-add')
     create_archive_web = WebElement('.hidden-xs .toolbar-buttons '
                                     '.oneicon-browser-archive-add')
+    create_a_new_archive = Button('.empty-archives-create-action')
     empty_dir_msg = Label('.empty-dir-text')
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
