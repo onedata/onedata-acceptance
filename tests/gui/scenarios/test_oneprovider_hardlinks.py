@@ -84,4 +84,4 @@ def screens():
 
 scenarios('../features/oneprovider/data/hardlinks.feature')
 scenarios('../features/oneprovider/data/symlinks.feature')
-scenarios('../features/oneprovider/data/hardlinks_and_symlinks_multi.feature')
+scenarios('../features/oneprovider/data/hardlinks_multiple_browser.feature')

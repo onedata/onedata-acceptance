@@ -69,3 +69,4 @@ def screens():
 
 scenarios('../features/oneprovider/data/symlinks.feature')
 scenarios('../features/oneprovider/data/external_symlinks.feature')
+scenarios('../features/oneprovider/data/symlinks_multiple_browser.feature')
