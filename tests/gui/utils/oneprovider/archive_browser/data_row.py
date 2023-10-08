@@ -40,7 +40,7 @@ class DataRow(PageObject, BrowserRow):
     base_archive = Label('.base-archive-name')
     base_archive_description = Label('.fb-table-col-incremental '
                                      '.secondary-description')
-    creator = Label('.fb-table-col-creator .file-item-text')
+    creator = Label('.fb-table-col-creator .file-item-text .file-owner-line')
     menu_button = Button('.file-row-actions-trigger')
 
     def click_and_enter(self):

@@ -35,7 +35,7 @@ Feature: Archives cancel test
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
-  Scenario: User successfully cancels creation its own archive without manage, create and remove archives privileges
+  Scenario: Non-owner-user successfully cancels creation its own archive without manage, create and remove archives privileges
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -74,7 +74,7 @@ Feature: Archives cancel test
     Then user of browser_user1 sees that item "dir1" has 0 archives
 
 
-  Scenario: User cannot cancel creation another user archive without manage archives privilege
+  Scenario: Non-owner-user cannot cancel creation another user archive without manage archives privilege
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

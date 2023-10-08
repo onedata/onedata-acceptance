@@ -336,23 +336,27 @@ def write_in_description_input(browser_id, modals, text, selenium):
     modals(driver).archive_details.save_modification.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees creator column for archive '
-                  'with description "{description}"'))
+@wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
+                  'column for archive with description "{description}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_presence_of_creator_column(browser_id, tmp_memory, description):
+def assert_presence_of_creator_column(browser_id, name, tmp_memory,
+                                      description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
     creator = archive.creator
-    assert creator is not None
+    err_msg = f'visible creator name is {creator} but should be {name}'
+    assert creator == name, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees creator field in '
-                  'archive details'))
+@wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
+                  'field in archive details'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_presence_of_creator_in_archive_details(browser_id, modals, selenium):
+def assert_presence_of_creator_in_archive_details(browser_id, name, modals,
+                                                  selenium):
     driver = selenium[browser_id]
     creator = modals(driver).archive_details.creator
-    assert creator is not None
+    err_msg = f'visible creator name is {creator} but should be {name}'
+    assert creator == name, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} hovers over "{button}" button in '
@@ -375,8 +379,8 @@ def hover_over_option_in_data_row_menu_in_browser(selenium, browser_id, popups,
     menu.move_to_option(driver, transform(option))
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>does not see|sees) link "(?P<link>.*?)" '
-                  'in archive browser'))
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>does not see|sees) '
+               'link "(?P<link>.*?)" in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_creation_link(browser_id, res, link, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
@@ -388,5 +392,3 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
             pass
     elif res == 'sees':
         _ = getattr(browser, transform(link))
-
-
