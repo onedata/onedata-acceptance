@@ -1,4 +1,4 @@
-Feature: Archives privileges test
+Feature: Archives manage privileges test
 
 
   Background:
