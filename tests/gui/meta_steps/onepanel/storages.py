@@ -80,7 +80,7 @@ def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
     driver = selenium[browser_id]
     onezone_url_pattern = 'https?://[^/]*/ozw/.*'
     sidebar = 'Clusters'
-    sub_item = 'Storages'
+    sub_item = 'Storage backends'
 
     if re.match(onezone_url_pattern, driver.current_url):
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
