@@ -96,8 +96,8 @@ Feature: Storage management using onepanel
           mount point: /volumes/posix
     And user of <browser> is idle for 5 seconds
     Then user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
-    And user of <browser> clicks on Remove storage option in storage's toolbar in Onepanel
-    And user of <browser> clicks on "Remove" button in modal "Remove storage"
+    And user of <browser> clicks on Remove storage backend option in storage's toolbar in Onepanel
+    And user of <browser> clicks on "Remove" button in modal "Remove storage backend"
     And user of <browser> sees that "<storage_name>" has disappeared from the storages list
 
     Examples:

@@ -43,9 +43,9 @@ from tests.utils.utils import repeat_failed
                   'in Onepanel page'))
 def remove_storage_in_op_panel_using_gui(selenium, browser_id, name, onepanel,
                                          popups, modals):
-    option = 'Remove storage'
+    option = 'Remove storage backend'
     button = 'Remove'
-    modal = 'REMOVE STORAGE'
+    modal = 'REMOVE STORAGE BACKEND'
 
     wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name,
                                                onepanel)
