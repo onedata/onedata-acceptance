@@ -94,7 +94,7 @@ def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
 def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                                        storage_name):
     content = 'storages'
-    btn = 'Add storage'
+    btn = 'Add storage backend'
     form = 'POSIX'
     input_box = 'Storage name'
     mount_point_option = 'mount point'
