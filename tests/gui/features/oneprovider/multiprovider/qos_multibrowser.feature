@@ -31,7 +31,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified clicks "Files" of "space1" space in the sidebar
     And user of browser_unified sees file browser in files tab in Oneprovider page
 
-    And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
+    And user of browser_emergency clicks on Storage backends item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "dir1" from file browser
@@ -54,7 +54,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
           oneprovider-1: entirely filled
           oneprovider-2: entirely empty
 
-    And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
+    And user of browser_emergency clicks on Storage backends item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser

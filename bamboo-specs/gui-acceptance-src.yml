@@ -338,6 +338,16 @@ automation-examples workflows: &acceptance-tests-in-chrome-job
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env and working dir
+    - script:
+        scripts:
+          - |-
+            echo "No real testing done on build 2 - only unpacking of surefire artifact (see above logs). The job is forced to fail."
+            false
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+        description: Qnthack - always fail on build 2
   artifacts:
     - name: report
       location: onedata-acceptance/tests/gui/logs/

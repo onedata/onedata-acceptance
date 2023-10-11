@@ -16,9 +16,6 @@ class Provider(Element):
                                     '.inner-text')
     home_icon = WebElement('.status-toolbar-icon:first-of-type span')
 
-    def is_home_icon(self):
-        return 'oneicon-home' in self.home_icon.get_attribute("class")
-
 
 class Icon(Element):
     name = id = icon = Button('.circle')
