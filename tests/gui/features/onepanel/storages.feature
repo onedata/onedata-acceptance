@@ -21,8 +21,8 @@ Feature: Storage management using onepanel
     # create new_storage POSIX storage
     When user of browser_unified clicks on Clusters in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
-    And user of <browser> clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of <browser> clicks on Add storage button in storages page in Onepanel
+    And user of <browser> clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of <browser> clicks on Add storage backend button in storages page in Onepanel
     And user of <browser> selects POSIX from storage selector in storages page in Onepanel
     And user of <browser> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
     And user of <browser> types "/volumes/posix" to Mount point field in POSIX form in storages page in Onepanel
@@ -96,8 +96,8 @@ Feature: Storage management using onepanel
           mount point: /volumes/posix
     And user of <browser> is idle for 5 seconds
     Then user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
-    And user of <browser> clicks on Remove storage option in storage's toolbar in Onepanel
-    And user of <browser> clicks on "Remove" button in modal "Remove storage"
+    And user of <browser> clicks on Remove storage backend option in storage's toolbar in Onepanel
+    And user of <browser> clicks on "Remove" button in modal "Remove storage backend"
     And user of <browser> sees that "<storage_name>" has disappeared from the storages list
 
     Examples:
@@ -146,7 +146,7 @@ Feature: Storage management using onepanel
 
     And user of browser_unified clicks on Clusters in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
-    And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_unified is idle for 2 seconds
 
     And user of browser_unified clicks on "Modify" button for "new_storage7" storage record in Storages page in Onepanel
@@ -185,17 +185,17 @@ Feature: Storage management using onepanel
     Given there is no "storage" storage in "oneprovider-1" Oneprovider panel
     When user of browser_unified clicks on Clusters in the main menu
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
-    And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
     # user adds new storage with name
-    And user of browser_unified clicks on Add storage button in storages page in Onepanel
+    And user of browser_unified clicks on Add storage backend button in storages page in Onepanel
     And user of browser_unified selects POSIX from storage selector in storages page in Onepanel
     And user of browser_unified types "storage" to Storage name field in POSIX form in storages page in Onepanel
     And user of browser_unified types "/" to Mount point field in POSIX form in storages page in Onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
 
     # user adds second storage with the same name
-    And user of browser_unified clicks on Add storage button in storages page in Onepanel
+    And user of browser_unified clicks on Add storage backend button in storages page in Onepanel
     And user of browser_unified selects POSIX from storage selector in storages page in Onepanel
     And user of browser_unified types "storage" to Storage name field in POSIX form in storages page in Onepanel
     And user of browser_unified types "/tmp" to Mount point field in POSIX form in storages page in Onepanel
