@@ -132,7 +132,7 @@ class FilePopularity(PageObject):
 
 
 class QuotaEditor(PageObject):
-    edit_button = Button('.oneicon-rename')
+    edit_button = Button('.oneicon-browser-rename')
     edit_input = WebElement('input')
     accept_button = Button('.oneicon-checked')
     cancel_button = Button('.oneicon-ban-left')
