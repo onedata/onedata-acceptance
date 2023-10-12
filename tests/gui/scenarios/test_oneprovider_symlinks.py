@@ -38,6 +38,7 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 
+from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *

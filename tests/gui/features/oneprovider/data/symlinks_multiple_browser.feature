@@ -33,6 +33,7 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     Then user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
     And user of browser1 clicks on menu for "file1(1)" directory in file browser
     And user of browser1 clicks "Download" option in data row menu in file browser
+    And user of browser1 sees that "file1(1)" has been downloaded
 
 
   Scenario: User creates symlink of non-owned file
