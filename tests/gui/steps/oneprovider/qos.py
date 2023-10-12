@@ -280,7 +280,7 @@ def assert_num_of_matching_storages(selenium, browser_id, number, modals):
     modal = modals(driver).details_modal.qos
     if number == 'no':
         actual = modal.no_storage_matching
-        number = 'No storages match'
+        number = 'No storage backends match'
     else:
         actual = modal.storage_matching
     assert number == actual, (f'{number} storages should match but {actual} '
