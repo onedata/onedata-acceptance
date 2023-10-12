@@ -72,7 +72,7 @@ Feature: Archives manage privileges test
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 hovers over "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 sees popup message about insufficient privileges requiring "Manage archives" privilege
+    Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege
 
 
   Scenario: Non-space-owner successfully edits its own archive without "manage", "create" and "remove archives" privileges
@@ -163,7 +163,7 @@ Feature: Archives manage privileges test
     And user of browser_user1 clicks on dataset for "dir1" in dataset browser
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 hovers over "Create archive" button in archive browser
-    Then user of browser_user1 sees popup message about insufficient privileges requiring "Create archives" privilege
+    Then user of browser_user1 sees popup message about insufficient privileges requiring "create archives" privilege
     And user of browser_user1 sees that page with text "NO ARCHIVES" appeared in archive browser
     And user of browser_user1 does not see link "Create a new archive" in archive browser
 
