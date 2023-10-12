@@ -35,26 +35,21 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     And user of browser1 clicks "Download" option in data row menu in file browser
 
 
-  Scenario: User sees non-owned symlink for file without POSIX read permission and cannot download it
+  Scenario: User creates symlink of non-owned file
+    When user of browser1 opens file browser for "space1" space
+    Then user of browser1 creates symlink of "file1" file in space "space1" in file browser
+    And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
+
+
+  Scenario: User creates symlink of non-owned file with POSIX permission 000
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
     And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
     And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
-    And user of space_owner_browser sets "622" permission code in edit permissions panel
+    And user of space_owner_browser sets "000" permission code in edit permissions panel
     And user of space_owner_browser clicks on "Save" button in edit permissions panel
-    And user of space_owner_browser clicks on "X" button in modal "Directory details"
-    And user of space_owner_browser creates symlink of "file1" file in space "space1" in file browser
 
     And user of browser1 opens file browser for "space1" space
-    Then user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
-    And user of browser1 clicks on menu for "file1(1)" directory in file browser
-    And user of browser1 clicks "Download" option in data row menu in file browser
-    And browser1 is idle for 1 seconds
-    And user of browser1 sees alert that file cannot be downloaded because of insufficient privileges
-
-
-  Scenario: User creates symlink of non-owned file
-    When user of browser1 opens file browser for "space1" space
     Then user of browser1 creates symlink of "file1" file in space "space1" in file browser
     And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
 

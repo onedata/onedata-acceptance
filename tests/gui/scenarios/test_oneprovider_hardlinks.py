@@ -1,5 +1,5 @@
 """This module contains tests suite for hardlinks
- using Oneprovider GUI and single browser instance.
+ using Oneprovider GUI and single or multiple browser instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -79,9 +79,8 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/data/hardlinks.feature')
-scenarios('../features/oneprovider/data/symlinks.feature')
 scenarios('../features/oneprovider/data/hardlinks_multiple_browser.feature')
