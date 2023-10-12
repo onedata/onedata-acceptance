@@ -54,7 +54,7 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
 
 
- Scenario: User cannot delete symlink without "write files" privilege
+ Scenario: User cannot delete symlink without "Write files" privilege
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

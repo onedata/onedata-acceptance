@@ -27,13 +27,12 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     And users of [space_owner_browser, browser1] logged as [space-owner-user, user1] to [Onezone, Onezone] service
 
 
-#  Scenario: User sees non-owned hardlink and can download it
-#    When user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
-#    And trace
-#    And user of browser1 opens file browser for "space1" space
-#    Then user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
-#    And user of browser1 clicks on menu for "file1(1)" directory in file browser
-#    And user of browser1 clicks "Download" option in data row menu in file browser
+  Scenario: User sees non-owned hardlink and can download it
+    When user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
+    And user of browser1 opens file browser for "space1" space
+    Then user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
+    And user of browser1 clicks on menu for "file1(1)" directory in file browser
+    And user of browser1 clicks "Download" option in data row menu in file browser
 
 
   Scenario: User sees non-owned hardlink without POSIX read permission and cannot download it
