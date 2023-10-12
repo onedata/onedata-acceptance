@@ -378,20 +378,6 @@ def assert_space_is_in_spaces_list_in_provider_popover(selenium, browser_id,
     assert space_name in spaces_list
 
 
-@wt(parsers.parse('user of {browser_id} sees that home of "{provider}" has '
-                  'appeared in the data sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
-                                                                    browser_id,
-                                                                    provider,
-                                                                    oz_page,
-                                                                    hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    assert oz_page(driver)['providers'].elements_list[provider].is_home_icon(), \
-        'home of provider "{}" not found'.format(provider)
-
-
 @wt(parsers.parse('user of {browser_id} sees that spaces counter for '
                   '"{provider}" provider displays {number} in data sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)

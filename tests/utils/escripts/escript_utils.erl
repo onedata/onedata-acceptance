@@ -1,10 +1,14 @@
-#!/usr/bin/env escript
-%%! -name oc_test@test_env
+-module(escript_utils).
 
--export([main/1]).
+-export([connect/1, safe_call/4]).
+
+
+connect(Node) ->
+    erlang:set_cookie(Node, cluster_node),
+    true = net_kernel:hidden_connect_node(Node).
+
 
 safe_call(Node, Module, Function, Args) ->
-    true = net_kernel:hidden_connect_node(Node),
     case rpc:call(Node, Module, Function, Args) of
         {badrpc, X} ->
             io:format(standard_error, "ERROR: in module ~p:~n {badrpc, ~p} in rpc:call(~p, ~p, ~p, ~p).~n",
@@ -17,12 +21,3 @@ safe_call(Node, Module, Function, Args) ->
         X ->
             X
     end.
-
-main([Duration]) ->
-        Node = "op_worker@dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local",
-        NodeAtom = list_to_atom(Node),
-        erlang:set_cookie(NodeAtom, cluster_node),
-        safe_call(NodeAtom, https_listener, stop, []),
-        DurationInt = list_to_integer(Duration),
-        timer:sleep(timer:seconds(DurationInt)),
-        safe_call(NodeAtom, https_listener, start, []).

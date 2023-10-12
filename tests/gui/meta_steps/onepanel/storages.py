@@ -43,9 +43,9 @@ from tests.utils.utils import repeat_failed
                   'in Onepanel page'))
 def remove_storage_in_op_panel_using_gui(selenium, browser_id, name, onepanel,
                                          popups, modals):
-    option = 'Remove storage'
+    option = 'Remove storage backend'
     button = 'Remove'
-    modal = 'REMOVE STORAGE'
+    modal = 'REMOVE STORAGE BACKEND'
 
     wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name,
                                                onepanel)
@@ -80,7 +80,7 @@ def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
     driver = selenium[browser_id]
     onezone_url_pattern = 'https?://[^/]*/ozw/.*'
     sidebar = 'Clusters'
-    sub_item = 'Storages'
+    sub_item = 'Storage backends'
 
     if re.match(onezone_url_pattern, driver.current_url):
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
@@ -94,7 +94,7 @@ def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
 def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                                        storage_name):
     content = 'storages'
-    btn = 'Add storage'
+    btn = 'Add storage backend'
     form = 'POSIX'
     input_box = 'Storage name'
     mount_point_option = 'mount point'
