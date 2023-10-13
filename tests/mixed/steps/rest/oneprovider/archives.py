@@ -53,7 +53,7 @@ def create_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
         data['description'] = description
     else:
         description = 'latest_created_archive'
-    if option == 'succeeds':
+    if option == 'succeeds' or option == 'tries':
         tmp_memory[description] = archive_api.create_archive(
             data).archive_id
     elif option == 'fails':

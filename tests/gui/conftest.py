@@ -20,6 +20,7 @@ from tests.gui.utils.generic import suppress
 from tests.conftest import export_logs
 from _pytest.fixtures import FixtureLookupError
 from tests.utils.ffmpeg_utils import start_recording, stop_recording
+from tests.oneclient.steps.environment_steps import unmock_archive_verification
 
 
 __author__ = "Jakub Liput, Bartosz Walkowicz"
@@ -480,3 +481,9 @@ def pytest_bdd_before_step_call(request, step_func_args):
         if isinstance(v, str) and v and v[0] == '<' and v[-1] == '>':
             with suppress(FixtureLookupError):
                 step_func_args[arg] = request.getfixturevalue(v[1:-1]).lower()
+
+
+@fixture(name='run_unmock')
+def run_around_testcase(hosts, name):
+    yield
+    unmock_archive_verification(name, hosts)
