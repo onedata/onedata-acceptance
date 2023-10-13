@@ -93,5 +93,5 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
   Scenario: User can access folder by non-owned symlink
     When user of space_owner_browser creates symlink of "dir1" file in space "space1" in file browser
     And user of browser1 opens file browser for "space1" space
-    Then user of browser1 clicks and presses enter on item named "dir1" in file browser
+    Then user of browser1 clicks and presses enter on item named "dir1(1)" in file browser
     And user of browser1 sees only items named ["dir2", "file2"] in file browser
