@@ -85,7 +85,8 @@ def click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory):
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
                                                    op_container, which_browser
                                                    ='file browser'):
-    # arg which_browser must be added previously in some step
+    # this cannot be first step that uses which_browser,
+    # browser must be loaded before in some previous step
     archive = which_browser == 'archive file browser'
     try:
         breadcrumbs = getattr(op_container(selenium[browser_id]),
