@@ -469,7 +469,8 @@ def assert_titled_error_modal_appeared(selenium, browser_id, title):
     assert title.lower() in modal_text, message
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" '
+               '(modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal, modals):
     modal = check_modal_name(modal)
