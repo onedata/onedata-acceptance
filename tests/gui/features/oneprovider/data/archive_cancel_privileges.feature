@@ -54,7 +54,7 @@ Feature: Archives cancel test
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 creates dataset for item "dir1" in "space1"
-    And user of browser_user1 succeeds to create archive for item "dir1" in "space1" with following configuration:
+    And user of browser_user1 tries to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -97,7 +97,7 @@ Feature: Archives cancel test
     And user of browser_user1 clicks on dataset for "dir1" in dataset browser
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
 
-    And user of space_owner_browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+    And user of space_owner_browser tries to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
 
