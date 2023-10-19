@@ -49,6 +49,7 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.qos import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.archives import *
 from tests.gui.meta_steps.oneprovider.permissions import *

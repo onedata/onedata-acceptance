@@ -50,17 +50,11 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     Then user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
     And user of browser1 clicks on menu for "file1(1)" directory in file browser
     And user of browser1 clicks "Download" option in data row menu in file browser
-    And browser1 is idle for 1 seconds
+    And browser1 is idle for 1 second
     And user of browser1 sees alert that file cannot be downloaded because of insufficient privileges
 
 
-  Scenario: User creates hardlink of non-owned file
-    When user of browser1 opens file browser for "space1" space
-    Then user of browser1 creates hardlink of "file1" file in space "space1" in file browser
-    And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
-
-
-  Scenario: User creates hardlink of non-owned file with POSIX permission 000
+  Scenario: User can create hardlink of non-owned file with POSIX permission 000
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
     And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
@@ -73,42 +67,23 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
 
 
- Scenario: User cannot delete hardlink without "Write files" privilege
-    When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space1" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Data management:
-            granted: Partially
-            privilege subtypes:
-              Write files: False
-    And user of space_owner_browser opens file browser for "space1" space
-    And user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
+  Scenario: User can delete hardlink without group "Write files" POSIX permission
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser clicks on "Permissions" in context menu for "dir1"
+    And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
+    And user of space_owner_browser sets "755" permission code in edit permissions panel
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
+    And user of space_owner_browser creates hard link of "file2" placed in "/.." directory on file browser
 
     And user of browser1 opens file browser for "space1" space
-    Then user of browser1 clicks on "Delete" in context menu for "file1(1)"
+    Then user of browser1 clicks on "Delete" in context menu for "file2"
     And user of browser1 clicks on "Yes" button in modal "Delete modal"
-    And browser1 is idle for 1 seconds
-    And user of browser1 sees alert that file cannot be deleted because of insufficient privileges
+    And user of browser1 does not see any item(s) named "file2" in file browser
 
 
-  Scenario: User can delete hardlink with "Write files" privilege
-    When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space1" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Data management:
-            granted: Partially
-            privilege subtypes:
-              Write files: True
-    And user of space_owner_browser opens file browser for "space1" space
-    And user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
-
-    And user of browser1 opens file browser for "space1" space
-    Then user of browser1 clicks on "Delete" in context menu for "file1(1)"
-    And user of browser1 clicks on "Yes" button in modal "Delete modal"
-    And user of browser1 does not see any item(s) named "file1(1)" in file browser
-
-
-  Scenario: User creates metadata for non-owned hardlink and owner user sees that
+  Scenario: User creates metadata for non-owned hardlink and owner user sees them on original file
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
 
@@ -121,7 +96,7 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     Then user of space_owner_browser sees basic metadata entry with attribute named "attr1" and value "val1"
 
 
-  Scenario: User creates QoS for non-owned hardlink and owner user sees that
+  Scenario: User creates QoS for non-owned hardlink and owner user sees them on original file
     When user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -138,18 +113,16 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     And user of browser1 confirms entering expression in expression text field in QoS panel
     And user of browser1 clicks on "Save" button in QoS panel
 
-    And user of space_owner_browser clicks on "Quality of Service" in context menu for "file1(1)"
+    And user of space_owner_browser clicks on "Quality of Service" in context menu for "file1"
     Then user of space_owner_browser sees [geo = "PL"] QoS requirement in QoS panel
 
 
   Scenario: User changes ACL privileges of a file and sees that ACL privileges for a hardlink has changed as well
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
-    And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
-    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
-    And user of space_owner_browser sets "622" permission code in edit permissions panel
-    And user of space_owner_browser clicks on "Save" button in edit permissions panel
-    And user of space_owner_browser clicks on "X" button in modal "Directory details"
-
+    And user of space_owner_browser sets "file1" ACL [allow, acl:read acl] privileges for user space-owner-user in "space1"
     And user of space_owner_browser clicks on "Permissions" in context menu for "file1(1)"
-    Then user of space_owner_browser sees that current permission is "622"
+    And user of space_owner_browser selects "ACL" permission type in edit permissions panel
+    Then user of space_owner_browser sees exactly 1 ACL record in edit permissions panel
+    And user of space_owner_browser sees that first ACL record in edit permissions panel is set for user space-owner-user
+    And user of space_owner_browser sees that only [allow, acl:read acl] privileges are set in first ACL record in edit permissions panel
