@@ -76,13 +76,13 @@ Feature: Workflows stores tests
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
 
     And user of browser modifies data type in "input" store to be "Dataset" for "echo" workflow
     And user of browser modifies data type in "output" store to be "Dataset" for "echo" workflow
 
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 2nd revision of "echo" and waits extended time for workflow to finish, using datasets as initial value: "["file1", "file2"]" in "space1" space
+    And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using datasets as initial value: "["file1", "file2"]" in "space1" space
 
     Then user of browser sees "["file1", "file2"]" datasets in Store details modal for "output" store
     And user of browser sees dataset browser after clicking "file1" in Store details modal for "output" store
@@ -92,7 +92,7 @@ Feature: Workflows stores tests
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
 
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser clicks on "Create new revision" in "echo"
@@ -101,7 +101,7 @@ Feature: Workflows stores tests
     And user of browser confirms edition of lambda using "Modify" button
 
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser modifies type in "input" store to be "Single Value" for "echo" workflow
     And user of browser modifies data type in "input" store to be "File" for "echo" workflow
     And user of browser modifies type in "output" store to be "Single Value" for "echo" workflow
@@ -112,7 +112,7 @@ Feature: Workflows stores tests
         results:
           - value: output
     And user of browser saves workflow edition by clicking "Save" button from menu bar
-    And user of browser executes 2nd revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
+    And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
 
     Then user of browser sees "file1" file in Store details modal for "output" store
     And user of browser sees file browser after clicking "file1" in Store details modal for "output" store

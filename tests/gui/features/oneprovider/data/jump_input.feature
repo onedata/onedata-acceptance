@@ -12,7 +12,7 @@ Feature: Jump to file using jump input in file browser
                     storage: posix
                     size: 1000000
 
-    And using REST, user1 creates 200 empty files in "space1" with names sorted alphabetically supported by "oneprovider-1" provider
+    And using REST, user1 creates 200 empty files in "space1" named "file_001", "file_002", ..., "file_N" supported by "oneprovider-1" provider
     And users opened browser browsers' windows
     And users of browser opened Onezone page
     And user of browser logged as user1 to Onezone service

@@ -29,7 +29,7 @@ class BaseContent(PageObject):
 
 
 class EmergencyInterfaceWarningBar(PageObject):
-    info = Button('.oneicon-sign-info')
+    info = Button('.oneicon-sign-info-rounded')
 
 
 class OnePage(object):

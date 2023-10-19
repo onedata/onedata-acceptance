@@ -85,7 +85,7 @@ Feature: Basic workflows management
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser clicks on "Modify" button in task "echo" menu in "lane 1" lane in workflow visualizer
     And user of browser writes "Task2" into name text field in task creation subpage
     And user of browser confirms edition of task using "Modify" button
@@ -96,7 +96,7 @@ Feature: Basic workflows management
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser sees task named "echo" in "lane 1" lane
     And user of browser clicks on "Remove" button in task "echo" menu in "lane 1" lane in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove task"

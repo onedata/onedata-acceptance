@@ -9,6 +9,10 @@ __license__ = ("This software is released under the MIT license cited in "
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 
+from tests.gui.steps.common.miscellaneous import \
+    click_option_in_popup_labeled_menu
+from tests.gui.steps.modals.details_modal import \
+    click_on_navigation_tab_in_modal
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
@@ -517,16 +521,34 @@ def create_symlinks_of_file(selenium, browser_id, file_name, space,
                                  option, button)
 
 
-def _create_link_in_file_browser(selenium, browser_id, file_name, space,
-                                 tmp_memory, oz_page, op_container, popups,
-                                 option, button):
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
-                      space)
+@wt(parsers.parse('user of {browser_id} creates symbolic link of "{file_name}" '
+                  'placed in "{path}" directory on {which_browser}'))
+def create_symlinks_of_file_with_path(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, path):
+    option = 'Create symbolic link'
+    button = 'Place symbolic link'
+
+    _create_link_in_file_browser(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, option, button, path=path,
+        go_to_file_browser=False)
+
+
+def _create_link_in_file_browser(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, option, button, path=None,
+        go_to_file_browser=True):
+    if go_to_file_browser:
+        go_to_filebrowser(selenium, browser_id, oz_page, op_container,
+                          tmp_memory, space)
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
                                                    file_name, space, tmp_memory,
                                                    oz_page, op_container)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
+    if path:
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     click_file_browser_button(browser_id, button, tmp_memory)
 
 
@@ -587,6 +609,28 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, 'file_id', modal_name, modals)
     return clipboard.paste(display=displays[browser_id])
+
+
+@wt(parsers.parse('user of {browser_id} opens size statistics per provider view'
+                  ' using breadcrumbs menu in "{space}"'))
+def go_to_size_statistics_per_provider_by_breadcrumbs(selenium, modals, popups,
+                                                      op_container, browser_id,
+                                                      tmp_memory, space):
+    browser = "file browser"
+    option = "Information"
+    tab_name = "Size stats"
+    modal = "Directory Details"
+    path = space
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                item_browser=browser)
+    is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
+                                                       path, op_container,
+                                                       which_browser=browser)
+    click_on_breadcrumbs_menu(selenium, browser_id, op_container, browser)
+    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+    click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
+                                     modal)
+    expand_size_statistics_for_providers(selenium, browser_id, modals)
 
 
 def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,

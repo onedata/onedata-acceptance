@@ -8,6 +8,7 @@ images:
   oneclient: current_branch
   rest-cli: default
   openfaas-pod-status-monitor: current_branch
+  openfaas-lambda-result-streamer: current_branch
 
 sources:
   # Specification of branches from which sources for components will be pulled.

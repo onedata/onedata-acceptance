@@ -42,10 +42,21 @@ class Charts(PageObject):
     chart = WebElement('.chart')
 
 
+class DirStatsRowPerProvider(PageObject):
+    name = id = Label('.header', parent_name='given provider')
+    content = Label('.contains-value')
+    logical_size = Label('.logical-size-value')
+    physical_size = Label('.physical-size-value')
+    error_cell = Label('.error-cell')
+
+
 class SizeStatistics(PageObject):
     tab = Button('.nav-link-size')
     charts_title = Label('.section-title')
     chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
+    dir_stats_row_per_provider = WebItemsSequence('.size-stats-per-provider-row',
+                                 cls=DirStatsRowPerProvider)
+    expand_stats_button = Button('.toggle-expand')
 
     def click_on_chart(self):
         ActionChains(self.driver).move_to_element_with_offset(

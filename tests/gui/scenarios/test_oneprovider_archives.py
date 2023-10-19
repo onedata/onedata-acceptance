@@ -49,6 +49,7 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.archives import *
+from tests.gui.steps.oneprovider.archives_audit import *
 from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import *
 
@@ -62,6 +63,8 @@ from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
 from tests.gui.meta_steps.onepanel.spaces import *
 
+from tests.oneclient.steps.environment_steps import *
+
 from . import BROWSER
 
 from tests.utils.acceptance_utils import *
@@ -74,4 +77,3 @@ def screens():
 
 scenarios('../features/oneprovider/data/archive_basic.feature')
 scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
-

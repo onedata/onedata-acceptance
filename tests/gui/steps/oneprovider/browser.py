@@ -87,6 +87,17 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                                  f'displayed: {breadcrumbs}')
 
 
+@wt(parsers.parse('user of {browser_id} clicks on menu on '
+                  'breadcrumbs in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
+                              which_browser='file browser'):
+    driver = selenium[browser_id]
+    breadcrumbs = getattr(op_container(driver),
+                          transform(which_browser)).breadcrumbs
+    breadcrumbs.menu_button()
+
+
 def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
                                  which_browser='file browser'):
 
@@ -259,3 +270,16 @@ def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
                                   which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     getattr(browser.data[item_name], transform(tag)).click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
+                  'is of {size} size in archive file browser'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
+                                                   selenium, op_container):
+    driver = selenium[browser_id]
+    browser = op_container(driver).archive_file_browser
+    item_size = browser.data[item_name].size
+    err_msg = (f'displayed size {item_size} for {item_name} does not '
+               f'match expected {size}')
+    assert size == item_size, err_msg

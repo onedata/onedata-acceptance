@@ -91,6 +91,7 @@ stages:
         - Oneprovider ACL subfiles
         - Oneprovider ACL subjects
         - Oneprovider archives
+        - Oneprovider archives audit logs
         - Oneprovider archives incremental and nested
         - Oneprovider archives recall
         - Oneprovider data tab
@@ -339,6 +340,16 @@ automation-examples workflows: &acceptance-tests-in-chrome-job
         scripts:
           - curl ${bamboo.OnedataFinalTasksURL} | bash -
         description: Clear env and working dir
+    - script:
+        scripts:
+          - |-
+            echo "No real testing done on build 2 - only unpacking of surefire artifact (see above logs). The job is forced to fail."
+            false
+        conditions:
+          - variable:
+              matches:
+                bamboo.buildNumber: '2'
+        description: Qnthack - always fail on build 2
   artifacts:
     - name: report
       location: onedata-acceptance/tests/gui/logs/
@@ -783,6 +794,21 @@ Oneprovider archives:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_archives test_gui_pkg
+
+Oneprovider archives audit logs:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAAL
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_archives_audit_logs test_gui_pkg
 
 Oneprovider archives incremental and nested:
   <<: *acceptance-tests-in-chrome-job
