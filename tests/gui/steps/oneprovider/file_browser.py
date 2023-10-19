@@ -490,3 +490,10 @@ def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option,
 def write_to_jump_input(browser_id, tmp_memory, prefix):
     browser = tmp_memory[browser_id]['file_browser']
     browser.jump_input = prefix
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to the top in file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def scroll_to_top_in_archive_audit_log(browser_id, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    browser.scroll_to_top()
