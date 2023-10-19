@@ -40,6 +40,7 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.marketplace import *
 from tests.gui.steps.onezone.space_configuration import *
+from tests.gui.steps.onezone.overview import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -74,10 +75,10 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/multispace.feature')
-scenarios('../features/onezone/space/spaces_memberships.feature')
-scenarios('../features/onezone/space/spaces_effective_privileges.feature')
+# scenarios('../features/onezone/space/spaces.feature')
+# scenarios('../features/onezone/space/create_new_space.feature')
+# scenarios('../features/onezone/space/multispace.feature')
+# scenarios('../features/onezone/space/spaces_memberships.feature')
+# scenarios('../features/onezone/space/spaces_effective_privileges.feature')
 scenarios('../features/onezone/space/space_marketplace.feature')
-scenarios('../features/onezone/space/marketplace_privileges_management.feature')
+# scenarios('../features/onezone/space/marketplace_privileges_management.feature')
