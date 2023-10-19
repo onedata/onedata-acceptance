@@ -19,7 +19,8 @@ from tests.mixed.steps.rest.oneprovider.archives import (
 from tests.mixed.utils.common import NoSuchClientException
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails)'
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) '
+               '(?P<option>succeeds|fails|tries)'
                ' to create archive for item "(?P<item_name>.*)" in space'
                ' "(?P<space_name>.*)" in (?P<host>.*) with following '
                r'configuration:\n(?P<config>(.|\s)*)'))

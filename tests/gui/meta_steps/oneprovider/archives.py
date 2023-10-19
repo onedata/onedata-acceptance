@@ -118,7 +118,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         item_name = item_name.split('/')[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    DATASET_BROWSER)
-    if option == 'succeeds':
+    if option == 'succeeds' or option == 'tries':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
                                                  popups, DATASET_BROWSER)

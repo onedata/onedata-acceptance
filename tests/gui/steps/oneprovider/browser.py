@@ -290,3 +290,16 @@ def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
                                   which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     getattr(browser.data[item_name], transform(tag)).click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
+                  'is of {size} size in archive file browser'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
+                                                   selenium, op_container):
+    driver = selenium[browser_id]
+    browser = op_container(driver).archive_file_browser
+    item_size = browser.data[item_name].size
+    err_msg = (f'displayed size {item_size} for {item_name} does not '
+               f'match expected {size}')
+    assert size == item_size, err_msg

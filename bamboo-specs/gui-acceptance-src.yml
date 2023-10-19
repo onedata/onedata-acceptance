@@ -90,6 +90,7 @@ stages:
         - Oneprovider ACL subfiles
         - Oneprovider ACL subjects
         - Oneprovider archives
+        - Oneprovider archives audit logs
         - Oneprovider archives incremental and nested
         - Oneprovider archives privileges
         - Oneprovider archives recall
@@ -793,6 +794,21 @@ Oneprovider archives:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_archives test_gui_src
+
+Oneprovider archives audit logs:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAAL
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_archives_audit_logs test_gui_src
 
 Oneprovider archives incremental and nested:
   <<: *acceptance-tests-in-chrome-job
