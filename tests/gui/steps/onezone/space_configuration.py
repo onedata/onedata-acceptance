@@ -81,7 +81,7 @@ def set_description_of_a_space(selenium, browser_id, oz_page, description):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
     page.editor_description_mode.click()
-    page.description_text_area = json.dumps(description)
+    page.description_text_area = description
     page.save_button.click()
     page.preview_description_mode.click()
 
