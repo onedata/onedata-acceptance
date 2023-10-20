@@ -48,7 +48,7 @@ Feature: Archives manage privileges test
     And user of browser_user1 sees archive browser in archives tab in Oneprovider page
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in details archive modal
+    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in archive details modal
     And user of browser_user1 sees that 1st archive in archive browser has description: "new description"
 
 
@@ -107,7 +107,7 @@ Feature: Archives manage privileges test
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 clicks "Edit description" option in data row menu in archive browser
-    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in details archive modal
+    Then user of browser_user1 writes "new description" into edit description and successfully saves it, in archive details modal
     And user of browser_user1 sees that 1st archive in archive browser has description: "new description"
 
 
@@ -144,7 +144,7 @@ Feature: Archives manage privileges test
     Then user of space_owner_browser sees username "space-owner-user" in creator column for archive with description "first archive"
     And user of space_owner_browser clicks on menu for archive with description: "first archive" in archive browser
     And user of space_owner_browser clicks "Properties" option in data row menu in archive browser
-    And user of space_owner_browser sees username "space-owner-user" in creator field in archive details
+    And user of space_owner_browser sees username "space-owner-user" in creator field in archive details modal
 
 
   Scenario: Non-space-owner cannot create archive, when there is no archives in archive browser, without "create archives" privilege

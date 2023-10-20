@@ -21,7 +21,7 @@ Feature: Archives cancel test
                 defaults:
                     provider: oneprovider-1
                 directory tree:
-                    - dir1:
+                    - dir1
     And directory tree structure on local file system:
             browser_user1:
                 dir2:

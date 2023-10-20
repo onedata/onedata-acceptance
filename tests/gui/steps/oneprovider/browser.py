@@ -222,26 +222,6 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
     menu.choose_option(option)
 
 
-@wt(parsers.parse('user of {browser_id} sees popup message about insufficient '
-                  'privileges requiring "{privilege}" privilege'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_popup_insufficient_privileges_message(browser_id, privilege, popups,
-                                                 selenium):
-    driver = selenium[browser_id]
-    toggle_info = popups(driver).toggle_label
-    message_dict = {
-        'manage archives':
-            'Insufficient privileges (requires "manage archives" privilege in '
-            'this space for non‑owned archives).',
-        'create archives':
-            'Insufficient privileges (requires "create archives" privilege in '
-            'this space).'
-    }
-    err_msg = (f'expected {message_dict[privilege]} info to be visible instead '
-               f'of {toggle_info}')
-    assert toggle_info == message_dict[privilege], err_msg
-
-
 @wt(parsers.parse('user of {browser_id} sees that "{option}" option is '
                   '{option_state} in opened item menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)

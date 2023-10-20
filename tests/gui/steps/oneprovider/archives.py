@@ -327,10 +327,11 @@ def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into edit '
-                  'description and successfully saves it, in details archive '
+                  'description and successfully saves it, in archive details '
                   'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_in_description_input(browser_id, modals, text, selenium):
+def write_description_in_archive_details_modal(browser_id, modals, text,
+                                               selenium):
     driver = selenium[browser_id]
     modals(driver).archive_details.description = text
     modals(driver).archive_details.save_modification.click()
@@ -339,8 +340,8 @@ def write_in_description_input(browser_id, modals, text, selenium):
 @wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
                   'column for archive with description "{description}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_presence_of_creator_column(browser_id, name, tmp_memory,
-                                      description):
+def assert_presence_of_creator_column_for_archive(browser_id, name, tmp_memory,
+                                                  description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
     creator = archive.creator
@@ -349,7 +350,7 @@ def assert_presence_of_creator_column(browser_id, name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
-                  'field in archive details'))
+                  'field in archive details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_presence_of_creator_in_archive_details(browser_id, name, modals,
                                                   selenium):
@@ -392,3 +393,23 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
             pass
     elif res == 'sees':
         _ = getattr(browser, transform(link))
+
+
+@wt(parsers.parse('user of {browser_id} sees popup message about insufficient '
+                  'privileges requiring "{privilege}" privilege'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_popup_insufficient_privileges_message(browser_id, privilege, popups,
+                                                 selenium):
+    driver = selenium[browser_id]
+    toggle_info = popups(driver).toggle_label
+    message_dict = {
+        'manage archives':
+            'Insufficient privileges (requires "manage archives" privilege in '
+            'this space for non‑owned archives).',
+        'create archives':
+            'Insufficient privileges (requires "create archives" privilege in '
+            'this space).'
+    }
+    err_msg = (f'expected {message_dict[privilege]} info to be visible instead '
+               f'of {toggle_info}')
+    assert toggle_info == message_dict[privilege], err_msg
