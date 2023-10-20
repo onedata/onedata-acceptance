@@ -8,9 +8,72 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+
+
+@wt(parsers.parse('user of {browser_id} writes "{space_name}" '
+                  'into rename space text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def type_space_name_on_rename_space_input_on_overview_page(selenium, browser_id,
+                                                           space_name, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].overview_page.info_tile.rename()
+    oz_page(driver)[
+        'data'].overview_page.info_tile.edit_name_box.value = space_name
+
+
+@wt(parsers.parse('user of {browser_id} clicks on confirmation button '
+                  'on overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
+                                                                  browser_id,
+                                                                  oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.confirm()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on cancel button '
+                  'on overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.cancel()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) confirms rename the space '
+               'using (?P<option>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_rename_the_space(selenium, browser_id, option, oz_page):
+    if option == 'enter':
+        press_enter_on_active_element(selenium, browser_id)
+    else:
+        rename_space_by_click_on_confirmation_button_on_overview_page(
+            selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
+                  'page that number of shares is {number}'))
+def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,
+                                             number: int):
+    driver = selenium[browser_id]
+    shares_count = int(
+        oz_page(driver)['data'].overview_page.info_tile.shares_count)
+    assert number == shares_count, (f'number of shares equals {shares_count},'
+                                    ' not {number} as expected')
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" label '
+                  'on overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_name_label_of_space_on_overview_page(selenium, browser_id,
+                                                space_name, oz_page):
+    driver = selenium[browser_id]
+    assert oz_page(driver)[
+               'data'].overview_page.space_name == space_name, \
+        'space "{}" not found on overview page'.format(space_name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees (?P<text>.*?) '
@@ -58,7 +121,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
 @wt(parsers.parse('user of {browser_id} clicks "{link}" link '
                   'in marketplace in space overview page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_advertised_in_space_marketplace_in_overview(
+def click_link_in_space_marketplace_in_overview(
         browser_id, link, selenium, oz_page):
     driver = selenium[browser_id]
     marketplace_tile = oz_page(driver)['data'].overview_page.marketplace_tile
