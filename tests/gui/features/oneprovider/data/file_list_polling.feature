@@ -37,7 +37,7 @@ Feature: File list polling
     And user of browser1 scrolls to the top in file browser
 
     And user of browser2 deletes first 100 files from current directory
-    And user of browser1 is idle for 2 seconds
+    And user of browser1 is idle for 10 seconds
     Then user of browser1 scrolls to the bottom of file browser and sees there are 100 files
 
 
