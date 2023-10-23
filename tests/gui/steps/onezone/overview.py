@@ -12,6 +12,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+import yaml
 
 
 @wt(parsers.parse('user of {browser_id} writes "{space_name}" '
@@ -76,7 +77,7 @@ def assert_name_label_of_space_on_overview_page(selenium, browser_id,
         'space "{}" not found on overview page'.format(space_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) sees (?P<text>.*?) '
+@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" '
                '(?P<field>Tags|Description|Organization name) in space details'
                ' in space overview page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -95,7 +96,7 @@ def assert_mes_at_field_in_space_details_in_overview(
             assert tag in visible_tags, err_msg
     else:
         # get rid of "" characters
-        text = text[1:-1]
+        # text = text[1:-1]
         err_msg = f'user sees {visible_mes} instead of {text} at {field}'
         assert text == visible_mes, err_msg
 
@@ -127,3 +128,53 @@ def click_link_in_space_marketplace_in_overview(
     marketplace_tile = oz_page(driver)['data'].overview_page.marketplace_tile
     link = getattr(marketplace_tile, transform(link))
     link.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees advertised space '
+                  'on Space Overview '
+                  'subpage with following parameters:\n{config}'))
+def assert_space_in_overview_with_config(browser_id, selenium, oz_page,
+                                            config):
+    """Assert space advertised in marketplace according to given config.
+
+        Config format given in yaml is as follows:
+        tags:                               ---> optional
+          - tag
+        organization name: organization_name
+        description: description
+
+        Example configuration:
+        tags:
+          - archival
+          - big-data
+          - science
+        organization name: "onedata"
+        description: "Example of a space advertised in a Marketplace"
+
+    """
+
+    _assert_space_in_overview_with_config(browser_id, config, selenium,
+                                             oz_page)
+
+
+def _assert_space_in_overview_with_config(browser_id, config, selenium,
+                                          oz_page):
+    data = yaml.load(config)
+
+    organization_name_option = 'organization name'
+    description_option = 'description'
+    tags_option = 'tags'
+
+    organization_name = data[organization_name_option]
+    tags = data.get('tags', False)
+    description = data[description_option]
+
+    assert_mes_at_field_in_space_details_in_overview(
+        selenium, browser_id, organization_name, organization_name_option,
+        oz_page)
+    assert_mes_at_field_in_space_details_in_overview(
+        selenium, browser_id, description, description_option, oz_page)
+
+    if tags:
+        assert_mes_at_field_in_space_details_in_overview(
+            selenium, browser_id, tags, tags_option, oz_page)

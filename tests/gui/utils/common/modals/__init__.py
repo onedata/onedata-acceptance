@@ -34,6 +34,7 @@ from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
+from .basic_modals.unsaved_changes import UnsavedChanges
 from .troubles_modals.error_modal import ErrorModal
 from .tokens_modals.invite_using_token import InviteUsingTokenModal
 from .troubles_modals.dns_configuration_warning import (
@@ -152,6 +153,7 @@ class Modals(object):
     advertise_space = WebItem('.modal-dialog', cls=AdvertiseSpace)
     advertise_space_in_the_marketplace = WebItem('.modal-dialog',
                                                  cls=AdvertiseSpaceInTheMarketplace)
+    unsaved_changes = WebItem('.modal-dialog', cls=UnsavedChanges)
 
     def __init__(self, driver):
         self.driver = driver

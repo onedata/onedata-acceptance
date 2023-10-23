@@ -65,30 +65,33 @@ def assert_contact_email_address(browser_id, selenium, oz_page, email_address):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
-                                        data_type, data_name):
+                                        data_type, data_name, with_save=True):
     driver = selenium[browser_id]
     data_type = transform(data_type)
     page = getattr(oz_page(driver)['data'].configuration_page, data_type)
     page.click()
     page.value = data_name
-    page.confirm()
+    if with_save:
+        page.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} sets organization description '
                   '"{description}" in space configuration subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_description_of_a_space(selenium, browser_id, oz_page, description):
+def set_description_of_a_space(selenium, browser_id, oz_page, description,
+                               with_save=True):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
     page.editor_description_mode.click()
     page.description_text_area = description
-    page.save_button.click()
-    page.preview_description_mode.click()
+    if with_save:
+        page.save_button.click()
+        page.preview_description_mode.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_tags_in_space_configuration_tab(selenium, browser_id,  oz_page, popups,
-                                        tag_type, tags):
+                                        tag_type, tags, with_save=True):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].configuration_page
     page.space_tags_editor.click()
@@ -99,7 +102,8 @@ def add_tags_in_space_configuration_tab(selenium, browser_id,  oz_page, popups,
         popups(driver).spaces_tags.search_bar = tag
         popups(driver).spaces_tags.tags_list[tag].click()
 
-    page.space_tags_editor.save_button.click()
+    if with_save:
+        page.space_tags_editor.save_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{label_info}" header label'
