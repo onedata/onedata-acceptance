@@ -85,7 +85,7 @@ Feature: Basic management of Space Marketplace
         description: "Example of a space advertised in a Marketplace"
 
 
-  Scenario: User is asked about unsaved changes in space configuration
+  Scenario: User is asked about unsaved changes in space configuration subpage and can save them
     When user of browser clicks "Configuration" of "space1" space in the sidebar
     And user of browser provides space configuration without saving as follows:
         space name: "space1"

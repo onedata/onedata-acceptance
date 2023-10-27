@@ -112,7 +112,7 @@ Feature: Basic management of spaces
     Then user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
 
 
-  Scenario: User sees space details in space overview page
+  Scenario: User sees space details in space overview subpage
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks on "Marketplace" button in spaces sidebar
     And user of space_owner_browser clicks on "Advertise your space" button in Space Marketplace subpage
@@ -129,6 +129,9 @@ Feature: Basic management of spaces
             - culture
         description: "Example of a space advertised in a Marketplace"
     And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
-    Then user of space_owner_browser sees ["dynamic", "culture"] Tags in space details in space overview page
-    And user of space_owner_browser sees "onedata" Organization name in space details in space overview page
-    And user of space_owner_browser sees "Example of a space advertised in a Marketplace" Description in space details in space overview page
+    Then user of space_owner_browser sees advertised space on Space Overview subpage with following parameters:
+        organization name: "onedata"
+        tags:
+          - dynamic
+          - culture
+        description: "Example of a space advertised in a Marketplace"
