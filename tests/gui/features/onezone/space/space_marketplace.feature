@@ -16,73 +16,73 @@ Feature: Basic management of Space Marketplace
     And user of browser logged as space-owner-user to Onezone service
 
 
-#  Scenario: User sees own space in the Marketplace after configuring it
-#    When user of browser clicks on Data in the main menu
-#    And user of browser clicks on "Marketplace" button in spaces sidebar
-#    And user of browser clicks on "Advertise your space" button in Space Marketplace subpage
-#    And user of browser chooses "space1" in spaces dropdown menu in modal "Advertise space"
-#    And user of browser clicks on "Configure..." button in modal "Advertise space"
-#    And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
-#    And user of browser sets space configuration as follows:
-#        space name: "space1"
-#        organization name: "onedata"
-#        tags:
-#          general:
-#            - archival
-#            - big-data
-#          domains:
-#            - science
-#        description: "Example of a space advertised in a Marketplace"
-#
-#    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
-#    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
-#    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
-#    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
-#    And user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
-#    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
-#    And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
-#    And user of browser clicks "View in Marketplace" link on space configuration page
-#    Then user of browser sees advertised space on Space Marketplace subpage with following parameters:
-#        space name: "space1"
-#        tags:
-#          - archival
-#          - big-data
-#          - science
-#        organization name: "onedata"
-#        creation time: current
-#        providers:
-#          - dev-oneprovider-krakow
-#        description: "Example of a space advertised in a Marketplace"
-#
-#
-#  Scenario: User sees that space is advertised or not, in marketplace in space overview page
-#    When user of browser clicks "Overview" of "space1" space in the sidebar
-#    Then user of browser sees that Space is not advertised in marketplace in space overview page
-#    And user of browser clicks "Configure advertisement" link in marketplace in space overview page
-#    And user of browser sets space configuration as follows:
-#        space name: "space1"
-#        organization name: "onedata"
-#        tags:
-#          general:
-#            - dynamic
-#          domains:
-#            - culture
-#        description: "Example of a space advertised in a Marketplace"
-#    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
-#    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
-#    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
-#    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
-#    And user of browser clicks "Overview" of "space1" space in the sidebar
-#    And user of browser sees that Space is advertised in marketplace in space overview page
-#    And user of browser clicks "Show" link in marketplace in space overview page
-#    And user of browser sees advertised space on Space Marketplace subpage with following parameters:
-#        space name: "space1"
-#        tags:
-#          - dynamic
-#          - culture
-#        organization name: "onedata"
-#        creation time: current
-#        description: "Example of a space advertised in a Marketplace"
+  Scenario: User sees own space in the Marketplace after configuring it
+    When user of browser clicks on Data in the main menu
+    And user of browser clicks on "Marketplace" button in spaces sidebar
+    And user of browser clicks on "Advertise your space" button in Space Marketplace subpage
+    And user of browser chooses "space1" in spaces dropdown menu in modal "Advertise space"
+    And user of browser clicks on "Configure..." button in modal "Advertise space"
+    And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+    And user of browser sets space configuration as follows:
+        space name: "space1"
+        organization name: "onedata"
+        tags:
+          general:
+            - archival
+            - big-data
+          domains:
+            - science
+        description: "Example of a space advertised in a Marketplace"
+
+    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
+    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
+    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
+    And user of browser sees that "Advertise in Marketplace" toggle is checked on space configuration page
+    And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
+    And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
+    And user of browser clicks "View in Marketplace" link on space configuration page
+    Then user of browser sees advertised space on Space Marketplace subpage with following parameters:
+        space name: "space1"
+        tags:
+          - archival
+          - big-data
+          - science
+        organization name: "onedata"
+        creation time: current
+        providers:
+          - dev-oneprovider-krakow
+        description: "Example of a space advertised in a Marketplace"
+
+
+  Scenario: User sees that space is advertised or not, in marketplace in space overview page
+    When user of browser clicks "Overview" of "space1" space in the sidebar
+    Then user of browser sees that Space is not advertised in marketplace in space overview page
+    And user of browser clicks "Configure advertisement" link in marketplace in space overview page
+    And user of browser sets space configuration as follows:
+        space name: "space1"
+        organization name: "onedata"
+        tags:
+          general:
+            - dynamic
+          domains:
+            - culture
+        description: "Example of a space advertised in a Marketplace"
+    And user of browser checks "Advertise in Marketplace" toggle on space configuration page
+    And user of browser writes "example@gmail.com" into contact email text field in modal "Advertise space in the Marketplace"
+    And user of browser accepts terms of privacy in Space Marketplace using checkbox in modal "Advertise space in the Marketplace"
+    And user of browser clicks on "Proceed" button in modal "Advertise space in the Marketplace"
+    And user of browser clicks "Overview" of "space1" space in the sidebar
+    And user of browser sees that Space is advertised in marketplace in space overview page
+    And user of browser clicks "Show" link in marketplace in space overview page
+    And user of browser sees advertised space on Space Marketplace subpage with following parameters:
+        space name: "space1"
+        tags:
+          - dynamic
+          - culture
+        organization name: "onedata"
+        creation time: current
+        description: "Example of a space advertised in a Marketplace"
 
 
   Scenario: User is asked about unsaved changes in space configuration
@@ -90,17 +90,17 @@ Feature: Basic management of Space Marketplace
     And user of browser provides space configuration without saving as follows:
         space name: "space1"
         organization name: "onedata"
+        tags:
+          general:
+            - dynamic
         description: "Example of a space advertised in a Marketplace"
-#        tags:
-#          general:
-#            - dynamic
-#          domains:
-#            - culture
-    And user of browser clicks "space1" on the spaces list in the sidebar
+
+    Then user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "Save" button in modal "Unsaved changes"
-    And user of browser sees advertised space on Space Overview subpage with following parameters:
-        organization name: "onedata"
-        description: "Example of a space advertised in a Marketplace"
-    And trace
     And user of browser clicks "Overview" of "space1" space in the sidebar
-    And trace
+    And user of browser sees advertised space on Space Overview subpage with following parameters:
+        # space name is not displayed here, but it is required in configuration view
+        organization name: "onedata"
+        tags:
+          - dynamic
+        description: "Example of a space advertised in a Marketplace"

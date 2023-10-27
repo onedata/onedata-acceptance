@@ -86,11 +86,12 @@ def _configure_space_manually(browser_id, config, selenium, oz_page, popups,
         selenium, browser_id, oz_page, description, with_save=with_save)
 
     if tags:
-        if tags[general_option]:
+        # KeyError when call tags[general_option] if not exists
+        if tags.__contains__(general_option):
             add_tags_in_space_configuration_tab(
                 selenium, browser_id, oz_page, popups, general_option,
                 tags[general_option], with_save=with_save)
-        if tags[domains_option]:
+        if tags.__contains__(domains_option):
             add_tags_in_space_configuration_tab(
                 selenium, browser_id, oz_page, popups, domains_option,
                 tags[domains_option], with_save=with_save)
