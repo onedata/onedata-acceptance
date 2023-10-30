@@ -639,8 +639,13 @@ def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,
     modal = "Delete modal"
     modal_option = "Yes"
     select_first_n_files(browser_id, num_files_to_delete, tmp_memory)
-    choose_option_from_selection_menu(browser_id, selenium, option_to_select,
-                                      popups, tmp_memory)
+    if num_files_to_delete > 1:
+        choose_option_from_selection_menu(
+            browser_id, selenium, option_to_select, popups, tmp_memory)
+    else:
+        click_menu_for_elem_in_browser(browser_id, 0, tmp_memory)
+        click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                                 option_to_select, popups)
     click_modal_button(selenium, browser_id, modal_option, modal, modals)
 
 
@@ -648,18 +653,8 @@ def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,
                   'files from current directory'))
 def delete_first_n_files_from_current_dir(browser_id, num_files_to_delete: int,
                                           tmp_memory, selenium, popups, modals):
-    err_msg = (f'number of files to delete {num_files_to_delete} must be'
-               f' greater than 1')
-    assert num_files_to_delete > 1, err_msg
     deleted_files = 0
     fixed_step = 5
-    # When single file is selected selection menu is not visible,
-    # so function delete_first_n_files cannot be used, so we avoid
-    # deleting exactly one file
-    if num_files_to_delete % fixed_step == 1:
-        delete_first_n_files(browser_id, 2, tmp_memory, selenium,
-                             popups, modals)
-        deleted_files += 2
     while deleted_files + fixed_step <= num_files_to_delete:
         delete_first_n_files(browser_id, fixed_step, tmp_memory, selenium,
                              popups, modals)
