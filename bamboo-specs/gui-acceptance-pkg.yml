@@ -92,8 +92,8 @@ stages:
         - Oneprovider ACL subjects
         - Oneprovider archives
         - Oneprovider archives audit logs
+        - Oneprovider archives cancel
         - Oneprovider archives incremental and nested
-        - Oneprovider archives privileges
         - Oneprovider archives recall
         - Oneprovider data tab
         - Oneprovider data tab files
@@ -811,6 +811,21 @@ Oneprovider archives audit logs:
         scripts:
           - make SUITE=test_oneprovider_archives_audit_logs test_gui_pkg
 
+Oneprovider archives cancel:
+  <<: *acceptance-tests-in-chrome-job
+  key: COACP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_oneprovider_archives_cancel ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
+
 Oneprovider archives incremental and nested:
   <<: *acceptance-tests-in-chrome-job
   key: COAIN
@@ -825,21 +840,6 @@ Oneprovider archives incremental and nested:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_oneprovider_archives_incremental_and_nested test_gui_pkg
-
-Oneprovider archives privileges:
-  <<: *acceptance-tests-in-chrome-job
-  key: COAAP
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script:
-        <<: *run-selenium-tests
-        scripts:
-          - make SUITE=test_oneprovider_archives_privileges ENV_FILE=1oz_2op_slow_file_operations test_gui_pkg
 
 Oneprovider archives recall:
   <<: *acceptance-tests-in-chrome-job

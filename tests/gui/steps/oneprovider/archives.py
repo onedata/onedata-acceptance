@@ -377,7 +377,7 @@ def hover_over_option_in_data_row_menu_in_archive_browser(selenium, browser_id,
                                                           popups, option):
     driver = selenium[browser_id]
     menu = popups(selenium[browser_id]).archive_row_menu
-    menu.move_to_option(driver, transform(option))
+    menu.move_to_elem(driver, transform(option))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>does not see|sees) '
@@ -392,14 +392,17 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
         except RuntimeError:
             pass
     elif res == 'sees':
-        _ = getattr(browser, transform(link))
+        visible_link = getattr(browser, transform(link))
+        assert visible_link == link, (f'link {visible_link} is visible in '
+                                      f'file browser instead of {link}')
 
 
 @wt(parsers.parse('user of {browser_id} sees popup message about insufficient '
-                  'privileges requiring "{privilege}" privilege'))
+                  'privileges requiring "{privilege}" privilege in archive '
+                  'browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_popup_insufficient_privileges_message(browser_id, privilege, popups,
-                                                 selenium):
+def assert_popup_insufficient_privileges_message_in_archive_browser(
+        browser_id, privilege, popups, selenium):
     driver = selenium[browser_id]
     toggle_info = popups(driver).toggle_label
     message_dict = {

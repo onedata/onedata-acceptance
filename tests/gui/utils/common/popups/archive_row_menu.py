@@ -23,9 +23,9 @@ class Options(PageObject):
 class ArchiveRowMenu(PageObject):
     options = WebItemsSequence('.left-top .file-actions.dropdown-menu '
                                'li:not(.separator)', cls=Options)
-    cancel_archivisation_web = WebElement('.file-action-cancel')
-    edit_description_web = WebElement('.file-action-editDescription')
-    delete_archive_web = WebElement('.file-action-delete')
+    cancel_archivisation_elem = WebElement('.file-action-cancel')
+    edit_description_elem = WebElement('.file-action-editDescription')
+    delete_archive_elem = WebElement('.file-action-delete')
 
     def choose_option(self, name):
         if name not in self.options:
@@ -37,8 +37,8 @@ class ArchiveRowMenu(PageObject):
             self.scroll_to_bottom()
         return self.options[name]
 
-    def move_to_option(self, driver, option):
-        element = getattr(self, option + '_web')
+    def move_to_elem(self, driver, option):
+        element = getattr(self, option + '_elem')
         try:
             ActionChains(driver).move_to_element(element).perform()
         except RuntimeError:

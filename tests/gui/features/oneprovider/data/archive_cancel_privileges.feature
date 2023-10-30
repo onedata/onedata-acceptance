@@ -103,4 +103,4 @@ Feature: Archives cancel test
 
     And user of browser_user1 clicks on menu for archive with description: "first archive" in archive browser
     And user of browser_user1 hovers over "Cancel archivisation" option in data row menu in archive browser
-    Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege
+    Then user of browser_user1 sees popup message about insufficient privileges requiring "manage archives" privilege in archive browser
