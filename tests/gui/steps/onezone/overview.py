@@ -81,19 +81,25 @@ def assert_name_label_of_space_on_overview_page(selenium, browser_id,
 def assert_mes_at_field_in_space_details_in_overview(
         selenium, browser_id, text, field, oz_page):
     driver = selenium[browser_id]
-    field = transform(field)
     details_tile = oz_page(driver)['data'].overview_page.space_details_tile
+    field = transform(field)
     visible_mes = getattr(details_tile, field)
-    if field == 'tags':
-        tags = text
-        visible_tags = [t.text.split('\n')[0] for t in visible_mes]
-        err_msg = f'user sees tags: {visible_tags} instead of {tags}'
-        assert len(tags) == len(visible_tags), err_msg
-        for tag in tags:
-            assert tag in visible_tags, err_msg
-    else:
-        err_msg = f'user sees {visible_mes} instead of {text} at {field}'
-        assert text == visible_mes, err_msg
+    err_msg = f'user sees {visible_mes} instead of {text} at {field}'
+    assert text == visible_mes, err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tags_in_space_details_in_overview(
+        selenium, browser_id, tags_to_check, oz_page):
+    tags = 'tags'
+    driver = selenium[browser_id]
+    details_tile = oz_page(driver)['data'].overview_page.space_details_tile
+    visible_mes = getattr(details_tile, tags)
+    visible_tags = [t.text.split('\n')[0] for t in visible_mes]
+    err_msg = f'user sees tags: {visible_tags} instead of {tags_to_check}'
+    assert len(tags_to_check) == len(visible_tags), err_msg
+    for tag in tags_to_check:
+        assert tag in visible_tags, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that Space {option} advertised '
@@ -125,8 +131,8 @@ def click_link_in_space_marketplace_in_overview(
     link.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees advertised space on Space '
-                  'Overview subpage with following parameters:\n{config}'))
+@wt(parsers.parse('user of {browser_id} sees tile Space Details on Space '
+                  'Overview subpage with following information:\n{config}'))
 def assert_space_in_overview_with_config(browser_id, selenium, oz_page, config):
     """Assert space advertised in marketplace according to given config.
 
@@ -156,7 +162,6 @@ def _assert_space_in_overview_with_config(browser_id, config, selenium,
 
     organization_name_option = 'organization name'
     description_option = 'description'
-    tags_option = 'tags'
 
     organization_name = data[organization_name_option]
     tags = data.get('tags', False)
@@ -169,5 +174,5 @@ def _assert_space_in_overview_with_config(browser_id, config, selenium,
         selenium, browser_id, description, description_option, oz_page)
 
     if tags:
-        assert_mes_at_field_in_space_details_in_overview(
-            selenium, browser_id, tags, tags_option, oz_page)
+        assert_tags_in_space_details_in_overview(selenium, browser_id, tags,
+                                                 oz_page)

@@ -1,4 +1,5 @@
-"""Utils and fixtures to facilitate operations on unsaved changes modal.
+"""Utils and fixtures to facilitate operations on there are unsaved changes
+modal.
 """
 
 __author__ = "Wojciech Szmelich"
@@ -10,10 +11,10 @@ from tests.gui.utils.core.web_elements import Button
 from ..modal import Modal
 
 
-class UnsavedChanges(Modal):
+class ThereAreUnsavedChanges(Modal):
     dont_save = Button('.question-dont-save')
     cancel = Button('.question-cancel')
     save = Button('.question-save')
 
     def __str__(self):
-        return 'Unsaved changes modal'
+        return 'There are unsaved changes modal'
