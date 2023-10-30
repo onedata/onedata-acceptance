@@ -117,7 +117,7 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     Then user of space_owner_browser sees [geo = "PL"] QoS requirement in QoS panel
 
 
-  Scenario: User changes ACL privileges of a file and sees that ACL privileges for a hardlink has changed as well
+  Scenario: User changes ACL privileges of a file and sees that ACL privileges for a hardlink have changed as well
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser creates hardlink of "file1" file in space "space1" in file browser
     And user of space_owner_browser sets "file1" ACL [allow, acl:read acl] privileges for user space-owner-user in "space1"

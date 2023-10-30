@@ -49,7 +49,7 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
 
 
-  Scenario: User can delete symbolic link without group "Write files" POSIX permission
+  Scenario: User can delete symbolic link pointing to the file inside a directory without the "Write" POSIX permission
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser clicks on "Permissions" in context menu for "dir1"
     And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
@@ -65,7 +65,7 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     And user of browser1 does not see any item(s) named "file2" in file browser
 
 
-  Scenario: User cannot access folder by non-owned symlink without POSIX Group Execute permission
+  Scenario: User cannot access a directory by non-owned symlink without POSIX Group Execute permission
     When user of space_owner_browser creates symlink of "dir1" file in space "space1" in file browser
     And user of space_owner_browser clicks on "Permissions" in context menu for "dir1"
     And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
