@@ -77,6 +77,10 @@ def set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
 
 @wt(parsers.parse('user of {browser_id} sets organization description '
                   '"{description}" in space configuration subpage'))
+def set_description_of_a_space_(selenium, browser_id, oz_page, description):
+    set_description_of_a_space(selenium, browser_id, oz_page, description)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_description_of_a_space(selenium, browser_id, oz_page, description,
                                with_save=True):

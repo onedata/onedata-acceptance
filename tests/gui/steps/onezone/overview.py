@@ -153,7 +153,7 @@ def assert_space_in_overview_with_config(browser_id, selenium, oz_page, config):
     """
 
     _assert_space_in_overview_with_config(browser_id, config, selenium,
-                                             oz_page)
+                                          oz_page)
 
 
 def _assert_space_in_overview_with_config(browser_id, config, selenium,
