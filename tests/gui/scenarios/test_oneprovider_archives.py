@@ -1,5 +1,5 @@
 """This module contains tests suite for operations on BagIt, plain and DIP
-archives using Oneprovider GUI and single browser instance.
+archives using Oneprovider GUI and multiple browser instances.
 """
 
 __author__ = "Agnieszka Warchol"

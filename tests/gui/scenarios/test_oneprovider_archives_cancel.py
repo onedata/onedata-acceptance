@@ -1,5 +1,5 @@
-"""This module contains tests suite for operations that deals with archives
-privileges using Oneprovider GUI and multiple browsers instance.
+"""This module contains tests suite for cancelling archives creation
+using Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Wojciech Szmelich"
