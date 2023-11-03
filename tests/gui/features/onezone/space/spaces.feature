@@ -129,7 +129,7 @@ Feature: Basic management of spaces
             - culture
         description: "Example of a space advertised in a Marketplace"
     And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
-    Then user of space_owner_browser sees tile Space Details on Space Overview subpage with following information:
+    Then user of space_owner_browser sees Space Details tile in space overview subpage with following information:
         organization name: "onedata"
         tags:
           - dynamic

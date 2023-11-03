@@ -18,8 +18,8 @@ Feature: Basic management of Space Marketplace
 
   Scenario: User sees own space in the Marketplace after configuring it
     When user of browser clicks "Overview" of "space1" space in the sidebar
-    And user of browser sees that Space is not advertised in marketplace in space overview page
-    And user of browser clicks "Configure advertisement" link in marketplace in space overview page
+    And user of browser sees that the space is not advertised in the Marketplace tile in space overview subpage
+    And user of browser clicks "Configure advertisement" link in the Marketplace tile in space overview subpage
     And user of browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
     And user of browser sets space configuration as follows:
         space name: "space1"
@@ -40,8 +40,8 @@ Feature: Basic management of Space Marketplace
     And user of browser sees "example@gmail.com" in marketplace contact e-mail address text field
     And user of browser sees that "space1" space is advertised in the marketplace in space sidebar
     And user of browser clicks "Overview" of "space1" space in the sidebar
-    Then user of browser sees that Space is advertised in marketplace in space overview page
-    And user of browser clicks "Show" link in marketplace in space overview page
+    Then user of browser sees that the space is advertised in the Marketplace tile in space overview subpage
+    And user of browser clicks "Show" link in the Marketplace tile in space overview subpage
     And user of browser sees advertised space on Space Marketplace subpage with following parameters:
         space name: "space1"
         tags:
@@ -69,7 +69,7 @@ Feature: Basic management of Space Marketplace
     Then user of browser sees that "There are unsaved changes" modal has appeared
     And user of browser clicks on "Save" button in modal "There are unsaved changes"
     And user of browser clicks "Overview" of "space1" space in the sidebar
-    And user of browser sees tile Space Details on Space Overview subpage with following information:
+    And user of browser sees Space Details tile in space overview subpage with following information:
         # space name is not displayed here, but it is required in configuration view
         organization name: "onedata"
         tags:
