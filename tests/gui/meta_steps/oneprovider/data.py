@@ -651,8 +651,8 @@ def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,
 
 @wt(parsers.parse('user of {browser_id} deletes first {num_files_to_delete} '
                   'files from current directory'))
-def delete_first_n_files_from_current_dir(browser_id, num_files_to_delete: int,
-                                          tmp_memory, selenium, popups, modals):
+def delete_first_n_files_with_fixed_step(browser_id, num_files_to_delete: int,
+                                         tmp_memory, selenium, popups, modals):
     deleted_files = 0
     fixed_step = 5
     while deleted_files + fixed_step <= num_files_to_delete:
