@@ -660,10 +660,10 @@ def delete_first_n_files_with_fixed_step(browser_id, num_files_to_delete: int,
                              popups, modals)
         deleted_files += fixed_step
     else:
-        if num_files_to_delete - deleted_files > 0:
-            delete_first_n_files(browser_id, num_files_to_delete -
-                                 deleted_files, tmp_memory, selenium,
-                                 popups, modals)
-            deleted_files += (num_files_to_delete - deleted_files)
+        num_remaining_files_to_delete = num_files_to_delete - deleted_files
+        if num_remaining_files_to_delete > 0:
+            delete_first_n_files(browser_id, num_remaining_files_to_delete,
+                                 tmp_memory, selenium, popups, modals)
+            deleted_files += num_remaining_files_to_delete
     err_msg = f'deleted {deleted_files} files instead of {num_files_to_delete}'
     assert deleted_files == num_files_to_delete, err_msg
