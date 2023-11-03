@@ -14,6 +14,7 @@ class ErrorModal(Modal):
     close = NamedButton('button', text='Close')
     content = Label('.modal-body')
     title = Label('h1 .one-label')
+    content_message = Label('.message-body')
 
     def __str__(self):
         return 'Error modal'

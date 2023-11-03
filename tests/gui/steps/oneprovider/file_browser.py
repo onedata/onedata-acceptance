@@ -464,3 +464,23 @@ def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option,
 def write_to_jump_input(browser_id, tmp_memory, prefix):
     browser = tmp_memory[browser_id]['file_browser']
     browser.jump_input = prefix
+
+
+@wt(parsers.parse('user of {browser_id} sees alert that file cannot be '
+                  '{option} because of insufficient privileges'))
+def assert_message_at_alert_modal(browser_id, option, modals, selenium):
+    driver = selenium[browser_id]
+    modal = modals(driver).error
+    messages_dict = {
+        "downloaded": ("Starting file download failed!\nYou are not authorized "
+                       "to perform this operation (insufficient privileges?)."),
+        "deleted": "Deleting file(s) failed!\nOperation not permitted"
+    }
+    visible_message = None
+    if option == "downloaded":
+        visible_message = modal.content_message
+    elif option == "deleted":
+        visible_message = modal.content
+    err_msg = (f"visible message is {visible_message}, which does not match to "
+               f"expected message {messages_dict[option]}")
+    assert visible_message == messages_dict[option], err_msg
