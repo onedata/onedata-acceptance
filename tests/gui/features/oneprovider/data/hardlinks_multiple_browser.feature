@@ -67,7 +67,7 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
     And user of browser1 sees only items named ["dir1", "file1", "file1(1)"] in file browser
 
 
-  Scenario: User can delete hardlink pointing to the file inside a directory without the "Write" POSIX permission
+  Scenario: User can delete hardlink that is linked with the file inside a directory without the "Write" POSIX permission
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser clicks on "Permissions" in context menu for "dir1"
     And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
