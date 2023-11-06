@@ -651,3 +651,39 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(selenium, modals, popups,
     click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
                                      modal)
     expand_size_statistics_for_providers(selenium, browser_id, modals)
+
+
+def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium,
+                         popups, modals):
+    option_to_select = "Delete"
+    modal = "Delete modal"
+    modal_option = "Yes"
+    select_first_n_files(browser_id, num_files_to_delete, tmp_memory)
+    if num_files_to_delete > 1:
+        choose_option_from_selection_menu(
+            browser_id, selenium, option_to_select, popups, tmp_memory)
+    else:
+        click_menu_for_elem_in_browser(browser_id, 0, tmp_memory)
+        click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                                 option_to_select, popups)
+    click_modal_button(selenium, browser_id, modal_option, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} deletes first {num_files_to_delete} '
+                  'files from current directory'))
+def delete_first_n_files_with_fixed_step(browser_id, num_files_to_delete: int,
+                                         tmp_memory, selenium, popups, modals):
+    deleted_files = 0
+    fixed_step = 5
+    while deleted_files + fixed_step <= num_files_to_delete:
+        delete_first_n_files(browser_id, fixed_step, tmp_memory, selenium,
+                             popups, modals)
+        deleted_files += fixed_step
+    else:
+        num_remaining_files_to_delete = num_files_to_delete - deleted_files
+        if num_remaining_files_to_delete > 0:
+            delete_first_n_files(browser_id, num_remaining_files_to_delete,
+                                 tmp_memory, selenium, popups, modals)
+            deleted_files += num_remaining_files_to_delete
+    err_msg = f'deleted {deleted_files} files instead of {num_files_to_delete}'
+    assert deleted_files == num_files_to_delete, err_msg

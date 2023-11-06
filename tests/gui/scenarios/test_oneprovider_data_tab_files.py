@@ -69,9 +69,10 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/file_management.feature')
+scenarios('../features/oneprovider/data/file_list_polling.feature')
