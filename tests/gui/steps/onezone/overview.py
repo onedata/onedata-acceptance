@@ -102,8 +102,9 @@ def assert_tags_in_space_details_in_overview(
         assert tag in visible_tags, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that Space {option} advertised '
-                  'in marketplace in space overview page'))
+@wt(parsers.parse('user of {browser_id} sees that the space {option} '
+                  'advertised in the Marketplace tile in space overview '
+                  'subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_advertised_in_space_marketplace_in_overview(
         browser_id, option, selenium, oz_page):
@@ -121,7 +122,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{link}" link '
-                  'in marketplace in space overview page'))
+                  'in the Marketplace tile in space overview subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_link_in_space_marketplace_in_overview(
         browser_id, link, selenium, oz_page):
@@ -131,8 +132,8 @@ def click_link_in_space_marketplace_in_overview(
     link.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees tile Space Details on Space '
-                  'Overview subpage with following information:\n{config}'))
+@wt(parsers.parse('user of {browser_id} sees Space Details tile in space '
+                  'overview subpage with following information:\n{config}'))
 def assert_space_in_overview_with_config(browser_id, selenium, oz_page, config):
     """Assert space advertised in marketplace according to given config.
 
