@@ -110,3 +110,28 @@ Feature: Basic management of spaces
     And user of space_owner_browser clicks on "Leave" button in space "space1" menu
     And user of space_owner_browser clicks on Leave button
     Then user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
+
+
+  Scenario: User sees space details in space overview subpage
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Marketplace" button in spaces sidebar
+    And user of space_owner_browser clicks on "Advertise your space" button in Space Marketplace subpage
+    And user of space_owner_browser chooses "space1" in spaces dropdown menu in modal "Advertise space"
+    And user of space_owner_browser clicks on "Configure..." button in modal "Advertise space"
+    And user of space_owner_browser sees that "Advertise in Marketplace" toggle is not checked on space configuration page
+    And user of space_owner_browser sets space configuration as follows:
+        space name: space1
+        organization name: "onedata"
+        tags:
+          general:
+            - dynamic
+          domains:
+            - culture
+        description: "Example of a space advertised in a Marketplace"
+    And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
+    Then user of space_owner_browser sees Space Details tile in space overview subpage with following information:
+        organization name: "onedata"
+        tags:
+          - dynamic
+          - culture
+        description: "Example of a space advertised in a Marketplace"

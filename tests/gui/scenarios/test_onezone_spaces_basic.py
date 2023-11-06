@@ -40,6 +40,7 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.marketplace import *
 from tests.gui.steps.onezone.space_configuration import *
+from tests.gui.steps.onezone.overview import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
