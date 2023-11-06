@@ -93,7 +93,7 @@ Feature: Incremental archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on Create Archive button in archive browser
+    And user of browser clicks on "Create Archive" button in archive browser
     And user of browser checks "Incremental" toggle in modal "Create Archive"
     Then user of browser sees that base archive name in Create Archive modal is the same as latest created archive name
 
@@ -107,7 +107,7 @@ Feature: Incremental archives operations
 
     # create archive
     And user of browser is idle for 61 seconds
-    And user of browser clicks on Create Archive button in archive browser
+    And user of browser clicks on "Create Archive" button in archive browser
     And user of browser clicks on "Create" button in modal "Create Archive"
 
     And user of browser clicks on menu for archive with description: "first archive" in archive browser

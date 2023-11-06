@@ -11,6 +11,7 @@ from .archives_modals.archive_audit_log import ArchiveAuditLog
 from .archives_modals.audit_log_entry_details import AuditLogEntryDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
+from .archives_modals.cancel_archive import CancelArchive
 from .files_modals.disable_directory_statistics import (
     DisableDirectoryStatistics)
 from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
@@ -113,6 +114,7 @@ class Modals(object):
     archive_audit_log = WebItem('.modal-dialog', cls=ArchiveAuditLog)
     audit_log_entry_details = WebItem('.details-container',
                                       cls=AuditLogEntryDetails)
+    cancel_archive = WebItem('.modal-content', cls=CancelArchive)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
