@@ -429,7 +429,13 @@ def go_to_path(selenium, browser_id, tmp_memory, path, op_container,
     else:
         path_list = [path]
     for directory in path_list:
-        if directory != '':
+        # go back
+        if directory == '..':
+            breadcrumbs = getattr(op_container(selenium[browser_id]),
+                                  transform(which_browser)).breadcrumbs
+            breadcrumbs = breadcrumbs._breadcrumbs
+            breadcrumbs[len(breadcrumbs)-2].click()
+        elif directory != '':
             click_and_press_enter_on_item_in_browser(selenium, browser_id,
                                                      directory,
                                                      tmp_memory, op_container,
@@ -502,7 +508,7 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
 def create_hardlinks_of_file(selenium, browser_id, file_name, space,
                              tmp_memory, oz_page, op_container, popups):
     option = 'Create hard link'
-    button = 'place hard link'
+    button = 'Place hard link'
 
     _create_link_in_file_browser(selenium, browser_id, file_name, space,
                                  tmp_memory, oz_page, op_container, popups,
@@ -528,6 +534,20 @@ def create_symlinks_of_file_with_path(
         op_container, popups, path):
     option = 'Create symbolic link'
     button = 'Place symbolic link'
+
+    _create_link_in_file_browser(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, option, button, path=path,
+        go_to_file_browser=False)
+
+
+@wt(parsers.parse('user of {browser_id} creates hard link of "{file_name}" '
+                  'placed in "{path}" directory on {which_browser}'))
+def create_hardlinks_of_file_with_path(
+        selenium, browser_id, file_name, space, tmp_memory, oz_page,
+        op_container, popups, path):
+    option = 'Create hard link'
+    button = 'Place hard link'
 
     _create_link_in_file_browser(
         selenium, browser_id, file_name, space, tmp_memory, oz_page,
