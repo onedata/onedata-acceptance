@@ -1,4 +1,4 @@
-aFeature: Archive recall tests
+Feature: Archive recall tests
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
