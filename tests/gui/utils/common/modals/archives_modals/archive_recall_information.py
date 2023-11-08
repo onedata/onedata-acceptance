@@ -8,7 +8,10 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Label, Button
+from tests.gui.utils.core.web_elements import (Label, Button,
+                                               WebElementsSequence, WebElement)
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 
 class ArchiveRecallInformation(Modal):
@@ -25,6 +28,9 @@ class ArchiveRecallInformation(Modal):
     recalling_oneprovider = Label('.recall-info-row-recalling-provider '
                                   '.property-value')
     recall_destination = Label('.recall-info-row-target-path .property-value')
+    error_log = Button('.logs-nav-link')
+    error_file_row = WebElementsSequence('.table-entry.data-row')
+    error_log_table = WebElement('.infinite-scroll-table')
 
 
     @staticmethod
@@ -49,3 +55,10 @@ class ArchiveRecallInformation(Modal):
                          eg. "files_recalled" or "data_recalled"
         """
         return ArchiveRecallInformation.parse_progress(getattr(self, type))
+
+    def scroll_by_press_space(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.SPACE).perform()
+
+    def move_to_error_logs_table(self, driver):
+        ActionChains(driver).move_to_element(self.error_log_table).perform()

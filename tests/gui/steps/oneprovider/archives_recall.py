@@ -146,3 +146,31 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
         else:
             time.sleep(2)
 
+
+@wt(parsers.parse('user of {browser_id} sees that error logs table in modal '
+                  '"Archive recall information" contain between {n1} and {n2} '
+                  'entries'))
+def assert_number_of_entries_in_archive_recall(browser_id, n1: int, n2: int,
+                                               selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    entries = modal.error_file_row
+    new_entries = [entry.text.split('\n')[1] for entry in entries if
+                   len(entry.text.split('\n')) > 1]
+    detected_entries = []
+    detected_entries.extend(new_entries)
+    number_of_entries = 0
+    # if we want to scroll cursor need to be somewhere on the
+    # table containing error logs
+    modal.move_to_error_logs_table(driver)
+    while new_entries:
+        number_of_entries += len(new_entries)
+        modal.scroll_by_press_space()
+        entries = modal.error_file_row
+        new_entries = [entry.text.split('\n')[1] for entry in entries if
+                       len(entry.text.split('\n')) > 1 and
+                       entry.text.split('\n')[1] not in detected_entries]
+        detected_entries.extend(new_entries)
+    err_msg = (f'number of entries is {number_of_entries} which is not between ' 
+               f'{n1} and {n2} in error logs')
+    assert n1 <= number_of_entries <= n2, err_msg
