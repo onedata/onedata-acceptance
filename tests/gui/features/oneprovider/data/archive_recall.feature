@@ -77,11 +77,11 @@ Feature: Archive recall tests
     And user of browser sees that not all data were recalled
     And user of browser sees last error: "No space left on device" in archive recall information modal
     And user of browser sees that number of items failed is greater than 0
-    And user of browser sees that error logs table in modal "Archive recall information" contain number of entries which is equal to number of items failed in status tab
-    And user of browser scrolls to top in archive recall information
-    And user of browser sees that error logs table in modal "Archive recall information" contain only entries with file name "file.txt" or with this name duplicated
-    And user of browser scrolls to top in archive recall information
-    And user of browser sees that error logs table in modal "Archive recall information" contain only entries with error message "No space left on device"
+    And user of browser sees that archive recall error logs table contain number of entries which is equal to number of items failed in status tab
+    And user of browser scrolls to the top in archive recall information
+    And user of browser sees that archive recall error logs table contain only entries with the file name "file.txt" or its duplicate names
+    And user of browser scrolls to the top in archive recall information
+    And user of browser sees that archive recall error logs table contain only entries with error message "No space left on device"
 
 
   Scenario: User sees that recall has been cancelled after cancelling it

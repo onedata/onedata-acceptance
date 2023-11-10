@@ -147,8 +147,8 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
             time.sleep(2)
 
 
-@wt(parsers.parse('user of {browser_id} sees that error logs table in modal '
-                  '"Archive recall information" contain number of entries '
+@wt(parsers.parse('user of {browser_id} sees that archive recall error logs '
+                  'table contain number of entries '
                   'which is equal to number of items failed in status tab'))
 def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -183,9 +183,9 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
     assert number_of_entries == number_of_items_failed, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that error logs table in modal '
-                  '"Archive recall information" contain only entries with file '
-                  'name "{file_name}" or with this name duplicated'))
+@wt(parsers.parse('user of {browser_id} sees that archive recall error logs '
+                  'table contain only entries with the '
+                  'file name "{file_name}" or its duplicate names'))
 def assert_entries_with_file_names_in_archive_recall(browser_id, file_name,
                                                      selenium, modals):
     # this test assumes that original file name does not
@@ -220,8 +220,8 @@ def assert_entries_with_file_names_in_archive_recall(browser_id, file_name,
         detected_entries.extend(new_entries_names)
 
 
-@wt(parsers.parse('user of {browser_id} sees that error logs table in modal '
-                  '"Archive recall information" contain only entries with '
+@wt(parsers.parse('user of {browser_id} sees that archive recall error '
+                  'logs table contain only entries with '
                   'error message "{message}"'))
 def assert_entries_with_error_messages_in_archive_recall(browser_id, message,
                                                          selenium, modals):
@@ -254,7 +254,7 @@ def assert_entries_with_error_messages_in_archive_recall(browser_id, message,
         detected_entries.extend(new_entries)
 
 
-@wt(parsers.parse('user of {browser_id} scrolls to top in archive recall '
+@wt(parsers.parse('user of {browser_id} scrolls to the top in archive recall '
                   'information'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_top_in_archive_recall_information(browser_id, selenium, modals):
