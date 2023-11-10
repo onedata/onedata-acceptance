@@ -62,3 +62,8 @@ class ArchiveRecallInformation(Modal):
 
     def move_to_error_logs_table(self, driver):
         ActionChains(driver).move_to_element(self.error_log_table).perform()
+
+    def scroll_to_top(self):
+        self.driver.execute_script(
+            "document.querySelector('.infinite-scroll-table "
+            ".table-scrollable-container').scrollTo(0,0)")
