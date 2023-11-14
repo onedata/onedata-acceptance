@@ -35,9 +35,11 @@ def open_initial_modal(data_type, op_container, driver, popups, modals):
         open_select_initial_files_modal(op_container, driver, popups, modals)
 
 
-def select_initial_items_for_workflow_in_modal(file_list, modals, driver,
+def select_initial_items_for_workflow_in_modal(files, modals, driver,
                                                data_type, op_container, popups):
-    files = parse_seq(file_list)
+    if not isinstance(files, list):
+        files = parse_seq(files)
+
     for path in files:
         modal_name = 'select files'
         file_name = go_to_path_and_return_file_name_in_modal(path, modals,
@@ -47,6 +49,8 @@ def select_initial_items_for_workflow_in_modal(file_list, modals, driver,
         for file in select_files_modal.files:
             if file.name == file_name:
                 file.clickable_field.click()
+                if popups(driver).is_upload_presenter():
+                    popups(driver).upload_presenter[0].cancel_button.click()
                 select_files_modal.confirm_button.click()
                 # wait a moment for modal to close
                 time.sleep(0.25)

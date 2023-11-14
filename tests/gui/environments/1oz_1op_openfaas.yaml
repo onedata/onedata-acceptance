@@ -8,6 +8,12 @@ openfaas: true
 storages:
   - s3
 
+# OpenFaaS Pod Status Monitor image to use.
+openfaasPodStatusMonitorImage: "docker.onedata.org/openfaas-pod-status-monitor:develop"
+
+# OpenFaaS Lambda Result Streamer image to use.
+openfaasLambdaResultStreamerImage: "docker.onedata.org/openfaas-lambda-result-streamer:develop"
+
 onezone:
   batchConfig:
     createUsers: false

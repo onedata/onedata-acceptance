@@ -13,7 +13,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar, write_text_into_lambda_form,
     switch_toggle_in_lambda_form, confirm_lambda_creation_or_edition)
-from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
@@ -122,10 +122,11 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
                   '"{docker_image}" docker image in "{inventory}" inventory'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
-                            docker_image, inventory):
-    click_on_option_in_the_sidebar(selenium, browser_id, 'Automation', oz_page)
+                            docker_image, inventory, tmp_memory):
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
+                                              tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory,
-                            'lambdas', oz_page)
+                            'lambdas', oz_page, tmp_memory)
     click_add_new_button_in_menu_bar(selenium, browser_id, oz_page,
                                      'Add new lambda')
     write_text_into_lambda_form(selenium, browser_id, oz_page,
@@ -136,7 +137,7 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, 'lambda')
 
     go_to_inventory_subpage(selenium, browser_id, inventory,
-                            'lambdas', oz_page)
+                            'lambdas', oz_page, tmp_memory)
 
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 

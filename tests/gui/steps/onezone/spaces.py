@@ -20,12 +20,20 @@ SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
               "harvesters_discovery", "automation_workflows"]
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
+    # check if data page is visible, if is marketplace button should be visible,
+    # and if is not this calling should give AttributeError
     try:
-        oz_page(driver)[option].spaces_header_list[name]()
+        oz_page(driver).get_page_no_clicking(option).marketplace_button
+        page = oz_page(driver).get_page_no_clicking(option)
+    except (AttributeError, RuntimeError):
+        page = oz_page(driver)[option]
+    try:
+        page.spaces_header_list[name]()
     except (RuntimeError, IndexError):
-        oz_page(driver)[option].choose_space(name)
+        page.choose_space(name)
 
 
 def _parse_tabs_list(tabs):
@@ -111,9 +119,20 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
         'space "{}" not found'.format(space_name)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on Automation in the main menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
+                                              tmp_memory):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    page = oz_page(driver)["automation"]
+    assert page
+    tmp_memory[browser_id]["oz_page"] = page
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
-               '|Clusters) in the main menu'))
+               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
+               'in the main menu'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]

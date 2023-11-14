@@ -10,6 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
@@ -52,7 +53,7 @@ def click_button_in_navigation_tab(selenium, browser_id, op_container,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) chooses to run '
-               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '(?P<ordinal>1st|2nd|3rd|4th|5th|6th) revision of '
                '"(?P<workflow>.*?)" workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_workflow_revision_to_run(selenium, browser_id, op_container,
@@ -74,26 +75,62 @@ def check_if_task_is_opened(task):
     return task.status != ''
 
 
+def search_for_parallel_box_in_lane(driver, page, lane_name, box_number):
+    workflow_visualiser = page.workflow_visualiser
+    number_of_lanes = len(workflow_visualiser.workflow_lanes)
+
+    for i in range(number_of_lanes):
+        lane_id = workflow_visualiser.workflow_lanes[
+            i].name_web_elem.get_attribute('id')
+        scroll_to_css_selector(driver, f'#{lane_id}')
+        found_lane = driver.find_element_by_css_selector(f'#{lane_id}').text
+
+        if found_lane == lane_name:
+            return workflow_visualiser.workflow_lanes[i].parallel_boxes[
+                box_number]
+        else:
+            try:
+                page.workflow_visualiser.right_arrow_scroll.click()
+            except RuntimeError:
+                pass
+
+
+def search_for_task_in_parallel_box(driver, parallel_box, task_name):
+    number_of_tasks = len(parallel_box.task_list)
+    for j in range(number_of_tasks):
+        task_id = parallel_box.task_list[j].name_web_elem.get_attribute('id')
+        scroll_to_css_selector(driver, f'#{task_id}')
+        found_task = driver.find_element_by_css_selector(f'#{task_id}').text
+
+        if found_task == task_name:
+            return parallel_box.task_list[j], task_id
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task '
                '"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
                '"(?P<lane_name>.*?)" lane in workflow visualizer'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, option):
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
-    task = box.task_list[task_name]
+    driver = selenium[browser_id]
+
+    parallel_box = search_for_parallel_box_in_lane(driver, page, lane_name,
+                                                   number)
+    task, task_id = search_for_task_in_parallel_box(driver, parallel_box,
+                                                    task_name)
+
     if option == 'closes':
         if check_if_task_is_opened(task):
-            task.drag_handle.click()
+            task.click_on_drag_handle()
         # wait for task to be closed
         time.sleep(2)
         assert not check_if_task_is_opened(task), (
-                f'Failed to close {task_name} task in parallel box')
+            f'Failed to close {task_name} task in parallel box')
     else:
-        task.drag_handle.click()
+        if not check_if_task_is_opened(task):
+            scroll_to_css_selector(driver, f'#{task_id}')
+            task.click_on_drag_handle()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on link "{option}" in '
@@ -104,9 +141,18 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
                               task_name, option, ordinal):
     number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_boxes[number]
-    getattr(box.task_list[task_name], transform(option)).click()
+    driver = selenium[browser_id]
+
+    parallel_box = search_for_parallel_box_in_lane(driver, page, lane_name,
+                                                   number)
+    task, task_id = search_for_task_in_parallel_box(driver, parallel_box,
+                                                    task_name)
+
+    scroll_to_css_selector(driver, f'#{task_id}')
+    parallel_box.scroll_to_bottom_of_task_in_parallel_box(task_id)
+    time.sleep(0.25)
+
+    task.click_on_option_in_task(option)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{tab_name}" tab in '
@@ -147,7 +193,6 @@ def click_and_enter_workflow(selenium, browser_id, op_container, workflow):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_workflow_on_executed_workflows_list(selenium, browser_id,
                                                op_container, workflow, option):
-
     page = switch_to_automation_page(selenium, browser_id, op_container)
 
     workflow_executions_list = page.workflow_executions_list

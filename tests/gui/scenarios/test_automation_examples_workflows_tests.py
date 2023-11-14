@@ -84,3 +84,4 @@ def screens():
 
 
 scenarios('../features/atm/automation_examples_workflows.feature')
+scenarios('../features/atm/automation_bagit_tests.feature')
