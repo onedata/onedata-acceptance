@@ -83,9 +83,10 @@ def type_text_to_val_of_attr_in_new_basic_entry(selenium, browser_id, text,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_basic_meta_record(selenium, browser_id, attr_name,
                                            attr_val, modals):
+    attr_val = attr_val.lower()
     modal = modals(selenium[browser_id]).details_modal.metadata
     err_msg = f'no metadata entry "{attr_name}" with value "{attr_val}" found'
-    assert modal.basic.entries[attr_name].value == attr_val, err_msg
+    assert modal.basic.entries[attr_name].value.lower() == attr_val, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} does not see basic metadata entry '

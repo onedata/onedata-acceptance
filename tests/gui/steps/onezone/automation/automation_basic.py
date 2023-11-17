@@ -120,7 +120,8 @@ def upload_workflow_from_repository(selenium, browser_id, workflow_name,
                                     oz_page):
     driver = selenium[browser_id]
     workflows_in_directories = [
-        'detect-file-formats', 'detect-file-mime-formats', 'download-files']
+        'detect-file-formats', 'detect-file-mime-formats', 'download-files',
+        'bagit-uploader']
 
     workflow_name = (workflow_name + '.json'
                      ) if workflow_name not in workflows_in_directories else (
