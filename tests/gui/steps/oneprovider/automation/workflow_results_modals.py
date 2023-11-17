@@ -82,12 +82,13 @@ def assert_no_data_message_processing_chart(browser_id, selenium, modals,
     assert actual_message == message, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that {option} processing speed'
-                  ' is greater or equal {number} per second on chart with'
-                  ' processing stats'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<option>.*?) '
+               'processing speed (?P<compare_option>is greater or equal|is '
+               'equal) (?P<number>.*?) per second on chart with processing '
+               'stats'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
-                                     number):
+                                     number, compare_option):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
@@ -95,7 +96,10 @@ def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
         if option in value[1].lower():
             err_msg = (f'Processing speed is {value[0]} {option} per second '
                        f'and is lower than expected {number} per second.')
-            assert value[0] >= int(number), err_msg
+            if compare_option == 'is greater or equal':
+                assert value[0] >= int(number), err_msg
+            else:
+                assert value[0] == int(number), err_msg
             break
     else:
         raise Exception(f'There is no {option} processing speed on chart with'

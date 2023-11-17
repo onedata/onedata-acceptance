@@ -493,13 +493,15 @@ def assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
 def compare_content_reason_of_task_audit_log(
         reason, actual_reason, selenium, browser_id, oz_page, op_container,
         tmp_memory, popups, modals, clipboard, displays, task_name):
+    err_msg = (f'Reason: "{reason}" in audit log for "{task_name}" '
+               f'task does not contain "{actual_reason}" as expected')
     if 'contains' in reason:
         reason_data = yaml.load(
             reason.split('contains ')[1].replace('])', ']'))
         for reason_elem in reason_data:
-            assert reason_elem in actual_reason, (
-                f'Reason: "{reason}" in audit log for "{task_name}" '
-                f'task does not contain "{actual_reason}" as expected')
+            assert reason_elem in actual_reason, err_msg
+    elif 'file checksum' in reason:
+        assert reason == actual_reason.replace(':', ''), err_msg
     else:
         if not isinstance(reason, str):
             placeholder_file_id = reason['details'][
@@ -549,6 +551,7 @@ def compare_content_of_task_audit_log(
 def assert_content_of_user_task_audit_log(selenium, browser_id, op_container,
                                           lane_name, task_name, ordinal, modals):
     click = 'click'
+    close = 'closes'
     link = 'Audit log'
     driver = selenium[browser_id]
 
@@ -566,6 +569,38 @@ def assert_content_of_user_task_audit_log(selenium, browser_id, op_container,
     except RuntimeError:
         pass
     modal.x()
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{element}" content of audit'
+                  ' log in task "{task_name}" in {ordinal} parallel box in lane'
+                  ' "{lane_name}" is {expected_data}'))
+def assert_element_content_in_task_audit_log(
+        expected_data, element, selenium, browser_id, op_container, lane_name,
+        task_name, ordinal, modals, clipboard, displays):
+    click = 'click'
+    link = 'Audit log'
+    close = 'closes'
+    expected_data = expected_data.replace('"', '')
+    driver = selenium[browser_id]
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
+                              task_name, link, ordinal)
+    # wait a moment for modal to open
+    time.sleep(1)
+    modal = modals(driver).audit_log
+    modal.user_log.click()
+    modal.copy_json()
+    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
+    actual_data = actual_items['content'][element]
+    err_msg = (f'actual {element} content for task: "{actual_data}" is not '
+               f'as expected: "{expected_data}"')
+    assert actual_data.lower() == expected_data.replace("\\n", "\n"), err_msg
+    modal.x()
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, close)
 
 
 @wt(parsers.parse('user of {browser_id} sees that audit log in task'
@@ -583,7 +618,9 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     content = data.get('content', False)
     severity = data.get('severity', False)
     source = data.get('source', False)
-
+    close = 'closes'
+    # wait a second for workflow to open
+    time.sleep(1)
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
@@ -612,5 +649,7 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
 
     try:
         modal.x()
+        click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                              task_name, ordinal, close)
     except StaleElementReferenceException:
         pass

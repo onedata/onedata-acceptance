@@ -122,6 +122,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
 
     if option == 'closes':
         if check_if_task_is_opened(task):
+            scroll_to_css_selector(driver, f'.task-drag-handle')
             task.click_on_drag_handle()
         # wait for task to be closed
         time.sleep(2)

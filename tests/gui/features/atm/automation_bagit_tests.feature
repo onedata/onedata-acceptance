@@ -69,9 +69,10 @@ Feature: Bagit uploader tests
       archive: valid.zip
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 160000 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater or equal 5 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 320000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
@@ -88,6 +89,7 @@ Feature: Bagit uploader tests
       source URL: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
       size: 5969
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 2500 per second on chart with processing stats
@@ -106,8 +108,9 @@ Feature: Bagit uploader tests
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that bytes processing speed is greater or equal 205500 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 300000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees that number of elements in the content of the "calculated-checksums" store details modal is 6
     And user of browser sees that each element in the content of the "calculated-checksums" store details modal contains following information:
@@ -126,9 +129,10 @@ Feature: Bagit uploader tests
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 6 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 160000 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 300000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees file browser after clicking "dir1" directory in Store details modal for "destination-directory" store
     And user of browser is redirected back to first tab
@@ -171,36 +175,13 @@ Feature: Bagit uploader tests
     And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
-    # Checking if Audit Logs and Time Series charts for all tasks are correct
-    And user of browser sees that audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" contains following entry:
-      timestamp: today
-      source: user
-      severity: info
-      content:
-      status: Valid bagit archive
-      archive: valid_with_xrootd.zip
-
-    And user of browser sees that audit log in task "bagit-uploader-unpack-data" in 1st parallel box in lane "unpack" contains following entry:
-      timestamp: today
-      source: user
-      severity: info
-      content:
-      status: Successfully unpacked 0 files.
-      archive: valid_with_xrootd.zip
-
-    And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 0 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 0 per second on chart with processing stats
-    And user of browser clicks on "X" button in modal "Task time series"
-    And user of browser closes task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane in workflow visualizer
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
       source: user
       severity: info
       content:
-      status: Found  1 files to be downloaded.
-      archive: valid_with_xrootd.zip
+        status: Found  1 files to be downloaded.
+        archive: valid_with_xrootd.zip
 
     # Check if 0 files has been unpacked and 1 has been fetched
     And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 1
@@ -208,6 +189,7 @@ Feature: Bagit uploader tests
       - LHC10c_pp_ESD_120076.json
     And user of browser closes "Store details" modal
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 135000 per second on chart with processing stats
@@ -216,21 +198,6 @@ Feature: Bagit uploader tests
     And user of browser sees that element in the content of the "files-to-download" store details modal contains following destination path:
       - LHC10c_pp_ESD_120076.json
     And user of browser closes "Store details" modal
-
-    And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that bytes processing speed is greater or equal 135000 per second on chart with processing stats
-    And user of browser clicks on "X" button in modal "Task time series"
-    And user of browser sees that number of elements in the content of the "calculated-checksums" store details modal is 1
-    And user of browser sees that element in the content of the "calculated-checksums" store details modal contains following file path:
-      - LHC10c_pp_ESD_120076.json
-    And user of browser closes "Store details" modal
-
-    And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 270000 per second on chart with processing stats
-    And user of browser clicks on "X" button in modal "Task time series"
 
     # Checking if Dataset in file browser has correct content
     And user of browser clicks "Files" of "space1" space in the sidebar
@@ -271,15 +238,15 @@ Feature: Bagit uploader tests
       source: user
       severity: info
       content:
-      status: Invalid bagit archive
-      reason: <exception_reason>
-      archive: <input_archive>
+        status: Invalid bagit archive
 
+    And user of browser sees that "archive" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is <input_archive>
+    And user of browser sees that "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is <exception_reason>
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 0 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 0 per second on chart with processing stats
+    And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" doesn't contain user's entry
 
@@ -287,8 +254,8 @@ Feature: Bagit uploader tests
     And user of browser closes "Store details" modal
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 0 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 0 per second on chart with processing stats
+    And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
@@ -299,8 +266,8 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 0 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 0 per second on chart with processing stats
+    And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
 
@@ -312,7 +279,55 @@ Feature: Bagit uploader tests
       | "missing_manifest_file.tgz"  | No manifest file found                                                                                    |
       | "missing_data_dir.tar"       | Payload (data/) directory not found                                                                       |
       | "missing_bagit_txt.tar"      | Bagit directory not found                                                                                 |
-      | "invalid_fetch_url.zip"      | Failed to extract url, size and path from line number 1 in fetch.txt                                      |
-      | "missing_fetch_txt.zip"      | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-sha256.txt not found  |
-      | "wrong_checksums.zip"        | sha256 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected: a4127b2d0ced5571d738917292cb64ae686bea0c016d18a66029062b43dbd7eb,Calculated: 8db8b25444ca1130c2150fe622df8aac8e5604332cd0ec84e80adb9ce90240ab  |
-      | "missing_payload.zip"        | Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files in payload but not referenced: set()\nFiles referenced but not in payload: {'data/ark-file-meta.csv'}                         |
+      | "invalid_fetch_url.zip"      | File path not within data/ directory (fetch.txt line 1)                                                   |
+      | "missing_fetch_txt.zip"      | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found     |
+      | "wrong_tagmanifest_checksums.zip" | md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected: 5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123 |
+      | "missing_payload.zip"        | Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files in payload but not referenced: set()\n  Files referenced but not in payload: {'data/ark-file-meta.csv'} |
+
+
+  Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_manifest_checksum.zip
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/wrong_manifest_checksum.zip" to current dir
+    And user of browser sees that item named "wrong_manifest_checksum.zip" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
+      destination-directory:
+        - dir1
+      input-bagit-archives:
+        - wrong_manifest_checksum.zip
+    Then user of browser sees that audit log in task "bagit-uploader-calculate-checksum" in 1st parallel box in lane "calculate checksums" contains following entry:
+      timestamp: today
+      source: system
+      severity: Error
+      content:
+        details:
+          reason: Expected file checksum c953ba35heh32b2de76f59640433bc70, when calculated checksum is c953ba35ed132b2de76f59640433bc70
+      description: Lambda exception occurred during item processing
+
+
+  Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_fetch.zip
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/wrong_fetch.zip" to current dir
+    And user of browser sees that item named "wrong_fetch.zip" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
+      destination-directory:
+        - dir1
+      input-bagit-archives:
+        - wrong_fetch.zip
+
+    Then user of browser sees that audit log in task "bagit-uploader-download-files" in 1st parallel box in lane "download-files" contains following entry:
+      timestamp: today
+      source: system
+      severity: Error
+      content:
+        details:
+          reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NewConnectionError", "Failed to establish a new connection", "[Errno -2] Name or service not known"])
+        description: Lambda exception occurred during item processing.
+

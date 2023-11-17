@@ -275,6 +275,3 @@ Feature: Workflows execution
          - 'message that contains: "calculate-checksum-mounted" + "Started container"'
          - 'message that contains: "calculate-checksum-mounted" + "Created container"'
     And user of browser sees that numer of events on "Pods activity" list for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane is about 18
-
-
-
