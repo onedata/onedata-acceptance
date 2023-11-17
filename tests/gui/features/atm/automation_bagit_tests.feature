@@ -36,10 +36,10 @@ Feature: Bagit uploader tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
-      input-bagit-archives:
-        - valid.zip
       destination-directory:
         - dir1
+      input-bagit-archives:
+        - valid.zip
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
@@ -167,8 +167,8 @@ Feature: Bagit uploader tests
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "bagit-uploader" workflow
-    And user of browser chooses "valid_with_xrootd.zip" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
+    And user of browser chooses "valid_with_xrootd.zip" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
