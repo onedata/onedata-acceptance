@@ -1,5 +1,5 @@
 """This module contains tests suite for operations on BagIt, plain and DIP
-archives using Oneprovider GUI and single browser instance.
+archives using Oneprovider GUI and multiple browser instances.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -72,8 +72,9 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/data/archive_basic.feature')
 scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
+scenarios('../features/oneprovider/data/archive_manage_privileges.feature')

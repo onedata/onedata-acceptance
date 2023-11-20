@@ -12,6 +12,7 @@ from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
 class ArchiveDetails(Modal):
+    creator = Label('.creator-field .record-name .record-name-general')
     archive_id = Input('.archiveId-field .clipboard-input')
     description = Input('.description-field .form-control')
     layout = Label('.layout-field .field-component')
@@ -22,6 +23,7 @@ class ArchiveDetails(Modal):
     base_archive = Label('.baseArchiveInfo-field .field-component')
     preserved_callback_url = Input('.preservedCallback-field .clipboard-input')
     deleted_callback_url = Input('.deletedCallback-field .clipboard-input')
+    save_modification = Button('.submit-archive-modification-btn')
     x = Button('.close')
 
     def __str__(self):

@@ -50,7 +50,20 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
     _configure_space_manually(browser_id, config, selenium, oz_page, popups)
 
 
-def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
+@wt(parsers.parse('user of {browser_id} provides space configuration without '
+                  'saving as follows:\n{config}'))
+def configure_space_manually_without_saving(browser_id, config, selenium,
+                                            oz_page, popups):
+    """Adjust space configuration according to given config.
+
+        Config format given in yaml is as in the previous function:
+    """
+    _configure_space_manually(browser_id, config, selenium, oz_page, popups,
+                              with_save=False)
+
+
+def _configure_space_manually(browser_id, config, selenium, oz_page, popups,
+                              with_save=True):
     data = yaml.load(config)
 
     space_name_option = 'space name'
@@ -63,22 +76,25 @@ def _configure_space_manually(browser_id, config, selenium, oz_page, popups):
     tags = data.get('tags', False)
     description = data['description']
 
-    set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
-                                        space_name_option, space_name)
-    set_space_data_in_configuration_tab(selenium, browser_id, oz_page,
-                                        organization_name_option,
-                                        organization_name)
-    set_description_of_a_space(selenium, browser_id, oz_page, description)
+    set_space_data_in_configuration_tab(
+        selenium, browser_id, oz_page, space_name_option, space_name,
+        with_save=with_save)
+    set_space_data_in_configuration_tab(
+        selenium, browser_id, oz_page, organization_name_option,
+        organization_name, with_save=with_save)
+    set_description_of_a_space(
+        selenium, browser_id, oz_page, description, with_save=with_save)
 
     if tags:
-        if tags[general_option]:
-            add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
-                                                popups, general_option,
-                                                tags[general_option])
-        if tags[domains_option]:
-            add_tags_in_space_configuration_tab(selenium, browser_id, oz_page,
-                                                popups, domains_option,
-                                                tags[domains_option])
+        # KeyError when call tags[general_option] if not exists
+        if tags.__contains__(general_option):
+            add_tags_in_space_configuration_tab(
+                selenium, browser_id, oz_page, popups, general_option,
+                tags[general_option], with_save=with_save)
+        if tags.__contains__(domains_option):
+            add_tags_in_space_configuration_tab(
+                selenium, browser_id, oz_page, popups, domains_option,
+                tags[domains_option], with_save=with_save)
 
 
 @wt(parsers.parse('user of {browser_id} sees advertised space '

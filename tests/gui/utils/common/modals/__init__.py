@@ -11,6 +11,7 @@ from .archives_modals.archive_audit_log import ArchiveAuditLog
 from .archives_modals.audit_log_entry_details import AuditLogEntryDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
+from .archives_modals.cancel_archive import CancelArchive
 from .files_modals.disable_directory_statistics import (
     DisableDirectoryStatistics)
 from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
@@ -34,6 +35,7 @@ from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
+from .basic_modals.there_are_unsaved_changes import ThereAreUnsavedChanges
 from .troubles_modals.error_modal import ErrorModal
 from .tokens_modals.invite_using_token import InviteUsingTokenModal
 from .troubles_modals.dns_configuration_warning import (
@@ -113,6 +115,7 @@ class Modals(object):
     archive_audit_log = WebItem('.modal-dialog', cls=ArchiveAuditLog)
     audit_log_entry_details = WebItem('.details-container',
                                       cls=AuditLogEntryDetails)
+    cancel_archive = WebItem('.modal-content', cls=CancelArchive)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
@@ -152,6 +155,8 @@ class Modals(object):
     advertise_space = WebItem('.modal-dialog', cls=AdvertiseSpace)
     advertise_space_in_the_marketplace = WebItem('.modal-dialog',
                                                  cls=AdvertiseSpaceInTheMarketplace)
+    there_are_unsaved_changes = WebItem('.modal-dialog',
+                                        cls=ThereAreUnsavedChanges)
 
     def __init__(self, driver):
         self.driver = driver

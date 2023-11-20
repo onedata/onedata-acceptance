@@ -83,7 +83,7 @@ def _find_modal(driver, modal_name):
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
                          'file details', 'symbolic link', 'inventory',
-                         'workflow']
+                         'workflow', 'unsaved']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '

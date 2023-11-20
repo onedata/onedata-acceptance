@@ -15,7 +15,9 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.modal import click_modal_button
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.modals.details_modal import click_on_context_menu_item
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op,\
+    choose_option_from_selection_menu
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
@@ -181,6 +183,30 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory):
         _select_files(browser, selector, item_list)
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_up()
+
+
+@wt(parsers.parse('user of {browser_id} selects first "{num_files_to_select}"'
+                  ' files from file browser with pressed ctrl'))
+@repeat_failed(timeout=WAIT_FRONTEND, exceptions=(Exception, AssertionError, ))
+def select_first_n_files(browser_id, num_files_to_select: int, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    with browser.select_files() as selector:
+        selector.ctrl_or_cmd_down()
+        selected_files = []
+        visible_files = browser.names_of_visible_elems()
+        new_files = [f for f in visible_files if f]
+        err_msg = (f'there are {len(new_files)} files in file browser'
+                   f' should be at least {num_files_to_select}')
+        assert len(new_files) >= num_files_to_select, err_msg
+        new_files = new_files[:num_files_to_select]
+        for new_file in new_files:
+            item = browser.data[new_file]
+            if not item.is_selected():
+                selector.select(item)
+                selected_files.append(new_file)
+        err_msg = (f'There are {len(selected_files)} selected files in'
+                   f' file browser when should be {num_files_to_select}')
+        assert len(selected_files) == num_files_to_select, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} deselects {item_list} '
@@ -464,3 +490,30 @@ def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option,
 def write_to_jump_input(browser_id, tmp_memory, prefix):
     browser = tmp_memory[browser_id]['file_browser']
     browser.jump_input = prefix
+
+
+@wt(parsers.parse('user of {browser_id} sees alert that file cannot be '
+                  '{option} because of insufficient privileges'))
+def assert_message_at_alert_modal(browser_id, option, modals, selenium):
+    driver = selenium[browser_id]
+    modal = modals(driver).error
+    messages_dict = {
+        "downloaded": ("Starting file download failed!\nYou are not authorized "
+                       "to perform this operation (insufficient privileges?)."),
+        "deleted": "Deleting file(s) failed!\nOperation not permitted"
+    }
+    visible_message = None
+    if option == "downloaded":
+        visible_message = modal.content_message
+    elif option == "deleted":
+        visible_message = modal.content
+    err_msg = (f"visible message is {visible_message}, which does not match to "
+               f"expected message {messages_dict[option]}")
+    assert visible_message == messages_dict[option], err_msg
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to the top in file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def scroll_to_top_in_file_browser(browser_id, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    browser.scroll_to_top()

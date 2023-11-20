@@ -85,6 +85,18 @@ class SpaceMembersTile(PageObject):
     effective_users = Label('.effective-users-counter')
 
 
+class SpaceDetailsTile(PageObject):
+    organization_name = Label('.organization-name')
+    description = Label('.description-row')
+    tags = WebElementsSequence('.tag-item')
+
+
+class SpaceMarketplaceTile(PageObject):
+    advertise_info = Label('.figure-bottom-text')
+    configure_advertisement = Button('.tile-footer-link')
+    show = Button('.more-link')
+
+
 class ProvidersMap(Element):
     providers = WebElementsSequence('.one-atlas-point')
 
@@ -127,6 +139,9 @@ class SpaceOverviewPage(PageObject):
     members_tile = WebItem('.resource-members-tile .tile-main',
                            cls=SpaceMembersTile)
     map = WebItem('.map-container', cls=ProvidersMap)
+    space_details_tile = WebItem('.space-details-tile', cls=SpaceDetailsTile)
+    marketplace_tile = WebItem('.space-marketplace-tile',
+                               cls=SpaceMarketplaceTile)
 
 
 class WelcomePage(PageObject):

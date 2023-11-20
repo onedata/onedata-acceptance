@@ -1,5 +1,5 @@
 """This module contains tests suite for symlinks
- using Oneprovider GUI and single browser instance.
+ using Oneprovider GUI and single or multiple browser instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -35,7 +35,10 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.members import *
 
+from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *
@@ -46,6 +49,7 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.qos import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.archives import *
 from tests.gui.meta_steps.oneprovider.permissions import *
@@ -56,16 +60,26 @@ from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
+
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.permissions import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 
 from tests.utils.acceptance_utils import *
 
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/data/symlinks.feature')
 scenarios('../features/oneprovider/data/external_symlinks.feature')
+scenarios('../features/oneprovider/data/symlinks_multiple_browser.feature')

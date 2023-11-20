@@ -154,7 +154,7 @@ def assert_base_archive_description(browser_id, tmp_memory, base_description,
                                                             item_base_archive)
 
 
-@wt(parsers.parse('user of browser clicks on {button} button in '
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
                   'archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id, tmp_memory, button):
@@ -185,7 +185,7 @@ def click_menu_for_archive(browser_id, tmp_memory, description):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
-                  'input in Delete Archive modal'))
+                  'input in "Delete Archive" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_in_confirmation_input(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
@@ -326,3 +326,93 @@ def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
     assert text == copied, err_msg
 
 
+@wt(parsers.parse('user of {browser_id} writes "{text}" into edit '
+                  'description and successfully saves it, in archive details '
+                  'modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_description_in_archive_details_modal(browser_id, modals, text,
+                                               selenium):
+    driver = selenium[browser_id]
+    modals(driver).archive_details.description = text
+    modals(driver).archive_details.save_modification.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
+                  'column for archive with description "{description}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_presence_of_creator_column_for_archive(browser_id, name, tmp_memory,
+                                                  description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_with_description(browser, description)
+    creator = archive.creator
+    err_msg = f'visible creator name is {creator} but should be {name}'
+    assert creator == name, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees username "{name}" in creator '
+                  'field in archive details modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_presence_of_creator_in_archive_details(browser_id, name, modals,
+                                                  selenium):
+    driver = selenium[browser_id]
+    creator = modals(driver).archive_details.creator
+    err_msg = f'visible creator name is {creator} but should be {name}'
+    assert creator == name, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} hovers over "{button}" button in '
+                  'archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def hover_over_button_in_archive_browser(browser_id, tmp_memory, selenium,
+                                         button):
+    browser = tmp_memory[browser_id]['archive_browser']
+    driver = selenium[browser_id]
+    browser.move_to_elem(driver, transform(button))
+
+
+@wt(parsers.parse('user of {browser_id} hovers over "{option}" option '
+                  'in data row menu in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def hover_over_option_in_data_row_menu_in_archive_browser(selenium, browser_id,
+                                                          popups, option):
+    driver = selenium[browser_id]
+    menu = popups(selenium[browser_id]).archive_row_menu
+    menu.move_to_elem(driver, transform(option))
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>does not see|sees) '
+               'link "(?P<link>.*?)" in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_creation_link(browser_id, res, link, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    if res == 'does not see':
+        try:
+            visible_link = getattr(browser, transform(link))
+            raise Exception(f'link {visible_link} is visible in archive browser')
+        except RuntimeError:
+            pass
+    elif res == 'sees':
+        visible_link = getattr(browser, transform(link))
+        assert visible_link == link, (f'link {visible_link} is visible in '
+                                      f'file browser instead of {link}')
+
+
+@wt(parsers.parse('user of {browser_id} sees popup message about insufficient '
+                  'privileges requiring "{privilege}" privilege in archive '
+                  'browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_popup_insufficient_privileges_message_in_archive_browser(
+        browser_id, privilege, popups, selenium):
+    driver = selenium[browser_id]
+    toggle_info = popups(driver).toggle_label
+    message_dict = {
+        'manage archives':
+            'Insufficient privileges (requires "manage archives" privilege in '
+            'this space for non‑owned archives).',
+        'create archives':
+            'Insufficient privileges (requires "create archives" privilege in '
+            'this space).'
+    }
+    err_msg = (f'expected {message_dict[privilege]} info to be visible instead '
+               f'of {toggle_info}')
+    assert toggle_info == message_dict[privilege], err_msg

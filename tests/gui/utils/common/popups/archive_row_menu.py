@@ -7,7 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Label
+from tests.gui.utils.core.web_elements import WebItemsSequence, Label, \
+    WebElement
+from selenium.webdriver import ActionChains
 
 
 class Options(PageObject):
@@ -21,6 +23,9 @@ class Options(PageObject):
 class ArchiveRowMenu(PageObject):
     options = WebItemsSequence('.left-top .file-actions.dropdown-menu '
                                'li:not(.separator)', cls=Options)
+    cancel_archivisation_elem = WebElement('.file-action-cancel')
+    edit_description_elem = WebElement('.file-action-editDescription')
+    delete_archive_elem = WebElement('.file-action-delete')
 
     def choose_option(self, name):
         if name not in self.options:
@@ -31,6 +36,14 @@ class ArchiveRowMenu(PageObject):
         if name not in self.options:
             self.scroll_to_bottom()
         return self.options[name]
+
+    def move_to_elem(self, driver, option):
+        element = getattr(self, option + '_elem')
+        try:
+            ActionChains(driver).move_to_element(element).perform()
+        except RuntimeError:
+            self.scroll_to_bottom()
+            ActionChains(driver).move_to_element(element).perform()
 
     def scroll_to_bottom(self):
         option_len = len(self.options)

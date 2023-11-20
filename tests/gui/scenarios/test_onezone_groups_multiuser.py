@@ -43,6 +43,7 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.harvesters.discovery import *
 from tests.gui.steps.onezone.clusters import *
+from tests.gui.steps.onezone.overview import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
