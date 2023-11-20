@@ -111,7 +111,7 @@ class Modals(object):
                             cls=CancelRecall)
     archive_details = WebItem('.modal-dialog', cls=ArchiveDetails)
     archive_audit_log = WebItem('.modal-dialog', cls=ArchiveAuditLog)
-    audit_log_entry_details = WebItem('.details-container',
+    audit_log_entry_details = WebItem('.details-container.visible',
                                       cls=AuditLogEntryDetails)
 
     # datasets modals
