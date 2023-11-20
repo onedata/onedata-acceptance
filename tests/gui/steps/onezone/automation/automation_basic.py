@@ -120,7 +120,8 @@ def upload_workflow_from_repository(selenium, browser_id, workflow_name,
                                     oz_page):
     driver = selenium[browser_id]
     workflows_in_directories = [
-        'detect-file-formats', 'detect-file-mime-formats', 'download-files']
+        'detect-file-formats', 'detect-file-mime-formats', 'download-files',
+        'bagit-uploader']
 
     workflow_name = (workflow_name + '.json'
                      ) if workflow_name not in workflows_in_directories else (
@@ -152,6 +153,16 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
 
     assert lambda_name in page.lambdas_page.elements_list, \
         f'Lambda: {lambda_name} not found '
+
+
+@wt(parsers.parse('user of {browser_id} sees there are {number} lambdas '
+                  'in lambdas list in inventory lambdas subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_lambdas(selenium, browser_id, oz_page, number: int):
+    page = oz_page(selenium[browser_id])['automation']
+    err_msg = f'number of lambdas is {len(page.lambdas_page.elements_list)}' \
+              f'instead of {number}'
+    assert len(page.lambdas_page.elements_list) == number, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '
