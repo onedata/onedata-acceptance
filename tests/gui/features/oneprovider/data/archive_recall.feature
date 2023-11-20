@@ -54,9 +54,11 @@ Feature: Archive recall tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir2" in file browser
 
-    # number of files that are being recalled must be greater than number of
-    # files recalled parallelly (as of 14.03.2022 it's 20 files) to make sure
-    # that quota will be exceeded
+
+    # there is a chance that test will fail, this test implementation does not
+    # guarantee that quota will be exceeded, if test starts to fail then
+    # try to expand files size or add step loop which repeats recalling archive
+    # till no enough space error appears
     And user of browser uses upload button from file browser menu bar to upload 50 local files "file.txt" to remote current dir
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
