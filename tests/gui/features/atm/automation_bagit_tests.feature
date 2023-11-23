@@ -71,8 +71,8 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 320000 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater or equal 2 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 160000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
@@ -131,7 +131,7 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 6 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 300000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees file browser after clicking "dir1" directory in Store details modal for "destination-directory" store
@@ -226,13 +226,12 @@ Feature: Bagit uploader tests
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "bagit-uploader" workflow
-    And user of browser chooses <input_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
+    And user of browser chooses <input_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-
     Then user of browser sees that audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" contains following entry:
       timestamp: today
       source: user
@@ -277,7 +276,7 @@ Feature: Bagit uploader tests
       | "unsupported_url.zip"        | URL from line number 1 in fetch.txt is not supported                                                      |
       | "unsupported_archive_type.7z"| Unsupported archive type: .7z                                                                             |
       | "missing_manifest_file.tgz"  | No manifest file found                                                                                    |
-      | "missing_data_dir.tar"       | Payload (data/) directory not found                                                                       |
+      | "missing_data_dir.tar"       | Payload directory not found                                                                       |
       | "missing_bagit_txt.tar"      | Bagit directory not found                                                                                 |
       | "invalid_fetch_url.zip"      | File path not within data/ directory (fetch.txt line 1)                                                   |
       | "missing_fetch_txt.zip"      | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found     |

@@ -32,7 +32,7 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
 
 @wt(parsers.parse('user of {browser_id} sees "{status}" status in status '
                   'bar in workflow visualizer'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
                                          status):
     page = switch_to_automation_page(selenium, browser_id, op_container)

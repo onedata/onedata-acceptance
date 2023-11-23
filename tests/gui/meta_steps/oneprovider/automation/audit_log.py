@@ -597,6 +597,9 @@ def assert_element_content_in_task_audit_log(
     actual_data = actual_items['content'][element]
     err_msg = (f'actual {element} content for task: "{actual_data}" is not '
                f'as expected: "{expected_data}"')
+    # this is done because of very specific problem with passing (data/)
+    # as expected_data
+    actual_data = actual_data.replace("(data/) ", "")
     assert actual_data.lower() == expected_data.replace("\\n", "\n"), err_msg
     modal.x()
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,

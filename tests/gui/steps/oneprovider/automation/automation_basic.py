@@ -109,6 +109,7 @@ def search_for_task_in_parallel_box(driver, parallel_box, task_name):
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task '
                '"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
                '"(?P<lane_name>.*?)" lane in workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, option):
     number = from_ordinal_number_to_int(ordinal) - 1
