@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import json
 import time
+import os
 from datetime import date
 
 import yaml
@@ -492,3 +493,37 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
         modal.x()
     except StaleElementReferenceException:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} sees that recent downloaded json '
+                  'file contains audit logs which correspond to logs visible '
+                  'in workflow audit log'))
+def assert_logs_in_json_same_as_visible_in_workflow_audit_log(
+        browser_id, tmpdir, modals, selenium, clipboard, displays):
+    driver = selenium[browser_id]
+    modal = modals(driver).audit_log
+    path = tmpdir.join(browser_id, 'download')
+    file_name = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_name)
+    if file_path.isfile():
+        with open(file_path) as f:
+            data = json.load(f)
+            logs_number = len(modal.logs_entry)
+            err_msg = (f'there is different number of logs in file {len(data)} '
+                       f'and visible {logs_number}')
+            assert len(data) == logs_number, err_msg
+            for i in range(logs_number):
+                file_log = data[i]
+                idx = logs_number - i - 1
+                modal.logs_entry[idx].click()
+                modal.copy_json()
+                visible_log = json.loads(
+                    clipboard.paste(display=displays[browser_id]))
+                # remove 'source' from dict
+                visible_log.pop('source')
+                err_msg = (f'logs in file: {file_log} and visible {visible_log}'
+                           f'are different')
+                assert file_log == visible_log, err_msg
+                modal.close_details.click()
+    else:
+        raise RuntimeError('file {} has not been downloaded'.format(file_name))
