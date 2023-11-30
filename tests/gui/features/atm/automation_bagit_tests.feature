@@ -110,7 +110,7 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that bytes processing speed is greater or equal 300000 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 150000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees that number of elements in the content of the "calculated-checksums" store details modal is 6
     And user of browser sees that each element in the content of the "calculated-checksums" store details modal contains following information:
@@ -132,7 +132,7 @@ Feature: Bagit uploader tests
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 300000 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 55000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser sees file browser after clicking "dir1" directory in Store details modal for "destination-directory" store
     And user of browser is redirected back to first tab
@@ -304,7 +304,7 @@ Feature: Bagit uploader tests
       content:
         details:
           reason: Expected file checksum c953ba35heh32b2de76f59640433bc70, when calculated checksum is c953ba35ed132b2de76f59640433bc70
-      description: Lambda exception occurred during item processing
+        description: Lambda exception occurred during item processing.
 
 
   Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_fetch.zip

@@ -152,7 +152,7 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
 
     scroll_to_css_selector(driver, f'#{task_id}')
     parallel_box.scroll_to_bottom_of_task_in_parallel_box(task_id)
-    time.sleep(0.25)
+    time.sleep(0.5)
 
     task.click_on_option_in_task(option)
 
