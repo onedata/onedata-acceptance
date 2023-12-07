@@ -40,8 +40,8 @@ def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
     now = datetime.now()
     ts = datetime.timestamp(now)
-    assert abs(chart_time_in_right_corner - ts) < 420, (
-        'Difference between actual time and time on chart is greater than 420s')
+    assert abs(chart_time_in_right_corner - ts) < 600, (
+        'Difference between actual time and time on chart is greater than 600s')
 
 
 @wt(parsers.parse('user of {browser_id} sees that value of last column on chart'

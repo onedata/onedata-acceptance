@@ -129,9 +129,15 @@ def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
 
     actual_size = store_details['size']
     expected_size = expected_data['size']
-    err_msg3 = (f'Actual size URL {actual_size} is not the same '
+    err_msg3 = (f'Actual size {actual_size} is not the same '
                 f'as expected {expected_size}')
     assert actual_size == expected_size, err_msg3
+
+    actual_destination_path = store_details['destinationPath'].split('/')[-1]
+    expected_destination_path = expected_data['destination path']
+    err_msg4 = (f'Actual destination path {actual_destination_path} is not the same '
+                f'as expected {expected_destination_path}')
+    assert actual_destination_path == expected_destination_path, err_msg4
 
 
 def get_store_audit_log(browser_id, selenium, op_container, store_name, modals,

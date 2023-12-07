@@ -40,7 +40,6 @@ Feature: Bagit uploader tests
         - dir1
       input-bagit-archives:
         - valid.zip
-
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     # Checking if Audit Logs, Time Series charts and output stores for all tasks are correct
@@ -67,13 +66,13 @@ Feature: Bagit uploader tests
       content:
       status: Successfully unpacked 5 files.
       archive: valid.zip
-
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 2 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 160000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
+
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
       source: user
@@ -83,11 +82,11 @@ Feature: Bagit uploader tests
       archive: valid.zip
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
-    And user of browser sees that element in the content of the "files-to-download" store details modal contains following destination path:
-      - googlelogo_color_272x92dp.png
     And user of browser sees destination path, size and source URL information in audit log in "files-to-download" store details and they are as follow:
       source URL: https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png
       size: 5969
+      destination path: googlelogo_color_272x92dp.png
+
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
@@ -112,6 +111,7 @@ Feature: Bagit uploader tests
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that bytes processing speed is greater or equal 150000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
+
     And user of browser sees that number of elements in the content of the "calculated-checksums" store details modal is 6
     And user of browser sees that each element in the content of the "calculated-checksums" store details modal contains following information:
       checksums:
@@ -141,7 +141,6 @@ Feature: Bagit uploader tests
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees Dataset status tag for "dir1" in file browser
-
     And user of browser sees that the file structure in file browser is as follow:
       - dir1:
         - Star__-__v7__-__SegueA__-__2013_02_18.bag_meta
@@ -151,7 +150,12 @@ Feature: Bagit uploader tests
         - ark-file-meta.csv
         - googlelogo_color_272x92dp.png
 
-    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser sees that each file in "dir1" directory has following metadata:
+      - checksum.sha256.expected
+      - checksum.sha256.calculated
+      - checksum.md5.expected
+      - checksum.md5.calculated
+
     And user of browser sees inherited status tag for "googlelogo_color_272x92dp.png" in file browser
     And user of browser clicks on inherited status tag for "googlelogo_color_272x92dp.png" in file browser
     And user of browser sees Dataset status tag for "googlelogo_color_272x92dp.png" in file browser
@@ -172,6 +176,7 @@ Feature: Bagit uploader tests
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
+
     And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
@@ -188,12 +193,14 @@ Feature: Bagit uploader tests
     And user of browser sees that element in the content of the "uploaded-files" store details modal contains following file names:
       - LHC10c_pp_ESD_120076.json
     And user of browser closes "Store details" modal
+
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 135000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
+
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
     And user of browser sees that element in the content of the "files-to-download" store details modal contains following destination path:
       - LHC10c_pp_ESD_120076.json
@@ -203,7 +210,6 @@ Feature: Bagit uploader tests
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees Dataset status tag for "dir1" in file browser
-
     And user of browser sees that the file structure in file browser is as follow:
       - dir1:
         - data:
@@ -231,6 +237,7 @@ Feature: Bagit uploader tests
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
+
     And user of browser clicks on first executed workflow
     Then user of browser sees that audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" contains following entry:
       timestamp: today
@@ -247,6 +254,7 @@ Feature: Bagit uploader tests
     And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
     And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
+
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" doesn't contain user's entry
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 0
@@ -297,7 +305,17 @@ Feature: Bagit uploader tests
         - dir1
       input-bagit-archives:
         - wrong_manifest_checksum.zip
-    Then user of browser sees that audit log in task "bagit-uploader-calculate-checksum" in 1st parallel box in lane "calculate checksums" contains following entry:
+
+    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    And user of browser sees that status of "validate" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "unpack" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "download-files" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "register metadata" lane in "bagit-uploader" is "Finished"
+
+
+    And user of browser sees that status of "calculate checksums" lane in "bagit-uploader" is "Failed"
+    And user of browser sees that status of task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane is "Failed"
+    And user of browser sees that audit log in task "bagit-uploader-calculate-checksum" in 1st parallel box in lane "calculate checksums" contains following entry:
       timestamp: today
       source: system
       severity: Error
@@ -321,7 +339,13 @@ Feature: Bagit uploader tests
       input-bagit-archives:
         - wrong_fetch.zip
 
-    Then user of browser sees that audit log in task "bagit-uploader-download-files" in 1st parallel box in lane "download-files" contains following entry:
+    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    And user of browser sees that status of "validate" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "unpack" lane in "bagit-uploader" is "Finished"
+
+    And user of browser sees that status of "download-files" lane in "bagit-uploader" is "Failed"
+    And user of browser sees that status of task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane is "Failed"
+    And user of browser sees that audit log in task "bagit-uploader-download-files" in 1st parallel box in lane "download-files" contains following entry:
       timestamp: today
       source: system
       severity: Error

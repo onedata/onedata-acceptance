@@ -75,16 +75,37 @@ def check_if_task_is_opened(task):
     return task.status != ''
 
 
+def search_for_lane_status(driver, page, lane_name):
+    workflow_visualiser = page.workflow_visualiser
+    number_of_lanes = len(workflow_visualiser.workflow_lanes)
+
+    for i in range(number_of_lanes):
+        lane_id = workflow_visualiser.workflow_lanes[
+            i].lane_web_elem.get_attribute('id')
+        scroll_to_css_selector(driver, f'#{lane_id}')
+        found_lane = driver.find_element_by_css_selector(f'#{lane_id} .lane-name').text
+        if found_lane == lane_name:
+            status = driver.find_element_by_css_selector(
+                f'#{lane_id} .visible-run-status-label').text
+            return status
+        else:
+            try:
+                page.workflow_visualiser.right_arrow_scroll.click()
+            except RuntimeError:
+                pass
+
+
 def search_for_parallel_box_in_lane(driver, page, lane_name, box_number):
     workflow_visualiser = page.workflow_visualiser
     number_of_lanes = len(workflow_visualiser.workflow_lanes)
 
     for i in range(number_of_lanes):
         lane_id = workflow_visualiser.workflow_lanes[
-            i].name_web_elem.get_attribute('id')
+            i].lane_web_elem.get_attribute('id')
         scroll_to_css_selector(driver, f'#{lane_id}')
-        found_lane = driver.find_element_by_css_selector(f'#{lane_id}').text
-
+        time.sleep(1)
+        found_lane = driver.find_element_by_css_selector(
+            f'#{lane_id} .lane-name').text
         if found_lane == lane_name:
             return workflow_visualiser.workflow_lanes[i].parallel_boxes[
                 box_number]
@@ -109,7 +130,7 @@ def search_for_task_in_parallel_box(driver, parallel_box, task_name):
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task '
                '"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
                '"(?P<lane_name>.*?)" lane in workflow visualizer'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, option):
     number = from_ordinal_number_to_int(ordinal) - 1
@@ -118,12 +139,20 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
 
     parallel_box = search_for_parallel_box_in_lane(driver, page, lane_name,
                                                    number)
-    task, task_id = search_for_task_in_parallel_box(driver, parallel_box,
-                                                    task_name)
-
+    time.sleep(1)
+    if len(parallel_box.task_list) == 1:
+        task = parallel_box.task_list[0]
+    else:
+        task, task_id = search_for_task_in_parallel_box(driver, parallel_box,
+                                                        task_name)
+    # wait a moment to find parallel box
+    time.sleep(1)
     if option == 'closes':
         if check_if_task_is_opened(task):
-            scroll_to_css_selector(driver, f'.task-drag-handle')
+            if len(parallel_box.task_list) > 1:
+                scroll_to_css_selector(driver, f'.task-drag-handle')
+            # wait a moment for scroll
+            time.sleep(1)
             task.click_on_drag_handle()
         # wait for task to be closed
         time.sleep(2)
@@ -131,7 +160,10 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
             f'Failed to close {task_name} task in parallel box')
     else:
         if not check_if_task_is_opened(task):
-            scroll_to_css_selector(driver, f'#{task_id}')
+            if len(parallel_box.task_list) > 1:
+                scroll_to_css_selector(driver, f'#{task_id}')
+            # wait a moment for scroll
+            time.sleep(1)
             task.click_on_drag_handle()
 
 

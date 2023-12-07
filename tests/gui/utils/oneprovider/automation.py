@@ -94,6 +94,7 @@ class RunIndicator(Element):
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
     name_web_elem = WebElement('.lane-name')
+    lane_web_elem = WebElement('.draggable-lane')
     status = Label('.visible-run-status-label')
     parallel_boxes = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                       cls=ParallelBox)
