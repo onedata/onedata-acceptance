@@ -160,9 +160,9 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_lambdas(selenium, browser_id, oz_page, number: int):
     page = oz_page(selenium[browser_id])['automation']
-    err_msg = f'number of lambdas is {len(page.lambdas_page.elements_list)}' \
-              f'instead of {number}'
-    assert len(page.lambdas_page.elements_list) == number, err_msg
+    lambdas_number = len(page.lambdas_page.elements_list)
+    err_msg = f'number of lambdas is {lambdas_number} instead of {number}'
+    assert lambdas_number == number, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '

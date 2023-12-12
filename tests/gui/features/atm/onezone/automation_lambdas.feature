@@ -58,10 +58,10 @@ Feature: Basic lambdas management
     Then user of browser sees that 2nd revision of "Lambda2" lambda is described "Lambda2"
 
 
-  Scenario: User does not see new lambda after upload again the same workflow
+  Scenario: A new lambda is not created after uploading the same workflow again
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
     And user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
     And user of browser uploads "bagit-uploader" workflow as new workflow from automation-examples repository to "inventory1" inventory
-    And user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
+    Then user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
