@@ -91,6 +91,17 @@ class TabHeader(PageObject):
         self.web_elem.click()
 
 
+class TransfersColumns(PageObject):
+    user = Label('.transfers-table-col-userName')
+    destination = Label('.transfers-table-col-destination')
+    started_at = Label('.transfers-table-col-startedAt')
+    processed = Label('.transfers-table-col-processed')
+    replicated = Label('.transfers-table-col-replicated')
+    evicted = Label('.transfers-table-col-evicted')
+    type = Label('.transfers-table-col-type')
+    status = Label('.transfers-table-col-status')
+
+
 class _TransfersTab(PageObject):
     ongoing_map_header = WebElement('.col-providers-map h2')
     spaces = WebItemsSequence('ul.spaces-list li', cls=SpaceRecord)
@@ -104,6 +115,8 @@ class _TransfersTab(PageObject):
                                      cls=TransferRecordHistory)
     _transfers_list_for_certain_file = WebItemsSequence(
         '.transfers-table-container .transfer-row', cls=TransferRecord)
+    configure_columns = Button('.columns-configuration-button')
+    columns = WebItem('.transfers-table', cls=TransfersColumns)
 
     @property
     def ongoing(self):

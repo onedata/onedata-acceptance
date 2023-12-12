@@ -238,3 +238,51 @@ def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
     menu = popups(driver).menu_popup_with_text.menu
     for element in parse_seq(options):
         assert element not in menu, f'{element} should not be in selection menu'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) selects only (?P<columns>.*) '
+               'columns from columns list in transfers table'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_columns_in_transfers_table(selenium, browser_id, columns,
+                                      op_container, popups):
+    option_select = 'select'
+    option_unselect = 'unselect'
+    all_columns = ['user', 'destination', 'started_at', 'processed',
+                   'replicated', 'evicted', 'type', 'status']
+    transfers = op_container(selenium[browser_id]).transfers
+    transfers.configure_columns.click()
+    columns_menu = popups(selenium[browser_id]).transfers_columns_menu
+    for column in all_columns:
+        if column in parse_seq(columns):
+            getattr(getattr(columns_menu, transform(column)), option_select)()
+        else:
+            getattr(getattr(columns_menu, transform(column)), option_unselect)()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<columns>.*) columns in '
+               'transfers table'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_visible_columns_in_transfers_table(browser_id, selenium,
+                                              op_container, columns):
+    transfers_columns = op_container(selenium[browser_id]).transfers.columns
+    for column in parse_seq(columns):
+        try:
+            getattr(transfers_columns, transform(column))
+        except RuntimeError:
+            raise AssertionError(
+                f'column {column} is not visible in transfers table')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) does not see (?P<columns>.*) '
+               'columns in transfers table'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_invisible_columns_in_transfers_table(browser_id, selenium,
+                                                op_container, columns):
+    transfers_columns = op_container(selenium[browser_id]).transfers.columns
+    for column in parse_seq(columns):
+        try:
+            getattr(transfers_columns, transform(column))
+            raise AssertionError(
+                f'column {column} is visible in transfers table but should not')
+        except RuntimeError:
+            pass
