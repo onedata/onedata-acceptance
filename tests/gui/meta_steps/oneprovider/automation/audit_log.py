@@ -496,9 +496,9 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} sees that recent downloaded json '
-                  'file contains audit logs which correspond to logs visible '
-                  'in workflow audit log'))
-def assert_logs_in_json_same_as_visible_in_workflow_audit_log(
+                  'file contains audit log which has the same entries as the '
+                  'workflow audit log in GUI'))
+def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
         browser_id, tmpdir, modals, selenium, clipboard, displays):
     driver = selenium[browser_id]
     modal = modals(driver).audit_log
@@ -508,13 +508,13 @@ def assert_logs_in_json_same_as_visible_in_workflow_audit_log(
     if file_path.isfile():
         with open(file_path) as f:
             data = json.load(f)
-            logs_number = len(modal.logs_entry)
-            err_msg = (f'there is different number of logs in file {len(data)} '
-                       f'and visible {logs_number}')
-            assert len(data) == logs_number, err_msg
-            for i in range(logs_number):
+            log_entries = len(modal.logs_entry)
+            err_msg = (f'there is different number of log entries in file '
+                       f'{len(data)} and visible {log_entries}')
+            assert len(data) == log_entries, err_msg
+            for i in range(log_entries):
                 file_log = data[i]
-                idx = logs_number - i - 1
+                idx = log_entries - i - 1
                 modal.logs_entry[idx].click()
                 modal.copy_json()
                 visible_log = json.loads(
