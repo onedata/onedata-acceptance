@@ -22,6 +22,12 @@ from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
+class FileColumns(PageObject):
+    size = Label('.fb-table-col-size')
+    modification = Label('.fb-table-col-modification')
+    owner = Label('.fb-table-col-owner')
+
+
 class _FileBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
@@ -44,6 +50,9 @@ class _FileBrowser(PageObject):
     _upload_input = WebElement('.fb-upload-trigger input')
     header = WebElement('.file-browser-head-container')
     jump_input = Input('.jump-input')
+
+    configure_columns = Button('.columns-configuration-button')
+    columns = WebItem('.fb-table-head-row', cls=FileColumns)
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)

@@ -133,3 +133,23 @@ Feature: Basic archives operations
     And user of browser sees that Follow symbolic link toggle is checked in Archive details modal
     And user of browser sees that base archive in Archive details modal is the same as copied
 
+
+  Scenario Outline: User selects desirable columns to be visible and can see only them in archive browser
+    When user of browser creates dataset for item "dir1" in "space1"
+    # archive need to be created otherwise columns won`t show up
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+
+    And user of browser selects only <columns_list> columns from columns list in archive browser
+    Then user of browser sees <columns_list> columns in archive browser
+    And user of browser does not see <other_columns_list> columns in archive browser
+    And user of browser refreshes site
+    And user of browser sees archive browser in files tab in Oneprovider page
+    And user of browser sees <columns_list> columns in archive browser
+    And user of browser does not see <other_columns_list> columns in archive browser
+
+  Examples:
+    |columns_list         |other_columns_list                  |
+    |["State", "Creator"] |["Base archive"]                    |
+    |[]                   |["State", "Base archive", "Creator"]|

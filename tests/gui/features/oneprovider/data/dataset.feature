@@ -313,3 +313,22 @@ Feature: Basic datasets operations
     Then user of browser sees that one of two listed datasets "dir1" has got root file deleted
     And user of browser sees two same root file paths "/space1/dir1" for datasets named "dir1"
 
+
+  Scenario Outline: User selects desirable columns to be visible and can see only them in dataset browser
+    # dataset need to be created otherwise columns won`t show up
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    And user of browser sees dataset browser in files tab in Oneprovider page
+
+    And user of browser selects only <columns_list> columns from columns list in dataset browser
+    Then user of browser sees <columns_list> columns in dataset browser
+    And user of browser does not see <other_columns_list> columns in dataset browser
+    And user of browser refreshes site
+    And user of browser sees dataset browser in files tab in Oneprovider page
+    And user of browser sees <columns_list> columns in dataset browser
+    And user of browser does not see <other_columns_list> columns in dataset browser
+
+  Examples:
+    |columns_list|other_columns_list        |
+    |["Archives"]|["Created at"]            |
+    |[]          |["Archives", "Created at"]|
