@@ -48,10 +48,11 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
         task_elem = box.task_list[0]
         actual_status = task_elem.status
     else:
-        _, task_id = search_for_task_in_parallel_box(
-            selenium[browser_id], box, task)
-        actual_status = driver.find_element_by_css_selector(
-            f'#{task_id} .status-detail .detail-value')
+        actual_status = box.task_list[task].status
+        # _, task_id = search_for_task_in_parallel_box(
+        #     selenium[browser_id], box, task)
+        # actual_status = driver.find_element_by_css_selector(
+        #     f'#{task_id} .status-detail .detail-value')
     assert_status(task, actual_status, expected_status)
 
 
