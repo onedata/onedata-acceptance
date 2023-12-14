@@ -33,7 +33,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     compare_string_in_store_details_modal, compare_array_in_store_details_modal,
     check_number_of_elements_in_store_details_modal, get_store_content)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
 
@@ -390,7 +390,7 @@ def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                             store_name)
 
 
-@wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in '
+@wt(parsers.parse('user of {browser_id} sees {item_list} datasets in '
                   'Store details modal for "{store_name}" store'))
 def assert_datasets_in_store_details(selenium, browser_id, op_container,
                                      modals, store_name, item_list):
@@ -414,24 +414,29 @@ def assert_file_in_store_details(selenium, browser_id, op_container, modals,
     modal.close()
 
 
-@wt(parsers.parse('user of {browser_id} sees {browser} after clicking '
-                  '"{name}" {option} in Store details modal for "{store_name}"'
-                  ' store'))
+@wt(parsers.parse('user of {browser_id} sees selected "{name}" {option} in '
+                  '{which_browser} after clicking it in Store details modal for '
+                  '"{store_name}" store'))
 def assert_browser_after_clicking_on_item_in_details_modal(
         browser_id, selenium, op_container, name, store_name, modals,
-        tmp_memory, browser, option=''):
+        tmp_memory, which_browser, option=''):
 
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
+    err_msg = f'Element {name} is not selected in {which_browser}'
     if option == 'archive':
         modal.store_content_list[name].file_name.click()
-    elif 'file' in browser:
+    elif 'file' in which_browser:
         modal.single_file_container.clickable_name()
     else:
         modal.store_content_list[name].dataset_name.click()
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
-                                browser)
+                                which_browser)
+
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    if_selected = browser.data[name].is_selected()
+    assert if_selected, err_msg
 
 
 def compare_to_expected_if_element_exist_for_store(

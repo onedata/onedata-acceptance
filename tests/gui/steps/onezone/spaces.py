@@ -126,7 +126,8 @@ def click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     page = oz_page(driver)["automation"]
-    assert page
+    err_msg = 'Clicking on the "Automation" in the main menu did not succeed'
+    assert page, err_msg
     tmp_memory[browser_id]["oz_page"] = page
 
 

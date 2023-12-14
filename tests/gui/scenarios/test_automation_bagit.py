@@ -1,4 +1,4 @@
-"""This module contains tests suite for example workflows using
+"""This module contains tests suite for bagit workflows using
 Oneprovider GUI.
 """
 
@@ -83,4 +83,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/atm/automation_examples_workflows.feature')
+scenarios('../features/atm/automation_bagit_tests.feature')

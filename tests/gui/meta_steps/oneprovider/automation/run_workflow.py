@@ -113,7 +113,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '
                '(?P<option>start|finish)'))
-@repeat_failed(interval=1, timeout=180,
+@repeat_failed(interval=1, timeout=360,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              option):

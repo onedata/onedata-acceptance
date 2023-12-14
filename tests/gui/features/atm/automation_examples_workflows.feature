@@ -43,7 +43,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with the following initial values:
         input-files:
           - test.py
 
@@ -69,7 +69,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with the following initial values:
         input-files:
           - lorem_ipsum.enl
 
@@ -106,7 +106,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with the following initial values:
         input-files:
           - test.py
 
@@ -128,7 +128,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with the following initial values:
         input-files:
           - lorem_ipsum.enl
 
@@ -161,7 +161,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch.txt" to current dir
     And user of browser sees that item named "fetch.txt" has appeared in file browser
 
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
         fetch-files:
           - fetch.txt
         destination:
@@ -202,7 +202,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/xrootd_fetch.txt" to current dir
     And user of browser sees that item named "xrootd_fetch.txt" has appeared in file browser
 
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
         fetch-files:
           - xrootd_fetch.txt
         destination:
@@ -235,7 +235,7 @@ Feature: Automation examples tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/incorrect_fetch.txt" to current dir
     And user of browser sees that item named "incorrect_fetch.txt" has appeared in file browser
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
         fetch-files:
           - incorrect_fetch.txt
         destination:
@@ -261,7 +261,7 @@ Feature: Automation examples tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/whitespaces_fetch.txt" to current dir
     And user of browser sees that item named "whitespaces_fetch.txt" has appeared in file browser
-    And user of browser executes 1st revision of "download-files" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
         fetch-files:
           - whitespaces_fetch.txt
         destination:
@@ -322,7 +322,7 @@ Feature: Automation examples tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser executes 1st revision of "echo" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "echo" workflow in "space1" space with the following initial values:
         input:
           - dir1
 
@@ -340,7 +340,7 @@ Feature: Automation examples tests
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "<workflow_name>" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser executes 1st revision of "<workflow_name>" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "<workflow_name>" workflow in "space1" space with the following initial values:
         input-files:
           - dir1
 
@@ -379,7 +379,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "demo" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "demo" workflow in "space1" space with the following initial values:
         input_files:
           - dir2
 

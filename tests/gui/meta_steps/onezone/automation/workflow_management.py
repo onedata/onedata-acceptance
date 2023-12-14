@@ -102,8 +102,8 @@ def upload_workflow_from_automation_examples(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}" workflow in "{space}" space with such initial '
-                  'values as:\n{config}'))
+                  '"{workflow}" workflow in "{space}" space with the following '
+                  'initial values:\n{config}'))
 def execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
                                        op_container, ordinal, workflow,
                                        modals, popups, config):

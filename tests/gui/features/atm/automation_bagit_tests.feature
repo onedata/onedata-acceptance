@@ -35,7 +35,7 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "valid.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
@@ -54,7 +54,7 @@ Feature: Bagit uploader tests
     And user of browser sees that content of "valid-archives" store is:
       name: valid.zip
 
-    And user of browser sees file browser after clicking "valid.zip" archive in Store details modal for "valid-archives" store
+    And user of browser sees selected "valid.zip" archive in file browser after clicking it in Store details modal for "valid-archives" store
     And user of browser is redirected back to first tab
     And user of browser sees automation page in files tab in Oneprovider page
     And user of browser closes "Store details" modal
@@ -134,7 +134,7 @@ Feature: Bagit uploader tests
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 55000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
-    And user of browser sees file browser after clicking "dir1" directory in Store details modal for "destination-directory" store
+    And user of browser sees selected "dir1" directory in file browser after clicking it in Store details modal for "destination-directory" store
     And user of browser is redirected back to first tab
 
     # Checking if Dataset in file browser has correct content
@@ -180,6 +180,14 @@ Feature: Bagit uploader tests
     And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
+    # Check if 0 files has been unpacked and 1 has been fetched
+    And user of browser sees that audit log in task "bagit-uploader-unpack-data" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Successfully unpacked 0 files.
+        archive: valid_with_xrootd.zip
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
       source: user
@@ -188,7 +196,6 @@ Feature: Bagit uploader tests
         status: Found  1 files to be downloaded.
         archive: valid_with_xrootd.zip
 
-    # Check if 0 files has been unpacked and 1 has been fetched
     And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 1
     And user of browser sees that element in the content of the "uploaded-files" store details modal contains following file names:
       - LHC10c_pp_ESD_120076.json
@@ -279,17 +286,17 @@ Feature: Bagit uploader tests
 
 
     Examples:
-      | input_archive                | exception_reason                                                                                          |
-      | "invalid_bagit_txt.tgz"      | Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt                                 |
-      | "unsupported_url.zip"        | URL from line number 1 in fetch.txt is not supported                                                      |
-      | "unsupported_archive_type.7z"| Unsupported archive type: .7z                                                                             |
-      | "missing_manifest_file.tgz"  | No manifest file found                                                                                    |
-      | "missing_data_dir.tar"       | Payload directory not found                                                                       |
-      | "missing_bagit_txt.tar"      | Bagit directory not found                                                                                 |
-      | "invalid_fetch_url.zip"      | File path not within data/ directory (fetch.txt line 1)                                                   |
-      | "missing_fetch_txt.zip"      | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found     |
-      | "wrong_tagmanifest_checksums.zip" | md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected: 5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123 |
-      | "missing_payload.zip"        | Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files in payload but not referenced: set()\n  Files referenced but not in payload: {'data/ark-file-meta.csv'} |
+      | input_archive                     | exception_reason                                                                                          |
+      | "invalid_bagit_txt.tgz"           | Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt                                 |
+      | "unsupported_url.zip"             | URL from line number 1 in fetch.txt is not supported                                                      |
+      | "unsupported_archive_type.7z"     | Unsupported archive type: .7z                                                                             |
+      | "missing_manifest_file.tgz"       | No manifest file found                                                                                    |
+      | "missing_data_dir.tar"            | Payload directory not found                                                                               |
+      | "missing_bagit_txt.tar"           | Bagit directory not found                                                                                 |
+      | "invalid_fetch_url.zip"           | File path not within data/ directory (fetch.txt line 1)                                                   |
+      | "missing_fetch_txt.zip"           | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found     |
+      | "wrong_tagmanifest_checksums.zip" | md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected: 5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123                                         |
+      | "missing_payload.zip"             | Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files in payload but not referenced: set()\n  Files referenced but not in payload: {'data/ark-file-meta.csv'} |
 
 
   Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_manifest_checksum.zip
@@ -300,7 +307,7 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "wrong_manifest_checksum.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
@@ -333,7 +340,7 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "wrong_fetch.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with such initial values as:
+    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:

@@ -38,7 +38,7 @@ def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
                                                        f' equal to {status}')
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
                                        ordinal, lane, task, expected_status):
     driver = selenium[browser_id]

@@ -67,6 +67,7 @@ stages:
         - Atm workflows pausing and cancelling
         - Atm workflows status
         - Atm workflows stores
+        - Atm bagit
         - Metadata
         - Multiprovider basic
         - Multiprovider multiuser
@@ -435,6 +436,21 @@ Atm workflows stores:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_pkg
+
+Atm bagit:
+  <<: *acceptance-tests-in-chrome-job
+  key: COB
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_automation_bagit ENV_FILE=1oz_1op_openfaas test_gui_pkg
 
 Metadata:
   <<: *acceptance-tests-in-chrome-job
