@@ -97,9 +97,9 @@ def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
             err_msg = (f'Processing speed is {value[0]} {option} per second '
                        f'and is lower than expected {number} per second.')
             if compare_option == 'is greater or equal':
-                assert value[0] >= int(number), err_msg
+                assert value[0] >= float(number), err_msg
             else:
-                assert value[0] == int(number), err_msg
+                assert value[0] == float(number), err_msg
             break
     else:
         raise Exception(f'There is no {option} processing speed on chart with'
