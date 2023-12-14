@@ -406,7 +406,7 @@ Feature: Automation examples tests
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser executes 1st revision of "echo", using file as initial value: "file1" in "space1" space
+    And user of browser executes 1st revision of "echo", using file as initial value: "dir1/file1" in "space1" space
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
