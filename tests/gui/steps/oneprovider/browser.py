@@ -292,53 +292,30 @@ def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
                                             which_browser, tmp_memory, popups):
     option_select = 'select'
     option_unselect = 'unselect'
-    all_columns = None
-    which_menu = None
     browser = tmp_memory[browser_id][transform(which_browser)]
-    if which_browser == 'file browser':
-        all_columns = ['size', 'modification', 'owner']
-        which_menu = 'files_columns_menu'
-    elif which_browser == 'archive browser':
-        all_columns = ['state', 'base_archive', 'creator']
-        which_menu = 'archive_columns_menu'
-    elif which_browser == 'dataset browser':
-        which_menu = 'dataset_columns_menu'
-        all_columns = ['archives', 'created_at']
     browser.configure_columns.click()
-    columns_menu = getattr(popups(selenium[browser_id]), which_menu)
-    for column in all_columns:
-        if column in parse_seq(columns):
-            getattr(getattr(columns_menu, transform(column)), option_select)()
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    for column in columns_menu:
+        if column.name.lower() in parse_seq(columns):
+            getattr(columns_menu[column.name], option_select)()
         else:
-            getattr(getattr(columns_menu, transform(column)), option_unselect)()
+            getattr(columns_menu[column.name], option_unselect)()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<columns>.*) columns in '
-               '(?P<which_browser>.*)'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
+               'in (?P<which_browser>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
                                       which_browser):
+    columns = parse_seq(columns)
     browser = tmp_memory[browser_id][transform(which_browser)]
-    browser_columns = browser.columns
-    for column in parse_seq(columns):
-        try:
-            getattr(browser_columns, transform(column))
-        except RuntimeError:
+    browser_columns = browser.column_headers
+    browser_columns = list(map(lambda x: x.name.lower(), browser_columns))
+    err_msg = (f'there is different number of columns visible: '
+               f'{len(browser_columns)} than expected: {len(columns)}, in '
+               f'{which_browser}')
+    assert len(columns) == len(browser_columns), err_msg
+    for column in columns:
+        if column not in browser_columns:
             raise AssertionError(
                 f'column {column} is not visible in {which_browser}')
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) does not see (?P<columns>.*) '
-               'columns in (?P<which_browser>.*)'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invisible_columns_in_browser(browser_id, tmp_memory, columns,
-                                        which_browser):
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    browser_columns = browser.columns
-    for column in parse_seq(columns):
-        try:
-            getattr(browser_columns, transform(column))
-            raise AssertionError(
-                f'column {column} is visible in {which_browser} but should not')
-        except RuntimeError:
-            pass

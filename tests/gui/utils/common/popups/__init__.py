@@ -38,9 +38,7 @@ from .cookies import Cookies
 from tests.gui.utils.common.common import (DropdownSelector,
                                            MigrateDropdownSelector)
 from .workflow_menu import WorkflowMenu
-from .archive_columns_menu import ArchiveColumnsMenu
-from .dataset_columns_menu import DatasetColumnsMenu
-from .files_columns_menu import FilesColumnsMenu
+from . configure_columns_menu import ConfigureColumnsMenu
 
 
 class Popups(object):
@@ -107,12 +105,8 @@ class Popups(object):
     run_info = Label('.tooltip-inner')
     spaces_tags = WebItem('.space-tags-selector', cls=SpacesTags)
     toggle_label = Label('.tooltip .tooltip-inner')
-    files_columns_menu = WebItem('.webui-popover-columns-configuration',
-                                 cls=FilesColumnsMenu)
-    archive_columns_menu = WebItem('.webui-popover-columns-configuration',
-                                   cls=ArchiveColumnsMenu)
-    dataset_columns_menu = WebItem('.webui-popover-columns-configuration',
-                                   cls=DatasetColumnsMenu)
+    configure_columns_menu = WebItem('.webui-popover-columns-configuration',
+                                     cls=ConfigureColumnsMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

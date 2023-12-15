@@ -15,9 +15,8 @@ from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
-class DatasetColumns(PageObject):
-    archives = Label('.fb-table-col-archives')
-    created_at = Label('.fb-table-col-created')
+class DatasetColumnHeader(PageObject):
+    name = id = Label('.column-name')
 
 
 class _DatasetBrowser(PageObject):
@@ -29,7 +28,8 @@ class _DatasetBrowser(PageObject):
     _bottom = WebElement('.table-bottom-spacing')
 
     configure_columns = Button('.dataset-browser .columns-configuration-button')
-    columns = WebItem('.fb-table-head-row', cls=DatasetColumns)
+    column_headers = WebItemsSequence(
+        '.fb-table-head-row .fb-table-secondary-col', cls=DatasetColumnHeader)
 
     def __str__(self):
         return f'dataset browser in {self.parent}'

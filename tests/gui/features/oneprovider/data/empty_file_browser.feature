@@ -93,14 +93,12 @@ Feature: Files tab operations with empty file browser
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser selects only <columns_list> columns from columns list in file browser
-    Then user of browser sees <columns_list> columns in file browser
-    And user of browser does not see <other_columns_list> columns in file browser
+    Then user of browser sees only <columns_list> columns in file browser
     And user of browser refreshes site
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees <columns_list> columns in file browser
-    And user of browser does not see <other_columns_list> columns in file browser
+    And user of browser sees only <columns_list> columns in file browser
 
   Examples:
-    |columns_list      |other_columns_list               |
-    |["Size", "Owner"] |["Modification"]                 |
-    |[]                |["Size", "Modification", "Owner"]|
+    |columns_list      |
+    |["Size", "Owner"] |
+    |[]                |

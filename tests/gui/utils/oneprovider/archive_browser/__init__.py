@@ -15,10 +15,8 @@ from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
-class ArchiveColumns(PageObject):
-    state = Label('.fb-table-col-state')
-    base_archive = Label('.fb-table-col-incremental')
-    creator = Label('.fb-table-col-creator')
+class ArchiveColumnHeader(PageObject):
+    name = id = Label('.column-name')
 
 
 class _ArchiveBrowser(PageObject):
@@ -36,7 +34,8 @@ class _ArchiveBrowser(PageObject):
     _bottom = WebElement('.table-bottom-spacing')
 
     configure_columns = Button('.archive-browser .columns-configuration-button')
-    columns = WebItem('.fb-table-head-row', cls=ArchiveColumns)
+    column_headers = WebItemsSequence(
+        '.fb-table-head-row .fb-table-secondary-col', cls=ArchiveColumnHeader)
 
     def __str__(self):
         return f'archive browser in {self.parent}'

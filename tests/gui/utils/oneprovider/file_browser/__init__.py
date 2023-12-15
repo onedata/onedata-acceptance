@@ -22,10 +22,8 @@ from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
-class FileColumns(PageObject):
-    size = Label('.fb-table-col-size')
-    modification = Label('.fb-table-col-modification')
-    owner = Label('.fb-table-col-owner')
+class FileColumnHeader(PageObject):
+    name = id = Label('.column-name')
 
 
 class _FileBrowser(PageObject):
@@ -52,7 +50,8 @@ class _FileBrowser(PageObject):
     jump_input = Input('.jump-input')
 
     configure_columns = Button('.columns-configuration-button')
-    columns = WebItem('.fb-table-head-row', cls=FileColumns)
+    column_headers = WebItemsSequence(
+        '.fb-table-head-row .fb-table-secondary-col', cls=FileColumnHeader)
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)

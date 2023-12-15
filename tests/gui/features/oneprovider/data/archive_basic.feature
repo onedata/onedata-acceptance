@@ -142,14 +142,12 @@ Feature: Basic archives operations
         layout: plain
 
     And user of browser selects only <columns_list> columns from columns list in archive browser
-    Then user of browser sees <columns_list> columns in archive browser
-    And user of browser does not see <other_columns_list> columns in archive browser
+    Then user of browser sees only <columns_list> columns in archive browser
     And user of browser refreshes site
     And user of browser sees archive browser in files tab in Oneprovider page
-    And user of browser sees <columns_list> columns in archive browser
-    And user of browser does not see <other_columns_list> columns in archive browser
+    And user of browser sees only <columns_list> columns in archive browser
 
   Examples:
-    |columns_list         |other_columns_list                  |
-    |["State", "Creator"] |["Base archive"]                    |
-    |[]                   |["State", "Base archive", "Creator"]|
+    |columns_list         |
+    |["State", "Creator"] |
+    |[]                   |
