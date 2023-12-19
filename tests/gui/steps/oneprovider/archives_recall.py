@@ -146,3 +146,120 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
         else:
             time.sleep(2)
 
+
+@wt(parsers.parse('user of {browser_id} sees that archive recall error logs '
+                  'table contain number of entries '
+                  'which is equal to number of items failed in status tab'))
+def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    items_failed = modal.items_failed
+    try:
+        number_of_items_failed = int(items_failed)
+    except ValueError:
+        number_of_items_failed = int(items_failed.split(' ')[0])
+    # change tab
+    modal.error_log.click()
+    # if we want to scroll cursor need to be somewhere on the
+    # table containing error logs
+    modal.move_to_error_logs_table(driver)
+
+    def condition(index=0):
+        pass
+
+    detected_entries = _scroll_and_check_condition(browser_id, selenium, modals,
+                                                   condition)
+    err_msg = (f'number of entries is {len(detected_entries)} is not equal to '
+               f'number of items failed {number_of_items_failed}')
+    assert len(detected_entries) == number_of_items_failed, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that archive recall error logs '
+                  'table contain only entries with the '
+                  'file name "{file_name}" or its duplicate names'))
+def assert_entries_with_file_names_in_archive_recall(browser_id, file_name,
+                                                     selenium, modals):
+    # this test assumes that original file name does not
+    # contain '(' or ')' characters
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    file_name_p = file_name.split('.')[0]
+    file_name_s = file_name.split('.')[1]
+    # if we want to scroll cursor need to be somewhere on the
+    # table containing error logs
+    modal.move_to_error_logs_table(driver)
+
+    def condition(index=0):
+        entries = modal.error_file_row
+        new_entries_names = [entry.text.split('\n')[1] for entry in entries if
+                             len(entry.text.split('\n')) > 1]
+        new_entries_names = new_entries_names[index:]
+        for entry_name in new_entries_names:
+            file_name_p_ = entry_name.split('.')[0]
+            file_name_s_ = entry_name.split('.')[1]
+            file_name_p_ = file_name_p_.split('(')[0]
+            err_msg = (f'file name {entry_name} does not match name or name '
+                       f'duplicated of {file_name}')
+            assert (file_name_p == file_name_p_
+                    and file_name_s == file_name_s_), err_msg
+
+    _scroll_and_check_condition(browser_id, selenium, modals, condition)
+
+
+@wt(parsers.parse('user of {browser_id} sees that archive recall error '
+                  'logs table contain only entries with '
+                  'error message "{message}"'))
+def assert_entries_with_error_messages_in_archive_recall(browser_id, message,
+                                                         selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    # if we want to scroll cursor need to be somewhere on the
+    # table containing error logs
+    modal.move_to_error_logs_table(driver)
+
+    def condition(index=0):
+        entries = modal.error_file_row
+        new_entries_mes = [entry.text.split('\n')[2] for entry in entries if
+                           len(entry.text.split('\n')) > 1]
+        new_entries_mes = new_entries_mes[index:]
+        for entry_mes in new_entries_mes:
+            err_msg = (f'There is visible error message {entry_mes}, but '
+                       f'expected message is {message}')
+            assert entry_mes == message, err_msg
+
+    _scroll_and_check_condition(browser_id, selenium, modals, condition)
+
+
+def _scroll_and_check_condition(browser_id, selenium, modals, condition, *args):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    entries = modal.error_file_row
+    new_entries = [entry.text.split('\n')[1] for entry in entries if
+                   len(entry.text.split('\n')) > 1]
+    detected_entries = []
+    detected_entries.extend(new_entries)
+    index = 0
+    while new_entries:
+        condition(*args, index=index)
+
+        modal.scroll_by_press_space()
+        entries = modal.error_file_row
+        new_entries = [entry.text.split('\n')[1] for entry in entries if
+                       len(entry.text.split('\n')) > 1]
+        index = 0
+        for entry in new_entries:
+            if entry not in detected_entries:
+                break
+            index += 1
+        new_entries = new_entries[index:]
+        detected_entries.extend(new_entries)
+    return detected_entries
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to the top in archive recall '
+                  'information'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def scroll_to_top_in_archive_recall_information(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_recall_information
+    modal.scroll_to_top()
