@@ -85,7 +85,8 @@ Feature: Workflows stores tests
     And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using datasets as initial value: "["file1", "file2"]" in "space1" space
 
     Then user of browser sees ["file1", "file2"] datasets in Store details modal for "output" store
-    And user of browser sees selected "file1" file in dataset browser after clicking it in Store details modal for "output" store
+    And user of browser clicks on "file1" dataset link in Store details modal for "output" store
+    And user of browser sees "file1" item selected in the dataset browser opened in new web browser tab
 
 
   Scenario: User sees file in result store after modifying input store and lambda data type to file and executing uploaded echo workflow
@@ -115,5 +116,5 @@ Feature: Workflows stores tests
     And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
 
     Then user of browser sees "file1" file in Store details modal for "output" store
-    And user of browser sees selected "file1" file in file browser after clicking it in Store details modal for "output" store
-
+    And user of browser clicks on "file1" file link in Store details modal for "output" store
+    And user of browser sees "file1" item selected in the file browser opened in new web browser tab

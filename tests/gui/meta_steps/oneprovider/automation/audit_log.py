@@ -107,8 +107,9 @@ def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
 @wt(parsers.parse('user of {browser_id} sees destination path, size and '
                   'source URL information in audit log in "{store_name}" store'
                   ' details and they are as follow:\n{content}'))
-def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
-                              modals, clipboard, displays, content):
+def assert_content_in_audit_log_in_store(browser_id, selenium, op_container,
+                                         store_name, modals, clipboard,
+                                         displays, content):
     driver = selenium[browser_id]
     store_type = 'object'
     expected_data = yaml.load(content)
@@ -121,23 +122,16 @@ def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
     assert (store_details['destinationPath'] and store_details['sourceUrl']
             and store_details['size']), err_msg1
 
-    actual_source_url = store_details['sourceUrl']
-    expected_source_url = expected_data['source URL']
-    err_msg2 = (f'Actual source URL {actual_source_url} is not the same '
-                f'as expected {expected_source_url}')
-    assert actual_source_url == expected_source_url, err_msg2
+    actual_expected = {'sourceUrl': 'source URL', 'size': 'size',
+                       'destinationPath': 'destination path'}
 
-    actual_size = store_details['size']
-    expected_size = expected_data['size']
-    err_msg3 = (f'Actual size {actual_size} is not the same '
-                f'as expected {expected_size}')
-    assert actual_size == expected_size, err_msg3
-
-    actual_destination_path = store_details['destinationPath'].split('/')[-1]
-    expected_destination_path = expected_data['destination path']
-    err_msg4 = (f'Actual destination path {actual_destination_path} is not the same '
-                f'as expected {expected_destination_path}')
-    assert actual_destination_path == expected_destination_path, err_msg4
+    for actual, expected in actual_expected.items():
+        actual_elem = (store_details[actual].split(
+            '/')[-1] if actual == 'destinationPath' else store_details[actual])
+        expected_elem = expected_data[expected]
+        err_msg2 = (f'Actual {actual} {actual_elem} is not the same '
+                    f'as expected {expected_elem}')
+        assert actual_elem == expected_elem, err_msg2
 
 
 def get_store_audit_log(browser_id, selenium, op_container, store_name, modals,
@@ -404,7 +398,6 @@ def assert_datasets_in_store_details(selenium, browser_id, op_container,
                   'Store details modal for "{store_name}" store'))
 def assert_file_in_store_details(selenium, browser_id, op_container, modals,
                                  store_name, file):
-
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
     actual_file = modal.single_file_container.name
@@ -414,22 +407,25 @@ def assert_file_in_store_details(selenium, browser_id, op_container, modals,
     modal.close()
 
 
-@wt(parsers.parse('user of {browser_id} sees selected "{name}" {option} in '
-                  '{which_browser} after clicking it in Store details modal for '
-                  '"{store_name}" store'))
-def assert_browser_after_clicking_on_item_in_details_modal(
-        browser_id, selenium, op_container, name, store_name, modals,
-        tmp_memory, which_browser, option=''):
-
+@wt(parsers.parse('user of {browser_id} clicks on "{name}" {option} link in '
+                  'Store details modal for "{store_name}" store'))
+def click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
+                                         name, store_name, modals, option=''):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    err_msg = f'Element {name} is not selected in {which_browser}'
     if option == 'archive':
         modal.store_content_list[name].file_name.click()
-    elif 'file' in which_browser:
-        modal.single_file_container.clickable_name()
-    else:
+    elif option == 'dataset':
         modal.store_content_list[name].dataset_name.click()
+    else:
+        modal.single_file_container.clickable_name()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{name}" item selected in the'
+                  ' {which_browser} opened in new web browser tab'))
+def assert_element_selected_in_new_browser_tab(
+        browser_id, selenium, op_container, name, tmp_memory, which_browser):
+    err_msg = f'Element {name} is not selected in {which_browser}'
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 which_browser)

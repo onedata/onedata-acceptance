@@ -203,8 +203,9 @@ def check_metadata_for_file_in_directory(selenium, browser_id, directory,
         time.sleep(1)
         modal = modals(selenium[browser_id]).details_modal
         entries = [entry.key for entry in modal.metadata.basic.entries]
-        err_msg = (f'Number of expected metadata entries does not equal number '
-                   f'of actual metadata entries for {item.name} in {directory}')
+        err_msg = (f'Number of expected metadata entries ({len(metadata)}) does'
+                   f' not equal number of actual metadata entries '
+                   f'({len(entries)}) for {item.name} in {directory}')
         assert len(entries) == len(metadata), err_msg
         for expected in metadata:
             err_msg2 = (f'{expected} metadata key is not in metadata for '

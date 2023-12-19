@@ -75,7 +75,7 @@ def check_if_task_is_opened(task):
     return task.status != ''
 
 
-def search_for_lane_status(driver, page, lane_name):
+def search_for_lane_status(driver, page, lane_name, box_number=None):
     workflow_visualiser = page.workflow_visualiser
     number_of_lanes = len(workflow_visualiser.workflow_lanes)
 
@@ -83,32 +83,15 @@ def search_for_lane_status(driver, page, lane_name):
         lane_id = workflow_visualiser.workflow_lanes[
             i].lane_web_elem.get_attribute('id')
         scroll_to_css_selector(driver, f'#{lane_id}')
-        found_lane = driver.find_element_by_css_selector(f'#{lane_id} .lane-name').text
-        if found_lane == lane_name:
-            status = driver.find_element_by_css_selector(
-                f'#{lane_id} .visible-run-status-label').text
-            return status
-        else:
-            try:
-                page.workflow_visualiser.right_arrow_scroll.click()
-            except RuntimeError:
-                pass
-
-
-def search_for_parallel_box_in_lane(driver, page, lane_name, box_number):
-    workflow_visualiser = page.workflow_visualiser
-    number_of_lanes = len(workflow_visualiser.workflow_lanes)
-
-    for i in range(number_of_lanes):
-        lane_id = workflow_visualiser.workflow_lanes[
-            i].lane_web_elem.get_attribute('id')
-        scroll_to_css_selector(driver, f'#{lane_id}')
-        time.sleep(1)
         found_lane = driver.find_element_by_css_selector(
             f'#{lane_id} .lane-name').text
         if found_lane == lane_name:
-            return workflow_visualiser.workflow_lanes[i].parallel_boxes[
-                box_number]
+            if box_number is not None:
+                return workflow_visualiser.workflow_lanes[i].parallel_boxes[
+                    box_number]
+            status = driver.find_element_by_css_selector(
+                f'#{lane_id} .visible-run-status-label').text
+            return status
         else:
             try:
                 page.workflow_visualiser.right_arrow_scroll.click()
@@ -137,8 +120,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
     page = switch_to_automation_page(selenium, browser_id, op_container)
     driver = selenium[browser_id]
 
-    parallel_box = search_for_parallel_box_in_lane(driver, page, lane_name,
-                                                   number)
+    parallel_box = search_for_lane_status(driver, page, lane_name, number)
     time.sleep(1)
     if len(parallel_box.task_list) == 1:
         task = parallel_box.task_list[0]
@@ -177,8 +159,7 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     page = switch_to_automation_page(selenium, browser_id, op_container)
     driver = selenium[browser_id]
 
-    parallel_box = search_for_parallel_box_in_lane(driver, page, lane_name,
-                                                   number)
+    parallel_box = search_for_lane_status(driver, page, lane_name, number)
     task, task_id = search_for_task_in_parallel_box(driver, parallel_box,
                                                     task_name)
 

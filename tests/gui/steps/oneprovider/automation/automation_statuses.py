@@ -11,7 +11,8 @@ import time
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
-    switch_to_automation_page, search_for_lane_status, search_for_parallel_box_in_lane, search_for_task_in_parallel_box)
+    switch_to_automation_page, search_for_lane_status,
+    search_for_task_in_parallel_box)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -24,7 +25,7 @@ def get_status_from_workflow_visualizer(page):
 def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     number = from_ordinal_number_to_int(ordinal) - 1
-    return search_for_parallel_box_in_lane(
+    return search_for_lane_status(
         selenium[browser_id], page, lane, number)
 
 
@@ -48,11 +49,10 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
         task_elem = box.task_list[0]
         actual_status = task_elem.status
     else:
-        actual_status = box.task_list[task].status
-        # _, task_id = search_for_task_in_parallel_box(
-        #     selenium[browser_id], box, task)
-        # actual_status = driver.find_element_by_css_selector(
-        #     f'#{task_id} .status-detail .detail-value')
+        _, task_id = search_for_task_in_parallel_box(
+            selenium[browser_id], box, task)
+        actual_status = driver.find_element_by_css_selector(
+            f'#{task_id} .status-detail .detail-value')
     assert_status(task, actual_status, expected_status)
 
 

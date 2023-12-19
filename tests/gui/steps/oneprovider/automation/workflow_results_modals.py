@@ -26,6 +26,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_processing_chart(browser_id, selenium, modals):
     switch_to_iframe(selenium, browser_id)
+    time.sleep(1)
     modal = modals(selenium[browser_id]).task_time_series
     assert modal.chart, 'chart with processing stats is not visible'
 

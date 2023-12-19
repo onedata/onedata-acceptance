@@ -54,8 +54,9 @@ Feature: Bagit uploader tests
     And user of browser sees that content of "valid-archives" store is:
       name: valid.zip
 
-    And user of browser sees selected "valid.zip" archive in file browser after clicking it in Store details modal for "valid-archives" store
-    And user of browser is redirected back to first tab
+    And user of browser clicks on "valid.zip" archive link in Store details modal for "valid-archives" store
+    And user of browser sees "valid.zip" item selected in the file browser opened in new web browser tab
+    And user of browser switches to the previously opened tab in the web browser
     And user of browser sees automation page in files tab in Oneprovider page
     And user of browser closes "Store details" modal
 
@@ -134,8 +135,9 @@ Feature: Bagit uploader tests
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 55000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
-    And user of browser sees selected "dir1" directory in file browser after clicking it in Store details modal for "destination-directory" store
-    And user of browser is redirected back to first tab
+    And user of browser clicks on "dir1" directory link in Store details modal for "destination-directory" store
+    And user of browser sees "dir1" item selected in the file browser opened in new web browser tab
+    And user of browser switches to the previously opened tab in the web browser
 
     # Checking if Dataset in file browser has correct content
     And user of browser clicks "Files" of "space1" space in the sidebar
