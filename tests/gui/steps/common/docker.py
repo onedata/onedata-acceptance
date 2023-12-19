@@ -93,6 +93,12 @@ def _docker_mv(path, new_path, hosts):
     subprocess.check_call(cmd)
 
 
+def _docker_cat(path, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'cat', path]
+    output = subprocess.check_output(cmd)
+    return output
+
+
 def _docker_append_text_to_file(text, path, hosts):
     cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
            'sh', '-c', f'echo {text} >> {path}']
@@ -183,6 +189,16 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
                   'to {new_src_path}'))
 def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
+
+
+def wt_assert_file_in_path_with_content(path, content, hosts):
+    if path[0] == '/':
+        path = path[1::]
+    output = _docker_cat(os.path.join(MOUNT_POINT, path), hosts)
+    output = output.decode('utf-8')
+    err_msg = (f'content of the file {path} is expected to be {content} '
+               f'but is {output}')
+    assert output == content, err_msg
 
 
 # TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624

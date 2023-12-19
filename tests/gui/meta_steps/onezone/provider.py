@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
+from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
 from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_understand_risk_in_cease_support_modal,
     wt_clicks_on_btn_in_cease_support_modal)
@@ -23,6 +24,7 @@ from tests.gui.steps.onezone.providers import (
     click_on_menu_button_of_provider_on_providers_list,
     click_on_cease_support_in_menu_of_provider_on_providers_list)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -91,3 +93,15 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
                                             modals)
     notify_visible_with_text(selenium, browser_id, notify_type,
                              notify_text_regexp)
+
+
+@wt(parsers.parse('user of {browser_id} sees that there is a file with '
+                  'content "{content}", in provider\'s storage mount point, '
+                  'under a path physical location, visible in file details'))
+def assert_file_with_content_in_provider_storage(
+        selenium, browser_id, clipboard, displays, content, modals, hosts):
+    button = 'physical_location'
+    modal = 'details modal'
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    path = clipboard.paste(display=displays[browser_id])
+    wt_assert_file_in_path_with_content(path, content, hosts)
