@@ -136,6 +136,7 @@ Feature: Basic archives operations
 
   Scenario Outline: User selects desirable columns to be visible and can see only them in archive browser
     When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     # archive need to be created otherwise columns won`t show up
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
