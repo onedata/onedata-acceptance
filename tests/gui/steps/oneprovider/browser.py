@@ -285,8 +285,9 @@ def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
     assert size == item_size, err_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) selects only (?P<columns>.*) '
-               'columns from columns list in (?P<which_browser>.*)'))
+@wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
+               'columns in columns configuration popover in '
+               '(?P<which_browser>.*) table'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
                                             which_browser, tmp_memory, popups):

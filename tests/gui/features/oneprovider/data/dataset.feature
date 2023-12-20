@@ -320,10 +320,10 @@ Feature: Basic datasets operations
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in files tab in Oneprovider page
 
-    And user of browser selects only <columns_list> columns from columns list in dataset browser
+    And user of browser enables only <columns_list> columns in columns configuration popover in dataset browser table
     Then user of browser sees only <columns_list> columns in dataset browser
     And user of browser refreshes site
-    And user of browser sees dataset browser in files tab in Oneprovider page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees only <columns_list> columns in dataset browser
 
   Examples:

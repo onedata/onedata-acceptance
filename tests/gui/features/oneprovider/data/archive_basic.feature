@@ -141,10 +141,10 @@ Feature: Basic archives operations
         description: first archive
         layout: plain
 
-    And user of browser selects only <columns_list> columns from columns list in archive browser
+    And user of browser enables only <columns_list> columns in columns configuration popover in archive browser table
     Then user of browser sees only <columns_list> columns in archive browser
     And user of browser refreshes site
-    And user of browser sees archive browser in files tab in Oneprovider page
+    And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees only <columns_list> columns in archive browser
 
   Examples:

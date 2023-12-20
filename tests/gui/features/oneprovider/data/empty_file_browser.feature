@@ -92,7 +92,7 @@ Feature: Files tab operations with empty file browser
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser selects only <columns_list> columns from columns list in file browser
+    And user of browser enables only <columns_list> columns in columns configuration popover in file browser table
     Then user of browser sees only <columns_list> columns in file browser
     And user of browser refreshes site
     And user of browser sees file browser in files tab in Oneprovider page
