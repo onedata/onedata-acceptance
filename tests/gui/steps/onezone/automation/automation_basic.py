@@ -159,6 +159,16 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
         f'Lambda: {lambda_name} not found '
 
 
+@wt(parsers.parse('user of {browser_id} sees there are {number} lambdas '
+                  'in lambdas list in inventory lambdas subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_lambdas(selenium, browser_id, oz_page, number: int):
+    page = oz_page(selenium[browser_id])['automation']
+    lambdas_number = len(page.lambdas_page.elements_list)
+    err_msg = f'number of lambdas is {lambdas_number} instead of {number}'
+    assert lambdas_number == number, err_msg
+
+
 @wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '
                   'in "{lambda_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
