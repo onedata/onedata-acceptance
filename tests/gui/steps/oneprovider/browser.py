@@ -283,3 +283,40 @@ def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
     err_msg = (f'displayed size {item_size} for {item_name} does not '
                f'match expected {size}')
     assert size == item_size, err_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
+               'columns in columns configuration popover in '
+               '(?P<which_browser>.*) table'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
+                                            which_browser, tmp_memory, popups):
+    option_select = 'select'
+    option_unselect = 'unselect'
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    for column in columns_menu:
+        if column.name.lower() in parse_seq(columns):
+            getattr(columns_menu[column.name], option_select)()
+        else:
+            getattr(columns_menu[column.name], option_unselect)()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
+               'in (?P<which_browser>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
+                                      which_browser):
+    columns = parse_seq(columns)
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser_columns = browser.column_headers
+    browser_columns = list(map(lambda x: x.name.lower(), browser_columns))
+    err_msg = (f'there is different number of columns visible: '
+               f'{len(browser_columns)} than expected: {len(columns)}, in '
+               f'{which_browser}')
+    assert len(columns) == len(browser_columns), err_msg
+    for column in columns:
+        if column not in browser_columns:
+            raise AssertionError(
+                f'column {column} is not visible in {which_browser}')
