@@ -21,7 +21,8 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
-def _assert_transfer(transfer, item_type, desc, sufix, hosts):
+def _assert_transfer(transfer, item_type, desc, sufix, hosts, selenium,
+                     browser_id, op_container, popups):
     assert getattr(transfer, 'is_{}'.format(item_type))(), \
         'Transferred item is not {} in {}'.format(item_type, sufix)
 
@@ -29,7 +30,15 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
     for key, val in desc.items():
         if key == 'destination':
             val = hosts[val]['name']
-        transfer_val = getattr(transfer, key.replace(' ', '_'))
+        transfer_val = None
+        try:
+            transfer_val = getattr(transfer, key.replace(' ', '_'))
+        except RuntimeError:
+            # if key differs from column name, consider creating suitable dict
+            cols = [key.replace(' ', '_')]
+            _select_columns_to_be_visible_in_transfers(
+                selenium, browser_id, cols, op_container, popups)
+            transfer_val = getattr(transfer, key.replace(' ', '_'))
         try:
             assert transfer_val == str(val), (f'Transfer {key} is '
                                               f'{transfer_val} instead of '
@@ -55,17 +64,22 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=240)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
-                          op_container):
-    transfer = op_container(selenium[browser_id]).transfers.ended[0]
-    _assert_transfer(transfer, item_type, desc, 'ended', hosts)
+                          op_container, popups):
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
+                                                       op_container, popups)
+    transfer = transfers.ended[0]
+    _assert_transfer(transfer, item_type, desc, 'ended', hosts, selenium,
+                     browser_id, op_container, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
                ' in waiting transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
-                            op_container):
-    transfer = op_container(selenium[browser_id]).transfers.waiting[0]
+                            op_container, popups):
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
+                                                       op_container, popups)
+    transfer = transfers.waiting[0]
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
 
 
@@ -76,7 +90,8 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
                              option, state):
-    transfers = op_container(selenium[browser_id]).transfers
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
+                                                       op_container, popups)
     if state == 'waiting':
         try:
             getattr(transfers, state)[0].menu_button()
@@ -106,14 +121,18 @@ def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) expands first transfer record'))
-def expand_transfer_record(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).transfers.ended[0].expand()
+def expand_transfer_record(selenium, browser_id, op_container, popups):
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
+                                                       op_container, popups)
+    transfers.ended[0].expand()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that there is non-zero '
                'throughput in transfer chart'))
-def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
-    chart = op_container(selenium[browser_id]).transfers.ended[0].get_chart()
+def assert_non_zero_transfer_speed(selenium, browser_id, op_container, popups):
+    transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
+                                                       op_container, popups)
+    chart = transfers.ended[0].get_chart()
     assert chart.get_speed() != '0', 'Transfer throughput is 0'
 
 
@@ -238,3 +257,26 @@ def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
     menu = popups(driver).menu_popup_with_text.menu
     for element in parse_seq(options):
         assert element not in menu, f'{element} should not be in selection menu'
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
+                                               op_container, popups):
+    option_select = 'select'
+    option_unselect = 'unselect'
+    transfer = op_container(selenium[browser_id]).transfers
+    transfer.configure_columns.click()
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    for column in columns_menu:
+        if column.name.lower() in columns:
+            getattr(columns_menu[column.name], option_select)()
+        else:
+            getattr(columns_menu[column.name], option_unselect)()
+
+
+def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container,
+                                           popups):
+    columns = ['user', 'type', 'status']
+    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
+                                               op_container, popups)
+    return op_container(selenium[browser_id]).transfers

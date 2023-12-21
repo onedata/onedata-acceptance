@@ -20,6 +20,8 @@ TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed',
 TransferTypeList = ['migration', 'replication', 'eviction']
 
 
+# before initializing transfer record make sure,
+# that columns used in __init__ are enabled
 class TransferRecord(PageObject):
     name = Label('td:first-of-type')
     username = Label('td:nth-of-type(2)')
@@ -62,7 +64,7 @@ class TransferRecord(PageObject):
 
 class TransferRecordHistory(TransferRecord):
     replicated = Label('.replicated-bytes')
-    total_files = Label('td:nth-of-type(7)')
+    total_files = Label('.evicted-files')
 
 
 class TransferRecordActive(TransferRecord):
@@ -104,6 +106,7 @@ class _TransfersTab(PageObject):
                                      cls=TransferRecordHistory)
     _transfers_list_for_certain_file = WebItemsSequence(
         '.transfers-table-container .transfer-row', cls=TransferRecord)
+    configure_columns = Button('.columns-configuration-button')
 
     @property
     def ongoing(self):
