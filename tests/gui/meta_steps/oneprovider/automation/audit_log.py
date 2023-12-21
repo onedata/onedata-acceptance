@@ -302,7 +302,7 @@ def assert_each_element_contains_some_information(
 @wt(parsers.parse('user of {browser_id} sees that each element in the '
                   'content of the "{store_name}" store details modal contains '
                   'following information:\n{content}'))
-def assert_each_element_contains_some_information(
+def assert_each_element_checksum_content_in_store(
         browser_id, selenium, store_name, content, op_container, modals,
         clipboard, displays):
     driver = selenium[browser_id]
