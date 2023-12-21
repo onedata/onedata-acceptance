@@ -25,6 +25,14 @@ def assert_number_of_first_non_empty_column_content(selenium, modals, fields,
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     fields = parse_seq(fields)
+    # Because files` names repeat, files` names must be first loaded in order to
+    # add annotations to them
+
+    def condition(index=0):
+        pass
+
+    _scroll_and_check_condition(browser_id, selenium, modals, condition)
+    scroll_to_top_in_archive_audit_log(browser_id, selenium, modals)
 
     def condition(index=0):
         for field in fields:
