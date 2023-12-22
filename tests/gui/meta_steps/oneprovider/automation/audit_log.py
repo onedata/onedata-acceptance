@@ -421,6 +421,9 @@ def click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
     else:
         modal.single_file_container.clickable_name()
 
+    # wait a moment to open a tab
+    time.sleep(1)
+
 
 @wt(parsers.parse('user of {browser_id} sees "{name}" item selected in the'
                   ' {which_browser} opened in new web browser tab'))

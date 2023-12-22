@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -44,15 +45,13 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
                                        ordinal, lane, task, expected_status):
     driver = selenium[browser_id]
     box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
-
-    if len(box.task_list) == 1:
-        task_elem = box.task_list[0]
-        actual_status = task_elem.status
-    else:
-        _, task_id = search_for_task_in_parallel_box(
-            selenium[browser_id], box, task)
+    task, task_id = search_for_task_in_parallel_box(driver, box, task)
+    try:
         actual_status = driver.find_element_by_css_selector(
             f'#{task_id} .status-detail .detail-value')
+    except NoSuchElementException:
+        actual_status = task.status
+
     assert_status(task, actual_status, expected_status)
 
 
