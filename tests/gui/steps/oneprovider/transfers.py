@@ -10,7 +10,8 @@ import time
 
 import yaml
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        NoSuchElementException)
 
 from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe, click_option_in_popup_labeled_menu)
@@ -33,7 +34,7 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts, selenium,
         transfer_val = None
         try:
             transfer_val = getattr(transfer, key.replace(' ', '_'))
-        except RuntimeError:
+        except (RuntimeError, NoSuchElementException):
             # if key differs from column name, consider creating suitable dict
             cols = [key.replace(' ', '_')]
             _select_columns_to_be_visible_in_transfers(
@@ -121,6 +122,7 @@ def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) expands first transfer record'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium, browser_id, op_container, popups):
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
                                                        op_container, popups)
@@ -129,6 +131,7 @@ def expand_transfer_record(selenium, browser_id, op_container, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that there is non-zero '
                'throughput in transfer chart'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium, browser_id, op_container, popups):
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
                                                        op_container, popups)
@@ -272,8 +275,11 @@ def _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
             getattr(columns_menu[column.name], option_select)()
         else:
             getattr(columns_menu[column.name], option_unselect)()
+    # hide columns menu popup
+    transfer.configure_columns.click()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container,
                                            popups):
     columns = ['user', 'type', 'status']
