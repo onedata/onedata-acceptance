@@ -25,6 +25,7 @@ class AuditLog(Modal):
 
     copy_json = Button('.copy-link')
     close_details = Button('.close-details')
+    download_as_json = Button('.download-audit-log-action-trigger')
 
     def __str__(self):
         return 'Audit log modal'

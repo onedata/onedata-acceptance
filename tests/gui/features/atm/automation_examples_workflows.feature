@@ -401,3 +401,15 @@ Feature: Automation examples tests
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees following strings represented by "["Hello - dir2", "Hello - file1"]" in content in "results" store details modal
 
+
+  Scenario: User downloads audit log of executed workflow and sees that log entries in the downloaded file correspond to those visible in GUI
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser executes 1st revision of "echo", using file as initial value: "dir1/file1" in "space1" space
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    And user of browser clicks "Audit log" button on "Echo" workflow status bar
+    And user of browser clicks on "Download as JSON" button in modal "Audit log"
+    Then user of browser sees that recent downloaded json file contains audit log which has the same entries as the workflow audit log in GUI

@@ -67,9 +67,26 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} uploads "{workflow}" workflow from '
                   'automation-examples repository to "{inventory}" inventory'))
-def upload_workflow_from_automation_examples(selenium, browser_id,
-                                             oz_page, modals,
-                                             inventory, workflow, tmp_memory):
+def upload_workflow_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory):
+    _upload_workflow_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory)
+
+
+@wt(parsers.parse(
+    'user of {browser_id} uploads "{workflow}" workflow {method} from '
+    'automation-examples repository to "{inventory}" inventory'))
+def upload_workflow_from_automation_examples_with_given_method(
+        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory,
+        method):
+    _upload_workflow_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory,
+        method=method)
+
+
+def _upload_workflow_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory,
+        method=None):
     option = 'Automation'
     subpage = 'workflows'
     modal = 'Upload workflow'
@@ -80,6 +97,12 @@ def upload_workflow_from_automation_examples(selenium, browser_id,
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page)
     upload_workflow_from_repository(selenium, browser_id, workflow, oz_page)
     _wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
+    if method == 'as new workflow':
+        method_button = 'Persist as new workflow'
+        click_modal_button(selenium, browser_id, method_button, modal, modals)
+    elif method == 'and merge into existing workflow':
+        method_button = 'Merge into existing workflow'
+        click_modal_button(selenium, browser_id, method_button, modal, modals)
     click_modal_button(selenium, browser_id, button, modal, modals)
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page)
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')

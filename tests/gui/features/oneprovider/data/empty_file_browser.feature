@@ -82,3 +82,23 @@ Feature: Files tab operations with empty file browser
     Then user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser clicks on "X" button in modal "Directory details"
 
+
+  Scenario Outline: User selects desirable columns to be visible and can see only them in file browser
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+
+    # file need to be uploaded otherwise columns won`t show up
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser sees that item named "20B-0.txt" has appeared in file browser
+
+    And user of browser enables only <columns_list> columns in columns configuration popover in file browser table
+    Then user of browser sees only <columns_list> columns in file browser
+    And user of browser refreshes site
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees only <columns_list> columns in file browser
+
+  Examples:
+    |columns_list      |
+    |["Size", "Owner"] |
+    |[]                |

@@ -15,6 +15,10 @@ from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
+class ArchiveColumnHeader(PageObject):
+    name = id = Label('.column-name')
+
+
 class _ArchiveBrowser(PageObject):
     data = WebItemsSequence('.archive-browser-container .data-row.fb-table-row',
                             cls=DataRow)
@@ -28,6 +32,10 @@ class _ArchiveBrowser(PageObject):
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
     _bottom = WebElement('.table-bottom-spacing')
+
+    configure_columns = Button('.archive-browser .columns-configuration-button')
+    column_headers = WebItemsSequence(
+        '.fb-table-head-row .fb-table-secondary-col', cls=ArchiveColumnHeader)
 
     def __str__(self):
         return f'archive browser in {self.parent}'

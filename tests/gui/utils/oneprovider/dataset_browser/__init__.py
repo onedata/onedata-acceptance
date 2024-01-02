@@ -10,9 +10,13 @@ from functools import partial
 from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
-                                               WebElement, Label)
+                                               WebElement, Label, Button)
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
+
+
+class DatasetColumnHeader(PageObject):
+    name = id = Label('.column-name')
 
 
 class _DatasetBrowser(PageObject):
@@ -22,6 +26,10 @@ class _DatasetBrowser(PageObject):
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
     _bottom = WebElement('.table-bottom-spacing')
+
+    configure_columns = Button('.dataset-browser .columns-configuration-button')
+    column_headers = WebItemsSequence(
+        '.fb-table-head-row .fb-table-secondary-col', cls=DatasetColumnHeader)
 
     def __str__(self):
         return f'dataset browser in {self.parent}'
