@@ -240,49 +240,38 @@ def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
         assert element not in menu, f'{element} should not be in selection menu'
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) selects only (?P<columns>.*) '
-               'columns from columns list in transfers table'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_columns_in_transfers_table(selenium, browser_id, columns,
-                                      op_container, popups):
-    option_select = 'select'
-    option_unselect = 'unselect'
-    all_columns = ['user', 'destination', 'started_at', 'processed',
-                   'replicated', 'evicted', 'type', 'status']
-    transfers = op_container(selenium[browser_id]).transfers
-    transfers.configure_columns.click()
-    columns_menu = popups(selenium[browser_id]).transfers_columns_menu
-    for column in all_columns:
-        if column in parse_seq(columns):
-            getattr(getattr(columns_menu, transform(column)), option_select)()
-        else:
-            getattr(getattr(columns_menu, transform(column)), option_unselect)()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<columns>.*) columns in '
+@wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
+               'columns in columns configuration popover in '
                'transfers table'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_visible_columns_in_transfers_table(browser_id, selenium,
-                                              op_container, columns):
-    transfers_columns = op_container(selenium[browser_id]).transfers.columns
-    for column in parse_seq(columns):
-        try:
-            getattr(transfers_columns, transform(column))
-        except RuntimeError:
-            raise AssertionError(
-                f'column {column} is not visible in transfers table')
+def select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
+                                              op_container, popups):
+    option_select = 'select'
+    option_unselect = 'unselect'
+    transfers = op_container(selenium[browser_id]).transfers
+    transfers.configure_columns.click()
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    for column in columns_menu:
+        if column.name.lower() in parse_seq(columns):
+            getattr(columns_menu[column.name], option_select)()
+        else:
+            getattr(columns_menu[column.name], option_unselect)()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) does not see (?P<columns>.*) '
-               'columns in transfers table'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
+               'in transfers'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invisible_columns_in_transfers_table(browser_id, selenium,
-                                                op_container, columns):
-    transfers_columns = op_container(selenium[browser_id]).transfers.columns
-    for column in parse_seq(columns):
-        try:
-            getattr(transfers_columns, transform(column))
+def assert_visible_columns_in_transfers(browser_id, op_container, columns,
+                                        selenium):
+    columns = parse_seq(columns)
+    transfers = op_container(selenium[browser_id]).transfers
+    transfers_columns = transfers.column_headers
+    transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))
+    err_msg = (f'there is different number of columns visible: '
+               f'{len(transfers_columns)} than expected: {len(columns)}, in '
+               f'transfers')
+    assert len(columns) == len(transfers_columns), err_msg
+    for column in columns:
+        if column not in transfers_columns:
             raise AssertionError(
-                f'column {column} is visible in transfers table but should not')
-        except RuntimeError:
-            pass
+                f'column {column} is not visible in transfers')

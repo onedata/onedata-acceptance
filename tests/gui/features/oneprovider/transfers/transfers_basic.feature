@@ -19,16 +19,14 @@ Feature: Oneprovider transfers basic functionality
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Transfers" of "space1" space in the sidebar
     And user of browser waits for Transfers page to load
-    And user of browser selects only <columns_list> columns from columns list in transfers table
-    Then user of browser sees <columns_list> columns in transfers table
-    And user of browser does not see <other_columns_list> columns in transfers table
+    And user of browser enables only <columns_list> columns in columns configuration popover in transfers table
+    Then user of browser sees only <columns_list> columns in transfers
     And user of browser refreshes site
     And user of browser waits for Transfers page to load
-    And user of browser sees <columns_list> columns in transfers table
-    And user of browser does not see <other_columns_list> columns in transfers table
+    And user of browser sees only <columns_list> columns in transfers
 
   # in standard browser view max 3 columns can be displayed
   Examples:
-    |columns_list                              |other_columns_list                                                 |
-    |["User", "Type", "Status"]                |["Destination", "Started at", "Processed", "Replicated", "Evicted"]|
-    |["Destination", "Processed", "Replicated"]|["User", "Type", "Status", "Started at",  "Evicted"]               |
+    |columns_list                              |
+    |["User", "Type", "Status"]                |
+    |["Destination", "Processed", "Replicated"]|

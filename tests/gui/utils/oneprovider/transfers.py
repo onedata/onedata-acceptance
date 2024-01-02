@@ -91,15 +91,8 @@ class TabHeader(PageObject):
         self.web_elem.click()
 
 
-class TransfersColumns(PageObject):
-    user = Label('.transfers-table-col-userName')
-    destination = Label('.transfers-table-col-destination')
-    started_at = Label('.transfers-table-col-startedAt')
-    processed = Label('.transfers-table-col-processed')
-    replicated = Label('.transfers-table-col-replicated')
-    evicted = Label('.transfers-table-col-evicted')
-    type = Label('.transfers-table-col-type')
-    status = Label('.transfers-table-col-status')
+class TransferColumnHeader(PageObject):
+    name = id = Label('.column-name')
 
 
 class _TransfersTab(PageObject):
@@ -116,7 +109,9 @@ class _TransfersTab(PageObject):
     _transfers_list_for_certain_file = WebItemsSequence(
         '.transfers-table-container .transfer-row', cls=TransferRecord)
     configure_columns = Button('.columns-configuration-button')
-    columns = WebItem('.transfers-table', cls=TransfersColumns)
+    column_headers = WebItemsSequence(
+        '.transfers-table th:not(:last-child, :first-of-type)',
+        cls=TransferColumnHeader)
 
     @property
     def ongoing(self):
