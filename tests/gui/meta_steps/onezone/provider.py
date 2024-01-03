@@ -24,7 +24,6 @@ from tests.gui.steps.onezone.providers import (
     click_on_menu_button_of_provider_on_providers_list,
     click_on_cease_support_in_menu_of_provider_on_providers_list)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.modals.modal import click_modal_button
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -97,11 +96,8 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
 
 @wt(parsers.parse('user of {browser_id} sees that there is a file with '
                   'content "{content}", in provider\'s storage mount point, '
-                  'under a path physical location, visible in file details'))
+                  'under a path copied to clipboard'))
 def assert_file_with_content_in_provider_storage(
-        selenium, browser_id, clipboard, displays, content, modals, hosts):
-    button = 'physical_location'
-    modal = 'details modal'
-    click_modal_button(selenium, browser_id, button, modal, modals)
+        browser_id, clipboard, displays, content, hosts):
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)

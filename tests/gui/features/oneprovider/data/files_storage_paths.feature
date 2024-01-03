@@ -19,8 +19,9 @@ Feature: File storage paths tests
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario: A file is stored in provider's storage mount point under a path physical location, visible in file details in GUI
+  Scenario: User can see path of the file on a physical storage using GUI and the file can be accessed on the storage
     When user of browser opens file browser for "space1" space
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on "Information" in context menu for "file1"
-    And user of browser sees that there is a file with content "some file content", in provider's storage mount point, under a path physical location, visible in file details
+    Then user of browser sees path physical location in file details and copies it into the clipboard
+    And user of browser sees that there is a file with content "some file content", in provider's storage mount point, under a path copied to clipboard
