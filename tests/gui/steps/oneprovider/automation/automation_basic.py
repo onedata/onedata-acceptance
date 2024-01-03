@@ -246,6 +246,7 @@ def click_option_for_lane(selenium, browser_id, op_container, lane_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_status_bar(selenium, browser_id, op_container, button):
     page = switch_to_automation_page(selenium, browser_id, op_container)
+    time.sleep(1)
     getattr(page.workflow_visualiser, transform(button))()
 
 
