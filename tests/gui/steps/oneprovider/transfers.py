@@ -81,7 +81,8 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium,
                                                        op_container, popups)
     transfer = transfers.waiting[0]
-    _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
+    _assert_transfer(transfer, item_type, desc, 'waiting', hosts, selenium,
+                     browser_id, op_container, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
