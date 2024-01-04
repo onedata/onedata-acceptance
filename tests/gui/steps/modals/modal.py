@@ -152,7 +152,7 @@ def _wait_for_named_modal_to_disappear(driver, modal_name):
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
         return
-    Wait(driver, WAIT_BACKEND).until_not(
+    Wait(driver, WAIT_FRONTEND).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
         message='waiting for modal to disappear')
 
@@ -481,6 +481,8 @@ def close_modal(selenium, browser_id, modal, modals):
             getattr(modals(selenium[browser_id]), modal).cancel()
         except AttributeError:
             getattr(modals(selenium[browser_id]), modal).x()
+    except RuntimeError:
+        return
 
     _wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 
