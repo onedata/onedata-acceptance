@@ -336,6 +336,17 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
         'found {} text instead of {}'.format(forbidden_alert_text, text))
 
 
+@wt(parsers.parse('user of {browser_id} sees "{text}" info '
+                  'in "{modal}" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_info_text_in_modal(selenium, browser_id, modals, modal, text):
+    driver = selenium[browser_id]
+    modal = check_modal_name(modal)
+    info_text = getattr(modals(driver), modal).info.text
+    assert text in info_text, (
+        'found {} text instead of {}'.format(info_text, text))
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in (?P<panel_name>.*?) panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)

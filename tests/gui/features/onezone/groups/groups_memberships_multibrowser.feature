@@ -317,7 +317,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks on "Leave" button in space "space1" menu
-    Then user of browser2 sees You cannot leave space alert in "leave modal" modal
+    Then user of browser2 sees "You cannot leave space" info in "Leave space" modal
 
 
   Scenario: User fails to join as subgroup because of lack in privileges

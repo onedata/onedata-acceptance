@@ -14,7 +14,7 @@ class LeaveElementModal(Modal):
     leave = NamedButton('button', text='Leave')
     cancel = NamedButton('button', text='Cancel')
 
-    forbidden_alert = WebElement('p:first-of-type')
+    info = WebElement('p:first-of-type')
 
     def __str__(self):
         return 'Leave element modal'
