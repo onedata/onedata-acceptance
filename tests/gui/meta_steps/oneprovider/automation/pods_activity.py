@@ -149,7 +149,7 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
     click = 'clicks on'
     close = 'closes'
     button = 'X'
-    modal =  'Function pods activity'
+    modal = 'Function pods activity'
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
@@ -161,7 +161,7 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
 
     assert_events_in_pods_monitor(selenium, browser_id, modals, events,
                                   option)
-    lambda_name =  get_lambda_name(events)
+    lambda_name = get_lambda_name(events)
 
     assert_events_containing_lambda_name(selenium, browser_id, modals, events,
                                          option, lambda_name)

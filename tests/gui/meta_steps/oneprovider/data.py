@@ -184,6 +184,36 @@ def check_file_structure_for_archive(browser_id, config, selenium, tmp_memory,
                       op_container, tmpdir, which_browser, description)
 
 
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that each file in '
+               '"(?P<directory>.*)" directory has following '
+               r'metadata:\n(?P<config>(.|\s)*)'))
+def check_metadata_for_file_in_directory(selenium, browser_id, directory,
+                                         config, tmp_memory, op_container,
+                                         modals):
+    which_browser = 'file_browser'
+    metadata = yaml.load(config)
+
+    click_and_press_enter_on_item_in_browser(selenium, browser_id, directory,
+                                             tmp_memory, op_container, which_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                which_browser)
+    browser = tmp_memory[browser_id][which_browser]
+    for item in browser.data:
+        item.click_on_status_tag("Metadata")
+        time.sleep(1)
+        modal = modals(selenium[browser_id]).details_modal
+        entries = [entry.key for entry in modal.metadata.basic.entries]
+        err_msg = (f'Number of expected metadata entries ({len(metadata)}) does'
+                   f' not equal number of actual metadata entries '
+                   f'({len(entries)}) for {item.name} in {directory}')
+        assert len(entries) == len(metadata), err_msg
+        for expected in metadata:
+            err_msg2 = (f'{expected} metadata key is not in metadata for '
+                        f'{item.name} in {directory}')
+            assert expected in entries, err_msg2
+        modal.x()
+
+
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the (file|item) '
                'structure in (?P<which_browser>.*) is as follow:\n'
                r'(?P<config>(.|\s)*)'))

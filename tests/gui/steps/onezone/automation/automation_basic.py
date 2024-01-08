@@ -88,9 +88,13 @@ def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
                '(?P<subpage>workflows|lambdas|members|main) subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
-    page = oz_page(selenium[browser_id])['automation']
+@repeat_failed(timeout=WAIT_BACKEND)
+def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
+                            tmp_memory):
+    try:
+        page = tmp_memory[browser_id]['oz_page']
+    except KeyError:
+        page = oz_page(selenium[browser_id])['automation']
     page.elements_list[inventory]()
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
