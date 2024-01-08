@@ -37,6 +37,7 @@ from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.rest_utils import (
     http_post, get_panel_rest_path, http_get, http_delete)
 from tests.utils.utils import repeat_failed
+from selenium.common.exceptions import NoSuchElementException
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage '
@@ -286,7 +287,11 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                                browser_id,
                                                                onepanel)
         save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        # modal may not appear
+        try:
+            click_modal_button(selenium, browser_id, button, modal, modals)
+        except (NoSuchElementException, RuntimeError):
+            pass
 
 
 @given(parsers.parse('there are no additional params in QoS parameters form '
