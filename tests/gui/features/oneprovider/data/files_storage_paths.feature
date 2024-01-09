@@ -23,5 +23,5 @@ Feature: File storage paths tests
     When user of browser opens file browser for "space1" space
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on "Information" in context menu for "file1"
-    Then user of browser sees path physical location in file details and copies it into the clipboard
-    And user of browser sees that there is a file with content "some file content", in provider's storage mount point, under a path copied to clipboard
+    Then user of browser sees physical location path in file details and copies it into the clipboard
+    And a file under the path from the user of browser clipboard exists, with content "some file content" in provider's storage mount point

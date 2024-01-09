@@ -519,7 +519,7 @@ def scroll_to_top_in_file_browser(browser_id, tmp_memory):
     browser.scroll_to_top()
 
 
-@wt(parsers.parse('user of {browser_id} sees path physical location in file '
+@wt(parsers.parse('user of {browser_id} sees physical location path in file '
                   'details and copies it into the clipboard'))
 def assert_physical_location_path_and_copy_in_file_details(
         selenium, browser_id, clipboard, displays, modals):

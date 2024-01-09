@@ -94,9 +94,9 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
                              notify_text_regexp)
 
 
-@wt(parsers.parse('user of {browser_id} sees that there is a file with '
-                  'content "{content}", in provider\'s storage mount point, '
-                  'under a path copied to clipboard'))
+@wt(parsers.parse('a file under the path from the user of {browser_id} '
+                  'clipboard exists, with content "{content}" in provider\'s '
+                  'storage mount point'))
 def assert_file_with_content_in_provider_storage(
         browser_id, clipboard, displays, content, hosts):
     path = clipboard.paste(display=displays[browser_id])
