@@ -256,28 +256,17 @@ def add_key_value_in_storage_page(selenium, browser_id, key,
                   'edit page'))
 def delete_additional_param_in_storage_page(selenium, browser_id,
                                             onepanel, modals):
-    button = 'Proceed'
-    checkbox = 'Understand checkbox'
-    modal = 'Modify Storage'
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
                                                        onepanel)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    # modal may not appear
-    try:
-        click_modal_button(selenium, browser_id, checkbox, modal, modals)
-        click_modal_button(selenium, browser_id, button, modal, modals)
-    except (NoSuchElementException, RuntimeError):
-        pass
+    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
 
 
 def _delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                   onepanel, modals):
     deleted = False
     name = 'posix'
-    button = 'Proceed'
-    checkbox = 'Understand checkbox'
-    modal = 'Modify Storage'
 
     while not deleted:
         click_modify_storage_in_onepanel(selenium, browser_id, name,
@@ -291,12 +280,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                                browser_id,
                                                                onepanel)
         save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-        # modal may not appear
-        try:
-            click_modal_button(selenium, browser_id, checkbox, modal, modals)
-            click_modal_button(selenium, browser_id, button, modal, modals)
-        except (NoSuchElementException, RuntimeError):
-            pass
+        _try_confirm_changes_in_modify_storage_modal(selenium, browser_id,
+                                                     modals)
 
 
 @given(parsers.parse('there are no additional params in QoS parameters form '
@@ -313,3 +298,21 @@ def wt_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                     onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                   onepanel, modals)
+
+
+def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
+    button = 'Proceed'
+    checkbox = 'Understand checkbox'
+    modal = 'Modify Storage'
+    # if modal will not appear
+    try:
+        click_modal_button(selenium, browser_id, checkbox, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal, modals)
+    except (NoSuchElementException, RuntimeError):
+        pass
+
+
+@wt(parsers.parse('user of {browser_id} confirms committed changes in modal '
+                  '"Modify Storage"'))
+def confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
+    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
