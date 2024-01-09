@@ -244,15 +244,12 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
 @wt(parsers.parse('user of {browser_id} adds key="{key}" value="{val}" in '
                   'QoS parameters form in storage edit page'))
 def add_key_value_in_storage_page(selenium, browser_id, key,
-                                  val, onepanel, modals):
-    button = 'Proceed'
-    modal = 'Modify Storage'
+                                  val, onepanel):
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     type_string_into_active_element(selenium, browser_id, val)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    click_modal_button(selenium, browser_id, button, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} deletes additional param in storage '
@@ -260,12 +257,18 @@ def add_key_value_in_storage_page(selenium, browser_id, key,
 def delete_additional_param_in_storage_page(selenium, browser_id,
                                             onepanel, modals):
     button = 'Proceed'
+    checkbox = 'Understand checkbox'
     modal = 'Modify Storage'
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
                                                        onepanel)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    # modal may not appear
+    try:
+        click_modal_button(selenium, browser_id, checkbox, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal, modals)
+    except (NoSuchElementException, RuntimeError):
+        pass
 
 
 def _delete_all_additional_params_in_storage_page(selenium, browser_id,
@@ -273,6 +276,7 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
     deleted = False
     name = 'posix'
     button = 'Proceed'
+    checkbox = 'Understand checkbox'
     modal = 'Modify Storage'
 
     while not deleted:
@@ -289,6 +293,7 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
         save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
         # modal may not appear
         try:
+            click_modal_button(selenium, browser_id, checkbox, modal, modals)
             click_modal_button(selenium, browser_id, button, modal, modals)
         except (NoSuchElementException, RuntimeError):
             pass
