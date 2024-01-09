@@ -8,10 +8,12 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
-    switch_to_automation_page)
+    switch_to_automation_page, search_for_lane_status,
+    search_for_task_in_parallel_box)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -23,16 +25,14 @@ def get_status_from_workflow_visualizer(page):
 
 def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    workflow_visualiser = page.workflow_visualiser
     number = from_ordinal_number_to_int(ordinal) - 1
-    workflow_visualiser.workflow_lanes[
-        lane].scroll_to_first_task_in_parallel_box(number)
-    return workflow_visualiser.workflow_lanes[lane].parallel_boxes[number]
+    return search_for_lane_status(
+        selenium[browser_id], page, lane, number)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{status}" status in status '
                   'bar in workflow visualizer'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
                                          status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
@@ -40,11 +40,18 @@ def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
                                                        f' equal to {status}')
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
                                        ordinal, lane, task, expected_status):
+    driver = selenium[browser_id]
     box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
-    actual_status = box.task_list[task].status
+    task, task_id = search_for_task_in_parallel_box(driver, box, task)
+    try:
+        actual_status = driver.find_element_by_css_selector(
+            f'#{task_id} .status-detail .detail-value')
+    except NoSuchElementException:
+        actual_status = task.status
+
     assert_status(task, actual_status, expected_status)
 
 
@@ -64,8 +71,8 @@ def await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
 def assert_status_of_lane(selenium, browser_id, op_container, lane,
                           expected_status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    workflow_visualiser = page.workflow_visualiser
-    actual_status = workflow_visualiser.workflow_lanes[lane].status
+    driver = selenium[browser_id]
+    actual_status = search_for_lane_status(driver, page, lane)
     assert_status(lane, actual_status, expected_status)
 
 

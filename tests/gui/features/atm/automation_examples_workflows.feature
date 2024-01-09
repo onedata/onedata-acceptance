@@ -43,10 +43,10 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-formats", using file as initial value: "test.py" in "space1" space
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
+    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with the following initial values:
+        input-files:
+          - test.py
+
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     And user of browser sees that content of "formats" store is:
@@ -69,7 +69,10 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-formats" and waits extended time for workflow to finish, using file as initial value: "lorem_ipsum.enl" in "space1" space
+    And user of browser executes 1st revision of "detect-file-formats" workflow in "space1" space with the following initial values:
+        input-files:
+          - lorem_ipsum.enl
+
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that content of "formats" store is:
         mimeType: text/plain
@@ -103,10 +106,9 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-mime-formats", using file as initial value: "test.py" in "space1" space
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
+    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with the following initial values:
+        input-files:
+          - test.py
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that content of "files-format" store is:
@@ -126,7 +128,10 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "detect-file-mime-formats" and waits extended time for workflow to finish, using file as initial value: "lorem_ipsum.enl" in "space1" space
+    And user of browser executes 1st revision of "detect-file-mime-formats" workflow in "space1" space with the following initial values:
+        input-files:
+          - lorem_ipsum.enl
+
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees that content of "files-format" store is:
         fileName: lorem_ipsum.enl
@@ -156,14 +161,11 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch.txt" to current dir
     And user of browser sees that item named "fetch.txt" has appeared in file browser
 
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "download-files" workflow
-    And user of browser chooses "fetch.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - fetch.txt
+        destination:
+          - dir1
 
     Then user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
@@ -176,7 +178,7 @@ Feature: Automation examples tests
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks on first executed workflow
     And user of browser sees "Finished" status in status bar in workflow visualizer
-    And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
         severity: info
@@ -200,18 +202,14 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/xrootd_fetch.txt" to current dir
     And user of browser sees that item named "xrootd_fetch.txt" has appeared in file browser
 
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "download-files" workflow
-    And user of browser chooses "xrootd_fetch.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - xrootd_fetch.txt
+        destination:
+          - dir1
 
-    And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
-    And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
         severity: info
@@ -237,26 +235,20 @@ Feature: Automation examples tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/incorrect_fetch.txt" to current dir
     And user of browser sees that item named "incorrect_fetch.txt" has appeared in file browser
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - incorrect_fetch.txt
+        destination:
+          - dir1
 
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "download-files" workflow
-    And user of browser chooses "incorrect_fetch.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
     Then user of browser sees "Failed" status in status bar in workflow visualizer
-    And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         severity: Error
         source: system
         content:
           details:
             reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
-            item:
-              file_id:  $(resolve_id space1/incorrect_fetch.txt)
           description: Lambda exception occurred during item processing.
 
 
@@ -269,18 +261,14 @@ Feature: Automation examples tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/whitespaces_fetch.txt" to current dir
     And user of browser sees that item named "whitespaces_fetch.txt" has appeared in file browser
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - whitespaces_fetch.txt
+        destination:
+          - dir1
 
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "download-files" workflow
-    And user of browser chooses "whitespaces_fetch.txt" file as initial value of "fetch-files" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
-    And user of browser sees that audit logs in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following information:
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
         severity: info
@@ -324,7 +312,7 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser clicks on 2nd revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
     And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
         configuration parameters:
             exceptionProbability:
@@ -334,22 +322,17 @@ Feature: Automation examples tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 2nd revision of "echo" workflow
-    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
+    And user of browser executes 1st revision of "echo" workflow in "space1" space with the following initial values:
+        input:
+          - dir1
 
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
     Then user of browser sees "Failed" status in status bar in workflow visualizer
-    And user of browser sees that audit logs in task "echo" in 1st parallel box in lane "lane 1" contains following information:
+    And user of browser sees that audit log in task "echo" in 1st parallel box in lane "lane 1" contains following entry:
         timestamp: today
         severity: Error
         content:
           details:
             reason: Random exception
-            item:
-              file_id:  $(resolve_id space1/dir1)
           description: Lambda exception occurred during item processing.
 
 
@@ -357,27 +340,30 @@ Feature: Automation examples tests
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "<workflow_name>" workflow from automation-examples repository to "inventory1" inventory
-    And user of browser executes 1st revision of "<workflow_name>" and waits extended time for workflow to finish, using directory as initial value: "dir1" in "space1" space
+    And user of browser executes 1st revision of "<workflow_name>" workflow in "space1" space with the following initial values:
+        input-files:
+          - dir1
+
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that value of last column on chart with processing stats is bigger than zero
+    And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater or equal 2.5 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 10 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser closes task "md5" in 1st parallel box in "calculate-checksums" lane in workflow visualizer
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "sha256" in 1st parallel box in "calculate-checksums" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that value of last column on chart with processing stats is bigger than zero
+    And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater or equal 2 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater or equal 10 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
-    And user of browser sees that number of elements in content in "results" store details modal is 12
+    And user of browser sees that number of elements in the content of the "results" store details modal is 12
     And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" space corresponds to two instances of the element with "file_id" in "results" store details modal
 
     Examples:
@@ -393,10 +379,9 @@ Feature: Automation examples tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
-    And user of browser executes 1st revision of "demo", using file as initial value: "dir2" in "space1" space
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
+    And user of browser executes 1st revision of "demo" workflow in "space1" space with the following initial values:
+        input_files:
+          - dir2
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser sees following strings represented by "["Hello - dir2", "Hello - file1"]" in content in "results" store details modal

@@ -53,28 +53,36 @@ class OZLoggedIn(object):
         return 'Onezone page'
 
     def __getitem__(self, item):
-        item = item.lower()
-        # expand side panel
-        ActionChains(self.web_elem).move_to_element(self._panels[0]).perform()
-        # wait for side panel to expand so we can read panel name
-        sleep(0.2)
-        cls = self.panels.get(item, None)
-        if cls:
-            item = item.replace('_', ' ').lower()
-            for panel in self._panels:
-                if item == panel.text.lower():
-                    panel.click()
-                    # collapse side panel
-                    ActionChains(self.web_elem).move_to_element(
-                        self.web_elem.find_element_by_css_selector(
-                            '.row-heading .col-title')).perform()
-                    # wait for side panel to collapse
-                    sleep(0.2)
+        return get_page(self, item)
 
-                    return cls(self.web_elem, self.web_elem, parent=self)
-        elif item == 'profile':
-            return ManageAccountPage(self.web_elem, self._profile, self)
-        elif item == 'uploads':
-            return UploadsPage(self.web_elem, self.web_elem, self)
-        else:
-            raise RuntimeError('no "{}" on {} found'.format(item, str(self)))
+    def get_page_no_clicking(self, item):
+        return get_page(self, item, False)
+
+
+def get_page(oz_page, item, click=True):
+    item = item.lower()
+    # expand side panel
+    ActionChains(oz_page.web_elem).move_to_element(oz_page._panels[0]).perform()
+    # wait for side panel to expand so we can read panel name
+    sleep(0.2)
+    cls = oz_page.panels.get(item, None)
+    if cls:
+        item = item.replace('_', ' ').lower()
+        for panel in oz_page._panels:
+            if item == panel.text.lower():
+                if click:
+                    panel.click()
+                # collapse side panel
+                ActionChains(oz_page.web_elem).move_to_element(
+                    oz_page.web_elem.find_element_by_css_selector(
+                        '.row-heading .col-title')).perform()
+                # wait for side panel to collapse
+                sleep(0.2)
+                return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
+    elif item == 'profile':
+        return ManageAccountPage(oz_page.web_elem, oz_page._profile, oz_page)
+    elif item == 'uploads':
+        return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
+    else:
+        raise RuntimeError('no "{}" on {} found'.format(item, str(oz_page)))
+

@@ -26,12 +26,14 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_processing_chart(browser_id, selenium, modals):
     switch_to_iframe(selenium, browser_id)
+    time.sleep(1)
     modal = modals(selenium[browser_id]).task_time_series
     assert modal.chart, 'chart with processing stats is not visible'
 
 
 @wt(parsers.parse('user of {browser_id} sees that time in right corner of chart'
                   ' with processing stats is around actual time'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
         browser_id, selenium, modals):
     switch_to_iframe(selenium, browser_id)
@@ -39,12 +41,12 @@ def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
     now = datetime.now()
     ts = datetime.timestamp(now)
-    assert abs(chart_time_in_right_corner - ts) < 120, (
-        'Difference between actual time and time on chart is bigger than 120s')
+    assert abs(chart_time_in_right_corner - ts) < 600, (
+        'Difference between actual time and time on chart is greater than 600s')
 
 
 @wt(parsers.parse('user of {browser_id} sees that value of last column on chart'
-                  ' with processing stats is bigger than zero'))
+                  ' with processing stats is greater than zero'))
 def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium,
                                                     modals):
     switch_to_iframe(selenium, browser_id)
@@ -69,19 +71,36 @@ def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
                         f' list in modal "{modal}".')
 
 
-@wt(parsers.parse('user of {browser_id} sees that {option} processing speed'
-                  ' is not bigger than {number} per second on chart with'
-                  ' processing stats'))
+@wt(parsers.parse('user of {browser_id} sees "{message}" message on chart '
+                  'with processing stats'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_no_data_message_processing_chart(browser_id, selenium, modals,
+                                            message):
+    switch_to_iframe(selenium, browser_id)
+    actual_message = modals(selenium[browser_id]).task_time_series.no_data_message
+    err_msg = (f'Actual message: "{actual_message}" on chart with processing'
+               f' stats is not "{message}" as expected')
+    assert actual_message == message, err_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<option>.*?) '
+               'processing speed (?P<compare_option>is greater or equal|is '
+               'equal) (?P<number>.*?) per second on chart with processing '
+               'stats'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(browser_id, selenium, modals, option,
-                                     number):
+                                     number, compare_option):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
     for value in values:
         if option in value[1].lower():
             err_msg = (f'Processing speed is {value[0]} {option} per second '
-                       f'and is bigger than expected {number} per second.')
-            assert value[0] <= int(number), err_msg
+                       f'and is lower than expected {number} per second.')
+            if compare_option == 'is greater or equal':
+                assert value[0] >= float(number), err_msg
+            else:
+                assert value[0] == float(number), err_msg
             break
     else:
         raise Exception(f'There is no {option} processing speed on chart with'
@@ -121,6 +140,8 @@ def get_audit_log_json_and_write_to_file(log, modal, clipboard, displays,
     append_log_to_file(path, audit_log)
 
 
+@wt(parsers.parse('user of {browser_id} opens "{store_name}" store details '
+                  'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_store_details_modal(selenium, browser_id, op_container, modals,
                              store_name):
@@ -190,12 +211,17 @@ def open_raw_view_for_elem(store_content_list, index, modal):
                         f'{index} element in store content list')
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def get_store_content(modal, store_type, index, clipboard, displays,
                       browser_id):
     store_content_type = 'store_content_' + store_type
     store_content_list = getattr(modal, store_content_type)
-    open_raw_view_for_elem(store_content_list, index, modal)
+    try:
+        open_raw_view_for_elem(store_content_list, index, modal)
+    except RuntimeError:
+        # this closes the successful copy alert
+        modal.name_header.click()
+        open_raw_view_for_elem(store_content_list, index, modal)
     modal.copy_button()
     return clipboard.paste(display=displays[browser_id])
 

@@ -45,8 +45,8 @@ Feature: Workflows stores tests
 
     And user of browser executes 1st revision of "calculate-checksums-rest" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
     Then user of browser sees file_id, checksum and algorithm information in audit log in "results" store details
-    And user of browser sees that audit logs in task "md5" in 1st parallel box in lane "calculate-checksums" contains same information like audit log in "results" store details
-    And user of browser sees that audit logs for "calculate-checksums-rest" workflow contains the same information like audit log in "results" store details
+    And user of browser sees that audit log in task "md5" in 1st parallel box in lane "calculate-checksums" contains same entries like audit log in "results" store details
+    And user of browser sees that audit log for "calculate-checksums-rest" workflow contains the same entries like audit log in "results" store details
 
 
   Scenario Outline: User sees expected results in result store after modifying input store type to <storage_type> and executing uploaded counting checksums workflow
@@ -60,7 +60,7 @@ Feature: Workflows stores tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     And user of browser executes 1st revision of "calculate-checksums-rest" and waits extended time for workflow to finish, using file as initial value: "<files>" in "space1" space
-    Then user of browser sees that number of elements in content in "results" store details modal is <elem_num>
+    Then user of browser sees that number of elements in the content of the "results" store details modal is <elem_num>
     And user of browser sees that each element with "file_id" in "results" store details modal corresponds to id of file from "<files_to_check_id>" in "space1" space
 
     Examples:
@@ -84,8 +84,9 @@ Feature: Workflows stores tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using datasets as initial value: "["file1", "file2"]" in "space1" space
 
-    Then user of browser sees "["file1", "file2"]" datasets in Store details modal for "output" store
-    And user of browser sees dataset browser after clicking "file1" in Store details modal for "output" store
+    Then user of browser sees ["file1", "file2"] datasets in Store details modal for "output" store
+    And user of browser clicks on "file1" dataset link in Store details modal for "output" store
+    And user of browser sees "file1" item selected in the dataset browser opened in new web browser tab
 
 
   Scenario: User sees file in result store after modifying input store and lambda data type to file and executing uploaded echo workflow
@@ -115,5 +116,5 @@ Feature: Workflows stores tests
     And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
 
     Then user of browser sees "file1" file in Store details modal for "output" store
-    And user of browser sees file browser after clicking "file1" in Store details modal for "output" store
-
+    And user of browser clicks on "file1" file link in Store details modal for "output" store
+    And user of browser sees "file1" item selected in the file browser opened in new web browser tab

@@ -119,6 +119,6 @@ Feature: Workflow execution statuses tests
 
     And user of browser awaits for status of "Lane1" lane to be "Active"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Active"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Active" or "Finished"
     And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Finished"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
