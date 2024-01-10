@@ -250,6 +250,8 @@ Feature: Automation examples tests
           details:
             reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
           description: Lambda exception occurred during item processing.
+    And user of browser sees that number of elements in the content of the "fetch-files" store details modal is 1
+    And user of browser sees that "file_id" in "fetch-files" store details modal is id of "incorrect_fetch.txt" in "space1" space
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using whitespaces fetch file
@@ -334,6 +336,8 @@ Feature: Automation examples tests
           details:
             reason: Random exception
           description: Lambda exception occurred during item processing.
+    And user of browser sees that number of elements in the content of the "input" store details modal is 1
+    And user of browser sees that "file_id" in "input" store details modal is id of "dir1" in "space1" space
 
 
   Scenario Outline: User checks time series charts and "results" store content after execution of uploaded "<workflow_name>" workflow
