@@ -7,12 +7,13 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import NamedButton
+from tests.gui.utils.core.web_elements import NamedButton, Button
 
 
 class ModifyStorage(Modal):
     proceed = NamedButton('button', text='Proceed')
     cancel = NamedButton('button', text='Cancel')
+    understand_checkbox = Button('.one-checkbox-understand')
 
     def __str__(self):
         return 'Modify storage modal'

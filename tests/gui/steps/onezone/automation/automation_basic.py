@@ -88,9 +88,13 @@ def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
                '(?P<subpage>workflows|lambdas|members|main) subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
-    page = oz_page(selenium[browser_id])['automation']
+@repeat_failed(timeout=WAIT_BACKEND)
+def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
+                            tmp_memory):
+    try:
+        page = tmp_memory[browser_id]['oz_page']
+    except KeyError:
+        page = oz_page(selenium[browser_id])['automation']
     page.elements_list[inventory]()
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
@@ -153,6 +157,16 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
 
     assert lambda_name in page.lambdas_page.elements_list, \
         f'Lambda: {lambda_name} not found '
+
+
+@wt(parsers.parse('user of {browser_id} sees there are {number} lambdas '
+                  'in lambdas list in inventory lambdas subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_lambdas(selenium, browser_id, oz_page, number: int):
+    page = oz_page(selenium[browser_id])['automation']
+    lambdas_number = len(page.lambdas_page.elements_list)
+    err_msg = f'number of lambdas is {lambdas_number} instead of {number}'
+    assert lambdas_number == number, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '

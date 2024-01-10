@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import json
 import time
+import os
 from datetime import date
 
 import yaml
@@ -31,9 +32,9 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     compare_datasets_in_store_details_modal,
     compare_booleans_in_store_details_modal,
     compare_string_in_store_details_modal, compare_array_in_store_details_modal,
-    check_number_of_elements_in_store_details_modal)
+    check_number_of_elements_in_store_details_modal, get_store_content)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
 
@@ -104,6 +105,36 @@ def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
     tmp_memory[f'{store_name}_store_log'] = store_details
 
 
+@wt(parsers.parse('user of {browser_id} sees destination path, size and '
+                  'source URL information in audit log in "{store_name}" store'
+                  ' details and they are as follow:\n{content}'))
+def assert_content_in_audit_log_in_store(browser_id, selenium, op_container,
+                                         store_name, modals, clipboard,
+                                         displays, content):
+    driver = selenium[browser_id]
+    store_type = 'object'
+    expected_data = yaml.load(content)
+    store_details = get_store_details_json(op_container, driver, browser_id,
+                                           modals, clipboard, displays,
+                                           store_name,  store_type)
+
+    err_msg1 = (f'There is no information about destination path, size or '
+                f'source URL in audit log in {store_name} store details')
+    assert (store_details['destinationPath'] and store_details['sourceUrl']
+            and store_details['size']), err_msg1
+
+    actual_expected = {'sourceUrl': 'source URL', 'size': 'size',
+                       'destinationPath': 'destination path'}
+
+    for actual, expected in actual_expected.items():
+        actual_elem = (store_details[actual].split(
+            '/')[-1] if actual == 'destinationPath' else store_details[actual])
+        expected_elem = expected_data[expected]
+        err_msg2 = (f'Actual {actual} {actual_elem} is not the same '
+                    f'as expected {expected_elem}')
+        assert actual_elem == expected_elem, err_msg2
+
+
 def get_store_audit_log(browser_id, selenium, op_container, store_name, modals,
                         clipboard, displays, tmp_memory, store_key):
     if store_key not in tmp_memory.keys():
@@ -134,9 +165,9 @@ def compare_audit_log_to_store_log(modals, driver, clipboard, displays,
     assert store_audit_log == audit_log['content'], err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that audit logs in task '
+@wt(parsers.parse('user of {browser_id} sees that audit log in task '
                   '"{task_name}" in {ordinal} parallel box in lane '
-                  '"{lane_name}" contains same information like audit log in'
+                  '"{lane_name}" contains same entries like audit log in'
                   ' "{store_name}" store details'))
 def assert_task_audit_log_is_like_store_audit_log(
         selenium, browser_id, op_container, lane_name, task_name, ordinal,
@@ -161,8 +192,8 @@ def assert_task_audit_log_is_like_store_audit_log(
     close_modal_and_task(modal, task)
 
 
-@wt(parsers.parse('user of {browser_id} sees that audit logs for "{workflow}"'
-                  ' workflow contains the same information like audit log in'
+@wt(parsers.parse('user of {browser_id} sees that audit log for "{workflow}"'
+                  ' workflow contains the same entries like audit log in'
                   ' "{store_name}" store details'))
 def assert_workflow_audit_log_contains_store_audit_log_info(
         selenium, browser_id, op_container, modals, store_name, clipboard,
@@ -178,8 +209,9 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     modals(driver).audit_log.x()
 
 
-@wt(parsers.parse('user of {browser_id} sees that number of elements in '
-                  'content in "{store_name}" store details modal is {number}'))
+@wt(parsers.parse('user of {browser_id} sees that number of elements in the '
+                  'content of the "{store_name}" store details modal'
+                  ' is {number}'))
 def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
                                                store_name, op_container,
                                                number):
@@ -233,6 +265,69 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
         assert len(storage_file_ids) == len(file_ids), (
             f'Number of elements in "{store_name}" store details modal does not'
             f' match number of files given to check id')
+
+
+@wt(parsers.parse('user of {browser_id} sees that element in the content of the'
+                  ' "{store_name}" store details modal contains following '
+                  '{option}:\n{content}'))
+@wt(parsers.parse('user of {browser_id} sees that each element in the content '
+                  'of the "{store_name}" store details modal contains one of '
+                  'following {option}:\n{content}'))
+def assert_each_element_contains_some_information(
+        browser_id, selenium, store_name, content, op_container, modals,
+        clipboard, displays, option):
+    driver = selenium[browser_id]
+    store_type = 'object'
+    expected_data = yaml.load(content)
+    actual_data = []
+    get_op_workflow_visualizer_page(op_container, driver)
+    modal = modals(driver).store_details
+    elem_num = len(modal.store_content_object)
+    for i in range(elem_num):
+        store_content = json.loads(get_store_content(modal, store_type, i,
+                                                     clipboard, displays,
+                                                     browser_id))
+        modal.close_details()
+        file_path = (store_content if option == 'file names' else store_content[
+            option.split(' ')[0] + option.split(' ')[-1].capitalize()])
+        actual_data.append(file_path.split('/')[-1])
+    assert len(actual_data) == len(expected_data), (
+        f'Actual and expected number of elements in {store_name} differ')
+    for elem in actual_data:
+        assert elem in expected_data, (
+            f'Expected data does not contain {elem} file name in'
+            f' {store_name} store details modal')
+
+
+@wt(parsers.parse('user of {browser_id} sees that each element in the '
+                  'content of the "{store_name}" store details modal contains '
+                  'following information:\n{content}'))
+def assert_each_element_checksum_content_in_store(
+        browser_id, selenium, store_name, content, op_container, modals,
+        clipboard, displays):
+    driver = selenium[browser_id]
+    store_type = 'object'
+    expected_data = yaml.load(content)
+    get_op_workflow_visualizer_page(op_container, driver)
+    modal = modals(driver).store_details
+    elem_num = len(modal.store_content_object)
+    for i in range(elem_num):
+        store_content = json.loads(get_store_content(modal, store_type, i,
+                                                     clipboard, displays,
+                                                     browser_id))
+        modal.close_details()
+        expected_sha256 = expected_data['checksums']['sha256']['status']
+        actual_sha256 = store_content['checksums']['sha256']['status']
+        err_msg = (f'expected sha256 status {expected_sha256} does not match '
+                   f'actual {actual_sha256} for {i} element in {store_name}'
+                   f' details modal')
+        assert (expected_sha256 == actual_sha256), err_msg
+        expected_md5 = expected_data['checksums']['md5']['status']
+        actual_md5 = store_content['checksums']['md5']['status']
+        err_msg = (f'expected md5 status {expected_md5} does not match '
+                   f'actual {actual_md5} for {i} element in {store_name}'
+                   f' details modal')
+        assert (expected_md5 == actual_md5), err_msg
 
 
 def check_visual_in_store_details_modal(modal, variable_type, item_list,
@@ -290,7 +385,7 @@ def assert_elements_in_store_details_modal(browser_id, selenium, op_container,
                                             store_name)
 
 
-@wt(parsers.parse('user of {browser_id} sees "{item_list}" datasets in '
+@wt(parsers.parse('user of {browser_id} sees {item_list} datasets in '
                   'Store details modal for "{store_name}" store'))
 def assert_datasets_in_store_details(selenium, browser_id, op_container,
                                      modals, store_name, item_list):
@@ -304,7 +399,6 @@ def assert_datasets_in_store_details(selenium, browser_id, op_container,
                   'Store details modal for "{store_name}" store'))
 def assert_file_in_store_details(selenium, browser_id, op_container, modals,
                                  store_name, file):
-
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
     actual_file = modal.single_file_container.name
@@ -314,21 +408,35 @@ def assert_file_in_store_details(selenium, browser_id, op_container, modals,
     modal.close()
 
 
-@wt(parsers.parse('user of {browser_id} sees {browser} after clicking '
-                  '"{name}" in Store details modal for "{store_name}"'
-                  ' store'))
-def assert_browser_after_clicking_on_item_in_details_modal(
-        browser_id, selenium, op_container, name, store_name, modals,
-        tmp_memory, browser):
+@wt(parsers.parse('user of {browser_id} clicks on "{name}" {option} link in '
+                  'Store details modal for "{store_name}" store'))
+def click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
+                                         name, store_name, modals, option=''):
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    if 'file' in browser:
-        modal.single_file_container.clickable_name()
-    else:
+    if option == 'archive':
+        modal.store_content_list[name].file_name.click()
+    elif option == 'dataset':
         modal.store_content_list[name].dataset_name.click()
+    else:
+        modal.single_file_container.clickable_name()
+
+    # wait a moment to open a tab
+    time.sleep(1)
+
+
+@wt(parsers.parse('user of {browser_id} sees "{name}" item selected in the'
+                  ' {which_browser} opened in new web browser tab'))
+def assert_element_selected_in_new_browser_tab(
+        browser_id, selenium, op_container, name, tmp_memory, which_browser):
+    err_msg = f'Element {name} is not selected in {which_browser}'
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
-                                browser)
+                                which_browser)
+
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    if_selected = browser.data[name].is_selected()
+    assert if_selected, err_msg
 
 
 def compare_to_expected_if_element_exist_for_store(
@@ -396,13 +504,15 @@ def assert_elements_of_task_audit_log_are_the_same(expected, actual, label,
 def compare_content_reason_of_task_audit_log(
         reason, actual_reason, selenium, browser_id, oz_page, op_container,
         tmp_memory, popups, modals, clipboard, displays, task_name):
+    err_msg = (f'Reason: "{reason}" in audit log for "{task_name}" '
+               f'task does not contain "{actual_reason}" as expected')
     if 'contains' in reason:
         reason_data = yaml.load(
             reason.split('contains ')[1].replace('])', ']'))
         for reason_elem in reason_data:
-            assert reason_elem in actual_reason, (
-                f'Reason: "{reason}" in audit log for "{task_name}" '
-                f'task does not contain "{actual_reason}" as expected')
+            assert reason_elem in actual_reason, err_msg
+    elif 'file checksum' in reason:
+        assert reason == actual_reason.replace(':', ''), err_msg
     else:
         if not isinstance(reason, str):
             placeholder_file_id = reason['details'][
@@ -446,9 +556,70 @@ def compare_content_of_task_audit_log(
             item, actual_details['item']['value'], 'Item', task_name)
 
 
-@wt(parsers.parse('user of {browser_id} sees that audit logs in task'
+@wt(parsers.parse('user of {browser_id} sees that audit log in task '
+                  '"{task_name}" in {ordinal} parallel box in lane '
+                  '"{lane_name}" doesn\'t contain user\'s entry'))
+def assert_content_of_user_task_audit_log(selenium, browser_id, op_container,
+                                          lane_name, task_name, ordinal, modals):
+    click = 'click'
+    close = 'closes'
+    link = 'Audit log'
+    driver = selenium[browser_id]
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
+                              task_name, link, ordinal)
+    # wait a moment for modal to open
+    time.sleep(1)
+    modal = modals(driver).audit_log
+    try:
+        modal.user_log
+        raise Exception(f'Audit log in task "{task_name}" in lane'
+                        f' "{lane_name}" contains user\'s entry')
+    except RuntimeError:
+        pass
+    modal.x()
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{element}" content of audit'
+                  ' log in task "{task_name}" in {ordinal} parallel box in lane'
+                  ' "{lane_name}" is {expected_data}'))
+def assert_element_content_in_task_audit_log(
+        expected_data, element, selenium, browser_id, op_container, lane_name,
+        task_name, ordinal, modals, clipboard, displays):
+    click = 'click'
+    link = 'Audit log'
+    close = 'closes'
+    expected_data = expected_data.replace('"', '')
+    driver = selenium[browser_id]
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
+                              task_name, link, ordinal)
+    # wait a moment for modal to open
+    time.sleep(1)
+    modal = modals(driver).audit_log
+    modal.user_log.click()
+    modal.copy_json()
+    actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
+    actual_data = actual_items['content'][element]
+    err_msg = (f'actual {element} content for task: "{actual_data}" is not '
+               f'as expected: "{expected_data}"')
+    # this is done because of very specific problem with passing (data/)
+    # as expected_data
+    actual_data = actual_data.replace("(data/) ", "")
+    assert actual_data.lower() == expected_data.replace("\\n", "\n"), err_msg
+    modal.x()
+    click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                          task_name, ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that audit log in task'
                   ' "{task_name}" in {ordinal} parallel box in lane '
-                  '"{lane_name}" contains following information:\n{config}'))
+                  '"{lane_name}" contains following entry:\n{config}'))
 def assert_content_of_task_audit_log(config, selenium, browser_id,
                                      op_container, lane_name, task_name,
                                      ordinal, modals, clipboard, displays,
@@ -461,7 +632,9 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     content = data.get('content', False)
     severity = data.get('severity', False)
     source = data.get('source', False)
-
+    close = 'closes'
+    # wait a second for workflow to open
+    time.sleep(1)
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
@@ -490,5 +663,41 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
 
     try:
         modal.x()
+        click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
+                              task_name, ordinal, close)
     except StaleElementReferenceException:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} sees that recent downloaded json '
+                  'file contains audit log which has the same entries as the '
+                  'workflow audit log in GUI'))
+def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
+        browser_id, tmpdir, modals, selenium, clipboard, displays):
+    driver = selenium[browser_id]
+    modal = modals(driver).audit_log
+    path = tmpdir.join(browser_id, 'download')
+    file_name = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_name)
+    if file_path.isfile():
+        with open(file_path) as f:
+            data = json.load(f)
+            log_entries = len(modal.logs_entry)
+            err_msg = (f'there is different number of log entries in file '
+                       f'{len(data)} and visible {log_entries}')
+            assert len(data) == log_entries, err_msg
+            for i in range(log_entries):
+                file_log = data[i]
+                idx = log_entries - i - 1
+                modal.logs_entry[idx].click()
+                modal.copy_json()
+                visible_log = json.loads(
+                    clipboard.paste(display=displays[browser_id]))
+                # remove 'source' from dict
+                visible_log.pop('source')
+                err_msg = (f'logs in file: {file_log} and visible {visible_log}'
+                           f'are different')
+                assert file_log == visible_log, err_msg
+                modal.close_details.click()
+    else:
+        raise RuntimeError('file {} has not been downloaded'.format(file_name))
