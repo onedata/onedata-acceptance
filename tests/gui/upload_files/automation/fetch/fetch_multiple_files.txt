@@ -1,0 +1,17 @@
+https://www.robots.ox.ac.uk/~vgg/data/bicos/data/oxfordflower17.tar	68567040	oxfordflower_images.tar
+https://www.robots.ox.ac.uk/~vgg/data/flowers/102/102segmentations.tgz	203577493	flower_segmentation.tgz
+https://www.robots.ox.ac.uk/~vgg/data/flowers/102/setid.mat	14989	flower_data_splits.mat
+https://thor.robots.ox.ac.uk/datasets/penguins/CompleteAnnotations_2016-07-11.tgz	47256126	CompleteAnnotations_2016-07-11.tgz
+https://thor.robots.ox.ac.uk/datasets/penguins/DAMOa.tgz	190480512	DAMOa.tgz
+https://thor.robots.ox.ac.uk/datasets/clevrtex/clevrtex_preview.tar.gz	269604303	clevrtex_preview.tar.gz
+https://www.robots.ox.ac.uk/~vgg/data/iseg/data/images.tgz	23030716	machine_lerning_images.tgz
+https://www.robots.ox.ac.uk/~vgg/data/bicos/data/faces.tar	14602240	machine_lerning_images_faces.tar
+https://www.robots.ox.ac.uk/~vgg/data/dtd/download/dtd-r1.0.1-labels.tar.gz	188651	describable_textures.tar.gz
+https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png	5969	logo_example.png
+http://opendata.cern.ch/record/5200/files/2e2mu_2011.csv	4092	cern_2e2mu_2011.csv
+http://opendata.cern.ch/record/5200/files/2e2mu_2012.csv	31445	cern_2e2mu_2012.csv
+http://opendata.cern.ch/record/5200/files/4e_2012.csv	12445	4e_2012.csv
+http://opendata.cern.ch/record/5200/files/Hto4l_120-130GeV.ig	1119117	cern_htol4l.ig
+http://opendata.cern.ch/record/5200/files/Hto4l_2011A.ig	2462918	cern_hto4l_2011A.ig
+http://opendata.cern.ch/record/5200/files/Hto4l_2012B.ig	9370066	cern_hto4l_2012B.ig
+http://opendata.cern.ch/record/5200/files/Hto4l_2012C_1.ig	7062143	cern_hto4l_2012C.ig

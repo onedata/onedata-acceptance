@@ -50,15 +50,11 @@ Feature: Automation examples input files test
 
     Examples:
     | example_file_name                  |
-    # lambda exception
-    #| bagit_archive_5gbfile.zip          |
-    # wrong url
-    #| bagit_archive_fetch.zip            |
-    # ok
     | bagit_archive_fetch_xrootd.zip     |
-    # ok
     | bagit_archive_unpack.tar           |
-    # lambda exception
+    # TODO uncomment after workflow fix or implement exception checking
+    #| bagit_archive_5gbfile.zip          |
+    #| bagit_archive_fetch.zip            |
     #| bagit_archive_unpack_and_fetch.zip |
 
 
@@ -154,7 +150,6 @@ Feature: Automation examples input files test
 
     Examples:
     | example_file_name        |
-    # lambda exception
-    #| fetch_multiple_files.txt |
-    # ok
     | fetch_xrootd.txt         |
+    # TODO uncomment after workflow fix or implement exception checking
+    #| fetch_multiple_files.txt |
