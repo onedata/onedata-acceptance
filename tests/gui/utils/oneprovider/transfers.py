@@ -93,6 +93,10 @@ class TabHeader(PageObject):
         self.web_elem.click()
 
 
+class TransferColumnHeader(PageObject):
+    name = id = Label('.column-name')
+
+
 class _TransfersTab(PageObject):
     ongoing_map_header = WebElement('.col-providers-map h2')
     spaces = WebItemsSequence('ul.spaces-list li', cls=SpaceRecord)
@@ -107,6 +111,9 @@ class _TransfersTab(PageObject):
     _transfers_list_for_certain_file = WebItemsSequence(
         '.transfers-table-container .transfer-row', cls=TransferRecord)
     configure_columns = Button('.columns-configuration-button')
+    column_headers = WebItemsSequence(
+        '.transfers-table th:not(:last-child, :first-of-type)',
+        cls=TransferColumnHeader)
 
     @property
     def ongoing(self):
