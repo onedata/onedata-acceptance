@@ -325,26 +325,16 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
         raise RuntimeError('no button named {} found'.format(button_name))
 
 
-@wt(parsers.parse('user of {browser_id} sees {text} alert '
-                  'in "{modal}" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<text>.*)" '
+               '(?P<element>info|alert) in "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
+def assert_element_text_in_modal(selenium, browser_id, modals, modal, text,
+                                 element):
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
-    forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
-    assert text in forbidden_alert_text, (
-        'found {} text instead of {}'.format(forbidden_alert_text, text))
-
-
-@wt(parsers.parse('user of {browser_id} sees "{text}" info '
-                  'in "{modal}" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_info_text_in_modal(selenium, browser_id, modals, modal, text):
-    driver = selenium[browser_id]
-    modal = check_modal_name(modal)
-    info_text = getattr(modals(driver), modal).info.text
-    assert text in info_text, (
-        'found {} text instead of {}'.format(info_text, text))
+    element_sel = 'forbidden_alert' if element == 'alert' else 'info'
+    element_text = getattr(getattr(modals(driver), modal), element_sel).text
+    assert text in element_text, f'found {element_text} text instead of {text}'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '

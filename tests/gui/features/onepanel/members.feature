@@ -101,7 +101,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks on "Invite user using token" button in users list menu in "oneprovider-1" cluster members view
-    Then user of browser_standard sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser_standard sees "This resource could not be loaded" alert in "Invite using token" modal
 
 
   Scenario: User fails to remove group from cluster without remove group privileges
@@ -147,7 +147,7 @@ Feature: Basic cluster members management utilities using onepanel
               View cluster: False
 
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    Then user of browser_standard sees Insufficient privileges alert in cluster members subpage
+    Then user of browser_standard sees "Insufficient privileges" alert in cluster members subpage
 
 
   Scenario: User fails to modify cluster without modify cluster privileges

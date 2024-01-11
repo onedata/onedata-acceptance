@@ -34,7 +34,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
 
     And user of browser2 refreshes site
     And user of browser2 clicks Members of "harvester11" harvester in the sidebar
-    Then user of browser2 sees Insufficient privileges alert in harvester members subpage
+    Then user of browser2 sees "Insufficient privileges" alert in harvester members subpage
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
     And user of browser2 sees Insufficient privileges alert on Spaces subpage
     And user of browser2 clicks Indices of "harvester11" harvester in the sidebar
@@ -94,7 +94,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     # fail to view privileges
     And user of browser2 clicks Members of "harvester14" harvester in the sidebar
     And user of browser2 clicks "admin" user in "harvester14" harvester members users list
-    And user of browser2 sees Insufficient privileges alert in harvester members subpage
+    And user of browser2 sees "Insufficient privileges" alert in harvester members subpage
 
     And user of browser1 sets following privileges for "user1" user in "harvester14" harvester:
           Harvester management:
