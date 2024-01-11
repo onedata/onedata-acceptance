@@ -517,3 +517,15 @@ def assert_message_at_alert_modal(browser_id, option, modals, selenium):
 def scroll_to_top_in_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     browser.scroll_to_top()
+
+
+@wt(parsers.parse('user of {browser_id} sees physical location path in file '
+                  'details and copies it into the clipboard'))
+def assert_physical_location_path_and_copy_in_file_details(
+        selenium, browser_id, clipboard, displays, modals):
+    button = 'physical_location'
+    modal = 'details modal'
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    path = clipboard.paste(display=displays[browser_id])
+    err_msg = f'there is no physical location path visible in file details'
+    assert path is not None, err_msg
