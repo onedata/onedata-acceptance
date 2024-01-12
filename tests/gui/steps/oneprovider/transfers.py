@@ -287,3 +287,31 @@ def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container,
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
                                                op_container, popups)
     return op_container(selenium[browser_id]).transfers
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
+               'columns in columns configuration popover in '
+               'transfers table'))
+def select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
+                                              op_container, popups):
+    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
+                                               op_container, popups)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
+               'in transfers'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_visible_columns_in_transfers(browser_id, op_container, columns,
+                                        selenium):
+    columns = parse_seq(columns)
+    transfers = op_container(selenium[browser_id]).transfers
+    transfers_columns = transfers.column_headers
+    transfers_columns = list(map(lambda x: x.name.lower(), transfers_columns))
+    err_msg = (f'there is different number of columns visible: '
+               f'{len(transfers_columns)} than expected: {len(columns)}, in '
+               f'transfers')
+    assert len(columns) == len(transfers_columns), err_msg
+    for column in columns:
+        if column not in transfers_columns:
+            raise AssertionError(
+                f'column {column} is not visible in transfers')

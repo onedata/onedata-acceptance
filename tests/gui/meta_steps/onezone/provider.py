@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
+from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
 from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_understand_risk_in_cease_support_modal,
     wt_clicks_on_btn_in_cease_support_modal)
@@ -91,3 +92,12 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
                                             modals)
     notify_visible_with_text(selenium, browser_id, notify_type,
                              notify_text_regexp)
+
+
+@wt(parsers.parse('a file under the path from the user of {browser_id} '
+                  'clipboard exists, with content "{content}" in provider\'s '
+                  'storage mount point'))
+def assert_file_with_content_in_provider_storage(
+        browser_id, clipboard, displays, content, hosts):
+    path = clipboard.paste(display=displays[browser_id])
+    wt_assert_file_in_path_with_content(path, content, hosts)
