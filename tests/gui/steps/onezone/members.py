@@ -663,7 +663,7 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient privileges) alert '
+               '"(?P<alert_text>Insufficient privileges)" alert '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,
@@ -730,7 +730,7 @@ def check_list_length_on_members_subpage(selenium, browser_id, oz_page,
     assert len(members_list.items) == number, error_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<alert_text>.*) alert '
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>.*)" alert '
                'in Invite user using token modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_insufficient_permissions_in_modal(selenium, browser_id, alert_text):
