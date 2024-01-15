@@ -226,6 +226,44 @@ Feature: Automation examples tests
            - xrootd_fetch.txt
 
 
+  Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_xrootd.txt" to current dir
+    And user of browser sees that item named "fetch_xrootd.txt" has appeared in file browser
+
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - fetch_xrootd.txt
+        destination:
+          - dir1
+
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
+        timestamp: today
+        source: user
+        severity: info
+        content:
+            status: Found  1 files to be downloaded.
+            fetchFileName: fetch_xrootd.txt
+
+    And user of browser opens file browser for "space1" space
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that the file structure in file browser is as follow:
+           - dir1:
+               - data:
+                  - LHC10c_pp_ESD_120076.json
+           - fetch_xrootd.txt
+
+    # TODO implement test for following archives after workflow fix
+    # fetch_multiple_files.txt
+
+
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using incorrect fetch file
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage

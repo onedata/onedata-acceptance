@@ -25,39 +25,6 @@ Feature: Automation examples input files test
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario Outline: User sees successful execution of uploaded "bagit-uploader" workflow and input file <example_file_name>
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
-
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "<example_file_name>" to current dir
-    And user of browser sees that item named <example_file_name> has appeared in file browser
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "bagit-uploader" workflow
-    And user of browser chooses <example_file_name> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
-
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
-
-
-    Examples:
-    | example_file_name                  |
-    | bagit_archive_fetch_xrootd.zip     |
-    | bagit_archive_unpack.tar           |
-    # TODO uncomment after workflow fix or implement exception checking
-    #| bagit_archive_5gbfile.zip          |
-    #| bagit_archive_fetch.zip            |
-    #| bagit_archive_unpack_and_fetch.zip |
-
-
   Scenario Outline: User sees desirable information in file metadata after execution of uploaded "detect-file-formats" workflow and input file <example_file_name>
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
@@ -123,33 +90,3 @@ Feature: Automation examples input files test
     | example_file_name        | meta_entry_val1      |
     | example_image.jpg        | image/jpeg           |
     | example_python_script.py | text/x-python        |
-
-
-  Scenario Outline: User sees successful execution of uploaded "download-files" workflow and input file <example_file_name>
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
-
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "<example_file_name>" to current dir
-    And user of browser sees that item named <example_file_name> has appeared in file browser
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "download-files" workflow
-    And user of browser chooses <example_file_name> file as initial value of "fetch-files" store for workflow in "Select files" modal
-    And user of browser chooses "dir1" file as initial value of "destination" store for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
-
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
-
-
-    Examples:
-    | example_file_name        |
-    | fetch_xrootd.txt         |
-    # TODO uncomment after workflow fix or implement exception checking
-    #| fetch_multiple_files.txt |
