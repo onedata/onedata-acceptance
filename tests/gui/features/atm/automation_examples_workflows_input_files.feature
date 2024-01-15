@@ -34,7 +34,7 @@ Feature: Automation examples input files test
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "<example_file_name>" to current dir
+    And user of browser uses upload button from file browser menu bar to upload input file "automation/input_files/<example_file_name>" to current dir
     And user of browser sees that item named <example_file_name> has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
@@ -48,16 +48,16 @@ Feature: Automation examples input files test
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on "Metadata" in context menu for "<example_file_name>"
+    And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
     And user of browser sees basic metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
     And user of browser sees basic metadata entry with attribute named "format.is-extension-matching-format" and value "True"
     And user of browser sees basic metadata entry with attribute named "format.format-name" and value "<meta_entry_val2>"
 
 
     Examples:
-    | example_file_name     | meta_entry_val1      | meta_entry_val2                      |
-    | example_cpp_script    | text/x-c++           | C++ source, ASCII text               |
-    | example_python_script | text/x-script.python | Python script, ASCII text executable |
+    | example_file_name       | meta_entry_val1      | meta_entry_val2                      |
+    | "example_cpp_script"    | text/x-c++           | C++ source, ASCII text               |
+    | "example_python_script" | text/x-script.python | Python script, ASCII text executable |
 
 
   Scenario Outline: User sees desirable information in file metadata after execution of uploaded "detect-file-mime-formats" workflow and input file <example_file_name>
@@ -68,7 +68,7 @@ Feature: Automation examples input files test
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "<example_file_name>" to current dir
+    And user of browser uses upload button from file browser menu bar to upload input file "automation/input_files/<example_file_name>" to current dir
     And user of browser sees that item named <example_file_name> has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
@@ -82,11 +82,11 @@ Feature: Automation examples input files test
     Then user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on "Metadata" in context menu for "<example_file_name>"
+    And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
     And user of browser sees basic metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
 
 
     Examples:
-    | example_file_name        | meta_entry_val1      |
-    | example_image.jpg        | image/jpeg           |
-    | example_python_script.py | text/x-python        |
+    | example_file_name          | meta_entry_val1    |
+    | "example_image.jpg"        | image/jpeg         |
+    | "example_python_script.py" | text/x-python      |
