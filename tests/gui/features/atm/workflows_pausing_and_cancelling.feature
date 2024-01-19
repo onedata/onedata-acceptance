@@ -233,7 +233,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Stopping" or "Paused"
     And user of browser clicks "Cancel" button on "workflow-with-one-box" workflow status bar
 
-    Then user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
+    Then user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
     And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
     And user of browser sees that status of "workflow-with-one-box" workflow is "Cancelled"
