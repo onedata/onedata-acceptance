@@ -47,7 +47,7 @@ Feature: Automation examples tests
         input-files:
           - test.py
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "detect-file-formats" workflow is "Finished"
 
     And user of browser sees that content of "formats" store is:
         mimeType: text/plain
@@ -73,7 +73,7 @@ Feature: Automation examples tests
         input-files:
           - lorem_ipsum.enl
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "detect-file-formats" workflow is "Finished"
     And user of browser sees that content of "formats" store is:
         mimeType: text/plain
         formatName: ASCII text
@@ -110,7 +110,7 @@ Feature: Automation examples tests
         input-files:
           - test.py
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "detect-file-mime-formats" workflow is "Finished"
     And user of browser sees that content of "files-format" store is:
         fileName: test.py
         mimeType: text/x-python
@@ -132,7 +132,7 @@ Feature: Automation examples tests
         input-files:
           - lorem_ipsum.enl
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "detect-file-mime-formats" workflow is "Finished"
     And user of browser sees that content of "files-format" store is:
         fileName: lorem_ipsum.enl
         mimeType: unknown
@@ -177,7 +177,7 @@ Feature: Automation examples tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks on first executed workflow
-    And user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser sees that status of "download-files" workflow is "Finished"
     And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
@@ -208,7 +208,7 @@ Feature: Automation examples tests
         destination:
           - dir1
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "download-files" workflow is "Finished"
     And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
@@ -241,7 +241,7 @@ Feature: Automation examples tests
         destination:
           - dir1
 
-    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    Then user of browser sees that status of "download-files" workflow is "Failed"
     And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         severity: Error
@@ -267,7 +267,7 @@ Feature: Automation examples tests
         destination:
           - dir1
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "download-files" workflow is "Finished"
     And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
         timestamp: today
         source: user
@@ -302,9 +302,9 @@ Feature: Automation examples tests
     And user of browser clicks on "Ongoing" tab in automation subpage
     And user of browser clicks on "echo" on workflow executions list
     And user of browser is idle for 2 seconds
-    And user of browser sees "Active" status in status bar in workflow visualizer
+    And user of browser sees that status of "echo" workflow is "Active"
     And user of browser is idle for 8 seconds
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser sees that status of "echo" workflow is "Finished"
 
 
   Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda
@@ -326,7 +326,7 @@ Feature: Automation examples tests
         input:
           - dir1
 
-    Then user of browser sees "Failed" status in status bar in workflow visualizer
+    Then user of browser sees that status of "echo" workflow is "Failed"
     And user of browser sees that audit log in task "echo" in 1st parallel box in lane "lane 1" contains following entry:
         timestamp: today
         severity: Error
@@ -344,7 +344,7 @@ Feature: Automation examples tests
         input-files:
           - dir1
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "<workflow_name>" workflow is "Finished"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
@@ -383,7 +383,7 @@ Feature: Automation examples tests
         input_files:
           - dir2
 
-    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that status of "demo" workflow is "Finished"
     And user of browser sees following strings represented by "["Hello - dir2", "Hello - file1"]" in content in "results" store details modal
 
 
