@@ -642,7 +642,7 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     # wait a moment for modal to open
     time.sleep(1)
     modal = modals(driver).audit_log
-    if severity == 'Error':
+    if severity == 'Error' or severity == 'Debug':
         modal.logs_entry[severity].click()
     elif source == 'user':
         modal.user_log.click()

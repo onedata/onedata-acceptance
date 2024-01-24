@@ -259,3 +259,12 @@ def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
     page = oz_page(selenium[browser_id])['automation']
     revision = int(ordinal[:-2]) - 1
     page.workflows_page.elements_list[workflow].revision_list[revision].click()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{level}" logging level'))
+def select_logging_level_in_automation_subpage(
+        browser_id, selenium, op_container, popups, level):
+    driver = selenium[browser_id]
+    op_container(driver).automation_page.logging_level()
+    options = popups(driver).logging_level
+    options.choose_item(level)

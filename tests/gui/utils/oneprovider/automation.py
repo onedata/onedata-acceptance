@@ -181,6 +181,7 @@ class WorkflowExecutionPage(PageObject):
     booleans_input = WebElementsSequence('.boolean-editor')
     number_input = WebItem('.number-editor', cls=NumberInput)
     string_input = WebItem('.string-editor', cls=StringInput)
+    logging_level = Button('.dropdown-field-trigger')
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(
