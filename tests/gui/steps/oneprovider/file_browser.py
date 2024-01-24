@@ -331,6 +331,8 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     visible_files = browser.names_of_visible_elems()
     new_files = [f for f in visible_files if f]
     while new_files:
+        # try to load browser again
+        browser = tmp_memory[browser_id]['file_browser']
         detected_files.extend(new_files)
         browser.scroll_visible_fragment()
         visible_files = browser.names_of_visible_elems()
