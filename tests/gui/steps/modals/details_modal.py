@@ -115,8 +115,8 @@ def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
                   'context menu for {item_name} in file browser'))
 def click_on_context_menu_item(selenium, browser_id, popups, item_name,
                                tmp_memory, context_menu_item):
-    if item_name[0] == "\"":
-        item_name = item_name.replace("\"", "")
+    if item_name[0] == '\"':
+        item_name = item_name.replace('\"', '')
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              context_menu_item, popups)

@@ -425,8 +425,8 @@ Feature: Bagit uploader tests
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees Dataset status tag for "dir1" in file browser
 
-    # TODO uncomment after implementing function which checks file structure and
-    #  recognize dirs with names not starting with "dir" prefix
+    # TODO: VFS-11706 uncomment after implementing function which checks file
+    #  structure and  recognize dirs with names not starting with "dir" prefix
 #    And user of browser sees that the file structure in file browser is as follow:
 #      - dir1:
 #        - mid-covid6:
@@ -438,7 +438,7 @@ Feature: Bagit uploader tests
     And user of browser clicks on inherited status tag for "mid-covid6" in file browser
     And user of browser sees Dataset status tag for "mid-covid6" in file browser
 
-    # TODO implement test for following archives after workflow fix
+    # TODO: VFS-11705 implement test for following archives after workflow fix
     # bagit_archive_5gbfile.zip
     # bagit_archive_fetch.zip
     # bagit_archive_unpack_and_fetch.zip

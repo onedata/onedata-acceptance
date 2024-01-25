@@ -170,10 +170,10 @@ Feature: Automation examples tests
     Then user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that the file structure in file browser is as follow:
-           - dir1:
-               - data:
-                  - googlelogo_color_272x92dp.png
-           - fetch.txt
+        - dir1:
+          - data:
+            - googlelogo_color_272x92dp.png
+        - fetch.txt
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks on first executed workflow
@@ -220,10 +220,10 @@ Feature: Automation examples tests
     And user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that the file structure in file browser is as follow:
-           - dir1:
-               - data:
-                  - LHC10c_pp_ESD_120076.json
-           - xrootd_fetch.txt
+        - dir1:
+          - data:
+            - LHC10c_pp_ESD_120076.json
+        - xrootd_fetch.txt
 
 
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
@@ -255,12 +255,13 @@ Feature: Automation examples tests
     And user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that the file structure in file browser is as follow:
-           - dir1:
-               - data:
-                  - LHC10c_pp_ESD_120076.json
-           - fetch_xrootd.txt
+        - dir1:
+          - data:
+            - data:
+              - LHC10c_pp_ESD_120076.json
+        - fetch_xrootd.txt
 
-    # TODO implement test for following archives after workflow fix
+    # TODO: VFS-11705 implement test for following archives after workflow fix
     # fetch_multiple_files.txt
 
 
