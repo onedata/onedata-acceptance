@@ -21,6 +21,7 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op,\
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -323,13 +324,15 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
-                  'and sees there are {count} files'))
+# @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
+#                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     detected_files = []
     visible_files = browser.names_of_visible_elems()
     new_files = [f for f in visible_files if f]
+    import pdb
+    pdb.set_trace()
     while new_files:
         # try to load browser again
         browser = tmp_memory[browser_id]['file_browser']
@@ -340,6 +343,44 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     else:
         err_msg = (f'There are {len(detected_files)} files in file browser '
                    f'when should be {count}')
+        assert len(detected_files) == count, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
+                  'and sees there are {count} files'))
+def count_files_while_scrolling(browser_id, count: int, tmp_memory):
+    """
+    In order to stabilize this function, check whether we did not scroll too far
+    function assumes files` names don`t repeat
+    """
+    last_file_name = None
+    browser = tmp_memory[browser_id]['file_browser']
+    detected_files = []
+    visible_files = browser.names_of_visible_elems()
+    new_files = [f for f in visible_files if f]
+    while new_files:
+        detected_files.extend(new_files)
+        last_file_name = detected_files[-1]
+        browser.scroll_visible_fragment()
+        visible_files = browser.names_of_visible_elems()
+        new_files = [f for f in visible_files if f and f not in detected_files]
+        # this means we may have scrolled a bit too far,
+        # so we may have omitted some files
+        if last_file_name not in visible_files:
+            write_to_jump_input(browser_id, tmp_memory, last_file_name)
+            try:
+                visible_files = browser.names_of_visible_elems()
+                new_files = [f for f in visible_files if
+                             f and f not in detected_files]
+            except StaleElementReferenceException:
+                # browser did not load
+                time.sleep(1)
+                visible_files = browser.names_of_visible_elems()
+                new_files = [f for f in visible_files if
+                             f and f not in detected_files]
+    else:
+        err_msg = (f'There are {len(detected_files)} files in file browser '
+                   f'when should be {count}, file list:{detected_files}')
         assert len(detected_files) == count, err_msg
 
 
