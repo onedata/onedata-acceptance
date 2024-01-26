@@ -127,16 +127,20 @@ Feature: Workflows stores tests
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "echo" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-    And user of browser chooses "debug" logging level
+    And user of browser chooses "Debug" logging level
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
-
-    And user of browser sees that audit log in task "echo" in 1st parallel box in lane "lane 1" contains following entry:
-        timestamp: today
-        severity: Debug
-        source: system
-        content:
-            description: Processing results for item...
+    And user of browser clicks "Audit log" button on "Echo" workflow status bar
+    And user of browser sees that workflow audit log contains following system debug entries with description:
+        - "[Lane: 1, Run: 1] Starting..."
+        - "[Lane: 1, Run: 1] Created."
+        - "[Lane: 1, Run: 1] Parallel boxes created."
+        - "[Lane: 1, Run: 1, PBox: 1, Task: 1] Created."
+        - "[Lane: 1, Run: 1, PBox: 1, Task: 1] Audit log created."
+        - "[Lane: 1, Run: 1, PBox: 1, Task: 1] Executor created."
+        - "[Lane: 1, Run: 1] Exception store created."
+        - "[Lane: 1, Run: 1] Creating..."
+        - "[Lane: 1, Run: 1] Preparing..."
