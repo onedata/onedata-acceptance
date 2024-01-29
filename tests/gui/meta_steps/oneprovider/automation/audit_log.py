@@ -15,6 +15,7 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests import GUI_LOGDIR
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
     get_store_details_json, open_modal_and_get_store_content)
 from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
@@ -37,6 +38,7 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
+from tests.utils.utils import repeat_failed
 
 
 def write_audit_logs_for_task_to_file(task, modals, driver, clipboard, path,
@@ -425,18 +427,22 @@ def click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
     time.sleep(1)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_if_element_is_selected(tmp_memory, browser_id, name, which_browser):
+    err_msg = f'Element {name} is not selected in {which_browser}'
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    if_selected = browser.data[name].is_selected()
+    assert if_selected, err_msg
+
+
 @wt(parsers.parse('user of {browser_id} sees "{name}" item selected in the'
                   ' {which_browser} opened in new web browser tab'))
 def assert_element_selected_in_new_browser_tab(
         browser_id, selenium, op_container, name, tmp_memory, which_browser):
-    err_msg = f'Element {name} is not selected in {which_browser}'
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 which_browser)
-
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    if_selected = browser.data[name].is_selected()
-    assert if_selected, err_msg
+    check_if_element_is_selected(tmp_memory, browser_id, name, which_browser)
 
 
 def compare_to_expected_if_element_exist_for_store(
