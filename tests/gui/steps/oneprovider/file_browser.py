@@ -324,28 +324,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-# @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
-#                   'and sees there are {count} files'))
-def count_files_while_scrolling(browser_id, count: int, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    detected_files = []
-    visible_files = browser.names_of_visible_elems()
-    new_files = [f for f in visible_files if f]
-    import pdb
-    pdb.set_trace()
-    while new_files:
-        # try to load browser again
-        browser = tmp_memory[browser_id]['file_browser']
-        detected_files.extend(new_files)
-        browser.scroll_visible_fragment()
-        visible_files = browser.names_of_visible_elems()
-        new_files = [f for f in visible_files if f and f not in detected_files]
-    else:
-        err_msg = (f'There are {len(detected_files)} files in file browser '
-                   f'when should be {count}')
-        assert len(detected_files) == count, err_msg
-
-
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
