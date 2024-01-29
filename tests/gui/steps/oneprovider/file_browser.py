@@ -350,34 +350,30 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     """
-    In order to stabilize this function, check whether we did not scroll too far
-    function assumes files` names don`t repeat
+    In order to stabilize this function, func does not scroll too much at once
+    to don`t omit any files
+    Function assumes files` names don`t repeat
     """
-    last_file_name = None
+
     browser = tmp_memory[browser_id]['file_browser']
     detected_files = []
     visible_files = browser.names_of_visible_elems()
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
-        last_file_name = detected_files[-1]
-        browser.scroll_visible_fragment()
-        visible_files = browser.names_of_visible_elems()
-        new_files = [f for f in visible_files if f and f not in detected_files]
-        # this means we may have scrolled a bit too far,
-        # so we may have omitted some files
-        if last_file_name not in visible_files:
-            write_to_jump_input(browser_id, tmp_memory, last_file_name)
+        # click some browser elem
+        browser.click_header()
+        # scroll about 5 files downs
+        for _ in range(5):
+            browser.scroll_one_file_down()
+        # wait if page does not respond instantly
+        for _ in range(10):
             try:
                 visible_files = browser.names_of_visible_elems()
-                new_files = [f for f in visible_files if
-                             f and f not in detected_files]
+                break
             except StaleElementReferenceException:
-                # browser did not load
-                time.sleep(1)
-                visible_files = browser.names_of_visible_elems()
-                new_files = [f for f in visible_files if
-                             f and f not in detected_files]
+                time.sleep(0.1)
+        new_files = [f for f in visible_files if f and f not in detected_files]
     else:
         err_msg = (f'There are {len(detected_files)} files in file browser '
                    f'when should be {count}, file list:{detected_files}')
