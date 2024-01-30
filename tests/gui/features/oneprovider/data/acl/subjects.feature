@@ -5,6 +5,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
             - user1
             - user2
             - user3
+            - user4
             - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
             group1:
@@ -146,3 +147,28 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     | [deny, general:delete]    | [general:delete]          | fails     |
 
 
+  Scenario: User sees ACL record for removed from space user
+    Given initial spaces configuration in "onezone" Onezone service:
+        space1:
+            owner: space-owner-user
+            users:
+                - user4
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                    - file1
+
+    And opened browser with space-owner-user signed in to "onezone" service
+    When user of browser sets "file1" ACL [acl] privileges for user user4 in "space1"
+    And user of browser sets "file1" ACL [acl] privileges for user space-owner-user in "space1"
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser removes "user4" user from "space1" space members
+    Then user of browser sees that "file1" in space "space1" has [acl] privileges set for unknown user in first ACL record
+    And user of browser sees that "file1" in space "space1" contains id of user "user4" in first ACL record
+    And user of browser sees that "file1" in space "space1" has [acl] privileges set for user space-owner-user in second ACL record
