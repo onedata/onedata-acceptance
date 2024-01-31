@@ -387,7 +387,7 @@ Feature: Bagit uploader tests
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
+    And user of browser waits extended time for all workflows to finish
     And user of browser clicks on first executed workflow
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
