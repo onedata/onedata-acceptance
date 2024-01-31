@@ -322,3 +322,17 @@ def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
         if column not in browser_columns:
             raise AssertionError(
                 f'column {column} is not visible in {which_browser}')
+
+
+@wt(parsers.parse('user of {browser_id} does not see button "{button}" '
+                  'in {which_browser}'))
+def assert_button_not_visible_in_browser(browser_id, tmp_memory, button,
+                                         which_browser):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    if button == 'New directory':
+        button += ' button'
+    try:
+        getattr(browser, transform(button))
+        raise AssertionError(f'button {button} is visible')
+    except RuntimeError:
+        pass
