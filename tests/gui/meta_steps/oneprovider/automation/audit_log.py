@@ -649,7 +649,7 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     # wait a moment for modal to open
     time.sleep(1)
     modal = modals(driver).audit_log
-    if severity == 'Error':
+    if severity == 'Error' or severity == 'Debug':
         modal.logs_entry[severity].click()
     elif source == 'user':
         modal.user_log.click()
@@ -708,6 +708,51 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 modal.close_details.click()
     else:
         raise RuntimeError('file {} has not been downloaded'.format(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees that workflow audit log contains '
+                  'following system debug entries with description:\n{config}'))
+def assert_workflow_audit_log_contains_entries(selenium, browser_id, modals,
+                                               tmpdir, tmp_memory, config):
+    _assert_workflow_audit_log_contains_entries(selenium, browser_id, modals,
+                                                tmpdir, tmp_memory, config)
+
+
+def _assert_workflow_audit_log_contains_entries(
+        selenium, browser_id, modals, tmpdir, tmp_memory, config):
+    data = yaml.load(config)
+    driver = selenium[browser_id]
+    modal_name = 'Workflow audit log'
+    # wait for modal to appear
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modal = modals(driver).audit_log
+    modal.download_as_json()
+    # wait a while for file to download
+    time.sleep(0.5)
+    path = tmpdir.join(browser_id, 'download')
+    file_name = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_name)
+
+    f = open(file_path)
+    data_file = json.load(f)
+    for expected_entry in data:
+        if assert_expected_in_entries(expected_entry, data_file):
+            continue
+        err_msg = f'there is no entry {expected_entry} in workflow audit log'
+        raise RuntimeError(err_msg)
+    modal.x()
+
+
+def assert_expected_in_entries(expected_entry, entries):
+    for actual_entry in entries:
+        if compare_audit_log_debug_entries(actual_entry, expected_entry):
+            return True
+    return False
+
+
+def compare_audit_log_debug_entries(actual_entry, expected_entry):
+    return expected_entry in actual_entry['content']['description'] and (
+            actual_entry['severity'] == 'debug')
 
 
 @wt(parsers.parse('user of {browser_id} sees that workflow audit log contains '

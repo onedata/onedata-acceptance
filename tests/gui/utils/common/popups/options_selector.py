@@ -24,7 +24,7 @@ class OptionsSelector(PageObject):
     menu = WebItemsSequence('.selector-item', cls=MenuItem)
 
     def __str__(self):
-        return 'Menu popup with label'
+        return 'Options selector'
 
     def choose_option(self, name):
         self.hover_over()
