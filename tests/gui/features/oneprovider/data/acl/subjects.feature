@@ -147,7 +147,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     | [deny, general:delete]    | [general:delete]          | fails     |
 
 
-  Scenario: User sees ACL record for removed from space user
+  Scenario: User sees ACL record for user removed from space
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: space-owner-user
