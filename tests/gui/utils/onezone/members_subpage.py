@@ -39,7 +39,7 @@ class MembersItemHeader(PageObject):
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
     name = id = Label('.record-name-general')
-    privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
+    privilege_tree = WebItem('.table-privileges', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
     status_labels = WebElementsSequence('.label')
     ownership_warning = WebElement('.privileges-of-owner-warning')
@@ -112,8 +112,6 @@ class MembersPage(PageObject):
     groups = WebItem('.group-list', cls=MembersList)
     users = WebItem('.user-list', cls=MembersUserList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
-    effective_button = NamedButton('.direct-selector button', text='Effective')
-    memberships_button = NamedButton('.mode-selector button', text='Memberships')
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
                                    cls=MembershipRow)
 

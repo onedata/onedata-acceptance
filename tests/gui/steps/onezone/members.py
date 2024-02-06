@@ -589,7 +589,26 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
-    tree.assert_privileges(selenium, browser_id, privileges)
+    tree.assert_privileges(selenium, browser_id, privileges, True)
+    driver = selenium[browser_id]
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    page.close_member(driver)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees following effective privileges '
+               'of "(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group|harvester|automation|cluster) '
+               'members subpage:\n(?P<config>(.|\s)*)'))
+def assert_effective_privileges_in_members_subpage(selenium, browser_id,
+                                                   member_name, member_type,
+                                                   where, config, onepanel,
+                                                   oz_page):
+    member_type = member_type + 's'
+    time.sleep(1)
+    privileges = yaml.load(config)
+    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                              member_type, member_name)
+    tree.assert_privileges(selenium, browser_id, privileges, False)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
