@@ -107,6 +107,7 @@ class Popups(object):
     toggle_label = Label('.tooltip .tooltip-inner')
     configure_columns_menu = WebItem('.webui-popover-columns-configuration',
                                      cls=ConfigureColumnsMenu)
+    logging_level = WebItem('.logLevel-field-dropdown', cls=PowerSelect)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
