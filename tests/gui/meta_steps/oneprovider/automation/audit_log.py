@@ -35,6 +35,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     compare_string_in_store_details_modal, compare_array_in_store_details_modal,
     check_number_of_elements_in_store_details_modal, get_store_content)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import append_log_to_file
@@ -707,3 +708,40 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 modal.close_details.click()
     else:
         raise RuntimeError('file {} has not been downloaded'.format(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees that workflow audit log contains '
+                  'entry with info about file attributes {item_list}'))
+def assert_workflow_audit_log_contains_entries(
+        selenium, browser_id, modals, tmpdir, tmp_memory, item_list):
+    driver = selenium[browser_id]
+    modal_name = 'Workflow audit log'
+    # wait for modal to appear
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modal = modals(driver).audit_log
+    modal.download_as_json()
+    # wait a while for file to download
+    time.sleep(0.5)
+    path = tmpdir.join(browser_id, 'download')
+    file_path = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_path)
+    f = open(file_path)
+    data_file = json.load(f)
+    item_list = parse_seq(item_list)
+    for entry in data_file:
+        try:
+            content = entry['content']
+            if _assert_all_items_in_json(item_list, content):
+                return True
+        except KeyError:
+            pass
+    err_msg = (f'there is no entry containing data about {item_list} '
+               f'in workflow audit log')
+    raise RuntimeError(err_msg)
+
+
+def _assert_all_items_in_json(item_list, data):
+    for item in item_list:
+        if not data.get(transform(item), False):
+            return False
+    return True
