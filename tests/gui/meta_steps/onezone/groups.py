@@ -106,16 +106,10 @@ def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
 def _select_mode_view_in_members_subpage(selenium, user, oz_page,
                                          parent, onepanel):
     where = 'group'
-    direct_selector = 'effective'
-    mode_selector = 'memberships'
     list_type = 'users'
     subpage = 'members'
 
     go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_mode_view_in_members_subpage(selenium, user, direct_selector,
-                                       oz_page, where, onepanel)
-    click_mode_view_in_members_subpage(selenium, user, mode_selector,
-                                       oz_page, where, onepanel)
     click_element_in_members_list(selenium, user, user, oz_page, where,
                                   list_type, onepanel)
 

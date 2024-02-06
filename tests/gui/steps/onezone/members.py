@@ -57,20 +57,6 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
     return getattr(page, list_type).items[member_name].privilege_tree
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks '
-               '(?P<mode>direct|effective|privileges|memberships) view mode '
-               'in (?P<where>space|group|cluster|harvester|automation) '
-               'members subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mode_view_in_members_subpage(selenium, browser_id, mode, oz_page,
-                                       where, onepanel):
-    driver = selenium[browser_id]
-    mode = mode + '_button'
-    page = _find_members_page(onepanel, oz_page, driver, where)
-
-    getattr(page, mode).click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) sees that "(?P<member_name>.*)" '
                '(?P<member_type>user|group) is member of '
                '"(?P<parent_name>.*)" (?P<parent_type>space|group) '
