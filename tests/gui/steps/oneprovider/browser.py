@@ -329,10 +329,9 @@ def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
 def assert_button_not_visible_in_browser(browser_id, tmp_memory, button,
                                          which_browser):
     browser = tmp_memory[browser_id][transform(which_browser)]
-    if button == 'New directory':
-        button += ' button'
     try:
-        getattr(browser, transform(button))
-        raise AssertionError(f'button {button} is visible')
+        getattr(browser, transform(button) + '_button')
+        raise AssertionError(f'button {button} is visible in '
+                             f'{which_browser} browser')
     except RuntimeError:
         pass
