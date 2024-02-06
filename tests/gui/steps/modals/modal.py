@@ -334,7 +334,8 @@ def assert_element_text_in_modal(selenium, browser_id, modals, modal, text,
     modal = check_modal_name(modal)
     element_sel = 'forbidden_alert' if element == 'alert' else 'info'
     element_text = getattr(getattr(modals(driver), modal), element_sel).text
-    assert text in element_text, f'found {element_text} text instead of {text}'
+    assert text in element_text, (f'found {element_text} text instead of '
+                                  f'{text} in modal {modal}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
