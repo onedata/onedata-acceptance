@@ -666,14 +666,27 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
                '"(?P<alert_text>Insufficient privileges)" alert '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,
-                                       alert_text, onepanel):
+def assert_insufficient_permission_alert_in_members_subpage(
+        selenium, browser_id, oz_page, where, alert_text, onepanel):
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
+    assert_insufficient_permission_alert(page, alert_text)
 
-    forbidden_alert = page.forbidden_alert.text
-    assert alert_text in forbidden_alert, (
-        'alert with text "{}" not found'.format(alert_text))
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>.*)" alert '
+               'in Invite user using token modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_insufficient_permissions_alert_in_modal(
+        selenium, browser_id, alert_text):
+    driver = selenium[browser_id]
+    assert_insufficient_permission_alert(modals(driver).invite_using_token,
+                                         alert_text)
+
+
+def assert_insufficient_permission_alert(elem, alert_text):
+    forbidden_alert = elem.forbidden_alert.text
+    assert alert_text in forbidden_alert, (f'alert with text '
+                                           f'{alert_text} not found')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees privileges for '
@@ -728,16 +741,6 @@ def check_list_length_on_members_subpage(selenium, browser_id, oz_page,
     members_list = getattr(page, member_type)
     error_msg = f'Wrong number of {member_type} in {where} members subpage'
     assert len(members_list.items) == number, error_msg
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>.*)" alert '
-               'in Invite user using token modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_insufficient_permissions_in_modal(selenium, browser_id, alert_text):
-    driver = selenium[browser_id]
-    forbidden_alert = modals(driver).invite_using_token.forbidden_alert.text
-    assert alert_text in forbidden_alert, (
-        'alert with text "{}" not found'.format(alert_text))
 
 
 @wt(parsers.parse('user of {browser_id} sees that {where} {item_name} has '
