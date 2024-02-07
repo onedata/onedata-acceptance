@@ -99,4 +99,4 @@ Feature: Workflows stores tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
     And user of browser clicks "Audit log" button on "Echo" workflow status bar
-    Then user of browser sees that workflow audit log contains entry with info about file attributes ["atime", "size", "provider id"]
+    Then user of browser sees that workflow audit log contains entry with info only about file attributes ["atime", "size", "provider id"]

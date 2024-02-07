@@ -756,8 +756,8 @@ def compare_audit_log_debug_entries(actual_entry, expected_entry):
 
 
 @wt(parsers.parse('user of {browser_id} sees that workflow audit log contains '
-                  'entry with info about file attributes {item_list}'))
-def assert_workflow_audit_log_contains_entries(
+                  'entry with info only about file attributes {item_list}'))
+def assert_workflow_audit_log_contains_entry(
         selenium, browser_id, modals, tmpdir, tmp_memory, item_list):
     driver = selenium[browser_id]
     modal_name = 'Workflow audit log'
@@ -776,7 +776,8 @@ def assert_workflow_audit_log_contains_entries(
     for entry in data_file:
         try:
             content = entry['content']
-            if _assert_all_items_in_json(item_list, content):
+            if _assert_all_items_in_json(item_list, content) and (
+                    len(item_list) == len(content)):
                 return True
         except KeyError:
             pass

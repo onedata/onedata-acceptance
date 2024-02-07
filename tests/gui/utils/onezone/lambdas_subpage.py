@@ -14,9 +14,14 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
 
+class FileAttr(PageObject):
+    x = Button('.tag-remove')
+
+
 class ParameterSetting(PageObject):
     file_type = Button('.fileType-field .field-component')
     carried_file_attrs = Button('.fileAttributes-field .field-component')
+    attrs = WebItemsSequence('.tag-item', cls=FileAttr)
 
 
 class LambdaParameter(PageObject):

@@ -216,6 +216,9 @@ def modify_parameter_in_lambda_form(selenium, browser_id, oz_page, popups,
             setts.file_type()
             popups(driver).power_select.choose_item(val)
         if arg == 'Carried file attributes':
+            # remove default file attrs
+            for attr in setts.attrs:
+                attr.x()
             setts.carried_file_attrs()
             for el in val:
                 try:

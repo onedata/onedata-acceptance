@@ -34,7 +34,8 @@ class OptionsSelector(PageObject):
                 self.scroll_down()
             else:
                 self.menu[name].click()
-                break
+                return
+        raise RuntimeError(f'item {name} not found in popup')
 
     def hover_over(self):
         ActionChains(self.driver).move_to_element(
