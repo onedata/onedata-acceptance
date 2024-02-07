@@ -224,9 +224,9 @@ def assert_number_of_elements_in_store_details(selenium, browser_id, modals,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that each element from list '
-               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" space '
+               '"(?P<file_list>.*?)" in "(?P<space_name>.*?)" '
                '(?P<option>corresponds to two) instances of the element with '
-               '"file_id" in "(?P<store_name>.*?)" store details modal'))
+               '"file_id" in "(?P<store_name>.*?)" store'))
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that (each element with |)'
                '"file_id" in "(?P<store_name>.*?)" store details modal '
                '(?P<option>corresponds to id of file from|is id of) '
