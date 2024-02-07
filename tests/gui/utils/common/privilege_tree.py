@@ -91,7 +91,7 @@ class PrivilegeGroup(PageObject):
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element_by_css_selector(
-                    '.tree-circle .oneicon-square-minus-empty').click()
+                    '.table-privileges .oneicon-arrow-up').click()
             except:
                 self.expander.click()
 
