@@ -54,10 +54,10 @@ class PrivilegeRow(PageObject):
                     not self.toggle.is_checked() and granted):
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                elem_class = self._checkbox.get_attribute('class').split(' ')[0]
+                elem_id = self._checkbox.get_attribute('id')
                 try:
                     driver.find_element_by_css_selector(
-                        '.' + elem_class).click()
+                        '#' + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
         else:
@@ -78,9 +78,16 @@ class PrivilegeGroup(PageObject):
     sub_privileges = WebItemsSequence('.privilege-row',
                                       cls=PrivilegeRow)
 
-    def expand(self):
+    def expand(self, driver):
         if not self.is_expanded():
-            self.expander.click()
+            expander_id = self._expander.get_attribute('id')
+            try:
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                driver.find_element_by_css_selector(
+                    f'#{expander_id}').click()
+            except:
+                self.expander.click()
 
     def is_expanded(self):
         return 'oneicon-arrow-up' in self._expander.get_attribute('class')
@@ -139,12 +146,11 @@ class PrivilegeGroup(PageObject):
                     self.toggle.is_partial_checked()):
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                elem_class = \
-                    self._checkbox.get_attribute('class').split(' ')[0]
+                elem_id = self._checkbox.get_attribute('id')
                 for i in range(count):
                     try:
                         driver.find_element_by_css_selector(
-                            '.' + elem_class).click()
+                            '#' + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
 
@@ -202,7 +208,7 @@ class PrivilegeTree(PageObject):
         granted = group['granted']
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
-            privilege_row.expand()
+            privilege_row.expand(driver)
             for sub_name, sub_granted in sub_privileges.items():
                 if is_direct_privileges:
                     self.privileges[sub_name].assert_privilege_granted(sub_granted)
@@ -251,7 +257,7 @@ class PrivilegeTree(PageObject):
         granted = group['granted']
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
-            privilege_row.expand()
+            privilege_row.expand(driver)
             for sub_name, sub_granted in sub_privileges.items():
                 self.privileges[sub_name].set_privilege(driver, sub_granted,
                                                         with_scroll)
