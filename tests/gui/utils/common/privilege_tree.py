@@ -49,10 +49,22 @@ class PrivilegeRow(PageObject):
             assert self.effective_revoke, msg
 
     def set_privilege(self, driver, granted, with_scroll=False):
-        if granted:
-            self.activate()
+        if with_scroll:
+            if (self.toggle.is_checked() and not granted) or (
+                    not self.toggle.is_checked() and granted):
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                elem_class = self._checkbox.get_attribute('class').split(' ')[0]
+                try:
+                    driver.find_element_by_css_selector(
+                        '.' + elem_class).click()
+                except ElementNotInteractableException:
+                    self.toggle.click()
         else:
-            self.deactivate()
+            if granted:
+                self.activate()
+            else:
+                self.deactivate()
 
 
 class PrivilegeGroup(PageObject):
@@ -60,6 +72,7 @@ class PrivilegeGroup(PageObject):
     expander = Button('.group-privilege-text-container .one-icon')
     _expander = WebElement('.group-privilege-text-container .one-icon')
     toggle = Toggle('.toggle-column.group .one-way-toggle')
+    _checkbox = WebElement('.one-checkbox-base')
     effective_priv = Label('.pill')
 
     sub_privileges = WebItemsSequence('.privilege-row',
@@ -74,7 +87,13 @@ class PrivilegeGroup(PageObject):
 
     def collapse(self, driver):
         if self.is_expanded():
-            self.expander.click()
+            try:
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                driver.find_element_by_css_selector(
+                    '.tree-circle .oneicon-square-minus-empty').click()
+            except:
+                self.expander.click()
 
     def minimalize(self):
         self.expander.click()
@@ -112,11 +131,28 @@ class PrivilegeGroup(PageObject):
             msg = f'{self.name} should not be granted but it is'
             assert granted_count == 0, msg
 
-    def set_privilege(self, driver, granted):
-        if granted:
-            self.activate()
+    def set_privilege(self, driver, granted, with_scroll=False):
+        count = 2 if self.toggle.is_partial_checked() and not granted else 1
+        if with_scroll:
+            if ((self.toggle.is_checked() and not granted) or (
+                    not self.toggle.is_checked() and granted) or
+                    self.toggle.is_partial_checked()):
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                elem_class = \
+                    self._checkbox.get_attribute('class').split(' ')[0]
+                for i in range(count):
+                    try:
+                        driver.find_element_by_css_selector(
+                            '.' + elem_class).click()
+                    except ElementNotInteractableException:
+                        self.toggle.click()
+
         else:
-            self.deactivate()
+            if granted:
+                self.activate()
+            else:
+                self.deactivate()
 
 
 class PrivilegeTree(PageObject):
@@ -217,10 +253,11 @@ class PrivilegeTree(PageObject):
             sub_privileges = group['privilege subtypes']
             privilege_row.expand()
             for sub_name, sub_granted in sub_privileges.items():
-                self.privileges[sub_name].set_privilege(driver, sub_granted, with_scroll)
+                self.privileges[sub_name].set_privilege(driver, sub_granted,
+                                                        with_scroll)
             privilege_row.collapse(driver)
         else:
-            privilege_row.set_privilege(driver, granted)
+            privilege_row.set_privilege(driver, granted, with_scroll)
 
     def set_all_true(self):
         for priv_group in self.privilege_groups:
