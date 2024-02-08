@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
@@ -153,7 +155,6 @@ class PrivilegeGroup(PageObject):
                             '#' + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
-
         else:
             if granted:
                 self.activate()
@@ -258,6 +259,7 @@ class PrivilegeTree(PageObject):
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
             privilege_row.expand(driver)
+            time.sleep(1)
             for sub_name, sub_granted in sub_privileges.items():
                 self.privileges[sub_name].set_privilege(driver, sub_granted,
                                                         with_scroll)

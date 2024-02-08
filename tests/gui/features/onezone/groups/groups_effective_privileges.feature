@@ -139,7 +139,6 @@ Feature: Groups effective privileges
             granted: False
           Harvester management:
             granted: True
-    And user of browser clicks effective view mode in group members subpage
     And user of browser clicks "child_group2" group in "grandparent_group" group members groups list
     Then user of browser sees following effective privileges of "child_group2" group in group members subpage:
           Group hierarchy management:
