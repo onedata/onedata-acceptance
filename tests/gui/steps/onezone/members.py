@@ -12,7 +12,8 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import search_for_members
-from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.modals.modal import (wt_wait_for_modal_to_appear,
+                                          assert_element_text)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.automation.automation_basic import \
     click_on_option_of_inventory_on_left_sidebar_menu
@@ -670,23 +671,7 @@ def assert_insufficient_permission_alert_in_members_subpage(
         selenium, browser_id, oz_page, where, alert_text, onepanel):
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
-    assert_insufficient_permission_alert(page, alert_text)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>.*)" alert '
-               'in Invite user using token modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_insufficient_permissions_alert_in_modal(
-        selenium, browser_id, alert_text):
-    driver = selenium[browser_id]
-    assert_insufficient_permission_alert(modals(driver).invite_using_token,
-                                         alert_text)
-
-
-def assert_insufficient_permission_alert(elem, alert_text):
-    forbidden_alert = elem.forbidden_alert.text
-    assert alert_text in forbidden_alert, (f'alert with text '
-                                           f'{alert_text} not found')
+    assert_element_text(page, 'forbidden_alert', alert_text)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees privileges for '

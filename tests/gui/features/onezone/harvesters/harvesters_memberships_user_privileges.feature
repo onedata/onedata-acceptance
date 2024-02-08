@@ -40,7 +40,7 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     And user of browser2 clicks "harvester16" on the harvesters list in the sidebar
     And user of browser2 clicks Members of "harvester16" harvester in the sidebar
     And user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
-    And user of browser2 sees "This resource could not be loaded" alert in Invite user using token modal
+    And user of browser2 sees "This resource could not be loaded" alert in "Invite user using token" modal
     And user of browser2 closes "Invite using token" modal
 
     And user of browser1 sets following privileges for "user1" user in "harvester16" harvester:

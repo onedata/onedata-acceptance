@@ -35,6 +35,8 @@ def check_modal_name(modal_name):
         return 'add_one_of_elements'
     elif 'rename' in modal_name:
         return 'rename_modal'
+    elif 'invite' in modal_name:
+        return 'invite_using_token'
     elif modal_name in ['file_details', 'directory_details']:
         return 'details_modal'
     else:
@@ -333,9 +335,13 @@ def assert_element_text_in_modal(selenium, browser_id, modals, modal, text,
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
     element_sel = 'forbidden_alert' if element == 'alert' else 'info'
-    element_text = getattr(getattr(modals(driver), modal), element_sel).text
-    assert text in element_text, (f'found {element_text} text instead of '
-                                  f'{text} in modal {modal}')
+    assert_element_text(getattr(modals(driver), modal), element_sel, text)
+
+
+def assert_element_text(elem, selector, elem_text):
+    text = getattr(elem, selector).text
+    assert elem_text in text, (f'found {elem_text} text instead of '
+                               f'{text}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
