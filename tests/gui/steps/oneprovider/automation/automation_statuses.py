@@ -8,7 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (NoSuchElementException,
+                                        StaleElementReferenceException)
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -120,10 +121,10 @@ def assert_status(name, actual_status, expected_status):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for workflow '
-               '"(?P<workflow>.*)" to be (paused|cancelled|stopped)'))
-def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container):
+               '"(?P<workflow>.*)" to be (?P<option>paused|cancelled|stopped)'))
+@repeat_failed(interval=1, timeout=360,
+               exceptions=(AssertionError, StaleElementReferenceException))
+def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     status = page.workflow_visualiser.status
-    while status == 'Stopping':
-        time.sleep(1)
-        status = page.workflow_visualiser.status
+    assert status != 'Stopping', f'workflow have not {option}'
