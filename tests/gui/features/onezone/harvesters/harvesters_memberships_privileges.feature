@@ -130,6 +130,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     Then user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
+    And user of browser is idle for 2 seconds
     And user of browser1 clicks "user1" user in "harvester15" harvester members users list
     And user of browser1 sees following privileges of "user1" user in harvester members subpage:
           Harvester management:

@@ -20,6 +20,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import wt, given, parsers
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.core import scroll_to_css_selector
 
 
 @given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) '
@@ -131,9 +132,13 @@ def wt_visit_file_browser(selenium, oz_page, providers_list, spaces_list,
                        browser_id_list, op_container, tmp_memory, hosts)
 
 
-def search_for_members(records, member_name, parent_name, fun):
+def search_for_members(driver, records, member_name, parent_name, fun):
     for record in records:
-        relations = [elem.name for elem in record.elements]
+        record_id = record.clickable_name.get_attribute('id')
+        scroll_to_css_selector(driver, f'#{record_id}')
+        elements = driver.find_elements_by_css_selector(
+            f'#{record_id} .membership-row-element.membership-block')
+        relations = [elem.text for elem in elements]
         if member_name in relations and parent_name in relations:
             member_index = relations.index(member_name)
             parent_index = relations.index(parent_name)

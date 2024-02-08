@@ -77,7 +77,7 @@ def assert_element_is_member_of_parent_in_memberships(selenium, browser_id,
             return True
         return False
 
-    if not search_for_members(records, member_name, parent_name, fun):
+    if not search_for_members(driver, records, member_name, parent_name, fun):
         raise RuntimeError(
             'not found "{}" {} as a member of "{}" {}'.format(member_name,
                                                               member_type,
@@ -114,7 +114,7 @@ def assert_element_is_not_member_of_parent_in_memberships(selenium, browser_id,
                                                               parent_type))
         return False
 
-    search_for_members(records, member_name, parent_name, fun)
+    search_for_members(driver, records, member_name, parent_name, fun)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
@@ -196,7 +196,7 @@ def click_relation_menu_button(selenium, browser_id, member_name, name, oz_page,
         record.relations[member_index].click_relation_menu_button(driver)
         return True
 
-    search_for_members(records, member_name, name, click_on_menu)
+    search_for_members(driver, records, member_name, name, click_on_menu)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
