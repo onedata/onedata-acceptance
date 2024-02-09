@@ -138,7 +138,7 @@ def search_for_members(driver, records, member_name, parent_name, fun):
         scroll_to_css_selector(driver, f'#{record_id}')
         elements = driver.find_elements_by_css_selector(
             f'#{record_id} .membership-row-element.membership-block')
-        relations = [elem.text for elem in elements]
+        relations = [elem.text.split()[0] for elem in elements]
         if member_name in relations and parent_name in relations:
             member_index = relations.index(member_name)
             parent_index = relations.index(parent_name)
