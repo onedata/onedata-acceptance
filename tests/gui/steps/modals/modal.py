@@ -85,7 +85,7 @@ def _find_modal(driver, modal_name):
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
                          'file details', 'symbolic link', 'inventory',
-                         'workflow', 'unsaved']
+                         'workflow', 'unsaved', 'cease']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -489,6 +489,8 @@ def close_modal(selenium, browser_id, modal, modals):
             getattr(modals(selenium[browser_id]), modal).cancel()
         except AttributeError:
             getattr(modals(selenium[browser_id]), modal).x()
+    except RuntimeError:
+        return
 
     _wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 

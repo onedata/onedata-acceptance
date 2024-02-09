@@ -23,6 +23,7 @@ from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -46,6 +47,7 @@ from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.provider import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 
@@ -58,3 +60,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/posix/privileges_posix.feature')
+scenarios('../features/oneprovider/data/files_storage_paths.feature')

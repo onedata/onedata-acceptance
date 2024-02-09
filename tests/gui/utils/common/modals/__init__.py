@@ -77,7 +77,7 @@ class Modals(object):
 
     # storage modals
     add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
-    modify_storage = WebItem('.modify-storage-modal.modal.in .modal-dialog',
+    modify_storage = WebItem('.modal-dialog .modal-content',
                              cls=ModifyStorage)
 
     # files modals

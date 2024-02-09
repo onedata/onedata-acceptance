@@ -211,6 +211,13 @@ def switch_to_last_tab(selenium, browser_id):
     driver.switch_to.window(driver.window_handles[-1])
 
 
+@wt(parsers.parse('user of {browser_id} switches to the previously opened'
+                  ' tab in the web browser'))
+def switch_to_first_tab(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.window(driver.window_handles[0])
+
+
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" '
                   'in browser'))
 def assert_image_in_browser(browser_id, selenium, image_name):

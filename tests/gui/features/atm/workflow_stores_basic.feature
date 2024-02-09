@@ -71,3 +71,32 @@ Feature: Workflows stores tests
     | Tree forest      | File                  | List              | File                   | files      | files         | dir1                                | [ /space1/dir1, /space1/dir1/file2, /space1/dir1/dir2, /space1/dir1/dir2/file3, /space1/dir1/dir2/file4]     |
     | List             | Range                 | List              | Object                 | ranges     | range_objects | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}] |
     | List             | Range                 | List              | Range                  | ranges     | ranges        | [{'start': 5, 'end': 50,'step': 5}, {'start': 1, 'end': 100,'step': 10}] | [{'start': 5, 'end': 50,'step': 5},{'start': 1, 'end': 100,'step': 10}] |
+
+
+  Scenario: User sees file attributes in result store after modifying lambda and executing uploaded echo workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser clicks on "Create new revision" in "echo"
+    And user of browser changes 1st argument named "value" to be "File" type
+    And user of browser modifies 1st argument named "value" by:
+      - File type: Regular
+      - Carried file attributes:
+        - atime
+        - size
+        - provider id
+    And user of browser confirms edition of lambda using "Modify" button
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
+    And user of browser modifies "echo" task in 1st parallel box in "lane 1" lane by changing following:
+        lambda:
+          - revision: 2nd
+        results:
+          - value: "Workflow system audit log"
+
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+    And user of browser executes 1st revision of "echo" and waits extended time for workflow to finish, using file as initial value: "file1" in "space1" space
+    And user of browser clicks "Audit log" button on "Echo" workflow status bar
+    Then user of browser sees that workflow audit log contains entry with info only about file attributes ["atime", "size", "provider id"]

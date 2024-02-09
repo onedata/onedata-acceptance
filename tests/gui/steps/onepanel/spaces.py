@@ -21,6 +21,7 @@ from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
 from tests.gui.utils.generic import transform, implicit_wait, parse_seq
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 
 
 @wt(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -300,11 +301,15 @@ def remove_space_instead_of_revoke(selenium, browser_id, modals):
                   'provided link'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_and_remove_space_instead_of_revoke(selenium, browser_id, modals, user,
-                                             login_page, users):
+                                             login_page, users, tmp_memory):
+    modal_name = 'Cease oneprovider support for space'
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
     wt_login_using_basic_auth(selenium, browser_id, user,
                               login_page, users, 'Onezone')
+    modal_name = 'Remove space'
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).remove_modal.understand_notice()
     modals(selenium[browser_id]).remove_modal.remove()
 

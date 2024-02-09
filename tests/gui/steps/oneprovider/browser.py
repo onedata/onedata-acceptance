@@ -287,7 +287,8 @@ def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
 
 @wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
                'columns in columns configuration popover in '
-               '(?P<which_browser>.*) table'))
+               '(?P<which_browser>file browser|archive browser|'
+               'dataset browser) table'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
                                             which_browser, tmp_memory, popups):
@@ -304,7 +305,8 @@ def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
-               'in (?P<which_browser>.*)'))
+               'in (?P<which_browser>file browser|archive browser|'
+               'dataset browser)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
                                       which_browser):
@@ -320,3 +322,16 @@ def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
         if column not in browser_columns:
             raise AssertionError(
                 f'column {column} is not visible in {which_browser}')
+
+
+@wt(parsers.parse('user of {browser_id} does not see button "{button}" '
+                  'in {which_browser}'))
+def assert_button_not_visible_in_browser(browser_id, tmp_memory, button,
+                                         which_browser):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    try:
+        getattr(browser, transform(button) + '_button')
+        raise AssertionError(f'button {button} is visible in '
+                             f'{which_browser} browser')
+    except RuntimeError:
+        pass

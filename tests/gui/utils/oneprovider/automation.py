@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.core import (
+    scroll_to_css_selector_bottom, scroll_to_css_selector)
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     WebItemsSequence, Label, Icon, Button, NamedButton, WebItem, WebElement,
@@ -48,6 +50,7 @@ class NavigationTab(Element):
 
 class Task(Element):
     name = id = Label('.task-name')
+    name_web_elem = WebElement('.task-name')
     drag_handle = WebElement('.task-drag-handle')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
     instance_id = Label('.instance-id-detail .truncated-string')
@@ -59,10 +62,28 @@ class Task(Element):
         elem_id = self.web_elem.get_attribute('id')
         return elem_id
 
+    def click_on_drag_handle(self):
+        self.web_elem.find_element_by_css_selector(f'.task-drag-handle').click()
+
+    def click_on_option_in_task(self, option):
+        if option == 'Audit log':
+            self.web_elem.find_element_by_css_selector(f'.view-task-audit-log'
+                                                       f'-action-trigger').click()
+        elif option == 'Pods activity':
+            self.web_elem.find_element_by_css_selector(f'.view-task-pods'
+                                                       f'-activity-action-trigger').click()
+        elif option == 'Time series':
+            self.web_elem.find_element_by_css_selector(f'.view-task-time'
+                                                       f'-series-action-trigger').click()
+
 
 class ParallelBox(Element):
     task_list = WebItemsSequence('.box-elements .workflow-visualiser-task',
                                  cls=Task)
+
+    def scroll_to_bottom_of_task_in_parallel_box(self, task_id):
+        box_sel = f'#{task_id} .detail-entry.actions-detail'
+        scroll_to_css_selector(self.driver, box_sel)
 
 
 class RunIndicator(Element):
@@ -72,6 +93,8 @@ class RunIndicator(Element):
 
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
+    name_web_elem = WebElement('.lane-name')
+    lane_web_elem = WebElement('.draggable-lane')
     status = Label('.visible-run-status-label')
     parallel_boxes = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                       cls=ParallelBox)
@@ -79,9 +102,9 @@ class WorkflowLane(Element):
     run_indicators = WebItemsSequence('.run-indicators-item', cls=RunIndicator)
 
     def scroll_to_first_task_in_parallel_box(self, number):
-        from tests.gui.utils.core import scroll_to_css_selector_bottom
         elem_id = self.parallel_boxes[number].task_list[0].get_elem_id()
-        box_sel = f'[id={elem_id}] .items-failed-detail'
+        box_sel = f'#{elem_id} .items-failed-detail'
+
         scroll_to_css_selector_bottom(self.driver, box_sel)
 
 
@@ -109,6 +132,9 @@ class WorkflowVisualiser(PageObject):
                          text="Resume")
     cancel = Button('.cancel-atm-workflow-execution-action-trigger')
     audit_log = NamedButton('.btn', text="Audit log")
+
+    left_arrow_scroll = Button('.left-edge-scroll-step-trigger')
+    right_arrow_scroll = Button('.right-edge-scroll-step-trigger')
 
 
 class Store(PageObject):
@@ -155,6 +181,7 @@ class WorkflowExecutionPage(PageObject):
     booleans_input = WebElementsSequence('.boolean-editor')
     number_input = WebItem('.number-editor', cls=NumberInput)
     string_input = WebItem('.string-editor', cls=StringInput)
+    logging_level = Button('.dropdown-field-trigger')
 
     def click_on_background_in_workflow_visualiser(self):
         ActionChains(self.driver).move_to_element_with_offset(

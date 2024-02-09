@@ -60,3 +60,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/transfers/transfers_file.feature')
+scenarios('../features/oneprovider/transfers/transfers_basic.feature')

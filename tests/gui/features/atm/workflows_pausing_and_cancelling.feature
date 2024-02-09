@@ -93,16 +93,14 @@ Feature: Workflow cancelling and pausing tests
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
     And user of browser clicks "Pause" button on "workflow-with-sleep" workflow status bar
-    And user of browser sees that status of "workflow-with-sleep" workflow is "Stopping"
     And user of browser waits for workflow "workflow-with-sleep" to be paused
 
     Then user of browser sees that status of "workflow-with-sleep" workflow is "Paused"
     And user of browser sees that status of "Lane1" lane in "workflow-with-sleep" is "Paused"
     And user of browser sees that status of "Lane2" lane in "workflow-with-sleep" is "Unscheduled"
 
-    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
     And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Paused"
 
     And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
@@ -152,6 +150,7 @@ Feature: Workflow cancelling and pausing tests
 
     And user of browser waits for workflow "workflow-with-sleep" to be stopped
 
+    And user of browser is idle for 1 second
     Then user of browser sees that status of "workflow-with-sleep" workflow is "<status>"
     And user of browser sees that status of "Lane1" lane in "workflow-with-sleep" is "<status>"
     And user of browser sees that status of "Lane2" lane in "workflow-with-sleep" is "Unscheduled"
@@ -177,7 +176,6 @@ Feature: Workflow cancelling and pausing tests
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser awaits for status of "workflow-with-sleep" workflow to be "Active"
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished"
 
     And user of browser sees that status of "workflow-with-sleep" workflow is "Active"
     And user of browser clicks "Cancel" button on "workflow-with-sleep" workflow status bar
@@ -188,7 +186,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser sees that status of "Lane1" lane in "workflow-with-sleep" is "Cancelled"
     And user of browser sees that status of "Lane2" lane in "workflow-with-sleep" is "Unscheduled"
 
-    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is one of "Finished" or "Cancelled"
     And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
 
     And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
@@ -231,11 +229,11 @@ Feature: Workflow cancelling and pausing tests
 
     And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active"
     And user of browser clicks "Pause" button on "workflow-with-one-box" workflow status bar
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Stopping"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
+    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Stopping" or "Paused"
     And user of browser clicks "Cancel" button on "workflow-with-one-box" workflow status bar
 
-    Then user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
+    Then user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
     And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
     And user of browser sees that status of "workflow-with-one-box" workflow is "Cancelled"

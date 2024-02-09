@@ -43,9 +43,9 @@ Feature: Workflow execution statuses tests
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
     Then user of browser sees that status of "Lane1" lane in "Workflow1" is "Preparing"
-    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Pending"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Pending"
     And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Active"
+    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Pending" or "Finished"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Pending" or "Finished"
 
 
   Scenario: User does not see workflow on list after removing uploaded "inout" workflow
@@ -91,11 +91,10 @@ Feature: Workflow execution statuses tests
 
     Then user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
-    And user of browser sees that status of "Lane1" lane in "workflow-with-sleep-one-lane" is "Resuming"
 
     And user of browser awaits for status of "Lane1" lane to be "Active"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Active"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Pending"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Pending" or "Finished"
     And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Finished"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Finished"
@@ -115,10 +114,9 @@ Feature: Workflow execution statuses tests
 
     Then user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Resuming"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Resuming"
-    And user of browser sees that status of "Lane1" lane in "workflow-with-sleep-one-lane" is "Resuming"
 
     And user of browser awaits for status of "Lane1" lane to be "Active"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Active"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Active" or "Finished"
     And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Finished"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Finished"

@@ -9,7 +9,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    Button, WebItemsSequence, Label, AceEditor, WebItem, WebElementsSequence)
+    Button, WebItemsSequence, Label, AceEditor, WebItem,
+    WebElementsSequence, WebElement)
 from tests.gui.utils.onezone.generic_page import Element
 from ..modal import Modal
 
@@ -25,6 +26,7 @@ class StoreDetailsObjectRow(PageObject):
 class StoreDetailsListRow(PageObject):
     name = id = Label('.column-name')
     dataset_name = Button('.dataset-name')
+    file_name = Button('.file-name')
     range_start = Label('.column-start')
     range_end = Label('.column-end')
     range_step = Label('.column-step')
@@ -46,6 +48,7 @@ class SingleFileContainer(PageObject):
 class StoreDetails(Modal):
     close = Button('.modal-header .close')
     copy_button = Button('.copy-link')
+    name_header = WebElement('.modal-header .truncated-string')
 
     tabs = WebItemsSequence('.nav-tabs .ember-view', cls=FilterTab)
     store_content_list = WebItemsSequence('.entries-table .data-row',
@@ -56,6 +59,7 @@ class StoreDetails(Modal):
     array_view = WebItem('.array-visual-presenter', cls=ArrayView)
     single_file_container = WebItem('.content-container',
                                     cls=SingleFileContainer)
+    close_details = Button('.close-details')
 
     def __str__(self):
         return 'Store details modal'

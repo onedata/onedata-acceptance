@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 import yaml
 
 from tests.gui.steps.onezone.automation.automation_basic import *
@@ -13,11 +14,12 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar, write_text_into_lambda_form,
     switch_toggle_in_lambda_form, confirm_lambda_creation_or_edition)
-from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from selenium.common.exceptions import ElementNotInteractableException
 
 
 @wt(parsers.parse('user of {browser_id} creates lambda with following '
@@ -122,10 +124,11 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
                   '"{docker_image}" docker image in "{inventory}" inventory'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
-                            docker_image, inventory):
-    click_on_option_in_the_sidebar(selenium, browser_id, 'Automation', oz_page)
+                            docker_image, inventory, tmp_memory):
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
+                                              tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory,
-                            'lambdas', oz_page)
+                            'lambdas', oz_page, tmp_memory)
     click_add_new_button_in_menu_bar(selenium, browser_id, oz_page,
                                      'Add new lambda')
     write_text_into_lambda_form(selenium, browser_id, oz_page,
@@ -136,7 +139,7 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, 'lambda')
 
     go_to_inventory_subpage(selenium, browser_id, inventory,
-                            'lambdas', oz_page)
+                            'lambdas', oz_page, tmp_memory)
 
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 
@@ -191,3 +194,35 @@ def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
 
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(type)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) modifies '
+               '(?P<ordinal>|1st |2nd |3rd |4th )argument named '
+               '"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'))
+def modify_parameter_in_lambda_form(selenium, browser_id, oz_page, popups,
+                                    ordinal, config):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].lambdas_page.form
+    data = yaml.load(config)
+    subpage = page.argument
+    ordinal = '1st' if not ordinal else ordinal
+    bracket_name = 'bracket_' + ordinal.strip()
+    object_bracket = getattr(subpage, bracket_name)
+    object_bracket.settings()
+    setts = object_bracket.parameter_settings
+    for item in data:
+        [(arg, val)] = item.items()
+        if arg == 'File type':
+            setts.file_type()
+            popups(driver).power_select.choose_item(val)
+        if arg == 'Carried file attributes':
+            # remove default file attrs
+            for attr in setts.attrs:
+                attr.x()
+            setts.carried_file_attrs()
+            for el in val:
+                try:
+                    popups(driver).options_selector.choose_option(transform(el))
+                except (ElementNotInteractableException, RuntimeError):
+                    time.sleep(1)
+                    popups(driver).options_selector.choose_option(transform(el))

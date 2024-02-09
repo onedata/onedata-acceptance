@@ -69,6 +69,14 @@ class _FileBrowser(PageObject):
                                    self.web_elem,
                                    self._bottom_of_visible_fragment)
 
+    def click_header(self):
+        action = ActionChains(self.driver)
+        action.click(self.header).perform()
+
+    def scroll_one_file_down(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.DOWN).key_down(Keys.DOWN).perform()
+
     def names_of_visible_elems(self):
         files = self._data
         # make sure row is fully loaded in gui
