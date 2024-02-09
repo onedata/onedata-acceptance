@@ -96,6 +96,7 @@ class MembershipRelation(PageObject):
 
 class MembershipRow(PageObject):
     name = id = Label('div')
+    clickable_name = WebElement('div')
     elements = WebItemsSequence('.membership-row-element.membership-block',
                                 cls=MembershipElement)
     relations = WebItemsSequence('.membership-row-element.membership-relation',
