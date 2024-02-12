@@ -576,7 +576,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
-    is_direct_privileges = False if option == 'effective' else True
+    is_direct_privileges = False if option == 'effective ' else True
     tree.assert_privileges(selenium, browser_id, privileges,
                            is_direct_privileges)
     driver = selenium[browser_id]
