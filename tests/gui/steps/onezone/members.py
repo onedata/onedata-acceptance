@@ -503,7 +503,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
     try:
         assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                              member_type, where, config,
-                                             onepanel, oz_page)
+                                             onepanel, oz_page, True)
     except AssertionError:
         option = 'Save'
         member_type_new = member_type + 's'

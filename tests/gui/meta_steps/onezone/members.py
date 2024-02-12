@@ -48,7 +48,7 @@ def assert_privileges_in_space_using_op_gui(user, space_name, member_name,
                                   oz_page, where, list_type, onepanel)
     assert_privileges_in_members_subpage(selenium, user, member_name,
                                          member_type, where, config,
-                                         onepanel, oz_page)
+                                         onepanel, oz_page, True)
 
 
 def fail_to_create_invitation_in_space_using_op_gui(user, space_name, popups,
