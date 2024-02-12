@@ -585,6 +585,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                'of "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|automation|cluster) '
                'members subpage:\n(?P<config>(.|\s)*)'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_effective_privileges_in_members_subpage(selenium, browser_id,
                                                    member_name, member_type,
                                                    where, config, onepanel,
