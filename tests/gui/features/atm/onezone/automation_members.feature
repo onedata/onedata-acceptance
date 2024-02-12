@@ -193,7 +193,7 @@ Feature: Management of inventories members
     # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
     And user of browser1 clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of browser1 sees This resource could not be loaded alert in Invite user using token modal
+    And user of browser1 sees "This resource could not be loaded" alert in "Invite user using token" modal
     And user of browser1 closes "Invite using token" modal
 
     # Space-owner-user changes privileges for user1
@@ -241,7 +241,7 @@ Feature: Management of inventories members
     # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
-    And user of browser1 sees This resource could not be loaded alert in Invite user using token modal
+    And user of browser1 sees "This resource could not be loaded" alert in "Invite user using token" modal
     And user of browser1 closes "Invite using token" modal
 
     # Space-owner-user changes privileges for user1
