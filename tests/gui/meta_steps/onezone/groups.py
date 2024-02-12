@@ -103,8 +103,7 @@ def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
         leave_group(selenium, user, group, oz_page, popups)
 
 
-def _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel):
+def _open_member_from_list(selenium, user, oz_page, parent, onepanel):
     where = 'group'
     list_type = 'users'
     subpage = 'members'
@@ -118,8 +117,7 @@ def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
                                   parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel)
+    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(selenium, user,
                                                           group, parent,
@@ -131,8 +129,7 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                        group_list, parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel)
+    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(selenium, user,
                                                               group, where,

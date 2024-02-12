@@ -58,8 +58,7 @@ class PrivilegeRow(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_id = self._checkbox.get_attribute('id')
                 try:
-                    driver.find_element_by_css_selector(
-                        '#' + elem_id).click()
+                    driver.find_element_by_css_selector('#' + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
         else:
@@ -77,8 +76,7 @@ class PrivilegeGroup(PageObject):
     _checkbox = WebElement('.one-checkbox-base')
     effective_priv = Label('.pill')
 
-    sub_privileges = WebItemsSequence('.privilege-row',
-                                      cls=PrivilegeRow)
+    sub_privileges = WebItemsSequence('.privilege-row', cls=PrivilegeRow)
 
     def expand(self, driver):
         if not self.is_expanded():
@@ -88,7 +86,7 @@ class PrivilegeGroup(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element_by_css_selector(
                     f'#{expander_id}').click()
-            except:
+            except ElementNotInteractableException:
                 self.expander.click()
 
     def is_expanded(self):
@@ -101,7 +99,7 @@ class PrivilegeGroup(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element_by_css_selector(
                     '.table-privileges .oneicon-arrow-up').click()
-            except:
+            except ElementNotInteractableException:
                 self.expander.click()
 
     def minimalize(self):
@@ -165,8 +163,7 @@ class PrivilegeGroup(PageObject):
 class PrivilegeTree(PageObject):
     privilege_groups = WebItemsSequence('.group-privilege-row',
                                         cls=PrivilegeGroup)
-    privileges = WebItemsSequence('.privilege-row ',
-                                  cls=PrivilegeRow)
+    privileges = WebItemsSequence('.privilege-row ', cls=PrivilegeRow)
 
     def get_privilege_row(self, name):
         return self.privileges[name]
