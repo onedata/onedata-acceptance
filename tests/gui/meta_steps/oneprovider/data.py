@@ -26,8 +26,8 @@ from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, wt_wait_for_modal_to_appear,
     write_name_into_text_field_in_modal, close_modal)
 from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-    click_element_on_lists_on_left_sidebar_menu, click_on_option_in_the_sidebar)
+    _click_on_option_of_space_on_left_sidebar_menu,
+    _click_on_option_in_the_sidebar)
 from tests.utils.entities_setup.spaces import init_storage
 
 
@@ -492,21 +492,18 @@ def get_item_name_and_containing_dir_path(path):
 
 @wt(parsers.parse('user of {browser_id} opens file browser for "{space}" '
                   'space'))
-def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
-                      tmp_memory, space):
-    space_option = 'spaces'
+def go_to_filebrowser(
+        selenium, browser_id, oz_page, op_container, tmp_memory, space):
     option_in_menu = 'Data'
     option_in_space_submenu = 'Files'
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,
-                                   oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                space_option, space, oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
-                                                  option_in_space_submenu,
-                                                  oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory)
+    _click_on_option_in_the_sidebar(
+        selenium, browser_id, option_in_menu, oz_page, force=False)
+    _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space, option_in_space_submenu, oz_page,
+        force=False)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory)
 
 
 def open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,

@@ -23,6 +23,17 @@ from .manage_account_page import ManageAccountPage
 from .uploads_page import UploadsPage
 from .automation_page import AutomationPage
 
+panels_dict = {
+    'data': 0,
+    'shares': 1,
+    'providers': 2,
+    'groups': 3,
+    'tokens': 4,
+    'discovery': 5,
+    'automation': 6,
+    'clusters': 7
+}
+
 
 class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
@@ -58,31 +69,28 @@ class OZLoggedIn(object):
     def get_page_no_clicking(self, item):
         return get_page(self, item, False)
 
+    def is_panel_clicked(self, item):
+        for idx, panel in enumerate(self._panels):
+            if idx != panels_dict[item] and (
+                    'selected' in panel.get_attribute('class')):
+                return False
+        panel = self._panels[panels_dict[item]]
+        return any([el in panel.get_attribute('class') for el
+                    in ['active', 'selected']])
+
 
 def get_page(oz_page, item, click=True):
     item = item.lower()
-    # expand side panel
-    ActionChains(oz_page.web_elem).move_to_element(oz_page._panels[0]).perform()
-    # wait for side panel to expand so we can read panel name
-    sleep(0.2)
     cls = oz_page.panels.get(item, None)
     if cls:
         item = item.replace('_', ' ').lower()
-        for panel in oz_page._panels:
-            if item == panel.text.lower():
-                if click:
-                    panel.click()
-                # collapse side panel
-                ActionChains(oz_page.web_elem).move_to_element(
-                    oz_page.web_elem.find_element_by_css_selector(
-                        '.row-heading .col-title')).perform()
-                # wait for side panel to collapse
-                sleep(0.2)
-                return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
+        panel = oz_page._panels[panels_dict[item]]
+        if click:
+            panel.click()
+        return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
     elif item == 'profile':
         return ManageAccountPage(oz_page.web_elem, oz_page._profile, oz_page)
     elif item == 'uploads':
         return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
     else:
         raise RuntimeError('no "{}" on {} found'.format(item, str(oz_page)))
-

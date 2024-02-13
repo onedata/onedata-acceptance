@@ -36,6 +36,17 @@ def _choose_space_from_menu_list(oz_page, driver, name):
         page.choose_space(name)
 
 
+def click_on_space_in_menu_list(oz_page, driver, name, force=True):
+    # function assumes data page is active
+    page = oz_page(driver).get_page_no_clicking('data')
+    if force:
+        page.spaces_header_list[name]()
+    else:
+        if not page.spaces_header_list[name].is_active():
+            page.spaces_header_list[name].click()
+    return page
+
+
 def _parse_tabs_list(tabs):
     tabs = tabs.split('"')[1:-1]
     tabs = [
@@ -119,26 +130,36 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
         'space "{}" not found'.format(space_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks on Automation in the main menu'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
-                                              tmp_memory):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    page = oz_page(driver)["automation"]
+def click_on_automation_option_in_the_sidebar(
+        selenium, browser_id, oz_page, tmp_memory):
+    option = 'Automation'
+    page = click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     err_msg = 'Clicking on the "Automation" in the main menu did not succeed'
     assert page, err_msg
-    tmp_memory[browser_id]["oz_page"] = page
+    tmp_memory[browser_id]['oz_page'] = page
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
-               'in the main menu'))
+               '(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|'
+               'Automation|Clusters) in the main menu'))
+def click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page):
+    _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page, force=True)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
+def _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page, force=True):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)[str(option).lower()]
+    name = str(option).lower()
+    # call get_page in Onezone page
+    if force:
+        return oz_page(driver)[name]
+    else:
+        if not oz_page(driver).is_panel_clicked(name):
+            oz_page(driver)[name]
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
@@ -271,15 +292,20 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
                'of "(?P<space_name>.*?)" space in the sidebar'))
+def click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page):
+    _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name, option, oz_page):
+def _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page, force=True):
     submenu_option = transform(option).replace(',', '')
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    _choose_space_from_menu_list(oz_page, driver, space_name)
-    getattr(oz_page(driver)['data'].elements_list[space_name],
-            submenu_option).click()
+    page = click_on_space_in_menu_list(oz_page, driver, space_name, force=force)
+    getattr(page.elements_list[space_name], submenu_option).click()
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
