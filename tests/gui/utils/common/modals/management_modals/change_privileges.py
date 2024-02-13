@@ -13,7 +13,7 @@ from tests.gui.utils.core.web_elements import WebItem, Button
 
 
 class ChangePrivilegesModal(Modal):
-    privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
+    privilege_tree = WebItem('.table-privileges', cls=PrivilegeTree)
     cancel_button = Button('.cancel')
     save_button = Button('.proceed')
 

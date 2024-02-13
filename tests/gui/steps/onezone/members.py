@@ -58,20 +58,6 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
     return getattr(page, list_type).items[member_name].privilege_tree
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks '
-               '(?P<mode>direct|effective|privileges|memberships) view mode '
-               'in (?P<where>space|group|cluster|harvester|automation) '
-               'members subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mode_view_in_members_subpage(selenium, browser_id, mode, oz_page,
-                                       where, onepanel):
-    driver = selenium[browser_id]
-    mode = mode + '_button'
-    page = _find_members_page(onepanel, oz_page, driver, where)
-
-    getattr(page, mode).click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) sees that "(?P<member_name>.*)" '
                '(?P<member_type>user|group) is member of '
                '"(?P<parent_name>.*)" (?P<parent_type>space|group) '
@@ -92,7 +78,7 @@ def assert_element_is_member_of_parent_in_memberships(selenium, browser_id,
             return True
         return False
 
-    if not search_for_members(records, member_name, parent_name, fun):
+    if not search_for_members(driver, records, member_name, parent_name, fun):
         raise RuntimeError(
             'not found "{}" {} as a member of "{}" {}'.format(member_name,
                                                               member_type,
@@ -129,7 +115,7 @@ def assert_element_is_not_member_of_parent_in_memberships(selenium, browser_id,
                                                               parent_type))
         return False
 
-    search_for_members(records, member_name, parent_name, fun)
+    search_for_members(driver, records, member_name, parent_name, fun)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
@@ -211,7 +197,7 @@ def click_relation_menu_button(selenium, browser_id, member_name, name, oz_page,
         record.relations[member_index].click_relation_menu_button(driver)
         return True
 
-    search_for_members(records, member_name, name, click_on_menu)
+    search_for_members(driver, records, member_name, name, click_on_menu)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
@@ -518,7 +504,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
     try:
         assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                              member_type, where, config,
-                                             onepanel, oz_page)
+                                             onepanel, oz_page, True)
     except AssertionError:
         option = 'Save'
         member_type_new = member_type + 's'
@@ -578,19 +564,22 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     modals(driver).change_privileges.save_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees following privileges of '
+@wt(parsers.re('user of (?P<browser_id>.*) sees following '
+               '(?P<option>effective |)privileges of '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|automation|cluster) '
                'members subpage:\n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
-                                         oz_page):
+                                         oz_page, option):
     member_type = member_type + 's'
-
+    time.sleep(1)
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
-    tree.assert_privileges(selenium, browser_id, privileges)
+    is_direct_privileges = False if option == 'effective ' else True
+    tree.assert_privileges(selenium, browser_id, privileges,
+                           is_direct_privileges)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)

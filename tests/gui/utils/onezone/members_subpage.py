@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from selenium.webdriver import ActionChains
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -39,7 +40,7 @@ class MembersItemHeader(PageObject):
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
     name = id = Label('.record-name-general')
-    privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
+    privilege_tree = WebItem('.table-privileges', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
     status_labels = WebElementsSequence('.label')
     ownership_warning = WebElement('.privileges-of-owner-warning')
@@ -95,6 +96,7 @@ class MembershipRelation(PageObject):
 
 class MembershipRow(PageObject):
     name = id = Label('div')
+    clickable_name = WebElement('div')
     elements = WebItemsSequence('.membership-row-element.membership-block',
                                 cls=MembershipElement)
     relations = WebItemsSequence('.membership-row-element.membership-relation',
@@ -112,8 +114,6 @@ class MembersPage(PageObject):
     groups = WebItem('.group-list', cls=MembersList)
     users = WebItem('.user-list', cls=MembersUserList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
-    effective_button = NamedButton('.direct-selector button', text='Effective')
-    memberships_button = NamedButton('.mode-selector button', text='Memberships')
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
                                    cls=MembershipRow)
 
@@ -122,7 +122,10 @@ class MembersPage(PageObject):
 
     def close_member(self, driver):
         driver.execute_script("window.scrollBy(0,0)")
-        driver.find_element_by_css_selector('.member-item '
-                                            '.one-collapsible-list-item-header'
-                                            '.opened').click()
+        try:
+            driver.find_element_by_css_selector('.member-item '
+                                                '.one-collapsible-list-item-header'
+                                                '.opened').click()
+        except NoSuchElementException:
+            pass
 
