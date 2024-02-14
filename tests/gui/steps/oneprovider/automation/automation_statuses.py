@@ -127,4 +127,4 @@ def assert_status(name, actual_status, expected_status):
 def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     status = page.workflow_visualiser.status
-    assert status != 'Stopping', f'workflow have not {option}'
+    assert status != 'Stopping', f'workflow is not in {option} state'
