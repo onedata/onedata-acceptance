@@ -407,7 +407,7 @@ Feature: Bagit uploader tests
         status: Found  0 files to be downloaded.
         archive: "bagit_archive_unpack.tar"
 
-    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 22
+    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 21
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
