@@ -136,6 +136,8 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
     button = 'Save'
     close_button = 'X'
     panel = 'Edit permissions'
+    warning_modal = 'warning'
+    proceed_button = 'proceed'
     path = parse_seq(path)
 
     if path and len(path) == 1:
@@ -149,6 +151,11 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     click_panel_button(selenium, browser_id, button, panel, modals)
+    try:
+        click_modal_button(selenium, browser_id, proceed_button, warning_modal, modals)
+    except RuntimeError:
+        # in case there is no warning modal
+        pass
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
