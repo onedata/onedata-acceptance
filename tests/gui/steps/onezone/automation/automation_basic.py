@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import (upload_file_path, upload_workflow_path,
                                      transform)
@@ -96,6 +98,7 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
     except KeyError:
         page = oz_page(selenium[browser_id])['automation']
     page.elements_list[inventory]()
+    time.sleep(0.2)
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
 

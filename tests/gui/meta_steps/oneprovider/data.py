@@ -115,8 +115,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
 
     try:
         option = "Files"
-        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                      space, option, oz_page)
+        _click_on_option_of_space_on_left_sidebar_menu(
+            selenium, browser_id, space, option, oz_page, force=False)
         assert_browser_in_tab_in_op(selenium, browser_id,
                                     op_container, tmp_memory)
     except NoSuchElementException:
@@ -639,9 +639,8 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
     option_in_space = 'Files'
     option_in_menu = 'Information'
 
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
+    _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option_in_space, oz_page, force=False)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory)
     if '/' in file_name:

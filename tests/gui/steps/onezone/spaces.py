@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (press_enter_on_active_element,
                                                   switch_to_iframe)
@@ -23,17 +25,10 @@ SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
-    # check if data page is visible, if is marketplace button should be visible,
-    # and if is not this calling should give AttributeError
-    try:
-        oz_page(driver).get_page_no_clicking(option).marketplace_button
-        page = oz_page(driver).get_page_no_clicking(option)
-    except (AttributeError, RuntimeError):
-        page = oz_page(driver)[option]
-    try:
-        page.spaces_header_list[name]()
-    except (RuntimeError, IndexError):
-        page.choose_space(name)
+    # select data in main menu if not selected
+    if not oz_page(driver).is_panel_clicked(option):
+        oz_page(driver)[option]
+    click_on_space_in_menu_list(oz_page, driver, name)
 
 
 def click_on_space_in_menu_list(oz_page, driver, name, force=True):
@@ -130,10 +125,13 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
         'space "{}" not found'.format(space_name)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on Automation '
+               'in the main menu'))
 def click_on_automation_option_in_the_sidebar(
         selenium, browser_id, oz_page, tmp_memory):
     option = 'Automation'
-    page = click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    page = _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page)
     err_msg = 'Clicking on the "Automation" in the main menu did not succeed'
     assert page, err_msg
     tmp_memory[browser_id]['oz_page'] = page
@@ -141,7 +139,7 @@ def click_on_automation_option_in_the_sidebar(
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|'
-               'Automation|Clusters) in the main menu'))
+               'Clusters) in the main menu'))
 def click_on_option_in_the_sidebar(
         selenium, browser_id, option, oz_page):
     _click_on_option_in_the_sidebar(
@@ -156,7 +154,8 @@ def _click_on_option_in_the_sidebar(
     name = str(option).lower()
     # call get_page in Onezone page
     if force:
-        return oz_page(driver)[name]
+        page = oz_page(driver)[name]
+        return page
     else:
         if not oz_page(driver).is_panel_clicked(name):
             oz_page(driver)[name]
