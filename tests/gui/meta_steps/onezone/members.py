@@ -14,7 +14,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_text_appeared, assert_alert_text_in_modal)
+    assert_error_modal_with_text_appeared, assert_element_text_in_modal)
 
 
 def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
@@ -48,7 +48,7 @@ def assert_privileges_in_space_using_op_gui(user, space_name, member_name,
                                   oz_page, where, list_type, onepanel)
     assert_privileges_in_members_subpage(selenium, user, member_name,
                                          member_type, where, config,
-                                         onepanel, oz_page)
+                                         onepanel, oz_page, True)
 
 
 def fail_to_create_invitation_in_space_using_op_gui(user, space_name, popups,
@@ -60,13 +60,14 @@ def fail_to_create_invitation_in_space_using_op_gui(user, space_name, popups,
     member = 'users'
     modal = 'Invite using token'
     text = 'This resource could not be loaded'
+    element = 'alert'
     click_on_option_of_space_on_left_sidebar_menu(selenium, user,
                                                   space_name, option,
                                                   oz_page)
     click_on_option_in_members_list_menu(selenium, user, button,
                                          where, member, oz_page, onepanel,
                                          popups)
-    assert_alert_text_in_modal(selenium, user, modals, modal, text)
+    assert_element_text_in_modal(selenium, user, modals, modal, text, element)
 
 
 def assert_not_user_in_space_using_op_gui(user, space_name, member_name,

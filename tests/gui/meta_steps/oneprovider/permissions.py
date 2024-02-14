@@ -218,8 +218,29 @@ def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
     close_button = 'X'
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'acl', popups)
-    assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
+    if type != 'unknown':
+        assert_acl_subject(selenium, browser_id, modals, num, numerals,
+                           type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
+    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+
+
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space '
+               r'"(?P<space>\w+)" contains id of user "(?P<name>.*)" in '
+               r'(?P<num>.*) ACL record'))
+def assert_user_id_in_ace_in_op_gui(
+        selenium, browser_id, name, num, space, path, tmp_memory, modals,
+        numerals, oz_page, op_container, popups, users):
+    modal_name = 'Details modal'
+    close_button = 'X'
+    open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                          oz_page, op_container, 'acl', popups)
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id,
+                                                    modals, num, numerals)
+    user_id = users[name]._user_id
+    err_msg = (f'id in acl entry: {visible_id} differs from actual '
+               f'user id: {user_id}')
+    assert visible_id == user_id, err_msg
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 

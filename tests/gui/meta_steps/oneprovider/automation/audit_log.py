@@ -753,3 +753,41 @@ def assert_expected_in_entries(expected_entry, entries):
 def compare_audit_log_debug_entries(actual_entry, expected_entry):
     return expected_entry in actual_entry['content']['description'] and (
             actual_entry['severity'] == 'debug')
+
+
+@wt(parsers.parse('user of {browser_id} sees that workflow audit log contains '
+                  'entry with info only about file attributes {item_list}'))
+def assert_workflow_audit_log_contains_entry(
+        selenium, browser_id, modals, tmpdir, tmp_memory, item_list):
+    driver = selenium[browser_id]
+    modal_name = 'Workflow audit log'
+    # wait for modal to appear
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modal = modals(driver).audit_log
+    modal.download_as_json()
+    # wait a while for file to download
+    time.sleep(0.5)
+    path = tmpdir.join(browser_id, 'download')
+    file_path = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_path)
+    f = open(file_path)
+    data_file = json.load(f)
+    item_list = parse_seq(item_list)
+    for entry in data_file:
+        try:
+            content = entry['content']
+            if _assert_all_items_in_json(item_list, content) and (
+                    len(item_list) == len(content)):
+                return True
+        except KeyError:
+            pass
+    err_msg = (f'there is no entry containing data about {item_list} '
+               f'in workflow audit log')
+    raise RuntimeError(err_msg)
+
+
+def _assert_all_items_in_json(item_list, data):
+    for item in item_list:
+        if not data.get(transform(item), False):
+            return False
+    return True

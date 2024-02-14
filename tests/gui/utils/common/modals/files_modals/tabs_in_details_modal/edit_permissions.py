@@ -76,6 +76,7 @@ class MemberAclPermission(PageObject):
     deny_option = WebElement('.ace-type-deny')
     _subject_type = WebElement('.item-icon .oneicon')
     header = WebElement('.one-collapsible-list-item-header')
+    subject_id = Label('.subject-identifier')
 
     def expand(self):
         self.click()

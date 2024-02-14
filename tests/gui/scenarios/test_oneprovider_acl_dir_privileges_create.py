@@ -31,6 +31,7 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.providers import *
+from tests.gui.steps.oneprovider.public_shares import *
 
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
