@@ -64,8 +64,6 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
               Leave parent group: True
 
     And user of browser1 opens group "group4" members subpage
-    And user of browser1 clicks effective view mode in group members subpage
-    And user of browser1 clicks memberships view mode in group members subpage
     And user of browser1 clicks "user1" user in "group4" group members users list
     And user of browser1 sees 2 membership rows in group memberships mode
 
@@ -216,7 +214,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     And user of browser2 opens group "group5" members subpage
     And user of browser2 clicks on "Invite user using token" button in users list menu in "group5" group members view
-    Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser2 sees "This resource could not be loaded" alert in "Invite using token" modal
 
 
   Scenario: User successfully removes other user from given group if he has remove user privileges
@@ -270,7 +268,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "space1" space in the sidebar
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "space1" space members view
-    Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser2 sees "This resource could not be loaded" alert in "Invite using token" modal
 
 
   Scenario: User creates new space and invites group to it but given group fails to control it because of lack in privileges
@@ -297,7 +295,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     # User tries to invite group using token
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
-    Then user of browser1 sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser1 sees "This resource could not be loaded" alert in "Invite using token" modal
     And user of browser1 closes "Invite using token" modal
 
     # User tries to add group through dropdown menu
@@ -317,8 +315,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks on "Leave" button in space "space1" menu
-    And user of browser2 clicks on Leave button
-    Then user of browser2 sees that error modal with text "Leaving space failed!" appeared
+    Then user of browser2 sees "You cannot leave space" info in "Leave space" modal
 
 
   Scenario: User fails to join as subgroup because of lack in privileges

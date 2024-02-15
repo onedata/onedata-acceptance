@@ -70,7 +70,7 @@ Feature: Basic management of user privileges for spaces in Onezone GUI
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
-    Then user of browser_user1 sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser_user1 sees "This resource could not be loaded" alert in "Invite using token" modal
 
 
   Scenario: User fails to remove other user from given space because of lack in privileges

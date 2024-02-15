@@ -21,6 +21,7 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op,\
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -326,18 +327,34 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
+    """
+    In order to stabilize this function, func does not scroll too much at once
+    to don`t omit any files
+    Function assumes files` names don`t repeat
+    """
+
     browser = tmp_memory[browser_id]['file_browser']
     detected_files = []
     visible_files = browser.names_of_visible_elems()
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
-        browser.scroll_visible_fragment()
-        visible_files = browser.names_of_visible_elems()
+        # click some browser elem
+        browser.click_header()
+        # scroll about 5 files downs
+        for _ in range(5):
+            browser.scroll_one_file_down()
+        # wait if page does not respond instantly
+        for _ in range(10):
+            try:
+                visible_files = browser.names_of_visible_elems()
+                break
+            except StaleElementReferenceException:
+                time.sleep(0.1)
         new_files = [f for f in visible_files if f and f not in detected_files]
     else:
         err_msg = (f'There are {len(detected_files)} files in file browser '
-                   f'when should be {count}')
+                   f'when should be {count}, file list:{detected_files}')
         assert len(detected_files) == count, err_msg
 
 

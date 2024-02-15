@@ -14,12 +14,25 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
 
+class FileAttr(PageObject):
+    x = Button('.tag-remove')
+
+
+class ParameterSetting(PageObject):
+    file_type = Button('.fileType-field .field-component')
+    carried_file_attrs = Button('.fileAttributes-field .field-component')
+    attrs = WebItemsSequence('.tag-item', cls=FileAttr)
+
+
 class LambdaParameter(PageObject):
     add_button = Button('.add-field-button')
     name = WebItem('.entryName-field .text-like-field', cls=InputBox)
     type_dropdown = WebElement('.entryDataSpec-field '
                                '.ember-power-select-trigger')
     remove_element = Button('.remove-trigger')
+    settings = Button('.oneicon-settings')
+    parameter_settings = WebItem(
+        '.dataTypeEditor-children', cls=ParameterSetting)
 
 
 class LambdaParameters(PageObject):

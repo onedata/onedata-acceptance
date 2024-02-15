@@ -35,6 +35,8 @@ def check_modal_name(modal_name):
         return 'add_one_of_elements'
     elif 'rename' in modal_name:
         return 'rename_modal'
+    elif 'invite' in modal_name:
+        return 'invite_using_token'
     elif modal_name in ['file_details', 'directory_details']:
         return 'details_modal'
     else:
@@ -83,7 +85,7 @@ def _find_modal(driver, modal_name):
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
                          'file details', 'symbolic link', 'inventory',
-                         'workflow', 'unsaved']
+                         'workflow', 'unsaved', 'cease']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -325,15 +327,21 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
         raise RuntimeError('no button named {} found'.format(button_name))
 
 
-@wt(parsers.parse('user of {browser_id} sees {text} alert '
-                  'in "{modal}" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<text>.*)" '
+               '(?P<element>info|alert) in "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
+def assert_element_text_in_modal(selenium, browser_id, modals, modal, text,
+                                 element):
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
-    forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
-    assert text in forbidden_alert_text, (
-        'found {} text instead of {}'.format(forbidden_alert_text, text))
+    element_sel = 'forbidden_alert' if element == 'alert' else 'info'
+    assert_element_text(getattr(modals(driver), modal), element_sel, text)
+
+
+def assert_element_text(elem, selector, elem_text):
+    text = getattr(elem, selector).text
+    assert elem_text in text, (f'found {elem_text} text instead of '
+                               f'{text}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '

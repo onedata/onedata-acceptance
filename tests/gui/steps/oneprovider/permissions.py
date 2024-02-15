@@ -345,3 +345,13 @@ def assert_not_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = f'"No access" tag for {item_name} in file browser visible'
     assert not browser.data[item_name].is_tag_visible('no_access'), err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_unknown_user_id_from_acl_entry(selenium, browser_id, modals,
+                                       num, numerals):
+    driver = selenium[browser_id]
+    n = _get_index(selenium, browser_id, num, modals, numerals)
+    perm = modals(driver
+                  ).details_modal.edit_permissions.acl.member_permission_list[n]
+    return perm.subject_id
