@@ -85,6 +85,8 @@ def _change_acl_options(option_list, subject, change):
                 child_permission = (permissions[1].capitalize()
                                     .replace('acl', 'ACL'))
                 parent_permission.expand()
+                subject.scroll_to_elem_on_acl_permission_group(
+                    parent_permission)
                 getattr(parent_permission.permissions[
                             child_permission].toggle, change)()
 
