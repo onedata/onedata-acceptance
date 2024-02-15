@@ -272,8 +272,6 @@ def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
     getattr(browser.data[item_name], transform(tag)).click()
 
 
-# @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-#                   'is of {size} size in archive file browser'))
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item named '
                '"(?P<item_name>.*)" is of (?P<number>.*) (?P<option>size) in '
                '(?P<which_browser>archive file browser|file browser)'))
@@ -310,6 +308,8 @@ def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
             getattr(columns_menu[column.name], option_select)()
         else:
             getattr(columns_menu[column.name], option_unselect)()
+    # hide columns menu popup
+    browser.configure_columns.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
