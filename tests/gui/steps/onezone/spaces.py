@@ -27,13 +27,13 @@ def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
     # select data in main menu if not selected
     if not oz_page(driver).is_panel_clicked(option):
-        oz_page(driver)[option]
+        oz_page(driver).get_page_and_click(option)
     click_on_space_in_menu_list(oz_page, driver, name)
 
 
 def click_on_space_in_menu_list(oz_page, driver, name, force=True):
     # function assumes data page is active
-    page = oz_page(driver).get_page_no_clicking('data')
+    page = oz_page(driver)['data']
     if force:
         page.spaces_header_list[name]()
     else:
@@ -154,11 +154,11 @@ def _click_on_option_in_the_sidebar(
     name = str(option).lower()
     # call get_page in Onezone page
     if force:
-        page = oz_page(driver)[name]
+        page = oz_page(driver).get_page_and_click(name)
         return page
     else:
         if not oz_page(driver).is_panel_clicked(name):
-            oz_page(driver)[name]
+            oz_page(driver).get_page_and_click(name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '

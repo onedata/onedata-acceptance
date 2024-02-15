@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 from time import sleep
 
 from selenium.webdriver.common.action_chains import ActionChains
@@ -64,10 +65,10 @@ class OZLoggedIn(object):
         return 'Onezone page'
 
     def __getitem__(self, item):
-        return get_page(self, item)
-
-    def get_page_no_clicking(self, item):
         return get_page(self, item, False)
+
+    def get_page_and_click(self, item):
+        return get_page(self, item)
 
     def is_panel_clicked(self, item):
         for idx, panel in enumerate(self._panels):
@@ -87,6 +88,8 @@ def get_page(oz_page, item, click=True):
         panel = oz_page._panels[panels_dict[item]]
         if click:
             panel.click()
+            # wait till panel will open
+            wait_for_panel_to_expand(oz_page)
         return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
     elif item == 'profile':
         return ManageAccountPage(oz_page.web_elem, oz_page._profile, oz_page)
@@ -94,3 +97,11 @@ def get_page(oz_page, item, click=True):
         return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
     else:
         raise RuntimeError('no "{}" on {} found'.format(item, str(oz_page)))
+
+
+def wait_for_panel_to_expand(oz_page):
+    for _ in range(20):
+        if oz_page._panels[0].text == 'DATA':
+            break
+        else:
+            time.sleep(0.1)
