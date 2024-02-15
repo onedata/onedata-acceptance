@@ -475,7 +475,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sees that there is token named "space_token_1" on tokens list
     And user of browser2 clicks on "space_token_1" on token list
     And user of browser2 refreshes site
-    And user of browser2 sees that created token configuration is as following:
+    Then user of browser2 sees that created token configuration is as following:
           name: space_token_1
           invite type: Invite group to space
           invite target: $(resolve_id space2)
