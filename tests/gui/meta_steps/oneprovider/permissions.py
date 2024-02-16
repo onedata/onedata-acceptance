@@ -257,7 +257,6 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           modals, op_container, oz_page, name, popups):
     privileges_option_list = (
         '[attributes]' if res == 'succeeds' else '[acl:change acl]')
-    text = 'Modifying permissions failed'
     button = 'Save'
     panel = 'Edit permissions'
 
@@ -265,14 +264,20 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           oz_page, op_container, 'acl', popups)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
-    select_acl_options(selenium, browser_id, privileges_option_list, modals,
-                       name)
-    click_panel_button(selenium, browser_id, button, panel, modals)
 
     if res == 'fails':
-        assert_error_modal_with_text_appeared(selenium, browser_id, text)
+        try:
+            select_acl_options(selenium, browser_id, privileges_option_list, modals,
+                               name)
+            raise Exception(f'User succeeded to change {path} ACL for'
+                            f' {name} which was not expected')
+        except RuntimeError:
+            pass
 
     else:
+        select_acl_options(selenium, browser_id, privileges_option_list, modals,
+                           name)
+        click_panel_button(selenium, browser_id, button, panel, modals)
         open_permission_modal(selenium, browser_id, path, space, tmp_memory,
                               modals, oz_page, op_container, 'acl', popups)
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
