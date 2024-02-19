@@ -94,8 +94,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks on "group4" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
@@ -113,8 +111,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sees 2 membership rows in space memberships mode
     And user of browser clicks on "group4" member relation menu button to "group1" group
@@ -134,8 +130,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Remove child group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sees 2 membership rows in space memberships mode
     And user of browser clicks on "group4" member relation menu button to "group1" group
@@ -204,7 +198,6 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees following privileges of "group2" group in space members subpage:
           User management:
             granted: True
-    And user of browser clicks "group2" group in "group1" group members groups list
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees following privileges of "user2" user in space members subpage:
           User management:
@@ -247,8 +240,6 @@ Feature: Basic management of groups privileges in Onezone GUI
               Leave parent group: False
 
     And user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks on "group4" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
