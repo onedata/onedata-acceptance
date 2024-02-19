@@ -256,9 +256,19 @@ def click_button_on_status_bar(selenium, browser_id, op_container, button):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_workflow_in_inventory_subpage(oz_page, selenium, browser_id,
                                            ordinal, workflow):
-    page = oz_page(selenium[browser_id])['automation']
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
     revision = int(ordinal[:-2]) - 1
     page.workflows_page.elements_list[workflow].revision_list[revision].click()
+    # wait for page to open
+    for _ in range(20):
+        try:
+            page.workflows_page.workflow_visualiser.stores_list[0].click()
+            return
+        except RuntimeError:
+            time.sleep(0.1)
+    raise AssertionError(
+        f'clicking on {ordinal} revision of workflow {workflow} did not succeed')
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{level}" logging level'))

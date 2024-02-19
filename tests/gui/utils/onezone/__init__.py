@@ -102,6 +102,7 @@ def get_page(oz_page, item, click=True):
 def wait_for_panel_to_expand(oz_page):
     for _ in range(20):
         if oz_page._panels[0].text == 'DATA':
-            break
+            return
         else:
             time.sleep(0.1)
+    raise RuntimeError
