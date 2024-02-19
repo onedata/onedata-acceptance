@@ -39,6 +39,7 @@ from tests.gui.utils.common.common import (DropdownSelector,
                                            MigrateDropdownSelector)
 from .workflow_menu import WorkflowMenu
 from . configure_columns_menu import ConfigureColumnsMenu
+from .options_selector import OptionsSelector
 
 
 class Popups(object):
@@ -108,6 +109,7 @@ class Popups(object):
     configure_columns_menu = WebItem('.webui-popover-columns-configuration',
                                      cls=ConfigureColumnsMenu)
     logging_level = WebItem('.logLevel-field-dropdown', cls=PowerSelect)
+    options_selector = WebItem('.webui-popover.in', cls=OptionsSelector)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

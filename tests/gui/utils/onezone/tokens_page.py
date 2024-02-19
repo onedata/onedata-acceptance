@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.common.privilege_tree import PrivilegeTree
+from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button, NamedButton, WebItemsSequence, Label, Input, WebElement, WebItem,

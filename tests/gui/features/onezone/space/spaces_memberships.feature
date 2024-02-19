@@ -37,8 +37,6 @@ Feature: Basic management of spaces memberships in Onezone GUI
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
-    And user of space_owner_browser clicks effective view mode in space members subpage
-    And user of space_owner_browser clicks memberships view mode in space members subpage
     And user of space_owner_browser clicks "space-owner-user" user in "space1" space members users list
     And user of space_owner_browser sees 2 membership rows in space memberships mode
     And user of space_owner_browser clicks on "group3" member relation menu button to "space1" space
@@ -62,8 +60,6 @@ Feature: Basic management of spaces memberships in Onezone GUI
     And user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space2" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "space2" space in the sidebar
-    And user of browser1 clicks effective view mode in space members subpage
-    And user of browser1 clicks memberships view mode in space members subpage
     And user of browser1 clicks "user1" user in "space2" space members users list
     And user of browser1 clicks on "group2" member relation menu button to "space2" space
     And user of browser1 clicks on "Remove relation" in space membership relation menu
@@ -75,8 +71,6 @@ Feature: Basic management of spaces memberships in Onezone GUI
     When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space3" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "space3" space in the sidebar
-    And user of browser1 clicks effective view mode in space members subpage
-    And user of browser1 clicks memberships view mode in space members subpage
     And user of browser1 clicks "user1" user in "space3" space members users list
     And user of browser1 clicks on "user1" member relation menu button to "space3" space
     And user of browser1 clicks on "Remove relation" in space membership relation menu

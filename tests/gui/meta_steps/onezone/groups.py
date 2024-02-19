@@ -103,19 +103,12 @@ def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
         leave_group(selenium, user, group, oz_page, popups)
 
 
-def _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel):
+def _open_member_from_list(selenium, user, oz_page, parent, onepanel):
     where = 'group'
-    direct_selector = 'effective'
-    mode_selector = 'memberships'
     list_type = 'users'
     subpage = 'members'
 
     go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_mode_view_in_members_subpage(selenium, user, direct_selector,
-                                       oz_page, where, onepanel)
-    click_mode_view_in_members_subpage(selenium, user, mode_selector,
-                                       oz_page, where, onepanel)
     click_element_in_members_list(selenium, user, user, oz_page, where,
                                   list_type, onepanel)
 
@@ -124,8 +117,7 @@ def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
                                   parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel)
+    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(selenium, user,
                                                           group, parent,
@@ -137,8 +129,7 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                        group_list, parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page,
-                                         parent, onepanel)
+    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(selenium, user,
                                                               group, where,
