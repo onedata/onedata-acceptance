@@ -464,7 +464,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes "harvester9" harvester in Onezone page
 
 
-  Scenario: User can see removed space id in invitation token
+  Scenario: User can see removed space ID in invitation token
     When user of browser2 creates token with following configuration:
           name: space_token_1
           type: invite
