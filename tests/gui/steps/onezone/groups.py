@@ -109,7 +109,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                '(?P<subpage>members|hierarchy|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+    page = oz_page(selenium[browser_id]).get_page_and_click('groups')
     page.elements_list[group]()
     if subpage != 'main':
         getattr(page.elements_list[group], subpage)()

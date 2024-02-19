@@ -68,3 +68,11 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
          'expected {}'.format(displayed_name, val))
 
 
+def try_get_elem(elem, to_get):
+    for _ in range(50):
+        try:
+            getattr(elem, to_get)
+            return
+        except RuntimeError:
+            time.sleep(0.1)
+    raise RuntimeError(f'Did not manage to get {to_get} from elem {elem}')

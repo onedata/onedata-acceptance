@@ -17,6 +17,7 @@ from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import (
     press_backspace_on_active_element)
+from tests.gui.steps.oneprovider.common import try_get_elem
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses '
@@ -224,6 +225,7 @@ def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].menu_button.click()
 
+    try_get_elem(popups(driver), 'menu_popup_with_label')
     popups(driver).menu_popup_with_label.menu[option].click()
 
 

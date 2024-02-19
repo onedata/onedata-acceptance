@@ -96,9 +96,8 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
     try:
         page = tmp_memory[browser_id]['oz_page']
     except KeyError:
-        page = oz_page(selenium[browser_id])['automation']
+        page = oz_page(selenium[browser_id]).get_page_and_click('automation')
     page.elements_list[inventory]()
-    time.sleep(0.2)
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
 

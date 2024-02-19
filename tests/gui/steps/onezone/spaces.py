@@ -173,7 +173,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
     if option == 'spaces':
         _choose_space_from_menu_list(oz_page, driver, name)
     else:
-        oz_page(driver)[option].elements_list[name].click()
+        oz_page(driver).get_page_and_click(option).elements_list[name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button '
@@ -335,14 +335,13 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
                'providers? on the map on (?P<space_name>.*) '
                'space (?P<page>.*) data page'))
-def check_number_of_providers_on_the_map_on_data_page(selenium, browser_id,
-                                                      correct_number,
-                                                      space_name, page,
-                                                      oz_page):
+def check_number_of_providers_on_the_map_on_data_page(
+        selenium, browser_id, correct_number, space_name, page, oz_page):
     if correct_number == 'no':
         correct_number = 0
     driver = selenium[browser_id]
-    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    current_page = getattr(oz_page(driver).get_page_and_click('data'),
+                           _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f'found {number_providers} instead of {correct_number}'
     assert number_providers == int(correct_number), error_msg
