@@ -65,7 +65,8 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
 
     if button == 'Create new token':
-        oz_page(driver)['tokens'].sidebar.click_create_new_token(driver)
+        oz_page(driver).get_page_and_click(
+            'tokens').sidebar.click_create_new_token(driver)
     else:
         sidebar = oz_page(selenium[browser_id])['tokens'].sidebar
         getattr(sidebar, transform(button))()

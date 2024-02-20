@@ -22,7 +22,8 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_cluster_page(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
-    getattr(oz_page(driver)['clusters'], transform(button)).click()
+    getattr(oz_page(driver).get_page_and_click('clusters'),
+            transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} copies registration token '
@@ -45,7 +46,7 @@ def assert_record_in_clusters_menu(selenium, browser_id, oz_page, record,
 
 def _get_clusters(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    return oz_page(driver)['clusters'].menu
+    return oz_page(driver).get_page_and_click('clusters').menu
 
 
 def _get_cluster_record(selenium, browser_id, oz_page, record_name, hosts):

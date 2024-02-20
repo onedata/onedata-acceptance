@@ -24,7 +24,8 @@ def click_create_automation_button_in_sidebar(selenium, browser_id, oz_page):
 
 
 def get_oz_workflow_visualizer(oz_page, driver):
-    return oz_page(driver)['automation'].workflows_page.workflow_visualiser
+    return oz_page(driver).get_page_and_click(
+        'automation').workflows_page.workflow_visualiser
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into inventory name '

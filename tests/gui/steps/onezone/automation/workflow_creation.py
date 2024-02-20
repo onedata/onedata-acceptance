@@ -220,12 +220,11 @@ def write_task_name_in_task_edition_text_field(selenium, browser_id,
 def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
                                      task_name, option, popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['automation']
+    page = oz_page(driver).get_page_and_click('automation')
     workflow_visualiser = page.workflows_page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].menu_button.click()
 
-    try_get_elem(popups(driver), 'menu_popup_with_label')
     popups(driver).menu_popup_with_label.menu[option].click()
 
 

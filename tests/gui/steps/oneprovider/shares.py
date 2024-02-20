@@ -11,6 +11,7 @@ from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
@@ -94,7 +95,13 @@ def click_option_in_share_row_menu(selenium, browser_id, option, popups):
                   'on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_shares_message(selenium, browser_id, op_container):
-    msg = op_container(selenium[browser_id]).shares_page.no_shares_msg
+    driver = selenium[browser_id]
+    try:
+        msg = op_container(driver).shares_page.no_shares_msg
+    except RuntimeError:
+        driver.refresh()
+        switch_to_iframe(selenium, browser_id)
+        msg = op_container(driver).shares_page.no_shares_msg
     assert "no shares" in msg.lower(), ('There are shares on the view but '
                                         'shouldn\'t be any')
 

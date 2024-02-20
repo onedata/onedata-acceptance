@@ -85,19 +85,17 @@ def _find_modal(driver, modal_name):
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
                          'file details', 'symbolic link', 'inventory',
-                         'workflow', 'unsaved', 'cease']
+                         'workflow', 'unsaved', 'cease', 'modify']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
-            modals = driver.find_elements_by_css_selector('.modal, '
-                                                          '.modal '
-                                                          '.modal-header h1')
+            modals = driver.find_elements_by_css_selector(
+                '.modal, .modal .modal-header h1')
         elif 'leave this space' in modal_name:
-            modals = driver.find_elements_by_css_selector('.modal.in, '
-                                                          '.modal.in h1')
+            modals = driver.find_elements_by_css_selector(
+                '.modal.in, .modal.in h1')
         else:
-            modals = driver.find_elements_by_css_selector('.modal.in, '
-                                                          '.modal.in '
-                                                          '.modal-title')
+            modals = driver.find_elements_by_css_selector(
+                '.modal.in, .modal.in .modal-title')
 
         for name, modal in zip(modals[1::2], modals[::2]):
             if name.text.lower() == modal_name.lower():

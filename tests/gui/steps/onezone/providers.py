@@ -80,7 +80,7 @@ def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    clipboard):
     driver = selenium[browser_id]
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
     page.elements_list[0]()
     _click_copy_hostname(driver, popups)
     displayed_domain = clipboard.paste(display=displays[browser_id])
@@ -298,7 +298,7 @@ def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
     try:
         provider_record = page.elements_list[provider]
         provider_record.click()

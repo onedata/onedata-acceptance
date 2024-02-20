@@ -47,8 +47,8 @@ def _find_groups(page, group_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_exists(selenium, browser_ids, option, group, oz_page):
     for browser_id in parse_seq(browser_ids):
-        groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
-                                        group))
+        groups_count = len(_find_groups(oz_page(selenium[browser_id]).
+                                        get_page_and_click('groups'), group))
         if option == 'does not see':
             assert groups_count == 0, f'group "{group}" found'
         else:

@@ -295,7 +295,7 @@ def copy_token_from_modal(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_groups_child(selenium, browser_id, option, child, parent,
                                    oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+    page = oz_page(selenium[browser_id]).get_page_and_click('groups')
     page.elements_list[parent]()
     page.elements_list[parent].members()
 
