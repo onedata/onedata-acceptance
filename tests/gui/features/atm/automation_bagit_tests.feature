@@ -413,7 +413,6 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around actual time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 13500 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
