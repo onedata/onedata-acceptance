@@ -37,7 +37,7 @@ Feature: Directories and files replications stats
     When user of browser opens file browser for "space1" space
     And user of browser enables only ["Size", "Replication"] columns in columns configuration popover in file browser table
     Then user of browser sees that item named "file1" has 100% replication rate in file browser
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that item named "file1" has 0% replication rate in file browser
@@ -48,7 +48,7 @@ Feature: Directories and files replications stats
     And user of browser waits for all transfers to finish
     And user of browser opens file browser for "space1" space
     And user of browser sees that item named "file1" has 100% replication rate in file browser
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-1" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that item named "file1" has 100% replication rate in file browser
@@ -65,7 +65,7 @@ Feature: Directories and files replications stats
     And user of browser waits for all transfers to finish
     And user of browser opens file browser for "space1" space
     Then user of browser sees that item named "dir1" has 75% replication rate in file browser
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that item named "dir1" has 25% replication rate in file browser
@@ -81,7 +81,7 @@ Feature: Directories and files replications stats
     And user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser opens file browser for "space1" space
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     Then user of browser sees that item named "dir2" has < 1% replication rate in file browser

@@ -279,7 +279,7 @@ def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
                '"(?P<item_name>.*)" has (?P<number>.*) (?P<option>replication '
                'rate) in (?P<which_browser>archive file browser|file browser)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_in_browser_is_of_option(
+def assert_value_in_column_for_item(
         browser_id, item_name, number, option, which_browser, selenium,
         op_container):
     driver = selenium[browser_id]
