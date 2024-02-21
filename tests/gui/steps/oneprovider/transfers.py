@@ -243,7 +243,7 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
-    op_container(selenium[browser_id]).transfers.ongoing_map_header
+    op_container(selenium[browser_id]).transfers.providers_table
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<options>Replicate '
