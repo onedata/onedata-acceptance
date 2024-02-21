@@ -87,7 +87,9 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
     else:
         add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name)
 
+    time.sleep(0.5)
     add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name)
+    time.sleep(0.5)
     add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
                                     ordinal)
 

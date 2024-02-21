@@ -17,7 +17,7 @@ from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import (
     press_backspace_on_active_element)
-from tests.gui.steps.oneprovider.common import try_get_elem
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses '
@@ -151,12 +151,14 @@ def assert_store_in_store_list(selenium, browser_id, oz_page, store_name):
                ' lane) of workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_lane_button_in_workflow_visualizer(selenium, browser_id, oz_page,
-                                                 option):
+                                                 option, tmp_memory):
     page = oz_page(selenium[browser_id])['automation']
+    modal_name = 'create new lane'
     if "right" in option:
         page.workflows_page.workflow_visualiser.create_lane_button[-1].click()
     else:
         page.workflows_page.workflow_visualiser.create_lane_button[0].click()
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow '

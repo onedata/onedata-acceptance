@@ -332,6 +332,9 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
     modal = 'Add one of spaces'
     element_type = 'harvester'
     modal_name = 'Add one of your harvesters'
+    panel_name = 'Data'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, panel_name, oz_page)
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page)
