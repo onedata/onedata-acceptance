@@ -98,9 +98,9 @@ class TransferColumnHeader(PageObject):
 
 
 class _TransfersTab(PageObject):
-    ongoing_map_header = WebElement('.col-providers-map h2')
+    providers_table = WebElement('.providers-table')
     spaces = WebItemsSequence('ul.spaces-list li', cls=SpaceRecord)
-    tabs = WebItemsSequence('.row-transfers-tables .nav-tabs li',
+    tabs = WebItemsSequence('.providers-table .nav-tabs li',
                             cls=TabHeader)
     _ended_list = WebItemsSequence('.col-ended-transfers tr.data-row',
                                    cls=TransferRecordHistory)
