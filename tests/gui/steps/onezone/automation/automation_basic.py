@@ -56,7 +56,7 @@ def confirm_name_input_on_main_automation_page(selenium, browser_id,
 def click_option_in_inventory_menu(selenium, browser_id, option, inventory,
                                    oz_page, popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['automation']
+    page = oz_page(driver).get_page_and_click('automation')
     page.elements_list[inventory]()
     page.elements_list[inventory].menu()
     popups(driver).menu_popup_with_text.menu[option]()

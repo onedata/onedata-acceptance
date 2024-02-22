@@ -35,8 +35,10 @@ from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
     button = 'Create space'
+    where = 'Data'
 
     for space_name in parse_seq(space_list):
+        click_on_option_in_the_sidebar(selenium, user, where, oz_page)
         click_button_on_spaces_sidebar_menu(selenium, user, button, oz_page)
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)

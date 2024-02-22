@@ -434,7 +434,8 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
                                      hosts, provider_name):
     driver = selenium[browser_id]
     provider = hosts[provider_name]['name']
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
+    time.sleep(0.5)
     provider_record = page.elements_list[provider]
     provider_record.click()
     start = time.time()
@@ -454,6 +455,7 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
     provider = hosts[provider_name]['name']
     provider_hostname = hosts[provider_name]['hostname']
     page = oz_page(driver).get_page_and_click('providers')
+    time.sleep(0.5)
     provider_record = page.elements_list[provider]
     provider_record.click()
     start = time.time()

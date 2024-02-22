@@ -244,7 +244,7 @@ def click_element_in_members_list(selenium, browser_id, member_name, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group, oz_page,
                                            member):
-    page = oz_page(selenium[browser_id])['groups']
+    page = oz_page(selenium[browser_id]).get_page_and_click('groups')
     page.elements_list[group]()
     page.elements_list[group].members()
     getattr(page.main_page.members, member).generate_token()
@@ -370,7 +370,7 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
                               popups):
     driver = selenium[browser_id]
     if where != 'cluster':
-        main_page = oz_page(selenium[browser_id])[_change_to_tab_name(where)]
+        main_page = oz_page(selenium[browser_id]).get_page_and_click(_change_to_tab_name(where))
         main_page.elements_list[name]()
         main_page.elements_list[name].members()
     members_page = _find_members_page(onepanel, oz_page, driver, where)
@@ -466,7 +466,7 @@ def assert_user_not_in_cluster_members_page(selenium, browser_id, member_name,
 def copy_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
                           popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['groups']
+    page = oz_page(driver).get_page_and_click('groups')
     page.elements_list[group]()
 
     getattr(page.main_page.members, who + 's').header.menu_button()
