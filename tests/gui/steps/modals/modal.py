@@ -115,7 +115,7 @@ def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = modal
 
 
-def assert_warning_modal(selenium, browser_id):
+def check_warning_modal(selenium, browser_id):
     driver = selenium[browser_id]
     if not driver.find_elements_by_css_selector('.question-modal'):
         return False

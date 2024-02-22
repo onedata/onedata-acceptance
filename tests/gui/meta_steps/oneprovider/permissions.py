@@ -22,7 +22,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl)
 from tests.gui.steps.modals.modal import (
     click_modal_button, click_panel_button, assert_there_is_no_button_in_panel,
-    assert_warning_modal)
+    check_warning_modal)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
@@ -151,8 +151,9 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     click_panel_button(selenium, browser_id, button, panel, modals)
-    if assert_warning_modal(selenium, browser_id):
-        click_modal_button(selenium, browser_id, proceed_button, warning_modal, modals)
+    if check_warning_modal(selenium, browser_id):
+        click_modal_button(selenium, browser_id, proceed_button, warning_modal
+                           , modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -263,8 +264,8 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                                                     modals, name)
 
     if res == 'fails':
-        fail_to_select_acl_option(selenium, browser_id, privileges_option_list,
-                                  modals, name)
+        assert_fail_to_select_acl_option(selenium, browser_id,
+                                         privileges_option_list, modals, name)
 
     else:
         select_acl_options(selenium, browser_id, privileges_option_list, modals,

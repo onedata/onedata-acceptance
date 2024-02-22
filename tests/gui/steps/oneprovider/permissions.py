@@ -117,8 +117,8 @@ def select_acl_options(selenium, browser_id, option_list, modals, subject):
     _change_acl_options(option_list, subject, change)
 
 
-def fail_to_select_acl_option(selenium, browser_id, option_list, modals,
-                              subject):
+def assert_fail_to_select_acl_option(selenium, browser_id, option_list,
+                                     modals, subject):
     driver = selenium[browser_id]
     subject = (modals(driver).details_modal.
                edit_permissions.acl.member_permission_list[subject])
