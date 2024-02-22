@@ -13,8 +13,6 @@ from ..modal import Modal
 class WarningModal(Modal):
     proceed = Button('.question-yes')
     cancel = Button('.question-no')
-    # proceed = NamedButton('button', text='Proceed')
-    # cancel = NamedButton('button', text='Cancel')
 
     def __str__(self):
         return 'Warning modal'

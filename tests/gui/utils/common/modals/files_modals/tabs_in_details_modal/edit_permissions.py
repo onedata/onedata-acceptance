@@ -46,6 +46,7 @@ class POSIX(PageObject):
 
 class AclPermission(PageObject):
     name = id = Label('label')
+    name_web_elem = WebElement('.node-text')
     toggle = Toggle('.one-way-toggle')
 
 
