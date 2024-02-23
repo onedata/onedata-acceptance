@@ -272,17 +272,22 @@ def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
     getattr(browser.data[item_name], transform(tag)).click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-                  'is of {size} size in archive file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_item_in_archive_file_browser_is_of_size(browser_id, item_name, size,
-                                                   selenium, op_container):
+@wt(parsers.re('user of (?P<browser_id>.*) sees that item named '
+               '"(?P<item_name>.*)" is of (?P<number>.*) (?P<option>size) in '
+               '(?P<which_browser>archive file browser|file browser)'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that item named '
+               '"(?P<item_name>.*)" has (?P<number>.*) (?P<option>replication '
+               'rate) in (?P<which_browser>archive file browser|file browser)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_value_in_column_for_item(
+        browser_id, item_name, number, option, which_browser, selenium,
+        op_container):
     driver = selenium[browser_id]
-    browser = op_container(driver).archive_file_browser
-    item_size = browser.data[item_name].size
-    err_msg = (f'displayed size {item_size} for {item_name} does not '
-               f'match expected {size}')
-    assert size == item_size, err_msg
+    browser = getattr(op_container(driver), transform(which_browser))
+    item_elem = getattr(browser.data[item_name], transform(option))
+    err_msg = (f'displayed {option} {item_elem} for {item_name} does not '
+               f'match expected {number}')
+    assert number == item_elem, err_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '
@@ -297,11 +302,14 @@ def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    columns = list(map(lambda s: s.lower(), parse_seq(columns)))
     for column in columns_menu:
-        if column.name.lower() in parse_seq(columns):
+        if column.name.lower() in columns:
             getattr(columns_menu[column.name], option_select)()
         else:
             getattr(columns_menu[column.name], option_unselect)()
+    # hide columns menu popup
+    browser.configure_columns.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '

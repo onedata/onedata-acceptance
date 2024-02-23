@@ -42,7 +42,7 @@ Feature: Archive recall tests using multiple providers
     And user of browser clicks "Recall to..." option in data row menu in archive browser
     And user of browser writes "file_recalled.txt" into target name input text field in modal "Recall archive"
     And user of browser clicks on "Recall" button in modal "Recall archive"
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on recalling status tag for "file_recalled.txt" in file browser
