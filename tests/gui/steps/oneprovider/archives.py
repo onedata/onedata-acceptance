@@ -178,10 +178,13 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on menu for archive '
                'with description: "(?P<description>.*?)" in archive browser'))
-def click_menu_for_archive(browser_id, tmp_memory, description):
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
+    if popups(selenium[browser_id]).archive_row_menu.options[0].name == '':
+        raise Exception(f'Archive with description {description} did not open')
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '

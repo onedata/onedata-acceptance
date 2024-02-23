@@ -235,6 +235,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
     And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "Proceed" button in modal "Warning"
     And user of browser clicks on "X" button in modal "File details"
 
      # check permission of original file
