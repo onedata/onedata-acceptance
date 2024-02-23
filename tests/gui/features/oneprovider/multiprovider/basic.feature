@@ -30,7 +30,7 @@ Feature: Oneprovider functionality using multiple providers
           unit: GiB
     And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on Choose other Oneprovider on file browser page
+    And user of space_owner_browser clicks on "Choose other Oneprovider" on file browser page
     Then user of space_owner_browser sees provider named "oneprovider-1" on file browser page
     And user of space_owner_browser sees provider named "oneprovider-2" on file browser page
     And user of space_owner_browser clicks on "oneprovider-2" provider on file browser page

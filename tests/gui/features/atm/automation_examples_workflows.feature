@@ -407,7 +407,7 @@ Feature: Automation examples tests
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "results" store details modal is 12
-    And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" space corresponds to two instances of the element with "file_id" in "results" store details modal
+    And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" corresponds to two instances of the element with "file_id" in "results" store
 
     Examples:
     | workflow_name               |
