@@ -144,3 +144,20 @@ Feature: Workflows stores tests
         - "[Lane: 1, Run: 1] Exception store created."
         - "[Lane: 1, Run: 1] Creating..."
         - "[Lane: 1, Run: 1] Preparing..."
+
+
+  Scenario: User runs workflow with "Info" logging level and cannot see any entry with severity "Debug" in audit log
+    When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "echo" workflow
+    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
+    And user of browser chooses "Info" logging level
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser clicks "Audit log" button on "Echo" workflow status bar
+    And user of browser sees that workflow audit log does not contain any system debug entry
