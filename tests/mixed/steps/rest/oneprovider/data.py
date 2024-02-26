@@ -256,9 +256,9 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
                                        hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
-    file_attrs = file_api.get_attrs(file_id, attribute='mode')
+    file_attrs = file_api.get_attrs(file_id, data={'attributes': ['posix_permissions']})
     try:
-        file_perms = int(file_attrs.mode) % 1000
+        file_perms = int(file_attrs.posix_permissions) % 1000
     except KeyError:
         assert False, 'File {} has no mode metadata'.format(path)
 
