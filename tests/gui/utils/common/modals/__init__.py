@@ -37,6 +37,7 @@ from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
 from .basic_modals.there_are_unsaved_changes import ThereAreUnsavedChanges
 from .troubles_modals.error_modal import ErrorModal
+from .troubles_modals.warning_modal import WarningModal
 from .tokens_modals.invite_using_token import InviteUsingTokenModal
 from .troubles_modals.dns_configuration_warning import (
     DNSConfigurationWarningModal)
@@ -96,6 +97,7 @@ class Modals(object):
                                         cls=DNSConfigurationWarningModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
+    warning = WebItem('.question-modal', cls=WarningModal)
 
     # tokens modals
     invite_using_token = WebItem('.generate-invite-token-modal.modal.in '

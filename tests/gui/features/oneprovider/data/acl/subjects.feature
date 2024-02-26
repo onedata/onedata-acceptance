@@ -139,6 +139,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And user of space_owner_browser adds ACE with <child_privileges> privileges set for group group3
     And user of space_owner_browser adds ACE with <parent_privileges> privileges set for group group1
     And user of space_owner_browser clicks on "Save" button in edit permissions panel
+    And user of space_owner_browser clicks on "Proceed" button in modal "Warning"
     Then user of browser_user3 <result> to remove "file1" in "space1"
 
     Examples:

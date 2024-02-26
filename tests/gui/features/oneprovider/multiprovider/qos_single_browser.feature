@@ -49,7 +49,7 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     Then user of browser sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled
           oneprovider-2: entirely filled
-    And user of browser clicks on Choose other Oneprovider on file browser page
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees only items named ["file1", "dir1"] in file browser
