@@ -265,19 +265,24 @@ def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
     switch_to_iframe(selenium, browser_id)
 
 
-@wt(parsers.parse('user of {browser_id} uses upload button from file '
-                  'browser menu bar to upload {option} '
-                  '"automation/bagit_test_archives/{file_name}" '
-                  'to current dir'))
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload {option} "{file_name}" to current dir '
                   'without waiting for upload to finish'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
-                                                  file_name, op_container,
-                                                  option="file"):
-    file_name = ("automation/bagit_test_archives/" + file_name.replace(
-        "\"", "")) if option == "archive" else file_name
+                                                  file_name, op_container):
+    driver = selenium[browser_id]
+    op_container(driver).file_browser.upload_files(upload_file_path(file_name))
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) uses upload button from file '
+               'browser menu bar to upload (?P<option>.*) '
+               '"automation/(?P<inner_dir>.*)/'
+               '(?P<file_name>.*)" to current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_automation_file_to_cwd_in_file_browser_no_waiting(
+        selenium, browser_id, file_name, op_container, inner_dir):
+    file_name = 'automation/' + inner_dir + '/' + file_name.replace('\"', '')
     driver = selenium[browser_id]
     op_container(driver).file_browser.upload_files(upload_file_path(file_name))
 

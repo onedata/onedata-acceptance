@@ -32,6 +32,9 @@ def _click_on_btn_for_token(driver, oz_page, token_name, btn, popups):
     click_option_for_token_row_menu(driver, btn, popups)
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "{token_name}" on '
+                  'token list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page):
     driver = selenium[browser_id]
     get_token_by_name(oz_page, token_name, driver).click()
@@ -329,12 +332,16 @@ def assert_invite_type(selenium, browser_id, oz_page, expected_type):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
+def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts,
+                         spaces):
     if 'oneprovider' in expected_target:
         expected_target = hosts[expected_target]['name']
 
     driver = selenium[browser_id]
     actual_type = oz_page(driver)['tokens'].invite_target
+    if expected_target.startswith('$(resolve_id'):
+        space_name = expected_target.split(' ')[1].replace(')', '')
+        expected_target = 'ID: ' + spaces[space_name]
     assert actual_type == expected_target, (f'Expected invite target '
                                             f'{expected_target} '
                                             f'does not match actual '
