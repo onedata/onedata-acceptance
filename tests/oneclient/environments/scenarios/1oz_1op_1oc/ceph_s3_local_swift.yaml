@@ -45,3 +45,15 @@ oneprovider-1:
     users: []
     wait_for_oneprovider:
       enabled: false
+
+sources:
+  oneprovider-1:
+    node-1:
+      - op-worker
+  oneclient-1: debug
+
+
+
+
+
+

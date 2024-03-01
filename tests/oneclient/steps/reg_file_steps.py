@@ -24,7 +24,7 @@ def write_rand_text(user, megabytes, file, users, context):
 
 @wt(parsers.re('(?P<user>\w+) fails to write "(?P<text>.*)" to (?P<file>.*)'))
 def write_text_fail(user, text, file, users):
-    multi_reg_file_steps.write_text_fail(user, text, file, users)
+    multi_reg_file_steps.write_text_fail(user, text, file, 'client1', users)
 
 
 @wt(parsers.re('(?P<user>\w+) reads "(?P<text>.*)" from file (?P<file>.*)'))
