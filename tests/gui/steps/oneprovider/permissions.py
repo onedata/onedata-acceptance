@@ -85,6 +85,8 @@ def _change_acl_options(option_list, subject, change):
                 child_permission = (permissions[1].capitalize()
                                     .replace('acl', 'ACL'))
                 parent_permission.expand()
+                subject.scroll_to_elem_on_acl_permission_group(
+                    parent_permission)
                 getattr(parent_permission.permissions[
                             child_permission].toggle, change)()
 
@@ -113,6 +115,25 @@ def select_acl_options(selenium, browser_id, option_list, modals, subject):
         change = f'un{change}'
 
     _change_acl_options(option_list, subject, change)
+
+
+def assert_fail_to_select_acl_option(selenium, browser_id, option_list,
+                                     modals, subject):
+    driver = selenium[browser_id]
+    subject = (modals(driver).details_modal.
+               edit_permissions.acl.member_permission_list[subject])
+    option = parse_seq(option_list)[0]
+    permissions = option.split(':')
+    parent_permission_name = (permissions[0].capitalize().replace('Acl', 'ACL'))
+    parent_permission = subject.acl_permission_group[parent_permission_name]
+    child_permission = (permissions[1].capitalize().replace('acl', 'ACL'))
+    parent_permission.expand()
+    subject.scroll_to_elem_on_acl_permission_group(parent_permission)
+    child_permission_class = parent_permission.permissions[
+        child_permission].name_web_elem.get_attribute('class')
+    if 'disabled' not in child_permission_class:
+        raise Exception(f'{child_permission} is not disabled and user can '
+                        f'change ACL option which is not expected')
 
 
 @wt(parsers.parse('user of {browser_id} expands select list for {num} ACL '

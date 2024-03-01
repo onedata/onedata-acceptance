@@ -48,6 +48,7 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.steps.oneprovider.permissions import *
 
@@ -84,3 +85,4 @@ def screens():
 
 
 scenarios('../features/atm/automation_examples_workflows.feature')
+scenarios('../features/atm/automation_examples_workflows_input_files.feature')
