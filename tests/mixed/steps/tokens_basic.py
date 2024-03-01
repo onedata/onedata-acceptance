@@ -46,7 +46,7 @@ def assert_token(client, user, config, selenium, oz_page, users,
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_token_configuration_gui(selenium, user, config, oz_page, users,
-                                       groups, hosts, tmp_memory)
+                                       groups, hosts, tmp_memory, spaces)
     elif client_lower == 'rest':
         assert_token_with_config_rest(user, config, users, hosts,
                                       tmp_memory, groups, spaces)

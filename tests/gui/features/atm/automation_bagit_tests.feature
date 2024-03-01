@@ -163,18 +163,18 @@ Feature: Bagit uploader tests
     And user of browser sees Dataset status tag for "googlelogo_color_272x92dp.png" in file browser
 
 
-  Scenario: User sees desirable xrootd file in file browser after execution of uploaded "bagit-uploader" with valid_with_xrootd.zip
+  Scenario Outline: User sees desirable xrootd file in file browser after execution of uploaded "bagit-uploader" with <xrootd_archive>
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload file "automation/bagit_test_archives/valid_with_xrootd.zip" to current dir
-    And user of browser sees that item named "valid_with_xrootd.zip" has appeared in file browser
+    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/<xrootd_archive>" to current dir
+    And user of browser sees that item named <xrootd_archive> has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "bagit-uploader" workflow
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
-    And user of browser chooses "valid_with_xrootd.zip" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
+    And user of browser chooses <xrootd_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
@@ -189,14 +189,14 @@ Feature: Bagit uploader tests
       severity: info
       content:
         status: Successfully unpacked 0 files.
-        archive: valid_with_xrootd.zip
+        archive: <xrootd_archive>
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
       timestamp: today
       source: user
       severity: info
       content:
         status: Found  1 files to be downloaded.
-        archive: valid_with_xrootd.zip
+        archive: <xrootd_archive>
 
     And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 1
     And user of browser sees that element in the content of the "uploaded-files" store details modal contains following file names:
@@ -229,6 +229,12 @@ Feature: Bagit uploader tests
     And user of browser sees inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
     And user of browser clicks on inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
     And user of browser sees Dataset status tag for "LHC10c_pp_ESD_120076.json" in file browser
+
+
+    Examples:
+      | xrootd_archive                   |
+      | "valid_with_xrootd.zip"          |
+      | "bagit_archive_fetch_xrootd.zip" |
 
 
   Scenario Outline: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - <input_archive>
@@ -363,3 +369,75 @@ Feature: Bagit uploader tests
           reason: $(contains ["HTTPSConnectionPool(host='www.heh.xd', port=443)", "Max retries exceeded with url", "Caused by NewConnectionError", "Failed to establish a new connection", "[Errno -2] Name or service not known"])
         description: Lambda exception occurred during item processing.
 
+
+  Scenario: User sees successful execution of uploaded "bagit-uploader" workflow and input file bagit_archive_unpack.tar
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload archive "automation/bagit_test_archives/bagit_archive_unpack.tar" to current dir
+    And user of browser sees that item named "bagit_archive_unpack.tar" has appeared in file browser
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "bagit-uploader" workflow
+    And user of browser chooses "bagit_archive_unpack.tar" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
+    And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
+    And user of browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser waits for all workflows to start
+    And user of browser waits extended time for all workflows to finish
+    And user of browser clicks on first executed workflow
+
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+
+    And user of browser sees that audit log in task "bagit-uploader-unpack-data" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Successfully unpacked 64 files.
+        archive: "bagit_archive_unpack.tar"
+    And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
+      timestamp: today
+      source: user
+      severity: info
+      content:
+        status: Found  0 files to be downloaded.
+        archive: "bagit_archive_unpack.tar"
+
+    And user of browser sees that number of elements in the content of the "uploaded-files" store details modal is 21
+    And user of browser closes "Store details" modal
+
+    And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
+    And user of browser changes time resolution to "1 min" in modal "Task time series"
+    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that bytes processing speed is greater or equal 13500 per second on chart with processing stats
+    And user of browser clicks on "X" button in modal "Task time series"
+
+    And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 0
+    And user of browser closes "Store details" modal
+
+    # Checking if Dataset in file browser has correct content
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees Dataset status tag for "dir1" in file browser
+
+    # TODO: VFS-11706 uncomment after implementing function which checks file
+    #  structure and  recognize dirs with names not starting with "dir" prefix
+#    And user of browser sees that the file structure in file browser is as follow:
+#      - dir1:
+#        - mid-covid6:
+#          - data_objects: 41
+#          - studies: 23
+
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser sees inherited status tag for "mid-covid6" in file browser
+    And user of browser clicks on inherited status tag for "mid-covid6" in file browser
+    And user of browser sees Dataset status tag for "mid-covid6" in file browser
+
+    # TODO: VFS-11705 implement test for following archives after workflow fix
+    # bagit_archive_5gbfile.zip
+    # bagit_archive_fetch.zip
+    # bagit_archive_unpack_and_fetch.zip

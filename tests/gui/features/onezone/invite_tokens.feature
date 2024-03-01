@@ -462,3 +462,20 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
     And user of browser1 removes "harvester8" harvester in Onezone page
     And user of browser1 removes "harvester9" harvester in Onezone page
+
+
+  Scenario: User can see removed space ID in invitation token
+    When user of browser2 creates token with following configuration:
+          name: space_token_1
+          type: invite
+          invite type: Invite group to space
+          invite target: space2
+    And user of browser2 removes "space2" space in Onezone page
+    And user of browser2 clicks on Tokens in the main menu
+    And user of browser2 sees that there is token named "space_token_1" on tokens list
+    And user of browser2 clicks on "space_token_1" on token list
+    And user of browser2 refreshes site
+    Then user of browser2 sees that created token configuration is as following:
+          name: space_token_1
+          invite type: Invite group to space
+          invite target: $(resolve_id space2)

@@ -115,8 +115,24 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=360,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
-                                             option):
+def wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, option):
+    _wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, option)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) waits extended time for '
+               'all workflows to (?P<option>start|finish)'))
+@repeat_failed(interval=1, timeout=1500,
+               exceptions=(AssertionError, StaleElementReferenceException))
+def wait_for_workflows_in_automation_subpage_extended_time(
+        selenium, browser_id, op_container, option):
+    _wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, option)
+
+
+def _wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     if option == 'start':
         change_tab_in_automation_subpage(selenium, browser_id,

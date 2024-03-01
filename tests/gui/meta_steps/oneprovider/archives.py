@@ -178,7 +178,8 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
         option_in_menu = 'Copy archive ID'
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory, ARCHIVE_BROWSER)
-        click_menu_for_archive(browser_id, tmp_memory, description)
+        click_menu_for_archive(browser_id, tmp_memory, description, popups,
+                               selenium)
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_menu, popups,
                                                  ARCHIVE_BROWSER)
@@ -238,7 +239,8 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
     click_on_dataset(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=ARCHIVE_BROWSER)
-    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_menu_for_archive(browser_id, tmp_memory, description, popups,
+                           selenium)
 
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
@@ -306,7 +308,8 @@ def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
     option_in_menu = 'Properties'
     info = f'{option} callback URL'
     button_name = 'X'
-    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_menu_for_archive(browser_id, tmp_memory, description, popups,
+                           selenium)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_menu, popups,
                                              ARCHIVE_BROWSER)
@@ -321,7 +324,8 @@ def recall_archive_for_archive_in_op_gui(browser_id, description, tmp_memory,
     modal_name = 'Recall archive'
     name_textfield = 'target name input'
     button_name = 'Recall'
-    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_menu_for_archive(browser_id, tmp_memory, description, popups,
+                           selenium)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_menu, popups,
                                              ARCHIVE_BROWSER)
