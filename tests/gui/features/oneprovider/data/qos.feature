@@ -59,11 +59,11 @@ Feature: Quality of Service tests using single storage and single browser in One
 
   Scenario: User sees that QoS is of a state Impossible in QoS column in file browser
     When user of browser creates "hello=WORLD" QoS requirement for "file1" in space "space1"
-    And user of browser enables only ["Size", "QoS"] columns in columns configuration popover in file browser table
+    And user of browser enables only ["QoS"] column in columns configuration popover in file browser table
     Then user of browser sees "Impossible" status in QoS column for "file1" in file browser
 
 
   Scenario: User sees that QoS is of a state Fulfilled in QoS column in file browser
     When user of browser creates "anyStorage" QoS requirement for "file1" in space "space1"
-    And user of browser enables only ["Size", "QoS"] columns in columns configuration popover in file browser table
+    And user of browser enables only ["QoS"] column in columns configuration popover in file browser table
     Then user of browser sees "Fulfilled" status in QoS column for "file1" in file browser
