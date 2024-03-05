@@ -10,7 +10,9 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
-    go_to_path_without_last_elem, check_file_structure_in_browser)
+    go_to_path_without_last_elem)
+from tests.gui.meta_steps.oneprovider.files_tree import (
+    check_file_structure_in_browser)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
@@ -166,9 +168,9 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
                              item_browser=item_browser)
-    check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
-                                    op_container, tmpdir,
-                                    which_browser=item_browser)
+    check_file_structure_in_browser(
+        browser_id, config, selenium, tmp_memory, op_container, tmpdir,
+        which_browser=item_browser)
 
 
 def check_effective_protection_flags_for_file_in_op_gui(

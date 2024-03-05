@@ -102,6 +102,21 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
         breadcrumbs.chdir(path, archive)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def go_back_using_breadcrumbs_in_data_tab_in_op(
+        selenium, browser_id, op_container, which_browser='file browser'):
+    # this cannot be first step that uses which_browser,
+    # browser must be loaded before in some previous step
+    try:
+        breadcrumbs = getattr(op_container(selenium[browser_id]),
+                              transform(which_browser)).breadcrumbs
+    except RuntimeError:
+        which_browser = 'archive browser'
+        breadcrumbs = getattr(op_container(selenium[browser_id]),
+                              transform(which_browser)).breadcrumbs
+    breadcrumbs.go_one_back()
+
+
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
                   'displayed in directory tree is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)

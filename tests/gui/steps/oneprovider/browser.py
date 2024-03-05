@@ -98,6 +98,7 @@ def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
     breadcrumbs.menu_button()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
                                  which_browser='file browser'):
 
@@ -127,9 +128,44 @@ def assert_items_presence_in_browser(selenium, browser_id, item_list, tmp_memory
                                      which_browser='file browser'):
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory,
                                         which_browser)
-    for item_name in parse_seq(item_list):
+    if not isinstance(item_list, list):
+        item_list = parse_seq(item_list)
+    for item_name in item_list:
         assert item_name in data, (f'not found "{item_name}" '
                                    f'in browser')
+
+
+def assert_only_items_presence_in_browser(
+        selenium, browser_id, item_list, tmp_memory, which_browser='file browser'):
+    data = _get_items_list_from_browser(selenium, browser_id, tmp_memory,
+                                        which_browser)
+    if not isinstance(item_list, list):
+        item_list = parse_seq(item_list)
+    for item_name in item_list:
+        assert item_name in data, (f'not found "{item_name}" '
+                                   f'in browser')
+    assert len(item_list) == len(data), (f'there is different number of '
+                                         f'items in {which_browser}')
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_item_is_dir_in_browser(selenium, browser_id, item_name, tmp_memory,
+                                     which_browser='file browser'):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    data = {f.name for f in browser.data if f.name}
+
+    if item_name not in data:
+        while item_name not in data and len(data) != len(browser.data):
+            browser.scroll_to_number_file(driver, len(data),
+                                          browser)
+            partial_data = {f.name for f in browser.data if f.name}
+            data.update(partial_data)
+
+        browser.scroll_to_number_file(driver, 2, browser)
+
+    item = browser.data[item_name]
+    return not item.is_file()
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named {item_list} '

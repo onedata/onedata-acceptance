@@ -151,6 +151,7 @@ Feature: Bagit uploader tests
         - Star__-__v7__-__SegueA__-__2013_02_18.rfm
         - ark-file-meta.csv
         - googlelogo_color_272x92dp.png
+      - valid.zip
 
     And user of browser sees that each file in "dir1" directory has following metadata:
       - checksum.sha256.expected
