@@ -29,7 +29,7 @@ Feature: Multi Browser basic management of spaces ownership
     And user of space_owner_browser sees [Remove ownership, Remove this member] are disabled for "space-owner-user" user in users list
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
     And user of space_owner_browser clicks "Remove ownership" for "space-owner-user" user in users list
-    Then user of space_owner_browser sees [you] status labels for "space-owner-user" user in space members subpage
+    Then user of space_owner_browser sees [you, direct] status labels for "space-owner-user" user in space members subpage
 
 
   Scenario: User can be revoked of ownership by another space owner
@@ -38,7 +38,7 @@ Feature: Multi Browser basic management of spaces ownership
     And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
     And user of browser1 clicks "Remove ownership" for "space-owner-user" user in users list
-    Then user of space_owner_browser sees [you] status label for "space-owner-user" user in space members subpage
+    Then user of space_owner_browser sees [you, direct] status label for "space-owner-user" user in space members subpage
 
 
   Scenario: User can leave space after passing ownership to another user
@@ -64,12 +64,10 @@ Feature: Multi Browser basic management of spaces ownership
 
   Scenario: Effective user who gets ownership becomes direct user
     When user of space_owner_browser clicks "Members" of "space2" space in the sidebar
-    And user of space_owner_browser clicks effective view mode in space members subpage
 
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
 
     And user of browser1 clicks "Members" of "space2" space in the sidebar
-    And user of browser1 clicks effective view mode in space members subpage
 
     Then user of browser1 sees [you, owner, direct] status labels for "user1" user in space members subpage
 
@@ -77,7 +75,7 @@ Feature: Multi Browser basic management of spaces ownership
   Scenario: Space creator becomes owner of space
     When user of space_owner_browser creates "space3" space in Onezone
     And user of space_owner_browser clicks "Members" of "space3" space in the sidebar
-    Then user of space_owner_browser sees [you, owner] status labels for "space-owner-user" user in space members subpage
+    Then user of space_owner_browser sees [you, owner,  direct] status labels for "space-owner-user" user in space members subpage
 
 
   Scenario: User who is not space owner can remove himself from space

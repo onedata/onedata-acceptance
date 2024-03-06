@@ -46,6 +46,7 @@ class POSIX(PageObject):
 
 class AclPermission(PageObject):
     name = id = Label('label')
+    name_web_elem = WebElement('.node-text')
     toggle = Toggle('.one-way-toggle')
 
 
@@ -60,6 +61,10 @@ class AclPermissionGroup(PageObject):
     def expand(self):
         if not self.is_expanded():
             self.click()
+
+    def get_elem_id(self):
+        elem_id = self.web_elem.get_attribute('id')
+        return elem_id
 
 
 class MemberAclPermission(PageObject):
@@ -76,6 +81,7 @@ class MemberAclPermission(PageObject):
     deny_option = WebElement('.ace-type-deny')
     _subject_type = WebElement('.item-icon .oneicon')
     header = WebElement('.one-collapsible-list-item-header')
+    subject_id = Label('.subject-identifier')
 
     def expand(self):
         self.click()
@@ -91,6 +97,13 @@ class MemberAclPermission(PageObject):
 
     def is_allow_option_checked(self):
         return 'active' in self.allow_option.get_attribute('class')
+
+    def scroll_to_elem_on_acl_permission_group(self, elem):
+        css_sel = '#' + elem.get_elem_id()
+        self.driver.execute_script(
+            f"var el = (typeof $ === 'function' ? $('{css_sel}')[0] : "
+            f"document.querySelector('{css_sel}')); "
+            f"el && el.scrollIntoView(true);")
 
 
 class ACL(PageObject):

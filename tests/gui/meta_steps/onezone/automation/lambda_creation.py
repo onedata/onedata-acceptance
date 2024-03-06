@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 import yaml
 
 from tests.gui.steps.onezone.automation.automation_basic import *
@@ -18,6 +19,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from selenium.common.exceptions import ElementNotInteractableException
 
 
 @wt(parsers.parse('user of {browser_id} creates lambda with following '
@@ -192,3 +194,35 @@ def add_parameter_into_lambda_form(selenium, browser_id, oz_page, popups,
 
     object_bracket.type_dropdown.click()
     popups(driver).power_select.choose_item(type)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) modifies '
+               '(?P<ordinal>|1st |2nd |3rd |4th )argument named '
+               '"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'))
+def modify_parameter_in_lambda_form(selenium, browser_id, oz_page, popups,
+                                    ordinal, config):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].lambdas_page.form
+    data = yaml.load(config)
+    subpage = page.argument
+    ordinal = '1st' if not ordinal else ordinal
+    bracket_name = 'bracket_' + ordinal.strip()
+    object_bracket = getattr(subpage, bracket_name)
+    object_bracket.settings()
+    setts = object_bracket.parameter_settings
+    for item in data:
+        [(arg, val)] = item.items()
+        if arg == 'File type':
+            setts.file_type()
+            popups(driver).power_select.choose_item(val)
+        if arg == 'Carried file attributes':
+            # remove default file attrs
+            for attr in setts.attrs:
+                attr.x()
+            setts.carried_file_attrs()
+            for el in val:
+                try:
+                    popups(driver).options_selector.choose_option(transform(el))
+                except (ElementNotInteractableException, RuntimeError):
+                    time.sleep(1)
+                    popups(driver).options_selector.choose_option(transform(el))

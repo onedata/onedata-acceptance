@@ -325,7 +325,7 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
                   'is as following:\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                               groups, hosts, tmp_memory):
+                               groups, hosts, tmp_memory, spaces):
     """Assert token is corresponding to given config.
 
         Config format given in yaml is as follows:
@@ -372,20 +372,21 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
                     consumer name: user1
         """
     _assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                                groups, hosts, tmp_memory)
+                                groups, hosts, tmp_memory, spaces)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
-                                   groups, hosts, tmp_memory):
+                                   groups, hosts, tmp_memory, spaces):
     token_name = yaml.load(config)['name']
     click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
     _assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                                groups, hosts, tmp_memory)
+                                groups, hosts, tmp_memory, spaces)
 
 
-def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                                groups, hosts, tmp_memory, creation=False):
+def _assert_token_configuration(
+        selenium, browser_id, config, oz_page, users, groups, hosts,
+        tmp_memory, spaces, creation=False):
     data = yaml.load(config)
     token_name = data.get('name', False)
     revoked = data.get('revoked', False)
@@ -406,7 +407,7 @@ def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
         assert_invite_type(selenium, browser_id, oz_page, invite_type)
     if invite_target:
         assert_invite_target(selenium, browser_id, oz_page, invite_target,
-                             hosts)
+                             hosts, spaces)
     if usage_count:
         assert_token_usage_count_value(selenium, browser_id, usage_count,
                                        oz_page)
@@ -518,11 +519,12 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
 @wt(parsers.parse('user of {browser_id} creates and checks token with '
                   'following configuration:\n{config}'))
 def create_and_check_token(browser_id, config, selenium, oz_page, popups,
-                           users, groups, hosts, tmp_memory):
+                           users, groups, hosts, tmp_memory, spaces):
     _create_token_with_config(selenium, browser_id, config, oz_page, popups,
                               users, groups, hosts, tmp_memory)
-    _assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                                groups, hosts, tmp_memory, creation=True)
+    _assert_token_configuration(
+        selenium, browser_id, config, oz_page, users, groups, hosts, tmp_memory,
+        spaces, creation=True)
 
 
 def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name,

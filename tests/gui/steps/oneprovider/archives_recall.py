@@ -98,11 +98,11 @@ def assert_recall_duration_in_archive_recall_information_modal(
 def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
     kind = kind + ' recalled'
     characters = "[\nMiB ]"
-    info = getattr(modals(selenium[browser_id]).archive_recall_information,
-                   transform(kind))
-    info = re.sub(characters, "", info).split('/')
+    data_info = getattr(modals(selenium[browser_id]).archive_recall_information,
+                        transform(kind))
+    info = re.sub(characters, "", data_info).split('/')
     all_data = float(info[1])
-    recalled = float(info[0])
+    recalled = float(info[0])/1024 if 'KiB' in data_info else float(info[0])
     err_msg = f'Number of recalled {kind} is not smaller then all {kind}'
     assert all_data > recalled, err_msg
 

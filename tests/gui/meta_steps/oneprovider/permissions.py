@@ -21,8 +21,8 @@ from tests.gui.meta_steps.oneprovider.data import (
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl)
 from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_text_appeared, click_modal_button,
-    click_panel_button, assert_there_is_no_button_in_panel)
+    click_modal_button, click_panel_button, assert_there_is_no_button_in_panel,
+    check_warning_modal)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
@@ -136,6 +136,8 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
     button = 'Save'
     close_button = 'X'
     panel = 'Edit permissions'
+    warning_modal = 'warning'
+    proceed_button = 'proceed'
     path = parse_seq(path)
 
     if path and len(path) == 1:
@@ -149,6 +151,9 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     click_panel_button(selenium, browser_id, button, panel, modals)
+    if check_warning_modal(selenium, browser_id):
+        click_modal_button(selenium, browser_id, proceed_button, warning_modal
+                           , modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -218,8 +223,29 @@ def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
     close_button = 'X'
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'acl', popups)
-    assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
+    if type != 'unknown':
+        assert_acl_subject(selenium, browser_id, modals, num, numerals,
+                           type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
+    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+
+
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space '
+               r'"(?P<space>\w+)" contains id of user "(?P<name>.*)" in '
+               r'(?P<num>.*) ACL record'))
+def assert_user_id_in_ace_in_op_gui(
+        selenium, browser_id, name, num, space, path, tmp_memory, modals,
+        numerals, oz_page, op_container, popups, users):
+    modal_name = 'Details modal'
+    close_button = 'X'
+    open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                          oz_page, op_container, 'acl', popups)
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id,
+                                                    modals, num, numerals)
+    user_id = users[name]._user_id
+    err_msg = (f'id in acl entry: {visible_id} differs from actual '
+               f'user id: {user_id}')
+    assert visible_id == user_id, err_msg
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -229,7 +255,6 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           modals, op_container, oz_page, name, popups):
     privileges_option_list = (
         '[attributes]' if res == 'succeeds' else '[acl:change acl]')
-    text = 'Modifying permissions failed'
     button = 'Save'
     panel = 'Edit permissions'
 
@@ -237,14 +262,15 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           oz_page, op_container, 'acl', popups)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
-    select_acl_options(selenium, browser_id, privileges_option_list, modals,
-                       name)
-    click_panel_button(selenium, browser_id, button, panel, modals)
 
     if res == 'fails':
-        assert_error_modal_with_text_appeared(selenium, browser_id, text)
+        assert_fail_to_select_acl_option(selenium, browser_id,
+                                         privileges_option_list, modals, name)
 
     else:
+        select_acl_options(selenium, browser_id, privileges_option_list, modals,
+                           name)
+        click_panel_button(selenium, browser_id, button, panel, modals)
         open_permission_modal(selenium, browser_id, path, space, tmp_memory,
                               modals, oz_page, op_container, 'acl', popups)
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id,

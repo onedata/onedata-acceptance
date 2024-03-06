@@ -31,8 +31,6 @@ Feature: Basic management of groups memberships in Onezone GUI
 
   Scenario: User checks effective memberships
     When user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
 
     Then user of browser sees 3 membership rows in group memberships mode
@@ -49,8 +47,6 @@ Feature: Basic management of groups memberships in Onezone GUI
 
   Scenario: User removes relation between user and group in members subpage
     When user of browser opens group "group1" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sees 3 membership rows in group memberships mode
 
@@ -63,8 +59,6 @@ Feature: Basic management of groups memberships in Onezone GUI
 
   Scenario: User removes relation between two groups (direct)
     When user of browser opens group "group2" members subpage
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group2" group members users list
     And user of browser sees 2 membership rows in group memberships mode
 

@@ -22,6 +22,7 @@ class DataRow(PageObject, BrowserRow):
     name = id = Label('.file-name-inner', parent_name='given data row')
     size = Label('.fb-table-col-size .file-item-text')
     modification_date = Label('.fb-table-col-modification .file-item-text')
+    replication_rate = Label('.fb-table-col-replication .replication-rate-text')
 
     _icon = WebElement('.file-icon')
     _icon_tag = WebElement('.one-icon-tag')

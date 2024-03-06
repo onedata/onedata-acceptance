@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
@@ -14,9 +16,11 @@ from selenium.common.exceptions import ElementNotInteractableException
 
 
 class PrivilegeRow(PageObject):
-    name = id = Label('.node-text')
+    name = id = Label('.priv')
     toggle = Toggle('.one-way-toggle')
     _checkbox = WebElement('.one-checkbox-base')
+    effective_granted = WebElement('.effective .one-icon')
+    effective_revoke = WebElement('.effective .priv-revoke')
 
     def expand(self):
         self.web_elem.click()
@@ -38,18 +42,25 @@ class PrivilegeRow(PageObject):
             msg = f'{self.name} should not be granted but it is'
             assert self.toggle.is_unchecked(), msg
 
+    def assert_effective_privilege_granted(self, granted):
+        if granted:
+            msg = f'{self.name} should be granted but is not'
+            assert 'oneicon-checked' in self.effective_granted.get_attribute('class'), msg
+        else:
+            msg = f'{self.name} should not be granted but it is'
+            assert self.effective_revoke, msg
+
     def set_privilege(self, driver, granted, with_scroll=False):
         if with_scroll:
             if (self.toggle.is_checked() and not granted) or (
                     not self.toggle.is_checked() and granted):
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                elem_class = self._checkbox.get_attribute('class').split(' ')[0]
+                elem_id = self._checkbox.get_attribute('id')
                 try:
-                    driver.find_element_by_css_selector('.' + elem_class).click()
+                    driver.find_element_by_css_selector('#' + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
-
         else:
             if granted:
                 self.activate()
@@ -58,19 +69,28 @@ class PrivilegeRow(PageObject):
 
 
 class PrivilegeGroup(PageObject):
-    name = id = Label('.one-tree-item-content')
-    expander = Button('.tree-circle')
-    toggle = Toggle('.one-way-toggle')
+    name = id = Label('.group-privilege-text-container div')
+    expander = Button('.group-privilege-text-container .one-icon')
+    _expander = WebElement('.group-privilege-text-container .one-icon')
+    toggle = Toggle('.toggle-column.group .one-way-toggle')
+    _checkbox = WebElement('.one-checkbox-base')
+    effective_priv = Label('.pill')
 
-    sub_privileges = WebItemsSequence('.one-tree-item-content',
-                                      cls=PrivilegeRow)
+    sub_privileges = WebItemsSequence('.privilege-row', cls=PrivilegeRow)
 
-    def expand(self):
+    def expand(self, driver):
         if not self.is_expanded():
-            self.expander.click()
+            expander_id = self._expander.get_attribute('id')
+            try:
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                driver.find_element_by_css_selector(
+                    f'#{expander_id}').click()
+            except ElementNotInteractableException:
+                self.expander.click()
 
     def is_expanded(self):
-        return 'expanded' in self.web_elem.get_attribute('class')
+        return 'oneicon-arrow-up' in self._expander.get_attribute('class')
 
     def collapse(self, driver):
         if self.is_expanded():
@@ -78,8 +98,8 @@ class PrivilegeGroup(PageObject):
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 driver.find_element_by_css_selector(
-                    '.tree-circle .oneicon-square-minus-empty').click()
-            except:
+                    '.table-privileges .oneicon-arrow-up').click()
+            except ElementNotInteractableException:
                 self.expander.click()
 
     def minimalize(self):
@@ -105,16 +125,51 @@ class PrivilegeGroup(PageObject):
             msg = f'{self.name} should not be granted but it is'
             assert self.toggle.is_unchecked(), msg
 
+    def assert_effective_privilege_granted(self, granted):
+        granted_count = int(self.effective_priv.split('/')[0])
+        all_count = int(self.effective_priv.split('/')[1])
+        if granted == 'Partially':
+            msg = f'{self.name} should be partially granted but is not'
+            assert granted_count != all_count and granted_count > 0, msg
+        elif granted:
+            msg = f'{self.name} should be granted but is not'
+            assert granted_count == all_count, msg
+        else:
+            msg = f'{self.name} should not be granted but it is'
+            assert granted_count == 0, msg
+
+    def set_privilege(self, driver, granted, with_scroll=False):
+        count = 2 if self.toggle.is_partial_checked() and not granted else 1
+        if with_scroll:
+            if ((self.toggle.is_checked() and not granted) or (
+                    not self.toggle.is_checked() and granted) or
+                    self.toggle.is_partial_checked()):
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                elem_id = self._checkbox.get_attribute('id')
+                for i in range(count):
+                    try:
+                        driver.find_element_by_css_selector(
+                            '#' + elem_id).click()
+                    except ElementNotInteractableException:
+                        self.toggle.click()
+        else:
+            if granted:
+                self.activate()
+            else:
+                self.deactivate()
+
 
 class PrivilegeTree(PageObject):
-    privilege_groups = WebItemsSequence('.has-checkbox-group',
+    privilege_groups = WebItemsSequence('.group-privilege-row',
                                         cls=PrivilegeGroup)
-    privileges = WebItemsSequence('.one-tree-item-content', cls=PrivilegeRow)
+    privileges = WebItemsSequence('.privilege-row ', cls=PrivilegeRow)
 
     def get_privilege_row(self, name):
         return self.privileges[name]
 
-    def assert_privileges(self, selenium, browser_id, privileges):
+    def assert_privileges(self, selenium, browser_id, privileges,
+                          is_direct_privileges=True):
         """Assert privileges according to given config.
             For this method only dict should be passed!
 
@@ -135,25 +190,33 @@ class PrivilegeTree(PageObject):
                 User management:
                   granted: False
             """
-        self._assert_privileges(selenium, browser_id, privileges)
+        self._assert_privileges(selenium, browser_id, privileges,
+                                is_direct_privileges)
 
-    def _assert_privileges(self, selenium, browser_id, privileges):
+    def _assert_privileges(self, selenium, browser_id, privileges,
+                           is_direct_privileges):
         for privilege_name, privilege_group in privileges.items():
             self._assert_privilege_group(selenium, browser_id, privilege_group,
-                                         privilege_name)
+                                         privilege_name, is_direct_privileges)
 
-    def _assert_privilege_group(self, selenium, browser_id, group, name):
+    def _assert_privilege_group(self, selenium, browser_id, group, name,
+                                is_direct_privileges):
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group['granted']
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
-            privilege_row.expand()
+            privilege_row.expand(driver)
             for sub_name, sub_granted in sub_privileges.items():
-                sub_row = privilege_row.get_sub_privilege_row(sub_name)
-                sub_row.assert_privilege_granted(sub_granted)
+                if is_direct_privileges:
+                    self.privileges[sub_name].assert_privilege_granted(sub_granted)
+                else:
+                    self.privileges[sub_name].assert_effective_privilege_granted(sub_granted)
             privilege_row.collapse(driver)
-        privilege_row.assert_privilege_granted(granted)
+        if is_direct_privileges:
+            privilege_row.assert_privilege_granted(granted)
+        else:
+            privilege_row.assert_effective_privilege_granted(granted)
 
     def set_privileges(self, selenium, browser_id, privileges,
                        with_scroll=False):
@@ -192,14 +255,14 @@ class PrivilegeTree(PageObject):
         granted = group['granted']
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
-            privilege_row.expand()
+            privilege_row.expand(driver)
+            time.sleep(1)
             for sub_name, sub_granted in sub_privileges.items():
-                sub_row = privilege_row.get_sub_privilege_row(sub_name)
-                sub_row.set_privilege(driver, sub_granted, with_scroll)
+                self.privileges[sub_name].set_privilege(driver, sub_granted,
+                                                        with_scroll)
             privilege_row.collapse(driver)
         else:
-            privilege_row.get_sub_privilege_row(name).set_privilege(driver,
-                                                                    granted)
+            privilege_row.set_privilege(driver, granted, with_scroll)
 
     def set_all_true(self):
         for priv_group in self.privilege_groups:

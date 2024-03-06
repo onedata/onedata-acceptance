@@ -170,10 +170,10 @@ Feature: Automation examples tests
     Then user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that the file structure in file browser is as follow:
-           - dir1:
-               - data:
-                  - googlelogo_color_272x92dp.png
-           - fetch.txt
+        - dir1:
+          - data:
+            - googlelogo_color_272x92dp.png
+        - fetch.txt
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks on first executed workflow
@@ -220,10 +220,49 @@ Feature: Automation examples tests
     And user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that the file structure in file browser is as follow:
-           - dir1:
-               - data:
-                  - LHC10c_pp_ESD_120076.json
-           - xrootd_fetch.txt
+        - dir1:
+          - data:
+            - LHC10c_pp_ESD_120076.json
+        - xrootd_fetch.txt
+
+
+  Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload file "automation/fetch/fetch_xrootd.txt" to current dir
+    And user of browser sees that item named "fetch_xrootd.txt" has appeared in file browser
+
+    And user of browser executes 1st revision of "download-files" workflow in "space1" space with the following initial values:
+        fetch-files:
+          - fetch_xrootd.txt
+        destination:
+          - dir1
+
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser sees that audit log in task "parse-fetch-file-mounted" in 1st parallel box in lane "collect-download-info" contains following entry:
+        timestamp: today
+        source: user
+        severity: info
+        content:
+            status: Found  1 files to be downloaded.
+            fetchFileName: fetch_xrootd.txt
+
+    And user of browser opens file browser for "space1" space
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that the file structure in file browser is as follow:
+        - dir1:
+          - data:
+            - data:
+              - LHC10c_pp_ESD_120076.json
+        - fetch_xrootd.txt
+
+    # TODO: VFS-11705 implement test for following archives after workflow fix
+    # fetch_multiple_files.txt
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using incorrect fetch file
@@ -250,6 +289,8 @@ Feature: Automation examples tests
           details:
             reason: $(contains ["ValueError", "not enough values to unpack (expected 3, got 1)"])
           description: Lambda exception occurred during item processing.
+    And user of browser sees that number of elements in the content of the "fetch-files" store details modal is 1
+    And user of browser sees that "file_id" in "fetch-files" store details modal is id of "incorrect_fetch.txt" in "space1" space
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using whitespaces fetch file
@@ -334,6 +375,8 @@ Feature: Automation examples tests
           details:
             reason: Random exception
           description: Lambda exception occurred during item processing.
+    And user of browser sees that number of elements in the content of the "input" store details modal is 1
+    And user of browser sees that "file_id" in "input" store details modal is id of "dir1" in "space1" space
 
 
   Scenario Outline: User checks time series charts and "results" store content after execution of uploaded "<workflow_name>" workflow
@@ -364,7 +407,7 @@ Feature: Automation examples tests
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "results" store details modal is 12
-    And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" space corresponds to two instances of the element with "file_id" in "results" store details modal
+    And user of browser sees that each element from list "[dir1, dir1/file1, dir1/file2, dir1/file3, dir1/file4, dir1/file5]" in "space1" corresponds to two instances of the element with "file_id" in "results" store
 
     Examples:
     | workflow_name               |

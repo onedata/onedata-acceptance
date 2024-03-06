@@ -50,7 +50,7 @@ Feature: Basic management of group privileges for spaces in Onezone GUI
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
     And user of browser_user1 clicks on "Invite group using token" button in groups list menu in "space2" space members view
-    Then user of browser_user1 sees This resource could not be loaded alert in "Invite using token" modal
+    Then user of browser_user1 sees "This resource could not be loaded" alert in "Invite using token" modal
 
 
   Scenario: Non-space-owner generates group invite token to join space
@@ -80,7 +80,6 @@ Feature: Basic management of group privileges for spaces in Onezone GUI
             granted: False
 
     And user of browser_user1 clicks "Members" of "space2" space in the sidebar
-    And user of browser_user1 clicks memberships view mode in space members subpage
     And user of browser_user1 clicks "group2" group in "space2" space members groups list
     And user of browser_user1 clicks on "group2" member relation menu button to "space2" space
     And user of browser_user1 clicks on "Remove relation" in space membership relation menu
