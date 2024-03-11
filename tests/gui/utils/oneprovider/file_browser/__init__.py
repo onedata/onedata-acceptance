@@ -20,6 +20,7 @@ from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
+from ...core import scroll_to_css_selector
 
 
 class FileColumnHeader(PageObject):
@@ -119,6 +120,17 @@ class _FileBrowser(PageObject):
         self.driver.execute_script(
             "document.querySelector('.perfect-scrollbar-element.ps--active-y')"
             ".scrollTo(0, 0)")
+
+    def get_css_selector(self):
+        css_selector = self.web_elem.get_attribute('class')
+        css_selector = css_selector.replace(' ', '.')
+        css_selector = '.' + css_selector
+        return css_selector
+
+    def scroll_to_number_file(self, driver, number, browser):
+        selector = (browser.get_css_selector() + ' ' +
+                    f'.data-row:nth-of-type({number})')
+        scroll_to_css_selector(driver, selector)
 
 
 FileBrowser = partial(WebItem, cls=_FileBrowser)

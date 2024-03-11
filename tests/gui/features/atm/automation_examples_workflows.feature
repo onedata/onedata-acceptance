@@ -173,6 +173,13 @@ Feature: Automation examples tests
         - dir1:
           - data:
             - googlelogo_color_272x92dp.png
+          - file1
+          - file2
+          - file3
+          - file4
+          - file5
+        - dir2:
+          - file1
         - fetch.txt
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
@@ -223,6 +230,13 @@ Feature: Automation examples tests
         - dir1:
           - data:
             - LHC10c_pp_ESD_120076.json
+          - file1
+          - file2
+          - file3
+          - file4
+          - file5
+        - dir2:
+          - file1
         - xrootd_fetch.txt
 
 
@@ -259,6 +273,13 @@ Feature: Automation examples tests
           - data:
             - data:
               - LHC10c_pp_ESD_120076.json
+          - file1
+          - file2
+          - file3
+          - file4
+          - file5
+        - dir2:
+          - file1
         - fetch_xrootd.txt
 
     # TODO: VFS-11705 implement test for following archives after workflow fix
