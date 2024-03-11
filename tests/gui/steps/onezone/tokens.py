@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import (
     WAIT_BACKEND, WAIT_FRONTEND)
 from tests.gui.utils.generic import transform
@@ -70,8 +72,18 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
     if button == 'Create new token':
         oz_page(driver).get_page_and_click(
             'tokens').sidebar.click_create_new_token(driver)
+    elif button == 'Clean up obsolete tokens':
+        sidebar = oz_page(driver)['tokens'].sidebar
+        button_clean = getattr(sidebar, transform(button))
+        for _ in range(50):
+            if 'clickable' in button_clean.web_elem.get_attribute('class'):
+                button_clean.click()
+                return
+            else:
+                time.sleep(0.1)
+        raise RuntimeError(f'did not menage to click {button} button')
     else:
-        sidebar = oz_page(selenium[browser_id])['tokens'].sidebar
+        sidebar = oz_page(driver)['tokens'].sidebar
         getattr(sidebar, transform(button))()
 
 

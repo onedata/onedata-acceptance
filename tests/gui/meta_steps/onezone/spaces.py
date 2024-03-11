@@ -97,7 +97,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, oz_page,
                                   popups, modals):
-    where = 'spaces'
+    where = 'Data'
     option = 'Remove'
     modal = 'Remove space'
 
@@ -105,6 +105,7 @@ def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, oz_page,
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
+    click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
     for space_name in space_list:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option,
                                       oz_page, popups)
