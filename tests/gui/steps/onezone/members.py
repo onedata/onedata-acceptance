@@ -55,7 +55,17 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                        list_type, member_name):
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
-    return getattr(page, list_type).items[member_name].privilege_tree
+    elem = getattr(page, list_type).items[member_name]
+    # wait for panel to expand
+    for _ in range(40):
+        if 'active' in elem.web_elem.get_attribute('class'):
+            break
+        else:
+            time.sleep(0.1)
+    else:
+        assert 'active' in elem.web_elem.get_attribute('class'), (
+            f'did not manage to expand {list_type} panel of {member_name}')
+    return elem.privilege_tree
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that "(?P<member_name>.*)" '
@@ -573,13 +583,18 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
                                          oz_page, option):
     member_type = member_type + 's'
-    time.sleep(1)
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
     is_direct_privileges = False if option == 'effective ' else True
-    tree.assert_privileges(selenium, browser_id, privileges,
-                           is_direct_privileges)
+    # wait for set privileges to be visible in gui
+    try:
+        tree.assert_privileges(selenium, browser_id, privileges,
+                               is_direct_privileges)
+    except AssertionError:
+        time.sleep(2)
+        tree.assert_privileges(selenium, browser_id, privileges,
+                               is_direct_privileges)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
