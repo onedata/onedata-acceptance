@@ -342,3 +342,20 @@ def assert_button_disabled_in_qos_panel(selenium, browser_id, modals, button):
     assert not enabled, f'{button} is not disabled'
 
 
+@wt(parsers.parse('user of {browser_id} sees "{status}" status in QoS column '
+                  'for "{item_name}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_qos_status_in_browser(selenium, browser_id, op_container, status,
+                                 item_name, which_browser):
+
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    vis_status = getattr(browser.data[item_name], 'qos_status')
+    err_msg = (f'status {status} for item {item_name} is not '
+               f'displayed in {which_browser}')
+    if status.lower() == 'impossible':
+        assert ('qos-status-impossible' in
+                vis_status.get_attribute('class'), err_msg)
+    elif status.lower() == 'fulfilled':
+        assert ('qos-status-fulfilled' in
+                vis_status.get_attribute('class'), err_msg)

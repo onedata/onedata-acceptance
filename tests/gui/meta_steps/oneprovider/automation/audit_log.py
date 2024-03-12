@@ -722,16 +722,9 @@ def _assert_workflow_audit_log_contains_entries(
         selenium, browser_id, modals, tmpdir, tmp_memory, config):
     data = yaml.load(config)
     driver = selenium[browser_id]
-    modal_name = 'Workflow audit log'
-    # wait for modal to appear
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modal = modals(driver).audit_log
-    modal.download_as_json()
-    # wait a while for file to download
-    time.sleep(0.5)
-    path = tmpdir.join(browser_id, 'download')
-    file_name = os.listdir(path)[-1]
-    file_path = tmpdir.join(browser_id, 'download', file_name)
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory,
+                                        modals, tmpdir)
 
     f = open(file_path)
     data_file = json.load(f)
@@ -759,17 +752,8 @@ def compare_audit_log_debug_entries(actual_entry, expected_entry):
                   'entry with info only about file attributes {item_list}'))
 def assert_workflow_audit_log_contains_entry(
         selenium, browser_id, modals, tmpdir, tmp_memory, item_list):
-    driver = selenium[browser_id]
-    modal_name = 'Workflow audit log'
-    # wait for modal to appear
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modal = modals(driver).audit_log
-    modal.download_as_json()
-    # wait a while for file to download
-    time.sleep(0.5)
-    path = tmpdir.join(browser_id, 'download')
-    file_path = os.listdir(path)[-1]
-    file_path = tmpdir.join(browser_id, 'download', file_path)
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory,
+                                        modals, tmpdir)
     f = open(file_path)
     data_file = json.load(f)
     item_list = parse_seq(item_list)
@@ -791,3 +775,31 @@ def _assert_all_items_in_json(item_list, data):
         if not data.get(transform(item), False):
             return False
     return True
+
+
+@wt(parsers.parse('user of {browser_id} sees that workflow audit log does '
+                  'not contain any system debug entry'))
+def assert_no_debug_entry_in_workflow_audit_log(browser_id, selenium,
+                                                tmp_memory, modals, tmpdir):
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory,
+                                        modals, tmpdir)
+    with open(file_path) as f:
+        data_file = json.load(f)
+        err_msg = 'workflow audit log contains debug entry'
+        assert not any(filter(lambda x: x.get('severity', None) == 'debug',
+                              data_file)), err_msg
+
+
+def _get_workflow_audit_log(browser_id, selenium, tmp_memory, modals, tmpdir):
+    driver = selenium[browser_id]
+    modal_name = 'Workflow audit log'
+    # wait for modal to appear
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modal = modals(driver).audit_log
+    modal.download_as_json()
+    # wait a while for file to download
+    time.sleep(0.5)
+    path = tmpdir.join(browser_id, 'download')
+    file_path = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, 'download', file_path)
+    return file_path
