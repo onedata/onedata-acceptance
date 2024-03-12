@@ -16,28 +16,7 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.oneprovider.data_tab import (
     has_downloaded_file_content,
     go_one_back_using_breadcrumbs_in_data_tab_in_op)
-
-
-class Node:
-    def __init__(self, name):
-        self.nodes = []
-        self.parent = None
-        self.name = name
-        self.path = None
-        self.content = None
-
-    def set_parent(self, parent):
-        self.parent = parent
-        self.path = self.parent.get_path() + self.name
-
-    def get_items(self):
-        return list(map(lambda x: getattr(x, 'name'), self.nodes))
-
-    def get_path(self):
-        if self.path == '':
-            return '/'
-        else:
-            return self.path + '/'
+from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
 
 
 def build_tree_config(data):
