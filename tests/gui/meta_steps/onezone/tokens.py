@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 import yaml
 
 from tests.gui.meta_steps.oneprovider.data import (
@@ -318,6 +320,7 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
         caveat.set_path_caveats(path_caveats)
     if object_id_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'object_id')
+        time.sleep(0.5)
         caveat.set_object_id_caveats(object_id_caveats)
 
 
