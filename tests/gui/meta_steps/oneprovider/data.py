@@ -204,18 +204,41 @@ def check_metadata_for_file_in_directory(selenium, browser_id, directory,
         modal.x()
 
 
+def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser='file browser'):
+    option = 'Data'
+    element = 'spaces'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+
+
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
-                                   provider, hosts):
+                                   which_browser='file browser'):
     try:
         assert_browser_in_tab_in_op(selenium, user, op_container,
-                                    tmp_memory)
+                                    tmp_memory, item_browser=which_browser)
     except (KeyError, NoSuchElementException):
-        go_to_filebrowser(selenium, user, oz_page, op_container,
-                          tmp_memory, space_name)
+        if which_browser == 'file browser':
+            option_in_space = 'Files'
+        # dataset browser
+        else:
+            option_in_space = 'Datasets, Archives'
+        go_to_and_assert_browser(selenium, user, oz_page, space_name,
+                                 option_in_space, op_container, tmp_memory,
+                                 item_browser=which_browser)
+
     check_file_structure_in_browser(
         user, config, selenium, tmp_memory, op_container, tmpdir,
-        which_browser='file browser')
+        which_browser=which_browser)
 
 
 def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,

@@ -593,8 +593,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
 
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_container,
-                                       tmp_memory, tmpdir, space, oz_page, host,
-                                       hosts)
+                                       tmp_memory, tmpdir, space, oz_page)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space,
                                         spaces, host)
@@ -615,8 +614,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_container,
-                                       tmp_memory, tmpdir, space, oz_page,
-                                       host, hosts)
+                                       tmp_memory, tmpdir, space, oz_page)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space,
                                         spaces, host)

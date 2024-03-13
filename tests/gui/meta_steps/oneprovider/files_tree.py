@@ -51,22 +51,19 @@ def check_tree_browser(
     for child in parent.nodes:
         if check_if_item_is_dir_in_browser(
                 selenium, user, child.name, tmp_memory, which_browser):
+            click_and_press_enter_on_item_in_browser(
+                selenium, user, child.name, tmp_memory, op_container,
+                which_browser)
             if child.content is not None:
                 # checking only number of children
-                click_and_press_enter_on_item_in_browser(
-                    selenium, user, child.name, tmp_memory, op_container, which_browser)
                 assert_num_of_files_are_displayed_in_browser(
                     user, int(child.content), tmp_memory, which_browser)
-                go_one_back_using_breadcrumbs_in_data_tab_in_op(
-                    selenium, user, op_container, which_browser)
             else:
-                click_and_press_enter_on_item_in_browser(
-                    selenium, user, child.name, tmp_memory, op_container, which_browser)
                 check_tree_browser(
                     child, selenium, user, tmp_memory, op_container, tmpdir,
                     which_browser)
-                go_one_back_using_breadcrumbs_in_data_tab_in_op(
-                    selenium, user, op_container, which_browser)
+            go_one_back_using_breadcrumbs_in_data_tab_in_op(
+                selenium, user, op_container, which_browser)
         elif child.content is not None:
             click_and_press_enter_on_item_in_browser(
                 selenium, user, child.name, tmp_memory, op_container, which_browser)

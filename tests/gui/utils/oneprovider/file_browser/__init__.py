@@ -17,10 +17,10 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Label, WebItemsSequence, WebItem,
                                                Button, Input)
-from tests.gui.utils.generic import iter_ahead, rm_css_cls
+from tests.gui.utils.generic import rm_css_cls
+from tests.gui.utils.core import scroll_to_css_selector
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
-from ...core import scroll_to_css_selector
 
 
 class FileColumnHeader(PageObject):
@@ -128,8 +128,8 @@ class _FileBrowser(PageObject):
         return css_selector
 
     def scroll_to_number_file(self, driver, number, browser):
-        selector = (browser.get_css_selector() + ' ' +
-                    f'.data-row:nth-of-type({number})')
+        selector = (browser.get_css_selector() +
+                    f' .data-row:nth-of-type({number})')
         scroll_to_css_selector(driver, selector)
 
 

@@ -51,6 +51,3 @@ class DataRow(PageObject, BrowserRow):
             return False
         else:
             return True
-
-    def is_file(self):
-        return 'fb-table-row-file' in self.web_elem.get_attribute('class')

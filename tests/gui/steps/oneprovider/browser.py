@@ -107,13 +107,13 @@ def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
     driver = selenium[browser_id]
 
     if len(data) != len(browser.data):
-        while len(data) != len(browser.data):
-            browser.scroll_to_number_file(driver, len(data),
-                                          browser)
-            partial_data = {f.name for f in browser.data if f.name}
-            data.update(partial_data)
 
+        def condition(data_):
+            return len(data_) != len(browser.data)
+
+        data = gather_data_from_browser(driver, browser, condition)
         browser.scroll_to_number_file(driver, 2, browser)
+
     return data
 
 
@@ -167,6 +167,17 @@ def check_if_item_is_dir_in_browser(selenium, browser_id, item_name, tmp_memory,
         item = browser.data[item_name]
 
     return not item.is_file()
+
+
+def gather_data_from_browser(driver, browser, condition):
+    data = {f.name: f for f in browser.data if f.name}
+    while condition(data):
+        browser.scroll_to_number_file(driver, len(data),
+                                      browser)
+        partial_data = {f.name: f for f in browser.data if f.name}
+        data.update(partial_data)
+
+    return data
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named {item_list} '

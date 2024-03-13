@@ -12,9 +12,10 @@ import time
 import re
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
+from tests.gui.meta_steps.oneprovider.data import (
+    go_to_path_without_last_elem, go_to_and_assert_browser)
 from tests.gui.meta_steps.oneprovider.dataset import (
-    go_to_and_assert_browser, get_item_name_from_path)
+    get_item_name_from_path)
 from tests.gui.steps.oneprovider.archives_recall import (
     assert_recall_duration_in_archive_recall_information_modal)
 from tests.gui.steps.oneprovider.dataset import click_on_dataset

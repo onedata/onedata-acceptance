@@ -74,6 +74,8 @@ class _Breadcrumbs(PageObject):
 
     def go_one_back(self):
         breadcrumbs = self._breadcrumbs
+        if len(breadcrumbs) - 2 < 0:
+            raise Exception(f'Cannot go back in breadcrumbs {breadcrumbs}')
         breadcrumbs[len(breadcrumbs)-2].click()
 
 
