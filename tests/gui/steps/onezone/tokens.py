@@ -438,6 +438,7 @@ def choose_token_template(selenium, browser_id, template, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
                   'tokens page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
     alert = oz_page(selenium[browser_id])['tokens'].alert
     assert text in alert, f'{text} does not match alert: {alert}'
