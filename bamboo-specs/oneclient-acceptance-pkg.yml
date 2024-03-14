@@ -894,11 +894,11 @@ singleprovider storage modification singleclient directio:
     - script: *init-submodules
     - script: *quarantine-hack-pull-surefire
     - script: *download-artifacts
-    - script: &build-oneclient-swaggers
+    - script: &build-swaggers
         <<: *run-script-working-dir
         scripts:
-          - make build_oneclient_swaggers
-        description: Build Oneclient swaggers
+          - make build_swaggers
+        description: Build swaggers
     - script:
         <<: *run-acceptance-tests
         scripts:

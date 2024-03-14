@@ -9,23 +9,18 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import re
 import os
 import sys
 
-import yaml
-
 sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../..")))
-
+    os.path.join(os.path.dirname(__file__), "../../../../mixed")))
 
 from tests.mixed.utils.common import (login_to_panel)
-from onepanel_client import (StoragesApi)
-from tests.utils.utils import repeat_failed
-from onepanel_client.models.cephrados_modify import CephradosModify
-from onepanel_client.models.s3_modify import S3Modify
-from onepanel_client.models.posix_modify import PosixModify
-from onepanel_client.models.nulldevice_modify import NulldeviceModify
+from tests.mixed.onepanel_client import (StoragesApi)
+from tests.mixed.onepanel_client.models.cephrados_modify import CephradosModify
+from tests.mixed.onepanel_client.models.s3_modify import S3Modify
+from tests.mixed.onepanel_client.models.posix_modify import PosixModify
+from tests.mixed.onepanel_client.models.nulldevice_modify import NulldeviceModify
 
 
 def modify_storage_parameters(user, provider, storage_id, storage_name, params,

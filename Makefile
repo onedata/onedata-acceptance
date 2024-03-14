@@ -75,7 +75,6 @@ RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
-ONECLIENT_TESTS_ROOT := $(shell pwd)/tests/oneclient
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification
@@ -137,9 +136,6 @@ build_swaggers:
 	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
 	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
 
-build_oneclient_swaggers:
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${ONECLIENT_TESTS_ROOT}
-
 ##
 ## Clean
 ##
@@ -155,7 +151,6 @@ clean_swaggers:
 	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
 	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
 	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
-	rm -rf ${ONECLIENT_TESTS_ROOT}/onepanel_client
 
 codetag-tracker:
 	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
