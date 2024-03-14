@@ -9,11 +9,7 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-# from tests.gui.conftest import WAIT_BACKEND
-# from tests.utils.entities_setup.spaces import force_start_storage_scan
-from tests.utils.bdd_utils import wt, then, parsers
-# from tests.utils.utils import repeat_failed
-# from tests.mixed.utils.common import NoSuchClientException
+from tests.utils.bdd_utils import wt, parsers
 
 
 @wt(parsers.parse('using REST, {user} changes storage "{type}" named "{storage}" '
@@ -33,4 +29,3 @@ def modify_storage_parameter(user, type, storage, parameter, value, provider,
     modify_storage_parameters(user, provider, storage_id, storage,
                               modify_params, onepanel_host,
                               onepanel_credentials)
-    pass

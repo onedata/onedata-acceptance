@@ -883,6 +883,26 @@ singleprovider regular file stat multiclient proxyio:
         scripts:
           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_pkg
 
+singleprovider storage modification singleclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SPSMSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &build-oneclient-swaggers
+        <<: *run-script-working-dir
+        scripts:
+          - make build_oneclient_swaggers
+        description: Build Oneclient swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg
+
 # tests applicable only to PKG mode - not present in SRC
 # @TODO VFS-6710 fix onedata_fs tests
 # onedata_fs tests:
