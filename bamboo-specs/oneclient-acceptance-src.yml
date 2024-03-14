@@ -82,6 +82,7 @@ stages:
         - singleprovider regular file CRUD multiclient proxyio
         - singleprovider regular file stat multiclient directio
         - singleprovider regular file stat multiclient proxyio
+        - singleprovider storage modification singleclient directio
   - Qnthack - rerun:
       manual: false
       final: true

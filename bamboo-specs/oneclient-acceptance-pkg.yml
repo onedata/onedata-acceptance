@@ -83,6 +83,7 @@ stages:
         - singleprovider regular file CRUD multiclient proxyio
         - singleprovider regular file stat multiclient directio
         - singleprovider regular file stat multiclient proxyio
+        - singleprovider storage modification singleclient directio
         # tests applicable only to PKG mode - not present in SRC
         # @TODO VFS-6710 fix onedata_fs tests
         # - onedata_fs tests
