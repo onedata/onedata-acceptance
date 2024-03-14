@@ -32,3 +32,8 @@ def test_ceph_storage_parameter_change(env_description_file):
 @scenario('Change S3 parameters with active oneclient connection')
 def test_s3_storage_parameter_change(env_description_file):
     pass
+
+
+@scenario('Change POSIX parameters with active oneclient connection')
+def test_posix_storage_parameter_change(env_description_file):
+    pass

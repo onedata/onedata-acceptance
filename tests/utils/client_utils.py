@@ -48,7 +48,7 @@ class Client:
                    ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
                    ' \' -ex \'bt\'').format(mount_path=self._mount_path, mode=mode_flag)
         else:
-            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v3', '--insecure']
+            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2', '--insecure']
                            + additional_opts + [self._mount_path])
 
         ret = self.run_cmd(cmd, verbose=True)

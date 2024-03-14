@@ -24,3 +24,14 @@ Feature: Storage_modification
     Then using REST, user1 changes storage "s3" named "s3" parameter "bucket_name" to "test" at provider "dev-oneprovider-krakow"
     Then user1 is idle for 15 seconds
     Then user1 reads "TEST TEXT ONEDATA S3" from file s3/file1
+
+  Scenario: Change POSIX parameters with active oneclient connection
+    When user1 creates regular files [posix/file1]
+    And user1 writes "TEST TEXT ONEDATA POSIX" to posix/file1
+    Then user1 reads "TEST TEXT ONEDATA POSIX" from file posix/file1
+    Then using REST, user1 changes storage "posix" named "local-volume-1" parameter "mount_point" to "/tmp" at provider "dev-oneprovider-krakow"
+    Then user1 is idle for 15 seconds
+    Then user1 fails to write "ABCD" to posix/file1
+    Then using REST, user1 changes storage "posix" named "local-volume-1" parameter "mount_point" to "/volumes/local-volume-1" at provider "dev-oneprovider-krakow"
+    Then user1 is idle for 15 seconds
+    Then user1 reads "TEST TEXT ONEDATA POSIX" from file posix/file1

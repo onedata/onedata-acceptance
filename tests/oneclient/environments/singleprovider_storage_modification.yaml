@@ -1,0 +1,10 @@
+scenario: "1oz_1op_1oc/ceph_s3_local.yaml"
+entities_config: "1op/1user_storage_modification.yaml"
+
+oneclient:
+  oneclient-1:
+    clients:
+      client1:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 10
