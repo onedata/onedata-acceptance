@@ -103,7 +103,7 @@ def assert_audit_log_in_store(browser_id, selenium, op_container, store_name,
     err_msg = (f'There is no information about algorithm, checksum or file id '
                f'in audit log in {store_name} store details')
     assert (store_details['algorithm'] and store_details['checksum']
-            and store_details['file_id']), err_msg
+            and store_details['fileId']), err_msg
 
     tmp_memory[f'{store_name}_store_log'] = store_details
 
@@ -245,7 +245,7 @@ def assert_file_id_in_store_details(browser_id, selenium, op_container,
     storage_file_ids = [
         json.loads(open_modal_and_get_store_content(
             browser_id, driver, page, modals, clipboard, displays, store_name,
-            store_type, i))['file_id']
+            store_type, i))['fileId']
         for i in range(elem_num)]
 
     file_ids = [get_file_id_from_details_modal(selenium, browser_id, oz_page,
@@ -523,11 +523,11 @@ def compare_content_reason_of_task_audit_log(
     else:
         if not isinstance(reason, str):
             placeholder_file_id = reason['details'][
-                'specificError']['details']['value']['file_id']
+                'specificError']['details']['value']['fileId']
             placeholder_file_id = placeholder_file_id.split(
                 ' ')[1].replace(')', '').split('/')
             reason['details']['specificError']['details']['value'][
-                'file_id'] = get_file_id_from_details_modal(
+                'fileId'] = get_file_id_from_details_modal(
                 selenium, browser_id, oz_page, placeholder_file_id[0],
                 op_container, tmp_memory, placeholder_file_id[1],
                 popups, modals, clipboard, displays)
@@ -553,9 +553,9 @@ def compare_content_of_task_audit_log(
             oz_page, op_container, tmp_memory, popups, modals, clipboard,
             displays, task_name)
     if item:
-        file_id = item['file_id'].split(' ')[1].replace(
+        file_id = item['fileId'].split(' ')[1].replace(
             ')', '').split('/')
-        item['file_id'] = get_file_id_from_details_modal(
+        item['fileId'] = get_file_id_from_details_modal(
             selenium, browser_id, oz_page, file_id[0],
             op_container, tmp_memory, file_id[1], popups, modals,
             clipboard, displays)

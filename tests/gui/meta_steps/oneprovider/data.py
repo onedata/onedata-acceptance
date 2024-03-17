@@ -657,7 +657,7 @@ def get_file_id_from_details_modal(selenium, browser_id, oz_page, space_name,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_menu, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    click_modal_button(selenium, browser_id, 'file_id', modal_name, modals)
+    click_modal_button(selenium, browser_id, 'fileId', modal_name, modals)
     return clipboard.paste(display=displays[browser_id])
 
 
