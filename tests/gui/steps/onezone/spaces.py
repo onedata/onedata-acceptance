@@ -335,6 +335,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
                'providers? on the map on (?P<space_name>.*) '
                'space (?P<page>.*) data page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_providers_on_the_map_on_data_page(
         selenium, browser_id, correct_number, space_name, page, oz_page):
     if correct_number == 'no':
