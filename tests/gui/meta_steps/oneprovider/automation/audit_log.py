@@ -772,7 +772,7 @@ def assert_workflow_audit_log_contains_entry(
 
 def _assert_all_items_in_json(item_list, data):
     for item in item_list:
-        if not data.get(transform(item), False):
+        if not data.get(item, False):
             return False
     return True
 

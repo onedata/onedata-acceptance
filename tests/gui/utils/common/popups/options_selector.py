@@ -22,6 +22,7 @@ class MenuItem(PageObject):
 
 class OptionsSelector(PageObject):
     menu = WebItemsSequence('.selector-item', cls=MenuItem)
+    replace_name = {'originproviderid': 'originProviderId'}
 
     def __str__(self):
         return 'Options selector'
@@ -29,12 +30,12 @@ class OptionsSelector(PageObject):
     def choose_option(self, name):
         self.hover_over()
         # max number of elements in popup list
-        for _ in range(10):
-            if name not in self.menu:
-                self.scroll_down()
-            else:
-                self.menu[name].click()
-                return
+        for _ in range(30):
+            for item in self.menu:
+                if item.name.lower() == name:
+                    self.menu[item.name].click()
+                    return
+            self.scroll_down()
         raise RuntimeError(f'item {name} not found in popup')
 
     def hover_over(self):
