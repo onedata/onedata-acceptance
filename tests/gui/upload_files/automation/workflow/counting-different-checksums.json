@@ -75,7 +75,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId"]
                     },
                     "type": "file"
                   }
@@ -101,7 +102,8 @@
           "config": {
             "itemDataSpec": {
               "valueConstraints": {
-                "fileType": "ANY"
+                "fileType": "ANY",
+                "attributes": ["fileId"]
               },
               "type": "file"
             }
