@@ -112,7 +112,7 @@
                   "dataSpec": {
                     "valueConstraints": {
                       "fileType": "ANY",
-                      "attributes": ["fileId"]
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -209,7 +209,7 @@
                   "dataSpec": {
                     "valueConstraints": {
                       "fileType": "ANY",
-                      "attributes": ["fileId"]
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -329,7 +329,7 @@
                   "dataSpec": {
                     "valueConstraints": {
                       "fileType": "ANY",
-                      "attributes": ["fileId"]
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -426,7 +426,7 @@
                   "dataSpec": {
                     "valueConstraints": {
                       "fileType": "ANY",
-                      "attributes": ["fileId"]
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -453,7 +453,7 @@
             "itemDataSpec": {
               "valueConstraints": {
                 "fileType": "ANY",
-                "attributes": ["fileId"]
+                "attributes": ["fileId", "type"]
               },
               "type": "file"
             }

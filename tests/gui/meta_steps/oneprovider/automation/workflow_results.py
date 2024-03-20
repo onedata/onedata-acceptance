@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import json
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -92,6 +93,7 @@ def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
 
 def checksums_counted_in_workflow(metadata_modal):
     result = {}
+    time.sleep(0.5)
     for item in metadata_modal.basic.entries:
         result[item.key.replace('_key', '')] = item.value
     return result
