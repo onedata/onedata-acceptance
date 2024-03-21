@@ -90,6 +90,7 @@ Feature: Basic spaces management utilities using onepanel
           unit: GiB
     # assert space existence and support
     And user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
+    And user of browser1 is idle for 2 seconds
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Providers" of "space1" space in the sidebar
     And user of browser1 sees "oneprovider-1" is on the providers list

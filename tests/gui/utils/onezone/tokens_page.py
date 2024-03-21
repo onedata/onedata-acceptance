@@ -58,7 +58,7 @@ class TokensSidebar(PageObject):
     create_new_token = Button('.one-sidebar-toolbar-button .oneicon-add-filled')
     tokens = WebItemsSequence('.token-item', cls=TokenRow)
     consume_token = Button('.oneicon-consume-token')
-    clean_up_obsolete_tokens = Button('.oneicon-clean-filled')
+    clean_up_obsolete_tokens = Button('.clean-obsolete-tokens-trigger')
     filter = WebItem('.filter-control', cls=TokenFilter)
     invite_filter = WebItem('.filter-control.target-filter',
                             cls=TokenInviteFilter)

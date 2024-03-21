@@ -66,5 +66,3 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
     assert displayed_name == val, \
         ('displayed {} provider name in Oneprovider GUI instead of '
          'expected {}'.format(displayed_name, val))
-
-
