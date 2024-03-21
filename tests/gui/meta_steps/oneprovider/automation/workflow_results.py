@@ -93,6 +93,7 @@ def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
 
 def checksums_counted_in_workflow(metadata_modal):
     result = {}
+    # wait for modal to load
     time.sleep(0.5)
     for item in metadata_modal.basic.entries:
         result[item.key.replace('_key', '')] = item.value
