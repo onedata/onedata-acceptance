@@ -80,7 +80,7 @@ def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    clipboard):
     driver = selenium[browser_id]
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
     page.elements_list[0]()
     _click_copy_hostname(driver, popups)
     displayed_domain = clipboard.paste(display=displays[browser_id])
@@ -298,7 +298,7 @@ def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
     try:
         provider_record = page.elements_list[provider]
         provider_record.click()
@@ -434,7 +434,8 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
                                      hosts, provider_name):
     driver = selenium[browser_id]
     provider = hosts[provider_name]['name']
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
+    time.sleep(0.5)
     provider_record = page.elements_list[provider]
     provider_record.click()
     start = time.time()
@@ -453,7 +454,8 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     provider = hosts[provider_name]['name']
     provider_hostname = hosts[provider_name]['hostname']
-    page = oz_page(driver)['providers']
+    page = oz_page(driver).get_page_and_click('providers')
+    time.sleep(0.5)
     provider_record = page.elements_list[provider]
     provider_record.click()
     start = time.time()

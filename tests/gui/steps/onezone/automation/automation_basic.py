@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import (upload_file_path, upload_workflow_path,
                                      transform)
@@ -22,7 +24,12 @@ def click_create_automation_button_in_sidebar(selenium, browser_id, oz_page):
 
 
 def get_oz_workflow_visualizer(oz_page, driver):
-    return oz_page(driver)['automation'].workflows_page.workflow_visualiser
+    page = oz_page(driver)
+    if page.is_panel_clicked('automation'):
+        return page['automation'].workflows_page.workflow_visualiser
+    else:
+        return page.get_page_and_click(
+            'automation').workflows_page.workflow_visualiser
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into inventory name '
@@ -49,7 +56,7 @@ def confirm_name_input_on_main_automation_page(selenium, browser_id,
 def click_option_in_inventory_menu(selenium, browser_id, option, inventory,
                                    oz_page, popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['automation']
+    page = oz_page(driver).get_page_and_click('automation')
     page.elements_list[inventory]()
     page.elements_list[inventory].menu()
     popups(driver).menu_popup_with_text.menu[option]()
@@ -94,7 +101,7 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
     try:
         page = tmp_memory[browser_id]['oz_page']
     except KeyError:
-        page = oz_page(selenium[browser_id])['automation']
+        page = oz_page(selenium[browser_id]).get_page_and_click('automation')
     page.elements_list[inventory]()
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()

@@ -354,6 +354,7 @@ Feature: Automation examples tests
               value : "10"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
+    And user of browser clicks on Data in the main menu
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "echo" workflow
@@ -382,6 +383,7 @@ Feature: Automation examples tests
               value : "1"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
+    And user of browser clicks on Data in the main menu
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser executes 1st revision of "echo" workflow in "space1" space with the following initial values:

@@ -277,7 +277,7 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
 @wt(parsers.parse('user of {browser_id} modifies {menu} in "{store_name}" '
                   'store to be "{value}" for "{workflow_name}" workflow'))
 def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
-                              popups, value, menu):
+                              popups, value, menu, tmp_memory):
     driver = selenium[browser_id]
     dropdown_menu = f'{menu} dropdown menu'
     button = 'OK'
@@ -288,7 +288,7 @@ def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
 
     if 'data' in menu:
         # wait a moment for modal to open
-        time.sleep(0.5)
+        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
         modals(driver).modify_store.data_type_remove()
 
     split_value = value.replace(')', '').split(' (')

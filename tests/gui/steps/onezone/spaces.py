@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (press_enter_on_active_element,
                                                   switch_to_iframe)
@@ -23,17 +25,21 @@ SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
-    # check if data page is visible, if is marketplace button should be visible,
-    # and if is not this calling should give AttributeError
-    try:
-        oz_page(driver).get_page_no_clicking(option).marketplace_button
-        page = oz_page(driver).get_page_no_clicking(option)
-    except (AttributeError, RuntimeError):
-        page = oz_page(driver)[option]
-    try:
+    # select data in main menu if not selected
+    if not oz_page(driver).is_panel_clicked(option):
+        oz_page(driver).get_page_and_click(option)
+    click_on_space_in_menu_list(oz_page, driver, name)
+
+
+def click_on_space_in_menu_list(oz_page, driver, name, force=True):
+    # function assumes data page is active
+    page = oz_page(driver)['data']
+    if force:
         page.spaces_header_list[name]()
-    except (RuntimeError, IndexError):
-        page.choose_space(name)
+    else:
+        if not page.spaces_header_list[name].is_active():
+            page.spaces_header_list[name].click()
+    return page
 
 
 def _parse_tabs_list(tabs):
@@ -119,26 +125,40 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
         'space "{}" not found'.format(space_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks on Automation in the main menu'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
-                                              tmp_memory):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    page = oz_page(driver)["automation"]
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on Automation '
+               'in the main menu'))
+def click_on_automation_option_in_the_sidebar(
+        selenium, browser_id, oz_page, tmp_memory):
+    option = 'Automation'
+    page = _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page)
     err_msg = 'Clicking on the "Automation" in the main menu did not succeed'
     assert page, err_msg
-    tmp_memory[browser_id]["oz_page"] = page
+    tmp_memory[browser_id]['oz_page'] = page
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
-               'in the main menu'))
+               '(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|'
+               'Clusters) in the main menu'))
+def click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page):
+    _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page, force=True)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
+def _click_on_option_in_the_sidebar(
+        selenium, browser_id, option, oz_page, force=True):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)[str(option).lower()]
+    name = str(option).lower()
+    # call get_page in Onezone page
+    if force:
+        page = oz_page(driver).get_page_and_click(name)
+        return page
+    else:
+        if not oz_page(driver).is_panel_clicked(name):
+            oz_page(driver).get_page_and_click(name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
@@ -153,7 +173,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
     if option == 'spaces':
         _choose_space_from_menu_list(oz_page, driver, name)
     else:
-        oz_page(driver)[option].elements_list[name].click()
+        oz_page(driver).get_page_and_click(option).elements_list[name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button '
@@ -271,15 +291,20 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
                'of "(?P<space_name>.*?)" space in the sidebar'))
+def click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page):
+    _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name, option, oz_page):
+def _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option, oz_page, force=True):
     submenu_option = transform(option).replace(',', '')
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    _choose_space_from_menu_list(oz_page, driver, space_name)
-    getattr(oz_page(driver)['data'].elements_list[space_name],
-            submenu_option).click()
+    page = click_on_space_in_menu_list(oz_page, driver, space_name, force=force)
+    getattr(page.elements_list[space_name], submenu_option).click()
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
@@ -310,14 +335,14 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
                'providers? on the map on (?P<space_name>.*) '
                'space (?P<page>.*) data page'))
-def check_number_of_providers_on_the_map_on_data_page(selenium, browser_id,
-                                                      correct_number,
-                                                      space_name, page,
-                                                      oz_page):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_number_of_providers_on_the_map_on_data_page(
+        selenium, browser_id, correct_number, space_name, page, oz_page):
     if correct_number == 'no':
         correct_number = 0
     driver = selenium[browser_id]
-    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    current_page = getattr(oz_page(driver).get_page_and_click('data'),
+                           _get_subpage_name(page))
     number_providers = len(current_page.map.providers)
     error_msg = f'found {number_providers} instead of {correct_number}'
     assert number_providers == int(correct_number), error_msg

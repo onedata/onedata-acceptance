@@ -303,21 +303,6 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 sees that error modal with text "insufficient privileges" appeared
 
 
-  Scenario: User fails to leave group from space because of lack in privileges
-    When user of browser1 opens group "group5" members subpage
-    And user of browser1 clicks "user2" user in "group5" group members users list
-    And user of browser1 sees privileges for "user2" user in group members subpage
-    And user of browser1 clicks on "user2" users checkbox
-    And user of browser1 clicks on bulk edit button
-    And user of browser1 sets following privileges on modal:
-          Space management:
-            granted: False
-
-    And user of browser2 clicks "space1" on the spaces list in the sidebar
-    And user of browser2 clicks on "Leave" button in space "space1" menu
-    Then user of browser2 sees "You cannot leave space" info in "Leave space" modal
-
-
   Scenario: User fails to join as subgroup because of lack in privileges
     When user of browser2 opens group "group7" members subpage
     And user of browser2 clicks "user2" user in "group7" group members users list

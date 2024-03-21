@@ -20,7 +20,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
                'group button in groups sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_group_button_in_panel(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['groups'].create_group()
+    oz_page(selenium[browser_id]).get_page_and_click('groups').create_group()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
@@ -47,8 +47,8 @@ def _find_groups(page, group_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_exists(selenium, browser_ids, option, group, oz_page):
     for browser_id in parse_seq(browser_ids):
-        groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
-                                        group))
+        groups_count = len(_find_groups(oz_page(selenium[browser_id]).
+                                        get_page_and_click('groups'), group))
         if option == 'does not see':
             assert groups_count == 0, f'group "{group}" found'
         else:
@@ -62,7 +62,7 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
 def click_on_group_menu_button(selenium, browser_id, option, group,
                                oz_page, popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['groups']
+    page = oz_page(driver).get_page_and_click('groups')
     page.elements_list[group]()
     page.elements_list[group].menu()
     popups(driver).menu_popup_with_text.menu[option]()
@@ -109,7 +109,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                '(?P<subpage>members|hierarchy|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+    page = oz_page(selenium[browser_id]).get_page_and_click('groups')
     page.elements_list[group]()
     if subpage != 'main':
         getattr(page.elements_list[group], subpage)()

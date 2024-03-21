@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import (
     WAIT_BACKEND, WAIT_FRONTEND)
 from tests.gui.utils.generic import transform
@@ -68,9 +70,20 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
 
     if button == 'Create new token':
-        oz_page(driver)['tokens'].sidebar.click_create_new_token(driver)
+        oz_page(driver).get_page_and_click(
+            'tokens').sidebar.click_create_new_token(driver)
+    elif button == 'Clean up obsolete tokens':
+        sidebar = oz_page(driver)['tokens'].sidebar
+        button_clean = getattr(sidebar, transform(button))
+        for _ in range(50):
+            if 'clickable' in button_clean.web_elem.get_attribute('class'):
+                button_clean.click()
+                return
+            else:
+                time.sleep(0.1)
+        raise RuntimeError(f'did not menage to click {button} button')
     else:
-        sidebar = oz_page(selenium[browser_id])['tokens'].sidebar
+        sidebar = oz_page(driver)['tokens'].sidebar
         getattr(sidebar, transform(button))()
 
 
@@ -425,6 +438,7 @@ def choose_token_template(selenium, browser_id, template, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
                   'tokens page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
     alert = oz_page(selenium[browser_id])['tokens'].alert
     assert text in alert, f'{text} does not match alert: {alert}'
