@@ -22,7 +22,6 @@ class MenuItem(PageObject):
 
 class OptionsSelector(PageObject):
     menu = WebItemsSequence('.selector-item', cls=MenuItem)
-    replace_name = {'originproviderid': 'originProviderId'}
 
     def __str__(self):
         return 'Options selector'
