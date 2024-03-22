@@ -114,6 +114,9 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     selenium[browser_id].refresh()
 
     try:
+        option_in_menu = 'Data'
+        _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,
+                                        oz_page, force=False)
         option = "Files"
         _click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option, oz_page, force=False)
