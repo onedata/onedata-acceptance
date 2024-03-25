@@ -18,7 +18,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(oz_page, token_name, driver):
-    return oz_page(driver)['tokens'].sidebar.tokens[token_name]
+    return oz_page(driver).get_page_and_click('tokens').sidebar.tokens[token_name]
 
 
 def _open_menu_for_token(driver, oz_page, token_name):
