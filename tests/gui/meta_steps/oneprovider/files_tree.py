@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.browser import (
-    assert_only_items_presence_in_browser,
+    assert_only_expected_items_presence_in_browser,
     click_and_press_enter_on_item_in_browser,
     assert_num_of_files_are_displayed_in_browser,
     check_if_item_is_dir_in_browser)
@@ -46,7 +46,7 @@ def _build_tree_config(data, parent: Node):
 def check_tree_browser(
         parent: Node, selenium, user, tmp_memory, op_container, tmpdir,
         which_browser):
-    assert_only_items_presence_in_browser(
+    assert_only_expected_items_presence_in_browser(
         selenium, user, parent.get_items(), tmp_memory, which_browser)
     for child in parent.nodes:
         if check_if_item_is_dir_in_browser(

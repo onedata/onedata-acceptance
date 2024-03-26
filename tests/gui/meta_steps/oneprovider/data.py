@@ -19,8 +19,6 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.files_tree import (
     check_file_structure_in_browser)
 from tests.gui.steps.oneprovider.browser import *
-from tests.gui.steps.oneprovider.archives import \
-    click_and_press_enter_on_archive
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui)
@@ -28,6 +26,7 @@ from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, wt_wait_for_modal_to_appear,
     write_name_into_text_field_in_modal, close_modal)
 from tests.gui.steps.onezone.spaces import (
+    click_element_on_lists_on_left_sidebar_menu,
     _click_on_option_of_space_on_left_sidebar_menu,
     _click_on_option_in_the_sidebar)
 from tests.utils.entities_setup.spaces import init_storage
@@ -209,13 +208,12 @@ def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              item_browser='file browser'):
     option = 'Data'
     element = 'spaces'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page,
+                                    force=False)
+    click_element_on_lists_on_left_sidebar_menu(
+        selenium, browser_id, element, space_name, oz_page)
+    _click_on_option_of_space_on_left_sidebar_menu(
+        selenium, browser_id, space_name, option_in_space, oz_page, force=False)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=item_browser)
 
@@ -227,11 +225,8 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
         assert_browser_in_tab_in_op(selenium, user, op_container,
                                     tmp_memory, item_browser=which_browser)
     except (KeyError, NoSuchElementException):
-        if which_browser == 'file browser':
-            option_in_space = 'Files'
-        # dataset browser
-        else:
-            option_in_space = 'Datasets, Archives'
+        option_in_space = 'Files' if which_browser == (
+            'file browser') else 'Datasets, Archives'
         go_to_and_assert_browser(selenium, user, oz_page, space_name,
                                  option_in_space, op_container, tmp_memory,
                                  item_browser=which_browser)

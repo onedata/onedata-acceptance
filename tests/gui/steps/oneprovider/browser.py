@@ -111,8 +111,19 @@ def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
         def condition(data_):
             return len(data_) != len(browser.data)
 
-        data = gather_data_from_browser(driver, browser, condition)
+        data = _gather_data_from_browser(driver, browser, condition)
         browser.scroll_to_number_file(driver, 2, browser)
+
+    return data
+
+
+def _gather_data_from_browser(driver, browser, condition):
+    data = {f.name: f for f in browser.data if f.name}
+    while condition(data):
+        browser.scroll_to_number_file(driver, len(data),
+                                      browser)
+        partial_data = {f.name: f for f in browser.data if f.name}
+        data.update(partial_data)
 
     return data
 
@@ -135,7 +146,7 @@ def assert_items_presence_in_browser(selenium, browser_id, item_list, tmp_memory
                                    f'in browser')
 
 
-def assert_only_items_presence_in_browser(
+def assert_only_expected_items_presence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser='file browser'):
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory,
                                         which_browser)
@@ -167,17 +178,6 @@ def check_if_item_is_dir_in_browser(selenium, browser_id, item_name, tmp_memory,
         item = browser.data[item_name]
 
     return not item.is_file()
-
-
-def gather_data_from_browser(driver, browser, condition):
-    data = {f.name: f for f in browser.data if f.name}
-    while condition(data):
-        browser.scroll_to_number_file(driver, len(data),
-                                      browser)
-        partial_data = {f.name: f for f in browser.data if f.name}
-        data.update(partial_data)
-
-    return data
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named {item_list} '
