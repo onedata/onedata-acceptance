@@ -35,8 +35,10 @@ from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
     button = 'Create space'
+    where = 'Data'
 
     for space_name in parse_seq(space_list):
+        click_on_option_in_the_sidebar(selenium, user, where, oz_page)
         click_button_on_spaces_sidebar_menu(selenium, user, button, oz_page)
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)
@@ -95,7 +97,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, oz_page,
                                   popups, modals):
-    where = 'spaces'
+    where = 'Data'
     option = 'Remove'
     modal = 'Remove space'
 
@@ -103,6 +105,7 @@ def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, oz_page,
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
+    click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
     for space_name in space_list:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option,
                                       oz_page, popups)
@@ -332,6 +335,9 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
     modal = 'Add one of spaces'
     element_type = 'harvester'
     modal_name = 'Add one of your harvesters'
+    panel_name = 'Data'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, panel_name, oz_page)
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page)

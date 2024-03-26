@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
@@ -79,6 +80,12 @@ def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_user_alias_in_sidebar(selenium, browser_id, oz_page, username):
     driver = selenium[browser_id]
+    err_msg = 'User alias: {} not found in the sidebar, visible alias: {}'
 
-    assert oz_page(driver).profile_username == username, \
-        f'User alias: {username} not found in the sidebar'
+    try:
+        name = oz_page(driver).profile_username
+        assert name == username, err_msg.format(username, name)
+    except AssertionError:
+        oz_page(driver)['profile'].profile()
+        name = oz_page(driver).profile_username
+        assert name == username, err_msg.format(username, name)

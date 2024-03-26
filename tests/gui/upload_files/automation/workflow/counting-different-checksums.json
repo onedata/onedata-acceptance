@@ -33,7 +33,7 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "-i",
@@ -75,7 +75,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId"]
                     },
                     "type": "file"
                   }
@@ -101,7 +102,8 @@
           "config": {
             "itemDataSpec": {
               "valueConstraints": {
-                "fileType": "ANY"
+                "fileType": "ANY",
+                "attributes": ["fileId"]
               },
               "type": "file"
             }

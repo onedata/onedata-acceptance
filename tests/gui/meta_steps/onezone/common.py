@@ -1,7 +1,7 @@
 """This module contains meta steps for common operations in Onezone
 using web GUI
 """
-
+import time
 from itertools import zip_longest
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -55,7 +55,8 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def visit_op(selenium, browser_id, oz_page, provider_name, popups):
     driver = selenium[browser_id]
-    providers_panel = oz_page(driver)['providers']
+    providers_panel = oz_page(driver).get_page_and_click('providers')
+    time.sleep(0.5)
     providers_panel[provider_name]()
     click_visit_provider(driver, popups)
 

@@ -49,6 +49,7 @@ class CaveatField(PageObject):
     time_label = Label('.datetime-field')
     inner_input = Input('.tag-creator .text-editor-input')
     input = Input('.text-like-field .form-control')
+    input_object_id = Input('.objectIdCaveat-field .text-like-field .form-control')
 
     rest_control = Button('.option-rest .one-way-radio-control')
     oneclient_control = Button('.option-oneclient .one-way-radio-control')
@@ -211,7 +212,9 @@ class CaveatField(PageObject):
         driver = selenium[browser_id]
         popup = popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
+        time.sleep(0.5)
         popup.consumer_types[consumer_type]()
+        time.sleep(0.5)
         popup.list_option()
 
         # this line is to load elements, test fails without it
@@ -251,7 +254,7 @@ class CaveatField(PageObject):
 
     def set_object_id_caveat(self, object_id):
         self.add_item()
-        self.input = str(object_id)
+        self.input_object_id = str(object_id)
 
     # assertions
 
