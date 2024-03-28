@@ -591,6 +591,29 @@ def assert_content_of_user_task_audit_log(selenium, browser_id, op_container,
                           task_name, ordinal, close)
 
 
+@wt(parsers.parse('user of {browser_id} sees expected exception for '
+                  '{file_name} in "{element}" content of audit log in task '
+                  '"{task_name}" in {ordinal} parallel box '
+                  'in lane "{lane_name}"'))
+def assert_element_content_in_task_audit_log_(
+        file_name, element, selenium, browser_id, op_container, lane_name,
+        task_name, ordinal, modals, clipboard, displays, tmp_memory):
+    file_name = file_name.replace('"', '')
+    expected_data = tmp_memory['exceptions'][file_name]
+
+    for el in expected_data:
+        try:
+            assert_element_content_in_task_audit_log(
+                el.lower(), element, selenium, browser_id, op_container, lane_name,
+                task_name, ordinal, modals, clipboard, displays)
+            return
+        except AssertionError:
+            pass
+    import pdb
+    pdb.set_trace()
+    raise AssertionError
+
+
 @wt(parsers.parse('user of {browser_id} sees that "{element}" content of audit'
                   ' log in task "{task_name}" in {ordinal} parallel box in lane'
                   ' "{lane_name}" is {expected_data}'))
