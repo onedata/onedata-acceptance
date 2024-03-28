@@ -336,7 +336,7 @@ def wt_clicks_on_configure(selenium, browser_id, onepanel):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
     space = onepanel(selenium[browser_id]).content.spaces.space
-    space.sync_chart.settings()
+    space.sync_chart.import_settings_list[0].click()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that number of '

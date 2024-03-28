@@ -81,7 +81,7 @@ class SpaceInfo(PageObject):
 
 class SyncChart(PageObject):
     configure = NamedButton('button', text='Configure')
-    settings = Button('.oneicon-settings')
+    import_settings_list = WebElementsSequence('.import-settings-list li')
 
     storage_import_configuration = WebItem('.storage-import-update-form '
                                            '.import-configuration-section',

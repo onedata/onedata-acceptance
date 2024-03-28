@@ -54,7 +54,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "-i",
@@ -104,7 +104,6 @@
                   }
                 }
               ],
-              "checksum": "7da00b77933825c06db45b7b8dc9fbd7",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -112,7 +111,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -151,7 +151,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v1",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "-i",
@@ -201,7 +201,6 @@
                   }
                 }
               ],
-              "checksum": "a112226008af1863aa6bfba129188175",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -209,7 +208,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -271,7 +271,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v1",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
@@ -321,7 +321,6 @@
                   }
                 }
               ],
-              "checksum": "c5d24977229154badb2821ff12f2ac48",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -329,7 +328,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -368,7 +368,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v1",
+                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
@@ -418,7 +418,6 @@
                   }
                 }
               ],
-              "checksum": "5e875c389af8bde49bd199fbde336d51",
               "argumentSpecs": [
                 {
                   "name": "file",
@@ -426,7 +425,8 @@
                   "defaultValue": null,
                   "dataSpec": {
                     "valueConstraints": {
-                      "fileType": "ANY"
+                      "fileType": "ANY",
+                      "attributes": ["fileId", "type"]
                     },
                     "type": "file"
                   }
@@ -452,7 +452,8 @@
           "config": {
             "itemDataSpec": {
               "valueConstraints": {
-                "fileType": "ANY"
+                "fileType": "ANY",
+                "attributes": ["fileId", "type"]
               },
               "type": "file"
             }
