@@ -600,18 +600,18 @@ def assert_element_content_in_task_audit_log_(
         task_name, ordinal, modals, clipboard, displays, tmp_memory):
     file_name = file_name.replace('"', '')
     expected_data = tmp_memory['exceptions'][file_name]
+    last_err = ''
 
     for el in expected_data:
         try:
             assert_element_content_in_task_audit_log(
-                el.lower(), element, selenium, browser_id, op_container, lane_name,
-                task_name, ordinal, modals, clipboard, displays)
+                el.lower(), element, selenium, browser_id, op_container,
+                lane_name, task_name, ordinal, modals, clipboard, displays)
             return
-        except AssertionError:
-            pass
-    import pdb
-    pdb.set_trace()
-    raise AssertionError
+        except AssertionError as e:
+            last_err = str(e)
+    err_msg = last_err + f', all expected errors: {expected_data}'
+    raise AssertionError(err_msg)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{element}" content of audit'
