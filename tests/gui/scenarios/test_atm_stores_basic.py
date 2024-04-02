@@ -21,6 +21,7 @@ from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.common.workflow_files import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.nodes import *
@@ -83,3 +84,4 @@ def screens():
 
 
 scenarios('../features/atm/workflow_stores_basic.feature')
+scenarios('../features/atm/using_workflows.feature')
