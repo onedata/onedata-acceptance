@@ -255,6 +255,7 @@ Feature: Bagit uploader tests
         - "File path not within data/ directory (fetch.txt line 1)"
       - "missing_fetch_txt.zip":
         - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found"
+        - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-sha256.txt not found"
       - "wrong_tagmanifest_checksums.zip":
         - "md5 checksum verification failed for macaroon_bag1/fetch.txt.\n
            Expected: 5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123"
