@@ -70,8 +70,8 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
          'expected {}'.format(displayed_name, val))
 
 
-@given(parsers.parse('exceptions for input files are loaded to temporary '
-                     'memory:\n{config}'))
+@given(parsers.parse('possible exception messages appearing for workflow '
+                     'files:\n{config}'))
 def load_exceptions_for_input_files(tmp_memory, config):
     """
     Configuration is as follows

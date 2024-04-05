@@ -238,7 +238,7 @@ Feature: Bagit uploader tests
 
 
   Scenario Outline: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - <input_archive>
-    Given exceptions for input files are loaded to temporary memory:
+    Given possible exception messages appearing for workflow files:
       - "invalid_bagit_txt.tgz":
         - "Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt"
       - "unsupported_url.zip":
@@ -332,6 +332,7 @@ Feature: Bagit uploader tests
         | "missing_fetch_txt.zip"           |
         | "wrong_tagmanifest_checksums.zip" |
         | "missing_payload.zip"             |
+
 
   Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_manifest_checksum.zip
     When user of browser clicks "space1" on the spaces list in the sidebar

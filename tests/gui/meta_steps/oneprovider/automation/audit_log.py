@@ -595,7 +595,7 @@ def assert_content_of_user_task_audit_log(selenium, browser_id, op_container,
                   '{file_name} in "{element}" content of audit log in task '
                   '"{task_name}" in {ordinal} parallel box '
                   'in lane "{lane_name}"'))
-def assert_element_content_in_task_audit_log_(
+def assert_exception_in_element_content_in_task_audit_log(
         file_name, element, selenium, browser_id, op_container, lane_name,
         task_name, ordinal, modals, clipboard, displays, tmp_memory):
     file_name = file_name.replace('"', '')
