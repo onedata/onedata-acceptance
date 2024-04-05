@@ -26,7 +26,7 @@ class ShareDirectory(Modal):
     create_another_share = NamedButton('button', text='Create another share')
 
     def __str__(self):
-        return 'Share directory'
+        return 'Share / Publish directory'
 
 
 

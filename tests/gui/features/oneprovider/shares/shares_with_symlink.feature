@@ -27,8 +27,8 @@ Feature: Shares with linked directories
     # create share
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir2" file in file browser
-    And user of browser clicks "Share" option in data row menu in file browser
-    And user of browser clicks on "Create" button in modal "Share directory"
+    And user of browser clicks "Share / Publish" option in data row menu in file browser
+    And user of browser clicks on "Create" button in modal "Share / Publish directory"
     And user of browser clicks on "X" button in modal "Directory details"
 
     # create and place symbolic link

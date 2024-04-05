@@ -112,8 +112,8 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" file in file browser
-    And user of browser_user1 clicks "Share" option in data row menu in file browser
-    And user of browser_user1 clicks on "Create" button in modal "Share directory"
+    And user of browser_user1 clicks "Share / Publish" option in data row menu in file browser
+    And user of browser_user1 clicks on "Create" button in modal "Share / Publish directory"
     And user of browser_user1 clicks on "X" button in modal "Directory details"
     And user of browser_user1 opens shares view of "space1"
     And user of browser_user1 clicks "dir1" share in shares browser on shares view
