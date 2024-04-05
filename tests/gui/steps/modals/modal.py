@@ -39,6 +39,8 @@ def check_modal_name(modal_name):
         return 'invite_using_token'
     elif modal_name in ['file_details', 'directory_details']:
         return 'details_modal'
+    elif 'share' in modal_name:
+        return 'share_directory'
     else:
         return modal_name
 
