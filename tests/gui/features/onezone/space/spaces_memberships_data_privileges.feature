@@ -99,7 +99,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser
-    And user of browser_user1 sees that "Share" option is disabled in opened item menu in dataset browser
+    And user of browser_user1 sees that "Share / Publish" option is disabled in opened item menu in dataset browser
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

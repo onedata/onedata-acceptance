@@ -82,7 +82,7 @@ class DetailsModal(Modal):
 
     qos = WebItem('.modal-content', cls=QoSTab)
     metadata = WebItem('.modal-content', cls=MetadataTab)
-    shares = WebItem('.modal-content', cls=ShareDirectory)
+    share_directory = WebItem('.modal-content', cls=ShareDirectory)
     edit_permissions = WebItem('.modal-content', cls=EditPermissionsTab)
     data_distribution = WebItem('.modal-content', cls=DataDistributionTab)
 
