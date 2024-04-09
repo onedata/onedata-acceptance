@@ -272,19 +272,6 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
                   'in modal is not selected'))
 def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
-    options = modal.find_elements_by_css_selector('.one-option-button',
-                                                  '.one-option-button .oneicon')
-    err_msg = 'option "{}" is selected while it should not be'.format(text)
-    for option, checkbox in zip(options[::2], options[1::2]):
-        if option.text == text:
-            checkbox_css = checkbox.get_attribute('class')
-            assert '.oneicon-checkbox-empty' in checkbox_css, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees that "{text}" option '
-                  'in modal is not selected'))
-def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
-    modal = tmp_memory[browser_id]['window']['modal']
     options = modal.find_elements_by_css_selector('.one-option-button, '
                                                   '.one-option-button .oneicon')
     err_msg = 'option "{}" is selected while it should not be'.format(text)
