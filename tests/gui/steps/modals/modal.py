@@ -40,7 +40,7 @@ def check_modal_name(modal_name):
     elif modal_name in ['file_details', 'directory_details']:
         return 'details_modal'
     elif 'share' in modal_name:
-        return 'share_directory'
+        return 'share'
     else:
         return modal_name
 
@@ -343,9 +343,8 @@ def assert_element_text(elem, selector, elem_text):
                'button in (?P<panel_name>.*?) panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_panel_button(selenium, browser_id, button, panel_name, modals):
-    modal = getattr(modals(selenium[browser_id]).details_modal,
-                    check_modal_name(panel_name))
-    getattr(modal, transform(button))()
+    tab = getattr(modals(selenium[browser_id]).details_modal, transform(panel_name))
+    getattr(tab, transform(button))()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that there is no '
@@ -409,9 +408,9 @@ def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number,
                                      modals):
     name = 'Shares'
     driver = selenium[browser_id]
-    modal = modals(driver).details_modal.shares
+    shares_tab = modals(driver).details_modal.shares
     navigation = modals(driver).details_modal.navigation
-    links = modal.share_options
+    links = shares_tab.share_options
     info = look_for_tab_name(navigation, name)
     err_msg = 'Item {item_name} is not shared {number} times'
     assert _assert_number_of_shares_in_modal(number, links, info), err_msg

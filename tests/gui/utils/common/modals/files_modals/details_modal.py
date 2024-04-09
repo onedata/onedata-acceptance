@@ -12,7 +12,7 @@ from .tabs_in_details_modal.data_distribution import DataDistributionTab
 from .tabs_in_details_modal.edit_permissions import EditPermissionsTab
 from .tabs_in_details_modal.metadata_tab import MetadataTab
 from .tabs_in_details_modal.qos import QoSTab
-from .tabs_in_details_modal.share_directory import ShareDirectory
+from .tabs_in_details_modal.shares_tab import SharesTab
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
@@ -82,7 +82,7 @@ class DetailsModal(Modal):
 
     qos = WebItem('.modal-content', cls=QoSTab)
     metadata = WebItem('.modal-content', cls=MetadataTab)
-    share_directory = WebItem('.modal-content', cls=ShareDirectory)
+    shares = WebItem('.modal-content', cls=SharesTab)
     edit_permissions = WebItem('.modal-content', cls=EditPermissionsTab)
     data_distribution = WebItem('.modal-content', cls=DataDistributionTab)
 
