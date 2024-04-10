@@ -14,18 +14,21 @@ from tests.utils.bdd_utils import wt, parsers
 
 WORKFLOW_DIR = 'automation-examples/workflows'
 TESTS_DIR = 'tests/gui/features'
+WORKFLOWS_NAMES = []
 
 
+@wt(parsers.parse('workflows from automation-examples are gathered'))
 def gather_workflows_names():
+    global WORKFLOWS_NAMES
     workflows_names = []
     for dir_path, dirs, files in os.walk(WORKFLOW_DIR):
         workflows_names.extend(filter(lambda x: x.endswith('.json'), files))
-    return workflows_names
+    WORKFLOWS_NAMES = workflows_names
 
 
-@wt(parsers.parse('all workflows are used in tests'))
+@wt(parsers.parse('all gathered workflows are used in acceptance tests'))
 def check_using_all_workflows():
-    workflows_names = gather_workflows_names()
+    workflows_names = WORKFLOWS_NAMES
     # remove extension
     workflows_names = set(map(lambda x: x.split('.')[0], workflows_names))
     used_workflows = set()
