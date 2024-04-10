@@ -262,9 +262,9 @@ Feature: Bagit uploader tests
         - "sha256 checksum verification failed for macaroon_bag1/fetch.txt.\n
            Expected: a4127b2d0ced5571d738917292cb64ae686bea0c016d18a66029062b43dbd7eb, Calculated: 8db8b25444ca1130c2150fe622df8aac8e5604332cd0ec84e80adb9ce90240ab"
       - "missing_payload.zip":
-        - "Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n
-           Files in payload but not referenced: set()\n
-           Files referenced but not in payload: {'data/ark-file-meta.csv'}"
+        - "Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files
+           in payload but not referenced: set()\n  Files
+           referenced but not in payload: {'data/ark-file-meta.csv'}"
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
