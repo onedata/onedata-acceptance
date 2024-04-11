@@ -600,18 +600,10 @@ def assert_exception_in_element_content_in_task_audit_log(
         task_name, ordinal, modals, clipboard, displays, tmp_memory):
     file_name = file_name.replace('"', '')
     expected_data = tmp_memory['exceptions'][file_name]
-    last_err = ''
-
-    for el in expected_data:
-        try:
-            assert_element_content_in_task_audit_log(
-                el.lower(), element, selenium, browser_id, op_container,
-                lane_name, task_name, ordinal, modals, clipboard, displays)
-            return
-        except AssertionError as e:
-            last_err = str(e)
-    err_msg = last_err + f', all expected errors: {expected_data}'
-    raise AssertionError(err_msg)
+    expected_data = list(map(lambda x: x.lower(), expected_data))
+    assert_element_content_in_task_audit_log(
+        expected_data, element, selenium, browser_id, op_container,
+        lane_name, task_name, ordinal, modals, clipboard, displays)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{element}" content of audit'
@@ -623,7 +615,12 @@ def assert_element_content_in_task_audit_log(
     click = 'click'
     link = 'Audit log'
     close = 'closes'
-    expected_data = expected_data.replace('"', '')
+    if isinstance(expected_data, list):
+        expected_data = list(map(lambda x: x.replace('"', ''), expected_data))
+        expected_data = list(map(lambda x: x.replace("\\n", "\n"), expected_data))
+    else:
+        expected_data = expected_data.replace('"', '')
+        expected_data = expected_data.replace("\\n", "\n")
     driver = selenium[browser_id]
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, click)
@@ -640,10 +637,16 @@ def assert_element_content_in_task_audit_log(
     # as expected_data
     actual_data = actual_data.replace("(data/) ", "")
     actual_data = actual_data.lower()
-    expected_data = expected_data.replace("\\n", "\n")
-    err_msg = (f'actual {element} content for task:\n "{actual_data}"\n is not '
-               f'as expected:\n "{expected_data}"')
-    assert actual_data == expected_data, err_msg
+    if isinstance(expected_data, list):
+        err_msg = (
+            f'actual {element} content for task:\n "{actual_data}"\n is not '
+            f'in expected cases:\n "{expected_data}"')
+        assert actual_data in expected_data, err_msg
+    else:
+        err_msg = (
+            f'actual {element} content for task:\n "{actual_data}"\n is not '
+            f'as expected:\n "{expected_data}"')
+        assert actual_data == expected_data, err_msg
     modal.x()
     click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name, ordinal, close)
