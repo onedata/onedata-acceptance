@@ -1,8 +1,6 @@
 """This module contains gherkin steps to run acceptance tests featuring
 storage parameter modifications in Onepanel using REST API in Oneclient tests.
 """
-from tests.gui.meta_steps.onezone.provider import \
-    send_copied_invite_token_in_oz_gui
 
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
