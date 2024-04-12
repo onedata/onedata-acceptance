@@ -265,6 +265,9 @@ Feature: Bagit uploader tests
         - "Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files
            in payload but not referenced: set()\n  Files
            referenced but not in payload: {'data/ark-file-meta.csv'}"
+        - "Files referenced by macaroon_bag1/manifest-sha256.txt do not match with payload files.\n  Files
+           in payload but not referenced: set()\n  Files
+           referenced but not in payload: {'data/ark-file-meta.csv'}"
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
