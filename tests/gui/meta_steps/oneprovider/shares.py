@@ -29,8 +29,8 @@ from tests.gui.steps.oneprovider.browser import (
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
                  modals, popups):
-    option = 'Share'
-    modal_name = 'Share directory'
+    option = 'Share / Publish'
+    modal_name = 'Share / Publish directory'
     button = 'Create'
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)

@@ -46,7 +46,7 @@ from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.leave_element import LeaveElementModal
 from .storage_modals.modify_storage import ModifyStorage
 from .rest_api_modal import RESTApiModal
-from .files_modals.tabs_in_details_modal.share_directory import ShareDirectory
+from .files_modals.share import Share
 from .management_modals.delete_user_account import DeleteUserAccountModal
 from .files_modals.symbolic_link_details import SymbolicLinkDetailsModal
 from .datasets_modals.datasets_modal import DatasetsModal
@@ -83,7 +83,7 @@ class Modals(object):
 
     # files modals
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
-    share_directory = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
+    share = WebItem('.share-modal .modal-dialog', cls=Share)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',

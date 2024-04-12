@@ -26,7 +26,7 @@ Feature: Basic operations on public shares in file browser
     And using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 
 
-  Scenario: User views and downloads files from public interface of share shared from another user using "Share directory" modal
+  Scenario: User views and downloads files from public interface of share shared from another user using "Share / Publish directory" modal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 

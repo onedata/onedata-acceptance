@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on share modal.
+"""Utils and fixtures to facilitate operations on shares tab of file modal.
 """
 
 __author__ = "Natalia Organek"
@@ -18,15 +18,9 @@ class SharesOptions(PageObject):
     copy_icon = Button('.oneicon-browser-copy')
 
 
-class ShareDirectory(Modal):
-    input_name = Input('.form-control.new-share-name')
-    create = NamedButton('button', text='Create')
-
+class SharesTab(Modal):
     share_options = WebItemsSequence('.file-share-item', cls=SharesOptions)
     create_another_share = NamedButton('button', text='Create another share')
 
     def __str__(self):
-        return 'Share directory'
-
-
-
+        return 'Shares tab'
