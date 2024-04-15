@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+import yaml
+
 from tests.utils.bdd_utils import given, parsers, wt
 
 from tests.gui.utils.generic import parse_seq
@@ -66,3 +68,27 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
     assert displayed_name == val, \
         ('displayed {} provider name in Oneprovider GUI instead of '
          'expected {}'.format(displayed_name, val))
+
+
+@given(parsers.parse('possible exception messages appearing for workflow '
+                     'files:\n{config}'))
+def load_exceptions_for_input_files(tmp_memory, config):
+    """
+    Configuration is as follows
+    - file_name:
+        - exception1
+        - exception2
+        ...
+    - file_name2:
+    ...
+    """
+
+    _load_exceptions_for_input_files(tmp_memory, config)
+
+
+def _load_exceptions_for_input_files(tmp_memory, config):
+    data = yaml.load(config)
+    for el in data:
+        file = list(el.keys())[0]
+        exceptions = list(el.values())[0]
+        tmp_memory['exceptions'][file] = exceptions
