@@ -22,3 +22,6 @@ class BrowserRow(object):
                 return
 
         raise RuntimeError('Waited too long for being selected')
+
+    def is_file(self):
+        return 'fb-table-row-file' in self.web_elem.get_attribute('class')

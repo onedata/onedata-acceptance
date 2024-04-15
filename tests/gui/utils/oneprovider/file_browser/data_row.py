@@ -52,15 +52,6 @@ class DataRow(PageObject, BrowserRow):
     def is_selected(self):
         return 'file-selected' in self.web_elem.get_attribute('class')
 
-    def is_file(self):
-        try:
-            'one-icon-tag' in self._icon_tag.get_attribute('class')
-        except RuntimeError:
-            pass
-        else:
-            return False
-        return 'browser-file' in self._icon.get_attribute('class')
-
     def is_directory(self):
         return 'browser-directory' in self._icon.get_attribute('class')
 
