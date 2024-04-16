@@ -151,6 +151,7 @@ Feature: Bagit uploader tests
         - Star__-__v7__-__SegueA__-__2013_02_18.rfm
         - ark-file-meta.csv
         - googlelogo_color_272x92dp.png
+      - valid.zip
 
     And user of browser sees that each file in "dir1" directory has following metadata:
       - checksum.sha256.expected
@@ -219,12 +220,11 @@ Feature: Bagit uploader tests
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees Dataset status tag for "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that the file structure in file browser is as follow:
-      - dir1:
         - data:
           - LHC10c_pp_ESD_120076.json
 
-    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks and presses enter on item named "data" in file browser
     And user of browser sees inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
     And user of browser clicks on inherited status tag for "LHC10c_pp_ESD_120076.json" in file browser
@@ -238,6 +238,36 @@ Feature: Bagit uploader tests
 
 
   Scenario Outline: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - <input_archive>
+    Given possible exception messages appearing for workflow files:
+      - "invalid_bagit_txt.tgz":
+        - "Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt"
+      - "unsupported_url.zip":
+        - "URL from line number 1 in fetch.txt is not supported"
+      - "unsupported_archive_type.7z":
+        - "Unsupported archive type: .7z"
+      - "missing_manifest_file.tgz":
+        - "No manifest file found"
+      - "missing_data_dir.tar":
+        - "Payload directory not found"
+      - "missing_bagit_txt.tar":
+        - "Bagit directory not found"
+      - "invalid_fetch_url.zip":
+        - "File path not within data/ directory (fetch.txt line 1)"
+      - "missing_fetch_txt.zip":
+        - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found"
+        - "bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-sha256.txt not found"
+      - "wrong_tagmanifest_checksums.zip":
+        - "md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected:
+           5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123"
+        - "sha256 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected:
+           a4127b2d0ced5571d738917292cb64ae686bea0c016d18a66029062b43dbd7eb, Calculated: 8db8b25444ca1130c2150fe622df8aac8e5604332cd0ec84e80adb9ce90240ab"
+      - "missing_payload.zip":
+        - "Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files
+           in payload but not referenced: set()\n  Files
+           referenced but not in payload: {'data/ark-file-meta.csv'}"
+        - "Files referenced by macaroon_bag1/manifest-sha256.txt do not match with payload files.\n  Files
+           in payload but not referenced: set()\n  Files
+           referenced but not in payload: {'data/ark-file-meta.csv'}"
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -262,7 +292,7 @@ Feature: Bagit uploader tests
         status: Invalid bagit archive
 
     And user of browser sees that "archive" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is <input_archive>
-    And user of browser sees that "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate" is <exception_reason>
+    And user of browser sees expected exception for <input_archive> in "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser sees that time in right corner of chart with processing stats is around actual time
@@ -294,17 +324,17 @@ Feature: Bagit uploader tests
 
 
     Examples:
-      | input_archive                     | exception_reason                                                                                          |
-      | "invalid_bagit_txt.tgz"           | Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt                                 |
-      | "unsupported_url.zip"             | URL from line number 1 in fetch.txt is not supported                                                      |
-      | "unsupported_archive_type.7z"     | Unsupported archive type: .7z                                                                             |
-      | "missing_manifest_file.tgz"       | No manifest file found                                                                                    |
-      | "missing_data_dir.tar"            | Payload directory not found                                                                               |
-      | "missing_bagit_txt.tar"           | Bagit directory not found                                                                                 |
-      | "invalid_fetch_url.zip"           | File path not within data/ directory (fetch.txt line 1)                                                   |
-      | "missing_fetch_txt.zip"           | bagit_missing_fetch_txt/fetch.txt referenced by bagit_missing_fetch_txt/tagmanifest-md5.txt not found     |
-      | "wrong_tagmanifest_checksums.zip" | md5 checksum verification failed for macaroon_bag1/fetch.txt.\nExpected: 5e8594d60bc90071ae12ad9b589166be, Calculated: ceb502eb82f571ea033f743f3c3c9123                                         |
-      | "missing_payload.zip"             | Files referenced by macaroon_bag1/manifest-md5.txt do not match with payload files.\n  Files in payload but not referenced: set()\n  Files referenced but not in payload: {'data/ark-file-meta.csv'} |
+        | input_archive                     |
+        | "invalid_bagit_txt.tgz"           |
+        | "unsupported_url.zip"             |
+        | "unsupported_archive_type.7z"     |
+        | "missing_manifest_file.tgz"       |
+        | "missing_data_dir.tar"            |
+        | "missing_bagit_txt.tar"           |
+        | "invalid_fetch_url.zip"           |
+        | "missing_fetch_txt.zip"           |
+        | "wrong_tagmanifest_checksums.zip" |
+        | "missing_payload.zip"             |
 
 
   Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_manifest_checksum.zip

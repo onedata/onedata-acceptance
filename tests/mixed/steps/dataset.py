@@ -11,6 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser)
+from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.mixed.steps.rest.oneprovider.datasets import (
     create_dataset_in_op_rest, assert_top_level_dataset_in_space_in_op_rest,
     remove_dataset_in_op_rest, assert_write_protection_flag_for_dataset_op_rest,
@@ -137,9 +138,9 @@ def check_dataset_structure_in_op(client, user, space_name, host, config,
     # fail if there are more datasets
     client_lower = client.lower()
     if client_lower == 'web gui':
-        check_dataset_structure_in_op_gui(selenium, user, oz_page,
-                                          space_name, config, op_container,
-                                          tmpdir, tmp_memory)
+        assert_space_content_in_op_gui(config, selenium, user, op_container,
+                                       tmp_memory, tmpdir, space_name, oz_page,
+                                       which_browser='dataset browser')
     elif client_lower == 'rest':
         check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
                                            space_name, config)

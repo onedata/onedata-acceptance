@@ -10,13 +10,13 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
-    go_to_path_without_last_elem, check_file_structure_in_browser)
+    go_to_path_without_last_elem, go_to_and_assert_browser)
+from tests.gui.meta_steps.oneprovider.files_tree import (
+    check_file_structure_in_browser)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
-    click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_of_space_on_left_sidebar_menu,
-    click_on_option_in_the_sidebar)
+    click_on_option_of_space_on_left_sidebar_menu)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
@@ -39,22 +39,6 @@ def get_flags(option):
     if 'metadata' in option:
         flags.append(METADATA_PROTECTION)
     return flags
-
-
-def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
-                             option_in_space, op_container, tmp_memory,
-                             item_browser='file browser'):
-    option = 'Data'
-    element = 'spaces'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
 
 
 def get_item_name_from_path(selenium, browser_id, space_name, oz_page,
@@ -166,9 +150,9 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
                              item_browser=item_browser)
-    check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
-                                    op_container, tmpdir,
-                                    which_browser=item_browser)
+    check_file_structure_in_browser(
+        browser_id, config, selenium, tmp_memory, op_container, tmpdir,
+        which_browser=item_browser)
 
 
 def check_effective_protection_flags_for_file_in_op_gui(

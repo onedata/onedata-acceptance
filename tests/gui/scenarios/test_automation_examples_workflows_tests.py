@@ -65,6 +65,7 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.automation.pods_activity import *
 from tests.gui.meta_steps.oneprovider.automation.audit_log import *
+from tests.gui.meta_steps.oneprovider.files_tree import *
 
 from tests.utils.acceptance_utils import *
 

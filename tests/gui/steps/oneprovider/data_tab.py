@@ -88,6 +88,26 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
     # this cannot be first step that uses which_browser,
     # browser must be loaded before in some previous step
     archive = which_browser == 'archive file browser'
+    breadcrumbs = _get_breadcrumbs(browser_id, selenium, op_container,
+                                   which_browser)
+    path = transform(path)
+    if path == 'space_root':
+        breadcrumbs.space_root()
+    else:
+        breadcrumbs.chdir(path, archive)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def go_one_back_using_breadcrumbs_in_data_tab_in_op(
+        selenium, browser_id, op_container, which_browser='file browser'):
+    # this cannot be first step that uses which_browser,
+    # browser must be loaded before in some previous step
+    breadcrumbs = _get_breadcrumbs(browser_id, selenium, op_container,
+                                   which_browser)
+    breadcrumbs.go_one_back()
+
+
+def _get_breadcrumbs(browser_id, selenium, op_container, which_browser):
     try:
         breadcrumbs = getattr(op_container(selenium[browser_id]),
                               transform(which_browser)).breadcrumbs
@@ -95,11 +115,7 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
         which_browser = 'archive browser'
         breadcrumbs = getattr(op_container(selenium[browser_id]),
                               transform(which_browser)).breadcrumbs
-    path = transform(path)
-    if path == 'space_root':
-        breadcrumbs.space_root()
-    else:
-        breadcrumbs.chdir(path, archive)
+    return breadcrumbs
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '

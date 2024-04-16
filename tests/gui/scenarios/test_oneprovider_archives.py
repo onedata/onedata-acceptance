@@ -62,6 +62,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
 from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.oneprovider.files_tree import *
 
 from tests.oneclient.steps.environment_steps import *
 

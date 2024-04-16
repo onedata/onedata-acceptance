@@ -533,8 +533,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
         from tests.gui.meta_steps.oneprovider.data import \
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_container,
-                                       tmp_memory, tmpdir, space_name, oz_page,
-                                       host, hosts)
+                                       tmp_memory, tmpdir, space_name, oz_page)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest

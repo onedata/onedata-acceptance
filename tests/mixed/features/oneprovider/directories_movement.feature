@@ -46,6 +46,7 @@ Feature: Directories movement tests
                 - dir5
     And using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
     And using <client2>, user1 succeeds to move "space1/dir4" to "space1/dir1/dir2/dir3/dir4" in oneprovider-1
+    And if <client1> is web GUI, user1 is idle for 10 seconds
     Then using <client1>, user1 sees that directory structure in "space1" space in oneprovider-1 is as follow:
             - dir1:
                 - dir2:

@@ -11,6 +11,7 @@ from pytest_bdd import scenario, scenarios
 from tests.utils.entities_setup.users import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
+from tests.utils.acceptance_utils import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
