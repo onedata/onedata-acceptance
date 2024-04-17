@@ -22,6 +22,15 @@ def choose_option_for_publish_as_open_data(browser_id, option, popups,
     popups(driver).handle_service.options[option].click()
 
 
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+                  'for metadata type on share\'s private interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_for_publish_as_open_data(browser_id, option, popups,
+                                           selenium):
+    driver = selenium[browser_id]
+    popups(driver).metadata_type.options[option].click()
+
+
 @wt(parsers.parse('user of {browser_id} writes "{text}" into last {which_input}'
                   ' input text field in "Dublin Core Metadata" form on '
                   'share\'s private interface'))
