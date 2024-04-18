@@ -97,9 +97,6 @@ class DataRow(PageObject, BrowserRow):
 
     def click_and_enter(self):
         time.sleep(0.1)
-        if self.is_any_tag_visible():
-            ActionChains(self.driver).click(self.clickable_field).perform()
-        else:
-            ActionChains(self.driver).click(self.web_elem).perform()
+        ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
