@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from selenium.webdriver import ActionChains
-from selenium.common.exceptions import (NoSuchElementException,
-                                        ElementClickInterceptedException)
+from selenium.common.exceptions import (
+    NoSuchElementException, ElementNotInteractableException,
+    ElementClickInterceptedException)
 
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -129,6 +130,6 @@ class MembersPage(PageObject):
             element.click()
         except NoSuchElementException:
             pass
-        except ElementClickInterceptedException:
+        except (ElementClickInterceptedException, ElementNotInteractableException):
             driver.execute_script("arguments[0].click();", element)
 

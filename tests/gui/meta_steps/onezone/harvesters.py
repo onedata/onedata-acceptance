@@ -219,13 +219,13 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.parse('user of {browser_id} sets following privileges for '
-                  '"{user_name}" user in "{harvester_name}" harvester:'
-                  '\n{config}'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|tries to set) '
+               'following privileges for "(?P<user_name>.*)" user in '
+               r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
                                          onepanel, config, user_name,
-                                         harvester_name):
+                                         harvester_name, option):
     where = 'harvester'
     list_type = 'user'
     menu_option = 'Members'
@@ -235,9 +235,9 @@ def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
                                                       menu_option, oz_page)
     click_element_in_members_list(selenium, browser_id, user_name, oz_page,
                                   where, list_type + 's', onepanel)
-    set_privileges_in_members_subpage(selenium, browser_id, user_name,
-                                      list_type, where, config, onepanel,
-                                      oz_page)
+    set_privileges_in_members_subpage(
+        selenium, browser_id, user_name, list_type, where, config,
+        onepanel, oz_page, option)
 
 
 @wt(parsers.parse('user of {browser_id} renames "{harvester_name}" harvester '
