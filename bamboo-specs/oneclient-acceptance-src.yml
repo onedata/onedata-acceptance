@@ -82,6 +82,7 @@ stages:
         - singleprovider regular file CRUD multiclient proxyio
         - singleprovider regular file stat multiclient directio
         - singleprovider regular file stat multiclient proxyio
+        - singleprovider storage modification singleclient directio
   - Qnthack - rerun:
       manual: false
       final: true
@@ -878,6 +879,26 @@ singleprovider regular file stat multiclient proxyio:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio test_oneclient_src
+
+singleprovider storage modification singleclient directio:
+  <<: *acceptance-oneclient-tests-job
+  key: SPSMSD
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: &build-swaggers
+        <<: *run-script-working-dir
+        scripts:
+          - make build_swaggers
+        description: Build swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_src
 
 
 Qnthack - rerun:

@@ -136,7 +136,6 @@ build_swaggers:
 	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
 	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
 
-
 ##
 ## Clean
 ##
@@ -152,7 +151,6 @@ clean_swaggers:
 	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
 	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
 	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
-
 
 codetag-tracker:
 	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc

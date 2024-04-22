@@ -2,6 +2,7 @@
 .idea
 
 *.pyc
+.pytest_cache/
 
 test-reports/*
 
@@ -16,6 +17,7 @@ tests/mixed/cdmi_client/
 tests/mixed/onepanel_client/
 tests/mixed/oneprovider_client/
 tests/mixed/onezone_client/
+tests/oneclient/onepanel_client/
 
 package
 pkg-list.json
