@@ -38,8 +38,8 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
 
     Examples:
     | result   |  privileges                   |
-    | succeeds |  [general:delete]             |
-    | fails    |  all except [general:delete]  |
+    | succeeds |  [deletion:delete]             |
+    | fails    |  all except [deletion:delete]  |
 
 
   Scenario Outline: Read files ACL

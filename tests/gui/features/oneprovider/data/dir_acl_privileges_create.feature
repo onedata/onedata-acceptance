@@ -37,13 +37,13 @@ Feature: ACL directories privileges tests on creating directories using multiple
     Then user of browser_user1 <result> to create directory "subdir" in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                        |
-    | succeeds |  [data:list files, data:add subdirectory, data:traverse directory] |
-    | fails    |  all except [data:add subdirectory]                                |
+    | result   |  privileges                                                                 |
+    | succeeds |  [content:list files, content:add subdirectory, content:traverse directory] |
+    | fails    |  all except [content:add subdirectory]                                      |
 
 
-  Scenario: Fails to create subdirectory without data:traverse directory privilege
-    When user of space_owner_browser sets "dir1" ACL all except [data:traverse directory] privileges for <subject_type> <subject_name> in "space1"
+  Scenario: Fails to create subdirectory without content:traverse directory privilege
+    When user of space_owner_browser sets "dir1" ACL all except [content:traverse directory] privileges for <subject_type> <subject_name> in "space1"
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks and presses enter on item named "dir1" in file browser
     Then user of browser_user1 sees "PERMISSION DENIED" sign in the file browser

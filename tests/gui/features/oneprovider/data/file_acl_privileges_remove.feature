@@ -38,8 +38,8 @@ Feature: ACL files privileges tests of changing and removing file using multiple
 
     Examples:
     | result   |  privileges                   |
-    | succeeds |  [general:delete]             |
-    | fails    |  all except [general:delete]  |
+    | succeeds |  [deletion:delete]             |
+    | fails    |  all except [deletion:delete]  |
 
 
   Scenario Outline: Change files ACL

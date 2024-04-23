@@ -42,7 +42,7 @@ Feature: ACL basic tests
 
     Examples:
     | privileges                              | subject_type  | subject_name  | item  |
-    | [data:read, data:write]                 | user          | user2         | file1 |
-    | [data:list files, data:add files]       | user          | user2         | dir1  |
-    | [deny, data:read, data:write]           | user          | user2         | file1 |
-    | [deny, data:list files, data:add files] | user          | user2         | dir1  |
+    | [content:read, content:write]                 | user          | user2         | file1 |
+    | [content:list files, content:add files]       | user          | user2         | dir1  |
+    | [deny, content:read, content:write]           | user          | user2         | file1 |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  |

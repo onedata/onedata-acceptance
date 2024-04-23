@@ -40,8 +40,8 @@ Feature: ACL subdirectories privileges on removing directories tests using multi
 
     Examples:
     | result   |  privileges                                                           |
-    | succeeds |  [data:delete child, data:traverse directory, data:list files]        |
-    | fails    |  all except [data:delete child]                                       |
+    | succeeds |  [content:delete child, content:traverse directory, content:list files]        |
+    | fails    |  all except [content:delete child]                                       |
 
 
   Scenario Outline: Remove non-empty directory
@@ -50,10 +50,10 @@ Feature: ACL subdirectories privileges on removing directories tests using multi
 
     Examples:
     | result   |  privileges                                                                       |
-    | succeeds |  [general:delete, data:delete child, data:list files, data:traverse directory]    |
-    | fails    |  all except [general:delete]                                                      |
-    | fails    |  all except [data:delete child]                                                   |
-    | fails    |  all except [data:list files]                                                     |
-    | fails    |  all except [data:traverse directory]                                             |
+    | succeeds |  [deletion:delete, content:delete child, content:list files, content:traverse directory]    |
+    | fails    |  all except [deletion:delete]                                                      |
+    | fails    |  all except [content:delete child]                                                   |
+    | fails    |  all except [content:list files]                                                     |
+    | fails    |  all except [content:traverse directory]                                             |
 
 

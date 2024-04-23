@@ -40,9 +40,9 @@ Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GU
 
     Examples:
     | result   |  privileges                                                                           |
-    | succeeds |  [data:list files, data:delete child, data:traverse directory, data:add files]        |
-    | fails    |  all except [data:add files]                                                          |
-    | fails    |  all except [data:delete child]                                                       |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add files]        |
+    | fails    |  all except [content:add files]                                                          |
+    | fails    |  all except [content:delete child]                                                       |
 
 
   Scenario Outline: Remove subfile
@@ -51,5 +51,5 @@ Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GU
 
     Examples:
     | result   |  privileges                                                      |
-    | succeeds |  [data:delete child, data:traverse directory, data:list files]   |
-    | fails    |  all except [data:delete child]                                  |
+    | succeeds |  [content:delete child, content:traverse directory, content:list files]   |
+    | fails    |  all except [content:delete child]                                  |

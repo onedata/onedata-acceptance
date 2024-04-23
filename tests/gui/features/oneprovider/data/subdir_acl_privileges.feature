@@ -40,9 +40,9 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
 
     Examples:
     | result   |  privileges                                 |
-    | succeeds |  [data:list files, data:traverse directory] |
-    | fails    |  all except [data:traverse directory]       |
-    | fails    |  all except [data:list files]               |
+    | succeeds |  [content:list files, content:traverse directory] |
+    | fails    |  all except [content:traverse directory]       |
+    | fails    |  all except [content:list files]               |
 
 
   Scenario Outline: Rename subdirectory
@@ -51,8 +51,8 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
 
     Examples:
     | result   |  privileges                                                                                  |
-    | succeeds |  [data:list files, data:delete child, data:traverse directory, data:add subdirectory]        |
-    | fails    |  all except [data:add subdirectory]                                                          |
-    | fails    |  all except [data:delete child]                                                              |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add subdirectory]        |
+    | fails    |  all except [content:add subdirectory]                                                          |
+    | fails    |  all except [content:delete child]                                                              |
 
 
