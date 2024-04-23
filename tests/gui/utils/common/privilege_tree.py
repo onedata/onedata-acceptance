@@ -276,4 +276,5 @@ class PrivilegeTree(PageObject):
                 time.sleep(0.1)
             except RuntimeError:
                 return
-        raise RuntimeError
+        raise RuntimeError(
+            'Did not manage to set privileges, exceeded loading time')
