@@ -76,7 +76,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
-    | privileges                    | subject_type  | subject_name  | result    |
+    | privileges                     | subject_type  | subject_name  | result    |
     | all except [deletion:delete]   | group         | group2        | fails     |
     | [deletion:delete]              | group         | group2        | succeeds  |
 
@@ -104,7 +104,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
-    | privileges                    | subject_type  | subject_name  | result    |
+    | privileges                     | subject_type  | subject_name  | result    |
     | all except [deletion:delete]   | group         | group2        | fails     |
     | [deletion:delete]              | group         | group2        | succeeds  |
 
@@ -143,7 +143,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     Then user of browser_user3 <result> to remove "file1" in "space1"
 
     Examples:
-    | child_privileges          | parent_privileges         | result    |
+    | child_privileges           | parent_privileges          | result    |
     | [deletion:delete]          | [deny, deletion:delete]    | succeeds  |
     | [deny, deletion:delete]    | [deletion:delete]          | fails     |
 

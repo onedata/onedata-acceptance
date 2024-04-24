@@ -37,7 +37,7 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
     Then user of browser_user1 <result> to rename "file1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                   |
+    | result   |  privileges                    |
     | succeeds |  [deletion:delete]             |
     | fails    |  all except [deletion:delete]  |
 

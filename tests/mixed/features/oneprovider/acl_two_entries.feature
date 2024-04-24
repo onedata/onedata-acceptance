@@ -41,7 +41,7 @@ Feature: ACL basic tests
     And using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for user user1 in first ACL record in oneprovider-1
 
     Examples:
-    | privileges                              | subject_type  | subject_name  | item  |
+    | privileges                                    | subject_type  | subject_name  | item  |
     | [content:read, content:write]                 | user          | user2         | file1 |
     | [content:list files, content:add files]       | user          | user2         | dir1  |
     | [deny, content:read, content:write]           | user          | user2         | file1 |
