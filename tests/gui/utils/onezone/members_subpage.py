@@ -7,7 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from selenium.webdriver import ActionChains
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException, ElementNotInteractableException,
+    ElementClickInterceptedException)
 
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -123,9 +125,11 @@ class MembersPage(PageObject):
     def close_member(self, driver):
         driver.execute_script("window.scrollBy(0,0)")
         try:
-            driver.find_element_by_css_selector('.member-item '
-                                                '.one-collapsible-list-item-header'
-                                                '.opened').click()
+            element = driver.find_element_by_css_selector(
+                '.member-item .one-collapsible-list-item-header.opened')
+            element.click()
         except NoSuchElementException:
             pass
+        except (ElementClickInterceptedException, ElementNotInteractableException):
+            driver.execute_script("arguments[0].click();", element)
 

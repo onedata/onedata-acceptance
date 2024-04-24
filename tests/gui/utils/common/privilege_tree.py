@@ -164,6 +164,7 @@ class PrivilegeTree(PageObject):
     privilege_groups = WebItemsSequence('.group-privilege-row',
                                         cls=PrivilegeGroup)
     privileges = WebItemsSequence('.privilege-row ', cls=PrivilegeRow)
+    spinner = WebElement('.spin-spinner-block')
 
     def get_privilege_row(self, name):
         return self.privileges[name]
@@ -267,3 +268,13 @@ class PrivilegeTree(PageObject):
     def set_all_true(self):
         for priv_group in self.privilege_groups:
             priv_group.activate()
+
+    def wait_for_load_privileges(self):
+        for _ in range(50):
+            try:
+                self.spinner
+                time.sleep(0.1)
+            except RuntimeError:
+                return
+        raise RuntimeError(
+            'Did not manage to set privileges, exceeded loading time')

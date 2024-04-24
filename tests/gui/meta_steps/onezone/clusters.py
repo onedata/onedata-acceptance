@@ -72,6 +72,7 @@ def change_privilege_config_in_cluster(selenium, browser_id, oz_page,
                                        onepanel, where, user_name, config):
     member_type = 'user'
     list_type = 'users'
+    option = 'sets'
 
     click_element_in_members_list(selenium, browser_id, user_name,
                                   oz_page, where, list_type, onepanel)
@@ -79,7 +80,7 @@ def change_privilege_config_in_cluster(selenium, browser_id, oz_page,
                               member_type, user_name, onepanel)
     set_privileges_in_members_subpage(selenium, browser_id, user_name,
                                       member_type, where, config, onepanel,
-                                      oz_page)
+                                      oz_page, option)
 
 
 @wt(parsers.parse('user of {browser_id} adds "{group_name}" group to '
