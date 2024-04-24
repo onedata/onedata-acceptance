@@ -69,7 +69,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser clicks on "Permissions" in context menu for "dir1"
     And user of browser sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser selects "ACL" permission type in edit permissions panel
-    And user of browser adds ACE with general:delete privilege set for user space-owner-user
+    And user of browser adds ACE with deletion:delete privilege set for user space-owner-user
     And user of browser clicks on "Discard changes" button in edit permissions panel
 
     # Check ACL record
@@ -129,7 +129,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions panel
 
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
-    And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
+    And user of browser adds ACE with [deletion:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks on "Save" button in edit permissions panel
 
     # Check ACL records
@@ -159,7 +159,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser sees that "File details" modal is opened on "Permissions" tab
     And user of browser selects "ACL" permission type in edit permissions panel
 
-    And user of browser adds ACE with "general:delete" privilege set for group group1
+    And user of browser adds ACE with "deletion:delete" privilege set for group group1
     And user of browser adds ACE with "acl:read acl" privilege set for user space-owner-user
     And user of browser clicks "<button>" button in <numeral> ACL record in permissions panel
     Then user of browser sees that first ACL record in edit permissions panel is set for user space-owner-user

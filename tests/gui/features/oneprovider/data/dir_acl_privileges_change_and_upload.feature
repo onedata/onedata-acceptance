@@ -37,10 +37,10 @@ Feature: ACL directories privileges tests on changing directory and uploading to
     Then user of browser_user1 <result> to upload "20B-0.txt" to "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                 |
-    | succeeds |  [data:list files, data:add files, data:traverse directory] |
-    | fails    |  all except [data:add files]                                |
-    | fails    |  all except [data:traverse directory]                       |
+    | result   |  privileges                                                          |
+    | succeeds |  [content:list files, content:add files, content:traverse directory] |
+    | fails    |  all except [content:add files]                                      |
+    | fails    |  all except [content:traverse directory]                             |
 
 
   Scenario Outline: Change directory ACL

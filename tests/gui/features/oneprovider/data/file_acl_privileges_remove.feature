@@ -37,9 +37,9 @@ Feature: ACL files privileges tests of changing and removing file using multiple
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
-    | result   |  privileges                   |
-    | succeeds |  [general:delete]             |
-    | fails    |  all except [general:delete]  |
+    | result   |  privileges                    |
+    | succeeds |  [deletion:delete]             |
+    | fails    |  all except [deletion:delete]  |
 
 
   Scenario Outline: Change files ACL

@@ -37,9 +37,9 @@ Feature: ACL directories privileges tests on removing directories using multiple
     Then user of browser_user1 <result> to remove "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                                       |
-    | succeeds |  [general:delete, data:delete child, data:list files, data:traverse directory]    |
-    | fails    |  all except [general:delete]                                                      |
-    | fails    |  all except [data:delete child]                                                   |
-    | fails    |  all except [data:list files]                                                     |
-    | fails    |  all except [data:traverse directory]                                             |
+    | result   |  privileges                                                                              |
+    | succeeds |  [deletion:delete, content:delete child, content:list files, content:traverse directory] |
+    | fails    |  all except [deletion:delete]                                                            |
+    | fails    |  all except [content:delete child]                                                       |
+    | fails    |  all except [content:list files]                                                         |
+    | fails    |  all except [content:traverse directory]                                                 |

@@ -39,10 +39,10 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser_user1 <result> to see [file1, dir2] in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                 |
-    | succeeds |  [data:list files, data:traverse directory] |
-    | fails    |  all except [data:traverse directory]       |
-    | fails    |  all except [data:list files]               |
+    | result   |  privileges                                       |
+    | succeeds |  [content:list files, content:traverse directory] |
+    | fails    |  all except [content:traverse directory]          |
+    | fails    |  all except [content:list files]                  |
 
 
   Scenario Outline: Rename subdirectory
@@ -50,9 +50,9 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser_user1 <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                                                  |
-    | succeeds |  [data:list files, data:delete child, data:traverse directory, data:add subdirectory]        |
-    | fails    |  all except [data:add subdirectory]                                                          |
-    | fails    |  all except [data:delete child]                                                              |
+    | result   |  privileges                                                                                       |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add subdirectory] |
+    | fails    |  all except [content:add subdirectory]                                                            |
+    | fails    |  all except [content:delete child]                                                                |
 
 
