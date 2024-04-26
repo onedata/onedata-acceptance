@@ -47,10 +47,3 @@ class DataRow(PageObject, BrowserRow):
         else:
             return True
 
-    def is_any_tag_visible(self):
-        try:
-            self._status_tag.get_attribute('class')
-        except RuntimeError:
-            return False
-        else:
-            return True

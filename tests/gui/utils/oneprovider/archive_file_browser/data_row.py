@@ -43,10 +43,3 @@ class DataRow(PageObject, BrowserRow):
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
 
-    def is_any_tag_visible(self):
-        try:
-            self._status_tag.get_attribute('class')
-        except RuntimeError:
-            return False
-        else:
-            return True
