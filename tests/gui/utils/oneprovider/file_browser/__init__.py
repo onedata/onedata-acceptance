@@ -11,6 +11,7 @@ from functools import partial
 from contextlib import contextmanager
 
 from selenium.webdriver import ActionChains
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.base import PageObject
@@ -117,9 +118,12 @@ class _FileBrowser(PageObject):
             self.header, 0, 0).click().perform()
 
     def scroll_to_top(self):
-        self.driver.execute_script(
-            "document.querySelector('.perfect-scrollbar-element.ps--active-y')"
-            ".scrollTo(0, 0)")
+        try:
+            self.driver.execute_script(
+                "document.querySelector('.perfect-scrollbar-element"
+                ".ps--active-y').scrollTo(0, 0)")
+        except JavascriptException:
+            pass
 
     def get_css_selector(self):
         css_selector = self.web_elem.get_attribute('class')

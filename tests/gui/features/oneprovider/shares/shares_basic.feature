@@ -36,5 +36,5 @@ Feature: Oneprovider shares basic functionality
 
   Examples:
     |columns_list            |
-    |["Size", "Modification"]|
+    |["Size", "Modified"]    |
     |[]                      |
