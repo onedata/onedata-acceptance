@@ -12,8 +12,8 @@ images:
 
 sources:
   # Specification of branches from which sources for components will be pulled.
-  oz-worker: current_branch
+  oz-worker: feature/VFS-11744-gui-update-develop
   op-worker: current_branch
-  onepanel: current_branch
+  onepanel: feature/VFS-11744-gui-update-develop
   cluster-manager: current_branch
   oneclient: current_branch

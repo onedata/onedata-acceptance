@@ -79,8 +79,7 @@ class ClustersPage(GenericPage):
     deregistration_checkbox = Button('.text-understand')
     confirm_deregistration = Button('.btn-danger.btn-deregister')
 
-    modify_provider_details = Button('.collapsible-toolbar-buttons '
-                                     '.btn-modify-provider')
+    edit_settings = NamedButton('.one-button.btn-default', text='Edit settings')
     confirm_modify_provider_details = NamedButton('button',
                                                   text='Modify provider details')
     gui_settings_page = WebItem('.content-clusters-gui-settings',

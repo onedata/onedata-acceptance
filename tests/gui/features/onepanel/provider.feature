@@ -19,7 +19,7 @@ Feature: Provider management in Onepanel GUI
   Scenario: User changes provider name and domain
     Given provider name set to name of "oneprovider-1" by user of browser_emergency in Onepanel
 
-    When user of browser_emergency clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    When user of browser_emergency clicks on Provider configuration item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency sees that Provider name attribute is equal to the name of "oneprovider-1" provider in Provider panel
     And user of browser_emergency sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
@@ -29,11 +29,11 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
 
     # modify provider details
-    And user of browser_emergency clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser_emergency clicks on Modify provider details button in provider page in Onepanel
+    And user of browser_emergency clicks on Provider configuration item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types "pro1" to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types test hostname of "oneprovider-1" to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency clicks on Modify provider details button in provider details form in Provider panel
+    And user of browser_emergency saves changes in provider details form in Provider panel
     And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
     And user of browser_emergency clicks on Discard button in the configure web cert modal
     And user of browser_emergency sees that Provider name attribute is equal to "pro1" in Provider panel
@@ -50,10 +50,10 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1"
 
     # restore provider details
-    And user of browser_emergency clicks on Modify provider details button in provider page in Onepanel
+    And user of browser_emergency clicks on Edit settings button in provider page in Onepanel
     And user of browser_emergency types name of "oneprovider-1" provider to Provider name input box in modify provider details form in Provider panel
     And user of browser_emergency types hostname of "oneprovider-1" provider to Domain input box in modify provider details form in Provider panel
-    And user of browser_emergency clicks on Modify provider details button in provider details form in Provider panel
+    And user of browser_emergency saves changes in provider details form in Provider panel
     And user of browser_emergency sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
     And user of browser_emergency is idle for 2 seconds
 
