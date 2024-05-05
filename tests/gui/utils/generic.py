@@ -74,6 +74,15 @@ def upload_workflow_path(workflow_name):
         'workflows', workflow_name))
 
 
+def upload_lambda_path(lambda_name):
+    """Resolve an absolute path for lambda dump file with name lambda_name
+     stored in automation-examples submodule
+    """
+    return os.path.abspath(os.path.join(
+        os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+        'lambdas', lambda_name))
+
+
 def strip_path(path_string, separator = '/'):
     """Strips string from whitespaces inside file path. Useful for file
      paths rendered

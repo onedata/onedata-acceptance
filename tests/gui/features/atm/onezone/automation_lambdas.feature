@@ -65,3 +65,31 @@ Feature: Basic lambdas management
     And user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
     And user of browser uploads "bagit-uploader" workflow as new workflow from automation-examples repository to "inventory1" inventory
     Then user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
+
+
+  Scenario Outline: A <lambda> lambda dump is the same after uploading and downloading it from automation inventory
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads <lambda> lambda from automation-examples repository to "inventory1" inventory
+    And user of browser clicks on "Download (json)" button from 1st revision of "<lambda>" lambda menu
+    Then user of browser sees that previously uploaded dump of lambda <lambda> is the same after download
+
+
+    Examples:
+      | lambda                                     |
+      | bagit-uploader-archive-destination-rest    |
+      | bagit-uploader-calculate-checksum-mounted  |
+      | bagit-uploader-parse-fetch-file-mounted    |
+      | bagit-uploader-register-metadata-mounted   |
+      | bagit-uploader-unpack-data-mounted         |
+      | bagit-uploader-validate-mounted            |
+      | calculate-checksum-mounted                 |
+      | calculate-checksum-rest                    |
+      | calculate-downloaded-file-checksum-mounted |
+      | demo                                       |
+      | detect-file-format-mounted                 |
+      | detect-file-mime-mounted                   |
+      | download-dile-mounted                      |
+      | echo                                       |
+      | parse-fetch-file-mounted                   |
+

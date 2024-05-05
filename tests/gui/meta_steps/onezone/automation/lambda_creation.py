@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import json
 import time
 import yaml
 
@@ -15,8 +16,9 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar, write_text_into_lambda_form,
     switch_toggle_in_lambda_form, confirm_lambda_creation_or_edition)
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.utils.core import scroll_to_css_selector
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from selenium.common.exceptions import ElementNotInteractableException
@@ -226,3 +228,52 @@ def modify_parameter_in_lambda_form(selenium, browser_id, oz_page, popups,
                 except (ElementNotInteractableException, RuntimeError):
                     time.sleep(1)
                     popups(driver).options_selector.choose_option(transform(el))
+
+
+@wt(parsers.parse('user of {browser_id} uploads {lambda_name} lambda from '
+                  'automation-examples repository to "{inventory}" inventory'))
+def upload_lambda_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory):
+    _upload_lambda_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory)
+
+
+def _upload_lambda_from_automation_examples(
+        selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory):
+    subpage = 'lambdas'
+    modal = 'Upload workflow'
+    button = 'Apply'
+
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page,
+                                              tmp_memory)
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
+                            tmp_memory)
+    upload_lambda_from_repository(selenium, browser_id, lambda_name, oz_page)
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
+                            tmp_memory)
+
+
+@wt(parsers.parse('user of {browser_id} sees that previously uploaded dump of '
+                  'lambda {lambda_name} is the same after download'))
+def assert_downloaded_and_uploaded_lambda_dumps_the_same(
+        browser_id, lambda_name, tmpdir):
+    has_downloaded_workflow_file_content(browser_id, tmpdir, lambda_name+'.json')
+
+    downloaded_dump = None
+    uploaded_dump = None
+    with open(tmpdir.join(browser_id, 'download', lambda_name+'.json')) as f:
+        downloaded_dump = json.load(f)
+    with open(upload_lambda_path(
+            ''.join([lambda_name, '/', lambda_name, '.json']))) as f:
+        uploaded_dump = json.load(f)
+
+    # remove keys
+    downloaded_dump.pop('originalAtmLambdaId')
+    uploaded_dump.pop('originalAtmLambdaId')
+    uploaded_dump['revision']['atmLambdaRevision']['_data'].pop('checksum')
+    err_msg = (f'Lambda dumps differ, '
+               f'uploaded: {uploaded_dump}, downloaded: {downloaded_dump}')
+    # test may start failing, because correct order in dicts is not guaranteed
+    # in order to fix implement keys sorting
+    assert downloaded_dump == uploaded_dump, err_msg

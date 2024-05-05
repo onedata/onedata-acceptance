@@ -55,12 +55,18 @@ class AutomationPage(GenericPage):
 
     privileges_err_msg = Label('.alert-promise-error')
 
-    _upload_input = WebElement('.upload-atm-workflow-schema-action-input')
+    _upload_input_workflow = WebElement('.upload-atm-workflow-schema-action-input')
+
+    _upload_input_lambda = WebElement('.upload-atm-lambda-action-input')
 
     def upload_workflow(self, files):
         """This interaction is very hacky, because uploading files with Selenium
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.
         """
-        with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
+        with rm_css_cls(self.driver, self._upload_input_workflow, 'hidden') as elem:
+            elem.send_keys(files)
+
+    def upload_lambda(self, files):
+        with rm_css_cls(self.driver, self._upload_input_lambda, 'hidden') as elem:
             elem.send_keys(files)
