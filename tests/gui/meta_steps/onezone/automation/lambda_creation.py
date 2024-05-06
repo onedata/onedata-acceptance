@@ -271,7 +271,10 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     # remove keys
     downloaded_dump.pop('originalAtmLambdaId')
     uploaded_dump.pop('originalAtmLambdaId')
-    uploaded_dump['revision']['atmLambdaRevision']['_data'].pop('checksum')
+    try:
+        uploaded_dump['revision']['atmLambdaRevision']['_data'].pop('checksum')
+    except KeyError:
+        pass
     err_msg = (f'Lambda dumps differ, '
                f'uploaded: {uploaded_dump}, downloaded: {downloaded_dump}')
     # test may start failing, because correct order in dicts is not guaranteed

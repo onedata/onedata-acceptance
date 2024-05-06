@@ -88,8 +88,8 @@ Feature: Basic lambdas management
       | calculate-downloaded-file-checksum-mounted |
       | demo                                       |
       | detect-file-format-mounted                 |
-      | detect-file-mime-mounted                   |
-      | download-dile-mounted                      |
+      | detect-file-mime-type-mounted              |
+      | download-file-mounted                      |
       | echo                                       |
       | parse-fetch-file-mounted                   |
 
