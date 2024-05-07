@@ -115,6 +115,9 @@ class Store(Element):
 class InitialValueStore(Element):
     name = id = Label('.control-label')
     input_link = Button('.file-value-editor-selector')
+    data_type = Label('.data-spec-type')
+    content = WebElement('.editor-box-content .ace_text-input')
+    input = Input('.form-control')
 
 
 class WorkflowVisualiser(PageObject):

@@ -67,10 +67,18 @@ def get_select_option_from_initial_value_popup(option, popup_menu):
             return elem
 
 
+def get_initial_value_store(driver, op_container, store_name):
+    initial_value_stores = op_container(driver).automation_page.initial_value_store
+    if store_name + ':' in initial_value_stores:
+        return initial_value_stores[store_name + ':']
+    if store_name + ': ' in initial_value_stores:
+        return initial_value_stores[store_name + ': ']
+
+
 def click_file_input_link_in_automation_page(op_container, driver, store_name):
     if store_name:
-        op_container(driver).automation_page.initial_value_store[
-            store_name + ':'].input_link.click()
+        store = get_initial_value_store(driver, op_container, store_name)
+        store.input_link.click()
     else:
         try:
             # for input store type Single Value this Button does not work
@@ -82,3 +90,7 @@ def click_file_input_link_in_automation_page(op_container, driver, store_name):
             # this button is used for input store type Single Value
             op_container(driver).automation_page.single_file_input_link.click()
 
+
+def get_data_type_in_initial_value_store(driver, op_container, store_name):
+    store = get_initial_value_store(driver, op_container, store_name)
+    return store.data_type
