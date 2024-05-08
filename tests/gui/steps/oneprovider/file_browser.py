@@ -87,7 +87,7 @@ def assert_presence_in_file_browser_with_order(browser_id, item_list,
 def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
                                             err_time: float, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    date_fmt = '%d %b %Y %H:%M'
+    date_fmt = '%d %b %Y %H:%M:%S'
     # %b - abbreviated month name
     item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)

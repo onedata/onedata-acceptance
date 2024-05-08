@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from functools import partial
 from selenium.webdriver import ActionChains
+from selenium.common.exceptions import JavascriptException
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
                                                WebElement, WebElementsSequence)
@@ -64,6 +65,14 @@ class _ArchiveFileBrowser(PageObject):
     def click_on_background(self):
         ActionChains(self.driver).move_to_element_with_offset(
             self.header, 0, 0).click().perform()
+
+    def scroll_to_top(self):
+        try:
+            self.driver.execute_script(
+                "document.querySelector('.perfect-scrollbar-element."
+                "ps--active-y').scrollTo(0, 0)")
+        except JavascriptException:
+            pass
 
 
 ArchiveFileBrowser = partial(WebItem, cls=_ArchiveFileBrowser)
