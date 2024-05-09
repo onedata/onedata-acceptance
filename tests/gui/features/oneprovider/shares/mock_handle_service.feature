@@ -71,3 +71,31 @@ Feature: Public share published with mock handle service
     And user of browser1 opens "Description" tab on share's public interface
     And user of browser1 sees "Description for another user to check if can see" description on share's public interface
 
+
+  Scenario: User creates public share on mock handle service using toggle in modal "Share / Publish directory"
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser clicks on "Share / Publish" in context menu for "dir1"
+    And user of space_owner_browser writes "share_dir1" into text field in modal "Share / Publish directory"
+    And user of space_owner_browser checks "Publish as an Open Data record" toggle in modal "Share / Publish directory"
+    And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
+
+    # step used to load page
+    And user of space_owner_browser opens "Publish as Open Data" tab on share's private interface
+
+    And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
+    And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
+    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
+    And user of space_owner_browser chooses "Dublin Core" in dropdown menu for metadata type on share's private interface
+    And user of space_owner_browser clicks "Proceed" button on share's private interface
+
+    And user of space_owner_browser writes "My test data" into last title input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser clicks "Add another title" button in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "Another title" into last title input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "Kasia" into last creator input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "This is test" into last description input text field in "Dublin Core Metadata" form on share's private interface
+    Then user of space_owner_browser clicks "Publish as Open Data" button on share's private interface
+
+    And user of space_owner_browser sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that creator is "Kasia" in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that description is "This is test" in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that link on share's private interface is "Public handle link"
