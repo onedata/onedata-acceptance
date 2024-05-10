@@ -78,9 +78,14 @@ def upload_lambda_path(lambda_name):
     """Resolve an absolute path for lambda dump file with name lambda_name
      stored in automation-examples submodule
     """
-    return os.path.abspath(os.path.join(
-        os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
-        'lambdas', lambda_name))
+    if lambda_name:
+        return os.path.abspath(os.path.join(
+            os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+            'lambdas', lambda_name))
+    else:
+        return os.path.abspath(os.path.join(
+            os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+            'lambdas'))
 
 
 def strip_path(path_string, separator = '/'):

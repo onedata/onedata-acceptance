@@ -64,6 +64,7 @@ from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
 from .workflows_modals.select_files_directories_symlink import SelectFiles
 from .workflows_modals.function_pods_activity import FunctionPodsActivity
+from .workflows_modals.unlink_lambda import UnlinkLambda
 
 
 class Modals(object):
@@ -136,6 +137,7 @@ class Modals(object):
     task_time_series = WebItem('.modal-dialog', cls=TaskTimeSeries)
     store_details = WebItem('.modal-dialog', cls=StoreDetails)
     audit_log = WebItem('.modal-dialog', cls=AuditLog)
+    unlink_lambda = WebItem('.modal-dialog', cls=UnlinkLambda)
 
     # management modals
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
