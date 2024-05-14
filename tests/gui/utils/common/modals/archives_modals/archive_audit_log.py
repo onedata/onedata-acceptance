@@ -13,6 +13,7 @@ from tests.gui.utils.core.web_elements import Label, WebElementsSequence,\
     WebItemsSequence, WebElement, Button
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import JavascriptException
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
@@ -41,9 +42,13 @@ class ArchiveAuditLog(Modal):
         action.key_down(Keys.SPACE).perform()
 
     def scroll_to_top(self):
-        self.driver.execute_script("document.querySelector('.audit-log-browser "
-                                   ".table-scrollable-container')"
-                                   ".scrollTo(0, 0)")
+        try:
+            self.driver.execute_script("document.querySelector("
+                                       "'.audit-log-browser "
+                                       ".table-scrollable-container')"
+                                       ".scrollTo(0, 0)")
+        except JavascriptException:
+            pass
 
     def get_rows_of_column(self, option):
         # order in dict

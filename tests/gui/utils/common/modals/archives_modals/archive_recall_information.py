@@ -12,6 +12,7 @@ from tests.gui.utils.core.web_elements import (Label, Button,
                                                WebElementsSequence, WebElement)
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import JavascriptException
 
 
 class ArchiveRecallInformation(Modal):
@@ -64,6 +65,9 @@ class ArchiveRecallInformation(Modal):
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
     def scroll_to_top(self):
-        self.driver.execute_script(
-            "document.querySelector('.infinite-scroll-table "
-            ".table-scrollable-container').scrollTo(0,0)")
+        try:
+            self.driver.execute_script(
+                "document.querySelector('.infinite-scroll-table "
+                ".table-scrollable-container').scrollTo(0,0)")
+        except JavascriptException:
+            pass

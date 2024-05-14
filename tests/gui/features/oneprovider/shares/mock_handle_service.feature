@@ -36,6 +36,8 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser opens "Publish as Open Data" tab on share's private interface
     And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
     And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
+    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
+    And user of space_owner_browser chooses "Dublin Core" in dropdown menu for metadata type on share's private interface
     And user of space_owner_browser clicks "Proceed" button on share's private interface
 
     And user of space_owner_browser writes "My test data" into last title input text field in "Dublin Core Metadata" form on share's private interface

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+import time
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, Button, WebElement
 from selenium.webdriver import ActionChains
@@ -26,10 +27,8 @@ class DataRow(PageObject, BrowserRow):
     _status_tag = WebElement('.file-status-tag')
 
     def click_and_enter(self):
-        if self.is_any_tag_visible():
-            ActionChains(self.driver).click(self.clickable_field).perform()
-        else:
-            ActionChains(self.driver).click(self.web_elem).perform()
+        time.sleep(0.1)
+        ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
 
@@ -44,10 +43,3 @@ class DataRow(PageObject, BrowserRow):
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
 
-    def is_any_tag_visible(self):
-        try:
-            self._status_tag.get_attribute('class')
-        except RuntimeError:
-            return False
-        else:
-            return True

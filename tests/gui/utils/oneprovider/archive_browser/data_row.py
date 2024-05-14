@@ -42,10 +42,11 @@ class DataRow(PageObject, BrowserRow):
                                      '.secondary-description')
     creator = Label('.fb-table-col-creator .file-item-text .file-owner-line')
     menu_button = Button('.file-row-actions-trigger')
+    clickable_field = WebElement('.file-name')
 
     def click_and_enter(self):
         time.sleep(0.1)
-        ActionChains(self.driver).click(self.web_elem).perform()
+        ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
 

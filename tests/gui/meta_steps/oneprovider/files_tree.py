@@ -48,9 +48,11 @@ def check_tree_browser(
         which_browser):
     assert_only_expected_items_presence_in_browser(
         selenium, user, parent.get_items(), tmp_memory, which_browser)
+    browser = tmp_memory[user][transform(which_browser)]
     for child in parent.nodes:
         if check_if_item_is_dir_in_browser(
                 selenium, user, child.name, tmp_memory, which_browser):
+            browser.scroll_to_top()
             click_and_press_enter_on_item_in_browser(
                 selenium, user, child.name, tmp_memory, op_container,
                 which_browser)
