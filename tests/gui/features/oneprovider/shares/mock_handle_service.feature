@@ -79,8 +79,7 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser checks "Publish as an Open Data record" toggle in modal "Share / Publish directory"
     And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
 
-    # step used to load page
-    And user of space_owner_browser opens "Publish as Open Data" tab on share's private interface
+    And user of space_owner_browser sees "Publish as Open Data" tab on share's private interface
 
     And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
     And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
