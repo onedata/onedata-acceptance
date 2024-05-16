@@ -65,12 +65,12 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
     setattr(form, transform(attr), hosts[host][property])
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Modify provider details '
-                  'button in provider details form in Provider panel'))
+@wt(parsers.parse('user of {browser_id} saves changes in provider details '
+                  'form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
+def wt_save_changes_in_modify_provider_detail_form(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.provider.form.modify_provider_details()
+    onepanel(driver).content.provider.form.save()
 
 
 @wt(parsers.parse('user of {browser_id} clicks Discard button on modal '

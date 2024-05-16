@@ -32,6 +32,7 @@ from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
 from .member_menu import MenuPopupWithText
+from .metadata_type import MetadataType
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .data_distribution_popup import DataDistributionPopup
 from .cookies import Cookies
@@ -96,6 +97,7 @@ class Popups(object):
     shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
     chart_statistics = WebItem('.chart-tooltip', cls=ChartStatistics)
     handle_service = WebItem('.ember-power-select-options', cls=HandleService)
+    metadata_type = WebItem('.ember-power-select-options', cls=MetadataType)
     boolean_values = WebItem('.ember-power-select-options', cls=BooleanValues)
     time_resolutions_list = WebElementsSequence(
         '.time-resolutions-dropdown .ember-power-select-option')

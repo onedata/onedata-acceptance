@@ -31,8 +31,7 @@ class ModifyProviderDetailsForm(ProviderDetailsCommon):
     subdomain = Input('input.field-editSubdomain-subdomain')
     latitude = Input('input.field-editBottom-geoLatitude')
     longitude = Input('input.field-editBottom-geoLongitude')
-    modify_provider_details = NamedButton('button',
-                                          text='Modify provider details')
+    save = NamedButton('.one-button.btn-primary', text='Save')
     subdomain_delegation = Toggle('.one-way-toggle.toggle-field-editTop'
                                   '-subdomainDelegation')
 
@@ -40,8 +39,7 @@ class ModifyProviderDetailsForm(ProviderDetailsCommon):
 class ProviderContentPage(PageObject):
     details = WebItem('.provider-registration-form', cls=ProviderDetails)
     form = WebItem('.provider-registration-form', cls=ModifyProviderDetailsForm)
-    modify_provider_details = NamedButton('button.btn-modify-provider',
-                                          text='Modify provider details')
+    edit_settings = NamedButton('.one-button.btn-default', text='Edit settings')
     cancel_modifying = NamedButton('button.btn-modify-provider',
                                    text='Cancel modifying')
     deregister_provider = Button('button.btn-deregister-provider')
