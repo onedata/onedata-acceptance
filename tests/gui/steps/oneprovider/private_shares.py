@@ -76,8 +76,8 @@ def write_description_in_description_form(browser_id, text, where, selenium,
     setattr(private_share(driver).description_form, transform(where), text)
 
 
-@wt(parsers.parse('user of {browser_id} sees that '
-                  'private share is named "{share_name}"'))
+@wt(parsers.parse('user of {browser_id} sees that share in private '
+                  'view is named is named "{share_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
 def assert_private_share_named(selenium, browser_id, share_name, private_share):
     driver = selenium[browser_id]

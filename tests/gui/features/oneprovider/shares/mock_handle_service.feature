@@ -80,4 +80,4 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
 
     Then user of space_owner_browser sees "Publish as Open Data" tab on share's private interface
-    And user of space_owner_browser sees that private share is named "share_dir1"
+    And user of space_owner_browser sees that share in private view is named is named "share_dir1"
