@@ -4,14 +4,18 @@ Feature: Eureka3d workflow tests
   Background:
     Given initial users configuration in "onezone" Onezone service:
           - space-owner-user
+          - user
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: space-owner-user
+          group2:
+            owner: user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: space-owner-user
             groups:
                 - group1
+                - group2
             providers:
                 - oneprovider-1:
                     storage: s3
@@ -40,8 +44,9 @@ Feature: Eureka3d workflow tests
         - dir1
       Project name:
         - "hello"
-      Managing group ID:
-        - { "groupId": "$(resolve_id group1)" }
+      Managing groups:
+        - group1
+        - group2
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
@@ -65,9 +70,11 @@ Feature: Eureka3d workflow tests
     And user of browser clicks on "Permissions" in context menu for "hello"
     And user of browser sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser selects "ACL" permission type in edit permissions panel
-    And user of browser sees exactly 1 ACL record in edit permissions panel
+    And user of browser sees exactly 2 ACL records in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for group group1
     And user of browser sees that all privileges are set in first ACL record in edit permissions panel
+    And user of browser sees that second ACL record in edit permissions panel is set for group group2
+    And user of browser sees that all privileges are set in second ACL record in edit permissions panel
 
 
   Scenario: User sees successful execution of uploaded "initialize-eureka3D-project" with already created project in file browser
@@ -89,8 +96,9 @@ Feature: Eureka3d workflow tests
         - dir1
       Project name:
         - "hello"
-      Managing group ID:
-        - { "groupId": "$(resolve_id group1)" }
+      Managing groups:
+        - group1
+        - group2
 
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
@@ -114,6 +122,8 @@ Feature: Eureka3d workflow tests
     And user of browser clicks on "Permissions" in context menu for "hello"
     And user of browser sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser selects "ACL" permission type in edit permissions panel
-    And user of browser sees exactly 1 ACL record in edit permissions panel
+    And user of browser sees exactly 2 ACL records in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for group group1
     And user of browser sees that all privileges are set in first ACL record in edit permissions panel
+    And user of browser sees that second ACL record in edit permissions panel is set for group group2
+    And user of browser sees that all privileges are set in second ACL record in edit permissions panel

@@ -38,9 +38,9 @@ def check_if_select_files_modal_disappeared(modals, driver, files):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_files_modal(op_container, driver, popups, modals,
                                     store_name=False):
-    option = f"Select/upload file"
+    option = "Select/upload file"
 
-    click_file_input_link_in_automation_page(op_container, driver, store_name)
+    click_input_link_in_automation_page(op_container, driver, store_name)
     time.sleep(1)
     menu_option = get_select_option_from_initial_value_popup(
         option, popups(driver).workflow_initial_values.menu)
@@ -48,6 +48,21 @@ def open_select_initial_files_modal(op_container, driver, popups, modals,
     time.sleep(1)
     # check if modal opened
     modals(driver).select_files
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_select_initial_groups_modal(op_container, driver, popups, modals,
+                                    store_name=False):
+    option = "Select groups"
+
+    click_input_link_in_automation_page(op_container, driver, store_name)
+    time.sleep(1)
+    menu_option = get_select_option_from_initial_value_popup(
+        option, popups(driver).workflow_group_initial_value.menu)
+    menu_option.click()
+    time.sleep(1)
+    # check if modal opened
+    modals(driver).select_groups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -75,7 +90,7 @@ def get_initial_value_store(driver, op_container, store_name):
         return initial_value_stores[store_name + ': ']
 
 
-def click_file_input_link_in_automation_page(op_container, driver, store_name):
+def click_input_link_in_automation_page(op_container, driver, store_name):
     if store_name:
         store = get_initial_value_store(driver, op_container, store_name)
         store.input_link.click()
@@ -94,3 +109,14 @@ def click_file_input_link_in_automation_page(op_container, driver, store_name):
 def get_data_type_in_initial_value_store(driver, op_container, store_name):
     store = get_initial_value_store(driver, op_container, store_name)
     return store.data_type
+
+
+def get_data_type_of_array_initial_value_store(driver, op_container, store_name):
+    store = get_initial_value_store(driver, op_container, store_name)
+    link_name = store.input_link.web_elem.text
+
+    if 'group' in link_name:
+        return 'group'
+    if 'file' in link_name:
+        return 'file'
+    raise ValueError(f'unknown type for link {link_name}')

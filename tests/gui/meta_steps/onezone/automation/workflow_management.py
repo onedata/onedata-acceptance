@@ -16,7 +16,8 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     wait_for_workflows_in_automation_subpage,
     choose_file_as_initial_workflow_value_for_store,
     provide_text_to_object_initial_workflow_value_store,
-    provide_text_to_string_initial_workflow_value_store)
+    provide_text_to_string_initial_workflow_value_store,
+    choose_group_as_initial_workflow_value_for_store)
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     choose_option_in_dropdown_menu_in_modal)
@@ -26,7 +27,8 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     get_input_element)
 from tests.gui.steps.oneprovider.automation.initial_values import (
     choose_range_as_initial_workflow_value,
-    get_data_type_in_initial_value_store)
+    get_data_type_in_initial_value_store,
+    get_data_type_of_array_initial_value_store)
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -134,7 +136,7 @@ def _upload_workflow_from_automation_examples(
                   'initial values:\n{config}'))
 def execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
                                        op_container, ordinal, workflow,
-                                       modals, popups, groups, config):
+                                       modals, popups, config):
     """Adjust configuration of input values for stores according to given config.
 
         Config format given in yaml is as follows:
@@ -153,12 +155,12 @@ def execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
 
     _execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
                                         op_container, ordinal, workflow,
-                                        modals, popups, groups, config)
+                                        modals, popups, config)
 
 
 def _execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
                                         op_container, ordinal, workflow,
-                                        modals, popups, groups, config):
+                                        modals, popups, config):
     spaces = 'spaces'
     automation_workflows = 'Automation Workflows'
     tab_name = 'Run workflow'
@@ -191,10 +193,24 @@ def _execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
             choose_file_as_initial_workflow_value_for_store(
                 selenium, browser_id, file_list, modals, op_container, popups,
                 store)
+        elif data_type == 'ARRAY':
+            item_list = data[store]
+            array_store_type = get_data_type_of_array_initial_value_store(
+                driver, op_container, store)
+            if array_store_type == 'group':
+                choose_group_as_initial_workflow_value_for_store(
+                    selenium, browser_id, item_list, modals, op_container,
+                    popups, store)
+            elif array_store_type == 'file':
+                choose_file_as_initial_workflow_value_for_store(
+                    selenium, browser_id, item_list, modals, op_container,
+                    popups, store)
+            else:
+                raise ValueError(f'unknown data type {array_store_type}')
         elif data_type == 'OBJECT':
             text = data[store][0]
             provide_text_to_object_initial_workflow_value_store(
-                driver, op_container, store, text, groups)
+                driver, op_container, store, text)
         elif data_type == 'STRING':
             text = data[store][0]
             provide_text_to_string_initial_workflow_value_store(

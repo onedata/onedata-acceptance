@@ -16,7 +16,8 @@ from tests.gui.steps.modals.modal import (
     click_modal_button, go_to_path_and_return_file_name_in_modal)
 from tests.gui.steps.oneprovider.automation.initial_values import (
     check_if_select_files_modal_disappeared, open_select_initial_datasets_modal,
-    open_select_initial_files_modal, get_initial_value_store)
+    open_select_initial_files_modal, get_initial_value_store,
+    open_select_initial_groups_modal)
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution)
 from tests.gui.steps.oneprovider.automation.automation_statuses import (
@@ -81,16 +82,22 @@ def choose_file_as_initial_workflow_value_for_store(
                                                data_type, op_container, popups)
 
 
+def choose_group_as_initial_workflow_value_for_store(
+        selenium, browser_id, group_list, modals, op_container, popups,
+        store_name):
+
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+    open_select_initial_groups_modal(op_container, driver, popups, modals,
+                                     store_name)
+    modals(driver).select_groups.select(group_list)
+
+
 def provide_text_to_object_initial_workflow_value_store(
-        driver, op_container, store_name, text, groups):
+        driver, op_container, store_name, text):
     store = get_initial_value_store(driver, op_container, store_name)
     store.content.send_keys([Keys.CONTROL, 'a', Keys.BACKSPACE])
     text = str(text).replace("'", '"')
-    if '$' in text:
-        group_name = text.split('$')[1]
-        group_name = group_name.split(')')[0]
-        group_name = group_name.replace('(resolve_id ', '')
-        text = text.replace(f'$(resolve_id {group_name})', groups[group_name])
     store.content.send_keys(text)
 
 
