@@ -24,5 +24,5 @@ Feature: Using lambda dumps
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads all lambda dumps from automation-examples repository to "inventory1" inventory
-    And user of browser downloads and removes each previously uploaded lambda dump from "inventory1" inventory
+    And user of browser downloads and removes all lambda dumps from "inventory1" inventory
     Then user of browser sees that each newly downloaded lambda dump has the same content as previously uploaded dump
