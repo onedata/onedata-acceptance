@@ -142,7 +142,7 @@ def upload_workflow_from_repository(selenium, browser_id, workflow_name,
     automation_page.upload_workflow(upload_workflow_path(workflow_name))
 
 
-@repeat_failed(timeout=2 * WAIT_BACKEND)
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_lambda_from_repository(selenium, browser_id, lambda_name,
                                   oz_page):
     driver = selenium[browser_id]

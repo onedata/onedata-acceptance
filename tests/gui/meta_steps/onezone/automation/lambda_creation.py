@@ -242,15 +242,9 @@ def upload_all_lambda_dumps_from_automation_examples(
     ALL_LAMBDA_NAMES = [f for f in os.listdir(upload_lambda_path(None))
                         if os.path.isdir(upload_lambda_path(f))]
     for lambda_name in ALL_LAMBDA_NAMES:
-        upload_lambda_dump_from_automation_examples(
+        _upload_lambda_dump_from_automation_examples(
             selenium, browser_id, oz_page, modals, inventory, lambda_name,
             tmp_memory)
-
-
-def upload_lambda_dump_from_automation_examples(
-        selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory):
-    _upload_lambda_dump_from_automation_examples(
-        selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory)
 
 
 def _upload_lambda_dump_from_automation_examples(
@@ -266,8 +260,8 @@ def _upload_lambda_dump_from_automation_examples(
                             tmp_memory)
 
 
-@wt(parsers.parse('user of {browser_id} downloads and removes all previously '
-                  'uploaded lambda dumps from "{inventory}" inventory'))
+@wt(parsers.parse('user of {browser_id} downloads and removes each previously '
+                  'uploaded lambda dump from "{inventory}" inventory'))
 def download_and_remove_all_lambda_dumps_from_inventory(
         selenium, browser_id, oz_page, popups, modals, tmp_memory):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
@@ -295,8 +289,8 @@ def download_and_remove_lambda_dump_from_inventory(
     click_modal_button(selenium, browser_id, option_unlink, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} sees that each previously uploaded '
-                  'lambda dump is the same after download'))
+@wt(parsers.parse('user of {browser_id} sees that each newly downloaded lambda '
+                  'dump has the same content as previously uploaded dump'))
 def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(browser_id,
                                                              tmpdir):
     for lamda_name in ALL_LAMBDA_NAMES:
