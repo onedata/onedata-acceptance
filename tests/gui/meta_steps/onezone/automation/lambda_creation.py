@@ -261,7 +261,7 @@ def _upload_lambda_dump_from_automation_examples(
 
 
 @wt(parsers.parse('user of {browser_id} downloads and removes '
-                  'all lambda dumps from "{inventory}" inventory'))
+                  'each lambda from "{inventory}" inventory'))
 def download_and_remove_all_lambda_dumps_from_inventory(
         selenium, browser_id, oz_page, popups, modals, tmp_memory):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
