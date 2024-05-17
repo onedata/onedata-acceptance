@@ -530,7 +530,7 @@ def assert_path_where_symbolic_link_points(selenium, browser_id,
 def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
                            option, modal_name):
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), transform(modal_name))
+    modal = getattr(modals(driver), check_modal_name(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
 

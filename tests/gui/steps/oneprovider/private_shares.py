@@ -75,3 +75,17 @@ def write_description_in_description_form(browser_id, text, where, selenium,
     driver = selenium[browser_id]
     setattr(private_share(driver).description_form, transform(where), text)
 
+
+@wt(parsers.parse('user of {browser_id} sees that share in private '
+                  'view is named "{share_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
+def assert_private_share_named(selenium, browser_id, share_name, private_share):
+    driver = selenium[browser_id]
+    # because label with share name lies beyond iframe we need to change
+    # to default content
+    driver.switch_to.default_content()
+    displayed_name = private_share(driver).share_name
+    assert displayed_name == share_name, (f'displayed private share name '
+                                          f'is "{displayed_name}" instead of '
+                                          f'expected "{share_name}"')
+
