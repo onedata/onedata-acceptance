@@ -10,7 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import (upload_file_path, upload_workflow_path,
-                                     transform)
+                                     upload_lambda_path, transform)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -102,6 +102,7 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
         page = tmp_memory[browser_id]['oz_page']
     except KeyError:
         page = oz_page(selenium[browser_id]).get_page_and_click('automation')
+        tmp_memory[browser_id]['oz_page'] = page
     page.elements_list[inventory]()
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
@@ -139,6 +140,15 @@ def upload_workflow_from_repository(selenium, browser_id, workflow_name,
             workflow_name + '/' + workflow_name + '.json')
     automation_page = oz_page(driver)['automation']
     automation_page.upload_workflow(upload_workflow_path(workflow_name))
+
+
+@repeat_failed(timeout=2*WAIT_BACKEND)
+def upload_lambda_from_repository(selenium, browser_id, lambda_name,
+                                  oz_page):
+    driver = selenium[browser_id]
+    lambda_name = ''.join([lambda_name, '/', lambda_name, '.json'])
+    automation_page = oz_page(driver)['automation']
+    automation_page.upload_lambda(upload_lambda_path(lambda_name))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
