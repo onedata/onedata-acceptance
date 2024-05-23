@@ -149,6 +149,22 @@ def open_tab_in_public_share(selenium, browser_id, public_share, tab):
     getattr(public_share(driver), tab)()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<tab_name>.*)" tab '
+               'on share\'s (public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tab_in_public_share(selenium, browser_id, tab_name):
+    tab_name = transform(tab_name)
+    driver = selenium[browser_id]
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    tabs = driver.find_elements_by_css_selector('.nav-tabs-share-mode li')
+    for tab in tabs:
+        if transform(tab.text) == tab_name:
+            err_msg = f'tab {tab_name} is not active'
+            assert 'active' in tab.get_attribute('class'), err_msg
+            return
+    raise AssertionError(f'did not manage to find tab {tab_name}')
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
                'share\'s (?P<option>public|private) interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)

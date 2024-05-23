@@ -71,3 +71,13 @@ Feature: Public share published with mock handle service
     And user of browser1 opens "Description" tab on share's public interface
     And user of browser1 sees "Description for another user to check if can see" description on share's public interface
 
+
+  Scenario: User opens Open Data publish view using toggle in modal "Share / Publish directory"
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser clicks on "Share / Publish" in context menu for "dir1"
+    And user of space_owner_browser writes "share_dir1" into text field in modal "Share / Publish directory"
+    And user of space_owner_browser checks "Publish as an Open Data record" toggle in modal "Share / Publish directory"
+    And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
+
+    Then user of space_owner_browser sees "Publish as Open Data" tab on share's private interface
+    And user of space_owner_browser sees that share in private view is named "share_dir1"

@@ -87,7 +87,8 @@ def _find_modal(driver, modal_name):
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
                          'file details', 'symbolic link', 'inventory',
-                         'workflow', 'unsaved', 'cease', 'modify', 'create']
+                         'workflow', 'unsaved', 'cease', 'modify', 'create',
+                         'unlink']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector(
@@ -530,7 +531,7 @@ def assert_path_where_symbolic_link_points(selenium, browser_id,
 def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
                            option, modal_name):
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), transform(modal_name))
+    modal = getattr(modals(driver), check_modal_name(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
 
