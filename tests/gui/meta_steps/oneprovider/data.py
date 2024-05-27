@@ -176,6 +176,22 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
         assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
+@wt(parsers.parse('user of {browser_id} creates dir "{dir_name}" '
+                  'in current dir'))
+def create_dir_in_current_dir(selenium, browser_id, tmp_memory, modals,
+                              dir_name):
+    button = 'New directory'
+    modal_header = 'Create new directory:'
+    modal_name = 'Create dir'
+    option = 'enter'
+
+    click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
+    write_name_into_text_field_in_modal(selenium, browser_id, dir_name,
+                                        modal_name, modals)
+    confirm_create_new_directory(selenium, browser_id, option, modals)
+
+
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that each file in '
                '"(?P<directory>.*)" directory has following '
                r'metadata:\n(?P<config>(.|\s)*)'))

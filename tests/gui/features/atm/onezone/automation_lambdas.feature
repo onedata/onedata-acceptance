@@ -65,3 +65,4 @@ Feature: Basic lambdas management
     And user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
     And user of browser uploads "bagit-uploader" workflow as new workflow from automation-examples repository to "inventory1" inventory
     Then user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage
+

@@ -105,6 +105,8 @@ class Popups(object):
                                       cls=MenuPopupWithLabel)
     workflow_dataset_initial_value = WebItem(
         '.in .dataset-value-editor-selector-actions', cls=MenuPopupWithLabel)
+    workflow_group_initial_value = WebItem(
+        '.in .group-value-editor-selector-actions', cls=MenuPopupWithLabel)
     run_info = Label('.tooltip-inner')
     spaces_tags = WebItem('.space-tags-selector', cls=SpacesTags)
     toggle_label = Label('.tooltip .tooltip-inner')

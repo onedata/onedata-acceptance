@@ -66,6 +66,7 @@ class Revision(Element):
 
 class Lambda(Element):
     name = id = Label('.lambda-name')
+    lambda_menu = Button('.atm-lambda-actions-trigger.one-menu-toggle')
     menu_button = Button('.one-menu-toggle')
     create_new_revision = Button('.create-atm-lambda-revision-action-trigger')
     show_revisions_button = Button('.expand-button')
