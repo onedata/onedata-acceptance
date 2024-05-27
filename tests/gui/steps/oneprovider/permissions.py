@@ -263,6 +263,15 @@ def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals,
                                             f'should be checked')
 
 
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that all'
+               r' privileges? are set in (?P<num>\w+) ACL record in edit '
+               'permissions panel'))
+def assert_set_all_acl_privileges(selenium, browser_id, modals, num, numerals):
+    option_list = '[allow, Content, Acl, Metadata, Attributes, Deletion]'
+    assert_set_acl_privileges(selenium, browser_id, modals, num, numerals,
+                              option_list)
+
+
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
                ' in edit permissions panel is set for (?P<type>.*?) '
                '(?P<name>.*)'))
