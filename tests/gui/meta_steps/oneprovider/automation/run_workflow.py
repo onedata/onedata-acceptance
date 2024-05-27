@@ -88,7 +88,7 @@ def choose_group_as_initial_workflow_value_for_store(
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_groups_modal(op_container, driver, popups, modals,
+    open_select_initial_groups_modal(op_container, selenium, browser_id, popups, modals,
                                      store_name)
     modals(driver).select_groups.select(group_list)
 
