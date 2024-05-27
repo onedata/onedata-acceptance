@@ -77,3 +77,4 @@ def screens():
 scenarios('../features/atm/onezone/automation_basics.feature')
 scenarios('../features/atm/onezone/automation_lambdas.feature')
 scenarios('../features/atm/onezone/automation_workflows.feature')
+scenarios('../features/atm/using_lambdas.feature')

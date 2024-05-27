@@ -14,7 +14,10 @@ import yaml
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
     wait_for_workflows_in_automation_subpage,
-    choose_file_as_initial_workflow_value_for_store)
+    choose_file_as_initial_workflow_value_for_store,
+    provide_text_to_object_initial_workflow_value_store,
+    provide_text_to_string_initial_workflow_value_store,
+    choose_group_as_initial_workflow_value_for_store)
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     choose_option_in_dropdown_menu_in_modal)
@@ -23,7 +26,9 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     confirm_workflow_to_execute, expand_first_executed_workflow_record,
     get_input_element)
 from tests.gui.steps.oneprovider.automation.initial_values import (
-    choose_range_as_initial_workflow_value)
+    choose_range_as_initial_workflow_value,
+    get_data_type_in_initial_value_store,
+    get_data_type_of_array_initial_value_store)
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -121,6 +126,8 @@ def _upload_workflow_from_automation_examples(
     click_modal_button(selenium, browser_id, button, modal, modals)
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page,
                             tmp_memory)
+    if workflow == 'initialize-eureka3D-project':
+        workflow = 'Initialize Eureka3D project'
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
@@ -178,12 +185,38 @@ def _execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
 
     data = yaml.load(config)
     for store in data:
-        file_list = data[store]
-
-        choose_file_as_initial_workflow_value_for_store(selenium, browser_id,
-                                                        file_list, modals,
-                                                        op_container, popups,
-                                                        store)
+        driver = selenium[browser_id]
+        data_type = get_data_type_in_initial_value_store(driver, op_container,
+                                                         store)
+        if data_type == 'FILE':
+            file_list = data[store]
+            choose_file_as_initial_workflow_value_for_store(
+                selenium, browser_id, file_list, modals, op_container, popups,
+                store)
+        elif data_type == 'ARRAY':
+            item_list = data[store]
+            array_store_type = get_data_type_of_array_initial_value_store(
+                driver, op_container, store)
+            if array_store_type == 'group':
+                choose_group_as_initial_workflow_value_for_store(
+                    selenium, browser_id, item_list, modals, op_container,
+                    popups, store)
+            elif array_store_type == 'file':
+                choose_file_as_initial_workflow_value_for_store(
+                    selenium, browser_id, item_list, modals, op_container,
+                    popups, store)
+            else:
+                raise ValueError(f'unknown data type {array_store_type}')
+        elif data_type == 'OBJECT':
+            text = data[store][0]
+            provide_text_to_object_initial_workflow_value_store(
+                driver, op_container, store, text)
+        elif data_type == 'STRING':
+            text = data[store][0]
+            provide_text_to_string_initial_workflow_value_store(
+                driver, op_container, store, text)
+        else:
+            raise ValueError(f'unknown data type {data_type}')
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,

@@ -87,3 +87,4 @@ def screens():
 
 scenarios('../features/atm/automation_examples_workflows.feature')
 scenarios('../features/atm/automation_examples_workflows_input_files.feature')
+scenarios('../features/atm/automation_eureka3d_tests.feature')

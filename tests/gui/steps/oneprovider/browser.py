@@ -147,16 +147,18 @@ def assert_items_presence_in_browser(selenium, browser_id, item_list, tmp_memory
                                    f'in browser')
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_only_expected_items_presence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser='file browser'):
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory,
                                         which_browser)
 
+    assert len(item_list) == len(data), (
+        f'there is different number of items in {which_browser}, '
+        f'actual items: {data}, expected items: {item_list}')
+
     assert_items_presence_in_browser(selenium, browser_id, item_list, tmp_memory,
                                      which_browser)
-
-    assert len(item_list) == len(data), (f'there is different number of '
-                                         f'items in {which_browser}')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
