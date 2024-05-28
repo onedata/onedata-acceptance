@@ -36,7 +36,7 @@ class _ArchiveBrowser(PageObject):
 
     configure_columns = Button('.archive-browser .columns-configuration-button')
     column_headers = WebItemsSequence(
-        '.fb-table-secondary-col', cls=ArchiveColumnHeader)
+        '.fb-table-thead .fb-table-secondary-col', cls=ArchiveColumnHeader)
 
     def __str__(self):
         return f'archive browser in {self.parent}'
