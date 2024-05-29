@@ -472,6 +472,29 @@ def assert_titled_error_modal_appeared(selenium, browser_id, title):
     assert title.lower() in modal_text, message
 
 
+@wt(parsers.parse('user of {browser_id} sees error modal with info about '
+                  'invalid target with id of "{target_name}" {target_type}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_invalid_id_in_error_modal(
+        selenium, browser_id, target_name, target_type, groups, spaces,
+        inventories, harvesters):
+    modal_text = modals(selenium[browser_id]).error.content.lower()
+    assert 'is invalid' in modal_text, ('There is no info about invalid target '
+                                        'in error modal')
+    err_msg = (f'There is no info about id of invalid target '
+               f'{target_name} in error modal')
+    if target_type == 'group':
+        assert groups[target_name] in modal_text, err_msg
+    elif target_type == 'space':
+        assert spaces[target_name] in modal_text, err_msg
+    elif target_type == 'inventory':
+        assert inventories[target_name] in modal_text, err_msg
+    elif target_type == 'harvester':
+        assert harvesters[target_name] in modal_text, err_msg
+    else:
+        raise ValueError(f'Unknown type {target_type}')
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" '
                '(modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)

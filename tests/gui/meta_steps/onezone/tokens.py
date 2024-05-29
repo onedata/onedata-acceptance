@@ -48,9 +48,14 @@ def paste_received_token_into_text_field(selenium, browser_id,
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) joins (?P<option>group|space) using '
+@wt(parsers.re('user of (?P<browser_id>.*) joins '
+               '(?P<option>group|space|inventory|harvester) using '
+                'received token'))
+@wt(parsers.re('user of (?P<browser_id>.*) tries to join '
+               '(?P<option>group|space|inventory|harvester) using '
                'received token'))
 def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
+    # step doesn`t check whether token consumption was successful
     option = 'Tokens'
     button = 'Consume token'
 

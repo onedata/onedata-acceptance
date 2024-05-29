@@ -49,9 +49,22 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    And user of space_owner_browser joins group using copied token
-
+    And user of space_owner_browser tries to join group using copied token
     Then user of space_owner_browser sees that error modal with text "Consuming token failed" appeared
+
+
+  Scenario: User fails to join to the group because the group was deleted
+    When user of space_owner_browser clicks on Groups in the main menu
+    And user of space_owner_browser clicks "group1" on the groups list in the sidebar
+    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "group1" group members view
+    And user of space_owner_browser copies invitation token from modal
+    And user of space_owner_browser sends copied token to user of browser1
+    And user of space_owner_browser closes "Invite using token" modal
+
+    And user of space_owner_browser removes group "group1"
+
+    Then user of browser1 tries to join group using received token
+    And user of browser1 sees error modal with info about invalid target with id of "group1" group
 
 
   Scenario: User fails to view group they do not belong to

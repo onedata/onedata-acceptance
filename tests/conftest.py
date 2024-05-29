@@ -174,6 +174,13 @@ def groups():
 
 
 @pytest.fixture
+def inventories():
+    """Mapping inventory name to inventory id, e.g.
+    {inventory1: UEIHSdft743dfjKEUgr}"""
+    return {}
+
+
+@pytest.fixture
 def spaces():
     """Mapping space name to space id, e.g. {space1: UEIHSdft743dfjKEUgr}"""
     return {}
