@@ -46,23 +46,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
 
     # All tabs are enabled when all privileges are granted
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Space management:
-            granted: True
-          Data management:
-            granted: True
-          Transfer management:
-            granted: True
-          QoS management:
-            granted: True
-          User management:
-            granted: True
-          Group management:
-            granted: True
-          Support management:
-            granted: True
-          Harvester management:
-            granted: True
+    And user of space_owner_browser sets all privileges true for "user1" user in space members subpage
     Then user of browser_user1 sees that all tabs of "space1" are enabled
 
     # Some tabs are disabled when view space is not granted
@@ -72,7 +56,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             granted: Partially
             privilege subtypes:
               View space: False
-    And user of browser_user1 sees that ["Overview", "Files", "Transfers", "Providers"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Files", "Transfers", "Providers", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that ["Shares, Open Data", "Members", "Harvesters, Discovery"] tabs of "space1" are disabled
 
     # All tabs are enabled when only view space from space management category is granted
@@ -93,7 +77,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Space management:
             granted: False
-    And user of browser_user1 sees that ["Overview", "Files", "Transfers", "Providers"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Files", "Transfers", "Providers", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that ["Shares, Open Data", "Members", "Harvesters, Discovery"] tabs of "space1" are disabled
 
     # Only files tab is disabled when only read files is not granted
@@ -103,7 +87,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             granted: Partially
             privilege subtypes:
               Read files: False
-    And user of browser_user1 sees that ["Overview", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that Files tab of "space1" is disabled
 
     # All tabs are enabled when only read files from data management category is granted
@@ -128,7 +112,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Data management:
             granted: False
-    And user of browser_user1 sees that ["Overview", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that Files tab of "space1" is disabled
 
     # Only transfers tab is disabled when only view transfers is not granted
@@ -138,7 +122,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             granted: Partially
             privilege subtypes:
               View transfers: False
-    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Providers", "Members", "Harvesters, Discovery", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that Transfers tab of "space1" is disabled
 
     # All tabs are enabled when only view transfers from transfer management category is granted
@@ -159,7 +143,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Transfer management:
             granted: False
-    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Providers", "Members", "Harvesters, Discovery", "Automation workflows"] tabs of "space1" are enabled
     And user of browser_user1 sees that Transfers tab of "space1" is disabled
 
     # All tabs are enabled when none from QoS management category are granted
@@ -196,6 +180,35 @@ Feature: Basic management of privileges for spaces in Onezone GUI
           Harvester management:
             granted: False
     And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Only automation workflows tab is disabled when only view workflow execution is not granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Automation management:
+            granted: Partially
+            privilege subtypes:
+              View workflow executions: False
+    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that Automation workflows tab of "space1" is disabled
+
+    # All tabs are enabled when only view workflow executions from automation management category is granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Automation management:
+            granted: Partially
+            privilege subtypes:
+              View workflow executions: True
+              Schedule workflow executions: False
+              Manage workflow executions: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Only automation workflows tab is disabled when none from automation management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Automation management:
+            granted: False
+    And user of browser_user1 sees that ["Overview", "Files", "Shares, Open Data", "Transfers", "Providers", "Members", "Harvesters, Discovery"] tabs of "space1" are enabled
+    And user of browser_user1 sees that Automation workflows tab of "space1" is disabled
 
 
 
