@@ -78,4 +78,4 @@ def screens():
 
 scenarios('../features/atm/onezone/automation_members.feature')
 scenarios('../features/atm/onezone/automation_effective_privileges.feature')
-scenarios('../features/atm/workflow_stores_privileges.feature')
+scenarios('../features/atm/workflows_execution_privileges.feature')

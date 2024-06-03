@@ -1,4 +1,4 @@
-Feature: Inventories effective privileges
+Feature: Workflows execution privileges
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -64,7 +64,6 @@ Feature: Inventories effective privileges
               View workflow executions: True
               Schedule workflow executions: False
               Manage workflow executions: False
-
 
     And user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "Automation Workflows" of "space1" space in the sidebar
