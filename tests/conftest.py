@@ -174,6 +174,13 @@ def groups():
 
 
 @pytest.fixture
+def inventories():
+    """Mapping inventory name to inventory id, e.g.
+    {inventory1: UEIHSdft743dfjKEUgr}"""
+    return {}
+
+
+@pytest.fixture
 def spaces():
     """Mapping space name to space id, e.g. {space1: UEIHSdft743dfjKEUgr}"""
     return {}
@@ -207,6 +214,13 @@ def hosts():
 def tokens():
     """Dict to use to store information about tokens, e.g. {'token1': {
     'token_id': HGS2783GYIS, 'token': HDSGUFGJY875381FGJFSU}}"""
+    return {}
+
+
+@pytest.fixture
+def workflows():
+    """Dict to use to store information about uploaded to zone workflow schemas,
+    e.g. {'workflow_name': 'workflow_id'}"""
     return {}
 
 
