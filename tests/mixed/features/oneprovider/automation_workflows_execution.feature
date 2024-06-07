@@ -32,4 +32,3 @@ Feature: Workflows execution tests
     And using REST, user1 executes all workflows with example input files on space "space1" in oneprovider-1
     And using REST, user1 waits for all workflow executions to finish on space "space1" in oneprovider-1
     Then using REST, user1 sees successful execution of all workflows on space "space1" in oneprovider-1
-    And trace
