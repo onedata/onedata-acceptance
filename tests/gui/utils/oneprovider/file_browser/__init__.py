@@ -53,7 +53,7 @@ class _FileBrowser(PageObject):
 
     configure_columns = Button('.columns-configuration-button')
     column_headers = WebItemsSequence(
-        '.fb-table-head-row .fb-table-secondary-col', cls=FileColumnHeader)
+        '.fb-table-secondary-col', cls=FileColumnHeader)
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
