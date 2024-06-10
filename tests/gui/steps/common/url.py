@@ -192,6 +192,22 @@ def refresh_site(selenium, browser_id_list):
         selenium[browser_id].refresh()
 
 
+@wt(parsers.re('users? of (?P<browser_id_list>.*?) refreshes site and wait '
+               'for page to load'))
+def refresh_site_and_wait(selenium, browser_id_list):
+    for browser_id in parse_seq(browser_id_list):
+        selenium[browser_id].refresh()
+    for browser_id in parse_seq(browser_id_list):
+        assert_main_page_loaded(selenium, browser_id)
+
+
+@repeat_failed(interval=0.1, timeout=10)
+def assert_main_page_loaded(selenium, browser_id):
+    elems = selenium[browser_id].find_elements_by_css_selector(
+        '.main-menu-content li.main-menu-item')
+    assert len(elems) > 0, 'did not manage to load main page'
+
+
 @wt(parsers.parse('if {client} is web GUI, {user} refreshes site'))
 def if_gui_refresh_site(selenium, client, user):
     if client == 'web GUI':

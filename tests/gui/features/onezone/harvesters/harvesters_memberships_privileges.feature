@@ -111,6 +111,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
 
   Scenario: User successfully sets privileges with set privileges privilege
     When user of browser1 creates "harvester15" harvester in Onezone page
+    And user of browser1 sees that "harvester15" has appeared on the harvesters list in the sidebar
     And user of browser1 sends invitation token from "harvester15" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester15" has appeared on the harvesters list in the sidebar
@@ -130,7 +131,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     Then user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
-    And user of browser1 refreshes site
+    And user of browser1 refreshes site and wait for page to load
     And user of browser1 clicks "user1" user in "harvester15" harvester members users list
     And user of browser1 sees following privileges of "user1" user in harvester members subpage:
           Harvester management:

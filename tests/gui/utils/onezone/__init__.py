@@ -105,4 +105,4 @@ def wait_for_panel_to_expand(oz_page):
             return
         else:
             time.sleep(0.1)
-    raise RuntimeError
+    raise RuntimeError('did not menage to expand main panel')
