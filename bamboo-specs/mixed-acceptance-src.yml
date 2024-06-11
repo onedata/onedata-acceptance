@@ -875,7 +875,7 @@ Workflows with input files:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files test_mixed_src
+          - make SUITE=test_workflows_with_input_files ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 
 Qnthack - rerun:
