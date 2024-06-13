@@ -30,7 +30,7 @@ class _DatasetBrowser(PageObject):
 
     configure_columns = Button('.dataset-browser .columns-configuration-button')
     column_headers = WebItemsSequence(
-        '.fb-table-head-row .fb-table-secondary-col', cls=DatasetColumnHeader)
+        '.fb-table-secondary-col', cls=DatasetColumnHeader)
 
     def __str__(self):
         return f'dataset browser in {self.parent}'
