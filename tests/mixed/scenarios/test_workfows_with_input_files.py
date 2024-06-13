@@ -11,23 +11,31 @@ from pytest_bdd import scenarios
 from tests.utils.entities_setup.users import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
-from tests.utils.entities_setup.inventory import *
 
-from tests.gui.steps.common.url import *
-from tests.gui.steps.common.browser_creation import *
-from tests.gui.steps.common.copy_paste import *
-from tests.gui.steps.common.local_file_system import *
-from tests.gui.steps.common.notifies import *
-from tests.gui.steps.common.miscellaneous import *
-from tests.gui.steps.common.login import *
+from tests.gui.steps.oneprovider_common import *
+from tests.gui.meta_steps.onezone import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.onepanel_basic import *
+from tests.mixed.steps.tokens_basic import *
+from tests.mixed.steps.group_basic import *
+from tests.mixed.steps.rest.onezone.group_management import *
+from tests.mixed.steps.rest.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.data import *
-from tests.gui.meta_steps.onezone.common import *
 from tests.mixed.steps.rest.onezone.automation import *
+from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.tokens import *
+from tests.utils.acceptance_utils import *
+
+from tests.mixed.utils.common import *
+
+from tests.gui.conftest import *
 
 from tests.oneclient.steps.auth_steps import *
-from tests.gui.conftest import *
+from tests.oneclient.steps.multi_file_steps import *
+
+from tests.gui.steps.common.miscellaneous import *
 
 
 @pytest.fixture(scope='module')
@@ -35,4 +43,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/automation_workflows_execution.feature')
+scenarios('../features/onezone/automation_workflows_execution.feature')

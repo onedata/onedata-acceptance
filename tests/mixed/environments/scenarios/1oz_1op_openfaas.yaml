@@ -1,0 +1,35 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-1op"
+
+spaces: false
+
+openfaas: true
+
+storages:
+  - s3
+
+# OpenFaaS Pod Status Monitor image to use.
+openfaasPodStatusMonitorImage: "docker.onedata.org/openfaas-pod-status-monitor:ID-998630eb48"
+
+# OpenFaaS Lambda Result Streamer image to use.
+openfaasLambdaResultStreamerImage: "docker.onedata.org/openfaas-lambda-result-streamer:ID-71762abfb7"
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {openfaas_function_env, #{
+          % Env vars passed to the OpenFaaS service
+          "read_timeout" => "604800s",   % 7 days
+          "write_timeout" => "604800s",  % 7 days
+          "exec_timeout" => "604800s",    % 7 days
+    
+          % Env vars passed to lambdas
+          "VERIFY_SSL_CERTIFICATES" => "false"
+      }}
+    ]}].
