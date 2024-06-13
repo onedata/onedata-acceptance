@@ -16,6 +16,7 @@ from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_url, transform
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 def _wait_for_op_session_to_start(selenium, browser_id_list):
@@ -92,3 +93,15 @@ def _load_exceptions_for_input_files(tmp_memory, config):
         file = list(el.keys())[0]
         exceptions = list(el.values())[0]
         tmp_memory['exceptions'][file] = exceptions
+
+
+def wait_for_item_to_appear(item):
+    for _ in range(50):
+        try:
+            if item.is_displayed():
+                return
+            else:
+                time.sleep(0.1)
+        except StaleElementReferenceException:
+            time.sleep(0.1)
+    raise RuntimeError(f'item {item} did not appear')
