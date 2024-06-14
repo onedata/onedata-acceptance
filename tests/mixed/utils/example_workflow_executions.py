@@ -13,7 +13,7 @@ import os
 from tests.gui.utils.generic import upload_workflow_path
 
 
-class DefaultExecution:
+class ExampleWorkflowExecutionInitialStoreContent:
 
     def __init__(self, resolve_file_id, upload_file, resolve_group_id=None):
         self.resolve_file_id = resolve_file_id
@@ -22,9 +22,8 @@ class DefaultExecution:
 
     @staticmethod
     def gather_input_files(workflow):
-        files = [f for f in os.listdir(upload_workflow_path(workflow)) if
-                 f != workflow + '.json']
-        return files
+        return [f for f in os.listdir(upload_workflow_path(workflow)) if
+                f != workflow + '.json']
 
     def bagit_uploader(self, input_file=None, dest_dir='space1/dir1'):
         input_files = self.gather_input_files(
@@ -32,31 +31,31 @@ class DefaultExecution:
         for file in input_files:
             path = upload_workflow_path('bagit-uploader') + '/' + file
             self.upload_file(path, file)
-        file_paths = ['space1/' + file for file in input_files]
+        file_paths = [f'{dest_dir.split("/")[0]}/{file}' for file in input_files]
 
         return [{
                 'input-bagit-archives': {'fileId': self.resolve_file_id(path)},
                 'destination-directory': {'fileId': self.resolve_file_id(dest_dir)}
         } for path in file_paths]
 
-    def detect_file_formats(self, input_file=None):
+    def detect_file_formats(self, input_file=None, space='space1'):
         input_files = self.gather_input_files(
             'detect-file-formats') if not input_file else input_file
         for file in input_files:
             path = upload_workflow_path('detect-file-formats') + '/' + file
             self.upload_file(path, file)
-        file_paths = ['space1/' + file for file in input_files]
+        file_paths = [f'{space}/{file}' for file in input_files]
         return [{
                 'input-files': [{'fileId': self.resolve_file_id(path)}]
         } for path in file_paths]
 
-    def detect_file_mime_formats(self, input_file=None):
+    def detect_file_mime_formats(self, input_file=None, space='space1'):
         input_files = self.gather_input_files(
             'detect-file-mime-formats') if not input_file else input_file
         for file in input_files:
             path = upload_workflow_path('detect-file-mime-formats') + '/' + file
             self.upload_file(path, file)
-        file_paths = ['space1/' + file for file in input_files]
+        file_paths = [f'{space}/{file}' for file in input_files]
         return [{
                 'input-files': [{'fileId': self.resolve_file_id(path)}]
         } for path in file_paths]
@@ -67,7 +66,7 @@ class DefaultExecution:
         for file in input_files:
             path = upload_workflow_path('download-files') + '/' + file
             self.upload_file(path, file)
-        file_paths = ['space1/' + file for file in input_files]
+        file_paths = [f'{destination.split("/")[0]}/{file}' for file in input_files]
         return [{
                 'fetch-files': [{'fileId': self.resolve_file_id(path)}],
                 'destination': {'fileId': self.resolve_file_id(destination)}
@@ -102,5 +101,5 @@ class DefaultExecution:
 
     def substitute_placeholders_example(self, name='Tom'):
         return [{
-            'input-store': {"name": name}
+            'input-store': {'name': name}
         }]

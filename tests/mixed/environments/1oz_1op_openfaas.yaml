@@ -1,2 +1,2 @@
 # Name of the scenario to run
-scenario: "scenario_1oz_1op_openfaas.yaml"
+scenario: "1oz_1op_openfaas.yaml"

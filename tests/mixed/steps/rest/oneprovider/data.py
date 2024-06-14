@@ -332,12 +332,12 @@ def assert_time_relation_in_op_rest(path, time1_name, time2_name,
 def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
     with open(path, 'rb') as f:
         data = f.read()
-        provider_hostname = hosts[host]['hostname']
-        # standard urllib2 cannot handle streaming bytes
-        response = http_post(
-            ip=provider_hostname, port=OP_REST_PORT,
-            path=get_provider_rest_path('data', parent_id,
-                                        f'children?name={file_name}'),
-            headers={'X-Auth-Token': users[user].token,
-                     'Content-Type': 'application/octet-stream'},
-            data=data)
+    provider_hostname = hosts[host]['hostname']
+    # standard urllib2 cannot handle streaming bytes
+    response = http_post(
+        ip=provider_hostname, port=OP_REST_PORT,
+        path=get_provider_rest_path('data', parent_id,
+                                    f'children?name={file_name}'),
+        headers={'X-Auth-Token': users[user].token,
+                 'Content-Type': 'application/octet-stream'},
+        data=data)

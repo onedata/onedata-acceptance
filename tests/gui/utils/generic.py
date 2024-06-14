@@ -65,7 +65,7 @@ def upload_file_path(file_name):
         file_name)
 
 
-def upload_workflow_path(workflow_name):
+def upload_workflow_path(workflow_name=None):
     """Resolve an absolute path for workflow file with name workflow_name
      stored in automation-examples submodule
     """
