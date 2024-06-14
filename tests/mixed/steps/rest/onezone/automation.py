@@ -104,8 +104,6 @@ def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
         partial(get_group_id, groups))
     for workflow in workflows:
         path = workflow + '/' + workflow if workflow in ALL_WORKFLOW_WITH_INPUT_FILES else workflow
-        if workflow == 'bagit-uploader' or workflow == 'download-files':
-            continue
         if hasattr(example_execution, workflow.replace('-', '_')):
             store_content = getattr(example_execution, workflow.replace('-', '_'))()
             for content in store_content:
