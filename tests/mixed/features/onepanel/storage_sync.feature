@@ -129,6 +129,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And user is idle for 20 seconds
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
+    And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir22: 10
     And using docker, user removes dir2 from provider's storage mount point
