@@ -49,7 +49,7 @@ Feature: Joining a group in Onezone GUI
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    And user of space_owner_browser tries to join group using copied token
+    And user of space_owner_browser joins group using copied token
     Then user of space_owner_browser sees that error modal with text "Consuming token failed" appeared
 
 
