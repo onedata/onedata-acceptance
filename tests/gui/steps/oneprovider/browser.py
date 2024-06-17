@@ -9,6 +9,7 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform, parse_seq
+from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 import time
 import re
 
@@ -352,6 +353,7 @@ def select_columns_to_be_visible_in_browser(selenium, browser_id, columns,
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    wait_for_item_to_appear(popups(selenium[browser_id]).configure_columns_menu.web_elem)
     columns = list(map(lambda s: s.lower(), parse_seq(columns)))
     for column in columns_menu:
         if column.name.lower() in columns:

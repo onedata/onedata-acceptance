@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
@@ -50,10 +51,13 @@ def open_select_initial_files_modal(op_container, driver, popups, modals,
     modals(driver).select_files
 
 
+@wt(parsers.parse('user of {browser_id} clicks "Add groups..." link in '
+                  '"{store_name}" store'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_groups_modal(op_container, driver, popups, modals,
-                                    store_name=False):
+def open_select_initial_groups_modal(op_container, selenium, browser_id,
+                                     popups, modals, store_name=False):
     option = "Select groups"
+    driver = selenium[browser_id]
 
     click_input_link_in_automation_page(op_container, driver, store_name)
     time.sleep(1)
@@ -120,3 +124,18 @@ def get_data_type_of_array_initial_value_store(driver, op_container, store_name)
     if 'file' in link_name:
         return 'file'
     raise ValueError(f'unknown type for link {link_name}')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sees|does not see) '
+               '"(?P<group>.*)" group in "Select groups" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_group_in_select_initial_groups_modal(
+        selenium, browser_id, option, modals, group):
+    driver = selenium[browser_id]
+    modal = modals(driver).select_groups
+    err_msg = 'there {} visible {} in select groups modal, but should {}'
+    if option == 'sees':
+        assert group in modal.groups, err_msg.format('is not', group, 'be')
+    else:
+        assert group not in modal.groups, err_msg.format('is', group, 'not be')
+

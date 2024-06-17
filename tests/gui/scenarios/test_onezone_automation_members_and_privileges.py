@@ -65,6 +65,7 @@ from tests.utils.acceptance_utils import *
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.onezone.automation.workflow_creation import *
 from tests.gui.steps.oneprovider.automation.automation_basic import *
+from tests.gui.steps.oneprovider.automation.initial_values import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *
 from tests.utils.entities_setup.inventory import *
@@ -77,3 +78,4 @@ def screens():
 
 scenarios('../features/atm/onezone/automation_members.feature')
 scenarios('../features/atm/onezone/automation_effective_privileges.feature')
+scenarios('../features/atm/workflows_execution_privileges.feature')
