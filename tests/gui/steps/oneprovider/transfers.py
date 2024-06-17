@@ -15,6 +15,7 @@ from selenium.common.exceptions import (StaleElementReferenceException,
 
 from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe, click_option_in_popup_labeled_menu)
+from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
@@ -271,6 +272,7 @@ def _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
     transfer = op_container(selenium[browser_id]).transfers
     transfer.configure_columns.click()
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    wait_for_item_to_appear(popups(selenium[browser_id]).configure_columns_menu.web_elem)
     for column in columns_menu:
         if column.name.lower() in columns:
             getattr(columns_menu[column.name], option_select)()
