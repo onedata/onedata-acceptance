@@ -20,30 +20,23 @@ from tests.mixed.utils.example_workflow_executions import ExampleWorkflowExecuti
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
 
 
-ALL_WORKFLOW_WITHOUT_INPUT_FILES = []
-ALL_WORKFLOW_WITH_INPUT_FILES = []
-
-
 @wt(parsers.parse('using REST, {user} uploads all workflows from '
                   'automation-examples to inventory "{inventory}" in '
                   '"{zone_name}" Onezone service'))
 def upload_all_workflows_from_automation_examples_rest(
-        hosts, zone_name, users, user, inventory, inventories, workflows):
-    global ALL_WORKFLOW_WITHOUT_INPUT_FILES, ALL_WORKFLOW_WITH_INPUT_FILES
+        hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory):
+    tmp_memory['workflows_with_input_files'] = []
+    tmp_memory['workflows_without_input_files'] = []
     for f in os.listdir(upload_workflow_path()):
+        workflow_name = f.split('.')[0]
         if os.path.isdir(upload_workflow_path(f)):
-            ALL_WORKFLOW_WITH_INPUT_FILES.append(f.split('.')[0])
+            tmp_memory['workflows_with_input_files'].append(workflow_name)
+            dump_path = f'{upload_workflow_path(workflow_name)}/{workflow_name}.json'
         else:
-            ALL_WORKFLOW_WITHOUT_INPUT_FILES.append(f.split('.')[0])
-
-    for workflow_name in ALL_WORKFLOW_WITHOUT_INPUT_FILES:
+            tmp_memory['workflows_without_input_files'].append(workflow_name)
+            dump_path = upload_workflow_path(workflow_name + '.json')
         upload_workflow_rest(hosts, zone_name, users, user, inventory,
-                             inventories, workflow_name,
-                             upload_workflow_path(workflow_name + '.json'), workflows)
-    for workflow_name in ALL_WORKFLOW_WITH_INPUT_FILES:
-        path = f'{upload_workflow_path(workflow_name)}/{workflow_name}.json'
-        upload_workflow_rest(hosts, zone_name, users, user, inventory,
-                             inventories, workflow_name, path, workflows)
+                             inventories, workflow_name, dump_path, workflows)
 
 
 def upload_workflow_rest(hosts, zone_name, users, user, inventory_name,
@@ -94,7 +87,7 @@ def get_revision_num_of_workflow(workflow_name):
 @wt(parsers.parse('using REST, {user} executes all workflows with example '
                   'input files on space "{space}" in {host}'))
 def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
-                          groups, workflow_executions):
+                          groups, workflow_executions, tmp_memory):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
         partial(_lookup_file_id, user_client_op=client),
@@ -102,10 +95,12 @@ def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
                 parent_id=spaces[space]),
         partial(get_group_id, groups))
     for workflow in workflows:
-        path = workflow + '/' + workflow if workflow in ALL_WORKFLOW_WITH_INPUT_FILES else workflow
+        path = f'{workflow}/{workflow}' if workflow in tmp_memory[
+            'workflows_with_input_files'] else workflow
         if hasattr(example_execution, workflow.replace('-', '_')):
-            store_content, files = getattr(example_execution, workflow.replace('-', '_'))()
-            for content in store_content:
+            example_initial_store_content, input_files = getattr(
+                example_execution, workflow.replace('-', '_'))()
+            for file, content in zip(input_files, example_initial_store_content):
                 # map store name into store_id
                 content = {get_store_schema_id_of_workflow(key, path):
                            content[key] for key in content}
@@ -113,7 +108,7 @@ def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
                 wid = execute_workflow_rest(
                     user, users, hosts, host, spaces, space, workflow, content,
                     workflows, rev_number=rev_num, loglevel='info')
-                workflow_executions[wid] = {workflow: files}
+                workflow_executions[wid] = {workflow: file}
         else:
             raise Exception(f'Example execution of workflow {workflow} is '
                             f'not implemented')
@@ -149,31 +144,33 @@ def wait_for_workflow_executions(user, users, host, hosts, space, spaces,
 
 def assert_all_workflow_execution_finished(user, users, host, hosts, space,
                                            spaces, workflow_executions):
-    executions_waiting = list_workflow_executions(
-        user, users, host, hosts, space, spaces, phase='waiting')
-    executions_ongoing = list_workflow_executions(
-        user, users, host, hosts, space, spaces, phase='ongoing')
-    if any(executions_waiting):
+    assert_empty_workflow_phase(user, users, host, hosts, space, spaces,
+                                workflow_executions, 'waiting')
+    assert_empty_workflow_phase(user, users, host, hosts, space, spaces,
+                                workflow_executions, 'ongoing')
+
+
+def assert_empty_workflow_phase(user, users, host, hosts, space, spaces,
+                                workflow_executions, phase):
+    executions = list_workflow_executions(
+        user, users, host, hosts, space, spaces, phase=phase)
+    if any(executions):
         raise RuntimeError(
-            f'workflows {[workflow_executions[wid] for wid in executions_waiting]} '
-            f'are in waiting state')
-    if any(executions_ongoing):
-        raise RuntimeError(
-            f'workflows {[workflow_executions[wid] for wid in executions_ongoing]} '
-            f'are in ongoing state')
+            f'workflows {[workflow_executions[wid] for wid in executions]} '
+            f'are in {phase} state')
 
 
 @wt(parsers.parse('using REST, {user} sees successful execution of all '
                   'workflows in {host}'))
 def assert_successful_workflow_executions(user, users, host, hosts, workflow_executions):
-    states = {}
+    err_msgs = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(user, users, host, hosts,
                                              wid, details=['name', 'status'])
-        if mes['state'] != 'finished':
-            states[workflow_executions[wid]] = mes['state']
-    if any(states):
-        raise Exception(f'workflows: {states} did not finish successfully')
+        if mes['status'] != 'finished':
+            err_msgs.append((workflow_executions[wid], mes['status']))
+    if any(err_msgs):
+        raise Exception(f'workflows: {err_msgs} did not finish successfully')
 
 
 def list_workflow_executions(user, users, host, hosts, space, spaces,
