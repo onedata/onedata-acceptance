@@ -192,7 +192,7 @@ def refresh_site(selenium, browser_id_list):
         selenium[browser_id].refresh()
 
 
-@wt(parsers.re('users? of (?P<browser_id_list>.*?) refreshes site and wait '
+@wt(parsers.re('users? of (?P<browser_id_list>.*?) refreshes site and waits '
                'for page to load'))
 def refresh_site_and_wait(selenium, browser_id_list):
     for browser_id in parse_seq(browser_id_list):
