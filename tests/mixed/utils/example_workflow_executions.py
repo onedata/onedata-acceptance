@@ -36,7 +36,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         return [{
                 'input-bagit-archives': {'fileId': self.resolve_file_id(path)},
                 'destination-directory': {'fileId': self.resolve_file_id(dest_dir)}
-        } for path in file_paths]
+        } for path in file_paths], input_files
 
     def detect_file_formats(self, input_file=None, space='space1'):
         input_files = self.gather_input_files(
@@ -47,7 +47,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         file_paths = [f'{space}/{file}' for file in input_files]
         return [{
                 'input-files': [{'fileId': self.resolve_file_id(path)}]
-        } for path in file_paths]
+        } for path in file_paths], input_files
 
     def detect_file_mime_formats(self, input_file=None, space='space1'):
         input_files = self.gather_input_files(
@@ -58,7 +58,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         file_paths = [f'{space}/{file}' for file in input_files]
         return [{
                 'input-files': [{'fileId': self.resolve_file_id(path)}]
-        } for path in file_paths]
+        } for path in file_paths], input_files
 
     def download_files(self, input_file=None, destination='space1/dir1'):
         input_files = self.gather_input_files(
@@ -70,36 +70,37 @@ class ExampleWorkflowExecutionInitialStoreContent:
         return [{
                 'fetch-files': [{'fileId': self.resolve_file_id(path)}],
                 'destination': {'fileId': self.resolve_file_id(destination)}
-        } for path in file_paths]
+        } for path in file_paths], input_files
 
     def calculate_checksums_mounted(self, input_file='space1/file1'):
         return [{
                 'input-files': [{'fileId': self.resolve_file_id(input_file)}]
-        }]
+        }], [input_file]
 
     def calculate_checksums_rest(self, input_file='space1/file1'):
         return [{
             'input-files': [{'fileId': self.resolve_file_id(input_file)}]
-        }]
+        }], [input_file]
 
     def demo(self, input_file='space1/dir1'):
         return [{
             'input_files': [{'fileId': self.resolve_file_id(input_file)}]
-        }]
+        }], [input_file]
 
     def echo(self, input_file='space1/file1'):
         return [{
             'input': [{'fileId': self.resolve_file_id(input_file)}]
-        }]
+        }], [input_file]
 
-    def initialize_eureka3D_project(self, parent_directory='space1/dir1', group='group1'):
+    def initialize_eureka3D_project(self, parent_directory='space1/dir1',
+                                    project_name='hello', group='group1'):
         return [{
                 'Parent directory': {'fileId': self.resolve_file_id(parent_directory)},
-                'Project name': 'hello',
+                'Project name': project_name,
                 'Managing groups': [{'groupId': self.resolve_group_id(group)}]
-        }]
+        }], []
 
     def substitute_placeholders_example(self, name='Tom'):
         return [{
             'input-store': {'name': name}
-        }]
+        }], []

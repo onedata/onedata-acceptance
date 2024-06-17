@@ -225,6 +225,13 @@ def workflows():
 
 
 @pytest.fixture
+def workflow_executions():
+    """Dict to use to store information about execution workflow id with
+    its name and input args, e.g. {'wid': {name: [arg1, arg2, ...]}}"""
+    return {}
+
+
+@pytest.fixture
 def rm_users(request):
     return not request.config.getoption('--preserve-users')
 

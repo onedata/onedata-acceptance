@@ -20,7 +20,6 @@ from tests.mixed.utils.example_workflow_executions import ExampleWorkflowExecuti
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
 
 
-ATM_WORKFLOW_EXECUTION_ID = []
 ALL_WORKFLOW_WITHOUT_INPUT_FILES = []
 ALL_WORKFLOW_WITH_INPUT_FILES = []
 
@@ -95,7 +94,7 @@ def get_revision_num_of_workflow(workflow_name):
 @wt(parsers.parse('using REST, {user} executes all workflows with example '
                   'input files on space "{space}" in {host}'))
 def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
-                          groups):
+                          groups, workflow_executions):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
         partial(_lookup_file_id, user_client_op=client),
@@ -105,15 +104,16 @@ def execute_all_workflows(user, users, hosts, host, spaces, space, workflows,
     for workflow in workflows:
         path = workflow + '/' + workflow if workflow in ALL_WORKFLOW_WITH_INPUT_FILES else workflow
         if hasattr(example_execution, workflow.replace('-', '_')):
-            store_content = getattr(example_execution, workflow.replace('-', '_'))()
+            store_content, files = getattr(example_execution, workflow.replace('-', '_'))()
             for content in store_content:
                 # map store name into store_id
                 content = {get_store_schema_id_of_workflow(key, path):
                            content[key] for key in content}
                 rev_num = get_revision_num_of_workflow(path)
-                execute_workflow_rest(
+                wid = execute_workflow_rest(
                     user, users, hosts, host, spaces, space, workflow, content,
                     workflows, rev_number=rev_num, loglevel='info')
+                workflow_executions[wid] = {workflow: files}
         else:
             raise Exception(f'Example execution of workflow {workflow} is '
                             f'not implemented')
@@ -129,9 +129,9 @@ def execute_workflow_rest(
             "atmWorkflowSchemaRevisionNumber": rev_number,
             "storeInitialContentOverlay": stores_content,
             "loglevel": loglevel}
-    ATM_WORKFLOW_EXECUTION_ID.append(
-        (workflow_name, workflow_execution_api.schedule_workflow_execution(
-            data).atm_workflow_execution_id))
+    wid = workflow_execution_api.schedule_workflow_execution(
+            data).atm_workflow_execution_id
+    return wid
 
 
 def get_group_id(groups, group):
@@ -141,34 +141,37 @@ def get_group_id(groups, group):
 @wt(parsers.parse('using REST, {user} waits for all workflow executions '
                   'to finish on space "{space}" in {host}'))
 @repeat_failed(interval=4, timeout=620)
-def wait_for_workflow_executions(user, users, host, hosts, space, spaces):
+def wait_for_workflow_executions(user, users, host, hosts, space, spaces,
+                                 workflow_executions):
     assert_all_workflow_execution_finished(user, users, host, hosts, space,
-                                           spaces)
+                                           spaces, workflow_executions)
 
 
 def assert_all_workflow_execution_finished(user, users, host, hosts, space,
-                                           spaces):
+                                           spaces, workflow_executions):
     executions_waiting = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase='waiting')
     executions_ongoing = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase='ongoing')
     if any(executions_waiting):
         raise RuntimeError(
-            f'workflows with ids {executions_waiting} are in waiting state')
+            f'workflows {[workflow_executions[wid] for wid in executions_waiting]} '
+            f'are in waiting state')
     if any(executions_ongoing):
         raise RuntimeError(
-            f'workflows with ids {executions_ongoing} are in ongoing state')
+            f'workflows {[workflow_executions[wid] for wid in executions_ongoing]} '
+            f'are in ongoing state')
 
 
 @wt(parsers.parse('using REST, {user} sees successful execution of all '
                   'workflows in {host}'))
-def assert_successful_workflow_executions(user, users, host, hosts):
+def assert_successful_workflow_executions(user, users, host, hosts, workflow_executions):
     states = {}
-    for (_, wid) in ATM_WORKFLOW_EXECUTION_ID:
+    for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(user, users, host, hosts,
                                              wid, details=['name', 'status'])
         if mes['state'] != 'finished':
-            states[f'{mes["name"]}@{wid}'] = mes['state']
+            states[workflow_executions[wid]] = mes['state']
     if any(states):
         raise Exception(f'workflows: {states} did not finish successfully')
 
