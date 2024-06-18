@@ -473,15 +473,22 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
     data = yaml.load(config)
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
-    modal.store_content_list[0].click()
-    modal.copy_button()
-    items = json.loads(clipboard.paste(display=displays[browser_id]))
 
-    for option in options_to_check:
-        elem = data.get(option, False)
-        compare_to_expected_if_element_exist_for_store(
-            elem, items, option, store_name, selenium, browser_id, oz_page,
-            op_container, tmp_memory, popups, modals, clipboard, displays)
+    if len(modal.store_content_list) == 0:
+        modal.copy_button()
+        item = json.loads(clipboard.paste(display=displays[browser_id]))
+        err_msg = 'expected value: {} differs from actual one: {}'
+        assert data[0] == item, err_msg.format(data[0], item)
+    else:
+        modal.store_content_list[0].click()
+        modal.copy_button()
+        items = json.loads(clipboard.paste(display=displays[browser_id]))
+
+        for option in options_to_check:
+            elem = data.get(option, False)
+            compare_to_expected_if_element_exist_for_store(
+                elem, items, option, store_name, selenium, browser_id, oz_page,
+                op_container, tmp_memory, popups, modals, clipboard, displays)
     try:
         modal.close()
     except StaleElementReferenceException:
