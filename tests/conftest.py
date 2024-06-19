@@ -218,6 +218,20 @@ def tokens():
 
 
 @pytest.fixture
+def workflows():
+    """Dict to use to store information about uploaded to zone workflow schemas,
+    e.g. {'workflow_name': 'workflow_id'}"""
+    return {}
+
+
+@pytest.fixture
+def workflow_executions():
+    """Dict to use to store information about execution workflow id with
+    its name and input args, e.g. {'wid': {name: [arg1, arg2, ...]}}"""
+    return {}
+
+
+@pytest.fixture
 def rm_users(request):
     return not request.config.getoption('--preserve-users')
 

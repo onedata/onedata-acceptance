@@ -1,0 +1,2 @@
+# Name of the scenario to run
+scenario: "1oz_1op_openfaas.yaml"

@@ -91,6 +91,7 @@ stages:
         - Spaces basic
         - Storage sync
         - Tokens
+        - Workflows with input files
   - Qnthack - rerun:
       manual: false
       final: true
@@ -860,6 +861,22 @@ Tokens:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_tokens test_mixed_pkg
+
+Workflows with input files:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_with_input_files ENV_FILE=1oz_1op_openfaas test_mixed_pkg
 
 
 Qnthack - rerun:

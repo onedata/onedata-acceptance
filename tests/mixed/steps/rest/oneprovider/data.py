@@ -12,6 +12,7 @@ from functools import partial
 import pytest
 import yaml
 
+from tests import OP_REST_PORT
 from tests.gui.utils.generic import parse_seq
 from cdmi_client import ContainerApi, DataObjectApi
 from cdmi_client.rest import ApiException as CdmiException
@@ -23,6 +24,7 @@ from tests.mixed.utils.data import (check_files_tree, create_content,
                                     assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
+from tests.utils.rest_utils import http_post, get_provider_rest_path
 
 
 def _lookup_file_id(path, user_client_op):
@@ -326,3 +328,16 @@ def assert_time_relation_in_op_rest(path, time1_name, time2_name,
                                           comparator, host, hosts, user,
                                           users, cdmi)
 
+
+def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
+    with open(path, 'rb') as f:
+        data = f.read()
+    provider_hostname = hosts[host]['hostname']
+    # standard urllib2 cannot handle streaming bytes
+    response = http_post(
+        ip=provider_hostname, port=OP_REST_PORT,
+        path=get_provider_rest_path('data', parent_id,
+                                    f'children?name={file_name}'),
+        headers={'X-Auth-Token': users[user].token,
+                 'Content-Type': 'application/octet-stream'},
+        data=data)

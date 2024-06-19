@@ -65,13 +65,18 @@ def upload_file_path(file_name):
         file_name)
 
 
-def upload_workflow_path(workflow_name):
+def upload_workflow_path(workflow_name=None):
     """Resolve an absolute path for workflow file with name workflow_name
      stored in automation-examples submodule
     """
-    return os.path.abspath(os.path.join(
-        os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
-        'workflows', workflow_name))
+    if workflow_name:
+        return os.path.abspath(os.path.join(
+            os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+            'workflows', workflow_name))
+    else:
+        return os.path.abspath(os.path.join(
+            os.path.dirname(gui.__file__), '..', '..', 'automation-examples',
+            'workflows'))
 
 
 def upload_lambda_path(lambda_name):
