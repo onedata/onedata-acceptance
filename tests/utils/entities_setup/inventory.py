@@ -18,7 +18,7 @@ from tests.utils.rest_utils import (http_post, get_zone_rest_path, http_put)
 @given(parsers.parse('initial inventories configuration in "{zone_name}" '
                      'Onezone service:\n{config}'))
 def inventories_creation(config, admin_credentials, hosts,
-                         users, groups, zone_name):
+                         users, groups, zone_name, inventories):
     """Create and configure inventories according to given config.
 
     Config format given in yaml is as follows:
@@ -54,11 +54,11 @@ def inventories_creation(config, admin_credentials, hosts,
             owner: user2
     """
     _inventories_creation(config, hosts, users, zone_name, admin_credentials,
-                          groups)
+                          groups, inventories)
 
 
 def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
-                          groups):
+                          groups, inventories):
     zone_hostname = hosts[zone_name]['hostname']
     config = yaml.load(config)
 
@@ -66,6 +66,7 @@ def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
         owner = users[description['owner']]
 
         inventory_id = _create_inventory(zone_hostname, owner, inventory_name)
+        inventories[inventory_name] = inventory_id
         for user in description.get('users', {}):
             try:
                 [(user, options)] = user.items()

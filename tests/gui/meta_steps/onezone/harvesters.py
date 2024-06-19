@@ -92,11 +92,13 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name):
 @wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester '
                   'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
+def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts,
+                     harvesters, clipboard, displays):
     where = 'Discovery'
     input_name = 'name'
     endpoint_input = 'endpoint'
     button_name = 'create new harvester'
+    option = 'Copy ID'
 
     click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
     click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id,
@@ -107,6 +109,9 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
                                                    oz_page, endpoint_input,
                                                    hosts)
     click_create_button_in_discovery_page(selenium, browser_id, oz_page)
+    click_on_option_in_harvester_menu(selenium, browser_id, option,
+                                      harvester_name, oz_page)
+    harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
 
 
 @wt(parsers.parse('user of {browser_id} adds "{space_name}" space to '

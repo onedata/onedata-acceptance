@@ -210,6 +210,21 @@ Feature: Management of inventories members
     Then user of browser1 copies invitation token from modal
 
 
+  Scenario: User fails to join to the inventory because the inventory was deleted
+    When user of space_owner_browser clicks on Automation in the main menu
+    And user of space_owner_browser opens inventory "inventory1" members subpage
+    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
+    And user of space_owner_browser copies invitation token from modal
+    And user of space_owner_browser sends copied token to user of browser1
+    And user of space_owner_browser closes "Invite using token" modal
+
+    And user of space_owner_browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
+    And user of space_owner_browser clicks on "Remove" button in modal "Remove inventory"
+
+    Then user of browser1 tries to join inventory using received token
+    And user of browser1 sees error modal with info about invalid target with id of "inventory1" inventory
+
+
   Scenario: User successfully removes user from inventory with remove user privilege
     When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory2" members subpage
