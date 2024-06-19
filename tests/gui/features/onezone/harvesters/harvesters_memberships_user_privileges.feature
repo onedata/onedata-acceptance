@@ -78,3 +78,19 @@ Feature: Basic management of harvester memberships privileges with users in Onez
     And user of browser1 sees that "harvester17" has disappeared on the harvesters list in the sidebar
 
 
+  Scenario: User fails to join to the harvester because the harvester was deleted
+    When user of browser1 creates "harvester18" harvester in Onezone page
+
+    And user of browser1 clicks on Discovery in the main menu
+    And user of browser1 clicks "harvester18" on the harvesters list in the sidebar
+    And user of browser1 clicks Members of "harvester18" harvester in the sidebar
+    And user of browser1 clicks on "Invite user using token" button in users list menu in "harvester10" harvester members view
+    And user of browser1 copies invitation token from modal
+    And user of browser1 sends copied token to user of browser2
+    And user of browser1 closes "Invite using token" modal
+
+    And user of browser1 removes "harvester18" harvester in Onezone page
+
+    Then user of browser2 tries to join harvester using received token
+    And user of browser2 sees error modal with info about invalid target with id of "harvester18" harvester
+

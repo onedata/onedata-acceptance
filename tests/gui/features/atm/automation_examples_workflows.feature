@@ -464,3 +464,18 @@ Feature: Automation examples tests
     And user of browser clicks "Audit log" button on "Echo" workflow status bar
     And user of browser clicks on "Download as JSON" button in modal "Audit log"
     Then user of browser sees that recent downloaded json file contains audit log which has the same entries as the workflow audit log in GUI
+
+
+  Scenario: User sees successful execution of uploaded "substitute-placeholders-example" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "substitute-placeholders-example" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser executes 1st revision of "substitute-placeholders-example" workflow in "space1" space with the following initial values:
+      input-store:
+        - {"name": "Bob"}
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser sees that content of "result-store" store is:
+      - Welcome Bob!
