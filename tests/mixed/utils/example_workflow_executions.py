@@ -1,5 +1,5 @@
-"""Class responsible for implementing default executions of atm workflows
- uses its default input files, returning dict which can be passed into
+"""Class responsible for implementing example executions of atm workflows
+ uses its example input files, returning dict which can be passed into
  REST request.
 """
 
