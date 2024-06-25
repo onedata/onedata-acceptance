@@ -28,7 +28,6 @@ def create_storage(hosts, host, config, onepanel_credentials, name):
         importedStorage: true/false
         lumaFeed: "auto"/"local"/"external"
         simulatedFilesystemParameters: filesystem_parameters      ---> optional
-        skipStorageDetection: true/false
         storagePathType: "flat"/"canonical"
         minLatency: min_latency                                   ---> optional
         maxLatency: max_latency                                   ---> optional
