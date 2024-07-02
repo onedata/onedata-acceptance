@@ -22,11 +22,14 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
     storage_selector = (
         onepanel(selenium[browser_id]).content.storages.form.storage_selector)
     storage_selector.expand()
-    storage_selector.options[storage_type].click()
+    for storage in storage_selector.options:
+        if storage.text.lower() == storage_type.lower():
+            storage_selector.options[storage.text].click()
+            return
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX) form '
+               '(?P<input_box>.*?) field in (?P<form>.*?) form '
                'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_storages_page_op_panel(selenium, browser_id, text,
@@ -64,7 +67,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
-               '(?P<attr>Storage type|Mount point) is (?P<val>.*?) '
+               '(?P<attr>.*?) is (?P<val>.*?) '
                'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_assert_storage_attr_in_storages_page_op_panel(selenium, browser_id,
@@ -104,8 +107,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 def click_modify_storage_in_onepanel(selenium, browser_id, name,
                                      onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.storages.click_modify_button_of_storage(driver,
-                                                                     name)
+    onepanel(driver).content.storages.storages[name].modify()
 
 
 @wt(parsers.parse('user of {browser_id} types "{in_value}" into last key in '
@@ -150,6 +152,8 @@ def save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
 
 @wt(parsers.parse('user of {browser_id} sees that "{name}" has disappeared '
                   'from the storages list'))
+@wt(parsers.parse('user of {browser_id} does not see "{name}" '
+                  'on the storages list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
@@ -193,13 +197,13 @@ def check_ids_different(id_list):
 
 
 @wt(parsers.parse('user of {browser_id} types "{name}" to {input_box} field '
-                  'in POSIX edit form for "{storage}" storage in Onepanel'))
+                  'in {storage_type} edit form for "{storage}" storage in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_name_to_form_in_storages_page(selenium, browser_id, name, input_box,
-                                       onepanel, storage):
+                                       onepanel, storage_type, storage):
     driver = selenium[browser_id]
-    form = (onepanel(driver).content.storages.storages[
-                storage].edit_form.posix_editor)
+    form = getattr(onepanel(driver).content.storages.storages[
+                storage].edit_form, f'{storage_type.lower()}_editor')
     setattr(form, transform(input_box), name)
 
 
