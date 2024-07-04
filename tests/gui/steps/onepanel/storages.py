@@ -107,6 +107,7 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 def click_modify_storage_in_onepanel(selenium, browser_id, name,
                                      onepanel):
     driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages[name].click()
     onepanel(driver).content.storages.storages[name].modify()
 
 
