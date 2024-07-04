@@ -58,15 +58,15 @@ def create_dir_in_op_oneclient(user, full_path, users, result, host):
         multi_dir_steps.create(user, full_path, host, users)
 
 
-def create_file_in_op_oneclient(user, path, users, result, host):
+def create_file_in_op_oneclient(user, path, users, result, host, request):
     if result == 'fails':
-        multi_file_steps.create_reg_file_fail(user, path, host, users)
+        multi_file_steps.create_reg_file_fail(user, path, host, users, request)
     else:
-        multi_file_steps.create_reg_file(user, path, host, users)
+        multi_file_steps.create_reg_file(user, path, host, users, request)
 
 
 def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
-                                            result, full_path, client_lower):
+                                            result, full_path, client_lower, request):
     try:
         mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                    client='oneclient')
@@ -74,12 +74,12 @@ def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_me
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+                                        oneclient_host, request)
     except AssertionError as e:
         if result == 'fails':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+                                        oneclient_host, request)
         else:
             raise e
 

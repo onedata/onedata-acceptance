@@ -23,30 +23,51 @@ from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.onenv_utils import cmd_exec
 
+HARDLINKS_PATH = '.hardlinks'
+SYMLINKS_PATH = '.symlinks'
 
-def create_base(user, files, client_node, users, should_fail=False):
+
+def create_base(user, files, client_node, users, request, should_fail=False):
     files = list_parser(files)
     user = users[user]
     client = user.clients[client_node]
+    mode = request.config.getoption('oneclient_file_mode')
 
     for file_name in files:
         path = client.absolute_path(file_name)
 
         def condition():
-            client.create_file(path)
+            if mode == 'regular':
+                client.create_file(path)
+            elif mode == 'hardlink':
+                client.create_file(HARDLINKS_PATH + path)
+                create_hardlink(client, HARDLINKS_PATH + path, path)
+            elif mode == 'symlink':
+                client.create_file(SYMLINKS_PATH + path)
+                create_symlink(client, SYMLINKS_PATH + path, path)
+            else:
+                raise Exception
         assert_generic(client.perform, should_fail, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
-def create_reg_file(user, files, client_node, users):
-    create_base(user, files, client_node, users)
+def create_reg_file(user, files, client_node, users, request):
+    create_base(user, files, client_node, users, request)
+
+
+def create_hardlink(client, file_path, link_path):
+    client.rpyc_connection.modules.os.link(file_path, link_path)
+
+
+def create_symlink(client, file_path, link_path):
+    client.rpyc_connection.modules.os.symlink(file_path, link_path)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to create regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
-def create_reg_file_fail(user, files, client_node, users):
-    create_base(user, files, client_node, users, should_fail=True)
+def create_reg_file_fail(user, files, client_node, users, request):
+    create_base(user, files, client_node, users, request, should_fail=True)
 
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '

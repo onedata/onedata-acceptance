@@ -55,6 +55,8 @@ def pytest_addoption(parser):
 
     parser.addoption('--timeout', action='store',
                      help='onenv wait timeout')
+    parser.addoption('--oneclient-file-mode', action='store', default='hardlink',
+                     help='Provide if tests should be run in symlinks or hardlinks mode')
 
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')
