@@ -14,6 +14,8 @@ import json
 import stat as stat_lib
 import subprocess as sp
 import time
+import random
+import string
 
 import jsondiff
 
@@ -22,32 +24,60 @@ from tests.utils.acceptance_utils import (list_parser, make_arg_list,
 from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.onenv_utils import cmd_exec
+from .multi_dir_steps import create
 
-HARDLINKS_PATH = '.hardlinks'
-SYMLINKS_PATH = '.symlinks'
+HARDLINKS_DIR = '.hardlinks'
+SYMLINKS_DIR = '.symlinks'
 
 
 def create_base(user, files, client_node, users, request, should_fail=False):
     files = list_parser(files)
-    user = users[user]
-    client = user.clients[client_node]
-    mode = request.config.getoption('oneclient_file_mode')
+    user_ = users[user]
+    client = user_.clients[client_node]
+    mode = request.config.getoption('file_mode')
 
     for file_name in files:
-        path = client.absolute_path(file_name)
+        # path for original file in hardlink/symlink mode
+        # space_name/(.hardlinks or .symlinks)/(file name hash)
 
-        def condition():
-            if mode == 'regular':
+        path = client.absolute_path(file_name)
+        if mode == 'regular':
+
+            def condition():
                 client.create_file(path)
-            elif mode == 'hardlink':
-                client.create_file(HARDLINKS_PATH + path)
-                create_hardlink(client, HARDLINKS_PATH + path, path)
-            elif mode == 'symlink':
-                client.create_file(SYMLINKS_PATH + path)
-                create_symlink(client, SYMLINKS_PATH + path, path)
-            else:
-                raise Exception
-        assert_generic(client.perform, should_fail, condition)
+
+        elif mode == 'hardlink':
+            space = file_name.split('/')[0]
+            create(user, f'[{space}/{HARDLINKS_DIR}]', client_node, users, exists_ok=True)
+            file_name_hash = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
+
+            org_file_path = os.path.join(space, HARDLINKS_DIR, file_name_hash)
+            org_file_path = client.absolute_path(org_file_path)
+
+            def condition():
+                client.create_file(org_file_path)
+                create_hardlink(client, org_file_path, path)
+
+        elif mode == 'symlink':
+            space = file_name.split('/')[0]
+            create(user, f'[{space}/{SYMLINKS_DIR}]', client_node, users, exists_ok=True)
+            file_name_hash = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
+
+            org_file_path = os.path.join(space, SYMLINKS_DIR, file_name_hash)
+            org_file_path = client.absolute_path(org_file_path)
+
+            def condition():
+                client.create_file(org_file_path)
+                create_symlink(client, org_file_path, path)
+
+        else:
+            raise Exception
+
+        try:
+            assert_generic(client.perform, should_fail, condition)
+        except Exception as e:
+            print(e)
+
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
@@ -73,10 +103,10 @@ def create_reg_file_fail(user, files, client_node, users, request):
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
                'with names in range \[(?P<lower>.*), (?P<upper>.*)\) on '
                '(?P<client_node>.*)'))
-def create_many(user, lower: int, upper: int, parent_dir, client_node, users):
+def create_many(user, lower: int, upper: int, parent_dir, client_node, users, request):
     for i in range(lower, upper):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(user, make_arg_list(new_file), client_node, users)
+        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
 
 
 @wt(parsers.re('(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)'
@@ -133,6 +163,7 @@ def ls_children(user, parent_dir, lower: int, upper: int, client_node, users):
 
     def condition():
         listed_files = client.ls(path)
+
         assert len(listed_files) == files_num, "Listed {} files instead of expected {}".format(
             len(listed_files), files_num)
         for i in range(lower, upper):

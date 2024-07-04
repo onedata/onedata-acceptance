@@ -94,7 +94,11 @@ class Client:
         return self.ls(path=self._mount_path)
 
     def ls(self, path='.'):
-        return self.rpyc_connection.modules.os.listdir(path)
+        res = self.rpyc_connection.modules.os.listdir(path)
+        res.remove('.hardlinks') if '.hardlinks' in res else None
+        res.remove('.symlinks') if '.symlinks' in res else None
+        return res
+
 
     def osrename(self, src, dest):
         self.rpyc_connection.modules.os.rename(src, dest)
@@ -125,7 +129,7 @@ class Client:
             self.rpyc_connection.modules.os.rmdir(dir_path)
 
     def mkdir(self, dir_path, recursive=False, exist_ok=False):
-        if recursive:
+        if recursive or exist_ok:
             self.rpyc_connection.modules.os.makedirs(dir_path, exist_ok=exist_ok)
         else:
             self.rpyc_connection.modules.os.mkdir(dir_path)

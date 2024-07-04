@@ -74,6 +74,7 @@ REPEATS                     ?= 1
 RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
+FILE_MODE                   ?= regular
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
 
 ifdef bamboo_GUI_PKG_VERIFICATION
@@ -105,7 +106,7 @@ test_mixed_src: test_mixed
 
 test_oneclient:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
-	 --repeats ${REPEATS} --timeout ${TIMEOUT} ${SOURCES} ${OPTS}
+	 --repeats ${REPEATS} --timeout ${TIMEOUT} --file-mode ${FILE_MODE} ${SOURCES} ${OPTS}
 
 test_oneclient_pkg: test_oneclient
 test_oneclient_src: SOURCES = --sources
