@@ -31,7 +31,7 @@ Feature: Storage modification
     | ceph         | Pool name   | wrong_name  | test           |
 
 
-  Scenario Outline: User tries to make <storage_name> storage with incorrect parameters using add storage form in Onepanel
+  Scenario Outline: User fails to create <storage_name> storage with incorrect parameters using add storage form in Onepanel
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -42,18 +42,18 @@ Feature: Storage modification
     And user of browser types "<param_val>" to <param_name> field in <storage_name> form in storages page in Onepanel
     And user of browser clicks on Add button in add storage form in storages page in Onepanel
 
-    Then user of browser sees that error modal with text "Adding "test_storage" storage backend failed!" appeared
+    Then user of browser sees that error modal with text "Adding 'test_storage' storage backend failed!" appeared
     And user of browser closes "error" modal
     And user of browser does not see "test_storage" on the storages list
 
 
     Examples:
-    | storage_name | param_name   | param_val  |
+    | storage_name | param_name  | param_val   |
     | posix        | Mount point | /wrong/path |
     | s3           | Bucket name | wrong_name  |
 
 
-  Scenario: User tries to make Ceph storage with incorrect parameters using add storage form in Onepanel
+  Scenario: User fails to create Ceph storage with incorrect parameters using add storage form in Onepanel
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -69,6 +69,6 @@ Feature: Storage modification
     And user of browser types "4194304" to Block size field in ceph form in storages page in Onepanel
     And user of browser clicks on Add button in add storage form in storages page in Onepanel
 
-    Then user of browser sees that error modal with text "Adding "test_storage" storage backend failed!" appeared
+    Then user of browser sees that error modal with text "Adding 'test_storage' storage backend failed!" appeared
     And user of browser closes "error" modal
     And user of browser does not see "test_storage" on the storages list

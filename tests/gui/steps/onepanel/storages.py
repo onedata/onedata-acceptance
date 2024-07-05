@@ -26,6 +26,7 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
         if storage.text.lower() == storage_type.lower():
             storage_selector.options[storage.text].click()
             return
+    raise Exception(f'storage {storage_type} not found')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
