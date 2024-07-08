@@ -460,7 +460,7 @@ def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     message = 'Modal does not contain text "{}"'.format(text)
     modal_text = modals(selenium[browser_id]).error.content.lower()
-    assert text.lower().replace("'", '"') in modal_text, message
+    assert text.lower().replace("\\", "") in modal_text, message
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{title}" '

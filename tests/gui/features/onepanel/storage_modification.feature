@@ -42,7 +42,7 @@ Feature: Storage modification
     And user of browser types "<param_val>" to <param_name> field in <storage_name> form in storages page in Onepanel
     And user of browser clicks on Add button in add storage form in storages page in Onepanel
 
-    Then user of browser sees that error modal with text "Adding 'test_storage' storage backend failed!" appeared
+    Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
     And user of browser closes "error" modal
     And user of browser does not see "test_storage" on the storages list
 
@@ -69,6 +69,6 @@ Feature: Storage modification
     And user of browser types "4194304" to Block size field in ceph form in storages page in Onepanel
     And user of browser clicks on Add button in add storage form in storages page in Onepanel
 
-    Then user of browser sees that error modal with text "Adding 'test_storage' storage backend failed!" appeared
+    Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
     And user of browser closes "error" modal
     And user of browser does not see "test_storage" on the storages list
