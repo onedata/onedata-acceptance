@@ -331,8 +331,11 @@ def assert_time_relation_in_op_rest(path, time1_name, time2_name,
 
 
 def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
-    with open(path, 'rb') as f:
-        data = f.read()
+    if path == '':
+        data = None
+    else:
+        with open(path, 'rb') as f:
+            data = f.read()
     provider_hostname = hosts[host]['hostname']
     # standard urllib2 cannot handle streaming bytes
     response = http_post(
@@ -370,7 +373,5 @@ def set_file_attributes_rest(users, user, hosts, host, file_id, attrs):
     file_api.set_attr(file_id, attribute=attrs)
 
 
-def create_file_in_dir_rest(users, user, hosts, host, dir_id, name, **kwargs):
-    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
-    file_api = BasicFileOperationsApi(user_client_op)
-    file_api.create_file(dir_id, name, **kwargs)
+def create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, name):
+    upload_file_rest(users, user, hosts, host, '', name, dir_id)

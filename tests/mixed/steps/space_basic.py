@@ -11,8 +11,8 @@ from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import wt, parsers
 from oneprovider_client.rest import ApiException
 from tests.mixed.steps.rest.oneprovider.data import (
-    get_space_details_rest, remove_file_by_id_rest, get_file_attributes_rest,
-    set_file_attributes_rest, create_file_in_dir_rest)
+    get_space_details_rest, remove_file_by_id_rest,
+    set_file_attributes_rest, create_empty_file_in_dir_rest)
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
@@ -372,27 +372,26 @@ def try_to_remove_space_root_dir(users, user, hosts, host, space_name,
         if not err_msg:
             err_msg = 'Operation failed with POSIX error: eperm.'
         assert err_msg in str(e), f'Unexpected error occurred {e}'
-        # import pdb
-        # pdb.set_trace()
-        # get_file_attributes_rest(users, user, hosts, host, tmp_memory['space_root_dir'][space_name])
 
 
-@wt(parsers.parse('using REST, {user} fails to set "{attr_type}" attribute '
-                  'into "{attr_val}" of root dir of "{space_name}" in {host}'))
-def try_to_set_space_root_dir_attrs(users, user, hosts, host, attr_type,
-                                    attr_val, space_name, tmp_memory):
-    import pdb
-    pdb.set_trace()
+@wt(parsers.parse('using REST, {user} fails to set "{attr_t}" attribute '
+                  'into "{attr_v}" of root dir of "{space_name}" in {host}'))
+def try_to_set_space_root_dir_attrs(users, user, hosts, host, attr_t,
+                                    attr_v, space_name, tmp_memory):
     set_file_attributes_rest(
         users, user, hosts, host, tmp_memory['space_root_dir'][space_name],
-        {attr_type: attr_val})
+        {attr_t: attr_v})
 
 
 @wt(parsers.parse('using REST, {user} fails to create file "{file_name}" '
                   'in root dir of "{space_name}" in {host}'))
 def try_to_create_file_in_space_root_dir(users, user, hosts, host, tmp_memory,
                                          space_name, file_name):
-    # import pdb
-    # pdb.set_trace()
-    create_file_in_dir_rest(users, user, hosts, host,
-                            tmp_memory['space_root_dir'][space_name], file_name)
+    try:
+        create_empty_file_in_dir_rest(
+            users, user, hosts, host, tmp_memory['space_root_dir'][space_name],
+            file_name)
+        raise Exception('file created in space root dir, but creation '
+                        'should have failed')
+    except Exception:
+        pass

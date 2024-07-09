@@ -23,15 +23,17 @@ Feature: Basic management
     When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
     Then using REST, admin fails to remove root dir of space "space1" in oneprovider-1, because user is not space owner
 
+#
+#  TODO VFS- uncomment after enabling setting attrs using rest
+#  Scenario Outline: User fails to set attribute
+#    When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
+#    Then using REST, user1 fails to set "<attr_type>" attribute into "<attr_val>" of root dir of "space1" in oneprovider-1
+#
+#    Examples:
+#    | attr_type | attr_val  |
+#    | name      | some_name |
 
-  Scenario Outline: User fails to set attribute
+
+  Scenario: User fails to create file in space root dir
     When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
-    Then using REST, user1 fails to set "<attr_type>" attribute into "<attr_val>" of root dir of "space1" in oneprovider-1
-
-    Examples:
-    | attr_type | attr_val  |
-    | name      | some_name |
-
-  Scenario: User fails to set attribute
-    When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
-    Then using REST, user1 fails to create file "some_name" in root dir of "space1" in oneprovider-1
+    Then using REST, user1 fails to create file "some_name.txt" in root dir of "space1" in oneprovider-1
