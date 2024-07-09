@@ -63,3 +63,18 @@ Feature: Basic files tab operations on single directory in file browser
     Then user of browser sees that item named "dir1" has disappeared from file browser
     And user of browser sees that item named "new_dir1" has appeared in file browser
     And user of browser sees that item named "new_dir1" is directory in file browser
+
+
+  Scenario: User fails to rename directory into incorrect name
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Rename" option in data row menu in file browser
+    And user of browser sees that "Rename" modal has appeared
+    And user of browser writes ".." into text field in modal "Rename modal"
+    And user of browser clicks "Rename" button in displayed modal
+    Then user of browser sees that error modal with text "Renaming the file failed!" appeared
+    And user of browser sees that item named "dir1" is directory in file browser
