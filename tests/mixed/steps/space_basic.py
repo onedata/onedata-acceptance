@@ -9,10 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import wt, parsers
-from oneprovider_client.rest import ApiException
-from tests.mixed.steps.rest.oneprovider.data import (
-    get_space_details_rest, remove_file_by_id_rest,
-    set_file_attributes_rest, create_empty_file_in_dir_rest)
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
@@ -332,66 +328,3 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
-
-@wt(parsers.parse('using REST, {user} gets root dir ID of space "{space_name}" '
-                  'in {host}'))
-def get_space_root_id(users, user, hosts, host, space_name, spaces, tmp_memory):
-    space_details = get_space_details_rest(users, user, hosts,
-                                           host, spaces[space_name])
-    if tmp_memory['space_root_dir']:
-        tmp_memory['space_root_dir'][space_name] = space_details.dir_id
-    else:
-        tmp_memory['space_root_dir'] = {space_name: space_details.dir_id}
-
-
-@wt(parsers.parse('using REST, {user} fails to remove root dir of '
-                  'space "{space_name}" in {host}'))
-def try_to_remove_space_root_dir_(users, user, hosts, host, space_name,
-                                  tmp_memory):
-    try_to_remove_space_root_dir(users, user, hosts, host, space_name,
-                                 tmp_memory)
-
-
-@wt(parsers.parse('using REST, {user} fails to remove root dir of '
-                  'space "{space_name}" in {host}, because user is not space '
-                  'owner'))
-def try_to_remove_space_root_dir_not_authorized(users, user, hosts, host,
-                                                space_name, tmp_memory):
-    err_msg = 'You are not authorized to perform this operation'
-    try_to_remove_space_root_dir(users, user, hosts, host, space_name,
-                                 tmp_memory, err_msg=err_msg)
-
-
-def try_to_remove_space_root_dir(users, user, hosts, host, space_name,
-                                 tmp_memory, err_msg=None):
-    try:
-        remove_file_by_id_rest(users, user, hosts, host,
-                               tmp_memory['space_root_dir'][space_name])
-        raise Exception('Space root dir was deleted!')
-    except ApiException as e:
-        if not err_msg:
-            err_msg = 'Operation failed with POSIX error: eperm.'
-        assert err_msg in str(e), f'Unexpected error occurred {e}'
-
-
-@wt(parsers.parse('using REST, {user} fails to set "{attr_t}" attribute '
-                  'into "{attr_v}" of root dir of "{space_name}" in {host}'))
-def try_to_set_space_root_dir_attrs(users, user, hosts, host, attr_t,
-                                    attr_v, space_name, tmp_memory):
-    set_file_attributes_rest(
-        users, user, hosts, host, tmp_memory['space_root_dir'][space_name],
-        {attr_t: attr_v})
-
-
-@wt(parsers.parse('using REST, {user} fails to create file "{file_name}" '
-                  'in root dir of "{space_name}" in {host}'))
-def try_to_create_file_in_space_root_dir(users, user, hosts, host, tmp_memory,
-                                         space_name, file_name):
-    try:
-        create_empty_file_in_dir_rest(
-            users, user, hosts, host, tmp_memory['space_root_dir'][space_name],
-            file_name)
-        raise Exception('file created in space root dir, but creation '
-                        'should have failed')
-    except Exception:
-        pass

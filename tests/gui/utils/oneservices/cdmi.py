@@ -114,6 +114,17 @@ class CDMIClient(object):
         return http_put(self.ip, self.port, parsed_dst_path, headers=headers,
                         data=json.dumps(data), default_headers=False)
 
+    def move_item_by_id(self, src_id, dst_path):
+        item_type = 'container'
+        parsed_src_path = f'/cdmi/cdmi_objectid/{src_id}'
+        parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)
+        headers = {'Content-Type': get_content_type(item_type),
+                   'X-CDMI-Specification-Version': self.cdmi_version}
+        headers.update(self.auth_header)
+        data = {'move': parsed_src_path}
+        return http_put(self.ip, self.port, parsed_dst_path, headers=headers,
+                        data=json.dumps(data), default_headers=False)
+
     def copy_item(self, src_path, dst_path):
         item_type = get_item_type(src_path)
         parsed_src_path = parse_path(src_path, item_type)

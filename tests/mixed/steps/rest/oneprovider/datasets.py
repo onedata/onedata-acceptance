@@ -19,8 +19,14 @@ def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
                               option):
     path = f'{space_name}/{item_name}'
     client = login_to_provider(user, users, hosts[host]['hostname'])
-    dataset_api = DatasetApi(client)
     file_id = _lookup_file_id(path, client)
+    create_dataset_in_op_by_id_rest(user, users, hosts, host, file_id, option)
+
+
+def create_dataset_in_op_by_id_rest(
+        user, users, hosts, host, file_id, option):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
     data = {"rootFileId": f"{file_id}"}
     flags = get_flags(option)
     if len(flags) != 0:
