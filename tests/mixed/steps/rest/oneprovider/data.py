@@ -358,20 +358,3 @@ def remove_file_by_id_rest(users, user, hosts, host, file_id):
     user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
     file_api.remove_file(file_id)
-
-
-def get_file_attributes_rest(users, user, hosts, host, file_id):
-    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
-    file_api = BasicFileOperationsApi(user_client_op)
-    attrs = file_api.get_attrs(file_id)
-    return attrs
-
-
-def set_file_attributes_rest(users, user, hosts, host, file_id, attrs):
-    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
-    file_api = BasicFileOperationsApi(user_client_op)
-    file_api.set_attr(file_id, attribute=attrs)
-
-
-def create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, name):
-    upload_file_rest(users, user, hosts, host, '', name, dir_id)

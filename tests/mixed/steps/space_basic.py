@@ -327,4 +327,3 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
             selenium, user, oz_page, provider_name, provider, hosts, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
-
