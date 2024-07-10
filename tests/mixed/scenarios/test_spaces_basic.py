@@ -41,6 +41,8 @@ from tests.mixed.steps.space_basic import *
 from tests.mixed.steps.members import *
 from tests.mixed.steps.rest.onezone.user_root_dir import *
 
+from tests.oneclient.steps.auth_steps import *
+
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *

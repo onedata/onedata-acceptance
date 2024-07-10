@@ -11,21 +11,35 @@ Feature: Basic operations on user root dir using REST API
                     storage: posix
                     size: 1000000
     And opened browser with user1 signed in to "onezone" service
+    And oneclient mounted using token by user1
 
 
-  Scenario: User fails to remove user root dir
+  Scenario Outline: User fails to remove user root dir
     When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
-    Then using REST, user1 fails to remove user root dir of space "space1" in oneprovider-1
+    Then using <client1>, user1 fails to remove user root dir of space "space1" in oneprovider-1
+
+    Examples:
+    | client1    |
+    | REST       |
+    | oneclient1 |
 
 
-  Scenario: User fails to move user root dir
+  Scenario Outline: User fails to move user root dir
     When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
-    Then using REST, user1 fails to move user root dir of "space1" in oneprovider-1
+    Then using <client1>, user1 fails to move user root dir of "space1" in oneprovider-1
+    Examples:
+    | client1    |
+    | REST       |
+    | oneclient1 |
 
 
-  Scenario: User fails to create file in user root dir
+  Scenario Outline: User fails to create file in user root dir
     When using REST, user1 gets root dir ID of space "space1" in oneprovider-1
-    Then using REST, user1 fails to create file "some_name.txt" in root dir of "space1" in oneprovider-1
+    Then using <client1>, user1 fails to create file "some_name.txt" in root dir of "space1" in oneprovider-1
+    Examples:
+    | client1    |
+    | REST       |
+    | oneclient1 |
 
 
   Scenario: User fails to add QoS requirement to user root dir

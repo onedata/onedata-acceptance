@@ -8,8 +8,10 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 import errno
+import os.path
 import subprocess as sp
 
+from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
@@ -131,6 +133,18 @@ def delete_non_empty(user, dirs, client_node, users):
             client.rm(path, recursive=True, force=True)
 
         assert_(client.perform, condition)
+
+
+def try_to_delete_root_dir(user, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    client.rm(client._mount_path, recursive=True)
+
+
+def try_to_move_root_dir(user, client_node, users, dst):
+    user = users[user]
+    client = user.clients[client_node]
+    client.mv(client._mount_path, os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
 @when(parsers.re('(?P<user>\w+) deletes directory \(rmdir -p\) '
