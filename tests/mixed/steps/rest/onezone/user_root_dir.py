@@ -34,7 +34,7 @@ def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memor
 
 
 @wt(parsers.parse('using {client}, {user} fails to remove user root '
-                  'directory of in {host}'))
+                  'directory in {host}'))
 def try_to_remove_user_root_dir(client, users, user, hosts, host, tmp_memory):
     if client.lower() == 'rest':
         try:
@@ -93,7 +93,7 @@ def try_to_add_qos_to_user_root_dir(user, users, hosts, host, tmp_memory,
 
 
 @wt(parsers.parse('using REST, {user} fails to add json metadata '
-                  '"{expression}" to user root directory in {host}'))
+                  '\'{expression}\' to user root directory in {host}'))
 def try_to_add_json_metadata_to_user_root_dir(user, users, hosts, host,
                                               tmp_memory, expression):
     try:

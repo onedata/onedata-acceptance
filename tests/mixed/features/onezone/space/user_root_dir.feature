@@ -1,4 +1,4 @@
-Feature: Basic operations on user root dir using REST API, oneclient
+Feature: Basic operations on user root directory using REST API, oneclient
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -51,7 +51,7 @@ Feature: Basic operations on user root dir using REST API, oneclient
 
   Scenario: User fails to add metadata to user root directory
     When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
-    Then using REST, user1 fails to add JSON metadata "{"id": 1}" to user root directory in oneprovider-1
+    Then using REST, user1 fails to add JSON metadata '{"id": 1}' to user root directory in oneprovider-1
 
 
   Scenario: User fails to establish dataset on user root directory
