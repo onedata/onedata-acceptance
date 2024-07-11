@@ -44,7 +44,6 @@ def create_storage(hosts, host, config, onepanel_credentials, name):
         importedStorage: true
         lumaFeed: "auto"
         simulatedFilesystemParameters: "0-1:20485760000"
-        skipStorageDetection: true
         storagePathType: "canonical"
     """
     _create_storage(hosts, host, config, onepanel_credentials, name)
