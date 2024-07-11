@@ -277,6 +277,9 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
         # for len(file_name) > 180 ffmpeg is not starting
         file_name = file_name[:180] if len(file_name) > 180 else file_name
 
+        # if there is '/' in file name ffmpeg is not starting
+        file_name = file_name.replace('/', '_')
+
         ffmpeg_proc, movies = start_recording(movie_dir, file_name, xvfb,
                                               screen_width, screen_height,
                                               mosaic_filter)

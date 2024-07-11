@@ -20,18 +20,36 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
 
 
-class POSIX(PageObject):
+class StorageForm(PageObject):
     storage_name = Input('input.field-generic-name')
     imported_storage = Toggle('.toggle-field-generic-importedStorage')
+
+
+class POSIX(StorageForm):
     mount_point = Input('input.field-posix-mountPoint')
     timeout = Input('input.field-posix-timeout')
     read_only = Toggle('.toggle-field-posix-readonly')
+
+
+class S3(StorageForm):
+    bucket_name = Input('input.field-s3-bucketName')
+
+
+class Ceph(StorageForm):
+    pool_name = Input('input.field-cephrados-poolName')
+    username = Input('input.field-cephrados-username')
+    key = Input('input.field-cephrados-key')
+    monitor_hostname = Input('input.field-cephrados-monitorHostname')
+    cluster_name = Input('input.field-cephrados-clusterName')
+    block_size = Input('input.field-cephrados-blockSize')
 
 
 class StorageAddForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')
     add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
+    s3 = WebItem('form', cls=S3)
+    ceph = WebItem('form', cls=Ceph)
 
 
 class POSIXEditorKeyValue(PageObject):
@@ -66,28 +84,43 @@ class QOSParams(PageObject):
             self.enabled_remove_icons[0].click()
 
 
-class POSIXEditor(PageObject):
+class Editor(PageObject):
     storage_name = Input('input.field-generic_editor-name')
-    mount_point = Input('input.field-posix_editor-mountPoint')
-    timeout = Input('input.field-posix_editor-timeout')
-    read_only = Toggle('.toggle-field-posix_editor-readonly')
-
     params = WebItem('.qos-params-editor', cls=QOSParams)
 
     save_button = Button('button.btn-primary')
     cancel_button = NamedButton('button', text='Cancel')
 
 
+class POSIXEditor(Editor):
+    mount_point = Input('input.field-posix_editor-mountPoint')
+    timeout = Input('input.field-posix_editor-timeout')
+    read_only = Toggle('.toggle-field-posix_editor-readonly')
+
+
+class S3Editor(Editor):
+    bucket_name = Input('input.field-s3_editor-bucketName')
+
+
+class CephEditor(Editor):
+    pool_name = Input('input.field-cephrados_editor-poolName')
+
+
 class StorageEditForm(PageObject):
     posix_editor = WebItem('form', cls=POSIXEditor)
+    s3_editor = WebItem('form', cls=S3Editor)
+    ceph_editor = WebItem('form', cls=CephEditor)
 
 
 class StorageRecord(PageObject, ExpandableMixin):
+    modify = Button('.btn-default')
     name = id = Label('.item-icon-container + .one-label')
     edit_form = WebItem('.storage-info .cluster-storage-add-form'
                         ':not(.form-static)', cls=StorageEditForm)
     storage_type = Label('.item-table .field-type_static-type')
     mount_point = Label('.item-table .field-posix_static-mountPoint')
+    bucket_name = Label('.item-table .field-s3_static-bucketName')
+    pool_name = Label('.item-table .field-cephrados_static-poolName')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
     copy_id_button = Button('.copy-btn-icon')

@@ -1,0 +1,21 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-1op"
+
+spaces: false
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+
+storages:
+  - posix
+  - s3
+  - ceph
+  - gluster
+  - webdav
+  # @TODO VFS-8296 swift helper is currently not tested
+  # - swift

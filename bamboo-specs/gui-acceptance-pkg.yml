@@ -78,6 +78,7 @@ stages:
         - Onepanel login
         - Onepanel members
         - Onepanel two hosts deployment
+        - Onepanel different storages
         - Oneprovider ACL basic
         - Oneprovider ACL directories privileges
         - Oneprovider ACL directories privileges change and upload
@@ -601,6 +602,21 @@ Onepanel two hosts deployment:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes test_gui_pkg
+
+Onepanel different storages:
+  <<: *acceptance-tests-in-chrome-job
+  key: CODST
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onepanel_different_storages ENV_FILE=1oz_1op_storages test_gui_pkg
 
 Oneprovider ACL basic:
   <<: *acceptance-tests-in-chrome-job
