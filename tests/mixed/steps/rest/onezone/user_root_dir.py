@@ -22,25 +22,24 @@ from tests.oneclient.steps.multi_dir_steps import try_to_delete_root_dir, try_to
 from tests.oneclient.steps.multi_file_steps import try_to_create_file_in_root_dir
 
 
-@wt(parsers.parse('using REST, {user} gets root dir ID of space "{space_name}" '
-                  'in {host}'))
-def get_user_root_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+@wt(parsers.parse('using REST, {user} gets ID of the user root directory as '
+                  'the parent of the space "{space_name}" in {host}'))
+def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts,
                                            host, spaces[space_name])
-    if tmp_memory['space_root_dir']:
-        tmp_memory['space_root_dir'][space_name] = space_details.dir_id
+    if tmp_memory['user_root_dir']:
+        tmp_memory['user_root_dir'][user] = space_details.dir_id
     else:
-        tmp_memory['space_root_dir'] = {space_name: space_details.dir_id}
+        tmp_memory['user_root_dir'] = {user: space_details.dir_id}
 
 
-@wt(parsers.parse('using {client}, {user} fails to remove user root dir of '
-                  'space "{space_name}" in {host}'))
-def try_to_remove_user_root_dir(client, users, user, hosts, host, space_name,
-                                tmp_memory):
+@wt(parsers.parse('using {client}, {user} fails to remove user root '
+                  'directory of in {host}'))
+def try_to_remove_user_root_dir(client, users, user, hosts, host, tmp_memory):
     if client.lower() == 'rest':
         try:
             remove_file_by_id_rest(users, user, hosts, host,
-                               tmp_memory['space_root_dir'][space_name])
+                               tmp_memory['user_root_dir'][user])
             raise Exception('Space root dir was deleted!')
         except ApiException as e:
             err_msg = 'Operation failed with POSIX error: eperm.'
@@ -57,13 +56,13 @@ def try_to_remove_user_root_dir(client, users, user, hosts, host, space_name,
 
 
 @wt(parsers.parse('using {client}, {user} fails to create file "{file_name}" '
-                  'in root dir of "{space_name}" in {host}'))
+                  'in user root directory in {host}'))
 def try_to_create_file_in_user_root_dir(client, users, user, hosts, host,
-                                        tmp_memory, space_name, file_name):
+                                        tmp_memory, file_name):
     if client.lower() == 'rest':
         try:
             create_empty_file_in_dir_rest(
-                users, user, hosts, host, tmp_memory['space_root_dir'][space_name],
+                users, user, hosts, host, tmp_memory['user_root_dir'][user],
                 file_name)
             raise Exception('file created in user root dir, but creation '
                             'should have failed')
@@ -80,13 +79,13 @@ def try_to_create_file_in_user_root_dir(client, users, user, hosts, host,
 
 
 @wt(parsers.parse('using REST, {user} fails to add qos requirement '
-                  '"{expression}" to user root dir of "{space_name}" in {host}'))
-def try_to_create_qos_in_user_root_dir(user, users, hosts, host, tmp_memory,
-                                       expression, space_name):
+                  '"{expression}" to user root directory in {host}'))
+def try_to_add_qos_to_user_root_dir(user, users, hosts, host, tmp_memory,
+                                    expression):
     try:
         create_qos_requirement_in_op_by_id_rest(
             user, users, hosts, host, expression,
-            tmp_memory['space_root_dir'][space_name])
+            tmp_memory['user_root_dir'][user])
         raise Exception('qos requirement added to user root dir, but adding '
                         'should have failed')
     except ApiException:
@@ -94,39 +93,39 @@ def try_to_create_qos_in_user_root_dir(user, users, hosts, host, tmp_memory,
 
 
 @wt(parsers.parse('using REST, {user} fails to add json metadata '
-                  '"{expression}" to user root dir of "{space_name}" in {host}'))
-def try_to_create_json_metadata_in_user_root_dir(user, users, hosts, host,
-                                                 tmp_memory, expression, space_name):
+                  '"{expression}" to user root directory in {host}'))
+def try_to_add_json_metadata_to_user_root_dir(user, users, hosts, host,
+                                              tmp_memory, expression):
     try:
         add_json_metadata_to_file_rest(user, users, hosts, host, expression,
-                                       tmp_memory['space_root_dir'][space_name])
+                                       tmp_memory['user_root_dir'][user])
         raise Exception('json metadata added to user root dir, but adding '
                         'should have failed')
     except ApiException:
         pass
 
 
-@wt(parsers.parse('using REST, {user} fails to establish dataset to '
-                  'user root dir of "{space_name}" in {host}'))
-def try_to_establish_dataset_to_user_root_dir(user, users, hosts, host,
-                                              tmp_memory, space_name):
+@wt(parsers.parse('using REST, {user} fails to establish dataset on '
+                  'user root directory in {host}'))
+def try_to_establish_dataset_on_user_root_dir(user, users, hosts, host,
+                                              tmp_memory):
     try:
         create_dataset_in_op_by_id_rest(user, users, hosts, host,
-                                        tmp_memory['space_root_dir'][space_name], '')
-        raise Exception('established dataset of user root dir, but establishing'
+                                        tmp_memory['user_root_dir'][user], '')
+        raise Exception('established dataset on user root dir, but establishing'
                         ' should have failed')
     except ApiException:
         pass
 
 
 @wt(parsers.parse('using {client}, {user} fails to move '
-                  'user root dir of "{space_name}" in {host}'))
+                  'user root directory in {host}'))
 def try_to_move_user_root_dir(client, user, users, hosts, host, tmp_memory,
-                              space_name, cdmi):
+                              cdmi):
     if client.lower() == 'rest':
         try:
             client = cdmi(hosts[host]['ip'], users[user].token)
-            client.move_item_by_id(tmp_memory['space_root_dir'][space_name], '/new_name')
+            client.move_item_by_id(tmp_memory['user_root_dir'][user], '/new_name')
             raise Exception('moved user root dir, but moving '
                             'should have failed')
         except HTTPBadRequest as e:

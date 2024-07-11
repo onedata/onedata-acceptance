@@ -63,7 +63,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     # Non-space-owner fails to create directory in space1
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
-    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And user of browser_user1 clicks "New directory" button from file browser menu bar
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
@@ -97,7 +97,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     # Non-space-owner fails to create share in space1
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
-    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 sees that "Share / Publish" option is disabled in opened item menu in dataset browser
 

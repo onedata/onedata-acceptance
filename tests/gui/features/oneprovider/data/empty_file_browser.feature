@@ -21,7 +21,7 @@ Feature: Files tab operations with empty file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And user of browser clicks "New directory" button from file browser menu bar
     And user of browser writes "dir1" into text field in modal "Create dir"
     And user of browser confirms create new directory using button
@@ -33,7 +33,7 @@ Feature: Files tab operations with empty file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     Then user of browser sees that item named "20B-0.txt" has appeared in file browser
 

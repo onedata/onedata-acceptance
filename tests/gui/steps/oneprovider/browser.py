@@ -70,7 +70,7 @@ def check_if_breadcrumbs_on_share_page(driver, op_container,
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
-                  'displayed in breadcrumbs on {which_browser} is {path}'))
+                  'displayed in breadcrumbs on {which_browser} is "{path}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                                                        path, op_container,
