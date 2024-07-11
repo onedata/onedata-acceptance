@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.utils.bdd_utils import wt, parsers
 from oneprovider_client.rest import ApiException
-from tests.utils.http_exceptions import HTTPBadRequest
+from tests.utils.http_exceptions import HTTPForbidden
 from tests.mixed.steps.rest.oneprovider.data import (
     get_space_details_rest, remove_file_by_id_rest,
     create_empty_file_in_dir_rest)
@@ -128,7 +128,7 @@ def try_to_move_user_root_dir(client, user, users, hosts, host, tmp_memory,
             client.move_item_by_id(tmp_memory['user_root_dir'][user], '/new_name')
             raise Exception('moved user root dir, but moving '
                             'should have failed')
-        except HTTPBadRequest as e:
+        except HTTPForbidden as e:
             pass
     elif 'oneclient' in client.lower():
         try:
