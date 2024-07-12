@@ -26,7 +26,7 @@ Feature: Basic files tab operations on single file in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
 
     And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
@@ -36,7 +36,7 @@ Feature: Basic files tab operations on single file in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
 
     And user of browser clicks once on item named "20B-0.txt" in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -50,7 +50,7 @@ Feature: Basic files tab operations on single file in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
 
     And user of browser clicks once on item named "20B-0.txt" in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -62,6 +62,24 @@ Feature: Basic files tab operations on single file in file browser
     Then user of browser sees that item named "20B-0.txt" has disappeared from file browser
     And user of browser sees that item named "new_file1" has appeared in file browser
     And user of browser sees that item named "new_file1" is file in file browser
+
+
+  Scenario: User fails to rename file into incorrect name
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
+
+    And user of browser clicks once on item named "20B-0.txt" in file browser
+    And user of browser clicks on menu for "20B-0.txt" file in file browser
+    And user of browser clicks "Rename" option in data row menu in file browser
+    And user of browser sees that "Rename" modal has appeared
+    And user of browser writes ".." into text field in modal "Rename modal"
+    And user of browser clicks "Rename" button in displayed modal
+    Then user of browser sees that error modal with text "Renaming the file failed!" appeared
+    And user of browser refreshes site
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that item named "20B-0.txt" is file in file browser
 
 
   Scenario: User sees that after uploading file with name of already existing file, the uploaded file appeared with suffix
@@ -77,7 +95,7 @@ Feature: Basic files tab operations on single file in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
 
     # User downloads file
     And user of browser downloads item named "20B-0.txt" with slow connection in file browser

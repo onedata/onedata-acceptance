@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 import json
+from oneprovider_client import CustomFileMetadataApi
+from tests.mixed.utils.common import *
 
 
 def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
@@ -46,6 +48,12 @@ def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
         if tab_name.lower() == 'json':
             val = json.loads(val)
     client.write_metadata(path, {attr: val})
+
+
+def add_json_metadata_to_file_rest(user, users, hosts, host, expression, file_id):
+    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
+    cfm_api = CustomFileMetadataApi(user_client_op)
+    cfm_api.set_json_metadata(file_id, expression)
 
 
 def remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, path):

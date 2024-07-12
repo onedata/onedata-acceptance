@@ -52,7 +52,7 @@ Feature: Basic files tab operations on external symlinks in file browser
     Then user of browser sees that path where symbolic link points is "space1/dir4" in external symbolic link modal
     And user of browser clicks on "Open" button in modal "External Symbolic Link"
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1/dir4
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1/dir4"
     And user of browser sees item(s) named file2 in file browser
 
 
@@ -76,7 +76,7 @@ Feature: Basic files tab operations on external symlinks in file browser
     And user of browser clicks and presses enter on item named "dir1" in archive file browser
     And user of browser clicks and presses enter on item named "symlink_dir3" in archive file browser
     Then user of browser sees item(s) named file1 in archive file browser
-    And user of browser sees that current working directory displayed in breadcrumbs on archive file browser is /{current archive}/dir1/symlink_dir3
+    And user of browser sees that current working directory displayed in breadcrumbs on archive file browser is "/{current archive}/dir1/symlink_dir3"
 
     Examples:
       | follow_sym_links  |

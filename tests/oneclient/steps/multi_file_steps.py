@@ -634,3 +634,9 @@ def assert_file_stats_on_storage(path, container, provider, hosts, uid, gid):
                              'but found {}'.format(path, uid, stat_uid))
     assert gid == stat_gid, ('Expected owner\'s GID of file {} to be {}, '
                              'but found {}'.format(path, gid, stat_gid))
+
+
+def try_to_create_file_in_root_dir(user, client_node, users, file_name):
+    user = users[user]
+    client = user.clients[client_node]
+    client.create_file(os.path.join(client._mount_path, file_name))

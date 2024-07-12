@@ -46,7 +46,7 @@ Feature: Operations when current provider stops
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And provider named oneprovider-1 is stopped
     Then user of browser sees "SELECTED ONEPROVIDER IS CURRENTLY OFFLINE" error on spaces page
     And user of browser clicks on "Choose other Oneprovider" on file browser page

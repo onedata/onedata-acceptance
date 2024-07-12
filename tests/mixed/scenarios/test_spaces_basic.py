@@ -39,6 +39,9 @@ from tests.gui.conftest import *
 
 from tests.mixed.steps.space_basic import *
 from tests.mixed.steps.members import *
+from tests.mixed.steps.rest.onezone.user_root_dir import *
+
+from tests.oneclient.steps.auth_steps import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -61,3 +64,4 @@ scenarios('../features/onezone/space/creation.feature')
 scenarios('../features/onezone/space/basic_management.feature')
 scenarios('../features/onezone/space/multiuser.feature')
 scenarios('../features/onezone/space/multiuser_with_admin.feature')
+scenarios('../features/onezone/space/user_root_dir.feature')
