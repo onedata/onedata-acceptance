@@ -12,7 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
                                                WebItem, WebElement,
-                                               WebElementsSequence, Icon)
+                                               WebElementsSequence, Icon, Input)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -48,6 +48,8 @@ class Space(Element):
     configuration = NamedButton('.one-list-level-2 .item-header',
                                 text='Configuration')
     menu_button = Button('.collapsible-toolbar-toggle')
+
+
 
     def click_menu(self):
         self.click()
@@ -223,6 +225,10 @@ class DataPage(GenericPage):
                                      cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
+
+    input_rename = Input('.name-editor .form-control')
+
+    save_button = Button('.save-icon')
 
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)

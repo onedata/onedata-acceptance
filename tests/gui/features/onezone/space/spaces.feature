@@ -134,3 +134,11 @@ Feature: Basic management of spaces
           - dynamic
           - culture
         description: "Example of a space advertised in a Marketplace"
+
+  Scenario: User sees new space name after renaming it
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Rename" button in space "space1" menu
+    And user of space_owner_browser writes "space_test" into "space1" name input box
+    And user of space_owner_browser clicks on save button in Data menu
+    Then user of space_owner_browser sees that "space_test" has appeared on the spaces list in the sidebar
+    And user of space_owner_browser does not see "space1" space in Data menu
