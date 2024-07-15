@@ -81,6 +81,6 @@ def screens():
 
 
 scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
-#scenarios('../features/oneprovider/data/qos.feature')
-#scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
+scenarios('../features/oneprovider/data/qos.feature')
+scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
 
