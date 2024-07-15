@@ -244,12 +244,13 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
 @wt(parsers.parse('user of {browser_id} adds key="{key}" value="{val}" in '
                   'QoS parameters form in storage edit page'))
 def add_key_value_in_storage_page(selenium, browser_id, key,
-                                  val, onepanel):
+                                  val, onepanel, modals):
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     type_string_into_active_element(selenium, browser_id, val)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
 
 
 @wt(parsers.parse('user of {browser_id} deletes additional param in storage '
