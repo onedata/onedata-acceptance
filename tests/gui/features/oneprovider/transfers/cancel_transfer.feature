@@ -8,7 +8,6 @@ Feature: Cancel transfer test
         importedStorage: true
         lumaFeed: "auto"
         simulatedFilesystemParameters: "0-1:10000000000"
-        skipStorageDetection: true
         storagePathType: "canonical"
     And initial spaces configuration in "onezone" Onezone service:
         space1:

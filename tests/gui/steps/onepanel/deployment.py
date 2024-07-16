@@ -245,17 +245,6 @@ def wt_select_storage_type_in_deployment_step5(selenium, browser_id,
     storage_selector.options[storage_type].click()
 
 
-@wt(parsers.parse('user of {browser_id} checks "Skip storage detection" toggle '
-                  'in storage form in step 5 of deployment process in '
-                  'Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_check_skip_storage_detection_in_deployment_step5(selenium, browser_id,
-                                                        onepanel):
-    (onepanel(selenium[
-                  browser_id]).content.deployment.step5.form
-     .skip_storage_detection.check())
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
                'in (?P<form>POSIX) form in step 5 of '
                'deployment process in Onepanel'))
