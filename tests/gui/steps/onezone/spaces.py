@@ -640,14 +640,15 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
                                                      f'appears west of provider'
                                                      f' "{provider2}"')
 
+
 @wt(parsers.parse('user of {browser_id} writes "{text}" into '
                   'input box in space title sidebar item'))
-def write_into_input_box_in_space_title_sidebar_tile(selenium, browser_id, text, oz_page):
+def write_into_input_box_in_space_title_sidebar_item(selenium, browser_id, text, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].input_rename = text
 
 
 @wt(parsers.parse('user of {browser_id} clicks on save icon in space title sidebar item'))
-def click_save_in_space_title_sidebar_tile(selenium, browser_id, oz_page):
+def click_save_in_space_title_sidebar_item(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].save_icon()
