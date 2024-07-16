@@ -24,7 +24,8 @@ from tests.utils.acceptance_utils import (list_parser, make_arg_list,
 from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.onenv_utils import cmd_exec
-from .multi_dir_steps import create
+from tests.utils.client_utils import create_hardlink, create_symlink
+from tests.oneclient.steps.multi_dir_steps import create
 
 HARDLINKS_DIR = '.hardlinks'
 SYMLINKS_DIR = '.symlinks'
@@ -38,7 +39,7 @@ def create_base(user, files, client_node, users, request, should_fail=False):
 
     for file_name in files:
         # path for original file in hardlink/symlink mode
-        # space_name/(.hardlinks or .symlinks)/(file name hash)
+        # space_name/(.hardlinks or .symlinks)/(random string)
 
         path = client.absolute_path(file_name)
         if mode == 'regular':
@@ -47,24 +48,16 @@ def create_base(user, files, client_node, users, request, should_fail=False):
                 client.create_file(path)
 
         elif mode == 'hardlink':
-            space = file_name.split('/')[0]
-            create(user, f'[{space}/{HARDLINKS_DIR}]', client_node, users, exists_ok=True)
-            file_name_hash = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
-
-            org_file_path = os.path.join(space, HARDLINKS_DIR, file_name_hash)
-            org_file_path = client.absolute_path(org_file_path)
+            org_file_path = get_org_file_path(user, client, client_node, users,
+                                              file_name, HARDLINKS_DIR)
 
             def condition():
                 client.create_file(org_file_path)
                 create_hardlink(client, org_file_path, path)
 
         elif mode == 'symlink':
-            space = file_name.split('/')[0]
-            create(user, f'[{space}/{SYMLINKS_DIR}]', client_node, users, exists_ok=True)
-            file_name_hash = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
-
-            org_file_path = os.path.join(space, SYMLINKS_DIR, file_name_hash)
-            org_file_path = client.absolute_path(org_file_path)
+            org_file_path = get_org_file_path(user, client, client_node, users,
+                                              file_name, SYMLINKS_DIR)
 
             def condition():
                 client.create_file(org_file_path)
@@ -79,19 +72,22 @@ def create_base(user, files, client_node, users, request, should_fail=False):
             print(e)
 
 
+def get_org_file_path(user, client, client_node, users, file_name, dir_name):
+    space = file_name.split('/')[0]
+    create(user, f'[{space}/{dir_name}]', client_node, users,
+           exists_ok=True)
+    file_name_hash = ''.join(
+        random.choice(string.ascii_lowercase + string.digits) for _ in
+        range(16))
+    org_file_path = os.path.join(space, dir_name, file_name_hash)
+    org_file_path = client.absolute_path(org_file_path)
+    return org_file_path
+
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
 def create_reg_file(user, files, client_node, users, request):
     create_base(user, files, client_node, users, request)
-
-
-def create_hardlink(client, file_path, link_path):
-    client.rpyc_connection.modules.os.link(file_path, link_path)
-
-
-def create_symlink(client, file_path, link_path):
-    client.rpyc_connection.modules.os.symlink(file_path, link_path)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to create regular files (?P<files>.*) '

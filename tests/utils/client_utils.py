@@ -307,3 +307,11 @@ def get_client_conf(client_id, client_host_alias, env_desc):
     client_conf = client_host_conf.get('clients').get(client_id)
     client_conf["id"] = client_id
     return client_conf
+
+
+def create_hardlink(client, file_path, link_path):
+    client.rpyc_connection.modules.os.link(file_path, link_path)
+
+
+def create_symlink(client, file_path, link_path):
+    client.rpyc_connection.modules.os.symlink(file_path, link_path)
