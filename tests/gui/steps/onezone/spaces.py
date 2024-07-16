@@ -640,19 +640,14 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
                                                      f'appears west of provider'
                                                      f' "{provider2}"')
 
-@wt(parsers.parse('user of {browser_id} writes "{text}" into "{space_name}" '
-                  'name input box'))
-def write_into_input_box_in_space_menu(selenium, browser_id, text, oz_page):
+@wt(parsers.parse('user of {browser_id} writes "{text}" into '
+                  'input box in space title sidebar item'))
+def write_into_input_box_in_space_title_sidebar_tile(selenium, browser_id, text, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].input_rename = text
 
 
-@wt(parsers.parse('user of {browser_id} clicks on save button in Data menu'))
-def click_save_in_space_menu(selenium, browser_id, oz_page):
+@wt(parsers.parse('user of {browser_id} clicks on save icon in space title sidebar item'))
+def click_save_in_space_title_sidebar_tile(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].save_button()
-
-@wt(parsers.parse('user of {browser_id} does not see "{space_name}" space in Data menu'))
-def assert_old_space_name_not_in_data_menu(selenium, browser_id, oz_page, space_name):
-    driver = selenium[browser_id]
-    assert space_name not in oz_page(driver)['data'].elements_list, f'Space {space_name} found'
+    oz_page(driver)['data'].save_icon()

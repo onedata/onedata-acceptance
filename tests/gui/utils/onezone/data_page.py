@@ -49,8 +49,6 @@ class Space(Element):
                                 text='Configuration')
     menu_button = Button('.collapsible-toolbar-toggle')
 
-
-
     def click_menu(self):
         self.click()
         self.menu_button.click()
@@ -224,11 +222,12 @@ class DataPage(GenericPage):
                                      'li.one-list-item.clickable.resource-item',
                                      cls=Space)
 
+    save_icon = Button('.sidebar-item-title '
+                       '.save-icon')
+    input_rename = Input('.sidebar-item-title '
+                         '.form-control')
+
     input_box = WebItem('.content-info-content-container', cls=InputBox)
-
-    input_rename = Input('.name-editor .form-control')
-
-    save_button = Button('.save-icon')
 
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
