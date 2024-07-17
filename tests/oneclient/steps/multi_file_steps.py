@@ -24,7 +24,6 @@ from tests.utils.acceptance_utils import (list_parser, make_arg_list,
 from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.onenv_utils import cmd_exec
-from tests.utils.client_utils import create_hardlink, create_symlink
 from tests.oneclient.steps.multi_dir_steps import create
 
 HARDLINKS_DIR = '.hardlinks'
@@ -48,20 +47,20 @@ def create_base(user, files, client_node, users, request, should_fail=False):
                 client.create_file(path)
 
         elif mode == 'hardlink':
-            org_file_path = get_org_file_path(user, client, client_node, users,
-                                              file_name, HARDLINKS_DIR)
+            target_file_path = create_target_file(user, client, client_node,
+                                                  users, file_name, HARDLINKS_DIR)
 
             def condition():
-                client.create_file(org_file_path)
-                create_hardlink(client, org_file_path, path)
+                client.create_file(target_file_path)
+                client.create_hardlink(target_file_path, path)
 
         elif mode == 'symlink':
-            org_file_path = get_org_file_path(user, client, client_node, users,
-                                              file_name, SYMLINKS_DIR)
+            target_file_path = create_target_file(user, client, client_node,
+                                                  users, file_name, SYMLINKS_DIR)
 
             def condition():
-                client.create_file(org_file_path)
-                create_symlink(client, org_file_path, path)
+                client.create_file(target_file_path)
+                client.create_symlink(target_file_path, path)
 
         else:
             raise Exception
@@ -72,16 +71,16 @@ def create_base(user, files, client_node, users, request, should_fail=False):
             print(e)
 
 
-def get_org_file_path(user, client, client_node, users, file_name, dir_name):
+def create_target_file(user, client, client_node, users, file_name, dir_name):
     space = file_name.split('/')[0]
     create(user, f'[{space}/{dir_name}]', client_node, users,
            exists_ok=True)
     file_name_hash = ''.join(
         random.choice(string.ascii_lowercase + string.digits) for _ in
         range(16))
-    org_file_path = os.path.join(space, dir_name, file_name_hash)
-    org_file_path = client.absolute_path(org_file_path)
-    return org_file_path
+    target_file_path = os.path.join(space, dir_name, file_name_hash)
+    target_file_path = client.absolute_path(target_file_path)
+    return target_file_path
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
