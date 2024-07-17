@@ -12,7 +12,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
                                                WebItem, WebElement,
-                                               WebElementsSequence, Icon)
+                                               WebElementsSequence, Icon, Input)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -221,6 +221,9 @@ class DataPage(GenericPage):
     elements_list = WebItemsSequence('.sidebar-spaces '
                                      'li.one-list-item.clickable.resource-item',
                                      cls=Space)
+
+    save_icon = Button('.sidebar-item-title .save-icon')
+    input_rename = Input('.sidebar-item-title .form-control')
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 

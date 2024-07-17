@@ -18,7 +18,7 @@ Feature: Basic management of spaces
     And user of space_owner_browser logged as space-owner-user to Onezone service
 
 
-  Scenario Outline: User successfully renames space
+  Scenario Outline: User successfully renames space in space info tile
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
@@ -30,6 +30,15 @@ Feature: Basic management of spaces
       | confirmation_method |
       | enter               |
       | button              |
+
+
+Scenario: User successfully renames space in the sidebar
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks on "Rename" button in space "space1" menu
+    And user of space_owner_browser writes "space2" into input box in space title sidebar item
+    And user of space_owner_browser clicks on save icon in space title sidebar item
+    Then user of space_owner_browser sees that "space2" has appeared on the spaces list in the sidebar
+    And user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
 
 
   Scenario: User successfully cancels rename space
