@@ -222,10 +222,8 @@ class DataPage(GenericPage):
                                      'li.one-list-item.clickable.resource-item',
                                      cls=Space)
 
-    save_icon = Button('.sidebar-item-title '
-                       '.save-icon')
-    input_rename = Input('.sidebar-item-title '
-                         '.form-control')
+    save_icon = Button('.sidebar-item-title .save-icon')
+    input_rename = Input('.sidebar-item-title .form-control')
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
