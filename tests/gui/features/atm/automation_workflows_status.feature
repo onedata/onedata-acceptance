@@ -64,16 +64,16 @@ Feature: Workflow execution statuses tests
     Then user of browser does not see "echo" on workflow executions list
 
 
-  Scenario: User can not remove uploaded "workflow-with-sleep" workflow while it is still running
+  Scenario: User can not remove uploaded "workflow-with-sleep-one-lane.json" workflow while it is still running
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
 
     And user of browser clicks on "Ongoing" tab in automation subpage
-    And user of browser sees "workflow-with-sleep" on workflow executions list
-    And user of browser clicks on "workflow-with-sleep" menu on workflow executions list
+    And user of browser sees "workflow-with-sleep-one-lane.json" on workflow executions list
+    And user of browser clicks on "workflow-with-sleep-one-lane.json" menu on workflow executions list
     Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
 
 
