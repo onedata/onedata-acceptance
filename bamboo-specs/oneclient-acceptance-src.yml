@@ -815,7 +815,7 @@ multiprovider proxy regular file CRUD proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy test_oneclient_src FILE_MODE=hardlink
 
 multiprovider proxy regular file CRUD proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -905,7 +905,7 @@ multiprovider proxy s3 directory CRUD proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_src FILE_MODE=hardlink
 
 multiprovider proxy s3 directory CRUD proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -950,7 +950,7 @@ multiprovider proxy s3 directory stat proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_src FILE_MODE=hardlink
 
 multiprovider proxy s3 directory stat proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -995,7 +995,7 @@ multiprovider proxy s3 regular file CRUD proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 test_oneclient_src FILE_MODE=hardlink
 
 multiprovider proxy s3 regular file CRUD proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -1040,7 +1040,7 @@ multiprovider proxy s3 regular file stat proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 test_oneclient_src FILE_MODE=hardlink
 
 multiprovider proxy s3 regular file stat proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -1085,7 +1085,7 @@ multiprovider regular file CRUD directio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio test_oneclient_src FILE_MODE=hardlink
 
 multiprovider regular file CRUD directio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -1130,7 +1130,7 @@ multiprovider regular file CRUD proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio test_oneclient_src FILE_MODE=hardlink
 
 multiprovider regular file CRUD proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -1175,7 +1175,7 @@ multiprovider regular file stat directio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio test_oneclient_src FILE_MODE=hardlink
 
 multiprovider regular file stat directio symlinks:
   <<: *acceptance-oneclient-tests-job
@@ -1220,7 +1220,7 @@ multiprovider regular file stat proxyio hardlinks:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio KEYWORDS='"not hardlink"' test_oneclient_src FILE_MODE=hardlink
+          - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio test_oneclient_src FILE_MODE=hardlink
 
 multiprovider regular file stat proxyio symlinks:
   <<: *acceptance-oneclient-tests-job
