@@ -9,7 +9,7 @@ Feature: Workflow cancelling and pausing tests
             owner: space-owner-user
             providers:
                 - oneprovider-1:
-                    storage: s3
+                    storage: posix
                     size: 10000000
             storage:
                 defaults:
@@ -215,7 +215,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
     And user of browser clicks on "workflow-with-sleep-one-lane" on workflow executions list
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
-    And user of browser sees that status of task "15s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
     And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Cancelled"
 
@@ -227,13 +227,13 @@ Feature: Workflow cancelling and pausing tests
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active"
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Active"
     And user of browser clicks "Pause" button on "workflow-with-sleep-one-lane" workflow status bar
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
-    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Stopping" or "Paused"
+    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
+    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Stopping" or "Paused"
     And user of browser clicks "Cancel" button on "workflow-with-sleep-one-lane" workflow status bar
 
-    Then user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
+    Then user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
+    And user of browser awaits for status of task "15s sleep" in 2nd parallel box in "Lane1" lane to be "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
     And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Cancelled"

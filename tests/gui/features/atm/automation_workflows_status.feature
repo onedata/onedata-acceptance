@@ -69,7 +69,7 @@ Feature: Workflow execution statuses tests
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep", using file as initial value: "file1" in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
 
     And user of browser clicks on "Ongoing" tab in automation subpage
     And user of browser sees "workflow-with-sleep-one-lane.json" on workflow executions list
