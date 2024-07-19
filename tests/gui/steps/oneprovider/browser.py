@@ -5,6 +5,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -28,15 +31,20 @@ def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
     # working of click_and enter
     browser.click_on_background()
 
-    # checking if file is located in file browser
+    data = browser._data
+    item = None
     start = time.time()
-    while item_name not in browser.data:
-        time.sleep(1)
+    while item is None:
+        for i in data:
+            if item_name in i.text:
+                item = i
+                break
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
 
-    click_and_enter_with_check(driver, op_container, browser, which_browser,
-                               item_name)
+    item.click()
+#    item.wait_for_selected()
+    ActionChains(driver).key_down(Keys.ENTER).perform()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

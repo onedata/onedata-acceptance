@@ -70,3 +70,31 @@ Feature: Basic files tab operations on several files in file browser
     And user of browser chooses Delete option from selection menu on file browser page
     And user of browser clicks on "Yes" button in modal "Delete modal"
     Then user of browser sees that items named ["file1", "file2", "file3"] have disappeared from file browser
+
+
+  Scenario: User copies several files
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+
+    And user of browser selects ["file1", "file2", "file3"] items from file browser with pressed ctrl
+    And user of browser chooses Copy option from selection menu on file browser page
+    And user of browser creates dir "dir1" in current dir
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser clicks "Paste" button from file browser menu bar
+    Then user of browser sees item(s) named ["file1", "file2", "file3"] in file browser
+
+
+Scenario: User cuts several files
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+
+    And user of browser selects ["file1", "file2", "file3"] items from file browser with pressed ctrl
+    And user of browser chooses Cut option from selection menu on file browser page
+    And user of browser creates dir "dir1" in current dir
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser clicks "Paste" button from file browser menu bar
+    Then user of browser sees item(s) named ["file1", "file2", "file3"] in file browser
+    And user of browser changes current working directory to space root using breadcrumbs
+    And user of browser sees that items named ["file1", "file2", "file3"] have disappeared from file browser
