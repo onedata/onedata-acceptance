@@ -197,43 +197,43 @@ Feature: Workflow cancelling and pausing tests
   Scenario: User sees that workflow is cancelled after cancelling workflow that is paused
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep-one-box", using file as initial value: "file1" in "space1" space
 
-    And user of browser clicks "Pause" button on "workflow-with-sleep-one-lane" workflow status bar
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
+    And user of browser clicks "Pause" button on "workflow-with-sleep-one-box" workflow status bar
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Paused"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Paused"
-    And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Paused"
+    And user of browser sees that status of "workflow-with-sleep-one-box" workflow is "Paused"
 
     And user of browser clicks on "Suspended" tab in automation subpage
-    And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
-    And user of browser clicks on "workflow-with-sleep-one-lane" menu on workflow executions list
+    And user of browser sees "workflow-with-sleep-one-box" on workflow executions list
+    And user of browser clicks on "workflow-with-sleep-one-box" menu on workflow executions list
     And user of browser clicks "Cancel" option in data row menu in automation workflows page
 
     Then user of browser clicks on "Ended" tab in automation subpage
-    And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
-    And user of browser clicks on "workflow-with-sleep-one-lane" on workflow executions list
+    And user of browser sees "workflow-with-sleep-one-box" on workflow executions list
+    And user of browser clicks on "workflow-with-sleep-one-box" on workflow executions list
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is "Cancelled"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
-    And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Cancelled"
+    And user of browser sees that status of "workflow-with-sleep-one-box" workflow is "Cancelled"
 
 
   Scenario: User sees that tasks are cancelled after cancelling workflow while task was pausing
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-box.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
+    And user of browser executes 1st revision of "workflow-with-sleep-one-box", using file as initial value: "file1" in "space1" space
 
-    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Active"
-    And user of browser clicks "Pause" button on "workflow-with-sleep-one-lane" workflow status bar
-    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
-    And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Stopping" or "Paused"
-    And user of browser clicks "Cancel" button on "workflow-with-sleep-one-lane" workflow status bar
+    And user of browser awaits for status of task "10s sleep" in 1st parallel box in "Lane1" lane to be "Active"
+    And user of browser clicks "Pause" button on "workflow-with-sleep-one-box" workflow status bar
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Paused" or "Finished"
+    And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Stopping" or "Paused"
+    And user of browser clicks "Cancel" button on "workflow-with-sleep-one-box" workflow status bar
 
-    Then user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
-    And user of browser awaits for status of task "15s sleep" in 2nd parallel box in "Lane1" lane to be "Cancelled"
+    Then user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is one of "Cancelled" or "Finished"
+    And user of browser awaits for status of task "20s sleep" in 1st parallel box in "Lane1" lane to be "Cancelled"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Cancelled"
-    And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Cancelled"
+    And user of browser sees that status of "workflow-with-sleep-one-box" workflow is "Cancelled"
