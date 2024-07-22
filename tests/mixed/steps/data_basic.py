@@ -344,7 +344,7 @@ def see_num_of_items_in_op(client, user, num, space, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) writes "(?P<text>.*)" '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>.*) writes "(?P<text>.*)" '
                r'to file named "(?P<file_name>.*)" in '
                r'"(?P<space>.*)" in (?P<host>.*)'))
 def write_to_file_in_op(client, user, text, file_name, space, host, users,
