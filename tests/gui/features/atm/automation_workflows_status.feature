@@ -72,8 +72,8 @@ Feature: Workflow execution statuses tests
     And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
 
     And user of browser clicks on "Ongoing" tab in automation subpage
-    And user of browser sees "workflow-with-sleep-one-lane.json" on workflow executions list
-    And user of browser clicks on "workflow-with-sleep-one-lane.json" menu on workflow executions list
+    And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
+    And user of browser clicks on "workflow-with-sleep-one-lane" menu on workflow executions list
     Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
 
 
