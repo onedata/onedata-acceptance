@@ -9,7 +9,7 @@ Feature: Workflow cancelling and pausing tests
             owner: space-owner-user
             providers:
                 - oneprovider-1:
-                    storage: posix
+                    storage: s3
                     size: 10000000
             storage:
                 defaults:
