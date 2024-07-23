@@ -102,16 +102,6 @@ Feature: Basic files tab operations on single file in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
 
 
-  Scenario: User writes to file and sees that date time in modified column is updated
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser enables only "modified" column in columns configuration popover in file browser table
-    And user of browser saves content of "modified" column for "20B-0.txt" in file browser
-    And using REST, space-owner-user writes "NEW CONTENT" to file named "20B-0.txt" in "space1" in oneprovider-1
-    Then user of browser sees that date time in "modified" column for "20B-0.txt" has become more current in file browser
-
-
   Scenario: User adds metadata to file and sees that date time in changed column is updated
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar

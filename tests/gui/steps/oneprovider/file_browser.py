@@ -89,7 +89,7 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
     browser = tmp_memory[browser_id]['file_browser']
     date_fmt = '%d %b %Y %H:%M:%S'
     # %b - abbreviated month name
-    item_date = datetime.strptime(browser.data[item_name].modification_date,
+    item_date = datetime.strptime(browser.data[item_name].modified,
                                   date_fmt)
     expected_date = datetime.fromtimestamp(time.time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
