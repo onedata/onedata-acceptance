@@ -80,3 +80,41 @@ Feature: Basic files tab operations on single directory in file browser
     And user of browser refreshes site
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that item named "dir1" is directory in file browser
+
+
+  Scenario: User uploads file into directory and sees that date time in modified column is updated
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser enables only "modified" column in columns configuration popover in file browser table
+    And user of browser saves content of "modified" column for "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser changes current working directory to space1 using breadcrumbs
+    Then user of browser sees that date time in "modified" column for "dir1" has become more current in file browser
+
+
+  Scenario: User removes file in directory and sees that date time in modified column is updated
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser enables only "modified" column in columns configuration popover in file browser table
+    And user of browser saves content of "modified" column for "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Delete" option in data row menu in file browser
+    And user of browser clicks on "Yes" button in modal "Delete modal"
+    And user of browser changes current working directory to space1 using breadcrumbs
+    Then user of browser sees that date time in "modified" column for "dir1" has become more current in file browser
+
+
+  Scenario: User renames file in directory and sees that date time in modified column is updated
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser enables only "modified" column in columns configuration popover in file browser table
+    And user of browser saves content of "modified" column for "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser succeeds to rename "file1" to "file2" in "space1/dir1"
+    And user of browser changes current working directory to space1 using breadcrumbs
+    Then user of browser sees that date time in "modified" column for "dir1" has become more current in file browser

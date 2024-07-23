@@ -12,6 +12,7 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 import time
 import re
+from datetime import datetime
 
 
 @wt(parsers.parse('user of {browser_id} clicks and presses enter on item named'
@@ -339,6 +340,36 @@ def assert_value_in_column_for_item(
     err_msg = (f'displayed {option} {item_elem} for {item_name} does not '
                f'match expected {number}')
     assert number == item_elem, err_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) saves content of "(?P<option>.*)" '
+               'column for "(?P<item_name>.*)" in '
+               '(?P<which_browser>archive file browser|file browser)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_value_in_column_for_item(
+        browser_id, item_name, option, which_browser, selenium,
+        op_container, tmp_memory):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    value = getattr(browser.data[item_name], transform(option))
+    tmp_memory['columns-content'] = {item_name: value}
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees that date time in '
+               '"(?P<option>.*)" column for "(?P<item_name>.*)" has become '
+               'more current in (?P<which_browser>archive file browser|file browser)'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def compare_value_in_column_for_item(
+        browser_id, item_name, option, which_browser, selenium,
+        op_container, tmp_memory):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    new_value = getattr(browser.data[item_name], transform(option))
+    old_value = tmp_memory['columns-content'][item_name]
+    new_value = datetime.strptime(new_value, '%d %b %Y %H:%M:%S')
+    old_value = datetime.strptime(old_value, '%d %b %Y %H:%M:%S')
+    err_msg = f'visible date time: {new_value} is not more current than {old_value}'
+    assert new_value > old_value, err_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) enables only (?P<columns>.*) '

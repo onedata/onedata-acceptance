@@ -61,6 +61,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 
 from . import BROWSER
 
