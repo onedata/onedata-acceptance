@@ -69,7 +69,7 @@ Feature: Basic workflows management
   Scenario: User sees task after adding it to uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow_empty_lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-empty-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
     And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
