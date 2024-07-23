@@ -43,10 +43,8 @@ def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
             raise RuntimeError('waited too long')
 
     item.click()
-    browser.data[item_name].wait_for_selected()
+#    item.wait_for_selected()
     ActionChains(driver).key_down(Keys.ENTER).perform()
-    check_breadcrumbs_after_dir_click(driver, op_container, browser,
-                                      which_browser, item_name)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -55,13 +53,6 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser,
     # this function does not check correctly if parent and children directory
     # have the same name
     browser.data[item_name].click_and_enter()
-    check_breadcrumbs_after_dir_click(driver, op_container, browser,
-                                      which_browser, item_name)
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def check_breadcrumbs_after_dir_click(driver, op_container, browser,
-                                      which_browser, item_name):
     if item_name.startswith('dir'):
         for _ in range(5):
             breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
