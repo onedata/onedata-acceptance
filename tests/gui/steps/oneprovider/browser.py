@@ -5,6 +5,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -395,3 +398,23 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button,
                              f'{which_browser} browser')
     except RuntimeError:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} enters directory'
+                  ' "{directory_name}" in {which_browser}'))
+def enter_directory(selenium, browser_id, directory_name, tmp_memory, op_container,
+                                             which_browser='file browser'):
+
+    which_browser = transform(which_browser)
+    browser = tmp_memory[browser_id][which_browser]
+    driver = selenium[browser_id]
+
+    browser.click_on_background()
+    data = browser._data
+    item = None
+    for i in data:
+        if directory_name in i.text:
+            item = i
+            break
+    item.click()
+    ActionChains(driver).key_down(Keys.ENTER).perform()
