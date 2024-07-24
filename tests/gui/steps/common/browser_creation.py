@@ -48,6 +48,7 @@ def create_instances_of_webdriver(selenium, driver, browser_id_list, tmpdir,
             with redirect_display(display):
                 temp_dir = str(tmpdir)
                 download_dir = os.path.join(temp_dir, browser_id, 'download')
+                os.makedirs(download_dir, exist_ok=True)
 
                 if driver_type.lower() == 'chrome':
                     option_keys = driver_kwargs['desired_capabilities'].keys()
