@@ -418,7 +418,7 @@ def enter_directory_without_scrolling(selenium, browser_id, directory_name,
         if directory_name == file.text.split('\n')[0]:
             item = file
             break
-    if item == None:
+    if item is None:
         raise RuntimeError(f'Directory not found')
     item.click()
     ActionChains(driver).key_down(Keys.ENTER).perform()
