@@ -398,27 +398,3 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button,
                              f'{which_browser} browser')
     except RuntimeError:
         pass
-
-
-#this function does not scroll down aafter click, it can be used when item is
-#not from the end position of the list and using
-#click_and_press_enter_on_item_in_browser does not click the directory
-@wt(parsers.parse('user of {browser_id} enters directory'
-                  ' "{directory_name}" in {which_browser}'))
-def enter_directory_without_scrolling(selenium, browser_id, directory_name,
-                                      tmp_memory, which_browser='file browser'):
-    which_browser = transform(which_browser)
-    browser = tmp_memory[browser_id][which_browser]
-    driver = selenium[browser_id]
-
-    browser.click_on_background()
-    browser_data = browser._data
-    item = None
-    for file in browser_data:
-        if directory_name == file.text.split('\n')[0]:
-            item = file
-            break
-    if item is None:
-        raise RuntimeError(f'Directory not found')
-    item.click()
-    ActionChains(driver).key_down(Keys.ENTER).perform()
