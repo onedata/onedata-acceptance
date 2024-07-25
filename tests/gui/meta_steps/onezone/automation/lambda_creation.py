@@ -273,14 +273,14 @@ def download_and_remove_lambda_dump_from_inventory(
         selenium, browser_id, oz_page, popups, modals, tmp_memory, lamda_name):
     option = 'Download (json)'
     option_unlink = 'Unlink'
-    ordinal = '1st'
+    number = 0
     page_name = 'lambda'
     modal = 'Unlink lambda'
     driver = selenium[browser_id]
     page = oz_page(driver)['automation']
 
     click_option_in_revision_menu_button(
-        selenium, browser_id, oz_page, option, lamda_name, ordinal, popups,
+        selenium, browser_id, oz_page, option, lamda_name, number, popups,
         page_name)
 
     page.lambdas_page.elements_list[lamda_name].lambda_menu.click()

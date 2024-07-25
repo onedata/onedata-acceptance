@@ -257,16 +257,21 @@ def assert_revision_of_object(selenium, browser_id, oz_page,
                'new revision|Duplicate to...|Download \(json\)|Remove)" button '
                'from (?P<ordinal>1st|2nd|3rd|4th) revision of '
                '"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'))
+def click_option_in_revision_menu_button_ordinal(
+        selenium, browser_id, oz_page, option, object_name, ordinal, popups,
+        page):
+    click_option_in_revision_menu_button(
+        selenium, browser_id, oz_page, option, object_name, ordinal[:-2],
+        popups, page)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
-                                         object_name, ordinal, popups,
+                                         object_name, number, popups,
                                          page):
-    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
-                                            page, object_name)
-
-    revision = object.revision_list[ordinal[:-2]]
-    object.revision_list[ordinal[:-2]].menu_button.click()
-
+    item = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                          page, object_name)
+    item.revision_list[number].menu_button.click()
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
