@@ -33,6 +33,12 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
+PART1 = ['bagit-uploader']
+PART2 = [
+    'detect-file-formats', 'detect-file-mime-formats', 'download-files',
+    'calculate-checksum-mounted', 'calculate-checksum-rest', 'demo',
+    'echo', 'initialize-eureka3D-project', 'substitute-placeholders-example']
+
 
 @given(
     parsers.parse(
@@ -82,20 +88,18 @@ def upload_workflow_from_upload_files_rest(
     )
 
 
-@wt(
-    parsers.parse(
-        "using REST, {user} uploads all workflows from "
-        'automation-examples to inventory "{inventory}" in '
-        '"{zone_name}" Onezone service'
-    )
-)
+@wt(parsers.parse('using REST, {user} uploads part{number} of the workflows from '
+                  'automation-examples to inventory "{inventory}" in '
+                  '"{zone_name}" Onezone service'))
 def upload_all_workflows_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
-):
+        hosts, zone_name, users, user, inventory, inventories, workflows,
+        tmp_memory, number):
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
-        workflow_name = f.split(".")[0]
+        workflow_name = f.split('.')[0]
+        if workflow_name not in globals()[f'PART{number}']:
+            continue
         if os.path.isdir(upload_workflow_path(f)):
             tmp_memory["workflows_with_input_files"].append(workflow_name)
             dump_path = f"{upload_workflow_path(workflow_name)}/{workflow_name}.json"
@@ -481,6 +485,15 @@ def wait_for_workflow_executions(
     assert_all_workflow_execution_finished(
         user, users, host, hosts, space, spaces, workflow_executions
     )
+
+
+@wt(parsers.parse('using REST, {user} waits extended time for all workflow executions '
+                  'to finish on space "{space}" in {host}'))
+@repeat_failed(interval=4, timeout=920)
+def wait_for_workflow_executions_extended_time(user, users, host, hosts, space,
+                                               spaces, workflow_executions):
+    assert_all_workflow_execution_finished(user, users, host, hosts, space,
+                                           spaces, workflow_executions)
 
 
 def assert_all_workflow_execution_finished(
