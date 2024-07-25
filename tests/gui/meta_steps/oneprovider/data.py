@@ -190,8 +190,8 @@ def create_dir_in_current_dir(selenium, browser_id, tmp_memory, modals,
     write_name_into_text_field_in_modal(selenium, browser_id, dir_name,
                                         modal_name, modals)
     confirm_create_new_directory(selenium, browser_id, option, modals)
-    # clicking on the background of browser to ensure correct
-    # working of _select_files
+    # clicking on the background of browser in order to deselect
+    # already created directory
     browser = tmp_memory[browser_id]['file_browser']
     browser.click_on_background()
 

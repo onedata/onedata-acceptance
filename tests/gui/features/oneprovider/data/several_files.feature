@@ -72,7 +72,7 @@ Feature: Basic files tab operations on several files in file browser
     Then user of browser sees that items named ["file1", "file2", "file3"] have disappeared from file browser
 
 
-  Scenario: User copies several files to a different location
+  Scenario: User copies and pastes several files into another location
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -85,7 +85,7 @@ Feature: Basic files tab operations on several files in file browser
     Then user of browser sees item(s) named ["file1", "file2", "file3"] in file browser
 
 
-  Scenario: User cuts several files and pastes in a different location
+  Scenario: User cuts and pastes several files into another location
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

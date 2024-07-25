@@ -5,9 +5,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
