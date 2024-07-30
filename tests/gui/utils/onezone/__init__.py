@@ -17,6 +17,7 @@ from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage
 from .groups.groups_page import GroupsPage
+from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .discovery_page import DiscoveryPage
 from .clusters_page import ClustersPage
@@ -55,7 +56,8 @@ class OZLoggedIn(object):
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
         'automation': AutomationPage,
-        'clusters': ClustersPage
+        'clusters': ClustersPage,
+        'shares': SharesPage
     }
 
     def __init__(self, driver):
