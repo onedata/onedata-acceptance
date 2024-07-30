@@ -249,3 +249,18 @@ def append_description(selenium, browser_id, description, op_container):
 def save_description_changes(selenium, browser_id, op_container):
     driver = selenium[browser_id]
     op_container(driver).shares_page.save_description()
+
+
+@wt(parsers.parse('user of {browser_id} sees share "{share_name}" '
+                  'from "{space_name}" space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_space_name_matches_shared_directory_name(selenium, browser_id,
+                                                    oz_page, share_name,
+                                                    space_name):
+    shares_list = oz_page(selenium[browser_id])['shares'].shares_list
+    data = {f.name for f in shares_list}
+    assert share_name in data, (f'Share {share_name} not in '
+                                f'shares sidedbar')
+
+    assert space_name == shares_list[
+        share_name].space_name, f'Space  {space_name} not in shares sidebar'
