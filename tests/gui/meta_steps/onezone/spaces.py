@@ -32,9 +32,11 @@ from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
+def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, spaces,
+                                  popups, clipboard, displays):
     option = 'enter'
     button = 'Create space'
+    button_copy_id = 'Copy ID'
     where = 'Data'
 
     for space_name in parse_seq(space_list):
@@ -43,6 +45,9 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
         type_space_name_on_input_on_create_new_space_page(selenium, user,
                                                           space_name, oz_page)
         confirm_create_new_space(selenium, user, option, oz_page)
+        click_on_option_in_space_menu(selenium, user, space_name,
+                                      button_copy_id, oz_page, popups)
+        spaces[space_name] = clipboard.paste(display=displays[user])
 
 
 @wt(parsers.parse('user of {user} sends support token for "{space_name}" '

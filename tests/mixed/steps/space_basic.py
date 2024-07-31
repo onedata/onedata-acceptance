@@ -15,7 +15,7 @@ from tests.utils.bdd_utils import wt, parsers
                'spaces? (?P<space_list>.+?) in "(?P<host>.+?)" '
                'Onezone service'))
 def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
-                        oz_page, request):
+                        oz_page, request, spaces, popups, clipboard, displays):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -24,7 +24,8 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
     elif client.lower() == 'web gui':
         from tests.gui.meta_steps.onezone.spaces import \
                                                 create_spaces_in_oz_using_gui
-        create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list)
+        create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
+                                      spaces, popups, clipboard, displays)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
