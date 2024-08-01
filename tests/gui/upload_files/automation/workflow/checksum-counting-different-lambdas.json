@@ -57,7 +57,7 @@
                 "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
-                  "oneclientOptions": "-i",
+                  "oneclientOptions": "",
                   "oneclientMountPoint": "/mnt/onedata",
                   "mountOneclient": true
                 }
@@ -154,7 +154,7 @@
                 "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
-                  "oneclientOptions": "-i",
+                  "oneclientOptions": "",
                   "oneclientMountPoint": "/mnt/onedata",
                   "mountOneclient": true
                 }
