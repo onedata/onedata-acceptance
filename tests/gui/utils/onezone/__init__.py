@@ -51,13 +51,13 @@ class OZLoggedIn(object):
 
     panels = {
         'data': DataPage,
+        'shares': SharesPage,
         'providers': ProvidersPage,
         'groups': GroupsPage,
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
         'automation': AutomationPage,
-        'clusters': ClustersPage,
-        'shares': SharesPage
+        'clusters': ClustersPage
     }
 
     def __init__(self, driver):

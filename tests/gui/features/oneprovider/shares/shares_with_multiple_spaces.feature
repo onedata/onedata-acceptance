@@ -1,4 +1,4 @@
-Feature: Share management with multiple spaces in Oneprovider GUI
+Feature: Basic shares operations in Onezone GUI
 
 
   Background:
@@ -33,20 +33,11 @@ Feature: Share management with multiple spaces in Oneprovider GUI
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: Names of spaces in SHARES sidebar in Onepanel are displayed correctly
+  Scenario: User sees shares names and space's names in Shares sidebar for each share respectively
     When user of browser opens file browser for "space1" space
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Share / Publish" option in data row menu in file browser
-    And user of browser sees that "Share / Publish directory" modal has appeared
-    And user of browser writes "share_dir1" into text field in modal "Share / Publish directory"
-    And user of browser clicks on "Create" button in modal "Share / Publish directory"
-
+    And user of browser creates "share_dir1" share of "dir1" directory
     And user of browser opens file browser for "space2" space
-    And user of browser clicks on menu for "dir2" directory in file browser
-    And user of browser clicks "Share / Publish" option in data row menu in file browser
-    And user of browser sees that "Share / Publish directory" modal has appeared
-    And user of browser writes "share_dir2" into text field in modal "Share / Publish directory"
-    And user of browser clicks on "Create" button in modal "Share / Publish directory"
+    And user of browser creates "share_dir2" share of "dir2" directory
 
     And user of browser clicks on Shares in the main menu
     Then user of browser sees share "share_dir1" from "space1" space
