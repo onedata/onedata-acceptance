@@ -166,4 +166,16 @@ def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
         pass
 
 
-
+@wt(parsers.parse('user of {browser_id} checks {toggle_type} write protection '
+                  'on "{name}" in ancestors list in {modal_name} modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_protection_toggle_in_ancestor_list(browser_id, selenium, modals,
+                                             name, modal_name,
+                                             toggle_type):
+    driver = selenium[browser_id]
+    toggle = getattr(modals(driver).datasets.ancestors[name],
+                     f'{toggle_type}_protection_toggle')
+    toggle.check()
+    if toggle.is_unchecked():
+        raise Exception(f'Cannot check {toggle_type} on "{name}" write '
+                        f'protection toggle')
