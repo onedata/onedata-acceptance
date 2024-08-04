@@ -54,7 +54,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
+                "dockerImage": "onedata/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
@@ -151,7 +151,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-mounted:v2",
+                "dockerImage": "donedata/lambda-calculate-checksum-mounted:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
@@ -271,7 +271,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v2",
+                "dockerImage": "onedata/lambda-calculate-checksum-rest:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",
@@ -368,7 +368,7 @@
               "preferredBatchSize": 10,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "docker.onedata.org/lambda-calculate-checksum-rest:v2",
+                "dockerImage": "onedata/lambda-calculate-checksum-rest:v2",
                 "dockerExecutionOptions": {
                   "readonly": false,
                   "oneclientOptions": "",

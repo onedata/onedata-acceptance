@@ -25,7 +25,7 @@ Feature: Basic lambdas management
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
-    And user of browser writes "docker.onedata.org/lambda-echo" into docker image text field
+    And user of browser writes "onedata/lambda-echo" into docker image text field
     And user of browser confirms creating new lambda using "Create" button
     Then user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
 
@@ -35,7 +35,7 @@ Feature: Basic lambdas management
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
-    And user of browser writes "docker.onedata.org/lambda-echo" into docker image text field
+    And user of browser writes "onedata/lambda-echo" into docker image text field
     And user of browser confirms creating new lambda using "Create" button
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
     And user of browser clicks on "Create new revision" in "Lambda1"
@@ -49,7 +49,7 @@ Feature: Basic lambdas management
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
-    And user of browser writes "docker.onedata.org/lambda-echo" into docker image text field
+    And user of browser writes "onedata/lambda-echo" into docker image text field
     And user of browser confirms creating new lambda using "Create" buttonn
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
     And user of browser clicks on "Redesign as new revision" button from 1st revision of "Lambda1" lambda menu
