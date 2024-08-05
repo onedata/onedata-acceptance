@@ -334,8 +334,6 @@ Feature: Basic datasets operations
 
   Scenario: User sees data protection tag in directory dataset modal and data protected status tag in file browser after marking its parent directory dataset data write protection on ancestors list
     When user of browser creates dataset for item "dir2" in "space1"
-    And user of browser clicks on menu for "dir2" directory in file browser
-
     And user of browser goes to "/dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
     And user of browser clicks on menu for "dir3" directory in file browser
