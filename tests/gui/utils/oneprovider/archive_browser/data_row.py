@@ -43,6 +43,7 @@ class DataRow(PageObject, BrowserRow):
     creator = Label('.fb-table-col-creator .file-item-text .file-owner-line')
     menu_button = Button('.file-row-actions-trigger')
     clickable_field = WebElement('.file-name')
+    size_statistics_icon = WebElement('.dir-size-container .one-icon')
 
     def click_and_enter(self):
         time.sleep(0.1)
