@@ -147,7 +147,7 @@ def get_time_for_file_in_op_oneclient(users, user, client_node, time_name,
     return file_time
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def compare_file_time_with_copied_time_in_op_oneclient(
         users, user, client_node, time_name1, file, time2, time_name2,
         comparator):

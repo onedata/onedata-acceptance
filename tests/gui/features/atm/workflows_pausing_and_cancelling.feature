@@ -30,7 +30,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser creates lambda with following configuration:
         name: "echo"
-        docker image: "docker.onedata.org/lambda-echo:v1"
+        docker image: "onedata/lambda-echo:v3"
         mount space: False
         configuration parameters:
           - name: "sleepDurationSec"

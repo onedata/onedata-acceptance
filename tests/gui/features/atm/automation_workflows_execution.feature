@@ -65,7 +65,7 @@ Feature: Workflows execution
     # User manually creates inout lambda
     And user of browser creates lambda with following configuration:
         name: "echo"
-        docker image: "docker.onedata.org/lambda-echo:v1"
+        docker image: "onedata/lambda-echo:v3"
         mount space: False
         configuration parameters:
           - name: "sleepDurationSec"
@@ -125,7 +125,7 @@ Feature: Workflows execution
 
     And user of browser creates lambda with following configuration:
         name: "checksum-counting-oneclient"
-        docker image: "docker.onedata.org/lambda-calculate-checksum-mounted:v2"
+        docker image: "onedata/lambda-calculate-checksum-mounted:v2"
         read-only: False
         configuration parameters:
           - name: "metadataKey"
