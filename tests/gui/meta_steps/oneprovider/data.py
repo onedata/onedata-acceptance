@@ -672,10 +672,3 @@ def delete_first_n_files_with_fixed_step(browser_id, num_files_to_delete: int,
             deleted_files += num_remaining_files_to_delete
     err_msg = f'deleted {deleted_files} files instead of {num_files_to_delete}'
     assert deleted_files == num_files_to_delete, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} opens size statistics per provider view'
-                  ' in directory details'))
-def go_to_size_statistics_per_provider_in_dir_details(selenium, modals,
-                                                      browser_id):
-    expand_size_statistics_for_providers(selenium, browser_id, modals)

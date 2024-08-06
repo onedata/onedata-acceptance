@@ -44,12 +44,11 @@ Feature: Size statistics of directories in archives
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser clicks on size statistics icon for "dir1" directory in archive browser
-    And user of browser opens size statistics per provider view in directory details
+    And user of browser clicks "Show statistics per provider" button on Size stats modal
 
     Then user of browser sees that logical_size for oneprovider-1 is "15 B"
     And user of browser sees that logical_size for oneprovider-2 is "15 B"
     And user of browser sees that physical_size for oneprovider-1 is "0 B"
     And user of browser sees that physical_size for oneprovider-2 is "15 B"
     And user of browser sees that oneprovider-1 content is "1 file, 1 directory"
-    And trace
     And user of browser sees that oneprovider-2 content is "1 file, 1 directory"
