@@ -244,3 +244,58 @@ Feature: Storage management using onepanel
 
     And user of browser_unified clicks and presses enter on item named "20B-1.txt" in file browser
     Then user of browser_unified sees that content of downloaded file "20B-1.txt" is equal to: "11111111111111111111"
+
+
+  Scenario: User sees actual space content after copying it into another location and changing s3 bucket for storage
+    When user of browser_unified creates "space7" space in Onezone
+
+    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "oneprovider-1" in clusters menu
+    And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+
+    And user of browser_unified clicks on Add storage backend button in storages page in Onepanel
+    And user of browser_unified selects s3 from storage selector in storages page in Onepanel
+    And user of browser_unified types "new_storage10" to Storage name field in s3 form in storages page in Onepanel
+    And user of browser_unified types "http://volume-s3.dev-volume-s3-krakow.default:9000" to hostname field in s3 form in storages page in Onepanel
+    And user of browser_unified types "test" to bucket name field in s3 form in storages page in Onepanel
+    And user of browser_unified types "accessKey" to admin access key field in s3 form in storages page in Onepanel
+    And user of browser_unified types "verySecretKey" to admin secret key field in s3 form in storages page in Onepanel
+    And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
+    And user of browser_unified sends support token for "space7" to user of browser_unified
+
+    # support space
+    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "oneprovider-1" in clusters menu
+    And user of browser_unified supports "space7" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage10
+          size: 1
+          unit: GiB
+
+    And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of browser_unified sees that space support record for "space7" has appeared in Spaces page in Onepanel
+
+    And user of browser_unified opens file browser for "space7" space
+    And user of browser_unified sees file browser in files tab in Oneprovider page
+    And user of browser_unified uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
+    And user of browser_unified clicks on "Information" in context menu for "20B-1.txt"
+    And user of browser_unified sees physical location path in file details and copies it into the clipboard
+
+    And using REST, user creates s3 bucket "bucket2"
+    And using REST, user of browser_unified copies item with recently copied path from "test" bucket into "bucket2" bucket
+
+    And user of browser_unified clicks on Clusters in the main menu
+    And user of browser_unified clicks on "oneprovider-1" in clusters menu
+    And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_unified is idle for 2 seconds
+
+    And user of browser_unified clicks on "Modify" button for "new_storage10" storage record in Storages page in Onepanel
+    And user of browser_unified types "bucket2" to bucket name field in s3 edit form for "new_storage10" storage in Onepanel
+    And user of browser_unified types "verySecretKey" to admin secret key field in s3 edit form for "new_storage10" storage in Onepanel
+    And user of browser_unified clicks on Save button in edit form for "new_storage10" storage in Onepanel
+    And user of browser_unified confirms committed changes in modal "Modify Storage"
+
+    And user of browser_unified opens file browser for "space7" space
+    And user of browser_unified sees file browser in files tab in Oneprovider page
+
+    And user of browser_unified clicks and presses enter on item named "20B-1.txt" in file browser
+    Then user of browser_unified sees that content of downloaded file "20B-1.txt" is equal to: "11111111111111111111"
