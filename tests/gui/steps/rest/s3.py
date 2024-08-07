@@ -1,6 +1,11 @@
 """Steps for amazon s3 buckets usage.
 """
 
+__author__ = "Wojciech Szmelich"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
 import requests
 import hashlib
 import hmac
@@ -9,11 +14,6 @@ from datetime import datetime
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-
-__author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
 
 
 HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'

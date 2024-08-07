@@ -261,6 +261,7 @@ Feature: Storage management using onepanel
     And user of browser_unified types "accessKey" to admin access key field in s3 form in storages page in Onepanel
     And user of browser_unified types "verySecretKey" to admin secret key field in s3 form in storages page in Onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
+    And user of browser_unified sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of browser_unified sends support token for "space7" to user of browser_unified
 
     # support space
