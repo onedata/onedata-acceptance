@@ -27,6 +27,8 @@ Feature: Quality of Service tests for 1 provider using multiple browsers in Onep
 
   Scenario: A QoS requirement is met when parameter is added to storage after defining the requirement
     When user of browser_unified creates "type2=posix2" QoS requirement for "file1" in space "space1"
+    And user of browser_unified enables only ["QoS"] column in columns configuration popover in file browser table
+    And user of browser_unified sees "Impossible" status in QoS column for "file1" in file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are impossible
     And user of browser_unified sees that no storage matches condition in QoS panel
@@ -35,6 +37,7 @@ Feature: Quality of Service tests for 1 provider using multiple browsers in Onep
     Then user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified sees that 1 storage matches condition in QoS panel
     And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
+    And user of browser_unified sees "Fulfilled" status in QoS column for "file1" in file browser
 
 
   Scenario: A QoS requirement with "and" operator is met when all joined conditions are met

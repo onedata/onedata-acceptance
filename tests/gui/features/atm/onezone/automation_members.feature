@@ -295,7 +295,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully manages lambda with manage lambda privilege
     # Space-owner-user creates a lambda
-    When user of space_owner_browser creates "Lambda1" lambda from "docker.onedata.org/lambda-echo" docker image in "inventory1" inventory
+    When user of space_owner_browser creates "Lambda1" lambda from "onedata/lambda-echo" docker image in "inventory1" inventory
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to add new revision
