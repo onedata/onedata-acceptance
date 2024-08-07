@@ -10,7 +10,6 @@ Feature: Basic operations on user root directory using REST API, oneclient
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browser with user1 signed in to "onezone" service
     And oneclient mounted using token by user1
 
 
@@ -24,6 +23,11 @@ Feature: Basic operations on user root directory using REST API, oneclient
     | oneclient1 |
 
 
+  Scenario: User fails to remove user root directory using file path
+    When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
+    Then using oneclient1, user1 fails to remove user root directory using file path in oneprovider-1
+
+
   Scenario Outline: User fails to move user root directory
     When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
     Then using <client1>, user1 fails to move user root directory in oneprovider-1
@@ -34,6 +38,11 @@ Feature: Basic operations on user root directory using REST API, oneclient
     | oneclient1 |
 
 
+  Scenario: User fails to move user root directory using file path
+    When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
+    Then using oneclient1, user1 fails to move user root directory using file path in oneprovider-1
+
+
   Scenario Outline: User fails to create file in user root directory
     When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
     Then using <client1>, user1 fails to create file "some_name.txt" in user root directory in oneprovider-1
@@ -42,6 +51,11 @@ Feature: Basic operations on user root directory using REST API, oneclient
     | client1    |
     | REST       |
     | oneclient1 |
+
+
+  Scenario: User fails to create file in user root directory using file path
+    When using REST, user1 gets ID of the user root directory as the parent of the space "space1" in oneprovider-1
+    Then using oneclient1, user1 fails to create file "some_name.txt" in user root directory using file path in oneprovider-1
 
 
   Scenario: User fails to add QoS requirement to user root directory

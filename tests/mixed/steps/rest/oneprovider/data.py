@@ -19,6 +19,7 @@ from cdmi_client.rest import ApiException as CdmiException
 from oneprovider_client import BasicFileOperationsApi
 from oneprovider_client import FilePathResolutionApi
 from oneprovider_client import SpaceApi
+from oneprovider_client import ShareApi
 from oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
 from tests.mixed.utils.data import (check_files_tree, create_content,
@@ -352,6 +353,22 @@ def get_space_details_rest(users, user, hosts, host, space_id):
     space_api = SpaceApi(user_client_op)
     space_details = space_api.get_space(space_id)
     return space_details
+
+
+def get_share_details_rest(users, user, hosts, host, share_id):
+    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
+    share_api = ShareApi(user_client_op)
+    share_details = share_api.get_share(share_id)
+    return share_details
+
+
+def create_share_rest(users, user, hosts, host, file_id,  name):
+    user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
+    share_api = ShareApi(user_client_op)
+    share_id = share_api.create_share(data={
+        "name": name,
+        "rootFileId": file_id})
+    return share_id
 
 
 def remove_file_by_id_rest(users, user, hosts, host, file_id):

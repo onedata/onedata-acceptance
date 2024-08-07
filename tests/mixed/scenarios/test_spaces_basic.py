@@ -39,7 +39,7 @@ from tests.gui.conftest import *
 
 from tests.mixed.steps.space_basic import *
 from tests.mixed.steps.members import *
-from tests.mixed.steps.rest.onezone.user_root_dir import *
+from tests.mixed.steps.rest.onezone.special_dirs import *
 
 from tests.oneclient.steps.auth_steps import *
 
@@ -65,3 +65,6 @@ scenarios('../features/onezone/space/basic_management.feature')
 scenarios('../features/onezone/space/multiuser.feature')
 scenarios('../features/onezone/space/multiuser_with_admin.feature')
 scenarios('../features/onezone/space/user_root_dir.feature')
+scenarios('../features/onezone/space/archives_dir.feature')
+scenarios('../features/onezone/space/trash_dir.feature')
+scenarios('../features/onezone/space/shares_dir.feature')

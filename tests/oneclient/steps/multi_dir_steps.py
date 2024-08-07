@@ -147,6 +147,19 @@ def try_to_move_root_dir(user, client_node, users, dst):
     client.mv(client._mount_path, os.path.join(ONECLIENT_MOUNT_DIR, dst))
 
 
+def move_dir_by_id(user, client_node, users, file_id, dst):
+    user = users[user]
+    client = user.clients[client_node]
+    client.mv(f'{client._mount_path}/.__onedata__file_id__{file_id}',
+              os.path.join(ONECLIENT_MOUNT_DIR, dst))
+
+
+def delete_dir_by_id(user, client_node, users, file_id):
+    user = users[user]
+    client = user.clients[client_node]
+    client.rm(f'{client._mount_path}/.__onedata__file_id__{file_id}', recursive=True)
+
+
 @when(parsers.re('(?P<user>\w+) deletes directory \(rmdir -p\) '
                  '(?P<paths>.*) on (?P<client_node>.*)'))
 def delete_parents(user, paths, client_node, users):

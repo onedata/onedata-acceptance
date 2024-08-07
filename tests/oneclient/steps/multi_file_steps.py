@@ -640,3 +640,9 @@ def try_to_create_file_in_root_dir(user, client_node, users, file_name):
     user = users[user]
     client = user.clients[client_node]
     client.create_file(os.path.join(client._mount_path, file_name))
+
+
+def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
+    user = users[user]
+    client = user.clients[client_node]
+    client.create_file(f'{client._mount_path}/.__onedata__file_id__{file_id}/{file_name}')
