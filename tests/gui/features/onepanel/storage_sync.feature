@@ -5,9 +5,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1
     And there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          storage type: POSIX
-          mount point: /volumes/posix
-          imported storage: true
+          type: posix
+          mountPoint: /volumes/posix
+          importedStorage: true
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page

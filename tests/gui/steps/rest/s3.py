@@ -11,15 +11,39 @@ import hashlib
 import hmac
 from datetime import datetime
 
+from requests.exceptions import HTTPError
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
+# HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
+HOST_URL = 'dev-volume-s3-krakow.default:9000'
 
 ACCESS_KEY = 'accessKey'
 SECRET_KEY = 'verySecretKey'
+
+
+@wt(parsers.parse('using REST, user creates s3 bucket "{bucket_name}"'))
+def create_s3_bucket_rest(bucket_name):
+    try:
+        create_bucket(bucket_name)
+    except HTTPError as e:
+        # if bucket already exists do not throw exception
+        if e.response.status_code == 409:
+            pass
+        else:
+            raise e
+
+
+@wt(parsers.parse('using REST, user of {browser_id} copies item with '
+                  'recently copied path from "{src_bucket}" bucket into '
+                  '"{dst_bucket}" bucket'))
+def copy_item_s3_bucket(browser_id, dst_bucket, src_bucket, clipboard, displays):
+    path = clipboard.paste(display=displays[browser_id])
+    copy_item_between_buckets(dst_bucket, f'{src_bucket}{path}/999999',
+                              f'{path[1::]}/999999')
 
 
 def sign(key, msg):
@@ -126,17 +150,3 @@ def copy_item_between_buckets(dst_bucket, src, dst):
     response = requests.put(url, headers=headers)
 
     response.raise_for_status()
-
-
-@wt(parsers.parse('using REST, user creates s3 bucket "{bucket_name}"'))
-def create_s3_bucket_rest(bucket_name):
-    create_bucket(bucket_name)
-
-
-@wt(parsers.parse('using REST, user of {browser_id} copies item with '
-                  'recently copied path from "{src_bucket}" bucket into '
-                  '"{dst_bucket}" bucket'))
-def copy_item_s3_bucket(browser_id, dst_bucket, src_bucket, clipboard, displays):
-    path = clipboard.paste(display=displays[browser_id])
-    copy_item_between_buckets(dst_bucket, f'{src_bucket}{path}/999999',
-                              f'{path[1::]}/999999')

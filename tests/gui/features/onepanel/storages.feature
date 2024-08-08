@@ -204,24 +204,20 @@ Feature: Storage management using onepanel
     Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list
 
 
-  Scenario: User sees actual space content after copying it into another location and changing mount point for storage
-    When user of browser_unified creates "space6" space in Onezone
-    And using docker, browser_unified creates directory (mkdir) /volumes/dir3
-    And user of browser_unified adds "new_storage9" storage in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage type: POSIX
-          mount point: /volumes/posix
-    And user of browser_unified sends support token for "space6" to user of browser_unified
+  Scenario: User sees file's content after modifying storage backend to copied mountpoint
+    Given there is "test_storage1" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          type: posix
+          mountPoint: /volumes/posix
 
-    # support space
-    And user of browser_unified clicks on Clusters in the main menu
-    And user of browser_unified clicks on "oneprovider-1" in clusters menu
-    And user of browser_unified supports "space6" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: new_storage9
-          size: 1
-          unit: GiB
+    And initial spaces configuration in "onezone" Onezone service:
+          space6:
+              owner: admin
+              providers:
+                  - oneprovider-1:
+                      storage: test_storage1
+                      size: 1000000
 
-    And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser_unified sees that space support record for "space6" has appeared in Spaces page in Onepanel
+    When using docker, user creates directory (mkdir) /volumes/dir3 on oneprovider-1
 
     And user of browser_unified opens file browser for "space6" space
     And user of browser_unified sees file browser in files tab in Oneprovider page
@@ -234,9 +230,9 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_unified is idle for 2 seconds
 
-    And user of browser_unified clicks on "Modify" button for "new_storage9" storage record in Storages page in Onepanel
-    And user of browser_unified types "/volumes/dir3" to Mount point field in POSIX edit form for "new_storage9" storage in Onepanel
-    And user of browser_unified clicks on Save button in edit form for "new_storage9" storage in Onepanel
+    And user of browser_unified clicks on "Modify" button for "test_storage1" storage record in Storages page in Onepanel
+    And user of browser_unified types "/volumes/dir3" to Mount point field in POSIX edit form for "test_storage1" storage in Onepanel
+    And user of browser_unified clicks on Save button in edit form for "test_storage1" storage in Onepanel
     And user of browser_unified confirms committed changes in modal "Modify Storage"
 
     And user of browser_unified opens file browser for "space6" space

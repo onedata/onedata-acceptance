@@ -218,16 +218,8 @@ def get_first_storage_id_by_name(storage_name, provider, hosts,
 @repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
                                         onepanel_credentials):
-    storage_config = {}
     options = yaml.load(config)
-
-    storage_config['type'] = options['storage type'].lower()
-    if options.get('imported storage', False):
-        storage_config['importedStorage'] = True
-    storage_config['mountPoint'] = options['mount point']
-    luma_feed = options.get('LUMA feed')
-    if luma_feed:
-        storage_config['lumaFeed'] = luma_feed
+    storage_config = options
 
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username

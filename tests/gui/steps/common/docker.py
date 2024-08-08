@@ -204,7 +204,8 @@ def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
 
 
-@wt(parsers.parse('using docker, {user} creates directory (mkdir) {path}'))
+@wt(parsers.parse('using docker, user creates directory (mkdir) {path} on '
+                  'oneprovider-1'))
 def wt_mkdir(path, hosts):
     _docker_mkdir(path, hosts)
 
