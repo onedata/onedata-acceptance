@@ -32,7 +32,6 @@ Feature: Size statistics of directories in archives
     And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
 
-    # create archive with description
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 0 archives
@@ -44,11 +43,15 @@ Feature: Size statistics of directories in archives
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser clicks on size statistics icon for "dir1" directory in archive browser
-    And user of browser clicks "Show statistics per provider" button on Size stats modal
 
-    Then user of browser sees that logical_size for oneprovider-1 is "15 B"
-    And user of browser sees that logical_size for oneprovider-2 is "15 B"
-    And user of browser sees that physical_size for oneprovider-1 is "0 B"
-    And user of browser sees that physical_size for oneprovider-2 is "15 B"
+    Then user of browser sees that current logical size is "15 B"
+    And user of browser sees that current total physical size is "15 B"
+    And user of browser sees that current contain counter is "1 file, 1 directory (2 elements in total)"
+
+    And user of browser clicks "Show statistics per provider" button on Size stats modal
+    And user of browser sees that logical size for oneprovider-1 is "15 B"
+    And user of browser sees that logical size for oneprovider-2 is "15 B"
+    And user of browser sees that physical size for oneprovider-1 is "0 B"
+    And user of browser sees that physical size for oneprovider-2 is "15 B"
     And user of browser sees that oneprovider-1 content is "1 file, 1 directory"
     And user of browser sees that oneprovider-2 content is "1 file, 1 directory"

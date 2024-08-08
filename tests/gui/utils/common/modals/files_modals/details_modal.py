@@ -57,6 +57,9 @@ class SizeStatistics(PageObject):
     dir_stats_row_per_provider = WebItemsSequence('.size-stats-per-provider-row',
                                  cls=DirStatsRowPerProvider)
     expand_stats_button = Button('.toggle-expand')
+    logical_size = Label('.property-logical-size .property-value')
+    total_physical_size = Label('.property-physical-size .property-value')
+    contain_counter = Label('.property-contains .property-value')
 
     def click_on_chart(self):
         ActionChains(self.driver).move_to_element_with_offset(
