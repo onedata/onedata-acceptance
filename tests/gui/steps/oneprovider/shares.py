@@ -272,7 +272,8 @@ def assert_space_name_for_share_matches_expected(selenium, browser_id, oz_page,
 @wt(parsers.parse('user of {browser_id} sees share name "{share_name}" in the '
                   'shares list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_share_name_in_shares_sidebar(selenium, browser_id, oz_page, share_name):
+def assert_share_name_in_shares_sidebar(selenium, browser_id, oz_page,
+                                        share_name):
     shares_list = oz_page(selenium[browser_id])['shares'].shares_list
     share_names_list = {share.name for share in shares_list}
 
