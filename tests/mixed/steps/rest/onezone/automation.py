@@ -35,9 +35,10 @@ from tests.utils.utils import repeat_failed
 
 PART1 = ['bagit-uploader']
 PART2 = [
-    'detect-file-formats', 'detect-file-mime-formats', 'download-files',
-    'calculate-checksum-mounted', 'calculate-checksum-rest', 'demo',
-    'echo', 'initialize-eureka3D-project', 'substitute-placeholders-example']
+    'bagit-uploader', 'detect-file-formats', 'detect-file-mime-formats',
+    'download-files', 'calculate-checksum-mounted', 'calculate-checksum-rest',
+    'demo', 'echo', 'initialize-eureka3D-project',
+    'substitute-placeholders-example']
 
 
 @given(
@@ -381,7 +382,7 @@ def retry_workflow_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} executes all workflows with example "
+        "using REST, {user} executes part{number} of the workflows with example "
         'input files on space "{space}" in {host}'
     )
 )
@@ -396,6 +397,7 @@ def execute_all_workflows(
     groups,
     workflow_executions,
     tmp_memory,
+    number: int,
 ):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
@@ -414,6 +416,12 @@ def execute_all_workflows(
                 example_execution, workflow.replace("-", "_")
             )()
             for file, content in zip(input_files, example_initial_store_content):
+                if number == 1:
+                    if file != 'bagit_archive_5GBfile.zip':
+                        continue
+                if number == 2:
+                    if file == 'bagit_archive_5GBfile.zip':
+                        continue
                 # map store name into store_id
                 content = {
                     get_store_schema_id_of_workflow(key, path): content[key]
