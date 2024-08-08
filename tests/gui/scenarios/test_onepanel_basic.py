@@ -58,8 +58,6 @@ from tests.gui.steps.modals.modal import *
 from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 
-from tests.gui.steps.rest.s3 import *
-
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.onepanel.spaces import *
