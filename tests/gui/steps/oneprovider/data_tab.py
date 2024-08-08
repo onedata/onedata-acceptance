@@ -716,3 +716,16 @@ def check_content_for_provider(selenium, hosts, modals, browser_id,
     assert provider_content == content, (
         f"Provider {provider} content is {provider_content} instead "
         f"of {content}!")
+
+
+@wt(parsers.parse('user of {browser_id} sees that {size_type} is '
+                  '"{expected_size}"'))
+@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
+def check_size(selenium, hosts, modals, browser_id, size_type, expected_size):
+    driver = selenium[browser_id]
+    size = getattr(modals(driver).details_modal.size_statistics
+                   .dir_stats_row_per_provider[provider_name],
+                   transform(size_type))
+
+    assert size == expected_size, (
+        f"{size_type} is {size} instead of {expected_size}!")
