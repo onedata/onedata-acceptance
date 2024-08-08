@@ -1,4 +1,4 @@
-"""Utils and to facilitate operations on shares sidebar"""
+"""Utils to facilitate operations on shares page in Onezone gui"""
 
 __author__ = "Jakub Pilch"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
