@@ -1,4 +1,4 @@
-Feature: Basic shares operations in Onezone GUI
+Feature: Basic shares operations in Onezone GUI featuring shares sidebar
 
 
   Background:

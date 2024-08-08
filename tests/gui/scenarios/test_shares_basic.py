@@ -37,6 +37,7 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.overview import *
+from tests.gui.steps.onezone.shares_sidebar import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -66,4 +67,4 @@ def screens():
 scenarios('../features/oneprovider/shares/basic_management.feature')
 scenarios('../features/oneprovider/shares/shares_with_symlink.feature')
 scenarios('../features/oneprovider/shares/shares_basic.feature')
-scenarios('../features/onezone/shares.feature')
+scenarios('../features/onezone/shares_sidebar.feature')
