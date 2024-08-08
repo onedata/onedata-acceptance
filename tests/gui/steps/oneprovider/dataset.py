@@ -173,7 +173,8 @@ def click_protection_toggle_in_ancestor_list(browser_id, selenium, modals,
                                              name, modal_name,
                                              toggle_type):
     driver = selenium[browser_id]
-    toggle = getattr(modals(driver).datasets.ancestors[name],
+    toggle = getattr(getattr(modals(driver),
+                     transform(modal_name)).ancestors[name],
                      f'{toggle_type}_protection_toggle')
     toggle.check()
     if toggle.is_unchecked():
