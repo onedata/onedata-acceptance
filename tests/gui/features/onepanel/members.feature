@@ -45,12 +45,11 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks "user1" user in "oneprovider-1" cluster members users list
-    And user of browser_standard tries to set following privileges for "user1" user in cluster members subpage:
+    Then user of browser_standard tries to set following privileges for "user1" user in cluster members subpage:
           Cluster management:
             granted: Partially
             privilege subtypes:
               View privileges: False
-    Then user of browser_standard sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to remove cluster without remove cluster privileges

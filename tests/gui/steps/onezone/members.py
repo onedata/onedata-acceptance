@@ -521,13 +521,12 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
         privileges = yaml.load(config)
         tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                                   member_type_new, member_name)
-        tree.set_privileges(selenium, browser_id, privileges, True)
+        result = tree.set_privileges(selenium, browser_id, privileges, True)
         if option == 'sets':
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, oz_page, where, onepanel, tree)
         else:
-            click_button_on_element_header_in_members(
-                selenium, browser_id, button, oz_page, where, onepanel)
+            assert not result, 'Modify privilege should not be possible'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets all privileges true for '
