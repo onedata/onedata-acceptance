@@ -819,8 +819,8 @@ def click_on_bulk_edit(browser_id, selenium, oz_page):
     oz_page(driver)['groups'].members_page.bulk_edit_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>This user is a '
-               'space owner and is authorized to perform all operations, '
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>As a '
+               'space owner, you are authorized to perform all operations, '
                'regardless of the assigned privileges.)" warning '
                'for "(?P<username>.*)" user in space members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
