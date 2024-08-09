@@ -27,7 +27,7 @@ Feature: Workflows execution tests
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario: User sees successful execution of all workflows from automation-examples with their example input files
+  Scenario: User sees successful execution of part 2 of the workflows from automation-examples with their example input files
     When using REST, user1 uploads part2 of the workflows from automation-examples to inventory "inventory1" in "onezone" Onezone service
     And using REST, user1 executes part2 of the workflows with example input files on space "space1" in oneprovider-1
     And using REST, user1 waits for all workflow executions to finish on space "space1" in oneprovider-1
