@@ -330,3 +330,17 @@ Feature: Basic datasets operations
     |columns_list|
     |["Archives"]|
     |[]          |
+
+
+  Scenario: User sees data protection tag in directory dataset modal and data protected status tag in file browser after marking its parent directory dataset data write protection on ancestors list
+    When user of browser creates dataset for item "dir2" in "space1"
+    And user of browser goes to "/dir2" in file browser
+    And user of browser creates dataset for item "dir3" in "space1"
+    And user of browser clicks on menu for "dir3" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser expands Ancestor datasets row in Datasets modal
+    And user of browser checks data write protection on "/space1/dir2" in ancestors list in Datasets modal
+
+    Then user of browser sees "Directory's data is write protected" label in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
+    And user of browser sees data protected status tag for "dir3" in file browser
