@@ -25,8 +25,8 @@ from tests.oneclient.steps.multi_file_steps import (
     try_to_create_file_in_root_dir, create_file_in_dir_by_id)
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the user root directory as '
-                  'the parent of the space "{space_name}" in {host}'))
+@wt(parsers.parse('using REST, {user} gets ID of the user root directory from '
+                  'the space "{space_name}" details in {host}'))
 def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts,
                                            host, spaces[space_name])
@@ -36,8 +36,8 @@ def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memor
         tmp_memory['user_root_dir'] = {user: space_details.dir_id}
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the archives directory as '
-                  'the parent of the space "{space_name}" in {host}'))
+@wt(parsers.parse('using REST, {user} gets ID of the archives directory from '
+                  'the space "{space_name}" details in {host}'))
 def get_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts,
                                            host, spaces[space_name])
@@ -47,8 +47,8 @@ def get_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory
         tmp_memory['archives_dir'] = {user: space_details.archives_dir_id}
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the trash directory as '
-                  'the parent of the space "{space_name}" in {host}'))
+@wt(parsers.parse('using REST, {user} gets ID of the trash directory from '
+                  'the space "{space_name}" details in {host}'))
 def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts,
                                            host, spaces[space_name])
@@ -58,8 +58,8 @@ def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
         tmp_memory['trash_dir'] = {user: space_details.trash_dir_id}
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the shares directory as '
-                  'the parent of the space "{space_name}" in {host}'))
+@wt(parsers.parse('using REST, {user} gets ID of the shares directory from '
+                  'the share details in the space "{space_name}" in {host}'))
 def get_shares_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     get_user_root_dir_id(users, user, hosts, host, space_name, spaces,
                          tmp_memory)
@@ -73,7 +73,7 @@ def get_shares_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
         tmp_memory['shares_dir'] = {user: share_details.root_file_id}
 
 
-@wt(parsers.parse('using {client}, {user} fails to remove {name} '
+@wt(parsers.parse('using {client}, {user} fails to remove the {name} '
                   'directory in {host}'))
 def try_to_remove_special_dir(client, users, user, hosts, host, tmp_memory, name):
     try_to_remove_special_dir_by_id(
@@ -101,7 +101,7 @@ def try_to_remove_special_dir_by_id(client, users, user, hosts, host, dir_id,
         raise Exception(f'unknown client {client}')
 
 
-@wt(parsers.parse('using {client}, {user} fails to remove user root '
+@wt(parsers.parse('using {client}, {user} fails to remove the user root '
                   'directory using file path in {host}'))
 def try_to_remove_user_root_dir_by_path(client, users, user):
     if 'oneclient' in client.lower():
@@ -115,7 +115,7 @@ def try_to_remove_user_root_dir_by_path(client, users, user):
         raise Exception(f'unknown client {client}')
 
 
-@wt(parsers.parse('using {client}, {user} fails to move '
+@wt(parsers.parse('using {client}, {user} fails to move the '
                   '{name} directory in {host}'))
 def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory,
                             cdmi, name):
@@ -145,7 +145,7 @@ def try_to_move_special_dir_by_id(client, user, users, hosts, host, dir_id,
         raise Exception(f'unknown client {client}')
 
 
-@wt(parsers.parse('using {client}, {user} fails to move '
+@wt(parsers.parse('using {client}, {user} fails to move the '
                   'user root directory using file path in {host}'))
 def try_to_move_user_root_dir_by_path(client, user, users):
     if 'oneclient' in client.lower():
@@ -161,7 +161,7 @@ def try_to_move_user_root_dir_by_path(client, user, users):
 
 
 @wt(parsers.parse('using {client}, {user} fails to create file "{file_name}" '
-                  'in {name} directory in {host}'))
+                  'in the {name} directory in {host}'))
 def try_to_create_file_in_special_dir(client, users, user, hosts, host,
                                       tmp_memory, file_name, name):
     try_to_create_file_in_special_dir_by_id(
@@ -191,7 +191,7 @@ def try_to_create_file_in_special_dir_by_id(client, users, user, hosts, host,
 
 
 @wt(parsers.parse('using {client}, {user} fails to create file "{file_name}" '
-                  'in user root directory using file path in {host}'))
+                  'in the user root directory using file path in {host}'))
 def try_to_create_file_in_user_root_dir_by_path(client, users, user, file_name):
     if 'oneclient' in client.lower():
         try:
@@ -203,8 +203,8 @@ def try_to_create_file_in_user_root_dir_by_path(client, users, user, file_name):
             assert 'Operation not permitted' in str(e)
 
 
-@wt(parsers.parse('using REST, {user} fails to add qos requirement '
-                  '"{expression}" to {name} directory in {host}'))
+@wt(parsers.parse('using REST, {user} fails to add QoS requirement '
+                  '"{expression}" to the {name} directory in {host}'))
 def try_to_add_qos_to_special_dir(user, users, hosts, host, tmp_memory,
                                   expression, name):
     try_to_add_qos_to_special_dir_by_id(
@@ -226,7 +226,7 @@ def try_to_add_qos_to_special_dir_by_id(user, users, hosts, host, dir_id,
 
 
 @wt(parsers.parse('using REST, {user} fails to add json metadata '
-                  '\'{expression}\' to {name} directory in {host}'))
+                  '\'{expression}\' to the {name} directory in {host}'))
 def try_to_add_json_metadata_to_special_dir(user, users, hosts, host,
                                             tmp_memory, expression, name):
     try_to_add_json_metadata_to_special_dir_by_id(
@@ -246,7 +246,7 @@ def try_to_add_json_metadata_to_special_dir_by_id(
         assert ex_err_msg in str(e)
 
 
-@wt(parsers.parse('using REST, {user} fails to establish dataset on '
+@wt(parsers.parse('using REST, {user} fails to establish dataset on the '
                   '{name} directory in {host}'))
 def try_to_establish_dataset_on_special_dir(user, users, hosts, host,
                                             tmp_memory, name):
