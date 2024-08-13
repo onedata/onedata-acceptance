@@ -7,6 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
@@ -57,11 +59,11 @@ class FunctionPodsActivity(Modal):
         selector =  f'{self.get_css_selector()} [data-row-id="{number}"]'
         elem_sel = f'.event-{option}'
         scroll_to_css_selector(driver, selector)
-        row = driver.find_elements_by_css_selector(selector)[0]
-        elem_in_row =  row.find_elements_by_css_selector(elem_sel)[0].text
+        row = driver.find_elements(By.CSS_SELECTOR, selector)[0]
+        elem_in_row = row.find_elements(By.CSS_SELECTOR, elem_sel)[0].text
         return elem_in_row
 
     def get_number_of_data_rows(self, driver):
-        element = driver.find_elements_by_css_selector(
+        element = driver.find_elements(By.CSS_SELECTOR,
             f'.audit-log-table-entry')[0]
         return element.get_attribute('data-row-id')

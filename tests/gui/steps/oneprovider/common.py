@@ -88,7 +88,7 @@ def load_exceptions_for_input_files(tmp_memory, config):
 
 
 def _load_exceptions_for_input_files(tmp_memory, config):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     for el in data:
         file = list(el.keys())[0]
         exceptions = list(el.values())[0]

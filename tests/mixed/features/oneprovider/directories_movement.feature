@@ -1,12 +1,5 @@
 Feature: Directories movement tests
 
-  Examples:
-  | client1    | client2    |
-  | web GUI    | oneclient1 |
-  | REST       | oneclient1 |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -36,6 +29,13 @@ Feature: Directories movement tests
             - dir4:
                 - dir3
 
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
+
 
   Scenario Outline: User moves non-empty directory using <client2> and using <client1> sees that its content has not changed
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
@@ -54,6 +54,13 @@ Feature: Directories movement tests
                         - dir4:
                             - dir5
 
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
+
 
   Scenario Outline: User fails to move directory to its subtree using <client2> and using <client1> sees that it has not been moved
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
@@ -66,6 +73,13 @@ Feature: Directories movement tests
         - dir1:
             - dir2:
                 - dir3
+
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
 
 
  Scenario Outline: User copies directory using <client2> and using <client1> sees that it has been copied
@@ -82,6 +96,13 @@ Feature: Directories movement tests
                     - dir3:
                         - dir4
             - dir4
+
+   Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
 
 
   Scenario Outline: User copies non-empty directory using <client2> and using <client1> sees that it has not changed
@@ -101,3 +122,10 @@ Feature: Directories movement tests
                         - dir5
         - dir4:
             - dir5
+
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |

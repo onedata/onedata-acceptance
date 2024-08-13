@@ -47,9 +47,9 @@ Feature: LUMA local feed acceptance tests with imported storage
   Scenario: LUMA local feed Onedata user mappings on POSIX imported storage are respected in web interface and in oneclient
     When LUMA local feed mappings for imported storage "luma_storage" at "oneprovider-1" are created between [7001, 7002] and [user1, user2]
 
-    And user user1 copies file_user1.txt to provider's storage mount point
-    And user user1 copies file_user2.txt to provider's storage mount point
-    And user user1 copies file_another_user.txt to provider's storage mount point
+    And using docker, user1 copies file_user1.txt to provider's storage mount point
+    And using docker, user1 copies file_user2.txt to provider's storage mount point
+    And using docker, user1 copies file_another_user.txt to provider's storage mount point
 
     # change file owners on storage
     And user user1 sets s_user1:luma_group as file_user1.txt owner on provider's storage mount point

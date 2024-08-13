@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
@@ -26,7 +27,7 @@ def _click_on_tab_in_main_menu_sidebar(driver, tab):
             return tab in driver.current_url
 
         current_url = driver.current_url
-        driver.find_element_by_css_selector(css_path).click()
+        driver.find_elements(By.CSS_SELECTOR, css_path).click()
 
         return Wait(driver, WAIT_FRONTEND).until(
             lambda _: _check_url(current_url),
@@ -65,10 +66,8 @@ def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list,
 
 def _has_dir_content_been_loaded(driver):
     # find_element_* throws exception if nothing found
-    loader = driver.find_elements_by_css_selector('#main-content '
-                                                  '.loader-area-'
-                                                  'content-with-'
-                                                  'secondary-top')
+    loader = driver.find_elements(
+        By.CSS_SELECTOR, '#main-content .loader-area-content-with-secondary-top')
     if loader:
         loader = loader[0]
         Wait(driver, WAIT_BACKEND).until_not(

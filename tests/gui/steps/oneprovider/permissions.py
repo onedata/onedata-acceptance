@@ -11,7 +11,8 @@ import random
 import string
 
 import pytest
-from selenium.common.exceptions import InvalidElementStateException
+from selenium.common.exceptions import (InvalidElementStateException,
+                                        JavascriptException)
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
@@ -63,15 +64,16 @@ def fail_to_set_posix_permission(selenium, browser_id, perm, modals):
                ).details_modal.edit_permissions.posix.value = perm
         raise Exception(f'Fail in setting permission code was expected, but it '
                         f'succeeded')
-    except InvalidElementStateException:
+    except (InvalidElementStateException, JavascriptException):
         pass
 
 
-def _change_acl_options(option_list, subject, change):
+def _change_acl_options(option_list, subject, change, driver):
     for option in parse_seq(option_list):
         if option in ['allow', 'deny']:
             button_name = f'{option}_option'
-            getattr(subject, button_name).click()
+            driver.execute_script("arguments[0].click();",
+                                  getattr(subject, button_name))
         else:
             permissions = option.split(':')
             parent_permission_name = (permissions[0].capitalize()
@@ -114,7 +116,7 @@ def select_acl_options(selenium, browser_id, option_list, modals, subject):
 
         change = f'un{change}'
 
-    _change_acl_options(option_list, subject, change)
+    _change_acl_options(option_list, subject, change, driver)
 
 
 def assert_fail_to_select_acl_option(selenium, browser_id, option_list,

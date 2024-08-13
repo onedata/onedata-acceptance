@@ -65,7 +65,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
 
             if patch_path:
                 with open(patch_path, 'r') as patch_file:
-                    patch_cfg = yaml.load(patch_file)
+                    patch_cfg = yaml.load(patch_file, yaml.Loader)
                 setup_users(patch_cfg, users, zone_hostname)
                 add_luma_mappings(patch_cfg, users, hosts)
 
@@ -136,7 +136,7 @@ def configure_os(scenario_path: str, dep_status) -> None:
     pods_cfg = dep_status.get('pods')
 
     with open(scenario_path, 'r') as env_file:
-        env_cfg = yaml.load(env_file)
+        env_cfg = yaml.load(env_file, yaml.Loader)
     os_configs = env_cfg.get('os-config')
     if not os_configs:
         return
@@ -203,7 +203,7 @@ def add_luma_mappings(patch_cfg, users, hosts):
 
 
 def get_deployment_status():
-    return yaml.load(run_onenv_command('status'))
+    return yaml.load(run_onenv_command('status'), yaml.Loader)
 
 
 def check_deployment(deployment_status):

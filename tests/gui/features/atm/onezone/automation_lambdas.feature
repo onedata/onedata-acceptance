@@ -50,7 +50,7 @@ Feature: Basic lambdas management
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "onedata/lambda-echo" into docker image text field
-    And user of browser confirms creating new lambda using "Create" buttonn
+    And user of browser confirms creating new lambda using "Create" button
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
     And user of browser clicks on "Redesign as new revision" button from 1st revision of "Lambda1" lambda menu
     And user of browser writes "Lambda2" into lambda name text field

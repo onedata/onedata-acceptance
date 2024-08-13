@@ -17,6 +17,7 @@ from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe, click_option_in_popup_labeled_menu)
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
 
 # this step is created to avoid using repeat_failed in metasteps
@@ -84,14 +85,14 @@ def search_for_lane_status(driver, page, lane_name, box_number=None):
         lane_id = workflow_visualiser.workflow_lanes[
             i].lane_web_elem.get_attribute('id')
         scroll_to_css_selector(driver, f'#{lane_id}')
-        found_lane = driver.find_element_by_css_selector(
-            f'#{lane_id} .lane-name').text
+        found_lane = driver.find_element(
+            By.CSS_SELECTOR, f'#{lane_id} .lane-name').text
         if found_lane == lane_name:
             if box_number is not None:
                 return workflow_visualiser.workflow_lanes[i].parallel_boxes[
                     box_number]
-            status = driver.find_element_by_css_selector(
-                f'#{lane_id} .visible-run-status-label').text
+            status = driver.find_element(
+                By.CSS_SELECTOR, f'#{lane_id} .visible-run-status-label').text
             return status
         else:
             try:
@@ -105,7 +106,7 @@ def search_for_task_in_parallel_box(driver, parallel_box, task_name):
     for j in range(number_of_tasks):
         task_id = parallel_box.task_list[j].name_web_elem.get_attribute('id')
         scroll_to_css_selector(driver, f'#{task_id}')
-        found_task = driver.find_element_by_css_selector(f'#{task_id}').text
+        found_task = driver.find_element(By.CSS_SELECTOR, f'#{task_id}').text
 
         if found_task == task_name:
             return parallel_box.task_list[j], task_id

@@ -159,7 +159,7 @@ def assert_space_in_overview_with_config(browser_id, selenium, oz_page, config):
 
 def _assert_space_in_overview_with_config(browser_id, config, selenium,
                                           oz_page):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
 
     organization_name_option = 'organization name'
     description_option = 'description'

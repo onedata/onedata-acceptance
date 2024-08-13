@@ -74,7 +74,7 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
     res_type = 'result'
     conf_param_option = 'configuration parameters'
     option = 'task'
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     arguments = data.get('arguments', False)
     results = data.get('results', False)
     task_name = data.get('task name', False)
@@ -145,7 +145,7 @@ def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals,
 def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
                         config, option):
     conf_param_option = 'configuration parameters'
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     results_conf = data.get('results', False)
     lambda_conf = data.get('lambda', False)
     configuration_parameters = data.get(conf_param_option, False)
@@ -168,9 +168,15 @@ def modify_task_results(oz_page, selenium, browser_id, lane, task, popups,
     if results_conf:
         for res in results_conf:
             [(res_name, new_res)] = res.items()
-            result = page.workflows_page.task_form.results[res_name + ':']
+            try:
+                result = page.workflows_page.task_form.results[res_name]
+            except RuntimeError:
+                result = page.workflows_page.task_form.results[res_name + ':']
             if option == 'adding':
                 result.add_mapping()
+            element = result.target_store_dropdown[-1]
+            driver.execute_script("arguments[0].scrollIntoView();",
+                                  element)
             result.target_store_dropdown[-1].click()
             popups(driver).power_select.choose_item(new_res)
 

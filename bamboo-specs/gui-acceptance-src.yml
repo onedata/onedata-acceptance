@@ -334,7 +334,7 @@ automation-examples workflows: &acceptance-tests-in-chrome-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/gui/logs
-            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/gui/logs
+            cp onedata-acceptance/sources_info.yaml onedata-acceptance/tests/gui/logs
             mv onedata-acceptance/tests/gui/logs/report.* onedata-acceptance/tests/gui/logs/gui_report
             mv onedata-acceptance/tests/gui/logs/gui_report/images.yaml onedata-acceptance/tests/gui/logs
         description: Pack logs

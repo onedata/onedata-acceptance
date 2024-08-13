@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
 from tests.gui.utils.core.web_elements import (Label, WebElement, WebItem,
@@ -81,7 +82,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
         css_sel = 'ul.data-files-tree-list li:not(.clickable)'
         return (DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
                 for dir_tree in
-                self._children.find_elements_by_css_selector(css_sel))
+                self._children.find_elements(By.CSS_SELECTOR, css_sel))
 
     def __getitem__(self, name):
         for directory in self:

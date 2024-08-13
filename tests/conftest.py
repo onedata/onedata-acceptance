@@ -10,14 +10,31 @@ import os
 import re
 import yaml
 import pytest
+import copy
+import datetime
+import sys
+import time
+from copy import deepcopy
 
-from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, ENTITIES_CONFIG_DIR, LOGDIRS)
+from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, ENTITIES_CONFIG_DIR,
+                   LOGDIRS)
 from tests.utils import CLIENT_POD_LOGS_DIR
 from tests.utils.user_utils import AdminUser
 from tests.utils.environment_utils import start_environment, clean_env
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
 from tests.utils import onenv_utils
+
+from _pytest.fixtures import FixtureLookupError
+from selenium.webdriver import Chrome
+
+from selenium.webdriver.support.event_firing_webdriver import \
+    EventFiringWebDriver
+
+
+# ============================================================================
+# PYTEST CONFIGURATION
+# =============================================================================
 
 
 def pytest_addoption(parser):
@@ -86,12 +103,26 @@ def pytest_addoption(parser):
     onenv.addoption('--gui-pkg-verification', action='store_true',
                     help='enables verification of GUI packages')
 
+    _capture_choices = ('never', 'failure', 'always')
+    parser.addini('selenium_capture_debug',
+                  help='when debug is captured {0}'.format(_capture_choices),
+                  default=os.getenv('SELENIUM_CAPTURE_DEBUG', 'failure'))
+
+    group = parser.getgroup('selenium', 'selenium')
+    group.addoption('--xvfb-recording',
+                    help='record tests (possible options: all | none | failed) '
+                         'using ffmpeg and save results to <logdir>/movies/',
+                    dest='xvfb_recording',
+                    choices=['all', 'none', 'failed'],
+                    default='none')
+
 
 def pytest_generate_tests(metafunc):
     if metafunc.config.option.test_type:
         test_type = metafunc.config.option.test_type
 
-        if test_type in ['gui', 'mixed', 'onedata_fs', 'oneclient', 'performance']:
+        if test_type in ['gui', 'mixed', 'onedata_fs', 'oneclient',
+                         'performance']:
             if test_type == 'gui':
                 default_env_file = '1oz_1op_deployed'
             else:
@@ -108,7 +139,7 @@ def pytest_generate_tests(metafunc):
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 with open(env_file, 'r') as f:
-                    test_config = yaml.load(f)
+                    test_config = yaml.load(f, yaml.Loader)
                 scenarios = test_config['scenarios']
                 metafunc.parametrize(
                     'env_description_file',
@@ -116,7 +147,28 @@ def pytest_generate_tests(metafunc):
                     scope='session'
                 )
             else:
-                raise RuntimeError("In upgrade tests --env-file option must be provided")
+                raise RuntimeError(
+                    "In upgrade tests --env-file option must be provided")
+
+
+def pytest_configure(config):
+    if hasattr(config, 'slaveinput'):
+        return  # xdist slave
+    config.addinivalue_line(
+        'markers', 'capabilities(kwargs): add or change existing '
+                   'capabilities. specify capabilities as keyword arguments, for example '
+                   'capabilities(foo=''bar'')')
+
+
+def pytest_report_header(config, start_path):
+    driver = config.getoption('driver')
+    if driver is not None:
+        return 'driver: {0}'.format(driver)
+
+
+# =============================================================================
+# PYTEST FIXTURES
+# =============================================================================
 
 
 @pytest.fixture(scope='session')
@@ -125,7 +177,7 @@ def test_config(request):
     test_type = get_test_type(request)
     if test_type == 'upgrade':
         with open(request.config.option.env_file, 'r') as f:
-            return yaml.load(f)
+            return yaml.load(f, yaml.Loader)
     return {}
 
 
@@ -135,7 +187,7 @@ def entities_config(request, env_desc):
     config_dir_path = ENTITIES_CONFIG_DIR.get(get_test_type(request))
     config_path = os.path.join(config_dir_path, file_name)
     with open(config_path) as config_file:
-        return yaml.load(config_file)
+        return yaml.load(config_file, yaml.Loader)
 
 
 @pytest.fixture(autouse=True)
@@ -157,7 +209,8 @@ def emergency_passphrase(users, hosts):
 @pytest.fixture(autouse=True)
 def admin_credentials(request, users, hosts):
     admin_username, admin_password = request.config.getoption('admin')
-    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'], admin_username,
+    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'],
+                                                   admin_username,
                                                    admin_password)
     return admin_user
 
@@ -243,34 +296,254 @@ def rm_users(request):
     return not request.config.getoption('--preserve-users')
 
 
-@pytest.fixture(scope='session')
-def env_description_abs_path(request, env_description_file):
-    env_dir = ENV_DIRS.get(get_test_type(request))
-    absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
-    return absolute_path
+@pytest.fixture
+def selenium(request):
+    """Returns a WebDriver instance based on options and capabilities"""
+    return {'request': request}
 
 
 @pytest.fixture(scope='session')
-def env_desc(env_description_abs_path):
-    with open(env_description_abs_path, 'r') as env_desc_file:
-        return yaml.load(env_desc_file)
+def session_capabilities(request, variables):
+    """Returns combined capabilities from pytest-variables and command line"""
+    capabilities = variables.get('capabilities', {})
+    for capability in request.config.getoption('capabilities'):
+        capabilities[capability[0]] = capability[1]
+    return capabilities
 
 
-@pytest.fixture(scope='session')
-def previous_env():
-    return {}
+@pytest.fixture
+def capabilities(request, session_capabilities):
+    """Returns combined capabilities"""
+    capabilities = copy.deepcopy(session_capabilities)  # make a copy
+    capabilities_marker = request.node.get_closest_marker('capabilities')
+    if capabilities_marker is not None:
+        # add capabilities from the marker
+        capabilities.update(capabilities_marker.kwargs)
+    return capabilities
 
 
-@pytest.fixture(scope='session', autouse=True)
-def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env, 
-                    test_config):
+# ============================================================================
+# WEBDRIVER
+# ============================================================================
+
+
+@pytest.fixture
+def driver(request):
+    """Return a factory function creating WebDriver instances.
+    """
+    driver_factory = request.getfixturevalue('chrome_driver')
+
+    event_listener = request.config.getoption('event_listener')
+    if event_listener:
+        # Import the specified event listener and wrap the driver instance
+        mod_name, class_name = event_listener.rsplit('.', 1)
+        mod = __import__(mod_name, fromlist=[class_name])
+        event_listener = getattr(mod, class_name)
+
+    @factory
+    def _get_instance():
+        """Return WebDriver instance based on given options.
+        """
+        web_driver = driver_factory.get_instance()
+        if event_listener and not isinstance(web_driver, EventFiringWebDriver):
+            web_driver = EventFiringWebDriver(web_driver, event_listener())
+
+        request.node._driver = web_driver
+        request.addfinalizer(web_driver.quit)
+        return web_driver
+
+    return _get_instance
+
+
+@pytest.fixture
+def config_driver():
+    def _configure(driver):
+        return driver
+
+    return _configure
+
+
+@pytest.fixture
+def chrome_driver(capabilities):
+    """Return a factory function creating Chrome WebDriver instances.
+    """
+
+    @factory
+    def _get_instance():
+        """Return Chrome WebDriver instance based on given options.
+        """
+        kwargs = {}
+        if capabilities:
+            kwargs['options'] = deepcopy(capabilities['options'])
+        return Chrome(**kwargs)
+
+    return _get_instance
+
+
+def factory(fun):
+    if 'get_instance' in dir(fun):
+        raise AttributeError('object {:s} already has "get_instance" '
+                             'attribute'.format(fun.__name__))
+    else:
+        fun.get_instance = lambda *args, **kwargs: fun(*args, **kwargs)
+        return fun
+
+
+# ============================================================================
+# TEST REPORT
+# ============================================================================
+
+
+_movies = set()
+
+
+def export_logs(request, env_description_abs_path=None, logdir_prefix=''):
     test_type = get_test_type(request)
+    logdir_path = LOGDIRS.get(test_type)
 
-    if _should_start_new_env(env_description_abs_path, previous_env):
-        start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path,
-                       test_config, previous_env)
+    if test_type in ['oneclient', 'upgrade']:
+        try:
+            feature_name = request.module.__name__.split('.')[-1]
+            test_path = os.path.join(get_file_name(env_description_abs_path),
+                                     feature_name)
+        except AttributeError:
+            test_path = "test"
+        logdir_path = make_logdir(logdir_path, test_path)
+    else:
+        timestamped_logdirs = os.listdir(logdir_path)
+        latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
+        logdir_path = os.path.join(logdir_path, latest_logdir)
 
-    return
+    if logdir_prefix:
+        dirpath, name = os.path.split(logdir_path)
+        logdir_path = os.path.join(dirpath, logdir_prefix + '.' + name)
+    onenv_utils.run_onenv_command('export',
+                                  [logdir_path, '-c', CLIENT_POD_LOGS_DIR],
+                                  fail_with_error=False)
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    summary = []
+    extra = getattr(report, 'extra', [])
+    driver = getattr(item, '_driver', None)
+    xfail = hasattr(report, 'wasxfail')
+    xvfb_rec = item.config.option.xvfb_recording
+    failure = (report.skipped and xfail) or (report.failed and not xfail)
+    when = item.config.getini('selenium_capture_debug').lower()
+    capture_debug = when == 'always' or (when == 'failure' and failure)
+    if driver is not None:
+        if capture_debug:
+            exclude = item.config.getini('selenium_exclude_debug').lower()
+            if 'url' not in exclude:
+                _gather_url(item, report, driver, summary, extra)
+            if 'screenshot' not in exclude:
+                _gather_screenshot(item, report, driver, summary, extra)
+            if 'html' not in exclude:
+                _gather_html(item, report, driver, summary, extra)
+            if 'logs' not in exclude:
+                _gather_logs(item, report, driver, summary, extra)
+            item.config.hook.pytest_selenium_capture_debug(
+                item=item, report=report, extra=extra)
+
+        if xvfb_rec != 'none':
+            movie_name = '{name}.mp4'.format(name=item.name)
+            if (xvfb_rec == 'failed') and (
+                    movie_name not in _movies) and not failure:
+                logdir = os.path.dirname(item.config.option.htmlpath)
+                movie_path = os.path.join(logdir, 'movies', movie_name)
+                if os.path.isfile(movie_path):
+                    os.remove(movie_path)
+            else:
+                _movies.add(movie_name)
+
+        item.config.hook.pytest_selenium_runtest_makereport(
+            item=item, report=report, summary=summary, extra=extra)
+    if summary:
+        report.sections.append(('pytest-selenium', '\n'.join(summary)))
+    report.extra = extra
+
+
+def _gather_url(item, report, driver, summary, extra):
+    try:
+        url = driver.current_url
+    except Exception as e:
+        summary.append('WARNING: Failed to gather URL: {0}'.format(e))
+        return
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    if pytest_html is not None:
+        # add url to the html report
+        extra.append(pytest_html.extras.url(url))
+    summary.append('URL: {0}'.format(url))
+
+
+def _gather_screenshot(item, report, driver, summary, extra):
+    try:
+        screenshot = driver.get_screenshot_as_base64()
+    except Exception as e:
+        summary.append('WARNING: Failed to gather screenshot: {0}'.format(e))
+        return
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    if pytest_html is not None:
+        # add screenshot to the html report
+        extra.append(pytest_html.extras.image(screenshot, 'Screenshot'))
+
+
+def _gather_html(item, report, driver, summary, extra):
+    try:
+        html = driver.page_source
+    except Exception as e:
+        summary.append('WARNING: Failed to gather HTML: {0}'.format(e))
+        return
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    if pytest_html is not None:
+        # add page source to the html report
+        extra.append(pytest_html.extras.text(html, 'HTML'))
+
+
+# TODO VFS-12302 implement gathering browser logs
+def _gather_logs(item, report, driver, summary, extra):
+    try:
+        types = driver.log_types
+    except Exception as e:
+        # note that some drivers may not implement log types
+        summary.append('WARNING: Failed to gather log types: {0}'.format(e))
+        return
+    for name in types:
+        try:
+            log = driver.get_log(name)
+        except Exception as e:
+            summary.append('WARNING: Failed to gather {0} log: {1}'.format(
+                name, e))
+            return
+        pytest_html = item.config.pluginmanager.getplugin('html')
+        formatted_logs = ''
+
+        if pytest_html is not None:
+            extra.append(pytest_html.extras.text(
+                '{}{}'.format(format_log(log), formatted_logs),
+                '%s Log' % name.title()))
+
+
+def format_log(log):
+    timestamp_format = '%Y-%m-%d %H:%M:%S.%f'
+    entries = [u'{0} {1[level]} - {1[message]}'.format(
+        datetime.utcfromtimestamp(entry['timestamp'] / 1000.0).strftime(
+            timestamp_format), entry).rstrip() for entry in log]
+    log = '\n'.join(entries)
+    return log
+
+
+def extract_timestamp(filename):
+    s = re.findall(r'\d+\.\d+$', filename)
+    return float(s[0]) if s else -1
+
+
+# =============================================================================
+# ENVIRONMENT
+# =============================================================================
 
 
 def _should_start_new_env(env_description_abs_path, previous_env):
@@ -300,16 +573,17 @@ def handle_env_init_error(request, env_description_abs_path, error_msg):
     pytest.skip(error_msg)
 
 
-def start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path,
-                   test_config, previous_env):
+def start_test_env(request, test_type, env_desc, hosts, users,
+                   env_description_abs_path,
+                   test_config, previous_env, scenario_abs_path):
     patch_path = ''
     scenario_path = ''
     if test_type in ['gui']:
         scenario_path = env_description_abs_path
     elif test_type in ['oneclient', 'mixed']:
-        scenario_path = scenario_abs_path(request, env_desc)
+        scenario_path = scenario_abs_path
     elif test_type in ['onedata_fs', 'performance', 'upgrade']:
-        scenario_path = scenario_abs_path(request, env_desc)
+        scenario_path = scenario_abs_path
         patch = env_desc.get('patch')
         patch_dir_path = PATCHES_DIR.get(get_test_type(request))
         patch_path = os.path.join(patch_dir_path, patch)
@@ -325,6 +599,38 @@ def start_test_env(request, test_type, env_desc, hosts, users, env_description_a
 
 
 @pytest.fixture(scope='session')
+def env_description_abs_path(request, env_description_file):
+    env_dir = ENV_DIRS.get(get_test_type(request))
+    absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
+    return absolute_path
+
+
+@pytest.fixture(scope='session')
+def env_desc(env_description_abs_path):
+    with open(env_description_abs_path, 'r') as env_desc_file:
+        return yaml.load(env_desc_file, yaml.Loader)
+
+
+@pytest.fixture(scope='session')
+def previous_env():
+    return {}
+
+
+@pytest.fixture(scope='session', autouse=True)
+def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users,
+                    previous_env,
+                    test_config, scenario_abs_path):
+    test_type = get_test_type(request)
+
+    if _should_start_new_env(env_description_abs_path, previous_env):
+        start_test_env(request, test_type, env_desc, hosts, users,
+                       env_description_abs_path,
+                       test_config, previous_env, scenario_abs_path)
+
+    return
+
+
+@pytest.fixture(scope='session')
 def scenario_abs_path(request, env_desc):
     scenario = env_desc.get('scenario')
     scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
@@ -332,36 +638,13 @@ def scenario_abs_path(request, env_desc):
                                         scenario))
 
 
+# ============================================================================
+# Miscellaneous.
+# ============================================================================
+
+
 def get_test_type(request):
     return request.config.getoption('test_type')
-
-
-def export_logs(request, env_description_abs_path=None, logdir_prefix=''):
-    test_type = get_test_type(request)
-    logdir_path = LOGDIRS.get(test_type)
-
-    if test_type in ['oneclient', 'upgrade']:
-        try:
-            feature_name = request.module.__name__.split('.')[-1]
-            test_path = os.path.join(get_file_name(env_description_abs_path),
-                                     feature_name)
-        except AttributeError:
-            test_path = "test"
-        logdir_path = make_logdir(logdir_path, test_path)
-    else:
-        timestamped_logdirs = os.listdir(logdir_path)
-        latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
-        logdir_path = os.path.join(logdir_path, latest_logdir)
-
-    if logdir_prefix:
-        dirpath, name = os.path.split(logdir_path)
-        logdir_path = os.path.join(dirpath, logdir_prefix + '.' + name)
-    onenv_utils.run_onenv_command('export', [logdir_path, '-c', CLIENT_POD_LOGS_DIR], fail_with_error=False)
-
-
-def extract_timestamp(filename):
-    s = re.findall(r'\d+\.\d+$', filename)
-    return float(s[0]) if s else -1
 
 
 @pytest.fixture()
@@ -374,9 +657,9 @@ def skip_by_env(request, env_description_file):
     the following way:
     pytestmark = pytest.mark.skip_env(*envs)
     """
-    if request.node.get_marker('skip_env'):
+    if request.node.get_closest_marker('skip_env'):
         env = get_file_name(env_description_file)
-        args = request.node.get_marker('skip_env').kwargs
+        args = request.node.get_closest_marker('skip_env').kwargs
         reason = args['reason']
         arg_envs = [get_file_name(e) for e in args['envs']]
         if env in arg_envs:
@@ -397,13 +680,30 @@ def xfail_by_env(request, env_description_file):
     pytestmark = pytest.mark.xfail_env(*envs)
     Running tests with --ignore-xfail causes xfail marks to be ignored.
     """
-    if request.node.get_marker('xfail_env'):
+    if request.node.get_closest_marker('xfail_env'):
         env = get_file_name(env_description_file)
-        args = request.node.get_marker('xfail_env').kwargs
+        args = request.node.get_closest_marker('xfail_env').kwargs
         reason = args['reason']
         arg_envs = [get_file_name(e) for e in args['envs']]
         ignore = request.config.getoption("--ignore-xfail")
         if env in arg_envs and not ignore:
             request.node.add_marker(pytest.mark.xfail(
                 reason='xfailed on env: {env} with reason: {reason}'
-                        .format(env=env, reason=reason)))
+                .format(env=env, reason=reason)))
+
+
+def select_browser(selenium, browser_id):
+    browser = selenium[browser_id]
+    selenium['request'].node._driver = browser
+    return browser
+
+
+def split_class_and_test_names(nodeid):
+    """Returns the class and method name from the current test"""
+    names = nodeid.split('::')
+    names[0] = names[0].replace('/', '.')
+    names = [x.replace('.py', '') for x in names if x != '()']
+    classnames = names[:-1]
+    classname = '.'.join(classnames)
+    name = names[-1]
+    return (classname, name)

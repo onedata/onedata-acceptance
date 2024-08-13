@@ -101,7 +101,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
     sub_item = 'Spaces'
     input_box = 'Size'
 
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
     unit = options.get('unit', 'MiB')
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
@@ -132,7 +132,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                   'Storage import tab as following:\n{config}'))
 def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
                                                         onepanel):
-    storage_import_configuration = yaml.load(config)
+    storage_import_configuration = yaml.load(config, yaml.Loader)
     _handle_configure_auto_storage_import(selenium, onepanel, user,
                                           storage_import_configuration)
     button = 'Save configuration'

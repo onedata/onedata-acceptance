@@ -65,7 +65,7 @@ def assert_space_content_in_op_rest(user, users, hosts, config, space_name,
     assert_file_content_fun = partial(assert_file_content_in_op_rest,
                                       user=user, users=users, provider=host,
                                       hosts=hosts)
-    check_files_tree(yaml.load(config), children, cwd, ls_fun,
+    check_files_tree(yaml.load(config, yaml.Loader), children, cwd, ls_fun,
                      assert_file_content_fun)
 
 
@@ -85,7 +85,7 @@ def create_dir_in_op_rest(user, users, host, hosts, path, result):
 
     c_api = ContainerApi(client)
     if result == 'fails':
-        with pytest.raises(CdmiException, message='Creating dir did not fail'):
+        with pytest.raises(CdmiException):
             c_api.create_container(path)
     else:
         c_api.create_container(path)
@@ -106,7 +106,7 @@ def create_file_in_op_rest(user, users, host, hosts, path, result,
 
     do_api = DataObjectApi(client)
     if result == 'fails':
-        with pytest.raises(CdmiException, message='Creating file did not fail'):
+        with pytest.raises(CdmiException):
             do_api.create_data_object(path, '')
     else:
         do_api.create_data_object(path, '')
@@ -117,8 +117,7 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
 
     do_api = DataObjectApi(client)
     if result == 'fails':
-        with pytest.raises(CdmiException,
-                           message='Removing file did not fail'):
+        with pytest.raises(CdmiException):
             do_api.delete_data_object(path)
     else:
         do_api.delete_data_object(path)
@@ -131,8 +130,7 @@ def remove_file_using_token_in_op_rest(user, users, host, hosts, path, result,
                            access_token=access_token)
     do_api = DataObjectApi(client)
     if result == 'fails':
-        with pytest.raises(CdmiException,
-                           message='Removing file did not fail'):
+        with pytest.raises(CdmiException):
             do_api.delete_data_object(path)
     else:
         do_api.delete_data_object(path)
@@ -163,8 +161,7 @@ def check_if_item_id_in_items(path, client, file_api):
 
 def check_if_item_exists_or_not_exists(result, path, client, file_api):
     if result == 'fails':
-        with pytest.raises(OPException,
-                           message=f'There is item {path}'):
+        with pytest.raises(OPException):
             check_if_item_id_in_items(path, client, file_api)
     else:
         check_if_item_id_in_items(path, client, file_api)
@@ -172,7 +169,7 @@ def check_if_item_exists_or_not_exists(result, path, client, file_api):
 
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 
                                           space, request):
-    items = yaml.load(config)
+    items = yaml.load(config, yaml.Loader)
     cwd = space
     create_content(user, users, cwd, items, create_item_in_op_rest, host,
                    hosts, request)

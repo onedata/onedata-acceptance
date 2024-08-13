@@ -57,7 +57,7 @@ def assert_token(client, user, config, selenium, oz_page, users,
 @wt(parsers.parse('if {client} is web gui, {user} copies created token'))
 def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard,
                       tmp_memory):
-    if client == 'web gui':
+    if client.lower() == 'web gui':
         copy_token_gui(selenium, oz_page, user, displays, clipboard,
                        tmp_memory)
 
@@ -85,10 +85,11 @@ def copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory):
 @repeat_failed(timeout=WAIT_BACKEND)
 def revoke_token_in_oz(client, user, token_name, users, hosts, tokens,
                        selenium, oz_page, popups):
-    if client == 'rest':
+    client_lower = client.lower()
+    if client_lower == 'rest':
         zone_name = 'onezone'
         revoke_token_rest(user, users, hosts, zone_name, tokens, token_name)
-    elif client == 'web gui':
+    elif client_lower == 'web gui':
         choose_and_revoke_token_in_oz_gui(selenium, user, token_name, oz_page,
                                           popups)
     else:
@@ -99,11 +100,12 @@ def revoke_token_in_oz(client, user, token_name, users, hosts, tokens,
                   'space_name} with received token'))
 def join_space_with_token(selenium, user, oz_page, tmp_memory, client, users,
                           hosts, space_name):
-    if client == 'web gui':
+    client_lower = client.lower()
+    if client_lower == 'web gui':
         consume_received_token(selenium, user, oz_page, tmp_memory)
         assert_new_created_space_has_appeared_on_spaces(selenium, user,
                                                         space_name, oz_page)
-    elif client == 'rest':
+    elif client_lower == 'rest':
         join_space_in_oz_using_rest(user, users, 'onezone', hosts,
                                     space_name, tmp_memory)
         assert_new_created_space_has_appeared_on_spaces(selenium, user,

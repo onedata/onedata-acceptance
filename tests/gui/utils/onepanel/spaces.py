@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import re
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 from tests.gui.utils.common.common import Toggle, DropdownSelector
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
@@ -73,7 +74,7 @@ class SpaceInfo(PageObject):
 
     @staticmethod
     def _get_labels(elem):
-        items = elem.find_elements_by_css_selector('strong, .one-label')
+        items = elem.find_elements(By.CSS_SELECTOR, 'strong, .one-label')
         items.pop(0)  # pop redundant "Storage import:" label
         return {attr.text.strip(':'): val.text for attr, val
                 in zip(items[::2], items[1::2])}

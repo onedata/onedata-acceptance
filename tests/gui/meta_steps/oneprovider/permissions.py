@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_BACKEND
@@ -255,7 +257,8 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           modals, op_container, oz_page, name, popups):
     privileges_option_list = (
         '[attributes]' if res == 'succeeds' else '[acl:change acl]')
-    button = 'Save'
+    button_save = 'Save'
+    button_close = 'Close'
     panel = 'Edit permissions'
 
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
@@ -270,7 +273,8 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
     else:
         select_acl_options(selenium, browser_id, privileges_option_list, modals,
                            name)
-        click_panel_button(selenium, browser_id, button, panel, modals)
+        click_panel_button(selenium, browser_id, button_save, panel, modals)
+        click_panel_button(selenium, browser_id, button_close, panel, modals)
         open_permission_modal(selenium, browser_id, path, space, tmp_memory,
                               modals, oz_page, op_container, 'acl', popups)
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id,

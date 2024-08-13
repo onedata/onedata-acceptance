@@ -1,12 +1,6 @@
 Feature: Onepanel features regarding storage sync (e.g. import)
 
 
-  Examples:
-    | client1   | client2   |
-    | web GUI   | REST      |
-    | REST      | web GUI   |
-
-
   Background:
     Given initial users configuration in "onezone" Onezone service:
           - user1:
@@ -82,8 +76,13 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space1" in "onezone" Onezone service
 
+    Examples:
+    | client1   | client2   |
+    | web GUI   | REST      |
+    | REST      | web GUI   |
 
-  Scenario: Files tree with specified depth is imported to space after changing import depth and enable delete detection option
+
+  Scenario Outline: Files tree with specified depth is imported to space after changing import depth and enable delete detection option
     When using <client1>, user1 creates space "space3" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -135,8 +134,13 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space3" in "onezone" Onezone service
 
+    Examples:
+    | client1   | client2   |
+    | web GUI   | REST      |
+    | REST      | web GUI   |
 
-  Scenario: Files tree with specified depth is imported to space after changing import depth and disable modification detection option
+
+  Scenario Outline: Files tree with specified depth is imported to space after changing import depth and disable modification detection option
     When using <client1>, user1 creates space "space4" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space4" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -177,8 +181,13 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space4" in "onezone" Onezone service
 
+    Examples:
+    | client1   | client2   |
+    | web GUI   | REST      |
+    | REST      | web GUI   |
 
-  Scenario: Files tree with specified depth is imported to space after changing max depth, enabling delete and disabling modification detection
+
+  Scenario Outline: Files tree with specified depth is imported to space after changing max depth, enabling delete and disabling modification detection
     When using <client1>, user1 creates space "space5" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space5" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -227,8 +236,13 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space5" in "onezone" Onezone service
 
+    Examples:
+    | client1   | client2   |
+    | web GUI   | REST      |
+    | REST      | web GUI   |
 
-  Scenario: User does not see files tree changes after disabling continuous scan option
+
+  Scenario Outline: User does not see files tree changes after disabling continuous scan option
     When using <client1>, user1 creates space "space7" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space7" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -261,3 +275,8 @@ Feature: Onepanel features regarding storage sync (e.g. import)
                - file1.txt: 22222
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space7" in "onezone" Onezone service
+
+    Examples:
+    | client1   | client2   |
+    | web GUI   | REST      |
+    | REST      | web GUI   |

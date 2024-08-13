@@ -170,13 +170,12 @@ def text_in_result_list(key, value, results_list):
         raise AssertionError(f'{key}: {value} not in results list')
 
 
-@wt(parsers.parse('user of browser sees that rejection is caused by field '
+@wt(parsers.parse('user of {browser_id} sees that rejection is caused by field '
                   '{field_name} of type {field_type} with ID from clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
-                                                   data_discovery, field_name,
-                                                   field_type, clipboard,
-                                                   displays):
+def assert_rejection_reason_on_data_discovery_page(
+        selenium, browser_id, data_discovery, field_name, field_type, clipboard,
+        displays):
     driver = selenium[browser_id]
     file_id = clipboard.paste(display=displays[browser_id])
     key = '__rejectionReason'

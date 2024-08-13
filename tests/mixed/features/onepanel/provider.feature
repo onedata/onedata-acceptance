@@ -1,9 +1,5 @@
 Feature: Provider management in Onepanel
 
-  Examples:
-  | client1 | client2   |
-#  | REST    | web GUI   |
-  | web GUI | REST      |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -31,6 +27,13 @@ Feature: Provider management in Onepanel
     Then using <client2>, user1 sees provider named "pro1" with test hostname of provider "oneprovider-1" in "onezone" Onezone service
     And using <client1>, onepanel modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
 
+    Examples:
+    | client1 | client2   |
+# TODO VFS-12309 enable using web gui in mixed tests
+#
+    #  | REST    | web GUI   |
+    | web GUI | REST      |
+
 
   Scenario Outline: User deregisters provider and registers it again
     Given provider name set to name of "oneprovider-1" by onepanel in Onepanel
@@ -52,3 +55,10 @@ Feature: Provider management in Onepanel
                 type: posix
                 mount point: /volumes/posix
           admin email: admin@onedata.org
+
+    Examples:
+    | client1 | client2   |
+# TODO VFS-12309 enable using web gui in mixed tests
+#  | REST    | web GUI   |
+    | web GUI | REST      |
+

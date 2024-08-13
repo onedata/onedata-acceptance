@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -68,9 +70,9 @@ class TokensSidebar(PageObject):
     discard = Button('.cancel-icon')
 
     def click_create_new_token(self, driver):
-        driver.execute_script("arguments[0].click();",
-                              self.web_elem.find_element_by_css_selector(
-                                  '.create-token-link-trigger'))
+        driver.execute_script(
+            "arguments[0].click();", self.web_elem.find_element(
+                By.CSS_SELECTOR, '.create-token-link-trigger'))
 
     def __str__(self):
         return 'Tokens sidebar'

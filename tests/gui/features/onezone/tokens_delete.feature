@@ -22,10 +22,10 @@ Feature: Deleting and revoking tokens tests in Onezone GUI
     Then user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
 
     Examples:
-    | token type| token name    |
-    | access    | access_token   |
-    | identity  | identity_token |
-    | invite    | invite_token   |
+    | token type | token name     |
+    | access     | access_token   |
+    | identity   | identity_token |
+    | invite     | invite_token   |
 
 
   Scenario Outline: User successfully revokes and then activates created token
@@ -46,10 +46,10 @@ Feature: Deleting and revoking tokens tests in Onezone GUI
     And user of browser sees that token named "<token name>" is marked as active
 
     Examples:
-    | token type| token name     |
-    | access    | access_token   |
-    | identity  | identity_token |
-    | invite    | invite_token   |
+    | token type | token name     |
+    | access     | access_token   |
+    | identity   | identity_token |
+    | invite     | invite_token   |
 
 
   Scenario Outline: User successfully deletes selected obsolete token

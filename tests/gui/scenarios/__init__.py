@@ -9,12 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import pytest
 
+BROWSER = None
 
-BROWSER = pytest.config.getoption('--driver')
 
-try:
-    pytest.config.getoption('--basic-url')
-except ValueError:
-    USING_BASE_URL = False
-else:
-    USING_BASE_URL = True
+@pytest.fixture(scope='session', autouse=True)
+def get_browser(request):
+    global BROWSER
+    BROWSER = request.config.getoption('--driver')
+    return BROWSER
+
+

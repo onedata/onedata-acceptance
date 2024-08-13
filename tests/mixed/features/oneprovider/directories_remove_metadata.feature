@@ -1,14 +1,5 @@
 Feature: Directory remove metadata tests
 
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | web GUI    | oneclient1 |
-  | oneclient1 | web GUI    |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -33,8 +24,23 @@ Feature: Directory remove metadata tests
     Then using <client1>, user1 sees that <fmt> metadata for "dir1" directory in space "space1" does not contain <metadata> in oneprovider-1
 
     Examples:
-    | fmt   | metadata  |
-    | basic | attr=val  |
-    | JSON  | {"id": 1} |
-    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>|
+    | fmt   | metadata  | client1    | client2    |
+    | basic | attr=val  | REST       | web GUI    |
+    | JSON  | {"id": 1} | REST       | web GUI    |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | REST       | web GUI    |
+    | basic | attr=val  | web GUI    | REST       |
+    | JSON  | {"id": 1} | web GUI    | REST       |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | web GUI    | REST       |
+    | basic | attr=val  | oneclient1 | REST       |
+    | JSON  | {"id": 1} | oneclient1 | REST       |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | oneclient1 | REST       |
+    | basic | attr=val  | REST       | oneclient1 |
+    | JSON  | {"id": 1} | REST       | oneclient1 |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | REST       | oneclient1 |
+    | basic | attr=val  | web GUI    | oneclient1 |
+    | JSON  | {"id": 1} | web GUI    | oneclient1 |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | web GUI    | oneclient1 |
+    | basic | attr=val  | oneclient1 | web GUI    |
+    | JSON  | {"id": 1} | oneclient1 | web GUI    |
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | oneclient1 | web GUI    |
 

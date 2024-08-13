@@ -1,9 +1,5 @@
 Feature: ACL directories privileges tests on changing directory and uploading to directory using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,19 +33,22 @@ Feature: ACL directories privileges tests on changing directory and uploading to
     Then user of browser_user1 <result> to upload "20B-0.txt" to "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                          |
-    | succeeds |  [content:list files, content:add files, content:traverse directory] |
-    | fails    |  all except [content:add files]                                      |
-    | fails    |  all except [content:traverse directory]                             |
-
+    | result   |  privileges                                                          |  subject_type  | subject_name  |
+    | succeeds |  [content:list files, content:add files, content:traverse directory] |  user          | user1         |
+    | fails    |  all except [content:add files]                                      |  user          | user1         |
+    | fails    |  all except [content:traverse directory]                             |  user          | user1         |
+    | succeeds |  [content:list files, content:add files, content:traverse directory] |  group         | group1        |
+    | fails    |  all except [content:add files]                                      |  group         | group1        |
+    | fails    |  all except [content:traverse directory]                             |  group         | group1        |
 
   Scenario Outline: Change directory ACL
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to change "dir1" ACL for <subject_name> in "space1"
 
     Examples:
-    | result   |  privileges                   |
-    | succeeds |  [acl]                        |
-    | fails    |  all except [acl:change acl]  |
-
+    | result   |  privileges                   | subject_type  | subject_name  |
+    | succeeds |  [acl]                        | user          | user1         |
+    | fails    |  all except [acl:change acl]  | user          | user1         |
+    | succeeds |  [acl]                        | group         | group1        |
+    | fails    |  all except [acl:change acl]  | group         | group1        |
 

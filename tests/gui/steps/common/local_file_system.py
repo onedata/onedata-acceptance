@@ -50,7 +50,7 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
                                                ---> SIZE OVERRIDES CONTENT
     """
 
-    for user, home_dir_content in yaml.load(structure).items():
+    for user, home_dir_content in yaml.load(structure, yaml.Loader).items():
         home_dir = tmpdir.join(user)
         with suppress(OSError):
             home_dir.mkdir()

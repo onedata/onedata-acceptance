@@ -123,7 +123,7 @@ def check_header_info_in_space_configuration(selenium, browser_id, label_info,
     assert header_label_message == str(label_info), err_msg
 
 
-@wt(parsers.parse('user of {browse_id} sees "{message_type}" message after '
+@wt(parsers.parse('user of {browser_id} sees "{message_type}" message after '
                   'hovering over "{toggle_name}" toggle in '
                   'configuration space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -144,7 +144,7 @@ def check_message_after_hovering_over_toggle(selenium, browser_id, message_type,
     assert toggle_info == messages_dict[message_type], err_msg
 
 
-@wt(parsers.parse('user of {browser_user} changes organization name for '
+@wt(parsers.parse('user of {browser_id} changes organization name for '
                   '"{org_name}" in space configuration subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_org_name_in_space_conf(selenium, browser_id, oz_page, org_name):

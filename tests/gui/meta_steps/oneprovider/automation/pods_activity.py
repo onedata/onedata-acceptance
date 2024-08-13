@@ -95,7 +95,7 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     modal = modals(driver).function_pods_activity
-    events_list = [event for event in yaml.load(events) if '+' not in event]
+    events_list = [event for event in yaml.load(events, yaml.Loader) if '+' not in event]
     gathered_list = gather_events_list(modal, driver, option)
 
     for event in events_list:
@@ -113,9 +113,9 @@ def assert_events_containing_lambda_name(selenium, browser_id, modals, events,
     switch_to_iframe(selenium, browser_id)
     modal = modals(driver).function_pods_activity
     events_list = [event.replace('"', '').split(' + ')[1] for event
-                   in yaml.load(events) if '+' in event]
+                   in yaml.load(events, yaml.Loader) if '+' in event]
     if not events_list:
-        events_list = yaml.load(events)
+        events_list = yaml.load(events, yaml.Loader)
     gathered_list = gather_events_list(modal, driver, option)
 
     for event in events_list:
@@ -131,7 +131,7 @@ def assert_events_containing_lambda_name(selenium, browser_id, modals, events,
 
 
 def get_lambda_name(events):
-    events_list = yaml.load(events)
+    events_list = yaml.load(events, yaml.Loader)
     for event in events_list:
         if '+' in event:
             lambda_name = event.replace('message that contains: ',

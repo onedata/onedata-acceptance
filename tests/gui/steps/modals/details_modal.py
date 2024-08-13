@@ -40,7 +40,7 @@ def assert_chart_title_in_details_modal(selenium, browser_id, modals, title,
 def click_on_chart_in_modal(browser_id, modals, selenium, modal):
     modal = check_modal_name(modal)
     getattr(modals(selenium[browser_id]),
-            modal).size_statistics.click_on_chart()
+            modal).size_statistics.chart[0].chart.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{element}" item displayed '
@@ -100,6 +100,7 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
 
 @wt(parsers.parse('user of {browser_id} sees that "Permissions" panel is opened'
                   ' on "POSIX" tab in "{modal_name}" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
     elem_name = 'posix_permission_edition'
     posix_hidden = getattr(modals(selenium[browser_id]),

@@ -27,7 +27,7 @@ from tests.utils.utils import repeat_failed
                      'Onezone service:\n{config}'))
 def create_and_configure_spaces_step(config, zone_host, admin_credentials, onepanel_credentials, hosts,
                                 users, groups, storages, spaces):
-    create_and_configure_spaces(yaml.load(config), zone_host, admin_credentials, onepanel_credentials, hosts,
+    create_and_configure_spaces(yaml.load(config, yaml.Loader), zone_host, admin_credentials, onepanel_credentials, hosts,
                                 users, groups, storages, spaces)
 
 
@@ -112,11 +112,12 @@ def create_and_configure_spaces(config, zone_host, admin_credentials, onepanel_c
 
 @given(parsers.parse('additional spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
-def add_spaces_configuration(config, zone_host, admin_credentials, onepanel_credentials, hosts,
-                             users, groups, storages, spaces):
-    _create_and_configure_spaces(yaml.load(config), zone_host, admin_credentials,
-                                 onepanel_credentials, hosts, users, groups,
-                                 storages, spaces)
+def add_spaces_configuration(
+        config, zone_host, admin_credentials, onepanel_credentials, hosts,
+        users, groups, storages, spaces):
+    _create_and_configure_spaces(
+        yaml.load(config, yaml.Loader), zone_host, admin_credentials,
+        onepanel_credentials, hosts, users, groups, storages, spaces)
 
 
 def _create_and_configure_spaces(config, zone_name, admin_credentials, onepanel_credentials, hosts,
@@ -404,9 +405,9 @@ def create_nested_directory(user, path, provider, number: int, name, users,
 @given(parsers.parse('using REST, {user} creates "{file_name}" file in the '
                      'last of {number} nested directories "{dir_name}" in '
                      '"{path}" supported by "{provider}" provider'))
-def create_file_in_nested_directory(user, path, provider, number: int, name,
+def create_file_in_nested_directory(user, path, provider, number: int, dir_name,
                                     file_name, users, hosts):
-    names_list = name.split('/')
+    names_list = dir_name.split('/')
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
     nested_path = f'{path}'

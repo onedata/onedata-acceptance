@@ -34,7 +34,7 @@ def docker_configure_users(config, hosts):
 
 
 def _docker_configure_users(config, hosts):
-    groups_cfg = yaml.load(config)
+    groups_cfg = yaml.load(config, yaml.Loader)
     for group, group_cfg in groups_cfg.items():
         gid = group_cfg['GID']
         try:
@@ -133,8 +133,6 @@ def docker_set_mount_point_ownership(ownership, hosts):
     subprocess.check_call(cmd)
 
 
-@wt(parsers.parse('user {browser_id} copies {src_path} to '
-                  'provider\'s storage mount point'))
 @wt(parsers.parse('user of {browser_id} copies {src_path} '
                   'to provider\'s storage mount point'))
 def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts):

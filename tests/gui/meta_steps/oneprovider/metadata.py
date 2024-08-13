@@ -59,7 +59,7 @@ def add_json_rdf_metadata_for_item(selenium, browser_id, modals, text,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) opens metadata panel on '
                '(?P<tab>JSON|RDF) '
-               'tab for "(?P<item_name>.*?)"'))
+               'tab for "(?P<item_name>.*?)"(?P<dir> directory|)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(selenium, browser_id, tab, item_name,
                                     modals, tmp_memory, popups):

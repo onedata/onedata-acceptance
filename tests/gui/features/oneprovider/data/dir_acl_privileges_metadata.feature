@@ -1,9 +1,5 @@
 Feature: ACL directories privileges metadata tests using single browser in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,10 +33,13 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
     Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
 
     Examples:
-    | result   |  privileges                                         |
-    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
-    | fails    |  all except [metadata:write metadata]               |
-    | succeeds |  all except [metadata:read metadata]                |
+    | result   |  privileges                                         | subject_type  | subject_name  |
+    | succeeds |  [metadata:read metadata, metadata:write metadata]  | user          | user1         |
+    | fails    |  all except [metadata:write metadata]               | user          | user1         |
+    | succeeds |  all except [metadata:read metadata]                | user          | user1         |
+    | succeeds |  [metadata:read metadata, metadata:write metadata]  | group         | group1        |
+    | fails    |  all except [metadata:write metadata]               | group         | group1        |
+    | succeeds |  all except [metadata:read metadata]                | group         | group1        |
 
 
   Scenario Outline: Read directory metadata
@@ -49,6 +48,8 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
     Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
 
     Examples:
-    | result   |  privileges                            |
-    | succeeds |  [metadata:read metadata]              |
-    | fails    |  all except [metadata:read metadata]   |
+    | result   |  privileges                            | subject_type  | subject_name  |
+    | succeeds |  [metadata:read metadata]              | user          | user1         |
+    | fails    |  all except [metadata:read metadata]   | user          | user1         |
+    | succeeds |  [metadata:read metadata]              | group         | group1        |
+    | fails    |  all except [metadata:read metadata]   | group         | group1        |

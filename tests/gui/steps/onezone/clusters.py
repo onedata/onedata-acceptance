@@ -268,8 +268,8 @@ def assert_message_on_agreement_page(selenium, browser_id, privacy_policy,
             err_msg)
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{button}" button '
-                  'on {kind_of_agreement} page'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
+               'on (?P<kind_of_agreement>privacy policy|terms of use) page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_agreement_page(selenium, browser_id, privacy_policy,
                                    terms_of_use, button, kind_of_agreement):

@@ -179,7 +179,7 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_container):
 
 @wt(parsers.parse('user of {browser_id} changes current working'
                   ' directory to current share using breadcrumbs'
-                  ' in shares view'))
+                  ' from share\'s file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).shares_page.breadcrumbs.space_root()

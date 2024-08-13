@@ -1,9 +1,5 @@
 Feature: ACL files privileges tests of changing and removing file using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,9 +33,11 @@ Feature: ACL files privileges tests of changing and removing file using multiple
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
-    | result   |  privileges                    |
-    | succeeds |  [deletion:delete]             |
-    | fails    |  all except [deletion:delete]  |
+    | result   |  privileges                    | subject_type  | subject_name  |
+    | succeeds |  [deletion:delete]             | user          | user1         |
+    | fails    |  all except [deletion:delete]  | user          | user1         |
+    | succeeds |  [deletion:delete]             | group         | group1        |
+    | fails    |  all except [deletion:delete]  | group         | group1        |
 
 
   Scenario Outline: Change files ACL
@@ -47,6 +45,8 @@ Feature: ACL files privileges tests of changing and removing file using multiple
     Then user of browser_user1 <result> to change "file1" ACL for <subject_name> in "space1"
 
     Examples:
-    | result   |  privileges                   |
-    | succeeds |  [acl]                        |
-    | fails    |  all except [acl:change acl]  |
+    | result   |  privileges                   | subject_type  | subject_name  |
+    | succeeds |  [acl]                        | user          | user1         |
+    | fails    |  all except [acl:change acl]  | user          | user1         |
+    | succeeds |  [acl]                        | group         | group1        |
+    | fails    |  all except [acl:change acl]  | group         | group1        |

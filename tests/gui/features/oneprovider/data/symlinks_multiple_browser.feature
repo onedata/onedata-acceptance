@@ -56,8 +56,9 @@ Feature: Symlinks functionalities using multiple providers and multiple browsers
     And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
     And user of space_owner_browser sets "755" permission code in edit permissions panel
     And user of space_owner_browser clicks on "Save" button in edit permissions panel
+    And user of space_owner_browser clicks on "X" button in modal "Directory details"
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
-    And user of space_owner_browser creates symbolic link of "file2" placed in "/.." directory on file browser
+    And user of space_owner_browser creates symbolic link of "file2" placed in "/.." directory on file browser in "space1"
 
     And user of browser1 opens file browser for "space1" space
     Then user of browser1 clicks on "Delete" in context menu for "file2"

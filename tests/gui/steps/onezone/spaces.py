@@ -228,7 +228,7 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
     assert space_name not in spaces, 'space "{}" found'.format(space_name)
 
 
-@wt(parsers.parse('user of {browser_id} sees {number} number of supporting '
+@wt(parsers.parse('user of {browser_id} sees {number:d} number of supporting '
                   'providers of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_supporting_providers_of_space(selenium, browser_id,
@@ -614,7 +614,9 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
-    page = oz_page(selenium[browser_id])['data']
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    page = oz_page(driver)['data']
     assert text in page.error_header, f'page with text "{text}" not found'
 
 

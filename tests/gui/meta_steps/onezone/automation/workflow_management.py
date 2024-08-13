@@ -183,7 +183,7 @@ def _execute_workflow_with_input_config(browser_id, selenium, oz_page, space,
     # wait a moment for workflow revision to open
     time.sleep(1)
 
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     for store in data:
         driver = selenium[browser_id]
         data_type = get_data_type_in_initial_value_store(driver, op_container,
@@ -315,6 +315,7 @@ def modify_data_type_in_store(selenium, browser_id, oz_page, store_name, modals,
     dropdown_menu = f'{menu} dropdown menu'
     button = 'OK'
     modal_name = 'Modify store'
+    value = value.lower()
 
     page = get_oz_workflow_visualizer(oz_page, driver)
     page.stores_list[store_name].click()

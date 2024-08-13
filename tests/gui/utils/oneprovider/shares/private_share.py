@@ -9,6 +9,7 @@ from tests.gui.utils.core.web_elements import WebItem, Button, Input, Label
 from ... import PublicShareView
 from ...core import scroll_to_css_selector_bottom
 from ...core.base import PageObject
+from selenium.webdriver.common.by import By
 
 
 class DublinCoreMetadata(PageObject):
@@ -17,13 +18,13 @@ class DublinCoreMetadata(PageObject):
         css_sel = f'.form-control[data-dc-element-type="{which}"]'
         # WebItemsSequence, WebElementsSequence were not working for this
         # case (because of weird selectors)
-        inputs = self.driver.find_elements_by_css_selector(css_sel)
+        inputs = self.driver.find_elements(By.CSS_SELECTOR, css_sel)
         inputs[-1].clear()
         inputs[-1].send_keys(val)
 
     def click_add_button(self, button_name):
-        buttons = self.driver.find_elements_by_css_selector('.btn-add-entry'
-                                                            ' .text')
+        buttons = self.driver.find_elements(By.CSS_SELECTOR,
+                                            '.btn-add-entry .text')
         for button in buttons:
             if button.text == button_name:
                 css_sel = '.metadata-text .one-icon'

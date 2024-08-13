@@ -1,9 +1,5 @@
 Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -39,10 +35,13 @@ Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GU
     Then user of browser_user1 <result> to rename "dir1/file1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                                                |
-    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add files] |
-    | fails    |  all except [content:add files]                                                            |
-    | fails    |  all except [content:delete child]                                                         |
+    | result   |  privileges                                                                                | subject_type  | subject_name  |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add files] | user          | user1         |
+    | fails    |  all except [content:add files]                                                            | user          | user1         |
+    | fails    |  all except [content:delete child]                                                         | user          | user1         |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add files] | group         | group1        |
+    | fails    |  all except [content:add files]                                                            | group         | group1        |
+    | fails    |  all except [content:delete child]                                                         | group         | group1        |
 
 
   Scenario Outline: Remove subfile
@@ -50,6 +49,8 @@ Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GU
     Then user of browser_user1 <result> to remove "dir1/file1" in "space1"
 
     Examples:
-    | result   |  privileges                                                             |
-    | succeeds |  [content:delete child, content:traverse directory, content:list files] |
-    | fails    |  all except [content:delete child]                                      |
+    | result   |  privileges                                                             | subject_type  | subject_name  |
+    | succeeds |  [content:delete child, content:traverse directory, content:list files] | user          | user1         |
+    | fails    |  all except [content:delete child]                                      | user          | user1         |
+    | succeeds |  [content:delete child, content:traverse directory, content:list files] | group         | group1        |
+    | fails    |  all except [content:delete child]                                      | group         | group1        |

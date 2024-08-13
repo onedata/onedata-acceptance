@@ -1,14 +1,5 @@
 Feature: Tests for creating file in Oneprovider
 
-  Examples:
-  | client1    | client2    | client3    |
-  | REST       | web GUI    | REST       |
-  | web GUI    | REST       | REST       |
-  | oneclient1 | REST       | oneclient1 |
-  | REST       | oneclient1 | REST       |
-  | oneclient1 | web GUI    | oneclient1 |
-  | web GUI    | oneclient1 | oneclient1 |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -29,6 +20,15 @@ Feature: Tests for creating file in Oneprovider
     And using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
 
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | web GUI    | REST       | REST       |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient1 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | web GUI    | oneclient1 | oneclient1 |
+
 
   Scenario Outline: User creates file using <client1> and removes it using <client2>
     When using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
@@ -36,5 +36,11 @@ Feature: Tests for creating file in Oneprovider
 	And using <client2>, user1 succeeds to remove file named "file1" in "space1" in oneprovider-1
 	Then using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
-
-
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | web GUI    | REST       | REST       |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient1 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | web GUI    | oneclient1 | oneclient1 |

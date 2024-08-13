@@ -171,7 +171,7 @@ Feature: Oneprovider POSIX privileges GUI tests
       | dir1      |
 
 
-  Scenario Outline: User fails to change <item_type> permissions because of lack in privileges (POSIX)
+  Scenario Outline: User fails to change <name_of_item> permissions because of lack in privileges (POSIX)
     When user of space_owner_browser sets <name_of_item> POSIX 553 privileges in "space1"
 
     # Fail to change file permissions

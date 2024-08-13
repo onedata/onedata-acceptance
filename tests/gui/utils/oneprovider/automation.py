@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 
 from tests.gui.utils.core import (
     scroll_to_css_selector_bottom, scroll_to_css_selector)
@@ -63,18 +64,18 @@ class Task(Element):
         return elem_id
 
     def click_on_drag_handle(self):
-        self.web_elem.find_element_by_css_selector(f'.task-drag-handle').click()
+        self.web_elem.find_element(By.CSS_SELECTOR, f'.task-drag-handle').click()
 
     def click_on_option_in_task(self, option):
         if option == 'Audit log':
-            self.web_elem.find_element_by_css_selector(f'.view-task-audit-log'
-                                                       f'-action-trigger').click()
+            self.web_elem.find_element(
+                By.CSS_SELECTOR, '.view-task-audit-log-action-trigger').click()
         elif option == 'Pods activity':
-            self.web_elem.find_element_by_css_selector(f'.view-task-pods'
-                                                       f'-activity-action-trigger').click()
+            self.web_elem.find_element(
+                By.CSS_SELECTOR, '.view-task-pods-activity-action-trigger').click()
         elif option == 'Time series':
-            self.web_elem.find_element_by_css_selector(f'.view-task-time'
-                                                       f'-series-action-trigger').click()
+            self.web_elem.find_element(
+                By.CSS_SELECTOR, '.view-task-time-series-action-trigger').click()
 
 
 class ParallelBox(Element):

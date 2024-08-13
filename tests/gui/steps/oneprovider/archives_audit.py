@@ -168,7 +168,7 @@ def _check_entries_in_archive_audit_log(browser_id, config, selenium, modals):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     visible_logs = modal.data_row
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     for item in data.keys():
         err_msg = (f'there is no visible log: {item}: {data[item]} in archive '
                    f'audit log')
@@ -252,7 +252,7 @@ def check_details_for_archived_item(browser_id, config, modals, selenium):
 
 
 def _check_details_for_archived_item(browser_id, config, modals, selenium):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
 
     for field in data.keys():
         if isinstance(data[field], dict):

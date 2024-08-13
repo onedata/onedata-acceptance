@@ -1,9 +1,5 @@
 Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -39,10 +35,13 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser_user1 <result> to see [file1, dir2] in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                       |
-    | succeeds |  [content:list files, content:traverse directory] |
-    | fails    |  all except [content:traverse directory]          |
-    | fails    |  all except [content:list files]                  |
+    | result   |  privileges                                       | subject_type  | subject_name  |
+    | succeeds |  [content:list files, content:traverse directory] | user          | user1         |
+    | fails    |  all except [content:traverse directory]          | user          | user1         |
+    | fails    |  all except [content:list files]                  | user          | user1         |
+    | succeeds |  [content:list files, content:traverse directory] | group         | group1        |
+    | fails    |  all except [content:traverse directory]          | group         | group1        |
+    | fails    |  all except [content:list files]                  | group         | group1        |
 
 
   Scenario Outline: Rename subdirectory
@@ -50,9 +49,12 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser_user1 <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                                                       |
-    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add subdirectory] |
-    | fails    |  all except [content:add subdirectory]                                                            |
-    | fails    |  all except [content:delete child]                                                                |
+    | result   |  privileges                                                                                       | subject_type  | subject_name  |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add subdirectory] | user          | user1         |
+    | fails    |  all except [content:add subdirectory]                                                            | user          | user1         |
+    | fails    |  all except [content:delete child]                                                                | user          | user1         |
+    | succeeds |  [content:list files, content:delete child, content:traverse directory, content:add subdirectory] | group         | group1        |
+    | fails    |  all except [content:add subdirectory]                                                            | group         | group1        |
+    | fails    |  all except [content:delete child]                                                                | group         | group1        |
 
 

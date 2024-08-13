@@ -26,7 +26,7 @@ Feature: Basic management of space marketplace privileges for users in Onezone G
              Manage in Marketplace: False
    And user of browser_user1 clicks "Configuration" of "space1" space in the sidebar
    And user of browser_user1 sees "READ-ONLY" header label in configuration space
-   And user of browers_user1 sees "Insufficient privileges" message after hovering over "Advertise in Marketplace" toggle in configuration space
+   And user of browser_user1 sees "Insufficient privileges" message after hovering over "Advertise in Marketplace" toggle in configuration space
 
    And user of space_owner_browser clicks "user1" user in "space1" space members users list
    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:

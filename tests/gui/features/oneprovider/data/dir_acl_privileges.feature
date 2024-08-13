@@ -1,9 +1,5 @@
 Feature: ACL directories privileges tests using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,9 +33,11 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
     Then user of browser_user1 <result> to rename "dir1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                    |
-    | succeeds |  [deletion:delete]             |
-    | fails    |  all except [deletion:delete]  |
+    | result   |  privileges                    |  subject_type  | subject_name  |
+    | succeeds |  [deletion:delete]             |  user          | user1         |
+    | fails    |  all except [deletion:delete]  |  user          | user1         |
+    | succeeds |  [deletion:delete]             |  group         | group1        |
+    | fails    |  all except [deletion:delete]  |  group         | group1        |
 
 
   Scenario Outline: Read directory ACL
@@ -47,7 +45,8 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
     Then user of browser_user1 <result> to read "dir1" ACL in "space1"
 
     Examples:
-    | result   |  privileges                   |
-    | succeeds |  [acl:read acl]               |
-    | fails    |  all except [acl:read acl]    |
-
+    | result   |  privileges                   |  subject_type  | subject_name  |
+    | succeeds |  [acl:read acl]               |  user          | user1         |
+    | fails    |  all except [acl:read acl]    |  user          | user1         |
+    | succeeds |  [acl:read acl]               |  group         | group1        |
+    | fails    |  all except [acl:read acl]    |  group         | group1        |

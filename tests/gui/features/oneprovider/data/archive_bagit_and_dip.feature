@@ -70,7 +70,7 @@ Feature: BagIt and DIP archives operations
          - tagmanifest-sha1.txt
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
-    And user of browser changes current working directory to space root using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs in archive file browser
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks on DIP view mode on archive file browser page

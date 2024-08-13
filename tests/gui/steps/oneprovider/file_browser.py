@@ -468,7 +468,7 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
     files_list = tar.getnames()
     tar.extractall(extract_path.strpath)
 
-    dir_tree = yaml.load(contents)
+    dir_tree = yaml.load(contents, yaml.Loader)
     _get_directory_contents(dir_tree)
 
     for f in files_list:

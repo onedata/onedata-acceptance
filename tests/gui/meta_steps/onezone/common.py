@@ -4,6 +4,7 @@ using web GUI
 import time
 from itertools import zip_longest
 
+from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
@@ -27,15 +28,14 @@ from tests.gui.utils.core import scroll_to_css_selector
                   'signed in to (?P<host_list>.*) service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
-                    driver_kwargs, driver_type, firefox_logging, displays,
-                    firefox_path, screen_width, screen_height, hosts,
+                    driver_kwargs, driver_type, displays,
+                    screen_width, screen_height, hosts,
                     users, login_page, browser_id_list, user_list,
-                    xvfb_recorder, test_type):
+                    xvfb_recorder, test_type, capabilities):
     create_instances_of_webdriver(selenium, driver, user_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
-                                  firefox_logging, firefox_path,
                                   xvfb, xvfb_recorder,
-                                  screen_width, screen_height, displays)
+                                  screen_width, screen_height, displays, capabilities)
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
 
     for browser, user in zip(parse_seq(browser_id_list), parse_seq(user_list)):
@@ -137,8 +137,8 @@ def search_for_members(driver, records, member_name, parent_name, fun):
     for record in records:
         record_id = record.clickable_name.get_attribute('id')
         scroll_to_css_selector(driver, f'#{record_id}')
-        elements = driver.find_elements_by_css_selector(
-            f'#{record_id} .membership-row-element.membership-block')
+        elements = driver.find_elements(
+            By.CSS_SELECTOR, f'#{record_id} .membership-row-element.membership-block')
         relations = [elem.text.split()[0] for elem in elements if elem.text]
         if member_name in relations and parent_name in relations:
             member_index = relations.index(member_name)

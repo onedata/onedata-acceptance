@@ -20,7 +20,7 @@ from tests.utils.http_exceptions import HTTPForbidden
 @given(parsers.parse('initial groups configuration in "{service}" '
                      'Onezone service:\n{config}'))
 def groups_creation_step(config, service, admin_credentials, users, hosts, groups):
-    groups_creation(yaml.load(config), service, admin_credentials, users, hosts, groups)
+    groups_creation(yaml.load(config, yaml.Loader), service, admin_credentials, users, hosts, groups)
 
 
 def groups_creation(config, service, admin_credentials, users, hosts, groups):

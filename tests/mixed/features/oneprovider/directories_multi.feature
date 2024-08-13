@@ -1,14 +1,5 @@
 Feature: Directories multiclient tests
 
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient2 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient2 |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -36,6 +27,15 @@ Feature: Directories multiclient tests
     Then using <client2>, user2 fails to see item named "dir1" in "space1" in oneprovider-1
     And using <client1>, user1 fails to see item named "dir1" in "space1" in oneprovider-1
 
+    Examples:
+    | client1    | client2    |
+    | REST       | web GUI    |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
+    | REST       | oneclient2 |
+    | oneclient1 | web GUI    |
+    | web GUI    | oneclient2 |
+
 
   Scenario Outline: User1 creates directory using <client1> and user2 renames it using <client2>
     When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
@@ -45,3 +45,12 @@ Feature: Directories multiclient tests
     And using <client1>, user1 fails to see item named "dir1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see item named "dir2" in "space1" in oneprovider-1
     And using <client1>, user1 succeeds to see item named "dir2" in "space1" in oneprovider-1
+
+    Examples:
+    | client1    | client2    |
+    | REST       | web GUI    |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
+    | REST       | oneclient2 |
+    | oneclient1 | web GUI    |
+    | web GUI    | oneclient2 |

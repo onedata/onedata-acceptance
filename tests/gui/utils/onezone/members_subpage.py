@@ -10,6 +10,7 @@ from selenium.webdriver import ActionChains
 from selenium.common.exceptions import (
     NoSuchElementException, ElementNotInteractableException,
     ElementClickInterceptedException)
+from selenium.webdriver.common.by import By
 
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
@@ -125,8 +126,8 @@ class MembersPage(PageObject):
     def close_member(self, driver):
         driver.execute_script("window.scrollBy(0,0)")
         try:
-            element = driver.find_element_by_css_selector(
-                '.member-item .one-collapsible-list-item-header.opened')
+            element = driver.find_element(
+                By.CSS_SELECTOR, '.member-item .one-collapsible-list-item-header.opened')
             element.click()
         except NoSuchElementException:
             pass

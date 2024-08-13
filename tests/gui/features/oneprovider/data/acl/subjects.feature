@@ -170,6 +170,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser removes "user4" user from "space1" space members
+    And user of browser opens file browser for "space1" space
     Then user of browser sees that "file1" in space "space1" has [acl] privileges set for unknown user in first ACL record
     And user of browser sees that "file1" in space "space1" contains id of user "user4" in first ACL record
     And user of browser sees that "file1" in space "space1" has [acl] privileges set for user space-owner-user in second ACL record

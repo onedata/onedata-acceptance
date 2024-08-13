@@ -1,6 +1,11 @@
 """
 Define fixtures used in web GUI acceptance/behavioral tests.
 """
+__author__ = "Jakub Liput, Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
 
 import os
 import re
@@ -23,12 +28,6 @@ from tests.utils.ffmpeg_utils import start_recording, stop_recording
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 
 
-__author__ = "Jakub Liput, Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
-
-
 SELENIUM_IMPLICIT_WAIT = 0
 
 # use this const when using: WebDriverWait(selenium, WAIT_FRONTEND).until(lambda s: ...)
@@ -48,6 +47,10 @@ WAIT_NORMAL_UPLOAD = 60
 WAIT_EXTENDED_UPLOAD = 1500
 
 
+# ============================================================================
+# PYTEST CONFIGURATION
+# =============================================================================
+
 
 def pytest_configure(config):
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
@@ -61,21 +64,108 @@ def pytest_configure(config):
 
 def pytest_addoption(parser):
     selenium_group = parser.getgroup('selenium', 'selenium')
-    selenium_group.addoption('--firefox-logs',
-                             action='store_true',
-                             help='enable firefox console logs using firebug')
     selenium_group.addoption('--xvfb',
                              action='store_true',
                              help='run Xvfb for tests')
-    selenium_group.addoption('--xvfb-recording',
-                             help='record tests run (all | none | failed) '
-                                  'using ffmpeg',
-                             choices=['all', 'none', 'failed'],
-                             default='none')
     selenium_group.addoption('--no-mosaic-filter',
                              action='store_true',
                              help='turn off mosaic filter if recording tests '
                                   'with multiple browsers')
+
+
+@hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, rep.when + '_xvfb_recorder', rep)
+
+
+def pytest_selenium_capture_debug(item, report, extra):
+    recording = item.config.getoption('--xvfb-recording')
+    if recording == 'none' or (recording == 'failed' and not report.failed):
+        return
+
+    log_dir = os.path.dirname(item.config.option.htmlpath)
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    for movie_path in getattr(item, '_movies', []):
+        src_attrs = {'src': os.path.relpath(movie_path, log_dir),
+                     'type': 'video/mp4'}
+        video_html = str(html.video(html.source(**src_attrs), **VIDEO_ATTRS))
+        extra.append(pytest_html.extras.html(video_html))
+
+
+def pytest_collection_modifyitems(items):
+    first = []
+    second = []
+    second_to_last = []
+    last = []
+    rest = []
+
+    run_first = ('test_cluster_deployment',
+                 )
+    run_second = ('test_support_space', 'test_revoke_space_support')
+    run_second_to_last = ('test_user_changes_provider_name_and_domain',
+                          )
+    run_last = ('test_user_deregisters_provider',
+                )
+    for item in items:
+        item.name = re.sub('{.*}', '', item.name)
+        item.name = re.sub('<.*>', '', item.name)
+
+    for item in items:
+        for suite_scenarios, run_suite in ((run_first, first),
+                                           (run_second, second),
+                                           (run_second_to_last, second_to_last),
+                                           (run_last, last)):
+            found_suite = False
+            for scenario_name in suite_scenarios:
+                if scenario_name in item.nodeid:
+                    run_suite.append(item)
+                    found_suite = True
+                    break
+
+            if found_suite:
+                break
+        else:
+            rest.append(item)
+
+    first.extend(second)
+    first.extend(rest)
+    first.extend(second_to_last)
+    first.extend(last)
+    items[:] = first
+
+
+def pytest_bdd_before_scenario(request, feature, scenario):
+    print(f"\n=================================================================")
+    print(f"- Executing scenario '{scenario.name}'")
+    print(f"- from feature '{feature.name}'")
+    print(f"-----------------------------------------------------------------")
+
+
+def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
+    print(f"-- Executing step: {format_step_name(step)}")
+
+
+def pytest_bdd_after_scenario(request, feature, scenario):
+    print(f"=================================================================")
+
+
+def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
+    print(f"--- STEP FAILED on {step}")
+    print(f'--- Exception: {exception}\n')
+
+
+def format_step_name(step_name):
+    step_name = step_name.name.split('\n')
+    if len(step_name) > 1:
+        return step_name[0] + ' (...)'
+    else:
+        return step_name[0]
+
+# =============================================================================
+# PYTEST FIXTURES
+# =============================================================================
 
 
 @fixture(autouse=True, scope='module')
@@ -112,15 +202,6 @@ def driver_type(request):
 @fixture(scope='session')
 def test_type(request):
     return request.config.getoption('--test-type')
-
-
-@fixture(scope='session')
-def firefox_logging(request, driver_type):
-    enabled = request.config.getoption('--firefox-logs')
-    if enabled and driver_type.lower() != 'firefox':
-        raise UsageError('--driver=Firefox must be specified '
-                         'if --firefox-logs option is given')
-    return enabled
 
 
 @fixture(scope='session')
@@ -205,6 +286,105 @@ def modals():
 def popups():
     from tests.gui.utils import Popups
     return Popups
+
+
+@fixture
+def tmp_memory():
+    """Dict to use when one wants to store sth between steps.
+
+    Because of use of multiple browsers, the correct format would be:
+     {'browser1': {...}, 'browser2': {...}, ...}
+    """
+    return defaultdict(dict)
+
+
+@fixture
+def displays():
+    """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
+    return {}
+
+
+@fixture(scope='session')
+def clipboard():
+    """utility simulating os clipboard"""
+    from platform import system as get_system
+    from collections import namedtuple
+    cls = namedtuple('Clipboard', ['copy', 'paste'])
+
+    def copy(text, display):
+        if get_system() == 'Darwin':
+            cmd = ['pbcopy']
+        else:
+            cmd = ['xclip', '-d', display, '-selection', 'c']
+        p = sp.Popen(cmd, stdin=sp.PIPE, close_fds=True)
+        p.communicate(input=text.encode('utf-8'))
+
+    def paste(display):
+        if get_system() == 'Darwin':
+            cmd = ['pbpaste']
+        else:
+            cmd = ['xclip', '-d', display, '-selection', 'c', '-o']
+        p = sp.Popen(cmd, stdout=sp.PIPE, close_fds=True)
+        stdout, _ = p.communicate()
+        return stdout.decode('utf-8')
+
+    return cls(copy, paste)
+
+
+@fixture(scope='session')
+def base_url(hosts, maybe_start_env):
+    return 'https://{}'.format(hosts['onezone']['hostname'])
+
+
+@fixture(scope='function', autouse=True)
+def _skip_sensitive(request, sensitive_url):
+    """Invert the default sensitivity behaviour: consider the test as destructive
+    only if it has marker "destructive".
+    """
+    destructive = 'destructive' in request.node.keywords
+    if sensitive_url and destructive:
+        skip('This test is destructive and the target URL is '
+             'considered a sensitive environment. If this test is '
+             'not destructive, add the \'nondestructive\' marker to '
+             'it. Sensitive URL: {0}'.format(sensitive_url))
+
+
+@fixture
+def capabilities(request, capabilities, tmpdir):
+    """Add --no-sandbox argument for Chrome headless
+    Should be the same as adding capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}
+    """
+    if capabilities is None:
+        capabilities = {}
+
+    if 'browserName' in capabilities and capabilities['browserName'] == 'chrome' or request.config.option.driver == 'Chrome':
+        options = webdriver.ChromeOptions()
+        options.add_argument("--no-sandbox")
+        options.add_argument("enable-popup-blocking")
+        options.add_argument("--ignore-ssl-errors=yes")
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--disable-infobars')
+        prefs = {"download.default_directory": str(tmpdir)}
+        options.add_experimental_option("excludeSwitches",
+                                        ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        options.add_experimental_option("prefs", prefs)
+        capabilities.update({'options': options})
+    # TODO: use Firefox Marionette driver (geckodriver) for Firefox 47: https://jira.plgrid.pl/jira/browse/VFS-2203
+    # but currently this driver is buggy...
+    # elif 'browserName' in capabilities and capabilities['browserName'] == 'firefox' or request.config.option.driver == 'Firefox':
+        # capabilities['acceptInsecureCerts'] = True
+        # capabilities['marionette'] = True
+
+    # currently there are no problems with invalid SSL certs in built-in FF driver and Chrome
+    # but some drivers could need it
+    # capabilities['loggingPrefs'] = {'browser': 'ALL'}
+    # capabilities['acceptSslCerts'] = True
+
+    # uncomment to debug selenium browser init
+    # print "DEBUG: Current capabilities: ", capabilities
+
+    return capabilities
 
 
 # ============================================================================
@@ -303,190 +483,13 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
         yield
 
 
-@hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item):
-    outcome = yield
-    rep = outcome.get_result()
-    setattr(item, rep.when + '_xvfb_recorder', rep)
-
-
-def pytest_selenium_capture_debug(item, report, extra):
-    recording = item.config.getoption('--xvfb-recording')
-    if recording == 'none' or (recording == 'failed' and not report.failed):
-        return
-
-    log_dir = os.path.dirname(item.config.option.htmlpath)
-    pytest_html = item.config.pluginmanager.getplugin('html')
-    for movie_path in getattr(item, '_movies', []):
-        src_attrs = {'src': os.path.relpath(movie_path, log_dir),
-                     'type': 'video/mp4'}
-        video_html = str(html.video(html.source(**src_attrs), **VIDEO_ATTRS))
-        extra.append(pytest_html.extras.html(video_html))
-
-
 # ============================================================================
 # Miscellaneous.
 # ============================================================================
 
 
-@fixture
-def tmp_memory():
-    """Dict to use when one wants to store sth between steps.
-
-    Because of use of multiple browsers, the correct format would be:
-     {'browser1': {...}, 'browser2': {...}, ...}
-    """
-    return defaultdict(dict)
-
-
-@fixture
-def displays():
-    """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
-    return {}
-
-
-@fixture(scope='session')
-def clipboard():
-    """utility simulating os clipboard"""
-    from platform import system as get_system
-    from collections import namedtuple
-    cls = namedtuple('Clipboard', ['copy', 'paste'])
-
-    def copy(text, display):
-        if get_system() == 'Darwin':
-            cmd = ['pbcopy']
-        else:
-            cmd = ['xclip', '-d', display, '-selection', 'c']
-        p = sp.Popen(cmd, stdin=sp.PIPE, close_fds=True)
-        p.communicate(input=text.encode('utf-8'))
-
-    def paste(display):
-        if get_system() == 'Darwin':
-            cmd = ['pbpaste']
-        else:
-            cmd = ['xclip', '-d', display, '-selection', 'c', '-o']
-        p = sp.Popen(cmd, stdout=sp.PIPE, close_fds=True)
-        stdout, _ = p.communicate()
-        return stdout.decode('utf-8')
-
-    return cls(copy, paste)
-
-
-@fixture(scope='session')
-def base_url(hosts, maybe_start_env):
-    return 'https://{}'.format(hosts['onezone']['hostname'])
-
-
-@fixture(scope='module', autouse=True)
-def _verify_url(request, base_url):
-    """Override original fixture to change scope to module (we can have different base_urls for each module)"""
-    from pytest_base_url.plugin import _verify_url as orig_verify_url
-    return orig_verify_url(request, base_url)
-
-
-@fixture(scope='module', autouse=True)
-def sensitive_url(request, base_url):
-    """Override original fixture to change scope to module (we can have different base_urls for each module)"""
-    from pytest_selenium.safety import sensitive_url as orig_sensitive_url
-    return orig_sensitive_url(request, base_url)
-
-
-@fixture(scope='function', autouse=True)
-def _skip_sensitive(request, sensitive_url):
-    """Invert the default sensitivity behaviour: consider the test as destructive
-    only if it has marker "destructive".
-    """
-    destructive = 'destructive' in request.node.keywords
-    if sensitive_url and destructive:
-        skip('This test is destructive and the target URL is '
-             'considered a sensitive environment. If this test is '
-             'not destructive, add the \'nondestructive\' marker to '
-             'it. Sensitive URL: {0}'.format(sensitive_url))
-
-
-@fixture
-def capabilities(request, capabilities, tmpdir):
-    """Add --no-sandbox argument for Chrome headless
-    Should be the same as adding capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}
-    """
-    if capabilities is None:
-        capabilities = {}
-
-    if 'browserName' in capabilities and capabilities['browserName'] == 'chrome' or request.config.option.driver == 'Chrome':
-        options = webdriver.ChromeOptions()
-        options.add_argument("--no-sandbox")
-        options.add_argument("enable-popup-blocking")
-        prefs = {"download.default_directory": str(tmpdir)}
-        options.add_experimental_option("prefs", prefs)
-        capabilities.update(options.to_capabilities())
-    # TODO: use Firefox Marionette driver (geckodriver) for Firefox 47: https://jira.plgrid.pl/jira/browse/VFS-2203
-    # but currently this driver is buggy...
-    # elif 'browserName' in capabilities and capabilities['browserName'] == 'firefox' or request.config.option.driver == 'Firefox':
-        # capabilities['acceptInsecureCerts'] = True
-        # capabilities['marionette'] = True
-
-    # currently there are no problems with invalid SSL certs in built-in FF driver and Chrome
-    # but some drivers could need it
-    capabilities['loggingPrefs'] = {'browser': 'ALL'}
-    capabilities['acceptSslCerts'] = True
-
-    # uncomment to debug selenium browser init
-    # print "DEBUG: Current capabilities: ", capabilities
-
-    return capabilities
-
-
-def pytest_collection_modifyitems(items):
-    first = []
-    second = []
-    second_to_last = []
-    last = []
-    rest = []
-
-    run_first = ('test_cluster_deployment',
-                 )
-    run_second = ('test_support_space', 'test_revoke_space_support')
-    run_second_to_last = ('test_user_changes_provider_name_and_domain',
-                          )
-    run_last = ('test_user_deregisters_provider',
-                )
-    for item in items:
-        item.name = re.sub('{.*}', '', item.name)
-        item.name = re.sub('<.*>', '', item.name)
-
-    for item in items:
-        for suite_scenarios, run_suite in ((run_first, first),
-                                           (run_second, second),
-                                           (run_second_to_last, second_to_last),
-                                           (run_last, last)):
-            found_suite = False
-            for scenario_name in suite_scenarios:
-                if scenario_name in item.nodeid:
-                    run_suite.append(item)
-                    found_suite = True
-                    break
-
-            if found_suite:
-                break
-        else:
-            rest.append(item)
-
-    first.extend(second)
-    first.extend(rest)
-    first.extend(second_to_last)
-    first.extend(last)
-    items[:] = first
-
-
-def pytest_bdd_before_step_call(request, step_func_args):
-    for arg in step_func_args:
-        v = request.getfixturevalue(arg)
-        if isinstance(v, str) and v and v[0] == '<' and v[-1] == '>':
-            with suppress(FixtureLookupError):
-                step_func_args[arg] = request.getfixturevalue(v[1:-1]).lower()
-
-
 @fixture(name='run_unmock')
-def run_around_testcase(hosts, name):
+def run_around_testcase(hosts):
     yield
-    unmock_archive_verification(name, hosts)
+    unmock_archive_verification('oneprovider-krakow', hosts)
+

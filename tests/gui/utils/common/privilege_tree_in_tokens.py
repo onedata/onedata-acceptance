@@ -13,6 +13,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
     WebElement
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
 
 class PrivilegeRow(PageObject):
@@ -48,7 +49,7 @@ class PrivilegeRow(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_class = self._checkbox.get_attribute('class').split(' ')[0]
                 try:
-                    driver.find_element_by_css_selector('.' + elem_class).click()
+                    driver.find_element(By.CSS_SELECTOR, '.' + elem_class).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
 
@@ -79,8 +80,8 @@ class PrivilegeGroup(PageObject):
             try:
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                driver.find_element_by_css_selector(
-                    '.tree-circle .oneicon-square-minus-empty').click()
+                driver.find_element(
+                    By.CSS_SELECTOR, '.tree-circle .oneicon-square-minus-empty').click()
             except:
                 self.expander.click()
 

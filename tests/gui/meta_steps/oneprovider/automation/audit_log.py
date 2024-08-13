@@ -116,7 +116,7 @@ def assert_content_in_audit_log_in_store(browser_id, selenium, op_container,
                                          displays, content):
     driver = selenium[browser_id]
     store_type = 'object'
-    expected_data = yaml.load(content)
+    expected_data = yaml.load(content, yaml.Loader)
     store_details = get_store_details_json(op_container, driver, browser_id,
                                            modals, clipboard, displays,
                                            store_name,  store_type)
@@ -281,7 +281,7 @@ def assert_each_element_contains_some_information(
         clipboard, displays, option):
     driver = selenium[browser_id]
     store_type = 'object'
-    expected_data = yaml.load(content)
+    expected_data = yaml.load(content, yaml.Loader)
     actual_data = []
     get_op_workflow_visualizer_page(op_container, driver)
     modal = modals(driver).store_details
@@ -310,7 +310,7 @@ def assert_each_element_checksum_content_in_store(
         clipboard, displays):
     driver = selenium[browser_id]
     store_type = 'object'
-    expected_data = yaml.load(content)
+    expected_data = yaml.load(content, yaml.Loader)
     get_op_workflow_visualizer_page(op_container, driver)
     modal = modals(driver).store_details
     elem_num = len(modal.store_content_object)
@@ -413,6 +413,12 @@ def assert_file_in_store_details(selenium, browser_id, op_container, modals,
 
 @wt(parsers.parse('user of {browser_id} clicks on "{name}" {option} link in '
                   'Store details modal for "{store_name}" store'))
+def wt_click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
+                                            name, store_name, modals, option):
+    click_on_elem_in_store_details_modal(
+        browser_id, selenium, op_container, name, store_name, modals, option=option)
+
+
 def click_on_elem_in_store_details_modal(browser_id, selenium, op_container,
                                          name, store_name, modals, option=''):
     modal = open_store_details_modal(selenium, browser_id, op_container,
@@ -470,7 +476,7 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
 
     options_to_check = ['mimeType', 'formatName', 'isExtensionMatchingFormat',
                         'fileName', 'extensions', 'sourceUrl', 'fileId']
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     modal = open_store_details_modal(selenium, browser_id, op_container,
                                      modals, store_name)
 
@@ -491,7 +497,7 @@ def assert_content_of_store(selenium, browser_id, op_container, modals,
                 op_container, tmp_memory, popups, modals, clipboard, displays)
     try:
         modal.close()
-    except StaleElementReferenceException:
+    except (StaleElementReferenceException, RuntimeError):
         pass
 
 
@@ -522,7 +528,7 @@ def compare_content_reason_of_task_audit_log(
                f'task does not contain "{actual_reason}" as expected')
     if 'contains' in reason:
         reason_data = yaml.load(
-            reason.split('contains ')[1].replace('])', ']'))
+            reason.split('contains ')[1].replace('])', ']'), yaml.Loader)
         for reason_elem in reason_data:
             assert reason_elem in actual_reason, err_msg
     elif 'file checksum' in reason:
@@ -670,7 +676,7 @@ def assert_content_of_task_audit_log(config, selenium, browser_id,
     click = 'click'
     link = 'Audit log'
     driver = selenium[browser_id]
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     content = data.get('content', False)
     severity = data.get('severity', False)
     source = data.get('source', False)
@@ -755,7 +761,7 @@ def assert_workflow_audit_log_contains_entries(selenium, browser_id, modals,
 
 def _assert_workflow_audit_log_contains_entries(
         selenium, browser_id, modals, tmpdir, tmp_memory, config):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     driver = selenium[browser_id]
     modal = modals(driver).audit_log
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory,

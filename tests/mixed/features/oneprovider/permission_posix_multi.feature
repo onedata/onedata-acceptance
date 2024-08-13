@@ -1,14 +1,5 @@
 Feature: POSIX privileges multiclient tests
 
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient2 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient2 |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -39,9 +30,20 @@ Feature: POSIX privileges multiclient tests
     And using <client1>, user1 sees that POSIX permission for item named "file1" in "space1" is "664" in oneprovider-1
 
     Examples:
-    | client0    |
-    | REST       |
-    | oneclient1 |
+    | client0    | client1    | client2    |
+    | REST       | REST       | web GUI    |
+    | oneclient1 | REST       | web GUI    |
+    | REST       | web GUI    | REST       |
+    | oneclient1 | web GUI    | REST       |
+    | REST       | oneclient1 | REST       |
+    | oneclient1 | oneclient1 | REST       |
+    | REST       | REST       | oneclient2 |
+    | oneclient1 | REST       | oneclient2 |
+    | REST       | oneclient1 | web GUI    |
+    | oneclient1 | oneclient1 | web GUI    |
+    | REST       | web GUI    | oneclient2 |
+    | oneclient1 | web GUI    | oneclient2 |
+
 
   Scenario Outline: User1 creates directory using <client1> and user2 fails to change its permission using <client2>
     When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
@@ -50,3 +52,12 @@ Feature: POSIX privileges multiclient tests
     And using <client2>, user2 fails to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
     Then using <client2>, user2 sees that POSIX permission for item named "dir1" in "space1" is "775" in oneprovider-1
     And using <client1>, user1 sees that POSIX permission for item named "dir1" in "space1" is "775" in oneprovider-1
+
+    Examples:
+    | client1    | client2    |
+    | REST       | web GUI    |
+    | web GUI    | REST       |
+    | oneclient1 | REST       |
+    | REST       | oneclient2 |
+    | oneclient1 | web GUI    |
+    | web GUI    | oneclient2 |

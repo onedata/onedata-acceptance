@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from functools import partial
 from selenium.webdriver import ActionChains
 from selenium.common.exceptions import JavascriptException
+from selenium.webdriver.common.by import By
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
                                                WebElement, WebElementsSequence)
@@ -55,7 +56,7 @@ class _ArchiveFileBrowser(PageObject):
     def click_on_dip_aip_view_mode(self, driver, option):
         selector = (f'.archive-filesystem-table-head-row'
                     f' .select-archive-{option}-btn')
-        driver.find_element_by_css_selector(selector).click()
+        driver.find_element(By.CSS_SELECTOR, selector).click()
 
     def scroll_to_number_file(self, driver, number, browser):
         selector = (browser.get_css_selector() + ' ' +

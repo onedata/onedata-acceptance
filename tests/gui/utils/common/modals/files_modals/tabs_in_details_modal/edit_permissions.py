@@ -132,6 +132,8 @@ class EditPermissionsTab(Modal):
 
     posix_permission_edition = WebElement('.posix-permissions-editor')
 
+    close = Button('.close')
+
     def __str__(self):
         return 'Edit permission tab'
 

@@ -1,13 +1,5 @@
 Feature: ACL basic tests
 
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient1 |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -41,8 +33,28 @@ Feature: ACL basic tests
     And using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for user user1 in first ACL record in oneprovider-1
 
     Examples:
-    | privileges                                    | subject_type  | subject_name  | item  |
-    | [content:read, content:write]                 | user          | user2         | file1 |
-    | [content:list files, content:add files]       | user          | user2         | dir1  |
-    | [deny, content:read, content:write]           | user          | user2         | file1 |
-    | [deny, content:list files, content:add files] | user          | user2         | dir1  |
+    | privileges                                    | subject_type  | subject_name  | item  | client1    | client2    |
+    | [content:read, content:write]                 | user          | user2         | file1 | REST       | web GUI    |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | REST       | web GUI    |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | REST       | web GUI    |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | REST       | web GUI    |
+    | [content:read, content:write]                 | user          | user2         | file1 | web GUI    | REST       |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | web GUI    | REST       |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | web GUI    | REST       |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | web GUI    | REST       |
+    | [content:read, content:write]                 | user          | user2         | file1 | oneclient1 | REST       |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | oneclient1 | REST       |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | oneclient1 | REST       |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | oneclient1 | REST       |
+    | [content:read, content:write]                 | user          | user2         | file1 | REST       | oneclient1 |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | REST       | oneclient1 |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | REST       | oneclient1 |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | REST       | oneclient1 |
+    | [content:read, content:write]                 | user          | user2         | file1 | oneclient1 | web GUI    |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | oneclient1 | web GUI    |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | oneclient1 | web GUI    |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | oneclient1 | web GUI    |
+    | [content:read, content:write]                 | user          | user2         | file1 | web GUI    | oneclient1 |
+    | [content:list files, content:add files]       | user          | user2         | dir1  | web GUI    | oneclient1 |
+    | [deny, content:read, content:write]           | user          | user2         | file1 | web GUI    | oneclient1 |
+    | [deny, content:list files, content:add files] | user          | user2         | dir1  | web GUI    | oneclient1 |

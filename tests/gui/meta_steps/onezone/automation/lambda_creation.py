@@ -80,7 +80,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     result_option = 'result'
     option = 'lambda'
 
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     name = data['name']
     docker_image = data['docker image']
     read_only = data.get('read-only', True)
@@ -156,6 +156,7 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
 def change_parameter_type_in_lambda_form(selenium, browser_id, oz_page,
                                          popups, option, type, ordinal):
     driver = selenium[browser_id]
+    type = type.lower()
     page = oz_page(driver)['automation'].lambdas_page.form
     subpage = getattr(page, transform(option))
 
@@ -163,13 +164,21 @@ def change_parameter_type_in_lambda_form(selenium, browser_id, oz_page,
     bracket_name = 'bracket_' + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     css_sel = '#' + object_bracket.name.web_elem.get_attribute('id')
+    try:
+        popups(driver).workflow_creation_alert.close()
+    except RuntimeError:
+        pass
+
     scroll_to_css_selector(driver, css_sel)
 
     split_type = type.replace(')', '').split(' (')
     new_type = split_type[0] if 'array' in type else type
 
+    # TODO VFS-12315 remove sleep in acc tests
+    time.sleep(1)
     object_bracket.remove_element()
     object_bracket.type_dropdown.click()
+
     popups(driver).power_select.choose_item(new_type)
 
     if 'array' in type:
@@ -209,7 +218,7 @@ def modify_parameter_in_lambda_form(selenium, browser_id, oz_page, popups,
                                     ordinal, config):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].lambdas_page.form
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     subpage = page.argument
     ordinal = '1st' if not ordinal else ordinal
     bracket_name = 'bracket_' + ordinal.strip()

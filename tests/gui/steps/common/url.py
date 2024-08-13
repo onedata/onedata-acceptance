@@ -11,10 +11,11 @@ import re
 
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.bdd_utils import parsers, wt, given
 from tests.utils.utils import repeat_failed
 
 
@@ -59,7 +60,7 @@ def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.+) opens '
-               '(?P<hosts_list>.+) page'))
+               '(?P<hosts_list>.*one.*|.*One.*) page'))
 def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
@@ -107,7 +108,7 @@ def is_url_matching(selenium, browser_id, path):
 
 def _open_url(selenium, browser_id, url):
     driver = selenium[browser_id]
-    old_page = driver.find_element_by_css_selector('html')
+    old_page = driver.find_element(By.CSS_SELECTOR, 'html')
     driver.get(url)
 
     Wait(driver, WAIT_BACKEND).until(
@@ -203,8 +204,8 @@ def refresh_site_and_wait(selenium, browser_id_list):
 
 @repeat_failed(interval=0.1, timeout=10)
 def assert_main_page_loaded(selenium, browser_id):
-    elems = selenium[browser_id].find_elements_by_css_selector(
-        '.main-menu-content li.main-menu-item')
+    elems = selenium[browser_id].find_elements(
+        By.CSS_SELECTOR, '.main-menu-content li.main-menu-item')
     assert len(elems) > 0, 'did not manage to load main page'
 
 
@@ -238,6 +239,6 @@ def switch_to_first_tab(selenium, browser_id):
                   'in browser'))
 def assert_image_in_browser(browser_id, selenium, image_name):
     driver = selenium[browser_id]
-    url = driver.find_elements_by_css_selector('img')[0].get_attribute('src')
+    url = driver.find_elements(By.TAG_NAME, 'img')[0].get_attribute('src')
     err_msg = f'{image_name} is not visible in browser'
     assert image_name in url, err_msg

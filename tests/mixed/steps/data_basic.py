@@ -42,9 +42,9 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
-               'file named "(?P<name>.*)" using received token in '
-               '"(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>\w+\s?\w*), (?P<user>\w+) (?P<result>\w+) '
+               r'to create file named "(?P<name>.*)" using received token in '
+               r'"(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_token(client, user, users, space, name, hosts,
                                  tmp_memory, host, result, env_desc, request):
     full_path = '{}/{}'.format(space, name)
@@ -61,7 +61,7 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
-               r'item named "(?P<name>.*)" using received access token in '
+               r'item named "(?P<name>[^ ]+)" using received access token in '
                r'"(?P<space>.*)" in (?P<host>.*)'))
 def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
                                  users, hosts, env_desc, result):
@@ -146,7 +146,7 @@ def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space,
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
-               'item named (?P<name>.*) in "(?P<space>.*)" in '
+               'item named (?P<name>[^ ]+) in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def see_item_in_op(client, user, users, result, name, space, host, hosts,
                    selenium, tmp_memory, op_container, oz_page):
@@ -501,7 +501,7 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) copies '
                '(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
-               '"(?P<space>.*)" space'))
+               '"(?P<space>.*)" space in (?P<host>.*)'))
 def remember_time_for_file(user, time_name, file_name, space, client, users,
                            host, hosts, cdmi, tmp_memory):
     client_lower = client.lower()
@@ -521,12 +521,12 @@ def remember_time_for_file(user, time_name, file_name, space, client, users,
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that '
-               '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" is '
-               '(?P<comparator>.*) (than|to) (?P<time_name2>.*) time '
-               'that was copied'))
-def compare_file_time_with_copied_time(user, time_name1, time_name2,  file_name, space,
-                                       client, users, host, hosts, cdmi,
-                                       tmp_memory, comparator):
+               '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" '
+               'in space "(?P<space>.*)" is (?P<comparator>.*) (than|to) '
+               '(?P<time_name2>.*) time that was copied in (?P<host>.*)'))
+def compare_file_time_with_copied_time(
+        user, time_name1, time_name2,  file_name, space, client, users, host,
+        hosts, cdmi, tmp_memory, comparator):
     client_lower = client.lower()
     full_path = '{}/{}'.format(space, file_name)
     time2 = tmp_memory[time_name1]
