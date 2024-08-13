@@ -33,7 +33,7 @@ Feature: Basic shares operations in Onezone GUI featuring shares sidebar
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User sees shares names and space's names in Shares sidebar for each share respectively
+  Scenario: User sees shares names and spaces names in Shares sidebar for each share respectively
     When user of browser opens file browser for "space1" space
     And user of browser creates "share_dir1" share of "dir1" directory
     And user of browser opens file browser for "space2" space
