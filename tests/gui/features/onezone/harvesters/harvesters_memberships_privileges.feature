@@ -116,7 +116,7 @@ Feature: Basic management of harvester memberships privileges in Onezone GUI
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester15" has appeared on the harvesters list in the sidebar
 
-    And user of browser2 tries to set following privileges for "user1" user in "harvester15" harvester:
+    And user of browser2 fails to set following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
 

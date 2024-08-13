@@ -170,7 +170,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks "Members" of "space1" space in the sidebar
     And user of browser_user1 clicks "user2" user in "space1" space members users list
-    Then user of browser_user1 tries to set following privileges for "user2" user in space members subpage:
+    Then user of browser_user1 fails to set following privileges for "user2" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:

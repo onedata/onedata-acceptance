@@ -503,14 +503,14 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
     tmp_memory[browser_id]['token'] = token
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|tries to set) '
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|fails to set) '
                'following privileges for "(?P<member_name>.*)" '
                '(?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|cluster|automation) members '
                r'subpage:\n(?P<config>(.|\s)*)'))
-def set_privileges_in_members_subpage(selenium, browser_id, member_name,
-                                      member_type, where, config, onepanel,
-                                      oz_page, option):
+def try_setting_privileges_in_members_subpage(selenium, browser_id, member_name,
+                                              member_type, where, config,
+                                              onepanel, oz_page, option):
     try:
         assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                              member_type, where, config,
@@ -526,7 +526,8 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
             click_button_on_element_header_in_members_and_wait(
                 selenium, browser_id, button, oz_page, where, onepanel, tree)
         else:
-            assert not result, 'Modify privilege should not be possible'
+            assert not result, (f'Modify {member_type} privilege on {where} '
+                                f'page should not be possible')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets all privileges true for '
@@ -560,15 +561,15 @@ def set_some_privileges_in_members_subpage_other_granted(selenium, browser_id,
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type + 's', member_name)
     tree.set_all_true()
-    set_privileges_in_members_subpage(selenium, browser_id, member_name,
-                                      member_type, where, config, onepanel,
-                                      oz_page, option)
+    try_setting_privileges_in_members_subpage(selenium, browser_id, member_name,
+                                              member_type, where, config,
+                                              onepanel, oz_page, option)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
                r'\n(?P<config>(.|\s)*)'))
-def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
-                                               modals):
+def try_setting_privileges_in_members_subpage_on_modal(selenium, browser_id,
+                                                       config, modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree

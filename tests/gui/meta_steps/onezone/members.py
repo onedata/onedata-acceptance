@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.steps.onezone.members import (
-    set_privileges_in_members_subpage, click_element_in_members_list,
+    try_setting_privileges_in_members_subpage, click_element_in_members_list,
     assert_privileges_in_members_subpage, click_on_option_in_members_list_menu,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.spaces import (
@@ -29,9 +29,9 @@ def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
         selenium, user, space_name, button, oz_page)
     click_element_in_members_list(selenium, user, member_name,
                                   oz_page, where, list_type, onepanel)
-    set_privileges_in_members_subpage(selenium, user, member_name,
-                                      member_type, where, config, onepanel,
-                                      oz_page, option)
+    try_setting_privileges_in_members_subpage(selenium, user, member_name,
+                                              member_type, where, config,
+                                              onepanel, oz_page, option)
     assert_error_modal_with_text_appeared(selenium, user, text)
 
 

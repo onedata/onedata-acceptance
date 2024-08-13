@@ -240,7 +240,7 @@ def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
                                                       menu_option, oz_page)
     click_element_in_members_list(selenium, browser_id, user_name, oz_page,
                                   where, list_type + 's', onepanel)
-    set_privileges_in_members_subpage(
+    try_setting_privileges_in_members_subpage(
         selenium, browser_id, user_name, list_type, where, config,
         onepanel, oz_page, option)
 
