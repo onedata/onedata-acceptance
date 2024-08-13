@@ -17,7 +17,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_name_for_share_matches_expected(selenium, browser_id, oz_page,
                                                  share_name, space_name):
-    shares_list = oz_page(selenium[browser_id])['shares'].shares_list
+    shares_list = oz_page(selenium[browser_id])['shares'].shares_sidebar_list
     share_names_list = {share.name for share in shares_list}
 
     if share_name not in share_names_list:
@@ -35,7 +35,7 @@ def assert_space_name_for_share_matches_expected(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_name_in_shares_sidebar(selenium, browser_id, oz_page,
                                         share_name):
-    shares_list = oz_page(selenium[browser_id])['shares'].shares_list
+    shares_list = oz_page(selenium[browser_id])['shares'].shares_sidebar_list
     share_names_list = {share.name for share in shares_list}
 
     assert share_name in share_names_list, (f'Share {share_name} not in '

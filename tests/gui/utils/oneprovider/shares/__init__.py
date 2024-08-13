@@ -22,17 +22,6 @@ class SettingDropdown(PageObject, ExpandableMixin):
     _toggle = WebElement('.dropdown-toggle[data-toggle="dropdown"]')
 
 
-class SharesSidebarRecord(PageObject):
-    name = id = Label('.item-icon + .item-label')
-    settings = WebItem('.settings-dropdown', cls=SettingDropdown)
-
-
-class SharesSidebar(PageObject):
-    title = Label('.secondary-sidebar-header .title')
-    shares = WebItemsSequence('ul.shares-list li.first-level',
-                              cls=SharesSidebarRecord)
-
-
 class SharesOptions(PageObject):
     name = id = Label('.item-name')
     menu_button = Button('.menu-toggle-frame')
