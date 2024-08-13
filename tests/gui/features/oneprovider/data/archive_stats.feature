@@ -27,7 +27,7 @@ Feature: Size statistics of directories in archives
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User sees archive's size stats and size stats per provider after clicking show statistics button
+  Scenario: User sees that archive's data is placed on the provider creating the archive via size statistics
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
@@ -35,18 +35,17 @@ Feature: Size statistics of directories in archives
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 0 archives
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser writes "first archive" into description text field in create archive modal
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+        description: first archive
+        layout: plain
 
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser clicks on size statistics icon for "dir1" directory in archive browser
 
-    Then user of browser sees that current logical size is "15 B"
-    And user of browser sees that current total physical size is "15 B"
-    And user of browser sees that current contain counter is "1 file, 1 directory (2 elements in total)"
+    Then user of browser sees in size stats tab that current logical size is "15 B"
+    And user of browser sees in size stats tab that current total physical size is "15 B"
+    And user of browser sees in size stats tab that current contain counter is "1 file, 1 directory (2 elements in total)"
 
     And user of browser clicks "Show statistics per provider" button on Size stats modal
     And user of browser sees that logical size for oneprovider-1 is "15 B"
