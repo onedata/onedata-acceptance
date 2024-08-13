@@ -224,7 +224,7 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|tries to set) '
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|fails to set) '
                'following privileges for "(?P<user_name>.*)" user in '
                r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
