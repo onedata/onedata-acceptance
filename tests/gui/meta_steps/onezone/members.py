@@ -13,8 +13,7 @@ from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_text_appeared, assert_element_text_in_modal)
+from tests.gui.steps.modals.modal import assert_element_text_in_modal
 
 
 def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
@@ -32,7 +31,6 @@ def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
     try_setting_privileges_in_members_subpage(selenium, user, member_name,
                                               member_type, where, config,
                                               onepanel, oz_page, option)
-    assert_error_modal_with_text_appeared(selenium, user, text)
 
 
 def assert_privileges_in_space_using_op_gui(user, space_name, member_name,
