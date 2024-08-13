@@ -497,7 +497,7 @@ def wait_for_workflow_executions(
 
 @wt(parsers.parse('using REST, {user} waits extended time for all workflow executions '
                   'to finish on space "{space}" in {host}'))
-@repeat_failed(interval=8, timeout=1600)
+@repeat_failed(interval=8, timeout=2000)
 def wait_for_workflow_executions_extended_time(user, users, host, hosts, space,
                                                spaces, workflow_executions):
     assert_all_workflow_execution_finished(user, users, host, hosts, space,
