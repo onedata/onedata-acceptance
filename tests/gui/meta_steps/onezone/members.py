@@ -20,10 +20,10 @@ def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
                                         member_type, config, selenium, onepanel,
                                         oz_page):
     button = 'Members'
-    option = 'sets'
+    option = 'fails to set'
     list_type = 'users'
     where = 'space'
-    text = 'insufficient privileges'
+
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, button, oz_page)
     click_element_in_members_list(selenium, user, member_name,
