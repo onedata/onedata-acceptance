@@ -17,4 +17,4 @@ class SharesSidebarRecord(PageObject):
 
 class SharesPage(GenericPage):
     shares_sidebar_list = WebItemsSequence('.sidebar-shares .one-list-item',
-                                   cls=SharesSidebarRecord)
+                                           cls=SharesSidebarRecord)
