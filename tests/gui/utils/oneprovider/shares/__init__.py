@@ -6,20 +6,12 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.gui.utils.core.base import PageObject, ExpandableMixin
-from tests.gui.utils.core.web_elements import (Label, WebItemsSequence,
-                                               WebItem, Input, Button,
-                                               WebElement)
-from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_elements import (Label, WebItemsSequence, Input,
+                                               Button, WebElement)
 
 from ..breadcrumbs import Breadcrumbs
 from ..file_browser import FileBrowser
-
-
-class SettingDropdown(PageObject, ExpandableMixin):
-    options = WebItemsSequence('ul.dropdown-menu-list li',
-                               cls=ButtonWithTextPageObject)
-    _toggle = WebElement('.dropdown-toggle[data-toggle="dropdown"]')
 
 
 class SharesOptions(PageObject):
