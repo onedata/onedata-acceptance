@@ -568,8 +568,8 @@ def set_some_privileges_in_members_subpage_other_granted(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
                r'\n(?P<config>(.|\s)*)'))
-def try_setting_privileges_in_members_subpage_on_modal(selenium, browser_id,
-                                                       config, modals):
+def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
+                                               modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
