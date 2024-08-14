@@ -10,7 +10,9 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.oneprovider.browser import click_tag_for_elem_in_browser
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op, \
+    _check_size_stats_in_dir_details, _check_size_stats_for_provider
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -419,3 +421,46 @@ def assert_popup_insufficient_privileges_message_in_archive_browser(
     err_msg = (f'expected {message_dict[privilege]} info to be visible instead '
                f'of {toggle_info}')
     assert toggle_info == message_dict[privilege], err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that current size statistics for '
+                  'directory "{item_name}" in archive with description '
+                  '"{description}" in {item_browser} are as follow:\n{config}'))
+def check_size_stats_in_archive(selenium, modals, browser_id, description,
+                                config, tmp_memory, op_container, item_name,
+                                item_browser):
+    """ Check size stats in directory details according to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type                          --> required
+                total physical size: total_physical_size            --> required
+                contain counter: contain_counter                    --> required
+        """
+
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory,
+                                item_browser)
+    click_and_press_enter_on_archive(browser_id, tmp_memory, description)
+    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                  tag='size statistics icon',
+                                  which_browser=item_browser)
+    _check_size_stats_in_dir_details(selenium, modals, browser_id, config)
+
+
+@wt(parsers.parse('user of {browser_id} sees that {provider} size statistics '
+                  'are as follow:\n{config}'))
+def check_size_stats_for_provider_in_dir_details(selenium, modals, hosts,
+                                                 browser_id, config, provider):
+    """ Check size stats in directory details  for specified provider according
+        to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type                          --> required
+                physical size: physical_size                        --> required
+                content: content                                    --> required
+        """
+
+    _check_size_stats_for_provider(selenium, modals, browser_id, config,
+                                   hosts, provider)

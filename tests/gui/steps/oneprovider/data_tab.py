@@ -10,6 +10,8 @@ __license__ = ("This software is released under the MIT license cited in "
 import pytest
 import time
 
+import yaml
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.conftest import WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -721,11 +723,40 @@ def check_content_for_provider(selenium, hosts, modals, browser_id,
 @wt(parsers.parse('user of {browser_id} sees in size stats tab that current '
                   '{size_type} is "{expected_size}"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_size_stats_in_dir_details(selenium, modals, browser_id, size_type,
+def check_size_statistic_in_dir_details(selenium, modals, browser_id, size_type,
                                     expected_size):
     driver = selenium[browser_id]
     size = getattr(modals(driver).details_modal.size_statistics,
                    transform(size_type))
 
     assert size == expected_size, (
-        f"{size_type} is {size} instead of {expected_size}!")
+        f'{size_type} is {size} instead of {expected_size}!')
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def _check_size_stats_in_dir_details(selenium, modals, browser_id, config):
+    options = yaml.load(config)
+
+    check_size_statistic_in_dir_details(selenium, modals, browser_id,
+                                        'logical_size',
+                                        options['logical size'])
+    check_size_statistic_in_dir_details(selenium, modals, browser_id,
+                                        'total_physical_size',
+                                        options['total physical size'])
+    check_size_statistic_in_dir_details(selenium, modals, browser_id,
+                                        'contain_counter',
+                                        options['contain counter'])
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def _check_size_stats_for_provider(selenium, modals, browser_id, config, hosts,
+                                   provider):
+    options = yaml.load(config)
+    check_size_for_provider(selenium, hosts, modals, browser_id, 'logical_size',
+                            provider, options['logical size'])
+    check_size_for_provider(selenium, hosts, modals, browser_id,
+                            'physical_size',
+                            provider, options['physical size'])
+    check_size_for_provider(selenium, hosts, modals, browser_id,
+                            'content', provider,
+                            options['content'])
