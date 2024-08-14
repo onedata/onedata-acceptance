@@ -8,31 +8,29 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.steps.onezone.members import (
-    set_privileges_in_members_subpage, click_element_in_members_list,
+    try_setting_privileges_in_members_subpage, click_element_in_members_list,
     assert_privileges_in_members_subpage, click_on_option_in_members_list_menu,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.modals.modal import (
-    assert_error_modal_with_text_appeared, assert_element_text_in_modal)
+from tests.gui.steps.modals.modal import assert_element_text_in_modal
 
 
 def fail_to_set_privileges_using_op_gui(user, space_name, member_name,
                                         member_type, config, selenium, onepanel,
                                         oz_page):
     button = 'Members'
-    option = 'sets'
+    option = 'fails to set'
     list_type = 'users'
     where = 'space'
-    text = 'insufficient privileges'
+
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, button, oz_page)
     click_element_in_members_list(selenium, user, member_name,
                                   oz_page, where, list_type, onepanel)
-    set_privileges_in_members_subpage(selenium, user, member_name,
-                                      member_type, where, config, onepanel,
-                                      oz_page, option)
-    assert_error_modal_with_text_appeared(selenium, user, text)
+    try_setting_privileges_in_members_subpage(selenium, user, member_name,
+                                              member_type, where, config,
+                                              onepanel, oz_page, option)
 
 
 def assert_privileges_in_space_using_op_gui(user, space_name, member_name,

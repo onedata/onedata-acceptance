@@ -66,6 +66,10 @@ class PrivilegeRow(PageObject):
                 self.activate()
             else:
                 self.deactivate()
+        if granted:
+            return self.toggle.is_checked()
+        else:
+            return self.toggle.is_unchecked()
 
 
 class PrivilegeGroup(PageObject):
@@ -158,6 +162,10 @@ class PrivilegeGroup(PageObject):
                 self.activate()
             else:
                 self.deactivate()
+        if granted:
+            return self.toggle.is_checked()
+        else:
+            return self.toggle.is_unchecked()
 
 
 class PrivilegeTree(PageObject):
@@ -241,29 +249,36 @@ class PrivilegeTree(PageObject):
             User management:
               granted: False
         """
-        self._set_privileges(selenium, browser_id, privileges, with_scroll)
+        return self._set_privileges(selenium, browser_id, privileges,
+                                    with_scroll)
 
     def _set_privileges(self, selenium, browser_id, privileges,
                         with_scroll=False):
+        result = True
         for privilege_name, privilege_group in privileges.items():
-            self._set_privilege_group(selenium, browser_id, privilege_group,
-                                      privilege_name, with_scroll)
+            result = result and self._set_privilege_group(
+                selenium, browser_id, privilege_group, privilege_name,
+                with_scroll)
+        return result
 
     def _set_privilege_group(self, selenium, browser_id, group, name,
                              with_scroll=False):
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group['granted']
+        result = True
         if granted == 'Partially':
             sub_privileges = group['privilege subtypes']
             privilege_row.expand(driver)
             time.sleep(1)
             for sub_name, sub_granted in sub_privileges.items():
-                self.privileges[sub_name].set_privilege(driver, sub_granted,
-                                                        with_scroll)
+                result = result and self.privileges[sub_name].set_privilege(
+                    driver, sub_granted, with_scroll)
             privilege_row.collapse(driver)
         else:
-            privilege_row.set_privilege(driver, granted, with_scroll)
+            result = result and privilege_row.set_privilege(
+                driver, granted, with_scroll)
+        return result
 
     def set_all_true(self):
         for priv_group in self.privilege_groups:

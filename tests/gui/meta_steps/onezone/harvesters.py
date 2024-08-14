@@ -224,7 +224,7 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|tries to set) '
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>sets|fails to set) '
                'following privileges for "(?P<user_name>.*)" user in '
                r'"(?P<harvester_name>.*)" harvester:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -240,7 +240,7 @@ def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
                                                       menu_option, oz_page)
     click_element_in_members_list(selenium, browser_id, user_name, oz_page,
                                   where, list_type + 's', onepanel)
-    set_privileges_in_members_subpage(
+    try_setting_privileges_in_members_subpage(
         selenium, browser_id, user_name, list_type, where, config,
         onepanel, oz_page, option)
 
