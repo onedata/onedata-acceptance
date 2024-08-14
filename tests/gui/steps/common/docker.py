@@ -159,7 +159,7 @@ def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
                             dst_path))
 
 
-@wt(parsers.parse('user of {browser_id} copies "{space}" space '
+@wt(parsers.parse('user of {browser_id} copies "{space}" space directory '
                   'to {dst_path}'))
 def wt_cp_space_to_dst_path(browser_id, dst_path, space, hosts, spaces):
     cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],

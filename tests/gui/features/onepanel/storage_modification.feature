@@ -74,13 +74,13 @@ Feature: Storage modification
     And user of browser does not see "test_storage" on the storages list
 
 
-  Scenario: User sees file's content after modifying storage backend to copied mountpoint
-    Given there is "test_storage1" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          type: posix
-          mountPoint: /volumes/posix
+  Scenario: User sees file's content after modifying storage backend to copied mountpoint directory
+    Given "test_storage1" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: POSIX
+          mount point: /volumes/posix
 
     And initial spaces configuration in "onezone" Onezone service:
-          space1:
+          space2:
               owner: admin
               providers:
                   - oneprovider-1:
@@ -89,11 +89,11 @@ Feature: Storage modification
 
     When user creates directory (mkdir) /volumes/dir3 on oneprovider-1 docker
 
-    And user of browser opens file browser for "space1" space
+    And user of browser opens file browser for "space2" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
 
-    And user of browser copies "space1" space to /volumes/dir3
+    And user of browser copies "space2" space directory to /volumes/dir3
 
     And user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
@@ -104,7 +104,7 @@ Feature: Storage modification
     And user of browser clicks on Save button in edit form for "test_storage1" storage in Onepanel
     And user of browser confirms committed changes in modal "Modify Storage"
 
-    And user of browser opens file browser for "space1" space
+    And user of browser opens file browser for "space2" space
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks and presses enter on item named "20B-1.txt" in file browser

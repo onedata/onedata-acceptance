@@ -6,11 +6,11 @@ Feature: LUMA local feed acceptance tests with imported storage
             - user1
             - user2
     And there are no spaces of user1 in "onezone" Onezone service
-    And there is "luma_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          type: posix
-          mountPoint: /volumes/posix
-          lumaFeed: local
-          importedStorage: true
+    And "luma_storage" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: POSIX
+          mount point: /volumes/posix
+          LUMA feed: local
+          imported storage: true
     And there is following users configuration in storage's mount point:
           luma_group:
             GID: 3013

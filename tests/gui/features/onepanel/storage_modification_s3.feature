@@ -5,12 +5,12 @@ Feature: Storage S3 management using onepanel, REST
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "test_storage1" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          type: s3
+    And "test_storage1" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: S3
           hostname: http://dev-volume-s3-krakow.default:9000
-          bucketName: test
-          accessKey: accessKey
-          secretKey: verySecretKey
+          bucket name: test
+          access key: accessKey
+          secret key: verySecretKey
 
     And initial spaces configuration in "onezone" Onezone service:
           space1:

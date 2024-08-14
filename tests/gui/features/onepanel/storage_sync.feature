@@ -4,10 +4,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          type: posix
-          mountPoint: /volumes/posix
-          importedStorage: true
+    And "new_storage" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: POSIX
+          mount point: /volumes/posix
+          imported storage: true
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page

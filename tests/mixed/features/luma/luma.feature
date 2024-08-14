@@ -5,10 +5,10 @@ Feature: LUMA local feed acceptance tests with non-imported storage
     Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
-    And there is "luma_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
-          type: posix
-          mountPoint: /volumes/posix
-          lumaFeed: local
+    And "luma_storage" storage backend in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: POSIX
+          mount point: /volumes/posix
+          LUMA feed: local
     And initial spaces configuration in "onezone" Onezone service:
         space1:
           owner: user1
