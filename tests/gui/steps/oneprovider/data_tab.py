@@ -10,8 +10,6 @@ __license__ = ("This software is released under the MIT license cited in "
 import pytest
 import time
 
-import yaml
-
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.conftest import WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -397,9 +395,9 @@ def network_throttling_upload(driver):
     upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency = 5,
-        download_throughput = 500 * 1024,
-        upload_throughput = float(upload_kb) / 8 * 1024)
+        latency=5,
+        download_throughput=500 * 1024,
+        upload_throughput=float(upload_kb) / 8 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -440,7 +438,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -621,12 +619,13 @@ def click_file_browser_button(browser_id, button, tmp_memory):
 
 
 def network_throttling_download(driver):
-    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+    download_kb = (
+                              GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
-        latency = 5,
-        download_throughput = float(download_kb) / 8 * 1024,
-        upload_throughput = 500 * 1024)
+        latency=5,
+        download_throughput=float(download_kb) / 8 * 1024,
+        upload_throughput=500 * 1024)
 
 
 @wt(parsers.parse('user of {browser_id} downloads item named "{item_name}" '
@@ -677,19 +676,19 @@ def expand_size_statistics_for_providers(selenium, browser_id, modals):
     modals(driver).details_modal.size_statistics.expand_stats_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that {size_type} for {provider}'
-                  ' is "{expected_size}"'))
+@wt(parsers.parse('user of {browser_id} sees that {elem_type} for {provider}'
+                  ' is "{expected}"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_size_for_provider(selenium, hosts, modals, browser_id, size_type,
-                            provider, expected_size):
+def check_size_stats_for_provider(selenium, hosts, modals, browser_id,
+                                  elem_type, provider, expected):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
     size = getattr(modals(driver).details_modal.size_statistics
                    .dir_stats_row_per_provider[provider_name],
-                   transform(size_type))
+                   transform(elem_type))
 
-    assert size == expected_size, (
-        f"{size_type} is {size} instead of {expected_size} for provider "
+    assert size == expected, (
+        f"{elem_type} is {size} instead of {expected} for provider "
         f"{provider_name}!")
 
 
@@ -720,43 +719,12 @@ def check_content_for_provider(selenium, hosts, modals, browser_id,
         f"of {content}!")
 
 
-@wt(parsers.parse('user of {browser_id} sees in size stats tab that current '
-                  '{size_type} is "{expected_size}"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_size_statistic_in_dir_details(selenium, modals, browser_id, size_type,
-                                    expected_size):
+def check_size_statistic_in_dir_details(selenium, modals, browser_id, elem_type,
+                                        expected):
     driver = selenium[browser_id]
     size = getattr(modals(driver).details_modal.size_statistics,
-                   transform(size_type))
+                   transform(elem_type))
 
-    assert size == expected_size, (
-        f'{size_type} is {size} instead of {expected_size}!')
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _check_size_stats_in_dir_details(selenium, modals, browser_id, config):
-    options = yaml.load(config)
-
-    check_size_statistic_in_dir_details(selenium, modals, browser_id,
-                                        'logical_size',
-                                        options['logical size'])
-    check_size_statistic_in_dir_details(selenium, modals, browser_id,
-                                        'total_physical_size',
-                                        options['total physical size'])
-    check_size_statistic_in_dir_details(selenium, modals, browser_id,
-                                        'contain_counter',
-                                        options['contain counter'])
-
-
-@repeat_failed(timeout=WAIT_BACKEND)
-def _check_size_stats_for_provider(selenium, modals, browser_id, config, hosts,
-                                   provider):
-    options = yaml.load(config)
-    check_size_for_provider(selenium, hosts, modals, browser_id, 'logical_size',
-                            provider, options['logical size'])
-    check_size_for_provider(selenium, hosts, modals, browser_id,
-                            'physical_size',
-                            provider, options['physical size'])
-    check_size_for_provider(selenium, hosts, modals, browser_id,
-                            'content', provider,
-                            options['content'])
+    assert size == expected, (
+        f'{elem_type} is {size} instead of {expected}!')

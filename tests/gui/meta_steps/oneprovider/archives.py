@@ -13,7 +13,7 @@ import re
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
-    go_to_path_without_last_elem, go_to_and_assert_browser)
+    go_to_path_without_last_elem, go_to_and_assert_browser, go_to_path)
 from tests.gui.meta_steps.oneprovider.dataset import (
     get_item_name_from_path)
 from tests.gui.steps.oneprovider.archives_recall import (
@@ -26,11 +26,13 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op, \
+    check_size_statistic_in_dir_details, check_size_stats_for_provider, \
+    expand_size_statistics_for_providers
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
-    assert_option_state_in_data_row_menu)
+    assert_option_state_in_data_row_menu, click_tag_for_elem_in_browser)
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
     write_description_in_create_archive_modal,
@@ -42,7 +44,6 @@ from tests.gui.steps.oneprovider.archives import (
     assert_archive_info_in_properties_modal)
 from tests.gui.steps.modals.modal import (
     click_modal_button, write_name_into_text_field_in_modal)
-
 
 OPTION_IN_SPACE = 'Datasets, Archives'
 DATASET_BROWSER = 'dataset browser'
@@ -90,7 +91,6 @@ def create_archive_with_follow_symbolic_link(browser_id, selenium, config,
                                              op_container, tmp_memory, modals,
                                              clipboard, displays, option,
                                              popups, follow_symbolic_links):
-
     follow_symbolic_links = follow_symbolic_links == 'true'
 
     _create_archive(browser_id, selenium, config, item_name, space_name,
@@ -338,7 +338,6 @@ def recall_archive_for_archive_in_op_gui(browser_id, description, tmp_memory,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                                        data, modals, selenium):
-
     status_type = 'recalled'
     click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory)
@@ -375,3 +374,64 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                 assert value <= expected_value, err_msg
             else:
                 assert value == expected_value, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that current size statistics for '
+                  'archive with description "{description}" for "{item_name}" '
+                  'in {item_browser} are as follow:\n{config}'))
+def check_size_stats_for_archive(selenium, modals, browser_id, description,
+                                 config, tmp_memory, op_container, item_name,
+                                 item_browser):
+    """ Check size stats in directory details according to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type                          --> required
+                total physical size: total_physical_size            --> required
+                contain counter: contain_counter                    --> required
+        """
+
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory,
+                                item_browser)
+    click_and_press_enter_on_archive(browser_id, tmp_memory, description)
+    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                  tag='size statistics icon',
+                                  which_browser=item_browser)
+    size_statistics = yaml.load(config)
+    for stat_type, expected_value in size_statistics.items():
+        check_size_statistic_in_dir_details(selenium, modals, browser_id,
+                                            stat_type, expected_value)
+
+
+@wt(parsers.parse('user of {browser_id} sees that {provider} size statistics '
+                  'for archive with description "{description}" '
+                  'for "{item_name}" in {item_browser} are as '
+                  'follow:\n{config}'))
+def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
+                                              description, hosts,
+                                              config, tmp_memory, op_container,
+                                              item_name,
+                                              item_browser, provider):
+    """ Check size stats in directory details  for specified provider according
+        to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type                          --> required
+                physical size: physical_size                        --> required
+                content: content                                    --> required
+        """
+
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory,
+                                item_browser)
+    click_and_press_enter_on_archive(browser_id, tmp_memory, description)
+    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                  tag='size statistics icon',
+                                  which_browser=item_browser)
+    expand_size_statistics_for_providers(selenium, browser_id, modals)
+    size_statistics = yaml.load(config)
+    for stat_type, expected_value in size_statistics.items():
+        check_size_stats_for_provider(selenium, hosts, modals, browser_id,
+                                      stat_type, provider, expected_value)
