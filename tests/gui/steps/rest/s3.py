@@ -164,4 +164,4 @@ def copy_item_between_buckets(dst_bucket, src, dst):
 
 def add_etc_hosts_entries(service_ip, service_host):
     sp.call('sudo bash -c "echo {} {} >> /etc/hosts"'.format(
-        service_ip, service_host), shell=True)
+        service_ip, service_host), shell=True, text=True)
