@@ -34,7 +34,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
 
     And user of browser_user1 refreshes site
     And user of browser_user1 clicks "user1" user in "space1" space members users list
-    And user of browser_user1 sees "This user is a space owner and is authorized to perform all operations, regardless of the assigned privileges." warning for "user1" user in space members subpage
+    And user of browser_user1 sees "As a space owner, you are authorized to perform all operations, regardless of the assigned privileges." warning for "user1" user in space members subpage
 
     And user of browser_user1 clicks "space-owner-user" user in "space1" space members users list
     Then user of browser_user1 sees privileges for "space-owner-user" user in space members subpage
