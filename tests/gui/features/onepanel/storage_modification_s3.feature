@@ -41,10 +41,10 @@ Feature: Storage S3 management using onepanel, REST
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
-    And user of browser clicks on "Modify" button for "new_storage1" storage record in Storages page in Onepanel
-    And user of browser types "bucket2" to bucket name field in S3 edit form for "new_storage1" storage in Onepanel
-    And user of browser types "verySecretKey" to admin secret key field in S3 edit form for "new_storage1" storage in Onepanel
-    And user of browser clicks on Save button in edit form for "new_storage1" storage in Onepanel
+    And user of browser clicks on "Modify" button for "test_storage1" storage record in Storages page in Onepanel
+    And user of browser types "bucket2" to bucket name field in S3 edit form for "test_storage1" storage in Onepanel
+    And user of browser types "verySecretKey" to admin secret key field in S3 edit form for "test_storage1" storage in Onepanel
+    And user of browser clicks on Save button in edit form for "test_storage1" storage in Onepanel
     And user of browser confirms committed changes in modal "Modify Storage"
 
     And user of browser opens file browser for "space1" space
