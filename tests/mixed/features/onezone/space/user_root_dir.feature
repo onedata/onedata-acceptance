@@ -1,5 +1,5 @@
 Feature: Basic operations on the special user root directory which is
-  user`s home onedata directory, parent directory of all user`s spaces.
+  user's home onedata directory, parent directory of all user's spaces.
   Using REST API and oneclient.
 
   Background:
