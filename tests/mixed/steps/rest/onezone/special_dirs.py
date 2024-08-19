@@ -36,15 +36,15 @@ def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memor
         tmp_memory['user_root_dir'] = {user: space_details.dir_id}
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the archives directory from '
-                  'the space "{space_name}" details in {host}'))
-def get_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+@wt(parsers.parse('using REST, {user} gets ID of the archives root directory '
+                  'from the space "{space_name}" details in {host}'))
+def get_archives_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts,
                                            host, spaces[space_name])
-    if tmp_memory['archives_dir']:
-        tmp_memory['archives_dir'][user] = space_details.archives_dir_id
+    if tmp_memory['archives_root_dir']:
+        tmp_memory['archives_root_dir'][user] = space_details.archives_dir_id
     else:
-        tmp_memory['archives_dir'] = {user: space_details.archives_dir_id}
+        tmp_memory['archives_root_dir'] = {user: space_details.archives_dir_id}
 
 
 @wt(parsers.parse('using REST, {user} gets ID of the trash directory from '
@@ -58,19 +58,19 @@ def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
         tmp_memory['trash_dir'] = {user: space_details.trash_dir_id}
 
 
-@wt(parsers.parse('using REST, {user} gets ID of the shares directory from '
+@wt(parsers.parse('using REST, {user} gets ID of the share root directory from '
                   'the share details in the space "{space_name}" in {host}'))
-def get_shares_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+def get_share_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     get_user_root_dir_id(users, user, hosts, host, space_name, spaces,
                          tmp_memory)
     share_id = create_share_rest(
         users, user, hosts, host, tmp_memory['user_root_dir'][user],
         'test_share').share_id
     share_details = get_share_details_rest(users, user, hosts, host, share_id)
-    if tmp_memory['shares_dir']:
-        tmp_memory['shares_dir'][user] = share_details.root_file_id
+    if tmp_memory['share_root_dir']:
+        tmp_memory['share_root_dir'][user] = share_details.root_file_id
     else:
-        tmp_memory['shares_dir'] = {user: share_details.root_file_id}
+        tmp_memory['share_root_dir'] = {user: share_details.root_file_id}
 
 
 @wt(parsers.parse('using {client}, {user} fails to remove the {name} '
