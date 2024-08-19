@@ -32,6 +32,7 @@ def add_s3_host_entry():
     ip = sp.check_output("kubectl get pods -o wide | grep dev-volume-s3-krakow |"
                          " grep -v dev-volume-s3-krakow-init | awk '{print $6}'",
                          shell=True, text=True)
+    ip = ip.replace('\n', '')
     add_etc_hosts_entries(ip, 'dev-volume-s3-krakow.default')
 
 
@@ -163,5 +164,5 @@ def copy_item_between_buckets(dst_bucket, src, dst):
 
 
 def add_etc_hosts_entries(service_ip, service_host):
-    sp.run('sudo bash -c "echo {} {} >> /etc/hosts"'.format(
-        service_ip, service_host), shell=True, text=True, check=True)
+    sp.run(f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
+           shell=True, text=True, check=True)
