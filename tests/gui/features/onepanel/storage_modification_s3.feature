@@ -27,7 +27,7 @@ Feature: Storage S3 management using onepanel, REST
     And S3 host entry is added to /etc/hosts
 
 
-  Scenario: User sees file's content after modifying storage backend to copied S3 bucket
+  Scenario: User sees file's content after modifying storage backend by setting new S3 bucket with copied content from the previous bucket
     When user of browser opens file browser for "space1" space
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
