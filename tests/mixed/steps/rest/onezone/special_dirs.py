@@ -131,7 +131,7 @@ def try_to_move_special_dir_by_id(client, user, users, hosts, host, dir_id,
             client = cdmi(hosts[host]['ip'], users[user].token)
             client.move_item_by_id(dir_id, '/new_name')
             raise Exception(err_msg)
-        except HTTPForbidden as e:
+        except (HTTPForbidden, HTTPBadRequest) as e:
             ex_err_msg = 'Operation failed with POSIX error: eperm.'
             assert ex_err_msg in str(e), f'Unexpected error occurred {e}'
     elif 'oneclient' in client.lower():
@@ -178,7 +178,7 @@ def try_to_create_file_in_special_dir_by_id(client, users, user, hosts, host,
                 users, user, hosts, host, dir_id,
                 file_name)
             raise Exception(err_msg)
-        except ApiException as e:
+        except (ApiException, HTTPBadRequest) as e:
             ex_err_msg = 'Operation failed with POSIX error: eperm.'
             assert ex_err_msg in str(e), f'Unexpected error occurred {e}'
     elif 'oneclient' in client.lower():
