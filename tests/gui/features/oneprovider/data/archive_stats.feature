@@ -39,23 +39,20 @@ Feature: Size statistics of directories in archives
         description: first archive
         layout: plain
 
-    Then user of browser sees that current size statistics for archive with description "first archive" for "dir1" in archive browser are as follow:
+    And user of browser sees archive browser in archives tab in Oneprovider page
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks on size statistics icon for "dir1" directory in archive browser
+
+    Then user of browser sees that current size statistics are as follow:
         logical size: 15 B
         total physical size: 15 B
         contain counter: 1 file, 1 directory (2 elements in total)
-
-    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on dataset for "dir1" in dataset browser
-    And user of browser sees that oneprovider-1 size statistics for archive with description "first archive" for "dir1" in archive browser are as follow:
+    And user of browser clicks "Show statistics per provider" button on Size stats modal
+    And user of browser sees that oneprovider-1 size statistics are as follow:
         logical size: 15 B
         physical size: 0 B
         content: 1 file, 1 directory
-
-    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on dataset for "dir1" in dataset browser
-    And user of browser sees that oneprovider-2 size statistics for archive with description "first archive" for "dir1" in archive browser are as follow:
+    And user of browser sees that oneprovider-2 size statistics are as follow:
         logical size: 15 B
         physical size: 15 B
         content: 1 file, 1 directory
