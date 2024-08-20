@@ -376,12 +376,9 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                 assert value == expected_value, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that current size statistics for '
-                  'archive with description "{description}" for "{item_name}" '
-                  'in {item_browser} are as follow:\n{config}'))
-def check_size_stats_for_archive(selenium, modals, browser_id, description,
-                                 config, tmp_memory, op_container, item_name,
-                                 item_browser):
+@wt(parsers.parse('user of {browser_id} sees that current size statistics are '
+                  'as follow:\n{config}'))
+def check_size_stats_for_archive(selenium, modals, browser_id, config):
     """ Check size stats in directory details according to given config.
 
             Config format given in yaml is as follows:
@@ -391,13 +388,6 @@ def check_size_stats_for_archive(selenium, modals, browser_id, description,
                 contain counter: contain_counter                    --> required
         """
 
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory,
-                                item_browser)
-    click_and_press_enter_on_archive(browser_id, tmp_memory, description)
-    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory,
-                                  tag='size statistics icon',
-                                  which_browser=item_browser)
     size_statistics = yaml.load(config)
     for stat_type, expected_value in size_statistics.items():
         check_size_statistic_in_dir_details(selenium, modals, browser_id,
@@ -405,14 +395,9 @@ def check_size_stats_for_archive(selenium, modals, browser_id, description,
 
 
 @wt(parsers.parse('user of {browser_id} sees that {provider} size statistics '
-                  'for archive with description "{description}" '
-                  'for "{item_name}" in {item_browser} are as '
-                  'follow:\n{config}'))
+                  'are as follow:\n{config}'))
 def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
-                                              description, hosts,
-                                              config, tmp_memory, op_container,
-                                              item_name,
-                                              item_browser, provider):
+                                              hosts, config, provider):
     """ Check size stats in directory details  for specified provider according
         to given config.
 
@@ -423,14 +408,6 @@ def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
                 content: content                                    --> required
         """
 
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory,
-                                item_browser)
-    click_and_press_enter_on_archive(browser_id, tmp_memory, description)
-    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory,
-                                  tag='size statistics icon',
-                                  which_browser=item_browser)
-    expand_size_statistics_for_providers(selenium, browser_id, modals)
     size_statistics = yaml.load(config)
     for stat_type, expected_value in size_statistics.items():
         check_size_stats_for_provider(selenium, hosts, modals, browser_id,

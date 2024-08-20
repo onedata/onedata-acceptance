@@ -619,8 +619,8 @@ def click_file_browser_button(browser_id, button, tmp_memory):
 
 
 def network_throttling_download(driver):
-    download_kb = (
-                              GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE /
+                   DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
         latency=5,
