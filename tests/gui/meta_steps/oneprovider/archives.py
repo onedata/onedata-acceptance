@@ -13,7 +13,7 @@ import re
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
-    go_to_path_without_last_elem, go_to_and_assert_browser, go_to_path)
+    go_to_path_without_last_elem, go_to_and_assert_browser)
 from tests.gui.meta_steps.oneprovider.dataset import (
     get_item_name_from_path)
 from tests.gui.steps.oneprovider.archives_recall import (
@@ -26,13 +26,13 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op, \
-    check_size_statistic_in_dir_details, check_size_stats_for_provider, \
-    expand_size_statistics_for_providers
+from tests.gui.steps.oneprovider.data_tab import (
+    assert_browser_in_tab_in_op,  check_size_statistic_in_dir_details,
+    check_size_stats_for_provider)
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
-    assert_option_state_in_data_row_menu, click_tag_for_elem_in_browser)
+    assert_option_state_in_data_row_menu)
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
     write_description_in_create_archive_modal,
@@ -383,9 +383,9 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
 
             Config format given in yaml is as follows:
 
-                logical size: storage_type                          --> required
-                total physical size: total_physical_size            --> required
-                contain counter: contain_counter                    --> required
+                logical size: storage_type
+                total physical size: total_physical_size
+                contain counter: contain_counter
         """
 
     size_statistics = yaml.load(config)
@@ -398,14 +398,14 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
                   'are as follow:\n{config}'))
 def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
                                               hosts, config, provider):
-    """ Check size stats in directory details  for specified provider according
+    """ Check size stats in directory details for specified provider according
         to given config.
 
             Config format given in yaml is as follows:
 
-                logical size: storage_type                          --> required
-                physical size: physical_size                        --> required
-                content: content                                    --> required
+                logical size: storage_type
+                physical size: physical_size
+                content: content
         """
 
     size_statistics = yaml.load(config)

@@ -726,5 +726,4 @@ def check_size_statistic_in_dir_details(selenium, modals, browser_id, elem_type,
     size = getattr(modals(driver).details_modal.size_statistics,
                    transform(elem_type))
 
-    assert size == expected, (
-        f'{elem_type} is {size} instead of {expected}!')
+    assert size == expected, f'{elem_type} is {size} instead of {expected}!'
