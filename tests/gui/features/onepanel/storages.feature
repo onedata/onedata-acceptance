@@ -181,6 +181,7 @@ Feature: Storage management using onepanel
     And user of browser_unified opens "space5" record on spaces list in Spaces page in Onepanel
     Then user of browser_unified cannot click on Storage import navigation tab in space "space5"
 
+
   Scenario: User succeeds to create 2 storages with the same name
     Given there is no "storage" storage in "oneprovider-1" Oneprovider panel
     When user of browser_unified clicks on Clusters in the main menu
@@ -201,3 +202,4 @@ Feature: Storage management using onepanel
     And user of browser_unified types "/tmp" to Mount point field in POSIX form in storages page in Onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
     Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list
+

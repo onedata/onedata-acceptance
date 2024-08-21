@@ -14,7 +14,8 @@ import yaml
 
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.miscellaneous import type_string_into_active_element
+from tests.gui.steps.common.miscellaneous import (
+    type_string_into_active_element, _camel_transform)
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.onepanel.common import (
@@ -126,7 +127,7 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
 
 
-@given(parsers.parse('there is "{storage_name}" storage in "{provider}" '
+@given(parsers.parse('"{storage_name}" storage backend in "{provider}" '
                      'Oneprovider panel service used by '
                      '{user} with following configuration:\n{config}'))
 def safely_create_storage_rest(storage_name, provider, config,
@@ -221,13 +222,13 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
     storage_config = {}
     options = yaml.load(config)
 
-    storage_config['type'] = options['storage type'].lower()
-    if options.get('imported storage', False):
-        storage_config['importedStorage'] = True
-    storage_config['mountPoint'] = options['mount point']
-    luma_feed = options.get('LUMA feed')
-    if luma_feed:
-        storage_config['lumaFeed'] = luma_feed
+    for key, val in options.items():
+        if key == 'storage type':
+            storage_config['type'] = val.lower()
+        elif key == 'imported storage':
+            storage_config['importedStorage'] = True
+        else:
+            storage_config[_camel_transform(key)] = val
 
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username

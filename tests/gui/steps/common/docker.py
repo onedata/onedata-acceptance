@@ -99,6 +99,11 @@ def _docker_cat(path, hosts):
     return output
 
 
+def _docker_mkdir(path, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'mkdir', '-p', path]
+    subprocess.check_call(cmd)
+
+
 def _docker_append_text_to_file(text, path, hosts):
     cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
            'sh', '-c', f'echo {text} >> {path}']
@@ -154,6 +159,14 @@ def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
                             dst_path))
 
 
+@wt(parsers.parse('user of {browser_id} copies "{space}" space directory '
+                  'to {dst_path}'))
+def wt_cp_space_to_dst_path(browser_id, dst_path, space, hosts, spaces):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'cp', '-r', f'/volumes/posix/{spaces[space]}/', dst_path]
+    subprocess.check_call(cmd)
+
+
 @wt(parsers.parse('user of {browser_id} copies {src_path} '
                   'to {dst_path} directory on docker'))
 def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
@@ -189,6 +202,12 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
                   'to {new_src_path}'))
 def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
+
+
+@wt(parsers.parse('user creates directory (mkdir) {path} on '
+                  'oneprovider-1 docker'))
+def wt_mkdir(path, hosts):
+    _docker_mkdir(path, hosts)
 
 
 def wt_assert_file_in_path_with_content(path, content, hosts):
