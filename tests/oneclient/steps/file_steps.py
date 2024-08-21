@@ -12,15 +12,15 @@ from tests.utils.bdd_utils import when, then, wt, parsers
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*)'))
-def create_reg_file(user, files, users):
-    multi_file_steps.create_reg_file(user, files, 'client1', users)
+def create_reg_file(user, files, users, request):
+    multi_file_steps.create_reg_file(user, files, 'client1', users, request)
 
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
                'with names in range \[(?P<lower>.*), (?P<upper>.*)\)'))
-def create_many(user, lower: int, upper: int, parent_dir, users):
+def create_many(user, lower: int, upper: int, parent_dir, users, request):
     multi_file_steps.create_many(user, lower, upper, parent_dir, 'client1',
-                                 users)
+                                 users, request)
 
 
 @wt(parsers.re('(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)'))

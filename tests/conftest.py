@@ -55,6 +55,13 @@ def pytest_addoption(parser):
 
     parser.addoption('--timeout', action='store',
                      help='onenv wait timeout')
+    parser.addoption('--file-mode', action='store', default='regular',
+                     help="""Determines how files in a test are created:
+                            * regular - a file is created as standard regular file (default);
+                            * hardlink - a file is created as a hardlink to a 
+                            regular file in a space, all created files are hardlinks to a different file;
+                            * symlink - a file is created as a symlink to a 
+                            regular file in a space, all created files are symlinks to a different file""")
 
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')

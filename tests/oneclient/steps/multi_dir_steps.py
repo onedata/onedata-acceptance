@@ -18,16 +18,16 @@ from tests.utils.bdd_utils import given, when, wt, parsers
 from tests.utils.utils import assert_generic, assert_, assert_expected_failure
 
 
-def create_base(user, dirs, client_node, users, should_fail=False):
+def create_base(user, dirs, client_node, users, should_fail=False, exists_ok=False):
     dirs = list_parser(dirs)
     user = users[user]
-    client = user.clients[client_node] 
+    client = user.clients[client_node]
 
     for dir in dirs:
         path = client.absolute_path(dir)
 
         def condition():
-            client.mkdir(path)
+            client.mkdir(path, exist_ok=exists_ok)
 
         if should_fail:
             assert_expected_failure(condition)
@@ -37,8 +37,12 @@ def create_base(user, dirs, client_node, users, should_fail=False):
 
 @when(parsers.re('(?P<user>\w+) creates directories (?P<dirs>.*)\son '
                  '(?P<client_node>.*)'))
-def create(user, dirs, client_node, users):
-    create_base(user, dirs, client_node, users)
+def create_(user, dirs, client_node, users):
+    create(user, dirs, client_node, users)
+
+
+def create(user, dirs, client_node, users, exists_ok=False):
+    create_base(user, dirs, client_node, users, exists_ok=exists_ok)
 
 
 @when(parsers.re('(?P<user>\w+) creates directory and parents (?P<paths>.*)\s'

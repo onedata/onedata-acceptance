@@ -14,6 +14,8 @@ import json
 import stat as stat_lib
 import subprocess as sp
 import time
+import random
+import string
 
 import jsondiff
 
@@ -22,40 +24,84 @@ from tests.utils.acceptance_utils import (list_parser, make_arg_list,
 from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.onenv_utils import cmd_exec
+from tests.oneclient.steps.multi_dir_steps import create
+
+HARDLINKS_DIR = '.hardlinks'
+SYMLINKS_DIR = '.symlinks'
 
 
-def create_base(user, files, client_node, users, should_fail=False):
+def create_base(user, files, client_node, users, request, should_fail=False):
     files = list_parser(files)
-    user = users[user]
-    client = user.clients[client_node]
+    user_ = users[user]
+    client = user_.clients[client_node]
+    mode = request.config.getoption('file_mode')
 
     for file_name in files:
-        path = client.absolute_path(file_name)
+        # path for original file in hardlink/symlink mode
+        # space_name/(.hardlinks or .symlinks)/(random string)
 
-        def condition():
-            client.create_file(path)
-        assert_generic(client.perform, should_fail, condition)
+        path = client.absolute_path(file_name)
+        if mode == 'regular':
+
+            def condition():
+                client.create_file(path)
+
+        elif mode == 'hardlink':
+            target_file_path = create_target_file(user, client, client_node,
+                                                  users, file_name, HARDLINKS_DIR)
+
+            def condition():
+                client.create_file(target_file_path)
+                client.create_hardlink(target_file_path, path)
+
+        elif mode == 'symlink':
+            target_file_path = create_target_file(user, client, client_node,
+                                                  users, file_name, SYMLINKS_DIR)
+
+            def condition():
+                client.create_file(target_file_path)
+                client.create_symlink(target_file_path, path)
+
+        else:
+            raise Exception
+
+        try:
+            assert_generic(client.perform, should_fail, condition)
+        except Exception as e:
+            print(e)
+
+
+def create_target_file(user, client, client_node, users, file_name, dir_name):
+    space = file_name.split('/')[0]
+    create(user, f'[{space}/{dir_name}]', client_node, users,
+           exists_ok=True)
+    file_name_hash = ''.join(
+        random.choice(string.ascii_lowercase + string.digits) for _ in
+        range(16))
+    target_file_path = os.path.join(space, dir_name, file_name_hash)
+    target_file_path = client.absolute_path(target_file_path)
+    return target_file_path
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
-def create_reg_file(user, files, client_node, users):
-    create_base(user, files, client_node, users)
+def create_reg_file(user, files, client_node, users, request):
+    create_base(user, files, client_node, users, request)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to create regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
-def create_reg_file_fail(user, files, client_node, users):
-    create_base(user, files, client_node, users, should_fail=True)
+def create_reg_file_fail(user, files, client_node, users, request):
+    create_base(user, files, client_node, users, request, should_fail=True)
 
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
                'with names in range \[(?P<lower>.*), (?P<upper>.*)\) on '
                '(?P<client_node>.*)'))
-def create_many(user, lower: int, upper: int, parent_dir, client_node, users):
+def create_many(user, lower: int, upper: int, parent_dir, client_node, users, request):
     for i in range(lower, upper):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(user, make_arg_list(new_file), client_node, users)
+        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
 
 
 @wt(parsers.re('(?P<user>\w+) can stat (?P<files>.*) in (?P<path>.*)'
@@ -112,6 +158,7 @@ def ls_children(user, parent_dir, lower: int, upper: int, client_node, users):
 
     def condition():
         listed_files = client.ls(path)
+
         assert len(listed_files) == files_num, "Listed {} files instead of expected {}".format(
             len(listed_files), files_num)
         for i in range(lower, upper):

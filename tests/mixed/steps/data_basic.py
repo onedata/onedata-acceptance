@@ -24,7 +24,7 @@ from tests.utils.path_utils import get_first_path_element
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
-                      selenium, op_container, result, modals, oz_page):
+                      selenium, op_container, result, modals, oz_page, request):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'web gui':
@@ -37,7 +37,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         create_file_in_op_oneclient(user, full_path, users, result,
-                                    oneclient_host)
+                                    oneclient_host, request)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -46,7 +46,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                'file named "(?P<name>.*)" using received token in '
                '"(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_token(client, user, users, space, name, hosts,
-                                 tmp_memory, host, result, env_desc):
+                                 tmp_memory, host, result, env_desc, request):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'rest':
@@ -55,7 +55,7 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
                                token)
     elif 'oneclient' in client_lower:
         create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
-                                                result, full_path, client_lower)
+                                                result, full_path, client_lower, request)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -82,7 +82,7 @@ def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
                r'?P<result>\w+) to create file named "(?P<name>.*)" using '
                'received token in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
-                                  tmp_memory, host, result, env_desc, tokens):
+                                  tmp_memory, host, result, env_desc, tokens, request):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'rest':
@@ -94,7 +94,7 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
     elif 'oneclient' in client_lower:
         create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc,
                                                 tmp_memory, result, full_path,
-                                                client_lower)
+                                                client_lower, request)
 
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
