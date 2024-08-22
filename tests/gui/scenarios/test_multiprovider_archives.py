@@ -1,9 +1,9 @@
-"""This module contains tests suite for operations on BagIt, plain and DIP
-archives using Oneprovider GUI and multiple browser instances.
+"""This module contains tests suite for operations on archives using
+multiple provider instances and single browser instance.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
+__author__ = "Jakub Pilch"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -76,6 +76,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/archive_basic.feature')
-scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
-scenarios('../features/oneprovider/data/archive_manage_privileges.feature')
+scenarios('../features/oneprovider/multiprovider/archive_stats.feature')
