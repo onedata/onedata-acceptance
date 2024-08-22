@@ -388,7 +388,7 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
                 contain counter: contain_counter
         """
 
-    size_statistics = yaml.load(config)
+    size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
         check_size_statistic_in_dir_details(selenium, modals, browser_id,
                                             stat_type, expected_value)
@@ -408,7 +408,7 @@ def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
                 content: content
         """
 
-    size_statistics = yaml.load(config)
+    size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
         check_size_stats_for_provider(selenium, hosts, modals, browser_id,
                                       stat_type, provider, expected_value)
