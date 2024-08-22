@@ -69,6 +69,7 @@ stages:
         - Atm workflows stores
         - Atm BagIt
         - Metadata
+        - Multiprovider archives
         - Multiprovider basic
         - Multiprovider multiuser
         - Multiprovider QoS
@@ -467,6 +468,21 @@ Metadata:
         <<: *run-script-working-dir
         scripts:
           - make SUITE=test_metadata test_gui_pkg
+
+Multiprovider archives:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_archives test_gui_pkg
 
 Multiprovider basic:
   <<: *acceptance-tests-in-chrome-job
