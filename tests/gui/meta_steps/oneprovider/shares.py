@@ -11,7 +11,7 @@ from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, write_name_into_text_field_in_modal,
-    click_modal_button, click_share_info_icon_in_share_directory_modal,
+    click_modal_button, click_share_details_link_in_shares_panel,
     click_icon_in_share_directory_modal, write_name_into_text_field_in_panel,
     click_panel_button)
 from tests.gui.steps.oneprovider.file_browser import (
@@ -52,7 +52,7 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
 
     click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory)
-    click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
+    click_share_details_link_in_shares_panel(selenium, browser_id, modals,
                                                    share_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 items_browser)

@@ -25,7 +25,7 @@ Feature: Oneprovider shares basic functionality
   Scenario Outline: User selects desirable columns to be visible and can see only them in files table
     When user of browser opens file browser for "space1" space
     And user of browser creates "share_dir1" share of "dir1" directory
-    And user of browser clicks on "share_dir1" share link with icon in shares panel
+    And user of browser clicks on "Show details" link for "share_dir1" share in shares panel
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser enables only <columns_list> columns in columns configuration popover in file browser table

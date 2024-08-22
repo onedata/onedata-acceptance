@@ -14,7 +14,7 @@ from tests.gui.utils.core.base import PageObject
 
 class SharesOptions(PageObject):
     name = id = Label('.item-name')
-    browser_share_icon = Button('.share-name')
+    share_details_link = Button('.share-local-url')
     copy_icon = Button('.oneicon-browser-copy')
 
 

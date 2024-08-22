@@ -427,14 +427,14 @@ def _assert_number_of_shares_in_modal(number, links, info):
     return number in info and len(links) == int(number)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
-                  'with icon in shares panel'))
+@wt(parsers.parse('user of {browser_id} clicks on "Show details" link for "{share_name}" '
+                  'share in shares panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
+def click_share_details_link_in_shares_panel(selenium, browser_id, modals,
                                                    share_name):
     modal = modals(selenium[browser_id]).details_modal.shares
 
-    icon = modal.share_options[share_name].browser_share_icon
+    icon = modal.share_options[share_name].share_details_link
     icon.click()
 
 
