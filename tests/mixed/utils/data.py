@@ -55,7 +55,7 @@ def check_files_tree(subtree, children, cwd, ls_fun, assert_file_content_fun):
                                         str(item_desc))
 
 
-def create_content(user, users, cwd, content, create_item_fun, host, hosts):
+def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -63,7 +63,7 @@ def create_content(user, users, cwd, content, create_item_fun, host, hosts):
             name = item
             content = None
         create_item_fun(user, users, cwd, name, content, create_item_fun, host,
-                        hosts)
+                        hosts, request)
 
 
 ACL_MASK = {

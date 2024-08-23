@@ -108,24 +108,24 @@ def assert_num_of_files_in_path_in_op_oneclient(num, path, user, users, host):
 
 
 def create_directory_structure_in_op_oneclient(user, users, config, space,
-                                               host, hosts):
+                                               host, hosts, request):
     items = yaml.load(config)
     cwd = space
     create_content(user, users, cwd, items, create_item_in_op_oneclient, host,
-                   hosts)
+                   hosts, request)
 
 
 def create_item_in_op_oneclient(user, users, cwd, name, content,
-                                create_item_fun, host, hosts):
+                                create_item_fun, host, hosts, request):
     if name.startswith('dir'):
         multi_dir_steps.create(user, '{}/{}'.format(cwd, name), host, users)
     else:
         multi_file_steps.create_reg_file(user, '{}/{}'.format(cwd, name), host,
-                                         users)
+                                         users, request)
     if not content:
         return
     cwd += '/' + name
-    create_content(user, users, cwd, content, create_item_fun, host, hosts)
+    create_content(user, users, cwd, content, create_item_fun, host, hosts, request)
 
 
 def assert_file_content_in_op_oneclient(path, text, user, users, host):

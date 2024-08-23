@@ -171,15 +171,15 @@ def check_if_item_exists_or_not_exists(result, path, client, file_api):
 
 
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 
-                                          space):
+                                          space, request):
     items = yaml.load(config)
     cwd = space
     create_content(user, users, cwd, items, create_item_in_op_rest, host,
-                   hosts)
+                   hosts, request)
 
 
 def create_item_in_op_rest(user, users, cwd, name, content, create_item_fun,
-                           host, hosts):
+                           host, hosts, request):
     if name.startswith('dir'):
         create_dir_in_op_rest(user, users, host, hosts,
                               '{}/{}'.format(cwd, name), '')
@@ -189,7 +189,7 @@ def create_item_in_op_rest(user, users, cwd, name, content, create_item_fun,
     if not content:
         return
     cwd += '/' + name
-    create_content(user, users, cwd, content, create_item_fun, host, hosts)
+    create_content(user, users, cwd, content, create_item_fun, host, hosts, request)
 
 
 def assert_ace_in_op_rest(user, users, host, hosts, cdmi, numerals, path, num,
