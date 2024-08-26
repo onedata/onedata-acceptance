@@ -18,10 +18,6 @@ from tests.utils.utils import repeat_failed
 def assert_space_name_for_share_matches_expected(selenium, browser_id, oz_page,
                                                  share_name, space_name):
     shares_list = oz_page(selenium[browser_id])['shares'].shares_sidebar_list
-    share_names_list = {share.name for share in shares_list}
-
-    if share_name not in share_names_list:
-        raise RuntimeError(f'Share {share_name} not in shares sidebar')
 
     found_space_name = shares_list[share_name].space_name
     assert space_name == found_space_name, (f'Space name for share '
