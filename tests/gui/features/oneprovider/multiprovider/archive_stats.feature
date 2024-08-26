@@ -48,11 +48,11 @@ Feature: Size statistics of directories in archives
         total physical size: 15 B
         contain counter: 1 file, 1 directory (2 elements in total)
     And user of browser clicks "Show statistics per provider" button on Size stats modal
-    And user of browser sees that oneprovider-1 size statistics are as follow:
+    And user of browser sees that size statistics for oneprovider-1 are as follow:
         logical size: 15 B
         physical size: 0 B
         content: 1 file, 1 directory
-    And user of browser sees that oneprovider-2 size statistics are as follow:
+    And user of browser sees that size statistics for oneprovider-2 are as follow:
         logical size: 15 B
         physical size: 15 B
         content: 1 file, 1 directory

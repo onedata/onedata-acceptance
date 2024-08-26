@@ -394,8 +394,8 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
                                             stat_type, expected_value)
 
 
-@wt(parsers.parse('user of {browser_id} sees that {provider} size statistics '
-                  'are as follow:\n{config}'))
+@wt(parsers.parse('user of {browser_id} sees that size statistics for '
+                  '{provider} are as follow:\n{config}'))
 def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
                                               hosts, config, provider):
     """ Check size stats in directory details for specified provider according
