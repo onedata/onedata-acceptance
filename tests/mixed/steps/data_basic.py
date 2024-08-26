@@ -460,7 +460,7 @@ def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users,
                r'as follow:\n(?P<config>(.|\s)*)'))
 def create_directory_structure_in_op(selenium, user, op_container, config, space, 
                                      tmp_memory, users, hosts, host, client,
-                                     modals, oz_page, popups):
+                                     modals, oz_page, popups, request):
     client_lower = client.lower()
     if client_lower == 'web gui':
         create_directory_structure_in_op_gui(selenium, user, op_container, 
@@ -468,7 +468,7 @@ def create_directory_structure_in_op(selenium, user, op_container, config, space
                                              modals, oz_page, popups)
     elif client_lower == 'rest':
         create_directory_structure_in_op_rest(user, users, hosts, host,
-                                              config, space)
+                                              config, space, request)
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         create_directory_structure_in_op_oneclient(user, users, config, space,
