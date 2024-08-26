@@ -472,7 +472,7 @@ def create_directory_structure_in_op(selenium, user, op_container, config, space
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         create_directory_structure_in_op_oneclient(user, users, config, space,
-                                                   oneclient_host, hosts)
+                                                   oneclient_host, hosts, request)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
