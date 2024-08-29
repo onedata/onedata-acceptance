@@ -103,6 +103,7 @@ Feature: Storage modification
     And user of browser types "/volumes/dir3" to Mount point field in POSIX edit form for "test_storage1" storage in Onepanel
     And user of browser clicks on Save button in edit form for "test_storage1" storage in Onepanel
     And user of browser confirms committed changes in modal "Modify Storage"
+    And user of browser sees that "test_storage1" is visible on the storages list
 
     And user of browser opens file browser for "space2" space
     And user of browser sees file browser in files tab in Oneprovider page
