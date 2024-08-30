@@ -296,11 +296,12 @@ def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
                '"automation/(?P<inner_dir>.*)/'
                '(?P<file_name>.*)" to current dir'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_automation_file_to_cwd_in_file_browser_no_waiting(
-        selenium, browser_id, file_name, op_container, inner_dir):
+def upload_automation_file_to_cwd_in_file_browser(
+        selenium, browser_id, file_name, op_container, inner_dir, popups):
     file_name = 'automation/' + inner_dir + '/' + file_name.replace('\"', '')
     driver = selenium[browser_id]
     op_container(driver).file_browser.upload_files(upload_file_path(file_name))
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
