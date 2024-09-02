@@ -157,13 +157,14 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = None
 
 
-def _wait_for_named_modal_to_disappear(driver, modal_name):
+def wait_for_named_modal_to_disappear(driver, modal_name,
+                                      wait_time=WAIT_FRONTEND):
     modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
         return
-    Wait(driver, WAIT_FRONTEND).until_not(
+    Wait(driver, wait_time).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
         message='waiting for modal to disappear')
 
@@ -510,7 +511,7 @@ def close_modal(selenium, browser_id, modal, modals):
     except RuntimeError:
         return
 
-    _wait_for_named_modal_to_disappear(selenium[browser_id], modal)
+    wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 
 
 @wt(parsers.parse('user of {browser_id} clicks copy command icon in REST API '

@@ -17,7 +17,7 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (
     type_string_into_active_element, _camel_transform)
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button, wait_for_named_modal_to_disappear
 from tests.gui.steps.onepanel.common import (
     wt_click_on_subitem_for_item, wt_click_on_btn_in_content)
 from tests.gui.steps.onepanel.storages import (
@@ -310,6 +310,8 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
     try:
         click_modal_button(selenium, browser_id, checkbox, modal, modals)
         click_modal_button(selenium, browser_id, button, modal, modals)
+        wait_for_named_modal_to_disappear(selenium[browser_id], modal,
+                                          wait_time=WAIT_BACKEND*2)
     except (NoSuchElementException, RuntimeError):
         pass
 
