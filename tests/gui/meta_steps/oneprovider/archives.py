@@ -26,7 +26,9 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.steps.oneprovider.data_tab import (
+    assert_browser_in_tab_in_op,  check_size_statistic_in_dir_details,
+    check_size_stats_for_provider)
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
@@ -90,7 +92,6 @@ def create_archive_with_follow_symbolic_link(browser_id, selenium, config,
                                              op_container, tmp_memory, modals,
                                              clipboard, displays, option,
                                              popups, follow_symbolic_links):
-
     follow_symbolic_links = follow_symbolic_links == 'true'
 
     _create_archive(browser_id, selenium, config, item_name, space_name,
@@ -338,7 +339,6 @@ def recall_archive_for_archive_in_op_gui(browser_id, description, tmp_memory,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                                        data, modals, selenium):
-
     status_type = 'recalled'
     click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory)
@@ -375,3 +375,41 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
                 assert value <= expected_value, err_msg
             else:
                 assert value == expected_value, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that current size statistics are '
+                  'as follow:\n{config}'))
+def check_size_stats_for_archive(selenium, modals, browser_id, config):
+    """ Check size stats in directory details according to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type
+                total physical size: total_physical_size
+                contain counter: contain_counter
+        """
+
+    size_statistics = yaml.load(config, yaml.Loader)
+    for stat_type, expected_value in size_statistics.items():
+        check_size_statistic_in_dir_details(selenium, modals, browser_id,
+                                            stat_type, expected_value)
+
+
+@wt(parsers.parse('user of {browser_id} sees that size statistics for '
+                  '{provider} are as follow:\n{config}'))
+def check_size_stats_for_archive_per_provider(selenium, modals, browser_id,
+                                              hosts, config, provider):
+    """ Check size stats in directory details for specified provider according
+        to given config.
+
+            Config format given in yaml is as follows:
+
+                logical size: storage_type
+                physical size: physical_size
+                content: content
+        """
+
+    size_statistics = yaml.load(config, yaml.Loader)
+    for stat_type, expected_value in size_statistics.items():
+        check_size_stats_for_provider(selenium, hosts, modals, browser_id,
+                                      stat_type, provider, expected_value)
