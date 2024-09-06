@@ -13,6 +13,7 @@ import yaml
 import re
 
 from selenium.common.exceptions import StaleElementReferenceException
+from subprocess import CalledProcessError
 
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.utils.bdd_utils import wt, parsers
@@ -22,6 +23,7 @@ from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
 from tests.gui.utils.generic import transform, implicit_wait, parse_seq
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.common.docker import docker_ls
 
 
 @wt(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -345,14 +347,26 @@ def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
                r'processing charts equals (?P<num>\d+) '
                r'in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND*10, interval=2)
-def assert_correct_number_displayed_on_sync_charts(selenium, browser_id,
-                                                   bar_type, onepanel, num):
+def assert_correct_number_displayed_on_sync_charts(
+        selenium, browser_id, bar_type, onepanel, num, hosts):
+    files_mount_point = docker_ls('', hosts)
+    try:
+        files_dir1 = docker_ls('dir1', hosts)
+    except CalledProcessError:
+        files_dir1 = []
+    try:
+        files_dir2 = docker_ls('dir2', hosts)
+    except CalledProcessError:
+        files_dir2 = []
+
     num = int(num)
     record = onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
     assert displayed_num == num, (
-        'displayed {} as number of {} files on sync chart instead of '
-        'expected {}'.format(displayed_num, bar_type, num))
+        f'Displayed {displayed_num} as number of {bar_type} files on sync '
+        f'chart instead of expected {num}. Files in mount point: '
+        f'{files_mount_point}. Files in dir1: {files_dir1}.'
+        f'Files in dir2: {files_dir2}.')
 
 
 @wt(parsers.parse('user of {browser_id} sees {tab_list} navigation tabs for '

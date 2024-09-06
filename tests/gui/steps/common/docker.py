@@ -99,6 +99,13 @@ def _docker_cat(path, hosts):
     return output
 
 
+def _docker_ls(path, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'ls', '-a', path]
+    output = subprocess.check_output(cmd)
+    return output
+
+
 def _docker_mkdir(path, hosts):
     cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'mkdir', '-p', path]
     subprocess.check_call(cmd)
@@ -218,6 +225,18 @@ def wt_assert_file_in_path_with_content(path, content, hosts):
     err_msg = (f'content of the file {path} is expected to be {content} '
                f'but is {output}')
     assert output == content, err_msg
+
+
+def docker_ls(path, hosts):
+    files = _docker_ls(os.path.join(MOUNT_POINT, path), hosts).\
+        decode('utf-8').split('\n')
+    try:
+        files.remove('')
+        files.remove('.')
+        files.remove('..')
+    except Exception:
+        pass
+    return files
 
 
 # TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
