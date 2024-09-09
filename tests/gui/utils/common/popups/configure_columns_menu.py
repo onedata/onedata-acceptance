@@ -13,7 +13,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 class ColumnOption(PageObject):
-    name = id = Label('.column-name-label .name-text')
+    name = id = Label('.column-name-label .truncate')
     checkbox = WebElement('.filter-column-checkbox')
 
     def select(self):
