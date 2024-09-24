@@ -12,7 +12,10 @@ import time
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        NoSuchElementException)
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils import Modals as modals
@@ -91,13 +94,13 @@ def _find_modal(driver, modal_name):
                          'unlink']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
-            modals = driver.find_elements_by_css_selector(
+            modals = driver.find_elements(By.CSS_SELECTOR,
                 '.modal, .modal .modal-header h1')
         elif 'leave this space' in modal_name:
-            modals = driver.find_elements_by_css_selector(
+            modals = driver.find_elements(By.CSS_SELECTOR,
                 '.modal.in, .modal.in h1')
         else:
-            modals = driver.find_elements_by_css_selector(
+            modals = driver.find_elements(By.CSS_SELECTOR,
                 '.modal.in, .modal.in .modal-title')
 
         for name, modal in zip(modals[1::2], modals[::2]):
@@ -118,7 +121,7 @@ def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
 
 def check_warning_modal(selenium, browser_id):
     driver = selenium[browser_id]
-    if not driver.find_elements_by_css_selector('.question-modal'):
+    if not driver.find_elements(By.CSS_SELECTOR, '.question-modal'):
         return False
     else:
         return True
@@ -164,7 +167,9 @@ def wait_for_named_modal_to_disappear(driver, modal_name,
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
         return
-    Wait(driver, wait_time).until_not(
+    Wait(driver, wait_time,
+         ignored_exceptions=[StaleElementReferenceException, NoSuchElementException]
+         ).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
         message='waiting for modal to disappear')
 
@@ -191,7 +196,7 @@ def _click_on_confirmation_btn_in_modal(driver, browser_id, button_name,
 
     button_name = button_name.lower()
     modal = tmp_memory[browser_id]['window']['modal']
-    buttons = modal.find_elements_by_css_selector('button')
+    buttons = modal.find_elements(By.CSS_SELECTOR, 'button')
     err_msg = 'clicking on {} in displayed modal disabled'.format(button_name)
     for btn in buttons:
         if btn.text.lower() == button_name:
@@ -223,7 +228,7 @@ def g_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
                   'displayed in modal matches: {regexp}'))
 def is_modal_msg_matching(browser_id, regexp, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
-    msg = modal.find_element_by_css_selector('.modal-body .message-text').text
+    msg = modal.find_element(By.CSS_SELECTOR, '.modal-body .message-text').text
     assert re.match(regexp, msg), 'mag displayed in modal: {msg} ' \
                                   'does not match {regexp}'.format(
         regexp=regexp, msg=msg)
@@ -234,7 +239,7 @@ def is_modal_msg_matching(browser_id, regexp, tmp_memory):
 def get_token_from_modal(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]['window']['modal']
-    token_box = modal.find_element_by_css_selector('input[readonly]')
+    token_box = modal.find_element(By.CSS_SELECTOR, 'input[readonly]')
     token = Wait(driver, WAIT_BACKEND).until(
         lambda _: token_box.get_attribute('value'),
         message='waiting for token to appear')
@@ -246,7 +251,7 @@ def get_token_from_modal(selenium, browser_id, tmp_memory):
 def activate_input_box_in_modal(browser_id, in_type, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     css_path = 'input#{}'.format(in_type_to_id[in_type]) if in_type else 'input'
-    in_box = modal.find_element_by_css_selector(css_path)
+    in_box = modal.find_element(By.CSS_SELECTOR, css_path)
     # send NULL to activates input box
     in_box.send_keys(Keys.NULL)
 
@@ -257,10 +262,10 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]['window']['modal']
     if option == 'copy':
-        button = modal.find_element_by_css_selector('button.copy-btn')
+        button = modal.find_element(By.CSS_SELECTOR, 'button.copy-btn')
     else:
-        button = modal.find_element_by_css_selector('.modal-footer '
-                                                    'button.btn-default')
+        button = modal.find_element(By.CSS_SELECTOR, '.modal-footer '
+                                                     'button.btn-default')
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
     def click_on_btn(d, btn, err_msg):
@@ -274,8 +279,8 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
                   'in modal is not selected'))
 def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
-    options = modal.find_elements_by_css_selector('.one-option-button, '
-                                                  '.one-option-button .oneicon')
+    options = modal.find_elements(
+        By.CSS_SELECTOR, '.one-option-button, .one-option-button .oneicon')
     err_msg = 'option "{}" is selected while it should not be'.format(text)
     for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
@@ -288,7 +293,7 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
 def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]['window']['modal']
-    buttons = modal.find_elements_by_css_selector('button')
+    buttons = modal.find_elements(By.CSS_SELECTOR, 'button')
     for btn in buttons:
         if btn.text.lower() == button_name:
             assert not btn.is_enabled(), '{} is not disabled'.format(btn_name)
@@ -301,8 +306,8 @@ def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
                   'in displayed modal'))
 def select_option_with_text_in_modal(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
-    options = modal.find_elements_by_css_selector('.one-option-button, '
-                                                  '.one-option-button .oneicon')
+    options = modal.find_elements(
+        By.CSS_SELECTOR, '.one-option-button, .one-option-button .oneicon')
     for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute('class')
@@ -315,7 +320,7 @@ def select_option_with_text_in_modal(browser_id, text, tmp_memory):
 def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]['window']['modal']
-    buttons = modal.find_elements_by_css_selector('button')
+    buttons = modal.find_elements_by(By.CSS_SELECTOR, 'button')
     for btn in buttons:
         if btn.text.lower() == button_name:
             assert btn.is_enabled(), '{} is disabled'.format(btn_name)
@@ -377,6 +382,14 @@ def click_modal_button(selenium, browser_id, button, modal_name, modals):
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
                'in (?P<panel_name>.*?) panel'))
+def wt_write_name_into_text_field_in_panel(selenium, browser_id, item_name,
+                                           panel_name, modals,
+                                           name_textfield):
+    write_name_into_text_field_in_panel(selenium, browser_id, item_name,
+                                        panel_name, modals,
+                                        name_textfield=name_textfield)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_panel(selenium, browser_id, item_name,
                                         panel_name, modals,
@@ -391,10 +404,17 @@ def write_name_into_text_field_in_panel(selenium, browser_id, item_name,
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
                'in modal "(?P<modal_name>.*?)"'))
+def wt_write_name_into_text_field_in_modal(
+        selenium, browser_id, item_name, modal_name, modals, name_textfield):
+    write_name_into_text_field_in_modal(
+        selenium, browser_id, item_name, modal_name, modals,
+        name_textfield=name_textfield)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
-                                        modal_name, modals,
-                                        name_textfield='input name'):
+def write_name_into_text_field_in_modal(
+        selenium, browser_id, item_name, modal_name, modals,
+        name_textfield='input name'):
     if name_textfield == '':
         name_textfield = 'input name'
     driver = selenium[browser_id]

@@ -60,7 +60,7 @@ def inventories_creation(config, admin_credentials, hosts,
 def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
                           groups, inventories):
     zone_hostname = hosts[zone_name]['hostname']
-    config = yaml.load(config)
+    config = yaml.load(config, yaml.Loader)
 
     for inventory_name, description in config.items():
         owner = users[description['owner']]

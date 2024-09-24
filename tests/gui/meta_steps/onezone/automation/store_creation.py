@@ -42,7 +42,7 @@ def create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
 
 def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
                                popups):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     name = data['name']
 
     type_dropdown = data['type dropdown']

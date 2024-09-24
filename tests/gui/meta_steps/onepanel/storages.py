@@ -103,7 +103,7 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
     notify_type = 'info'
     text_regexp = '.*[Ss]torage.*added.*'
 
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     wt_click_on_btn_in_content(selenium, browser_id, btn, content, onepanel)
 
@@ -220,7 +220,7 @@ def get_first_storage_id_by_name(storage_name, provider, hosts,
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
                                         onepanel_credentials):
     storage_config = {}
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     for key, val in options.items():
         if key == 'storage type':

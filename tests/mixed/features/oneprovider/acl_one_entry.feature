@@ -1,13 +1,5 @@
 Feature: ACL basic tests
 
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient1 |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -39,10 +31,22 @@ Feature: ACL basic tests
     Then using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1
 
     Examples:
-    | subject_type  | subject_name  | item  |
-    | user          | user1         | file1 |
-    | user          | user1         | dir1  |
-    | group         | group1        | file1 |
-
-
-
+    | subject_type  | subject_name  | item  | client1    | client2    |
+    | user          | user1         | file1 | REST       | web GUI    |
+    | user          | user1         | dir1  | REST       | web GUI    |
+    | group         | group1        | file1 | REST       | web GUI    |
+    | user          | user1         | file1 | web GUI    | REST       |
+    | user          | user1         | dir1  | web GUI    | REST       |
+    | group         | group1        | file1 | web GUI    | REST       |
+    | user          | user1         | file1 | oneclient1 | REST       |
+    | user          | user1         | dir1  | oneclient1 | REST       |
+    | group         | group1        | file1 | oneclient1 | REST       |
+    | user          | user1         | file1 | REST       | oneclient1 |
+    | user          | user1         | dir1  | REST       | oneclient1 |
+    | group         | group1        | file1 | REST       | oneclient1 |
+    | user          | user1         | file1 | oneclient1 | web GUI    |
+    | user          | user1         | dir1  | oneclient1 | web GUI    |
+    | group         | group1        | file1 | oneclient1 | web GUI    |
+    | user          | user1         | file1 | web GUI    | oneclient1 |
+    | user          | user1         | dir1  | web GUI    | oneclient1 |
+    | group         | group1        | file1 | web GUI    | oneclient1 |

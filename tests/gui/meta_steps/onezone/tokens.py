@@ -128,7 +128,8 @@ def assert_alert_while_consuming_token(selenium, browser_id, oz_page,
     assert_alert_on_tokens_page(browser_id, text, oz_page, selenium)
 
 
-@wt(parsers.parse('user of {browser_id} {result} to consume token'))
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<result>succeeds|fails) '
+               'to consume token'))
 def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
                             displays, modals):
     consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
@@ -243,7 +244,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     click_create_custom_token(selenium, browser_id, oz_page)
 
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     name = data.get('name', False)
     token_type = data['type']
     invite_type = data.get('invite type', False)
@@ -386,7 +387,7 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
                                    groups, hosts, tmp_memory, spaces):
-    token_name = yaml.load(config)['name']
+    token_name = yaml.load(config, yaml.Loader)['name']
     click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
     _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, spaces)
@@ -395,7 +396,7 @@ def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
 def _assert_token_configuration(
         selenium, browser_id, config, oz_page, users, groups, hosts,
         tmp_memory, spaces, creation=False):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     token_name = data.get('name', False)
     revoked = data.get('revoked', False)
     token_type = data.get('type', False)

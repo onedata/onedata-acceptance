@@ -12,6 +12,7 @@ import re
 from contextlib import contextmanager
 from itertools import islice
 from time import sleep
+from enum import Enum
 
 try:
     from itertools import izip
@@ -21,6 +22,7 @@ except ImportError:
 from tests import gui
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 
 # RE_URL regexp is matched as shown below:
 #
@@ -130,7 +132,7 @@ def iter_ahead(iterable):
 def find_web_elem(web_elem_root, css_sel, err_msg):
     try:
         _scroll_to_css_sel(web_elem_root, css_sel)
-        item = web_elem_root.find_element_by_css_selector(css_sel)
+        item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
     except NoSuchElementException:
         with suppress(TypeError):
             err_msg = err_msg()
@@ -140,7 +142,7 @@ def find_web_elem(web_elem_root, css_sel, err_msg):
 
 
 def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
-    items = web_elem_root.find_elements_by_css_selector(css_sel)
+    items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
     _scroll_to_css_sel(web_elem_root, css_sel)
     for item in items:
         if item.text.lower() == text.lower():
@@ -217,3 +219,10 @@ def redirect_display(new_display):
 
 def transform(val, strip_char=None):
     return val.strip(strip_char).lower().replace(' ', '_')
+
+
+class WhichBrowser(Enum):
+    archive_browser = 'archive browser'
+    archive_file_browser = 'archive file browser'
+    dataset_browser = 'dataset browser'
+    file_browser = 'file browser'

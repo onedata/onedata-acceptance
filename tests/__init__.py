@@ -34,6 +34,7 @@ ONEDATA_FS_LOGDIR = os.path.join(ONEDATA_FS_DIR, 'logs')
 
 GUI_DIR = os.path.join(TEST_DIR, 'gui')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
+GUI_SCENARIO_DIR = os.path.join(GUI_ENV_DIR, 'scenarios')
 GUI_LOGDIR = os.path.join(GUI_DIR, 'logs')
 
 MIXED_DIR = os.path.join(TEST_DIR, 'mixed')
@@ -98,6 +99,7 @@ LOGDIRS = {
 SCENARIO_DIRS = {
     'oneclient': ONECLIENT_SCENARIO_DIR,
     'mixed': MIXED_SCENARIO_DIR,
+    'gui': GUI_SCENARIO_DIR,
     'onedata_fs': ONEDATA_FS_SCENARIO_DIR,
     'performance': PERFORMANCE_SCENARIO_DIR,
     'upgrade': UPGRADE_TESTS_SCENARIO_DIR

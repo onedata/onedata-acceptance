@@ -120,7 +120,7 @@ def check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
                                        space_name, config):
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
-    subtree = yaml.load(config)
+    subtree = yaml.load(config, yaml.Loader)
     client = login_to_provider(user, users, hosts[host]['hostname'])
     dataset_api = DatasetApi(client)
     space_id = f'{spaces[space_name]}'

@@ -40,7 +40,7 @@ def translate_config_for_archive(config, tmp_memory):
 def create_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
                               config, spaces, tmp_memory, option):
 
-    config = yaml.load(config)
+    config = yaml.load(config, yaml.Loader)
     translate_config_for_archive(config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]['hostname'])
     dataset_api = DatasetApi(client)
@@ -243,7 +243,7 @@ def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
 
 def assert_progress_of_recall_in_op_rest(user, name, space_name, host,
                                          hosts, users, config):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_api = ArchiveApi(client)
     path = f'{space_name}/{name}'

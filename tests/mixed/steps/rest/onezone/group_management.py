@@ -65,8 +65,7 @@ def fail_to_rename_groups_using_rest(user, users, hosts, group_list, new_names,
     for group_name, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
         group = get_group(group_name, user_client)
         data = {'name': new_name}
-        with pytest.raises(ApiException, message = 'Renaming group {} to {} ' \
-                           'did not fail'.format(group_name, new_name)):
+        with pytest.raises(ApiException):
             group_api.modify_group(group.group_id, data)
 
 
@@ -78,8 +77,7 @@ def fail_to_remove_groups_using_rest(user, users, hosts, group_list,
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
         group = get_group(group_name, user_client)
-        with pytest.raises(ApiException, message = 'Removing group {} did '
-                           'not fail'.format(group_name)):
+        with pytest.raises(ApiException):
             group_api.remove_group(group.group_id)
 
 
@@ -125,8 +123,7 @@ def fail_to_add_subgroups_using_rest(user, users, hosts, group_list, parent,
         parent_id = get_group(parent, user_client).group_id
         child_id = get_group(group_name, user_client).group_id
         token = group_api.create_child_group_token(parent_id)
-        with pytest.raises(ApiException, message = 'Adding group {} as' \
-                    ' subgroup to {} did not fail'.format(group_name, parent)):
+        with pytest.raises(ApiException):
             group_api.join_parent_group(child_id, data=token)
 
 

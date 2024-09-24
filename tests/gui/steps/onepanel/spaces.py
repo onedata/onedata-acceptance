@@ -232,7 +232,7 @@ def wt_assert_proper_space_configuration_in_panel(selenium, browser_id,
     space.navigation.overview()
     displayed_conf = getattr(space.overview, sync_type.lower() + '_strategy')
 
-    for attr, val in yaml.load(conf).items():
+    for attr, val in yaml.load(conf, yaml.Loader).items():
         displayed_val = displayed_conf[attr]
         assert str(val).lower() == displayed_val.lower(), (
             'Displayed {} as {} instead of expected {} in {} strategy of '
@@ -287,8 +287,8 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
-@wt(parsers.parse('user of {browser_id} removes space using '
-                  'delete space modal invoked from provided link'))
+@wt(parsers.re(r'user of (?P<browser_id>\S+) removes space using '
+               'delete space modal invoked from provided link'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_instead_of_revoke(selenium, browser_id, modals):
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
@@ -424,22 +424,16 @@ def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
     getattr(tab, toggle).check()
 
 
-@wt(parsers.parse('user of {browser_id} enables selective cleaning '
-                  'in auto-cleaning tab in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def enable_selective_cleaning(selenium, browser_id, onepanel):
-    driver = selenium[browser_id]
-    op = onepanel(driver)
-    op.content.spaces.space.auto_cleaning.selective_cleaning.check()
-
-
 @wt(parsers.parse('user of {browser_id} enables {option} '
                   'in auto-cleaning tab in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    tab.selective_cleaning_form[option].checkbox.check()
+    if option == 'selective cleaning':
+        tab.selective_cleaning.check()
+    else:
+        tab.selective_cleaning_form[option].checkbox.check()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} on dropdown '

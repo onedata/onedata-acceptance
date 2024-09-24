@@ -50,7 +50,7 @@ def create_storage(hosts, host, config, onepanel_credentials, name):
 
 
 def _create_storage(hosts, host, config, onepanel_credentials, name):
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     _remove_storage_in_op_panel_using_rest(name, host, hosts,
                                            onepanel_credentials)

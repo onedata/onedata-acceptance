@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 
@@ -43,9 +45,11 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
         browser = tmp_memory[browser_id]['file_browser']
         browser.click_on_background()
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    except (KeyError, StaleElementReferenceException):
+    except (KeyError, RuntimeError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
+        # TODO VFS-12315 remove sleep in acc tests
+        time.sleep(0.5)
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
                                      path, op_container)
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
@@ -203,7 +207,7 @@ def check_metadata_for_file_in_directory(selenium, browser_id, directory,
                                          config, tmp_memory, op_container,
                                          modals):
     which_browser = 'file_browser'
-    metadata = yaml.load(config)
+    metadata = yaml.load(config, yaml.Loader)
 
     click_and_press_enter_on_item_in_browser(selenium, browser_id, directory,
                                              tmp_memory, op_container, which_browser)
@@ -300,12 +304,12 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                                    cwd, op_container)
 
 
-@given(parsers.re('directory structure created by (?P<user>\w+) '
-                  'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
-                  '(?P<config>(.|\s)*)'))
+@given(parsers.re(r'directory structure created by (?P<user>\w+) '
+                  r'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
+                  r'(?P<config>(.|\s)*)'))
 def g_create_directory_structure(user, config, space, host, users, hosts):
     owner = users[user]
-    items = yaml.load(config)
+    items = yaml.load(config, yaml.Loader)
     provider_hostname = hosts[host]['hostname']
 
     init_storage(owner, space, hosts, provider_hostname, users, items)
@@ -314,7 +318,7 @@ def g_create_directory_structure(user, config, space, host, users, hosts):
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
                                          space, tmp_memory, modals, oz_page,
                                          popups):
-    items = yaml.load(config)
+    items = yaml.load(config, yaml.Loader)
     cwd = ''
 
     _create_content(selenium, user, items, cwd, space, tmp_memory,
@@ -355,6 +359,8 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
                'root directory of "(?P<space>.*)"'))
+@wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
+               'root directory of "(?P<space>.*)" using (?P<provider>.*) GUI'))
 def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
                                        op_container, tmp_memory, oz_page,
                                        popups):
@@ -409,6 +415,12 @@ def _select_item(selenium, browser_id, tmp_memory, path, op_container):
 
 
 @wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
+def go_to_path_(selenium, browser_id, tmp_memory, path, op_container,
+                which_browser):
+    go_to_path(selenium, browser_id, tmp_memory, path, op_container,
+               which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_path(selenium, browser_id, tmp_memory, path, op_container,
                which_browser='file browser'):
@@ -514,7 +526,7 @@ def create_symlinks_of_file(selenium, browser_id, file_name, space,
 
 
 @wt(parsers.parse('user of {browser_id} creates symbolic link of "{file_name}" '
-                  'placed in "{path}" directory on {which_browser}'))
+                  'placed in "{path}" directory on {which_browser} in "{space}"'))
 def create_symlinks_of_file_with_path(
         selenium, browser_id, file_name, space, tmp_memory, oz_page,
         op_container, popups, path):
@@ -528,7 +540,7 @@ def create_symlinks_of_file_with_path(
 
 
 @wt(parsers.parse('user of {browser_id} creates hard link of "{file_name}" '
-                  'placed in "{path}" directory on {which_browser}'))
+                  'placed in "{path}" directory on {which_browser} in "{space}"'))
 def create_hardlinks_of_file_with_path(
         selenium, browser_id, file_name, space, tmp_memory, oz_page,
         op_container, popups, path):
@@ -551,6 +563,8 @@ def _create_link_in_file_browser(
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
                                                    file_name, space, tmp_memory,
                                                    oz_page, op_container)
+    # TODO VFS-12315 remove sleep in acc tests
+    time.sleep(0.5)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     if path:

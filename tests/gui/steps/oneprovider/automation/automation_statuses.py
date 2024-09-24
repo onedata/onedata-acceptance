@@ -10,6 +10,7 @@ import time
 
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
+from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -48,8 +49,8 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
     box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
     task, task_id = search_for_task_in_parallel_box(driver, box, task)
     try:
-        actual_status = driver.find_element_by_css_selector(
-            f'#{task_id} .status-detail .detail-value')
+        actual_status = driver.find_element(
+            By.CSS_SELECTOR, f'#{task_id} .status-detail .detail-value')
     except NoSuchElementException:
         actual_status = task.status
 

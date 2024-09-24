@@ -10,6 +10,8 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 import time
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modals.modal import (wt_wait_for_modal_to_appear,
@@ -518,7 +520,7 @@ def try_setting_privileges_in_members_subpage(selenium, browser_id, member_name,
     except AssertionError:
         button = 'Save'
         member_type_new = member_type + 's'
-        privileges = yaml.load(config)
+        privileges = yaml.load(config, yaml.Loader)
         tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                                   member_type_new, member_name)
         result = tree.set_privileges(selenium, browser_id, privileges, True)
@@ -571,7 +573,7 @@ def set_some_privileges_in_members_subpage_other_granted(selenium, browser_id,
 def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
                                                modals):
     driver = selenium[browser_id]
-    privileges = yaml.load(config)
+    privileges = yaml.load(config, yaml.Loader)
     tree = modals(driver).change_privileges.privilege_tree
     tree.set_privileges(selenium, browser_id, privileges)
     modals(driver).change_privileges.save_button.click()
@@ -586,7 +588,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
                                          oz_page, option):
     member_type = member_type + 's'
-    privileges = yaml.load(config)
+    privileges = yaml.load(config, yaml.Loader)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
     is_direct_privileges = False if option == 'effective ' else True
@@ -608,7 +610,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
 def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
                                                   modals):
     driver = selenium[browser_id]
-    privileges = yaml.load(config)
+    privileges = yaml.load(config, yaml.Loader)
     tree = modals(driver).change_privileges.privilege_tree
     tree.assert_privileges(selenium, browser_id, privileges)
 
@@ -625,8 +627,8 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
     time.sleep(1)
-    driver.find_element_by_css_selector(
-        '.list-header-row ' + option_selector).click()
+    driver.find_element(
+        By.CSS_SELECTOR, '.list-header-row ' + option_selector).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -637,8 +639,8 @@ def click_button_on_element_header_in_members_and_wait(
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     driver.execute_script("window.scrollBy(0,0)")
-    driver.find_element_by_css_selector(
-        '.list-header-row ' + option_selector).click()
+    driver.find_element(
+        By.CSS_SELECTOR, '.list-header-row ' + option_selector).click()
     tree.wait_for_load_privileges()
     page.close_member(driver)
 
@@ -758,7 +760,7 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
     option = where + 's' if where != 'inventory' else 'automation'
     option2 = 'Members'
 
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     privileges = data['privileges']
 
     if where != 'cluster':

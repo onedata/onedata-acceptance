@@ -28,7 +28,7 @@ from tests.utils.utils import repeat_failed
 def users_creation_with_cleanup_step(host, config, admin_credentials,
                                      onepanel_credentials, hosts, users,
                                      rm_users):
-    users_db, zone_hostname = users_creation_with_cleanup(host, yaml.load(config), admin_credentials,
+    users_db, zone_hostname = users_creation_with_cleanup(host, yaml.load(config, yaml.Loader), admin_credentials,
                                                           onepanel_credentials, hosts, users, rm_users)
 
     yield
@@ -39,8 +39,12 @@ def users_creation_with_cleanup_step(host, config, admin_credentials,
 
 @given(parsers.parse('initial user for future delete configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation_step(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users):
-    return users_creation(host, yaml.load(config), admin_credentials, onepanel_credentials, hosts, users, rm_users)
+def users_creation_step(
+        host, config, admin_credentials, onepanel_credentials, hosts, users,
+        rm_users):
+    return users_creation(
+        host, yaml.load(config, yaml.Loader), admin_credentials,
+        onepanel_credentials, hosts, users, rm_users)
 
 
 def users_creation_with_cleanup(host, config, admin_credentials,

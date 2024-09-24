@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.provider import get_provider_id
@@ -300,11 +301,13 @@ def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
         expected.append(f'{name} provided by {provider_name}')
 
     scroll_to_css_selector_bottom(driver, css_sel)
-    driver.find_element_by_css_selector(css_sel).click()
+    driver.find_element(By.CSS_SELECTOR, css_sel).click()
 
     actual = [elem.text for elem in popups(
         driver).storages_matching_popover.storages]
     compare_lists(expected, actual)
+    # unclick element
+    driver.find_element(By.CSS_SELECTOR, css_sel).click()
 
 
 def compare_lists(expected, actual):

@@ -80,6 +80,14 @@ def click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory):
 
 
 @wt(parsers.parse('user of {browser_id} changes current working directory '
+                  'to {path} using breadcrumbs in {which_browser}'))
+def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
+        selenium, browser_id, path, op_container, which_browser):
+    change_cwd_using_breadcrumbs_in_data_tab_in_op(
+        selenium, browser_id, path, op_container, which_browser=which_browser)
+
+
+@wt(parsers.parse('user of {browser_id} changes current working directory '
                   'to {path} using breadcrumbs'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
@@ -174,8 +182,6 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
                                              space_name, op_container)
 
 
-@wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
-                  'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
                                                     op_container, tmp_memory,
@@ -188,8 +194,6 @@ def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
                                           'should not be empty but is')
 
 
-@wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
-                  'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
                                             op_container, tmp_memory,
@@ -203,14 +207,29 @@ def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
     tmp_memory[browser_id][transform(item_browser)] = items_browser
 
 
-@wt(parsers.parse('user of {browser_id} sees {item_browser} '
-                  'in {} tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           item_browser)
+
+
+@wt(parsers.parse('user of {browser_id} sees {item_browser} '
+                  'in {} tab in Oneprovider page'))
+def wt_assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                   tmp_memory, item_browser):
+    if 'empty' in item_browser.split(' '):
+        assert_empty_browser_in_files_tab_in_op(
+            selenium, browser_id, op_container, tmp_memory,
+            item_browser=item_browser.replace('empty ', ''))
+    elif 'nonempty' in item_browser.split(' '):
+        assert_nonempty_file_browser_in_files_tab_in_op(
+            selenium, browser_id, op_container, tmp_memory,
+            item_browser=item_browser.replace('nonempty ', ''))
+    else:
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                    tmp_memory, item_browser=item_browser)
 
 
 @wt(parsers.parse('user of {browser_id} records displayed name length for '
@@ -244,9 +263,9 @@ def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
                                  '}'.format(path, curr_len)
 
 
-@wt(parsers.re('user of (?P<browser_id>.+?) expands data tab sidebar to the '
-               '(?P<direction>right|left) of approximately '
-               '(?P<offset>\d+)px'))
+@wt(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
+               r'(?P<direction>right|left) of approximately '
+               r'(?P<offset>\d+)px'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
                             op_container):
@@ -487,10 +506,9 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
         expected_chunks), 'displayed {} chunks instead of expected {}'.format(
         len(displayed_chunks), len(expected_chunks))
     for chunk1, chunk2 in zip(displayed_chunks, expected_chunks):
-        assert all(round(x - z) == 0 for x, z in zip(chunk1, parse_seq(chunk2,
-                                                                       pattern='\d+',
-                                                                       default=int))), 'displayed chunk {} instead of expected {}'.format(
-            chunk1, chunk2)
+        assert all(round(x - z) == 0 for x, z in zip(
+            chunk1, parse_seq(chunk2, pattern=r'\d+', default=int))), (
+            'displayed chunk {} instead of expected {}'.format(chunk1, chunk2))
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of downloaded '
@@ -649,6 +667,8 @@ def check_data_distribution_percentage_for_provider(selenium, browser_id,
                                                     modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
+    # TODO VFS-12315 remove sleep in acc tests
+    time.sleep(1)
     data_distribution = modals(driver).details_modal.data_distribution
     percentage_label = data_distribution.providers[provider].percentage_label
     assert percentage_label == percentage, (
@@ -669,7 +689,7 @@ def check_data_distribution_size_for_provider(selenium, browser_id, provider,
                                f"of {size} for provider {provider}!"
 
 
-@wt(parsers.parse('user of browser clicks "Show statistics per provider" button'
+@wt(parsers.parse('user of {browser_id} clicks "Show statistics per provider" button'
                   ' on Size stats modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_size_statistics_for_providers(selenium, browser_id, modals):
@@ -677,8 +697,9 @@ def expand_size_statistics_for_providers(selenium, browser_id, modals):
     modals(driver).details_modal.size_statistics.expand_stats_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that {elem_type} for {provider}'
-                  ' is "{expected}"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that '
+               '(?P<elem_type>physical_size|logical_size) for '
+               '(?P<provider>.*?) is "(?P<expected>.*?)"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(selenium, hosts, modals, browser_id,
                                   elem_type, provider, expected):

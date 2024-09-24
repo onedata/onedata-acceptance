@@ -1,9 +1,5 @@
 Feature: ACL directories privileges tests on removing directories using multiple browsers in Oneprovider GUI
 
-  Examples:
-  | subject_type  | subject_name  |
-  | user          | user1         |
-  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,9 +33,14 @@ Feature: ACL directories privileges tests on removing directories using multiple
     Then user of browser_user1 <result> to remove "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                                              |
-    | succeeds |  [deletion:delete, content:delete child, content:list files, content:traverse directory] |
-    | fails    |  all except [deletion:delete]                                                            |
-    | fails    |  all except [content:delete child]                                                       |
-    | fails    |  all except [content:list files]                                                         |
-    | fails    |  all except [content:traverse directory]                                                 |
+    | result   |  privileges                                                                              | subject_type  | subject_name  |
+    | succeeds |  [deletion:delete, content:delete child, content:list files, content:traverse directory] | user          | user1         |
+    | fails    |  all except [deletion:delete]                                                            | user          | user1         |
+    | fails    |  all except [content:delete child]                                                       | user          | user1         |
+    | fails    |  all except [content:list files]                                                         | user          | user1         |
+    | fails    |  all except [content:traverse directory]                                                 | user          | user1         |
+    | succeeds |  [deletion:delete, content:delete child, content:list files, content:traverse directory] | group         | group1        |
+    | fails    |  all except [deletion:delete]                                                            | group         | group1        |
+    | fails    |  all except [content:delete child]                                                       | group         | group1        |
+    | fails    |  all except [content:list files]                                                         | group         | group1        |
+    | fails    |  all except [content:traverse directory]                                                 | group         | group1        |

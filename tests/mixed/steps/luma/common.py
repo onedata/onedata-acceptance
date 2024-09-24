@@ -48,7 +48,7 @@ def wt_create_luma_mappings(config, users, spaces, hosts,
 
 def create_luma_mappings(config, users, spaces, hosts,
                          onepanel_credentials):
-    mappings = yaml.load(config)
+    mappings = yaml.load(config, yaml.Loader)
     for provider in mappings:
         storages = mappings[provider]
         for storage, storage_mappings in storages.items():

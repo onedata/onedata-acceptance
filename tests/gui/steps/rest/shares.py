@@ -53,7 +53,7 @@ def create_many_shares_using_rest(user, config, hosts, users):
 
 
 def _create_many_shares_using_rest(user, config, hosts, users):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     for share in data:
         name = share['name']
         path = share['path']

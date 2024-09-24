@@ -289,7 +289,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "new_space" space in the sidebar
     And user of browser2 clicks "group6" group in "new_space" space members groups list
-    And user of browser2 sees privileges for "group6" group in space members subpage
+    And user of browser2 sees following privileges of "group6" group in space members subpage:
           Group management:
             granted: False
 

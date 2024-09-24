@@ -83,7 +83,7 @@ def deregister_provider_in_op_panel_using_gui(selenium, browser_id,
 def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config,
                                       tmp_memory):
     step2 = 'step 2'
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     wt_type_registration_token_in_step2(selenium, user, onepanel,
                                         tmp_memory)

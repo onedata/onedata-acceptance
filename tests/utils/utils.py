@@ -55,9 +55,7 @@ def get_fun_name(fun):
 
 
 def assert_expected_failure(fun, *args, **kwargs):
-    operation = get_fun_name(str(fun))
-    with pytest.raises(OSError, message=f'Operation: {operation}, that should '
-                                        f'failed, did not failed'):
+    with pytest.raises(OSError):
         fun(*args, **kwargs)
 
 

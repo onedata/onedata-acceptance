@@ -22,6 +22,7 @@ def click_on_cancel_upload_button_on_popup(selenium, browser_id, popups,
 
 
 @wt(parsers.parse('user of {browser_id} confirms canceling the upload'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_confirm_cancel_upload(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()

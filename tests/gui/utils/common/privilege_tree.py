@@ -13,6 +13,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence, Button, \
     WebElement
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
 
 class PrivilegeRow(PageObject):
@@ -58,7 +59,7 @@ class PrivilegeRow(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)")
                 elem_id = self._checkbox.get_attribute('id')
                 try:
-                    driver.find_element_by_css_selector('#' + elem_id).click()
+                    driver.find_element(By.CSS_SELECTOR, '#' + elem_id).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
         else:
@@ -88,8 +89,8 @@ class PrivilegeGroup(PageObject):
             try:
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                driver.find_element_by_css_selector(
-                    f'#{expander_id}').click()
+                driver.find_element(
+                    By.CSS_SELECTOR, f'#{expander_id}').click()
             except ElementNotInteractableException:
                 self.expander.click()
 
@@ -101,8 +102,8 @@ class PrivilegeGroup(PageObject):
             try:
                 driver.execute_script(
                     "document.querySelector('.col-content').scrollTo(0, 0)")
-                driver.find_element_by_css_selector(
-                    '.table-privileges .oneicon-arrow-up').click()
+                driver.find_element(
+                    By.CSS_SELECTOR, '.table-privileges .oneicon-arrow-up').click()
             except ElementNotInteractableException:
                 self.expander.click()
 
@@ -153,8 +154,8 @@ class PrivilegeGroup(PageObject):
                 elem_id = self._checkbox.get_attribute('id')
                 for i in range(count):
                     try:
-                        driver.find_element_by_css_selector(
-                            '#' + elem_id).click()
+                        driver.find_element(
+                            By.CSS_SELECTOR, '#' + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
         else:

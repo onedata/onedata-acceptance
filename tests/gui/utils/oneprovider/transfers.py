@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from functools import partial
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 from tests.gui.utils.core.web_elements import (Label, WebElement,
@@ -39,8 +41,8 @@ class TransferRecord(PageObject):
         self.type = [x for x in type_class if x in TransferTypeList][0]
 
     def get_chart(self):
-        return TransferChart(self.driver, self.web_elem.find_element_by_xpath(
-            ' .//following-sibling::tr'), self.web_elem)
+        return TransferChart(self.driver, self.web_elem.find_element(
+            By.XPATH, ' .//following-sibling::tr'), self.web_elem)
 
     def is_expanded(self):
         return 'expanded-row' in self.web_elem.get_attribute('class')

@@ -9,8 +9,7 @@ GIT_URL := $(shell if [ "${GIT_URL}" = "file:/" ]; then echo 'ssh://git@git.plgr
 ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL}; else echo ${ONEDATA_GIT_URL}; fi)
 export ONEDATA_GIT_URL
 
-ACCEPTANCE_GUI_IMAGE := onedata/acceptance_gui:v9
-ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v12
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v1
 
 unpack = tar xzf $(1).tar.gz
 
@@ -89,7 +88,7 @@ endif
 .PHONY: test_upgrade
 
 test_gui:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_gui_pkg: test_gui
@@ -97,7 +96,7 @@ test_gui_src: SOURCES = --sources
 test_gui_src: test_gui
 
 test_mixed:
-	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_mixed_pkg: test_mixed
@@ -105,26 +104,22 @@ test_mixed_src: SOURCES = --sources
 test_mixed_src: test_mixed
 
 test_oneclient:
-	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
+	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_TEST_IMAGE} -k=${KEYWORDS} \
 	 --repeats ${REPEATS} --timeout ${TIMEOUT} --file-mode ${FILE_MODE} ${SOURCES} ${OPTS}
 
 test_oneclient_pkg: test_oneclient
 test_oneclient_src: SOURCES = --sources
 test_oneclient_src: test_oneclient
 
-test_onedata_fs:
-	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
-     --repeats ${REPEATS} --timeout ${TIMEOUT} ${SOURCES} ${OPTS}
-
 test_performance:
-	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} ${SOURCES} ${OPTS}
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_TEST_IMAGE} -k=${KEYWORDS} ${SOURCES} ${OPTS}
 
 test_performance_pkg: test_performance
 test_performance_src: SOURCES = --sources
 test_performance_src: test_performance
 
 test_upgrade:
-	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_MIXED_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/"${CONFIG_FILE}".yaml
+	${TEST_RUN} --ignore-xfail --test-type upgrade -vvv --test-dir tests/upgrade --image ${ACCEPTANCE_TEST_IMAGE} --timeout ${TIMEOUT} --local-charts-path="" --pull-only-missing-images --env-file=tests/upgrade/configs/"${CONFIG_FILE}".yaml
 
 
 ##

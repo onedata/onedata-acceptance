@@ -139,7 +139,7 @@ class User:
     @repeat_failed(attempts=10, interval=1, exceptions=ConnectionRefusedError)
     def _connect_to_rpyc(self, ip, port):
         import rpyc
-        return rpyc.classic.connect(ip, port)
+        return rpyc.classic.connect(ip, port=port)
 
 
 class AdminUser(User):

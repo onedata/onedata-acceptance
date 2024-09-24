@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import re
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
@@ -103,7 +104,7 @@ class ProvidersMap(Element):
     def click_provider(self, provider_name, driver):
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
-            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            name = driver.find_element(By.CSS_SELECTOR, '.tooltip-inner').text
             if name == provider_name:
                 prov.click()
                 return
@@ -113,7 +114,7 @@ class ProvidersMap(Element):
     def hover_and_check_provider(self, provider_name, driver):
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
-            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            name = driver.find_element(By.CSS_SELECTOR, '.tooltip-inner').text
             if name == provider_name:
                 return
 
@@ -122,7 +123,7 @@ class ProvidersMap(Element):
     def get_provider_horizontal_position(self, provider_name, driver):
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
-            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            name = driver.find_element(By.CSS_SELECTOR, '.tooltip-inner').text
             if name == provider_name:
                 style = prov.get_attribute('style')
                 position = re.search(r'left:\s*(\d+\.*\d*)px', style).group(1)

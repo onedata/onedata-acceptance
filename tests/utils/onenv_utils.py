@@ -188,7 +188,7 @@ def get(key):
 
 def load_yaml(path):
     with open(path) as f:
-        return yaml.load(f)
+        return yaml.load(f, yaml.Loader)
 
 
 def user_config_path():

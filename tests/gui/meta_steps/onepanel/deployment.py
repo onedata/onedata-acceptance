@@ -41,7 +41,7 @@ def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts,
 
 def _setup_step1(selenium, browser_id, onepanel, host_regexp, configuration,
                  hosts, modals):
-    config = yaml.load(configuration)
+    config = yaml.load(configuration, yaml.Loader)
     options = config.get('options', [])
     step = 'step 1'
     btn = 'Deploy'
@@ -132,7 +132,7 @@ def setup_step2(selenium, browser_id, onepanel, hosts, config):
 
 
 def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
-    config = yaml.load(configuration)
+    config = yaml.load(configuration, yaml.Loader)
     provider_for_name, provider_for_domain = _parse_provider(config['name'],
                                                              config['domain'])
     request_a_subdomain = config.get('request a subdomain', False)
@@ -185,7 +185,7 @@ def add_storage_in_step5(selenium, browser_id, onepanel, config):
 
 
 def _add_storage_in_step5(selenium, browser_id, onepanel, configuration):
-    config = yaml.load(configuration)
+    config = yaml.load(configuration, yaml.Loader)
     storage_type = config['storage type']
     name = config['name']
     name_box = 'Storage name'

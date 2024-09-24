@@ -28,7 +28,7 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts, selenium,
     assert getattr(transfer, 'is_{}'.format(item_type))(), \
         'Transferred item is not {} in {}'.format(item_type, sufix)
 
-    desc = yaml.load(desc)
+    desc = yaml.load(desc, yaml.Loader)
     for key, val in desc.items():
         if key == 'destination':
             val = hosts[val]['name']
@@ -269,6 +269,7 @@ def _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
                                                op_container, popups):
     option_select = 'select'
     option_unselect = 'unselect'
+    columns = [column.lower() for column in columns]
     transfer = op_container(selenium[browser_id]).transfers
     transfer.configure_columns.click()
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
@@ -296,8 +297,8 @@ def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container,
                'transfers table'))
 def select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
                                               op_container, popups):
-    _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns,
-                                               op_container, popups)
+    _select_columns_to_be_visible_in_transfers(
+        selenium, browser_id, parse_seq(columns), op_container, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees only (?P<columns>.*) columns '
@@ -314,6 +315,6 @@ def assert_visible_columns_in_transfers(browser_id, op_container, columns,
                f'transfers')
     assert len(columns) == len(transfers_columns), err_msg
     for column in columns:
-        if column not in transfers_columns:
+        if column.lower() not in transfers_columns:
             raise AssertionError(
                 f'column {column} is not visible in transfers')

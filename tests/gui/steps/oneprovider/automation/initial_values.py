@@ -55,7 +55,7 @@ def open_select_initial_files_modal(op_container, driver, popups, modals,
                   '"{store_name}" store'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(op_container, selenium, browser_id,
-                                     popups, modals, store_name=False):
+                                     popups, modals, store_name):
     option = "Select groups"
     driver = selenium[browser_id]
 

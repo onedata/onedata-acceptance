@@ -109,7 +109,7 @@ def assert_num_of_files_in_path_in_op_oneclient(num, path, user, users, host):
 
 def create_directory_structure_in_op_oneclient(user, users, config, space,
                                                host, hosts, request):
-    items = yaml.load(config)
+    items = yaml.load(config, yaml.Loader)
     cwd = space
     create_content(user, users, cwd, items, create_item_in_op_oneclient, host,
                    hosts, request)
@@ -165,7 +165,7 @@ def assert_space_content_in_op_oneclient(config, space_name, user, users,
     ls_fun = partial(ls_dir_in_op_oneclient, user=user, users=users, host=host)
     assert_file_content_fun = partial(assert_file_content_in_op_oneclient,
                                       user=user, users=users, host=host)
-    check_files_tree(yaml.load(config), children, cwd, ls_fun,
+    check_files_tree(yaml.load(config, yaml.Loader), children, cwd, ls_fun,
                      assert_file_content_fun)
 
 

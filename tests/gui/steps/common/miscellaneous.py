@@ -13,6 +13,7 @@ import subprocess
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
 from tests.gui.utils.generic import transform
 from tests.gui.conftest import WAIT_FRONTEND
@@ -105,7 +106,7 @@ def pass_test():
 def switch_to_iframe(selenium, browser_id, selector=None):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    iframe = driver.find_element_by_tag_name('iframe')
+    iframe = driver.find_element(By.TAG_NAME, 'iframe')
     driver.switch_to.frame(iframe)
 
 
@@ -162,7 +163,7 @@ def _process_curl_output(output, page):
                   'following config:\n{config}'))
 def assert_curl_result_with_config(browser_id, tmp_memory, config):
     curl_res = tmp_memory[browser_id]['curl result']
-    expected_data = yaml.load(config)
+    expected_data = yaml.load(config, yaml.Loader)
 
     for key, val in expected_data.items():
         assert curl_res[_camel_transform(key)] == val, (f'{key}: {val} not '

@@ -37,7 +37,7 @@ def deregister_provider_in_op_panel_using_rest(user, users, provider_host,
 
 
 def register_provider_in_op_using_rest(user, users, hosts, config):
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     try:
         provider = options['provider name']['of provider']

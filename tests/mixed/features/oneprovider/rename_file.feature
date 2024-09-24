@@ -1,14 +1,5 @@
 Feature: Tests for renaming file in Oneprovider
 
-  Examples:
-  | client1    | client2    | client3    |
-  | REST       | web GUI    | REST       |
-  | web GUI    | REST       | REST       |
-  | oneclient1 | REST       | oneclient1 |
-  | REST       | oneclient1 | REST       |
-  | oneclient1 | web GUI    | oneclient1 |
-  | web GUI    | oneclient1 | oneclient1 |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -32,6 +23,15 @@ Feature: Tests for renaming file in Oneprovider
     Then using <client1>, user1 succeeds to see item named "file2" in "space1" in oneprovider-1
     And using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | web GUI    | REST       | REST       |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient1 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | web GUI    | oneclient1 | oneclient1 |
+
 
   Scenario Outline: User renames file using <client1> and using <client2> sees that its name has changed
     When using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
@@ -40,4 +40,11 @@ Feature: Tests for renaming file in Oneprovider
     Then using <client2>, user1 succeeds to see item named "file2" in "space1" in oneprovider-1
     And using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
-
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | web GUI    | REST       | REST       |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient1 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | web GUI    | oneclient1 | oneclient1 |

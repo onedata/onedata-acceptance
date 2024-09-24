@@ -45,7 +45,7 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
     spaces_api = SpaceSupportApi(user_client)
     storages_api = StoragesApi(user_client)
 
-    options = yaml.load(config)
+    options = yaml.load(config, yaml.Loader)
 
     storage_import_options = options.get('storage import', None)
     if storage_import_options:
@@ -96,7 +96,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
                                  hosts['onezone']['hostname'])
 
     space_api = SpaceSupportApi(user_client_op)
-    options = yaml.load(conf)
+    options = yaml.load(conf, yaml.Loader)
 
     space = get_space_with_name(user_client_oz, space_name)
     space_details = space_api.get_space_details(
@@ -147,7 +147,7 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
 
     storage_sync = space_details.storage_import.auto_storage_import_config
 
-    for attr, expected_val in yaml.load(conf).items():
+    for attr, expected_val in yaml.load(conf, yaml.Loader).items():
         if attr == 'Scan interval [s]':
             attr = 'Scan interval'
         actual_val = getattr(storage_sync, '_'.join(attr.lower().split()))

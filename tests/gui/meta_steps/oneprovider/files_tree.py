@@ -80,10 +80,18 @@ def check_tree_browser(
                'for archive with description: "(?P<description>.*)" '
                'in (?P<which_browser>.*) '
                r'is as follow:\n(?P<config>(.|\s)*)'))
+def wt_check_file_structure_in_browser(
+        browser_id, config, selenium, tmp_memory, op_container, tmpdir,
+        which_browser):
+    check_file_structure_in_browser(
+        browser_id, config, selenium, tmp_memory, op_container, tmpdir,
+        which_browser=which_browser)
+
+
 def check_file_structure_in_browser(
         browser_id, config, selenium, tmp_memory, op_container, tmpdir,
         which_browser='file browser'):
-    tree = yaml.load(config)
+    tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree)
     check_tree_browser(
         root, selenium, browser_id, tmp_memory, op_container, tmpdir,

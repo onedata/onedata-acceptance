@@ -1,14 +1,5 @@
 Feature: Files multiclient tests
 
-  Examples:
-  | client1    | client2    | client3    |
-  | REST       | web GUI    | REST       |
-  | REST       | REST       | web GUI    |
-  | oneclient1 | REST       | oneclient1 |
-  | REST       | oneclient2 | REST       |
-  | oneclient1 | web GUI    | oneclient1 |
-  | oneclient1 | oneclient2 | web GUI    |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -36,6 +27,15 @@ Feature: Files multiclient tests
     Then using <client2>, user2 fails to see item named "file1" in "space1" in oneprovider-1
     And using <client3>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | REST       | REST       | web GUI    |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient2 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | oneclient1 | oneclient2 | web GUI    |
+
 
   Scenario Outline: User1 creates file using <client1> and user2 renames it using <client2>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
@@ -45,3 +45,12 @@ Feature: Files multiclient tests
     And using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see item named "file2" in "space1" in oneprovider-1
     And using <client3>, user1 succeeds to see item named "file2" in "space1" in oneprovider-1
+
+    Examples:
+    | client1    | client2    | client3    |
+    | REST       | web GUI    | REST       |
+    | REST       | REST       | web GUI    |
+    | oneclient1 | REST       | oneclient1 |
+    | REST       | oneclient2 | REST       |
+    | oneclient1 | web GUI    | oneclient1 |
+    | oneclient1 | oneclient2 | web GUI    |

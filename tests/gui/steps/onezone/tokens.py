@@ -242,7 +242,7 @@ def click_menu_button_of_tokens_page(selenium, browser_id, oz_page):
     oz_page(driver)['tokens'].menu()
 
 
-@wt(parsers.parse('user of browser clicks "{option}" option in '
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option in '
                   'tokens view menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_token_page_menu(selenium, browser_id, option, popups):

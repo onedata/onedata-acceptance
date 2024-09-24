@@ -8,15 +8,13 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import transform, parse_seq
+from tests.gui.utils.generic import transform, parse_seq, WhichBrowser
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 import time
 import re
 from datetime import datetime
 
 
-@wt(parsers.parse('user of {browser_id} clicks and presses enter on item named'
-                  ' "{item_name}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                              tmp_memory, op_container,
@@ -40,6 +38,15 @@ def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                item_name)
 
 
+@wt(parsers.parse('user of {browser_id} clicks and presses enter on item named'
+                  ' "{item_name}" in {which_browser}'))
+def wt_click_and_press_enter_on_item_in_browser(
+        selenium, browser_id, item_name, tmp_memory, op_container, which_browser):
+    click_and_press_enter_on_item_in_browser(
+        selenium, browser_id, item_name, tmp_memory, op_container,
+        which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_and_enter_with_check(driver, op_container, browser, which_browser,
                                item_name):
@@ -48,9 +55,8 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser,
     browser.data[item_name].click_and_enter()
     if item_name.startswith('dir'):
         for _ in range(5):
-            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
-                                                             op_container,
-                                                             which_browser)
+            breadcrumbs = check_if_breadcrumbs_on_share_page(
+                driver, op_container, which_browser)
             if breadcrumbs.split('/')[-1] == item_name:
                 return
             else:
@@ -72,11 +78,15 @@ def check_if_breadcrumbs_on_share_page(driver, op_container,
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
                   'displayed in breadcrumbs on {which_browser} is "{path}"'))
+def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
+        selenium, browser_id, path, op_container, which_browser):
+    is_displayed_breadcrumbs_in_data_tab_in_op_correct(
+        selenium, browser_id, path, op_container, which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
-                                                       path, op_container,
-                                                       which_browser=
-                                                       'file browser'):
+def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
+        selenium, browser_id, path, op_container, which_browser='file browser'):
     driver = selenium[browser_id]
     breadcrumbs = getattr(op_container(driver),
                           transform(which_browser)).breadcrumbs.pwd()
@@ -91,6 +101,12 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} clicks on menu on '
                   'breadcrumbs in {which_browser}'))
+def wt_click_on_breadcrumbs_menu(selenium, browser_id, op_container,
+                                 which_browser):
+    click_on_breadcrumbs_menu(selenium, browser_id, op_container,
+                              which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_breadcrumbs_menu(selenium, browser_id, op_container,
                               which_browser='file browser'):
@@ -130,12 +146,22 @@ def _gather_data_from_browser(driver, browser, condition):
     return data
 
 
-@wt(parsers.parse('user of {browser_id} sees item(s) '
-                  'named {item_list} in {which_browser}'))
-@wt(parsers.parse('user of {browser_id} sees that item named '
-                  '{item_list} has appeared in {which_browser}'))
-@wt(parsers.parse('user of {browser_id} sees that items named '
-                  '{item_list} have appeared in {which_browser}'))
+@wt(parsers.parse(
+    'user of {browser_id} sees item(s) named {item_list} in '
+    '{which_browser:WhichBrowser}', extra_types={'WhichBrowser': WhichBrowser}))
+@wt(parsers.parse(
+    'user of {browser_id} sees that item named {item_list} has appeared in '
+    '{which_browser:WhichBrowser}', extra_types={'WhichBrowser': WhichBrowser}))
+@wt(parsers.parse(
+    'user of {browser_id} sees that items named {item_list} have appeared in '
+    '{which_browser:WhichBrowser}', extra_types={'WhichBrowser': WhichBrowser}))
+def wt_assert_items_presence_in_browser(selenium, browser_id, item_list,
+                                        tmp_memory, which_browser):
+    assert_items_presence_in_browser(
+        selenium, browser_id, item_list, tmp_memory,
+        which_browser=which_browser.value)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_presence_in_browser(selenium, browser_id, item_list, tmp_memory,
                                      which_browser='file browser'):
@@ -190,6 +216,12 @@ def check_if_item_is_dir_in_browser(selenium, browser_id, item_name, tmp_memory,
                   'have disappeared from {which_browser}'))
 @wt(parsers.parse('user of {browser_id} does not see any item(s) named '
                   '{item_list} in {which_browser}'))
+def wt_assert_items_absence_in_browser(selenium, browser_id, item_list, tmp_memory,
+                                     which_browser):
+    assert_items_absence_in_browser(selenium, browser_id, item_list, tmp_memory,
+                                    which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_absence_in_browser(selenium, browser_id, item_list, tmp_memory,
                                     which_browser='file browser'):
@@ -202,6 +234,12 @@ def assert_items_absence_in_browser(selenium, browser_id, item_list, tmp_memory,
 
 @wt(parsers.re(r'user of (?P<browser_id>.+?) sees that there '
                r'(is 1|are (?P<num>\d+)) items? in (?P<which_browser>.*)'))
+def assert_num_of_files_are_displayed_in_browser_(browser_id, num, tmp_memory,
+                                                  which_browser):
+    assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
+                                                 which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
                                                  which_browser='file_browser'):
@@ -214,10 +252,17 @@ def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
 
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
                   'status tag for "{item_name}" in {which_browser}'))
+def wt_assert_status_tag_for_file_in_browser(
+        browser_id, status_type, item_name, tmp_memory, which_browser):
+    assert_status_tag_for_file_in_browser(
+        browser_id, status_type, item_name, tmp_memory,
+        which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
-                                          tmp_memory,
-                                          which_browser='file browser'):
+def assert_status_tag_for_file_in_browser(
+        browser_id, status_type, item_name, tmp_memory,
+        which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = (f'{status_type} tag for {item_name} in {which_browser} not '
                f'visible')
@@ -228,10 +273,17 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
                   'status tag with "{text}" text for "{item_name}" '
                   'in {which_browser}'))
+def wt_assert_status_tag_text_for_file_in_browser(
+        browser_id, status_type, text, item_name, tmp_memory, which_browser):
+    assert_status_tag_text_for_file_in_browser(
+        browser_id, status_type, text, item_name, tmp_memory,
+        which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_text_for_file_in_browser(browser_id, status_type, text,
-                                               item_name, tmp_memory,
-                                               which_browser='file browser'):
+def assert_status_tag_text_for_file_in_browser(
+        browser_id, status_type, text, item_name, tmp_memory,
+        which_browser='file browser'):
     assert_status_tag_for_file_in_browser(browser_id, status_type,
                                           item_name, tmp_memory, which_browser)
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -243,6 +295,13 @@ def assert_status_tag_text_for_file_in_browser(browser_id, status_type, text,
 
 @wt(parsers.parse('user of {browser_id} does not see {status_type} '
                   'status tag for "{item_name}" in {which_browser}'))
+def wt_assert_not_status_tag_for_file_in_browser(
+        browser_id, status_type, item_name, tmp_memory, which_browser):
+    assert_not_status_tag_for_file_in_browser(
+        browser_id, status_type, item_name, tmp_memory,
+        which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
                                               item_name, tmp_memory,
@@ -264,14 +323,20 @@ def _choose_menu(selenium, browser_id, which_browser, popups):
         return popups(selenium[browser_id]).data_row_menu
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups,
                                              which_browser='file browser'):
     menu = _choose_menu(selenium, browser_id, which_browser, popups)
     menu.choose_option(option)
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
+                  'in data row menu in {which_browser}'))
+def wt_click_option_in_data_row_menu_in_browser(
+        selenium, browser_id, option, popups, which_browser):
+    click_option_in_data_row_menu_in_browser(
+        selenium, browser_id, option, popups, which_browser=which_browser)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{option}" option is '
@@ -306,8 +371,14 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which,
     time.sleep(0.5)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" {type} in {which_browser}'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on menu for "(?P<item_name>.*)" '
+               '(?P<type>dataset|directory|file) in (?P<which_browser>.*)'))
+def wt_click_menu_for_elem_in_browser(
+        browser_id, item_name, tmp_memory, which_browser):
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser=which_browser)
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser='file browser'):
@@ -315,11 +386,11 @@ def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {tag} for "{item_name}" '
-                  '{type} in {which_browser}'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) '
+               'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
-                                  which_browser='file browser'):
+                                  which_browser):
     browser = tmp_memory[browser_id][transform(which_browser)]
     getattr(browser.data[item_name], transform(tag)).click()
 
@@ -410,7 +481,7 @@ def assert_visible_columns_in_browser(browser_id, tmp_memory, columns,
                f'{which_browser}')
     assert len(columns) == len(browser_columns), err_msg
     for column in columns:
-        if column not in browser_columns:
+        if column.lower() not in browser_columns:
             raise AssertionError(
                 f'column {column} is not visible in {which_browser}')
 

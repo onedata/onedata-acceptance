@@ -12,7 +12,8 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.common.url import _open_url
+from selenium.webdriver.support.expected_conditions import url_to_be
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened, get_op_workflow_visualizer_page)
 from tests.gui.utils.generic import parse_seq
@@ -239,7 +240,12 @@ def open_url_from_store_content(browser_id, option, store_name, selenium,
     modal.close()
 
     url = items[option]
-    _open_url(selenium, browser_id, url)
+    driver = selenium[browser_id]
+    driver.get(url)
+    Wait(driver, WAIT_BACKEND).until(
+        url_to_be(url),
+        message='waiting for page {:s} to load'.format(url)
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

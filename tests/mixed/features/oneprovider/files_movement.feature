@@ -1,12 +1,5 @@
 Feature: Files movement tests
 
-  Examples:
-  | client1    | client2    |
-  | web GUI    | oneclient1 |
-  | REST       | oneclient1 |
-  | web GUI	   | REST	    |
-  | oneclient1 | REST       |
-
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -36,6 +29,13 @@ Feature: Files movement tests
           - dir3:
               - 20B-0.txt
 
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI	 | REST	      |
+    | oneclient1 | REST       |
+
 
   Scenario Outline: User moves non-empty file using <client2> and using <client1> sees that its content has not changed
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
@@ -53,6 +53,13 @@ Feature: Files movement tests
                 - 20B-0.txt
     And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir3/20B-0.txt" in "space1" in oneprovider-1
 
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI	 | REST	      |
+    | oneclient1 | REST       |
+
 
   Scenario Outline: User copies file using <client2> and using <client1> sees that it has been copied
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
@@ -68,6 +75,13 @@ Feature: Files movement tests
                   - 20B-0.txt
           - dir3:
               - 20B-0.txt
+
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI	 | REST       |
+    | oneclient1 | REST       |
 
 
   Scenario Outline: User copies non-empty file using <client2> and using <client1> sees that it has not changed
@@ -87,3 +101,10 @@ Feature: Files movement tests
               - 20B-0.txt
     And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir3/20B-0.txt" in "space1" in oneprovider-1
     And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir1/dir2/20B-0.txt" in "space1" in oneprovider-1
+
+    Examples:
+    | client1    | client2    |
+    | web GUI    | oneclient1 |
+    | REST       | oneclient1 |
+    | web GUI    | REST  	  |
+    | oneclient1 | REST       |

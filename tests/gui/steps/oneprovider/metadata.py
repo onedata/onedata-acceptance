@@ -69,7 +69,7 @@ def type_text_to_val_input_in_new_basic_entry(selenium, browser_id, text,
     modal.basic.new_entry.value = text
 
 
-@wt(parsers.parse('user of browser types "{text}" to value input box of '
+@wt(parsers.parse('user of {browser_id} types "{text}" to value input box of '
                   'attribute "{attribute_name}" metadata basic entry'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_val_of_attr_in_new_basic_entry(selenium, browser_id, text,

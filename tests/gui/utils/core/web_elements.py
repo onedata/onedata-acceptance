@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from functools import partial
+from selenium.webdriver.common.by import By
 
 from .base import AbstractWebElement, AbstractWebItem
 from .web_objects import (ButtonPageObject, PageObjectsSequence,
@@ -117,7 +118,7 @@ class WebElementsSequence(AbstractWebElement):
         if instance is None:
             return self
 
-        return instance.web_elem.find_elements_by_css_selector(self.css_sel)
+        return instance.web_elem.find_elements(By.CSS_SELECTOR, self.css_sel)
 
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):

@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 import time
 
+from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, given, wt
@@ -108,8 +109,8 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
     if btn == 'Add host':
 
         for _ in range(10):
-            selector = driver.find_elements_by_css_selector(
-                '.cluster-host-table .cluster-host-table-row')
+            selector = driver.find_elements(
+                By.CSS_SELECTOR, '.cluster-host-table .cluster-host-table-row')
             if len(selector) < 2:
                 time.sleep(1)
             else:

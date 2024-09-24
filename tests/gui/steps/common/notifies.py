@@ -12,6 +12,7 @@ import re
 
 from selenium.common.exceptions import (
     NoSuchElementException, StaleElementReferenceException)
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -29,7 +30,7 @@ def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
     regexp = re.compile(text_regexp)
     with suppress(NoSuchElementException, StaleElementReferenceException):
         assert any(regexp.match(notify.text) for notify
-                   in driver.find_elements_by_css_selector(css_sel)), \
+                   in driver.find_elements(By.CSS_SELECTOR, css_sel)), \
             'no {} notify with "{}" msg found'.format(notify_type,
                                                       text_regexp)
 
@@ -38,8 +39,8 @@ def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_visible_notifies(selenium, browser_id):
     driver = selenium[browser_id]
-    notifies = driver.find_elements_by_css_selector('.ember-notify '
-                                                    'a.close-button')
+    notifies = driver.find_elements(By.CSS_SELECTOR,
+                                    '.ember-notify a.close-button')
 
     with suppress(StaleElementReferenceException):
         map(lambda btn: btn.click(), notifies)

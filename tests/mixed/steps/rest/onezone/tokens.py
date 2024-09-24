@@ -71,7 +71,7 @@ translation_dict = {
 
 def _create_token_with_config(user, config, users, hosts, tmp_memory, tokens,
                               groups, spaces, zone_name):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
     name = data['name']
     token_type = data['type']
     usage_limit = data.get('usage limit', False)
@@ -274,7 +274,7 @@ def revoke_token_rest(user, users, hosts, zone_name, tokens, token_name):
 def assert_token_with_config_rest(user, config, users, hosts,
                                   tmp_memory, groups, spaces,
                                   zone_name='onezone'):
-    data = yaml.load(config)
+    data = yaml.load(config, yaml.Loader)
 
     name = data['name']
     token_type = data['type']

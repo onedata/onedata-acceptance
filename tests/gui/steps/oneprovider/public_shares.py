@@ -13,6 +13,8 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
 
+from selenium.webdriver.common.by import By
+
 
 @wt(parsers.parse('user of {browser_id} changes current working directory '
                   'to {path} using breadcrumbs on share\'s public interface'))
@@ -35,7 +37,7 @@ def change_public_share_to_home_cwd_using_breadcrumbs(selenium, browser_id,
 def _change_iframe_for_public_share_page(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    iframe = driver.find_element_by_tag_name('iframe')
+    iframe = driver.find_element(By.TAG_NAME, 'iframe')
     driver.switch_to.frame(iframe)
 
 
@@ -156,7 +158,7 @@ def assert_tab_in_public_share(selenium, browser_id, tab_name):
     tab_name = transform(tab_name)
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
-    tabs = driver.find_elements_by_css_selector('.nav-tabs-share-mode li')
+    tabs = driver.find_elements(By.CSS_SELECTOR, '.nav-tabs-share-mode li')
     for tab in tabs:
         if transform(tab.text) == tab_name:
             err_msg = f'tab {tab_name} is not active'

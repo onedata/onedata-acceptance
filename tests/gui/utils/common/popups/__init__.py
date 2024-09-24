@@ -41,6 +41,7 @@ from tests.gui.utils.common.common import (DropdownSelector,
 from .workflow_menu import WorkflowMenu
 from . configure_columns_menu import ConfigureColumnsMenu
 from .options_selector import OptionsSelector
+from .workflow_creation_alert import WorkflowCreationAlert
 
 
 class Popups(object):
@@ -114,6 +115,7 @@ class Popups(object):
                                      cls=ConfigureColumnsMenu)
     logging_level = WebItem('.logLevel-field-dropdown', cls=PowerSelect)
     options_selector = WebItem('.webui-popover.in', cls=OptionsSelector)
+    workflow_creation_alert = WebItem('.alert.alert-success', cls=WorkflowCreationAlert)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
