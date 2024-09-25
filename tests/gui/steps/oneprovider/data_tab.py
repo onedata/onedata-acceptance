@@ -698,7 +698,7 @@ def expand_size_statistics_for_providers(selenium, browser_id, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that '
-               '(?P<elem_type>physical size|logical size) for '
+               '(?P<elem_type>physical_size|logical_size) for '
                '(?P<provider>.*?) is "(?P<expected>.*?)"'))
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(selenium, hosts, modals, browser_id,
