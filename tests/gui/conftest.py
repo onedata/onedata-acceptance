@@ -364,6 +364,9 @@ def capabilities(request, capabilities, tmpdir):
         options.add_argument("--ignore-ssl-errors=yes")
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--disable-infobars')
+        options.add_argument('--enable-logging')
+        options.add_argument('--v=1')
+        options.set_capability('goog:loggingPrefs', {'performance': 'ALL', 'driver': 'ALL', 'browser': 'ALL'})
         prefs = {"download.default_directory": str(tmpdir)}
         options.add_experimental_option("excludeSwitches",
                                         ["enable-automation"])

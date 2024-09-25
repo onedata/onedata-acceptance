@@ -11,7 +11,7 @@ import re
 import yaml
 import pytest
 import copy
-import datetime
+from datetime import datetime, timezone
 import sys
 import time
 from copy import deepcopy
@@ -426,114 +426,128 @@ def export_logs(request, env_description_abs_path=None, logdir_prefix=''):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+    if call.when != 'call':
+        return
+    request = item.funcargs['request']
+    drivers = request.getfixturevalue('selenium')
+    try:
+        drivers.pop('request')
+    except KeyError:
+        pass
     summary = []
-    extra = getattr(report, 'extra', [])
-    driver = getattr(item, '_driver', None)
+    extras = []
     xfail = hasattr(report, 'wasxfail')
     xvfb_rec = item.config.option.xvfb_recording
     failure = (report.skipped and xfail) or (report.failed and not xfail)
     when = item.config.getini('selenium_capture_debug').lower()
     capture_debug = when == 'always' or (when == 'failure' and failure)
-    if driver is not None:
-        if capture_debug:
-            exclude = item.config.getini('selenium_exclude_debug').lower()
-            if 'url' not in exclude:
-                _gather_url(item, report, driver, summary, extra)
-            if 'screenshot' not in exclude:
-                _gather_screenshot(item, report, driver, summary, extra)
-            if 'html' not in exclude:
-                _gather_html(item, report, driver, summary, extra)
-            if 'logs' not in exclude:
-                _gather_logs(item, report, driver, summary, extra)
-            item.config.hook.pytest_selenium_capture_debug(
-                item=item, report=report, extra=extra)
+    for name, driver in drivers.items():
+        if report.when == 'call':
+            if capture_debug:
+                exclude = item.config.getini('selenium_exclude_debug').lower()
+                if 'url' not in exclude:
+                    _gather_url(item, report, driver, summary, extras, name)
+                if 'screenshot' not in exclude:
+                    _gather_screenshot(item, report, driver, summary, extras, name)
+                if 'html' not in exclude:
+                    _gather_html(item, report, driver, summary, extras, name)
+                if 'logs' not in exclude:
+                    _gather_logs(item, report, driver, summary, extras, name)
+                # responsible for adding movies to the report
+                item.config.hook.pytest_selenium_capture_debug(
+                    item=item, report=report, extra=extras)
 
-        if xvfb_rec != 'none':
-            movie_name = '{name}.mp4'.format(name=item.name)
-            if (xvfb_rec == 'failed') and (
-                    movie_name not in _movies) and not failure:
-                logdir = os.path.dirname(item.config.option.htmlpath)
-                movie_path = os.path.join(logdir, 'movies', movie_name)
-                if os.path.isfile(movie_path):
-                    os.remove(movie_path)
-            else:
-                _movies.add(movie_name)
+            if xvfb_rec != 'none':
+                movie_name = '{name}.mp4'.format(name=item.name)
+                if (xvfb_rec == 'failed') and (
+                        movie_name not in _movies) and not failure:
+                    logdir = os.path.dirname(item.config.option.htmlpath)
+                    movie_path = os.path.join(logdir, 'movies', movie_name)
+                    if os.path.isfile(movie_path):
+                        os.remove(movie_path)
+                else:
+                    _movies.add(movie_name)
 
-        item.config.hook.pytest_selenium_runtest_makereport(
-            item=item, report=report, summary=summary, extra=extra)
-    if summary:
-        report.sections.append(('pytest-selenium', '\n'.join(summary)))
-    report.extra = extra
+        # item.config.hook.pytest_selenium_runtest_makereport(
+        #     item=item, report=report, summary=summary, extra=extras)
+
+    # replace report extras
+    report.extras = extras
 
 
-def _gather_url(item, report, driver, summary, extra):
+def _gather_url(item, report, driver, summary, extras, browser_name):
     try:
         url = driver.current_url
     except Exception as e:
-        summary.append('WARNING: Failed to gather URL: {0}'.format(e))
+        summary.append(f'WARNING: Failed to gather URL: {e}')
         return
     pytest_html = item.config.pluginmanager.getplugin('html')
     if pytest_html is not None:
         # add url to the html report
-        extra.append(pytest_html.extras.url(url))
-    summary.append('URL: {0}'.format(url))
+        extras.append(pytest_html.extras.url(url, f'{browser_name} URL'))
+    summary.append(f'{browser_name} URL: {url}')
 
 
-def _gather_screenshot(item, report, driver, summary, extra):
+def _gather_screenshot(item, report, driver, summary, extras, browser_name):
     try:
         screenshot = driver.get_screenshot_as_base64()
     except Exception as e:
-        summary.append('WARNING: Failed to gather screenshot: {0}'.format(e))
+        summary.append(f'WARNING: Failed to gather screenshot: {e}')
         return
     pytest_html = item.config.pluginmanager.getplugin('html')
     if pytest_html is not None:
         # add screenshot to the html report
-        extra.append(pytest_html.extras.image(screenshot, 'Screenshot'))
+        extras.append(pytest_html.extras.image(
+            screenshot, f'{browser_name} Screenshot'))
 
 
-def _gather_html(item, report, driver, summary, extra):
+def _gather_html(item, report, driver, summary, extras, browser_name):
     try:
         html = driver.page_source
     except Exception as e:
-        summary.append('WARNING: Failed to gather HTML: {0}'.format(e))
+        summary.append(f'WARNING: Failed to gather HTML: {e}')
         return
     pytest_html = item.config.pluginmanager.getplugin('html')
     if pytest_html is not None:
         # add page source to the html report
-        extra.append(pytest_html.extras.text(html, 'HTML'))
+        extras.append(pytest_html.extras.text(html, f'{browser_name} HTML'))
 
 
-# TODO VFS-12302 implement gathering browser logs
-def _gather_logs(item, report, driver, summary, extra):
+def _gather_logs(item, report, driver, summary, extras, browser_name):
     try:
         types = driver.log_types
     except Exception as e:
         # note that some drivers may not implement log types
-        summary.append('WARNING: Failed to gather log types: {0}'.format(e))
+        summary.append(f'WARNING: Failed to gather log types: {e}')
         return
     for name in types:
         try:
             log = driver.get_log(name)
         except Exception as e:
-            summary.append('WARNING: Failed to gather {0} log: {1}'.format(
-                name, e))
-            return
+            summary.append(f'WARNING: Failed to gather {name} log: {e}')
+            break
         pytest_html = item.config.pluginmanager.getplugin('html')
-        formatted_logs = ''
 
         if pytest_html is not None:
-            extra.append(pytest_html.extras.text(
-                '{}{}'.format(format_log(log), formatted_logs),
-                '%s Log' % name.title()))
+            extras.append(pytest_html.extras.text(
+                format_log(log), f'{browser_name} {name.title()} Log'))
+
+
+def format_timestamp(timestamp):
+    return datetime.fromtimestamp(timestamp / 1000.0, timezone.utc).strftime(
+        '%Y-%m-%d %H:%M:%S')
 
 
 def format_log(log):
-    timestamp_format = '%Y-%m-%d %H:%M:%S.%f'
-    entries = [u'{0} {1[level]} - {1[message]}'.format(
-        datetime.utcfromtimestamp(entry['timestamp'] / 1000.0).strftime(
-            timestamp_format), entry).rstrip() for entry in log]
-    log = '\n'.join(entries)
-    return log
+    formatted_logs = []
+    if len(log) == 0:
+        return '--- no logs captured ---'
+    for entry in log:
+        timestamp = format_timestamp(entry['timestamp'])
+        log_level = entry['level']
+        message = entry['message']
+        formatted_logs.append(f"[{timestamp}] [{log_level}] {message} \n")
+    return "\n".join(formatted_logs)
 
 
 def extract_timestamp(filename):
