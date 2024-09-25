@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import sys
 import time
 from copy import deepcopy
+from collections import defaultdict
 
 from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, ENTITIES_CONFIG_DIR,
                    LOGDIRS)
@@ -375,9 +376,23 @@ def chrome_driver(capabilities):
         kwargs = {}
         if capabilities:
             kwargs['options'] = deepcopy(capabilities['options'])
-        return Chrome(**kwargs)
+        return ChromeWithAllLogs(**kwargs)
 
     return _get_instance
+
+
+class ChromeWithAllLogs(Chrome):
+    def __init__(self, *args, **kwargs):
+        self.all_logs = defaultdict(list)
+        super().__init__(*args, **kwargs)
+
+    def get_log(self, log_type):
+        temp = super().get_log(log_type)
+        self.all_logs[log_type].extend(temp)
+        return temp
+
+    def get_all_logs(self):
+        return self.all_logs
 
 
 def factory(fun):
@@ -522,7 +537,8 @@ def _gather_logs(item, report, driver, summary, extras, browser_name):
         return
     for name in types:
         try:
-            log = driver.get_log(name)
+            driver.get_log(name)
+            log = driver.get_all_logs()[name]
         except Exception as e:
             summary.append(f'WARNING: Failed to gather {name} log: {e}')
             break
