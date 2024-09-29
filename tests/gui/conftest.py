@@ -345,6 +345,9 @@ def capabilities(request, capabilities, tmpdir):
 
     if 'browserName' in capabilities and capabilities['browserName'] == 'chrome' or request.config.option.driver == 'Chrome':
         options = webdriver.ChromeOptions()
+
+        options.binary_location = '/usr/local/bin/google-chrome'
+
         options.add_argument('--no-sandbox')
         options.add_argument('--enable-popup-blocking')
         options.add_argument('--ignore-ssl-errors=yes')
