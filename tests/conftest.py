@@ -11,6 +11,7 @@ import re
 import yaml
 import pytest
 import copy
+from py.xml import html
 from datetime import datetime, timezone
 import sys
 import time
@@ -32,6 +33,16 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.support.event_firing_webdriver import \
     EventFiringWebDriver
 
+
+html.__tagspec__.update({x: 1 for x in ('video', 'source')})
+VIDEO_ATTRS = {'controls': '',
+               'poster': '',
+               'play-pause-on-click': '',
+               'style': 'border:1px solid #e6e6e6; '
+                        'float:right; height:240px; '
+                        'margin-left:5px; overflow:hidden; '
+                        'width:320px',
+               'class': 'visible'}
 
 # ============================================================================
 # PYTEST CONFIGURATION
@@ -452,40 +463,22 @@ def pytest_runtest_makereport(item, call):
     summary = []
     extras = []
     xfail = hasattr(report, 'wasxfail')
-    xvfb_rec = item.config.option.xvfb_recording
     failure = (report.skipped and xfail) or (report.failed and not xfail)
     when = item.config.getini('selenium_capture_debug').lower()
     capture_debug = when == 'always' or (when == 'failure' and failure)
     for name, driver in drivers.items():
-        if report.when == 'call':
-            if capture_debug:
-                exclude = item.config.getini('selenium_exclude_debug').lower()
-                if 'url' not in exclude:
-                    _gather_url(item, report, driver, summary, extras, name)
-                if 'screenshot' not in exclude:
-                    _gather_screenshot(item, report, driver, summary, extras, name)
-                if 'html' not in exclude:
-                    _gather_html(item, report, driver, summary, extras, name)
-                if 'logs' not in exclude:
-                    _gather_logs(item, report, driver, summary, extras, name)
-                # responsible for adding movies to the report
-                item.config.hook.pytest_selenium_capture_debug(
-                    item=item, report=report, extra=extras)
+        if capture_debug:
+            exclude = item.config.getini('selenium_exclude_debug').lower()
+            if 'url' not in exclude:
+                _gather_url(item, report, driver, summary, extras, name)
+            if 'screenshot' not in exclude:
+                _gather_screenshot(item, report, driver, summary, extras, name)
+            if 'html' not in exclude:
+                _gather_html(item, report, driver, summary, extras, name)
+            if 'logs' not in exclude:
+                _gather_logs(item, report, driver, summary, extras, name)
 
-            if xvfb_rec != 'none':
-                movie_name = '{name}.mp4'.format(name=item.name)
-                if (xvfb_rec == 'failed') and (
-                        movie_name not in _movies) and not failure:
-                    logdir = os.path.dirname(item.config.option.htmlpath)
-                    movie_path = os.path.join(logdir, 'movies', movie_name)
-                    if os.path.isfile(movie_path):
-                        os.remove(movie_path)
-                else:
-                    _movies.add(movie_name)
-
-        # item.config.hook.pytest_selenium_runtest_makereport(
-        #     item=item, report=report, summary=summary, extra=extras)
-
+    _gather_movie(item, report, extras)
     # replace report extras
     report.extras = extras
 
@@ -547,6 +540,37 @@ def _gather_logs(item, report, driver, summary, extras, browser_name):
         if pytest_html is not None:
             extras.append(pytest_html.extras.text(
                 format_log(log), f'{browser_name} {name.title()} Log'))
+
+
+def _gather_movie(item, report, extras):
+    recording = item.config.getoption('--xvfb-recording')
+    if recording == 'none' or (recording == 'failed' and not report.failed):
+        return
+    log_dir = os.path.dirname(item.config.option.htmlpath)
+    pytest_html = item.config.pluginmanager.getplugin('html')
+    for movie_path in getattr(item, '_movies', []):
+
+        src_attrs = {'src': os.path.relpath(movie_path, log_dir),
+                     'type': 'video/mp4'}
+        video_html = str(html.video(html.source(**src_attrs), **VIDEO_ATTRS))
+        # first html element added to the report section gets .hidden css sel
+        # in order to get around this, this line is added
+        extras.append(pytest_html.extras.html('<video>nothing</video>'))
+        extras.append(pytest_html.extras.html(video_html))
+
+    xvfb_rec = item.config.option.xvfb_recording
+    xfail = hasattr(report, 'wasxfail')
+    failure = (report.skipped and xfail) or (report.failed and not xfail)
+    if xvfb_rec != 'none':
+        movie_name = '{name}.mp4'.format(name=item.name)
+        if (xvfb_rec == 'failed') and (
+                movie_name not in _movies) and not failure:
+            logdir = os.path.dirname(item.config.option.htmlpath)
+            movie_path = os.path.join(logdir, 'movies', movie_name)
+            if os.path.isfile(movie_path):
+                os.remove(movie_path)
+        else:
+            _movies.add(movie_name)
 
 
 def format_timestamp(timestamp):
