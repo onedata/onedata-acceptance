@@ -14,7 +14,6 @@ from time import time
 import subprocess as sp
 from collections import defaultdict
 
-from py.xml import html
 from selenium import webdriver
 from pytest import fixture, UsageError, skip, hookimpl
 
@@ -78,20 +77,6 @@ def pytest_runtest_makereport(item):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, rep.when + '_xvfb_recorder', rep)
-
-
-def pytest_selenium_capture_debug(item, report, extra):
-    recording = item.config.getoption('--xvfb-recording')
-    if recording == 'none' or (recording == 'failed' and not report.failed):
-        return
-
-    log_dir = os.path.dirname(item.config.option.htmlpath)
-    pytest_html = item.config.pluginmanager.getplugin('html')
-    for movie_path in getattr(item, '_movies', []):
-        src_attrs = {'src': os.path.relpath(movie_path, log_dir),
-                     'type': 'video/mp4'}
-        video_html = str(html.video(html.source(**src_attrs), **VIDEO_ATTRS))
-        extra.append(pytest_html.extras.html(video_html))
 
 
 def pytest_collection_modifyitems(items):
@@ -359,15 +344,23 @@ def capabilities(request, capabilities, tmpdir):
 
     if 'browserName' in capabilities and capabilities['browserName'] == 'chrome' or request.config.option.driver == 'Chrome':
         options = webdriver.ChromeOptions()
-        options.add_argument("--no-sandbox")
-        options.add_argument("enable-popup-blocking")
-        options.add_argument("--ignore-ssl-errors=yes")
+
+        options.binary_location = '/usr/local/bin/google-chrome'
+
+        options.add_argument('--no-sandbox')
+        options.add_argument('--enable-popup-blocking')
+        options.add_argument('--ignore-ssl-errors=yes')
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--disable-infobars')
-        prefs = {"download.default_directory": str(tmpdir)}
+        options.add_argument('--enable-logging')
+        options.add_argument('--v=1')
+
+        options.set_capability('goog:loggingPrefs',
+                               {'performance': 'ALL', 'driver': 'ALL', 'browser': 'ALL'})
+
         options.add_experimental_option("excludeSwitches",
                                         ["enable-automation"])
-        options.add_experimental_option('useAutomationExtension', False)
+        prefs = {"download.default_directory": str(tmpdir)}
         options.add_experimental_option("prefs", prefs)
         capabilities.update({'options': options})
     # TODO: use Firefox Marionette driver (geckodriver) for Firefox 47: https://jira.plgrid.pl/jira/browse/VFS-2203
@@ -390,16 +383,6 @@ def capabilities(request, capabilities, tmpdir):
 # ============================================================================
 # Xvfb and ffmpeg options and configurations.
 # ============================================================================
-
-
-html.__tagspec__.update({x: 1 for x in ('video', 'source')})
-VIDEO_ATTRS = {'controls': '',
-               'poster': '',
-               'play-pause-on-click': '',
-               'style': 'border:1px solid #e6e6e6; '
-                        'float:right; height:240px; '
-                        'margin-left:5px; overflow:hidden; '
-                        'width:320px'}
 
 
 @fixture(scope='session')
