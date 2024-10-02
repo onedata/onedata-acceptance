@@ -44,14 +44,14 @@ def create_instances_of_webdriver(
             with redirect_display(display):
                 temp_dir = str(tmpdir)
                 download_dir = os.path.join(temp_dir, browser_id, 'download')
-                logs_dir = os.path.join(temp_dir, browser_id, 'logs')
+                browser_data = os.path.join(temp_dir, browser_id, 'browser_data')
                 os.makedirs(download_dir, exist_ok=True)
-                os.makedirs(logs_dir, exist_ok=True)
+                os.makedirs(browser_data, exist_ok=True)
 
                 if driver_type.lower() == 'chrome':
                     chrome_prefs = {"download.default_directory": download_dir}
                     capabilities['options'].add_experimental_option("prefs", chrome_prefs)
-                    capabilities['options'].add_argument(f'--user-data-dir={logs_dir}')
+                    capabilities['options'].add_argument(f'--user-data-dir={browser_data}')
 
                 browser = driver()
                 _config_driver(browser, screen_width, screen_height)

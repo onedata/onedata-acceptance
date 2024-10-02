@@ -14,7 +14,6 @@ from time import time
 import subprocess as sp
 from collections import defaultdict
 
-from py.xml import html
 from selenium import webdriver
 from pytest import fixture, UsageError, skip, hookimpl
 
@@ -384,16 +383,6 @@ def capabilities(request, capabilities, tmpdir):
 # ============================================================================
 # Xvfb and ffmpeg options and configurations.
 # ============================================================================
-
-
-html.__tagspec__.update({x: 1 for x in ('video', 'source')})
-VIDEO_ATTRS = {'controls': '',
-               'poster': '',
-               'play-pause-on-click': '',
-               'style': 'border:1px solid #e6e6e6; '
-                        'float:right; height:240px; '
-                        'margin-left:5px; overflow:hidden; '
-                        'width:320px'}
 
 
 @fixture(scope='session')

@@ -392,6 +392,9 @@ def chrome_driver(capabilities):
     return _get_instance
 
 
+# The reason of using this class is gathering all logs.
+# Without it each call of get_log() returns but also removes logs,
+# so calling it before making report causes loss of logs.
 class ChromeWithAllLogs(Chrome):
     def __init__(self, *args, **kwargs):
         self.all_logs = defaultdict(list)
@@ -523,23 +526,23 @@ def _gather_html(item, report, driver, summary, extras, browser_name):
 
 def _gather_logs(item, report, driver, summary, extras, browser_name):
     try:
-        types = driver.log_types
+        log_types = driver.log_types
     except Exception as e:
         # note that some drivers may not implement log types
         summary.append(f'WARNING: Failed to gather log types: {e}')
         return
-    for name in types:
+    for log_name in log_types:
         try:
-            driver.get_log(name)
-            log = driver.get_all_logs()[name]
+            driver.get_log(log_name)
+            log = driver.get_all_logs()[log_name]
         except Exception as e:
-            summary.append(f'WARNING: Failed to gather {name} log: {e}')
+            summary.append(f'WARNING: Failed to gather {log_name} log: {e}')
             break
         pytest_html = item.config.pluginmanager.getplugin('html')
 
         if pytest_html is not None:
             extras.append(pytest_html.extras.text(
-                format_log(log), f'{browser_name} {name.title()} Log'))
+                format_log(log), f'{browser_name} {log_name.title()} Log'))
 
 
 def _gather_movie(item, report, extras):
@@ -565,8 +568,7 @@ def _gather_movie(item, report, extras):
         movie_name = '{name}.mp4'.format(name=item.name)
         if (xvfb_rec == 'failed') and (
                 movie_name not in _movies) and not failure:
-            logdir = os.path.dirname(item.config.option.htmlpath)
-            movie_path = os.path.join(logdir, 'movies', movie_name)
+            movie_path = os.path.join(log_dir, 'movies', movie_name)
             if os.path.isfile(movie_path):
                 os.remove(movie_path)
         else:
