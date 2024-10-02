@@ -239,7 +239,7 @@ def rerun_workflow_rest(
     workflow_execution_api.rerun_workflow_execution(wid, data)
 
 
-@wt(parsers.parse('using REST, {user} retry execution of "{workflow_name}" '
+@wt(parsers.parse('using REST, {user} retries execution of "{workflow_name}" '
                   'workflow from lane run {lane_run}, lane index {lane_id} '
                   'in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -401,6 +401,31 @@ def assert_workflow_execution_details(
             val = inventories[val]
         err_msg = f'Value of {key} is expected to be {val}, but got {details[key]}'
         assert details[key] == val, err_msg
+
+
+@wt(parsers.parse('using REST, {user} saves "{workflow_name}" '
+                  'workflow execution details in {host}'))
+def save_workflow_execution_details(
+        user, users, host, hosts, workflow_name, workflow_executions,
+        tmp_memory):
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    tmp_memory['workflow_exec_details'] = details
+
+
+@wt(parsers.parse('using REST, {user} sees that iteratedStoreId is the same '
+                  'as the exceptionStoreId from previous run in "{workflow_name}" '
+                  'workflow execution details in {host}'))
+def compare_stores_id_after_retry_from_workflow_execution_details(
+        user, users, host, hosts, workflow_name, workflow_executions,
+        tmp_memory):
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    exception_store_id = tmp_memory['workflow_exec_details']['lanes'][0]['runs'][0]['exceptionStoreId']
+    iterated_store_id = details['lanes'][0]['runs'][0]['iteratedStoreId']
+    err_msg = (f'Exception store id from previous run {exception_store_id} '
+               f'should be the same as iterated store id {iterated_store_id}')
+    assert exception_store_id == iterated_store_id, err_msg
 
 
 def get_workflow_execution_id(workflow_name, workflow_executions):
