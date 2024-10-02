@@ -24,9 +24,9 @@ from tests.mixed.utils.example_workflow_executions import ExampleWorkflowExecuti
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
 
 
-@given(parsers.parse('there is "{workflow_name}" workflow dump uploaded from automation examples by '
-                     'user {user} in inventory "{inventory}" in "{zone_name}" '
-                     'Onezone service'))
+@given(parsers.parse('there is "{workflow_name}" workflow dump uploaded '
+                     'from automation examples by user {user} in inventory '
+                     '"{inventory}" in "{zone_name}" Onezone service'))
 def upload_workflow_from_automation_examples_rest(
         hosts, zone_name, users, user, inventory, inventories, workflow_name,
         workflows):
@@ -154,7 +154,8 @@ def wt_execute_workflow_rest(
     workflow_executions[wid] = {workflow_name: []}
 
 
-@wt(parsers.parse('using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} pauses execution of '
+                  '"{workflow_name}" workflow in {host}'))
 def pause_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
     client = login_to_provider(user, users, hosts[host]['hostname'])
@@ -163,7 +164,8 @@ def pause_workflow_rest(
     workflow_execution_api.pause_workflow_execution(wid)
 
 
-@wt(parsers.parse('using REST, {user} resumes execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} resumes execution of '
+                  '"{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resume_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
@@ -173,7 +175,8 @@ def resume_workflow_rest(
     workflow_execution_api.resume_workflow_execution(wid)
 
 
-@wt(parsers.parse('using REST, {user} cancels execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} cancels execution of '
+                  '"{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cancel_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
@@ -183,7 +186,8 @@ def cancel_workflow_rest(
     workflow_execution_api.cancel_workflow_execution(wid)
 
 
-@wt(parsers.parse('using REST, {user} deletes execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} deletes execution of '
+                  '"{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
@@ -193,7 +197,8 @@ def delete_workflow_rest(
     workflow_execution_api.delete_workflow_execution(wid)
 
 
-@wt(parsers.parse('using REST, {user} fails to resume execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} fails to resume execution of '
+                  '"{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_resume_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
@@ -207,7 +212,8 @@ def fail_to_resume_workflow_rest(
         raise
 
 
-@wt(parsers.parse('using REST, {user} forces continue execution of "{workflow_name}" workflow in {host}'))
+@wt(parsers.parse('using REST, {user} forces continue execution of '
+                  '"{workflow_name}" workflow in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def force_continue_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions):
@@ -217,7 +223,9 @@ def force_continue_workflow_rest(
     workflow_execution_api.force_continue_workflow_execution(wid)
 
 
-@wt(parsers.parse('using REST, {user} reruns execution of "{workflow_name}" workflow from lane run {lane_run}, lane index {lane_id} in {host}'))
+@wt(parsers.parse('using REST, {user} reruns execution of "{workflow_name}"'
+                  ' workflow from lane run {lane_run}, lane index {lane_id} '
+                  'in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rerun_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions,
@@ -231,7 +239,9 @@ def rerun_workflow_rest(
     workflow_execution_api.rerun_workflow_execution(wid, data)
 
 
-@wt(parsers.parse('using REST, {user} retry execution of "{workflow_name}" workflow from lane run {lane_run}, lane index {lane_id} in {host}'))
+@wt(parsers.parse('using REST, {user} retry execution of "{workflow_name}" '
+                  'workflow from lane run {lane_run}, lane index {lane_id} '
+                  'in {host}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def retry_workflow_rest(
         user, users, hosts, host, workflow_name, workflow_executions,
