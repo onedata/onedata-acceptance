@@ -24,7 +24,7 @@ Feature: Automation tests
             owner: user1
 
 
-  Scenario: User can see correct workflow execution details using of executed workflow using REST
+  Scenario: User can see correct workflow execution details using REST
     Given there is "echo" workflow dump uploaded from automation examples by user user1 in inventory "inventory1" in "onezone" Onezone service
     When using REST, user1 executes "echo" workflow on space "space1" in oneprovider-1 with following configuration:
         input: [{fileId: $(resolve_file_id space1/file1)}]
