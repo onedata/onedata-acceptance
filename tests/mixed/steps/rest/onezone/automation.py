@@ -17,6 +17,7 @@ from oneprovider_client.rest import ApiException
 from tests import OP_REST_PORT
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import upload_workflow_path, upload_file_path
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.mixed.utils.common import *
 from tests.mixed.oneprovider_client.api.workflow_execution_api import WorkflowExecutionApi
 from tests.utils.rest_utils import (http_post, http_get, get_zone_rest_path, get_provider_rest_path)
@@ -38,7 +39,7 @@ def upload_workflow_from_automation_examples_rest(
 @given(parsers.parse('there is "{workflow_name}" workflow dump uploaded by '
                      'user {user} in inventory "{inventory}" in "{zone_name}" '
                      'Onezone service'))
-def upload_workflow_from_automation_examples_rest(
+def upload_workflow_from_upload_files_rest(
         hosts, zone_name, users, user, inventory, inventories, workflow_name,
         workflows):
     dump_path = upload_file_path(f'automation/workflow/{workflow_name}.json')
@@ -207,7 +208,7 @@ def fail_to_resume_workflow_rest(
                              workflow_executions)
         raise AssertionError(f'Resuming workflow execution should have failed')
     except ApiException as e:
-        if e.status in [400, 404]:
+        if e.status == 400:
             return
         raise
 
@@ -361,6 +362,7 @@ def assert_successful_workflow_executions(user, users, host, hosts, workflow_exe
                   'of status "{status}" on space "{space}" in {host}'))
 @wt(parsers.parse('using REST, {user} sees there is {num} workflow execution '
                   'of status "{status}" on space "{space}" in {host}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_num_workflow_executions_in_status(
         user, users, host, hosts, status, num: int, workflow_executions):
     executions = []
@@ -403,29 +405,36 @@ def assert_workflow_execution_details(
         assert details[key] == val, err_msg
 
 
-@wt(parsers.parse('using REST, {user} saves "{workflow_name}" '
-                  'workflow execution details in {host}'))
-def save_workflow_execution_details(
-        user, users, host, hosts, workflow_name, workflow_executions,
-        tmp_memory):
-    wid = get_workflow_execution_id(workflow_name, workflow_executions)
-    details = get_workflow_execution_details(user, users, host, hosts, wid)
-    tmp_memory['workflow_exec_details'] = details
-
-
 @wt(parsers.parse('using REST, {user} sees that iteratedStoreId is the same '
                   'as the exceptionStoreId from previous run in "{workflow_name}" '
                   'workflow execution details in {host}'))
 def compare_stores_id_after_retry_from_workflow_execution_details(
-        user, users, host, hosts, workflow_name, workflow_executions,
-        tmp_memory):
+        user, users, host, hosts, workflow_name, workflow_executions):
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     details = get_workflow_execution_details(user, users, host, hosts, wid)
-    exception_store_id = tmp_memory['workflow_exec_details']['lanes'][0]['runs'][0]['exceptionStoreId']
+    # first run
+    exception_store_id = details['lanes'][0]['runs'][1]['exceptionStoreId']
+    # second run
     iterated_store_id = details['lanes'][0]['runs'][0]['iteratedStoreId']
     err_msg = (f'Exception store id from previous run {exception_store_id} '
                f'should be the same as iterated store id {iterated_store_id}')
     assert exception_store_id == iterated_store_id, err_msg
+
+
+@wt(parsers.parse('using REST, {user} sees error resource not found when '
+                  'trying to get "{workflow_name}" workflow execution '
+                  'details in {host}'))
+def fail_to_get_workflow_execution_details(
+        user, users, host, hosts, workflow_name, workflow_executions):
+    try:
+        wid = get_workflow_execution_id(workflow_name, workflow_executions)
+        _ = get_workflow_execution_details(user, users, host, hosts, wid)
+        raise AssertionError(
+            f'Expected to get error 404 workflow not found, but succeed')
+    except HTTPNotFound as e:
+        if e.status_code == 404:
+            return
+        raise
 
 
 def get_workflow_execution_id(workflow_name, workflow_executions):
