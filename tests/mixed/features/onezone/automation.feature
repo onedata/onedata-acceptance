@@ -70,7 +70,7 @@ Feature: Automation tests
         input: [{fileId: $(resolve_file_id space1/file1)}]
     And using REST, user1 pauses execution of "echo" workflow in oneprovider-1
     And using REST, user1 deletes execution of "echo" workflow in oneprovider-1
-    Then using REST, user1 sees error resource not found when trying to get "echo" workflow execution details in oneprovider-1
+    Then using REST, user1 sees the resource not found error when trying to get "echo" workflow execution details in oneprovider-1
 
 
   Scenario: User sees successful execution of workflow that has been forced to continue after failure using REST
@@ -96,7 +96,7 @@ Feature: Automation tests
     Then using REST, user1 sees there is 1 workflow execution of status "failed" on space "space1" in oneprovider-1
 
 
-  Scenario: User retries failed workflow execution and can see that exceptionStoreId is the same as iteratedStoreId after retry using REST
+  Scenario: User sees the same iteratedStoreId as exceptionStoreId from previous run after retrying failed workflow execution using REST
     Given there is "workflow-with-sleep-50-failing" workflow dump uploaded by user user1 in inventory "inventory1" in "onezone" Onezone service
     When using REST, user1 executes "workflow-with-sleep-50-failing" workflow on space "space1" in oneprovider-1 with following configuration:
         input: [{fileId: $(resolve_file_id space1/file1)}, {fileId: $(resolve_file_id space1/file2)}, {fileId: $(resolve_file_id space1/file3)},

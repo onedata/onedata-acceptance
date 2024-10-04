@@ -421,7 +421,7 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     assert exception_store_id == iterated_store_id, err_msg
 
 
-@wt(parsers.parse('using REST, {user} sees error resource not found when '
+@wt(parsers.parse('using REST, {user} sees the resource not found error when '
                   'trying to get "{workflow_name}" workflow execution '
                   'details in {host}'))
 def fail_to_get_workflow_execution_details(

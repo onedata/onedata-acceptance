@@ -428,7 +428,7 @@ Automation:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_automation test_mixed_src
+          - make SUITE=test_automation ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 Create file:
   <<: *acceptance-mixed-tests-in-chrome-job
