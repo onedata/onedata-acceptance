@@ -32,7 +32,7 @@ Feature: Basic files tab operations on directory metadata in file browser
     And user of browser clicks "Metadata" option in data row menu in file browser
     And user of browser sees that "<modal>" modal has appeared
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    Then user of browser sees [Basic, JSON, RDF] navigation tabs in metadata panel
+    Then user of browser sees [xattrs, JSON, RDF] navigation tabs in metadata panel
     And user of browser sees that all metadata tabs are marked as empty
     And user of browser sees that there is no metadata in metadata panel
 
