@@ -1,0 +1,204 @@
+{
+  "summary": "Missing summary",
+  "schemaFormatVersion": 3,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "099e9c6ed971c13c63e553377f0cceedch86fe": {
+        "1": {
+          "schemaFormatVersion": 3,
+          "revision": {
+            "schemaFormatVersion": 3,
+            "originalRevisionNumber": 1,
+            "atmLambdaRevision": {
+              "_version": 1,
+              "_data": {
+                "summary": "",
+                "state": "draft",
+                "resultSpecs": [],
+                "resourceSpec": {
+                  "_version": 1,
+                  "_data": {
+                    "memoryRequested": 104857600,
+                    "memoryLimit": null,
+                    "ephemeralStorageRequested": 104857600,
+                    "ephemeralStorageLimit": null,
+                    "cpuRequested": 0.1,
+                    "cpuLimit": null
+                  }
+                },
+                "preferredBatchSize": 100,
+                "operationSpec": {
+                  "_version": 1,
+                  "_data": {
+                    "engine": "openfaas",
+                    "_version": 1,
+                    "_data": {
+                      "dockerImage": "onedata/lambda-echo:v3",
+                      "dockerExecutionOptions": {
+                        "readonly": true,
+                        "oneclientOptions": "",
+                        "oneclientMountPoint": "/mnt/onedata",
+                        "mountOneclient": false
+                      }
+                    }
+                  }
+                },
+                "name": "echo",
+                "description": "",
+                "configParameterSpecs": [
+                  {
+                    "_version": 1,
+                    "_data": {
+                      "name": "sleepDurationSec",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "dataSpec": {
+                        "_version": 2,
+                        "_data": {
+                          "type": "number",
+                          "_version": 1,
+                          "_data": {
+                            "integersOnly": false,
+                            "allowedValues": null
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "_version": 1,
+                    "_data": {
+                      "name": "exceptionProbability",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "dataSpec": {
+                        "_version": 2,
+                        "_data": {
+                          "type": "number",
+                          "_version": 1,
+                          "_data": {
+                            "integersOnly": false,
+                            "allowedValues": null
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "_version": 1,
+                    "_data": {
+                      "name": "streamResults",
+                      "isOptional": false,
+                      "defaultValue": null,
+                      "dataSpec": {
+                        "_version": 2,
+                        "_data": {
+                          "type": "boolean",
+                          "_version": 1,
+                          "_data": {}
+                        }
+                      }
+                    }
+                  }
+                ],
+                "argumentSpecs": []
+              }
+            }
+          },
+          "originalAtmLambdaId": "099e9c6ed971c13c63e553377f0cceedch86fe"
+        }
+      }
+    },
+    "schemaFormatVersion": 3,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "_version": 1,
+      "_data": {
+        "stores": [
+          {
+            "_version": 1,
+            "_data": {
+              "type": "list",
+              "requiresInitialContent": true,
+              "name": "input",
+              "id": "41ab7e05e5fb41f8daf7fa034b653ba2cdced9",
+              "description": "",
+              "defaultInitialContent": null,
+              "config": {
+                "_version": 1,
+                "_data": {
+                  "itemDataSpec": {
+                    "_version": 2,
+                    "_data": {
+                      "type": "file",
+                      "_version": 1,
+                      "_data": {
+                        "fileType": "ANY",
+                        "attributes": [
+                          "fileId"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "state": "draft",
+        "lanes": [
+          {
+            "_version": 1,
+            "_data": {
+              "storeIteratorSpec": {
+                "_version": 1,
+                "_data": {
+                  "storeSchemaId": "41ab7e05e5fb41f8daf7fa034b653ba2cdced9",
+                  "maxBatchSize": 1
+                }
+              },
+              "parallelBoxes": [
+                {
+                  "_version": 1,
+                  "_data": {
+                    "tasks": [
+                      {
+                        "_version": 1,
+                        "_data": {
+                          "timeSeriesStoreConfig": null,
+                          "resultMappings": [],
+                          "resourceSpecOverride": null,
+                          "name": "1s sleep 50 fail",
+                          "lambdaRevisionNumber": 1,
+                          "lambdaId": "099e9c6ed971c13c63e553377f0cceedch86fe",
+                          "lambdaConfig": {
+                            "streamResults": false,
+                            "sleepDurationSec": 1,
+                            "exceptionProbability": 50
+                          },
+                          "id": "e43112ac2bc483f0e40372cb397d2ce1be49f4",
+                          "argumentMappings": []
+                        }
+                      }
+                    ],
+                    "name": "Parallel box",
+                    "id": "58abb981eeedc3ca70697dc5ef684ed1578c58"
+                  }
+                }
+              ],
+              "name": "Lane1",
+              "maxRetries": 0,
+              "instantFailureExceptionThreshold": 1,
+              "id": "45243b8dfe82315142286d0018741bdf80cd4f",
+              "dashboardSpec": null
+            }
+          }
+        ],
+        "description": "",
+        "dashboardSpec": null
+      }
+    }
+  },
+  "originalAtmWorkflowSchemaId": "4c494b47474200bc96eb6ab627997e70ch6cba",
+  "name": "workflow-with-sleep-50-failing"
+}

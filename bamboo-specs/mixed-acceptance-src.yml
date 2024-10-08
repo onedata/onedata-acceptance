@@ -62,6 +62,7 @@ stages:
         - ACL two entries
         - Archive privileges
         - Archives
+        - Automation
         - Create file
         - Datasets
         - Directories movement
@@ -412,6 +413,22 @@ Archives:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_archives test_mixed_src
+
+Automation:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CAT4
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_automation ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 Create file:
   <<: *acceptance-mixed-tests-in-chrome-job
