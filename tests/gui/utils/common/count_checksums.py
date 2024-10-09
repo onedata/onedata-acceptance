@@ -1,9 +1,10 @@
-"""This module contains functions that counts different checksums
-"""
+"""This module contains functions that counts different checksums"""
+
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = (
+    "This software is released under the MIT license cited in LICENSE.txt"
+)
 
 import hashlib
 from zlib import adler32

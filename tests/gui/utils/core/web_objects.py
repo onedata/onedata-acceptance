@@ -1,37 +1,41 @@
-"""Utils and fixtures to facilitate operations on various web objects in web GUI.
-"""
+"""Utils and fixtures to facilitate operations on various web objects in web GUI."""
+
+from tests.gui.utils.generic import nth
 
 from .base import PageObject
-from tests.gui.utils.generic import nth
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = (
+    "This software is released under the MIT license cited in LICENSE.txt"
+)
 
 
 class ButtonPageObject(PageObject):
-    name = 'button'
-    item_not_found_msg = '{text} btn not found in {parent}'
+    name = "button"
+    item_not_found_msg = "{text} btn not found in {parent}"
 
     def __str__(self):
-        return '{} btn in {}'.format(self.name, self.parent)
+        return "{} btn in {}".format(self.name, self.parent)
 
     def __call__(self):
         self.click()
 
     def is_enabled(self):
-        return (self.web_elem.is_enabled() and
-                'disabled' not in self.web_elem.get_attribute('class'))
+        return (
+            self.web_elem.is_enabled()
+            and "disabled" not in self.web_elem.get_attribute("class")
+        )
 
     def is_active(self):
-        return 'active' in self.web_elem.get_attribute('class')
+        return "active" in self.web_elem.get_attribute("class")
 
 
 class ButtonWithTextPageObject(ButtonPageObject):
     def __str__(self):
-        return '{} btn with "{}" text in {}'.format(self.name, self.text,
-                                                    self.parent)
+        return '{} btn with "{}" text in {}'.format(
+            self.name, self.text, self.parent
+        )
 
     @property
     def text(self):
@@ -58,12 +62,13 @@ class PageObjectsSequence(object):
         return nth(self.items, idx) if idx < len(self) else None
 
     def __iter__(self):
-        return (self.cls(self.driver, item, self.parent)
-                for item in self.items)
+        return (self.cls(self.driver, item, self.parent) for item in self.items)
 
     def __reversed__(self):
-        return (self.cls(self.driver, item, self.parent)
-                for item in reversed(self.items))
+        return (
+            self.cls(self.driver, item, self.parent)
+            for item in reversed(self.items)
+        )
 
     def __getitem__(self, sel):
         if isinstance(sel, int):
@@ -71,18 +76,23 @@ class PageObjectsSequence(object):
             if item:
                 return self.cls(self.driver, item, self.parent)
             else:
-                raise RuntimeError('Index out of bound. Requested item at '
-                                   '{idx} while limit is {limit} in '
-                                   '{parent}'.format(idx=sel, limit=len(self),
-                                                     parent=self.parent))
+                raise RuntimeError(
+                    "Index out of bound. Requested item at "
+                    "{idx} while limit is {limit} in "
+                    "{parent}".format(
+                        idx=sel, limit=len(self), parent=self.parent
+                    )
+                )
         elif isinstance(sel, str):
             item = self._getitem_by_id(sel)
             if item:
                 return item
             else:
-                raise RuntimeError('no "{id}" found in '
-                                   '{parent}'.format(id=sel,
-                                                     parent=self.parent))
+                raise RuntimeError(
+                    'no "{id}" found in {parent}'.format(
+                        id=sel, parent=self.parent
+                    )
+                )
         else:
             return None
 
