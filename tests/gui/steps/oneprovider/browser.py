@@ -59,9 +59,8 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser,
                 driver, op_container, which_browser)
             if breadcrumbs.split('/')[-1] == item_name:
                 return
-            else:
-                time.sleep(1)
-        raise RuntimeError(f'Click and enter has not entered the directory')
+            time.sleep(1)
+        raise RuntimeError('Click and enter has not entered the directory')
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -315,12 +314,11 @@ def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
 def _choose_menu(selenium, browser_id, which_browser, popups):
     if which_browser == 'archive browser':
         return popups(selenium[browser_id]).archive_row_menu
-    elif which_browser == 'dataset browser':
+    if which_browser == 'dataset browser':
         return popups(selenium[browser_id]).dataset_row_menu
-    elif which_browser == 'automation workflows page':
+    if which_browser == 'automation workflows page':
         return popups(selenium[browser_id]).workflow_menu
-    else:
-        return popups(selenium[browser_id]).data_row_menu
+    return popups(selenium[browser_id]).data_row_menu
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

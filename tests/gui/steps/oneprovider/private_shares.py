@@ -16,8 +16,8 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
                   'for handle service on share\'s private interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_option_for_publish_as_open_data(browser_id, option, popups,
-                                           selenium):
+def choose_option_for_publish_handle_service_as_open_data(
+        browser_id, option, popups, selenium):
     driver = selenium[browser_id]
     popups(driver).handle_service.options[option].click()
 
@@ -25,8 +25,8 @@ def choose_option_for_publish_as_open_data(browser_id, option, popups,
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
                   'for metadata type on share\'s private interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_option_for_publish_as_open_data(browser_id, option, popups,
-                                           selenium):
+def choose_option_for_publish_metadata_as_open_data(
+        browser_id, option, popups, selenium):
     driver = selenium[browser_id]
     popups(driver).metadata_type.options[option].click()
 

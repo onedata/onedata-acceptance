@@ -133,7 +133,7 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
                                                     op_container):
     driver = selenium[browser_id]
     cwd = op_container(driver).data.sidebar.cwd.pwd()
-    assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
+    assert path == cwd, f'expected path {path}\n got: {path}'
 
 
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
@@ -156,9 +156,8 @@ def _is_space_viewed_space_in_data_tab_in_op(driver, is_home, space_name,
     assert displayed_name == space_name, err_msg.format(displayed_name,
                                                         space_name)
     if is_home:
-        assert selector.is_selected_space_home() is True, 'space {} is not ' \
-                                                          'home space'.format(
-            displayed_name)
+        assert selector.is_selected_space_home() is True, (
+            f'space {displayed_name} is not home space')
 
 
 @given(parsers.re('user of (?P<browser_id>.+?) seen that displayed directory '
@@ -168,7 +167,7 @@ def _is_space_viewed_space_in_data_tab_in_op(driver, is_home, space_name,
 def g_is_space_tree_root(selenium, browser_id, is_home, space_name,
                          op_container):
     driver = selenium[browser_id]
-    _is_space_viewed_space_in_data_tab_in_op(driver, True if is_home else False,
+    _is_space_viewed_space_in_data_tab_in_op(driver, bool(is_home),
                                              space_name, op_container)
 
 
@@ -178,7 +177,7 @@ def g_is_space_tree_root(selenium, browser_id, is_home, space_name,
 def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
                           op_container):
     driver = selenium[browser_id]
-    _is_space_viewed_space_in_data_tab_in_op(driver, True if is_home else False,
+    _is_space_viewed_space_in_data_tab_in_op(driver, bool(is_home),
                                              space_name, op_container)
 
 
@@ -259,8 +258,7 @@ def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
 
     prev_len = tmp_memory[browser_id][path]
     curr_len = cwd.displayed_name_width
-    assert prev_len != curr_len, 'name len of {} is the same as before {' \
-                                 '}'.format(path, curr_len)
+    assert prev_len != curr_len, f'name len of {path} is the same as before {curr_len}'
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
@@ -356,7 +354,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
         op_container(driver).file_browser.upload_files('\n'.join(
             str(item) for item in directory.listdir() if item.isfile()))
     else:
-        raise RuntimeError('directory {} does not exist'.format(str(directory)))
+        raise RuntimeError(f'directory {directory} does not exist')
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -390,7 +388,7 @@ def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
 def upload_number_of_files_to_cwd_in_data_tab(selenium, browser_id, file_path,
                                               tmpdir, op_container, popups,
                                               number):
-    for i in range(int(number)):
+    for _ in range(int(number)):
         upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id,
                                                   file_path, tmpdir,
                                                   op_container)
@@ -408,7 +406,7 @@ def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
     if file.isfile():
         op_container(driver).file_browser.upload_files(upload_file_path(file))
     else:
-        raise RuntimeError('file {} does not exist'.format(str(file)))
+        raise RuntimeError(f'file {file} does not exist')
 
 
 def network_throttling_upload(driver):
@@ -450,10 +448,9 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
         provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
-    assert displayed_size == size, 'displayed chunk size {} in data' \
-                                   'distribution modal does not match ' \
-                                   'expected ' \
-                                   '{}'.format(displayed_size, size)
+    assert displayed_size == size, (
+            f'displayed chunk size {displayed_size} in data distribution modal '
+            f'does not match expected {size}')
 
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
@@ -486,8 +483,8 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
-    assert not chunks, 'distribution for {} is not entirely empty. ' \
-                       'Visible chunks: {}'.format(provider, chunks)
+    assert not chunks, (f'distribution for {provider} is not entirely empty. '
+                        f'Visible chunks: {chunks}')
 
 
 @wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
@@ -503,12 +500,12 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
     displayed_chunks = distribution.chunks(size)
     expected_chunks = parse_seq(chunks, pattern=r'\(.+?\)')
     assert len(displayed_chunks) == len(
-        expected_chunks), 'displayed {} chunks instead of expected {}'.format(
-        len(displayed_chunks), len(expected_chunks))
+        expected_chunks), (f'displayed {len(displayed_chunks)} chunks instead '
+                           f'of expected {len(expected_chunks)}')
     for chunk1, chunk2 in zip(displayed_chunks, expected_chunks):
         assert all(round(x - z) == 0 for x, z in zip(
             chunk1, parse_seq(chunk2, pattern=r'\d+', default=int))), (
-            'displayed chunk {} instead of expected {}'.format(chunk1, chunk2))
+            f'displayed chunk {chunk1} instead of expected {chunk2}')
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of downloaded '
@@ -520,12 +517,10 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
         with downloaded_file.open() as f:
             file_content = ''.join(f.readlines())
             file_content = file_content.strip()
-            assert content == file_content, ('expected {} as {} content, '
-                                             'instead got {}'.format(content,
-                                                                     file_name,
-                                                                     file_content))
+            assert content == file_content, (
+                f'expected {content} as {file_name} content, instead got {file_content}')
     else:
-        raise RuntimeError('file {} has not been downloaded'.format(file_name))
+        raise RuntimeError(f'file {file_name} has not been downloaded')
 
 
 @wt(parsers.parse('user of {browser_id} chooses {option} option '
@@ -607,8 +602,7 @@ def _assert_provider_in_space(selenium, browser_id, provider, oz_page):
 @wt(parsers.parse('user of {browser_id} sees that current provider is '
                   '"{provider}" on file browser page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_current_provider_in_space(selenium, browser_id, provider, hosts,
-                                     oz_page):
+def assert_current_provider_in_space(selenium, browser_id, provider, oz_page):
     _assert_current_provider_in_space(selenium, browser_id, provider, oz_page)
 
 

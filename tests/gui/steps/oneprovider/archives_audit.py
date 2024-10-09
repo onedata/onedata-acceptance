@@ -7,14 +7,14 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import yaml
+from datetime import datetime
 import re
+import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq, transform
-from datetime import datetime
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees non-empty '
@@ -294,10 +294,9 @@ def parse_time(str_time):
     n = len(str_time)
     if str_time[n-2:n] == 'ms':
         return int(str_time[:n-2])
-    elif str_time[n-1] == 's':
+    if str_time[n-1] == 's':
         return float(str_time[:n-1]) * 1000
-    else:
-        raise ValueError('wrong time unit')
+    raise ValueError('wrong time unit')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on link for field '

@@ -6,8 +6,6 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import time
-
 import yaml
 
 from selenium.common.exceptions import (StaleElementReferenceException,
@@ -25,8 +23,8 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts, selenium,
                      browser_id, op_container, popups):
-    assert getattr(transfer, 'is_{}'.format(item_type))(), \
-        'Transferred item is not {} in {}'.format(item_type, sufix)
+    assert getattr(transfer, f'is_{item_type}')(), (
+        f'Transferred item is not {item_type} in {sufix}')
 
     desc = yaml.load(desc, yaml.Loader)
     for key, val in desc.items():
@@ -63,7 +61,7 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts, selenium,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
-               ' in ended transfers:\n(?P<desc>(.|\s)*)'))
+               r' in ended transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=240)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                           op_container, popups):
@@ -75,7 +73,7 @@ def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
-               ' in waiting transfers:\n(?P<desc>(.|\s)*)'))
+               r' in waiting transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
                             op_container, popups):

@@ -11,17 +11,15 @@ import time
 from datetime import datetime
 import tarfile
 import yaml
+from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.modal import click_modal_button
-from tests.gui.steps.modals.details_modal import click_on_context_menu_item
-from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op,\
-    choose_option_from_selection_menu
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
-from selenium.common.exceptions import StaleElementReferenceException
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -75,9 +73,8 @@ def assert_presence_in_file_browser_with_order(browser_id, item_list,
             except StopIteration:
                 return
 
-    raise RuntimeError('item(s) not in browser or not in specified order '
-                       '{order} starting from {item}'.format(order=item_list,
-                                                             item=curr_item))
+    raise RuntimeError(f'item(s) not in browser or not in specified order '
+                       f'{item_list} starting from {curr_item}')
 
 
 @wt(parsers.parse('user of {browser_id} sees that modification date of item '
@@ -352,10 +349,9 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
             except StaleElementReferenceException:
                 time.sleep(0.1)
         new_files = [f for f in visible_files if f and f not in detected_files]
-    else:
-        err_msg = (f'There are {len(detected_files)} files in file browser '
-                   f'when should be {count}, file list:{detected_files}')
-        assert len(detected_files) == count, err_msg
+    err_msg = (f'There are {len(detected_files)} files in file browser '
+               f'when should be {count}, file list: {detected_files}')
+    assert len(detected_files) == count, err_msg
 
 
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
@@ -367,8 +363,8 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
                                                         number, modals):
     name = modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip('(').strip(')')
-    assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
-                                  f'hardlinks tab name')
+    assert number == actual_num, (
+        f'Expected {number}, got {actual_num} in hardlinks tab name')
 
 
 def assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id,
@@ -427,13 +423,13 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                   '"{name}" TAR file in download directory have following'
                   ' structure:\n{contents}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
+def assert_contents_downloaded_tar_file(browser_id, contents, tmpdir,
                                         clipboard, displays, name):
     configured_dir_contents = {}
     if name == 'archive':
         name = (f'archive_'
                      f'{clipboard.paste(display=displays[browser_id])}.tar')
-        contents = contents.replace('archive', name.split('.')[0])
+        contents = contents.replace('archive', name.split('.', maxsplit=1)[0])
 
     def _get_directory_contents(directory_tree, path=''):
 
@@ -544,5 +540,5 @@ def assert_physical_location_path_and_copy_in_file_details(
     modal = 'details modal'
     click_modal_button(selenium, browser_id, button, modal, modals)
     path = clipboard.paste(display=displays[browser_id])
-    err_msg = f'there is no physical location path visible in file details'
+    err_msg = 'there is no physical location path visible in file details'
     assert path is not None, err_msg

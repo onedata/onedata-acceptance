@@ -57,5 +57,5 @@ def assert_item_appeared_in_spaces_perm_table(selenium, browser_id, name,
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError('no {} named "{}" found in spaces permission table'
-                           ''.format(caption, name))
+        raise RuntimeError(
+            f'no {caption} named "{name}" found in spaces permission table')

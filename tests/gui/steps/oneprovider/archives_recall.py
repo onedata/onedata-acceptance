@@ -56,7 +56,7 @@ def wait_for_status_in_archive_recall_information_modal(selenium, browser_id,
                                                         modals, status):
     driver = selenium[browser_id]
     recall_status = modals(driver).archive_recall_information.status
-    for i in range(100):
+    for _ in range(100):
         if recall_status == status:
             break
         else:

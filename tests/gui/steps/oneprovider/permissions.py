@@ -7,8 +7,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import re
-import random
-import string
 
 import pytest
 from selenium.common.exceptions import (InvalidElementStateException,
@@ -43,8 +41,8 @@ def select_permission_type(selenium, browser_id, permission_type, modals):
 def check_permission(selenium, browser_id, perm, modals):
     perm_value = modals(selenium[browser_id]
                         ).details_modal.edit_permissions.posix.value
-    assert perm_value == perm, ('POSIX permission value {} instead of'
-                                ' expected {}'.format(perm_value, perm))
+    assert perm_value == perm, (
+        f'POSIX permission value {perm_value} instead of expected {perm}')
 
 
 @wt(parsers.parse('user of {browser_id} sets "{perm}" permission code in '
@@ -62,8 +60,8 @@ def fail_to_set_posix_permission(selenium, browser_id, perm, modals):
     try:
         modals(selenium[browser_id]
                ).details_modal.edit_permissions.posix.value = perm
-        raise Exception(f'Fail in setting permission code was expected, but it '
-                        f'succeeded')
+        raise Exception('Fail in setting permission code was expected, but it '
+                        'succeeded')
     except (InvalidElementStateException, JavascriptException):
         pass
 
@@ -157,7 +155,7 @@ def select_acl_subject(selenium, browser_id, subject, modals, popups):
     popups(driver).dropdown.options[subject].click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
+@wt(parsers.re(r'user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
                'records? in edit permissions panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_amount_of_acls(selenium, browser_id, modals, val: int):
@@ -168,7 +166,7 @@ def assert_amount_of_acls(selenium, browser_id, modals, val: int):
                               f'instead of {val} ACL records')
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record '
                'has (?P<subject_type>group|user) subject type '
                'in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -182,8 +180,8 @@ def assert_subject_type(selenium, browser_id, modals, subject_type, num,
         f'{subject_type} is not subject type in {num} ACL record')
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that there is no subject in '
-               '(?P<num>\w+) ACL record in edit permissions modal'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that there is no subject in '
+               r'(?P<num>\w+) ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(selenium, browser_id, modals, num, numerals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
@@ -194,8 +192,8 @@ def assert_lack_of_subject(selenium, browser_id, modals, num, numerals):
         f'There is subject named {perm.subject_name}')
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-               'type) is editable in (?P<num>\w+) ACL record in edit '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
+               r'type) is editable in (?P<num>\w+) ACL record in edit '
                'permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_editable(selenium, browser_id, modals, num, numerals,
@@ -205,14 +203,13 @@ def assert_acl_record_editable(selenium, browser_id, modals, num, numerals,
     perm = modals(selenium[browser_id]
                   ).details_modal.edit_permissions.acl.permissions[n]
     try:
-        _ = getattr(perm, '_{}_select'.format(name))
-    except RuntimeError:
-        raise RuntimeError("Subject {} is not editable in {} ACL record".
-                           format(name, num))
+        _ = getattr(perm, f'_{name}_select')
+    except RuntimeError as exc:
+        raise RuntimeError(f"Subject {name} is not editable in {num} ACL record") from exc
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-               'type) is not editable in (?P<num>\w+) ACL record in edit '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
+               r'type) is not editable in (?P<num>\w+) ACL record in edit '
                'permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_not_editable(selenium, browser_id, modals, num, numerals,
@@ -221,9 +218,9 @@ def assert_acl_record_not_editable(selenium, browser_id, modals, num, numerals,
 
     perm = modals(selenium[browser_id]
                   ).details_modal.edit_permissions.acl.permissions[n]
-    with pytest.raises(RuntimeError, message="Subject {} is editable in {} ACL"
-                                             " record".format(name, num)):
-        _ = getattr(perm, '_{}_select'.format(name))
+    with pytest.raises(RuntimeError, message=f"Subject {name} is editable in {num} ACL"
+                                             " record"):
+        _ = getattr(perm, f'_{name}_select')
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that only (?P<option_list>.*)'
@@ -275,10 +272,10 @@ def assert_set_all_acl_privileges(selenium, browser_id, modals, num, numerals):
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
-               ' in edit permissions panel is set for (?P<type>.*?) '
+               ' in edit permissions panel is set for (?P<sub_type>.*?) '
                '(?P<name>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name):
+def assert_acl_subject(selenium, browser_id, modals, num, numerals, sub_type, name):
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
 
@@ -286,7 +283,7 @@ def assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name):
                   ).details_modal.edit_permissions.acl.member_permission_list[n]
     name = name.strip('\"')
 
-    assert perm.subject_type() == type, (f'Subject type is not {type} '
+    assert perm.subject_type() == sub_type, (f'Subject type is not {sub_type} '
                                          f'in {num} ACL record')
     assert perm.name == name, 'Subject name is not {name} in {num} ACL record'
 
@@ -306,11 +303,11 @@ def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num,
     popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
                '(is|are) in subject list in ACL record'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
-                                         tmp_memory, popups):
+                                         popups):
     driver = selenium[browser_id]
     modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
     subject_list = popups(driver).dropdown.options
@@ -318,7 +315,7 @@ def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
         assert subject in subject_list, f'{subject} not found in subjects list'
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
                'in subject list in (?P<num>.*) ACL record'))
 def assert_subject_not_in_list_in_acl_record(selenium, browser_id, subjects,
                                              modals, num, numerals):
@@ -329,9 +326,8 @@ def assert_subject_not_in_list_in_acl_record(selenium, browser_id, subjects,
     perm.expand()
     subjects_list = [x.text.lower() for x in perm.subjects_list]
     for subject in parse_seq(subjects):
-        assert subject.lower() not in subjects_list, ("{} in subjects list in "
-                                                      "{} ACL record".format(
-            subject, num))
+        assert subject.lower() not in subjects_list, (
+            f"{subject} in subjects list in {num} ACL record")
     perm.expand()
 
 
@@ -363,7 +359,7 @@ def check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
     assert len(edit_permissions_modal.acl.member_permission_list) > 0
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees "no access" tag on '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees "no access" tag on '
                '(?P<item_name>.*)'))
 def assert_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -371,7 +367,7 @@ def assert_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     assert browser.data[item_name].tag_label == "No access", err_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) does not see "no access" tag on '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) does not see "no access" tag on '
                '(?P<item_name>.*)'))
 def assert_not_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']

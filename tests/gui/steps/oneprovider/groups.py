@@ -27,8 +27,7 @@ def is_present_on_groups_list(selenium, browser_id, name, op_container):
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, op_container, name):
         driver.refresh()
-        raise RuntimeError('no group named "{}" found in groups '
-                           'sidebar'.format(name))
+        raise RuntimeError(f'no group named "{name}" found in groups sidebar')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on settings icon displayed '
@@ -69,6 +68,5 @@ def assert_item_appeared_in_groups_perm_table(selenium, browser_id, name,
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()
-        raise RuntimeError('no {} named "{}" found in groups permission table'
-                           ''.format(caption, name))
-
+        raise RuntimeError(
+            f'no {caption} named "{name}" found in groups permission table')

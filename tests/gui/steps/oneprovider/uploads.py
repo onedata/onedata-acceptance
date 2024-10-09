@@ -60,7 +60,7 @@ def assert_file_is_uploaded(selenium, browser_id, oz_page, file_name, option):
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Uploads) in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_uploads_in_the_sidebar(selenium, browser_id, option, oz_page):
+def click_on_uploads_in_the_sidebar(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     oz_page(driver).uploads.click()

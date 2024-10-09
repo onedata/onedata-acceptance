@@ -12,7 +12,6 @@ import time
 
 from tests.gui.steps.common.miscellaneous import (
     press_tab_on_active_element, press_backspace_on_active_element)
-from tests.gui.steps.modals.modal import click_modal_button
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -186,4 +185,3 @@ def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
     item_status = modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f'{item_status} does not match expected {text}'
-

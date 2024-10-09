@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.common.by import By
 
@@ -31,17 +30,16 @@ def _click_on_tab_in_main_menu_sidebar(driver, tab):
 
         return Wait(driver, WAIT_FRONTEND).until(
             lambda _: _check_url(current_url),
-            message='waiting for url to change.'
-                    'Current url: {:s}'.format(driver.current_url)
+            message=(f'waiting for url to change. '
+                     f'Current url: {driver.current_url}')
         )
 
     menu_tab = main_menu_tab_to_url(tab)
-    css_path = '.primary-sidebar a#main-{:s}'.format(menu_tab)
+    css_path = f'.primary-sidebar a#main-{menu_tab}'
 
     Wait(driver, WAIT_BACKEND).until(
         lambda _: _load_main_menu_tab_page(menu_tab),
-        message='waiting for {:s} main menu tab page to load'
-                ''.format(tab)
+        message=f'waiting for {tab} main menu tab page to load'
     )
 
 
@@ -67,7 +65,8 @@ def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list,
 def _has_dir_content_been_loaded(driver):
     # find_element_* throws exception if nothing found
     loader = driver.find_elements(
-        By.CSS_SELECTOR, '#main-content .loader-area-content-with-secondary-top')
+        By.CSS_SELECTOR,
+        '#main-content .loader-area-content-with-secondary-top')
     if loader:
         loader = loader[0]
         Wait(driver, WAIT_BACKEND).until_not(
@@ -84,7 +83,7 @@ def g_has_dir_content_been_loaded(selenium, browser_id):
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of current '
-                    'directory has been loaded'))
+                  'directory has been loaded'))
 def wt_has_dir_content_been_loaded(selenium, browser_id):
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)

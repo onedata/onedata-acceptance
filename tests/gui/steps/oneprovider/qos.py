@@ -16,7 +16,7 @@ from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
-from tests.utils.utils import repeat_failed 
+from tests.utils.utils import repeat_failed
 
 # Character used to separate provider name from storage name in QoS expressions editor.
 # Eg. "storage is my_posix @provider-krakow"
@@ -89,7 +89,7 @@ def process_expression(expression, hosts, users):
     domain = split_expression[0]
     if domain == 'storage':
         return process_storage_expression(expression, hosts)
-    elif domain == 'provider':
+    if domain == 'provider':
         return process_provider_expression(expression, hosts, users)
 
 
@@ -357,8 +357,8 @@ def assert_qos_status_in_browser(selenium, browser_id, op_container, status,
     err_msg = (f'status {status} for item {item_name} is not '
                f'displayed in {which_browser}')
     if status.lower() == 'impossible':
-        assert ('qos-status-impossible' in
-                vis_status.get_attribute('class'), err_msg)
+        assert 'qos-status-impossible' in vis_status.get_attribute('class'), (
+            err_msg)
     elif status.lower() == 'fulfilled':
-        assert ('qos-status-fulfilled' in
-                vis_status.get_attribute('class'), err_msg)
+        assert 'qos-status-fulfilled' in vis_status.get_attribute('class'), (
+            err_msg)
