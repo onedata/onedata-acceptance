@@ -195,7 +195,7 @@ def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
     open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space, oz_page,
                                      op_container)
-    click_on_navigation_tab_in_panel(selenium, browser_id, 'Basic', modals,
+    click_on_navigation_tab_in_panel(selenium, browser_id, 'xattrs', modals,
                                      option)
     remove_all_basic_metadata(selenium, browser_id, modals)
 
