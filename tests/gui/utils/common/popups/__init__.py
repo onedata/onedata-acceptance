@@ -51,7 +51,7 @@ from .workflow_creation_alert import WorkflowCreationAlert
 from .workflow_menu import WorkflowMenu
 
 
-class Popups(object):
+class Popups:
     toolbar = WebItem(".webui-popover.in ul.dropdown-menu", cls=ToolbarPopup)
     deregister_provider = WebItem(
         ".popover-deregister-provider", cls=DeregisterProvider

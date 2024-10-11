@@ -11,6 +11,7 @@ __license__ = (
 import time
 
 from selenium.common.exceptions import TimeoutException
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
@@ -27,9 +28,17 @@ from tests.gui.steps.onezone.clusters import (
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
 )
-from tests.gui.steps.onezone.members import *
+from tests.gui.steps.onezone.members import (
+    click_element_in_members_list,
+    click_on_option_in_members_list_menu,
+    copy_token_from_modal,
+    remove_member_from_parent,
+    see_privileges_for_member,
+    try_setting_privileges_in_members_subpage,
+    wt_wait_for_modal_to_appear,
+)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.utils.bdd_utils import given
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
@@ -51,6 +60,7 @@ def invite_user_to_cluster(
     displays,
     clipboard,
     popups,
+    modals,
 ):
     option = "Clusters"
     sub_item = "Members"
@@ -136,6 +146,7 @@ def add_group_to_cluster(
     cluster_name,
     popups,
     tmp_memory,
+    modals,
 ):
     sidebar = "CLUSTERS"
     menu_option = "Members"

@@ -55,7 +55,7 @@ def get_archive_with_description(browser, description):
     for archive in browser.data:
         if description == archive.description:
             return archive
-    raise Exception("failed to load archive from description")
+    raise RuntimeError("failed to load archive from description")
 
 
 @wt(
@@ -250,7 +250,9 @@ def click_menu_for_archive(
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
     if popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
-        raise Exception(f"Archive with description {description} did not open")
+        raise RuntimeError(
+            f"Archive with description {description} did not open"
+        )
 
 
 @wt(
@@ -316,7 +318,9 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
     archives = browser.data
     for item in archives:
         if description in item.name:
-            raise Exception(f'Archive with description: "{description}" found')
+            raise RuntimeError(
+                f'Archive with description: "{description}" found'
+            )
 
 
 @wt(
@@ -353,10 +357,9 @@ def waits_for_preserved_state(browser_id, status, description, tmp_memory):
     for _ in range(150):
         if archive.state.state_type == status:
             break
-        else:
-            time.sleep(2)
+        time.sleep(2)
     else:
-        raise Exception(
+        raise RuntimeError(
             f'failed to see "{status}" state for archive with '
             f'description "{description}"'
         )
@@ -389,7 +392,7 @@ def assert_archive_info_in_properties_modal(
     if expected == "None":
         try:
             text = getattr(modals(driver).archive_details, transform(info))
-            raise Exception(f"{info} is {text} but should be None")
+            raise AssertionError(f"{info} is {text} but should be None")
         except RuntimeError:
             pass
     else:
@@ -539,7 +542,7 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
     if res == "does not see":
         try:
             visible_link = getattr(browser, transform(link))
-            raise Exception(
+            raise AssertionError(
                 f"link {visible_link} is visible in archive browser"
             )
         except RuntimeError:

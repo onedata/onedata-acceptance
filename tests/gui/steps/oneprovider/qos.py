@@ -104,6 +104,7 @@ def process_expression(expression, hosts, users):
         return process_storage_expression(expression, hosts)
     if domain == "provider":
         return process_provider_expression(expression, hosts, users)
+    raise ValueError("unknown expression type")
 
 
 @wt(

@@ -13,9 +13,8 @@ from datetime import datetime
 
 import requests
 from requests.exceptions import HTTPError
-from tests.gui.conftest import WAIT_BACKEND
+from tests.conftest import REQUEST_TIMEOUT
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.utils import repeat_failed
 
 # HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
 HOST_URL = "dev-volume-s3-krakow.default:9000"
@@ -172,7 +171,7 @@ def create_bucket(bucket_name):
     headers["Authorization"] = authorization_header
 
     url = f"http://{HOST_URL}{canonical_uri}"
-    response = requests.put(url, headers=headers)
+    response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
 
@@ -202,7 +201,7 @@ def copy_item_between_buckets(dst_bucket, src, dst):
     headers["Authorization"] = authorization_header
 
     url = f"http://{HOST_URL}{canonical_uri}"
-    response = requests.put(url, headers=headers)
+    response = requests.put(url, headers=headers, timeout=REQUEST_TIMEOUT)
 
     response.raise_for_status()
 

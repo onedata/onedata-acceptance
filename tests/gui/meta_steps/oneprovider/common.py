@@ -9,7 +9,6 @@ from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
-    wt_click_on_confirmation_btn_in_modal,
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.oneprovider.browser import (
@@ -134,7 +133,6 @@ def wt_assert_file_chunks(
     file_name,
     desc,
     tmp_memory,
-    op_container,
     hosts,
     modals,
     popups,
@@ -169,9 +167,7 @@ def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(
-    selenium, browser_id, name, tmp_memory, op_container, modals
-):
+def create_directory(selenium, browser_id, name, tmp_memory, modals):
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"

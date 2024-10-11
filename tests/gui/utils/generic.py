@@ -14,11 +14,6 @@ from enum import Enum
 from itertools import islice
 from time import sleep
 
-try:
-    from itertools import izip
-except ImportError:
-    izip = zip
-
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -54,13 +49,12 @@ def go_to_relative_url(selenium, relative_url):
 def parse_seq(seq, pattern=None, separator=None, default=str):
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
-    else:
-        separator = "," if separator is None else separator
-        return [
-            default(el.strip().strip('"'))
-            for el in seq.strip("[]").split(separator)
-            if el != ""
-        ]
+    separator = "," if separator is None else separator
+    return [
+        default(el.strip().strip('"'))
+        for el in seq.strip("[]").split(separator)
+        if el != ""
+    ]
 
 
 def upload_file_path(file_name):
@@ -89,16 +83,15 @@ def upload_workflow_path(workflow_name=None):
                 workflow_name,
             )
         )
-    else:
-        return os.path.abspath(
-            os.path.join(
-                os.path.dirname(gui.__file__),
-                "..",
-                "..",
-                "automation-examples",
-                "workflows",
-            )
+    return os.path.abspath(
+        os.path.join(
+            os.path.dirname(gui.__file__),
+            "..",
+            "..",
+            "automation-examples",
+            "workflows",
         )
+    )
 
 
 def upload_lambda_path(lambda_name):
@@ -116,16 +109,15 @@ def upload_lambda_path(lambda_name):
                 lambda_name,
             )
         )
-    else:
-        return os.path.abspath(
-            os.path.join(
-                os.path.dirname(gui.__file__),
-                "..",
-                "..",
-                "automation-examples",
-                "lambdas",
-            )
+    return os.path.abspath(
+        os.path.join(
+            os.path.dirname(gui.__file__),
+            "..",
+            "..",
+            "automation-examples",
+            "lambdas",
         )
+    )
 
 
 def strip_path(path_string, separator="/"):
@@ -138,15 +130,15 @@ def strip_path(path_string, separator="/"):
     )
 
 
-@contextmanager
-def rm_css_cls(driver, web_elem, css_cls):
-    driver.execute_script(
-        "$(arguments[0]).removeClass('{}')".format(css_cls), web_elem
-    )
-    yield web_elem
-    driver.execute_script(
-        "$(arguments[0]).addClass('{}')".format(css_cls), web_elem
-    )
+# @contextmanager
+# def rm_css_cls(driver, web_elem, css_cls):
+#     driver.execute_script(
+#         f"$(arguments[0]).removeClass('{css_cls}')", web_elem
+#     )
+#     yield web_elem
+#     driver.execute_script(
+#         f"$(arguments[0]).addClass('{css_cls}')", web_elem
+#     )
 
 
 @contextmanager
@@ -160,8 +152,8 @@ def implicit_wait(driver, timeout, prev_timeout):
 
 def iter_ahead(iterable):
     read_ahead = iter(iterable)
-    next(read_ahead)
-    for item, next_item in izip(iterable, read_ahead):
+    next(read_ahead, None)
+    for item, next_item in zip(iterable, read_ahead):
         yield item, next_item
 
 
@@ -169,12 +161,11 @@ def find_web_elem(web_elem_root, css_sel, err_msg):
     try:
         _scroll_to_css_sel(web_elem_root, css_sel)
         item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
-    except NoSuchElementException:
+    except NoSuchElementException as exc:
         with suppress(TypeError):
             err_msg = err_msg()
-        raise RuntimeError(err_msg)
-    else:
-        return item
+        raise RuntimeError(err_msg) from exc
+    return item
 
 
 def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
@@ -183,15 +174,14 @@ def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
     for item in items:
         if item.text.lower() == text.lower():
             return item
-    else:
-        raise RuntimeError(f'Css element wtih "{text}" text not found')
+    raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
 
 
 def click_on_web_elem(driver, web_elem, err_msg, delay=True):
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
-        web_elem.location_once_scrolled_into_view
+        _ = web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
         # TODO VFS-7484 make optional sleep and localize only those tests
         #  that need it or find better alternative
@@ -261,7 +251,7 @@ def transform(val, strip_char=None):
 
 
 class WhichBrowser(Enum):
-    archive_browser = "archive browser"
-    archive_file_browser = "archive file browser"
-    dataset_browser = "dataset browser"
-    file_browser = "file browser"
+    ARCHIVE_BROWSER = "archive browser"
+    ARCHIVE_FILE_BROWSER = "archive file browser"
+    DATASET_BROWSER = "dataset browser"
+    FILE_BROWSER = "file browser"

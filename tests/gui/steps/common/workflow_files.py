@@ -21,7 +21,7 @@ WORKFLOWS_NAMES = []
 def gather_workflows_names():
     global WORKFLOWS_NAMES
     workflows_names = []
-    for dir_path, dirs, files in os.walk(WORKFLOW_DIR):
+    for _, _, files in os.walk(WORKFLOW_DIR):
         workflows_names.extend(filter(lambda x: x.endswith(".json"), files))
     WORKFLOWS_NAMES = workflows_names
 
@@ -32,7 +32,7 @@ def check_using_all_workflows():
     # remove extension
     workflows_names = set(map(lambda x: x.split(".")[0], workflows_names))
     used_workflows = set()
-    for dir_path, dirs, files in os.walk(TESTS_DIR):
+    for dir_path, _, files in os.walk(TESTS_DIR):
         for file in files:
             used_workflows.update(
                 check_names_in_file(

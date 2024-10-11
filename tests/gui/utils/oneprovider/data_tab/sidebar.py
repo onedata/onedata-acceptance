@@ -29,10 +29,10 @@ class DataTabSidebar(PageObject):
 
     def __init__(self, *args, **kwargs):
         self._resize_handler = kwargs.pop("resize_handler")
-        super(DataTabSidebar, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __str__(self):
-        return "sidebar in {}".format(self.parent)
+        return f"sidebar in {self.parent}"
 
     @property
     def width(self):
@@ -52,11 +52,7 @@ class DataTabSidebar(PageObject):
 
     @property
     def cwd(self):
-        cwd = self._cwd(self.root_dir)
-        if cwd:
-            return cwd
-        else:
-            raise RuntimeError("no working directory found")
+        return self._cwd(self.root_dir)
 
     def _cwd(self, curr_dir):
         if curr_dir.is_active():
@@ -65,6 +61,7 @@ class DataTabSidebar(PageObject):
             cwd = self._cwd(directory)
             if cwd:
                 return cwd
+        raise RuntimeError("no working directory found")
 
 
 class DirectoryTree(PageObject, ExpandableMixin):
@@ -80,12 +77,10 @@ class DirectoryTree(PageObject, ExpandableMixin):
 
     def __init__(self, *args, **kwargs):
         self._children = kwargs.pop("children")
-        super(DirectoryTree, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __str__(self):
-        return "DirectoryTree({path}) in {parent}".format(
-            path=self.pwd(), parent=self.parent
-        )
+        return f"DirectoryTree({self.pwd()}) in {self.parent}"
 
     def __iter__(self):
         css_sel = "ul.data-files-tree-list li:not(.clickable)"
@@ -100,15 +95,10 @@ class DirectoryTree(PageObject, ExpandableMixin):
         for directory in self:
             if directory.name == name:
                 return directory
-        else:
-            raise RuntimeError(
-                'no subdirectory named "{name}" found in {path}'.format(
-                    name=name, path=self
-                )
-            )
+        raise RuntimeError(f'no subdirectory named "{name}" found in {self}')
 
     def is_expanded(self):
-        return True if "open" in self._toggle.get_attribute("class") else False
+        return "open" in self._toggle.get_attribute("class")
 
     def is_active(self):
         return "active" in self._header.get_attribute("class")
@@ -116,8 +106,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
     def pwd(self):
         if not isinstance(self.parent, DirectoryTree):
             return "/"
-        else:
-            return "{path}{dir}/".format(path=self.parent.pwd(), dir=self.name)
+        return f"{self.parent.pwd()}{self.name}/"
 
     @property
     def displayed_name_width(self):

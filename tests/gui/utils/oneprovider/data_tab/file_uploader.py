@@ -42,7 +42,7 @@ class FileUploader(PageObject):
         return "visible" in self.web_elem.get_attribute("class")
 
     def __str__(self):
-        return "file uploader in {}".format(self.parent)
+        return f"file uploader in {self.parent}"
 
     def scroll_to_bottom(self):
         self.driver.execute_script(

@@ -25,7 +25,7 @@ class HostRecord(PageObject):
     )
 
     def __str__(self):
-        return "{} record in {}".format(self.name, self.parent)
+        return f"{self.name} record in {self.parent}"
 
 
 class NodesContentPage(PageObject):

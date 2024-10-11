@@ -39,7 +39,7 @@ class ClusterRecord(ButtonWithTextPageObject):
     status_icon = WebElement(".sidebar-item-icon")
 
     def __str__(self):
-        return "{} item in {}".format(self.name, self.parent)
+        return f"{self.name} item in {self.parent}"
 
     def is_not_working(self):
         return "error" in self.status_icon.get_attribute("class")

@@ -6,8 +6,6 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-import time
-
 from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
@@ -34,12 +32,30 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
 )
-from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.permissions import (
+    assert_acl_subject,
+    assert_fail_to_select_acl_option,
+    assert_set_acl_privileges,
+    check_permission,
+    check_permission_denied_alert_in_edit_permissions_modal,
+    check_permissions_list_in_edit_permissions_modal,
+    click_on_record_header_in_edit_permissions_modal,
+    expand_subject_record_in_edit_permissions_modal,
+    fail_to_set_posix_permission,
+    get_unknown_user_id_from_acl_entry,
+    select_acl_options,
+    select_acl_subject,
+    select_permission_type,
+    set_posix_permission,
+)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
@@ -205,7 +221,6 @@ def fail_to_set_posix_permissions_in_op_gui(
 ):
     button = "Save"
     panel = "Edit permissions"
-    text = "Modifying permissions failed"
     details_modal = "Details modal"
     x_button = "X"
 
@@ -294,7 +309,6 @@ def grant_acl_privileges_to_selected_in_filebrowser(
     op_container,
     tmp_memory,
     popups,
-    oz_page,
     modals,
     item_name,
 ):
@@ -401,7 +415,7 @@ def assert_ace_in_op_gui(
     selenium,
     browser_id,
     priv,
-    type,
+    acl_type,
     name,
     num,
     space,
@@ -427,9 +441,9 @@ def assert_ace_in_op_gui(
         "acl",
         popups,
     )
-    if type != "unknown":
+    if acl_type != "unknown":
         assert_acl_subject(
-            selenium, browser_id, modals, num, numerals, type, name
+            selenium, browser_id, modals, num, numerals, acl_type, name
         )
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
@@ -474,7 +488,7 @@ def assert_user_id_in_ace_in_op_gui(
     visible_id = get_unknown_user_id_from_acl_entry(
         selenium, browser_id, modals, num, numerals
     )
-    user_id = users[name]._user_id
+    user_id = users[name].user_id
     err_msg = (
         f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
     )

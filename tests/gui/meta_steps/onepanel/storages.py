@@ -81,7 +81,7 @@ def remove_storage_in_op_panel_using_gui(
         'user of (?P<browser_id>.+?) adds "(?P<name>.*)" storage '
         'in "(?P<provider_name>.+?)" Oneprovider panel service '
         "with following configuration:\n"
-        "(?P<config>(.|\s)*)"
+        r"(?P<config>(.|\s)*)"
     )
 )
 def add_storage_in_op_panel_using_gui(

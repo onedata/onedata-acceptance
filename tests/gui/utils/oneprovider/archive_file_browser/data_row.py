@@ -13,13 +13,12 @@ import time
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
-class DataRow(PageObject, BrowserRow):
+class DataRow(BrowserRow):
     name = id = Label(".file-name-inner")
     size = Label(".fb-table-col-size .file-item-text")
     menu_button = Button(".file-row-actions-trigger")
@@ -39,8 +38,7 @@ class DataRow(PageObject, BrowserRow):
             getattr(self, f"{transform(name)}_tag")
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
     def get_tag_text(self, name):
         return getattr(self, f"{transform(name)}_tag").text

@@ -6,6 +6,7 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
@@ -24,10 +25,18 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.shares import (
+    change_shares_browser_to_file_browser,
+    click_menu_button_on_shares_page,
+    click_option_in_share_row_menu,
+    click_share_in_shares_browser,
+    is_selected_share_named,
+)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 @wt(

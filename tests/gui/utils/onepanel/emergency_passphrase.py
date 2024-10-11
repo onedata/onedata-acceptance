@@ -7,7 +7,7 @@ __license__ = (
 )
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Input, NamedButton, WebElement
+from tests.gui.utils.core.web_elements import NamedButton, WebElement
 
 
 class EmergencyPassphrase(PageObject):

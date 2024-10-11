@@ -25,7 +25,7 @@ def _enter_text(input_box, text):
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:
-        raise RuntimeError('entering "{}" to input box failed'.format(text))
+        raise RuntimeError(f'entering "{text}" to input box failed')
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
@@ -67,9 +67,7 @@ def press_backspace_on_active_element(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title
-    assert text in page_title, "{} page title should contain {}".format(
-        page_title, text
-    )
+    assert text in page_title, f"{page_title} page title should contain {text}"
 
 
 @wt(
@@ -114,7 +112,7 @@ def pass_test():
 
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
-def switch_to_iframe(selenium, browser_id, selector=None):
+def switch_to_iframe(selenium, browser_id, _selector=None):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     iframe = driver.find_element(By.TAG_NAME, "iframe")
@@ -173,8 +171,7 @@ def _process_onedata_curl_output(output):
 def _process_curl_output(output, page):
     if page == "data discovery":
         return _process_curl_data_discovery_output(output)
-    else:
-        return _process_onedata_curl_output(output)
+    return _process_onedata_curl_output(output)
 
 
 @wt(

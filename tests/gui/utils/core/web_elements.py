@@ -11,7 +11,6 @@ from functools import partial
 
 from selenium.webdriver.common.by import By
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
-from tests.utils.utils import repeat_failed
 
 from .base import AbstractWebElement, AbstractWebItem
 from .web_objects import (
@@ -24,7 +23,7 @@ from .web_objects import (
 class WebElement(AbstractWebElement):
     def __init__(self, *args, **kwargs):
         self.parent_name = kwargs.pop("parent_name", "")
-        super(WebElement, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -49,7 +48,7 @@ class WebElementWithText(WebElement):
         self.text = kwargs.pop("text", None)
         if self.text is None:
             raise ValueError("text not specified")
-        super(WebElementWithText, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -66,7 +65,7 @@ class WebElementWithText(WebElement):
 
 class WebItem(AbstractWebItem, WebElement):
     def __get__(self, instance, owner):
-        elem = super(WebItem, self).__get__(instance, owner)
+        elem = super().__get__(instance, owner)
         return (
             elem
             if instance is None
@@ -88,25 +87,23 @@ class Label(WebElement):
     item_not_found_msg = "{item} label not found in {parent}"
 
     def __get__(self, instance, owner):
-        item = super(Label, self).__get__(instance, owner)
+        item = super().__get__(instance, owner)
         return item.text if instance else item
 
 
 class Input(WebElement):
     def __get__(self, instance, owner):
-        item = super(Input, self).__get__(instance, owner)
+        item = super().__get__(instance, owner)
         return item.get_attribute("value") if instance else item
 
     def __set__(self, instance, val):
-        input_box = super(Input, self).__get__(instance, type(instance))
+        input_box = super().__get__(instance, type(instance))
         input_box.clear()
         if val != "":
             input_box.send_keys(val)
             assert (
                 input_box.get_attribute("value") == val
-            ), 'entering "{}" to {} in {} failed'.format(
-                val, self.name, instance
-            )
+            ), f'entering "{val}" to {self.name} in {instance} failed'
 
 
 class AceEditor(WebElement):
@@ -143,7 +140,7 @@ class WebElementsSequence(AbstractWebElement):
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):
     def __get__(self, instance, owner):
-        seq = super(WebItemsSequence, self).__get__(instance, owner)
+        seq = super().__get__(instance, owner)
         return (
             seq
             if instance is None

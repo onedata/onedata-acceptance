@@ -21,10 +21,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token_to_browser(
-    selenium,
     browser_id,
     item_type,
-    oz_page,
     displays,
     clipboard,
     browser_list,

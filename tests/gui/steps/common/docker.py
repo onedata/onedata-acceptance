@@ -108,9 +108,7 @@ def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
         "docker",
         "cp",
         src_path,
-        "{0}:{1}".format(
-            hosts[PROVIDER_CONTAINER_NAME]["container-id"], dst_path
-        ),
+        f"{hosts[PROVIDER_CONTAINER_NAME]['container-id']}:{dst_path}",
     ]
     subprocess.check_call(cmd)
 
@@ -288,7 +286,7 @@ def wt_cp_files_to_dst_path_in_space(
         'user of {browser_id} copies "{space}" space directory to {dst_path}'
     )
 )
-def wt_cp_space_to_dst_path(browser_id, dst_path, space, hosts, spaces):
+def wt_cp_space_to_dst_path(dst_path, space, hosts, spaces):
     cmd = [
         "docker",
         "exec",
@@ -389,7 +387,7 @@ def docker_ls(path, hosts):
         files.remove("")
         files.remove(".")
         files.remove("..")
-    except Exception:
+    except ValueError:
         pass
     return files
 

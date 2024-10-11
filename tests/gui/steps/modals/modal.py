@@ -143,7 +143,7 @@ def _find_modal(driver, modal_name):
     modal_name = modal_name.lower()
     return Wait(driver, WAIT_BACKEND).until(
         lambda _: _find(),
-        message="waiting for {:s} modal to appear".format(modal_name),
+        message=f"waiting for {modal_name:s} modal to appear",
     )
 
 
@@ -248,13 +248,13 @@ def _click_on_confirmation_btn_in_modal(
     button_name = button_name.lower()
     modal = tmp_memory[browser_id]["window"]["modal"]
     buttons = modal.find_elements(By.CSS_SELECTOR, "button")
-    err_msg = "clicking on {} in displayed modal disabled".format(button_name)
+    err_msg = f"clicking on {button_name} in displayed modal disabled"
     for btn in buttons:
         if btn.text.lower() == button_name:
             click_on_btn(driver, btn, err_msg)
             break
     else:
-        raise RuntimeError("no button named {} found".format(button_name))
+        raise RuntimeError(f"no button named {button_name} found")
 
 
 @wt(
@@ -298,9 +298,7 @@ def is_modal_msg_matching(browser_id, regexp, tmp_memory):
     msg = modal.find_element(By.CSS_SELECTOR, ".modal-body .message-text").text
     assert re.match(
         regexp, msg
-    ), "mag displayed in modal: {msg} does not match {regexp}".format(
-        regexp=regexp, msg=msg
-    )
+    ), f"mag displayed in modal: {msg} does not match {regexp}"
 
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in active modal"))
@@ -323,7 +321,7 @@ def get_token_from_modal(selenium, browser_id, tmp_memory):
 )
 def activate_input_box_in_modal(browser_id, in_type, tmp_memory):
     modal = tmp_memory[browser_id]["window"]["modal"]
-    css_path = "input#{}".format(in_type_to_id[in_type]) if in_type else "input"
+    css_path = f"input#{in_type_to_id[in_type]}" if in_type else "input"
     in_box = modal.find_element(By.CSS_SELECTOR, css_path)
     # send NULL to activates input box
     in_box.send_keys(Keys.NULL)
@@ -348,9 +346,7 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
     def click_on_btn(d, btn, err_msg):
         click_on_web_elem(d, btn, err_msg)
 
-    click_on_btn(
-        driver, button, "{} btn for displayed modal disabled".format(option)
-    )
+    click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
 
 
 @wt(
@@ -364,7 +360,7 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     options = modal.find_elements(
         By.CSS_SELECTOR, ".one-option-button, .one-option-button .oneicon"
     )
-    err_msg = 'option "{}" is selected while it should not be'.format(text)
+    err_msg = f'option "{text}" is selected while it should not be'
     for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute("class")
@@ -383,10 +379,10 @@ def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
     buttons = modal.find_elements(By.CSS_SELECTOR, "button")
     for btn in buttons:
         if btn.text.lower() == button_name:
-            assert not btn.is_enabled(), "{} is not disabled".format(btn_name)
+            assert not btn.is_enabled(), f"{btn_name} is not disabled"
             break
     else:
-        raise RuntimeError("no button named {} found".format(button_name))
+        raise RuntimeError(f"no button named {button_name} found")
 
 
 @wt(
@@ -418,10 +414,10 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
     buttons = modal.find_elements_by(By.CSS_SELECTOR, "button")
     for btn in buttons:
         if btn.text.lower() == button_name:
-            assert btn.is_enabled(), "{} is disabled".format(btn_name)
+            assert btn.is_enabled(), f"{btn_name} is disabled"
             break
     else:
-        raise RuntimeError("no button named {} found".format(button_name))
+        raise RuntimeError(f"no button named {button_name} found")
 
 
 @wt(
@@ -644,7 +640,7 @@ def click_icon_in_share_directory_modal(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
-    message = 'Modal does not contain text "{}"'.format(text)
+    message = f'Modal does not contain text "{text}"'
     modal_text = modals(selenium[browser_id]).error.content.lower()
     assert text.lower().replace("\\", "") in modal_text, message
 

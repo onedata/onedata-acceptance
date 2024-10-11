@@ -77,9 +77,8 @@ def wait_for_status_in_archive_recall_information_modal(
     for _ in range(100):
         if recall_status == status:
             break
-        else:
-            time.sleep(2)
-            recall_status = modals(driver).archive_recall_information.status
+        time.sleep(2)
+        recall_status = modals(driver).archive_recall_information.status
     else:
         err_msg = f"Archive status:{recall_status} does not match expected"
         assert recall_status == status, err_msg
@@ -181,8 +180,7 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
         is_visible = browser.data[name].is_tag_visible(status_type)
         if is_visible:
             break
-        else:
-            time.sleep(2)
+        time.sleep(2)
 
 
 @wt(
@@ -207,7 +205,8 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
     modal.move_to_error_logs_table(driver)
 
     def condition(index=0):
-        pass
+        # just pass
+        _ = index
 
     detected_entries = _scroll_and_check_condition(
         browser_id, selenium, modals, condition

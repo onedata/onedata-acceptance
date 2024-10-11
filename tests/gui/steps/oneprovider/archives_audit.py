@@ -35,12 +35,12 @@ def assert_number_of_first_non_empty_column_content(
     # add annotations to them
 
     def condition(index=0):
-        pass
+        _ = index
 
     _scroll_and_check_condition(browser_id, selenium, modals, condition)
     scroll_to_top_in_archive_audit_log(browser_id, selenium, modals)
 
-    def condition(index=0):
+    def condition2(index=0):
         for field in fields:
             elems_to_check = modal.get_rows_of_column(field)[index:]
             for elem in elems_to_check:
@@ -49,7 +49,7 @@ def assert_number_of_first_non_empty_column_content(
                 ), f"there is empty {field} field: {elem} in archive audit log"
 
     checked_elems = _scroll_and_check_condition(
-        browser_id, selenium, modals, condition
+        browser_id, selenium, modals, condition2
     )
     assert len(checked_elems) == number, (
         f"there is {len(checked_elems)} entries instead of {number} in archive "
@@ -346,14 +346,14 @@ def assert_pattern_at_field_in_archive_audit_log(
     visible_message = getattr(modal, field_name)
     patterns = {
         "date": re.compile(
-            r"\d\d? [A-Z][a-z][a-z]? \d\d\d\d \d\d?:" r"\d\d:\d\d\.\d\d\d"
+            r"\d\d? [A-Z][a-z][a-z]? \d\d\d\d \d\d?:\d\d:\d\d\.\d\d\d"
         ),
         "file_id": re.compile(r"([A-Z]|[0-9])*"),
         "time_taken": re.compile(r"\d*(\.\d*)?(ms|s|min|h)"),
         "location_path": re.compile(r"/.*"),
     }
     if mes_type not in patterns:
-        raise Exception("Empty pattern, unknown this message type")
+        raise AssertionError("Empty pattern, unknown this message type")
     pattern = patterns[mes_type]
     err_msg = (
         f"message at field is {visible_message}, which does not"

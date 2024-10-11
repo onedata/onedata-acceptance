@@ -8,10 +8,12 @@ __license__ = (
 
 import time
 
+import yaml
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui,
 )
@@ -31,16 +33,47 @@ from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal,
     wt_wait_for_modal_to_appear,
 )
-from tests.gui.steps.oneprovider.browser import *
-from tests.gui.steps.oneprovider.data_tab import *
-from tests.gui.steps.oneprovider.file_browser import *
-from tests.gui.steps.oneprovider.metadata import *
+from tests.gui.steps.oneprovider.browser import (
+    assert_items_absence_in_browser,
+    assert_items_presence_in_browser,
+    assert_num_of_files_are_displayed_in_browser,
+    click_and_press_enter_on_item_in_browser,
+    click_menu_for_elem_in_browser,
+    click_on_breadcrumbs_menu,
+    click_option_in_data_row_menu_in_browser,
+    is_displayed_breadcrumbs_in_data_tab_in_op_correct,
+)
+from tests.gui.steps.oneprovider.data_tab import (
+    assert_browser_in_tab_in_op,
+    assert_nonempty_file_browser_in_files_tab_in_op,
+    change_cwd_using_breadcrumbs_in_data_tab_in_op,
+    check_error_in_upload_presenter,
+    choose_option_from_selection_menu,
+    click_button_from_file_browser_menu_bar,
+    click_file_browser_button,
+    expand_size_statistics_for_providers,
+    has_downloaded_file_content,
+    upload_file_to_cwd_in_file_browser,
+    upload_file_to_cwd_in_file_browser_no_waiting,
+)
+from tests.gui.steps.oneprovider.file_browser import (
+    assert_item_in_file_browser_is_of_mdate,
+    check_file_owner_in_file_details_modal,
+    click_modal_button,
+    confirm_create_new_directory,
+    confirm_rename_directory,
+    select_files_from_file_list_using_ctrl,
+    select_first_n_files,
+)
 from tests.gui.steps.onezone.spaces import (
     _click_on_option_in_the_sidebar,
     _click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu,
 )
+from tests.gui.utils.generic import transform
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
+from tests.utils.utils import repeat_failed
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
@@ -284,7 +317,7 @@ def create_item_in_op_gui(
 
     try:
         _open_menu_for_item_in_file_browser()
-    except (RuntimeError, KeyError) as e:
+    except (RuntimeError, KeyError):
         go_to_filebrowser(
             selenium, browser_id, oz_page, op_container, tmp_memory, space
         )
@@ -443,7 +476,7 @@ def see_num_of_items_in_path_in_op_gui(
     tmp_memory,
     op_container,
     path,
-    space,
+    _space,
     num,
     oz_page,
     provider,
@@ -470,14 +503,10 @@ def assert_file_content_in_op_gui(
     space,
     selenium,
     user,
-    users,
-    provider,
-    hosts,
     oz_page,
     op_container,
     tmp_memory,
     tmpdir,
-    modals,
 ):
     cwd = "space root"
     try:
@@ -708,7 +737,7 @@ def upload_file_to_op_gui(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_mtime_not_earlier_than_op_gui(
-    path, time, browser_id, tmp_memory, selenium, op_container
+    path, mtime, browser_id, tmp_memory, selenium, op_container
 ):
     assert_nonempty_file_browser_in_files_tab_in_op(
         selenium,
@@ -721,7 +750,7 @@ def assert_mtime_not_earlier_than_op_gui(
         selenium, browser_id, tmp_memory, path, op_container
     )
     assert_item_in_file_browser_is_of_mdate(
-        browser_id, item_name, time, tmp_memory
+        browser_id, item_name, mtime, tmp_memory
     )
 
 
@@ -768,7 +797,7 @@ def go_to_path(
             breadcrumbs = getattr(
                 op_container(selenium[browser_id]), transform(which_browser)
             ).breadcrumbs
-            breadcrumbs = breadcrumbs._breadcrumbs
+            breadcrumbs = breadcrumbs.breadcrumbs
             breadcrumbs[len(breadcrumbs) - 2].click()
         elif directory != "":
             click_and_press_enter_on_item_in_browser(
@@ -1199,17 +1228,16 @@ def delete_first_n_files_with_fixed_step(
             browser_id, fixed_step, tmp_memory, selenium, popups, modals
         )
         deleted_files += fixed_step
-    else:
-        num_remaining_files_to_delete = num_files_to_delete - deleted_files
-        if num_remaining_files_to_delete > 0:
-            delete_first_n_files(
-                browser_id,
-                num_remaining_files_to_delete,
-                tmp_memory,
-                selenium,
-                popups,
-                modals,
-            )
-            deleted_files += num_remaining_files_to_delete
+    num_remaining_files_to_delete = num_files_to_delete - deleted_files
+    if num_remaining_files_to_delete > 0:
+        delete_first_n_files(
+            browser_id,
+            num_remaining_files_to_delete,
+            tmp_memory,
+            selenium,
+            popups,
+            modals,
+        )
+        deleted_files += num_remaining_files_to_delete
     err_msg = f"deleted {deleted_files} files instead of {num_files_to_delete}"
     assert deleted_files == num_files_to_delete, err_msg

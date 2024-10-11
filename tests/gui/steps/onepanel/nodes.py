@@ -28,9 +28,7 @@ def wt_assert_options_enabled_for_host_in_nodes(
     selenium, browser_id, options, host_regexp, onepanel
 ):
     options = [transform(option) for option in parse_seq(options)]
-    err_msg = "{{}} not enabled for {host} in Nodes page in Onepanel".format(
-        host=host_regexp
-    )
+    err_msg = f"{{}} not enabled for {host_regexp} in Nodes page in Onepanel"
     for host in onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):
             for option in options:
@@ -46,13 +44,13 @@ def wt_assert_options_enabled_for_host_in_nodes(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_options_enabled_for_host_in_nodes(
+def wt_assert_options_cannot_be_changed_for_host_in_nodes(
     selenium, browser_id, options, host_regexp, onepanel
 ):
     options = [transform(option) for option in parse_seq(options)]
     err_msg = (
-        "{{}} can be changed for {host} in Nodes page in Onepanel, "
-        "while it should not be".format(host=host_regexp)
+        f"{{}} can be changed for {host_regexp} in Nodes page in Onepanel, "
+        "while it should not be"
     )
     for host in onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):

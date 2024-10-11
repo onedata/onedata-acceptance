@@ -26,7 +26,7 @@ class SpaceRecord(PageObject):
         self.web_elem.click()
 
     def __str__(self):
-        return "{name} in {parent}".format(name=self.name, parent=self.parent)
+        return f"{self.name} in {self.parent}"
 
     def is_home(self):
         return "oneicon-space-home" in self._icon.get_attribute("class")

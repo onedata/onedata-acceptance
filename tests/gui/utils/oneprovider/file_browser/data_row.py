@@ -12,13 +12,12 @@ import time
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
-class DataRow(PageObject, BrowserRow):
+class DataRow(BrowserRow):
     name = id = Label(".file-name-inner", parent_name="given data row")
     size = Label(".fb-table-col-size .file-item-text")
     replication_rate = Label(".fb-table-col-replication .replication-rate-text")
@@ -47,9 +46,7 @@ class DataRow(PageObject, BrowserRow):
     size_statistics_icon = WebElement(".dir-size-container .one-icon")
 
     def __str__(self):
-        return "{item} in {parent}".format(
-            item=self.name, parent=str(self.parent)
-        )
+        return f"{self.name} in {self.parent}"
 
     def is_selected(self):
         return "file-selected" in self.web_elem.get_attribute("class")
@@ -82,14 +79,13 @@ class DataRow(PageObject, BrowserRow):
             getattr(self, f"{transform(name)}_tag")
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
     def get_tag_text(self, name):
         return getattr(self, f"{transform(name)}_tag").text
 
     def click_on_status_tag(self, name):
-        tag = getattr(self, "{tag}_tag".format(tag=name.lower()))
+        tag = getattr(self, f"{name.lower()}_tag")
         click_on_web_elem(
             self.driver, tag, f'cannot click on "{name}" in {self}'
         )

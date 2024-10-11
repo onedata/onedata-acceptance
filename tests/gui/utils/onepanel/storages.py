@@ -169,7 +169,7 @@ class StorageContentPage(PageObject):
                 assert record.is_expanded(), err_msg
                 break
         else:
-            raise Exception(
+            raise RuntimeError(
                 f"Cannot click on {storage_name} Modify button "
                 "because storage is not visible on page."
             )

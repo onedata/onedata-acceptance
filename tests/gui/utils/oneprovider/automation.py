@@ -73,9 +73,7 @@ class Task(Element):
         return elem_id
 
     def click_on_drag_handle(self):
-        self.web_elem.find_element(
-            By.CSS_SELECTOR, f".task-drag-handle"
-        ).click()
+        self.web_elem.find_element(By.CSS_SELECTOR, ".task-drag-handle").click()
 
     def click_on_option_in_task(self, option):
         if option == "Audit log":
@@ -125,7 +123,7 @@ class WorkflowLane(Element):
         scroll_to_css_selector_bottom(self.driver, box_sel)
 
 
-class Store(Element):
+class WorkflowVisualiserStore(Element):
     name = id = Label(".store-name")
 
 
@@ -145,7 +143,8 @@ class WorkflowVisualiser(PageObject):
 
     add_store_button = Button(".create-store-action-trigger")
     stores_list = WebItemsSequence(
-        ".workflow-visualiser-stores-list .tag-item", cls=Store
+        ".workflow-visualiser-stores-list .tag-item",
+        cls=WorkflowVisualiserStore,
     )
     pause = NamedButton(
         ".pause-resume-atm-workflow-execution-action-trigger", text="Pause"
@@ -160,7 +159,7 @@ class WorkflowVisualiser(PageObject):
     right_arrow_scroll = Button(".right-edge-scroll-step-trigger")
 
 
-class Store(PageObject):
+class WorkflowExecutionStore(PageObject):
     name = id = Label(".store-name")
 
 
@@ -201,7 +200,7 @@ class WorkflowExecutionPage(PageObject):
     )
     workflow_header = WebElement(".workflow-visualiser")
     stores = WebItemsSequence(
-        ".workflow-visualiser-stores-list .tag-item", cls=Store
+        ".workflow-visualiser-stores-list .tag-item", cls=WorkflowExecutionStore
     )
     ranges_input = WebItemsSequence(".range-editor", cls=RangeInput)
     numbers_input = WebItemsSequence(".number-editor", cls=NumberInput)

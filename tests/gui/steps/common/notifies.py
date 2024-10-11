@@ -32,13 +32,13 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
     driver = selenium[browser_id]
-    css_sel = ".ember-notify-show[class*={}] .message".format(notify_type)
+    css_sel = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
     with suppress(NoSuchElementException, StaleElementReferenceException):
         assert any(
             regexp.match(notify.text)
             for notify in driver.find_elements(By.CSS_SELECTOR, css_sel)
-        ), 'no {} notify with "{}" msg found'.format(notify_type, text_regexp)
+        ), f'no {notify_type} notify with "{text_regexp}" msg found'
 
 
 @wt(parsers.parse("user of {browser_id} closes all notifies"))
@@ -76,7 +76,9 @@ def assert_loading_error(selenium, browser_id, onepage, error_msg):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error(selenium, browser_id, public_onepage, error_msg):
+def assert_loading_error_public_page(
+    selenium, browser_id, public_onepage, error_msg
+):
     given_msg = public_onepage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg

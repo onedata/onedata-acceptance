@@ -81,7 +81,7 @@ def fail_to_set_posix_permission(selenium, browser_id, perm, modals):
         modals(
             selenium[browser_id]
         ).details_modal.edit_permissions.posix.value = perm
-        raise Exception(
+        raise AssertionError(
             "Fail in setting permission code was expected, but it succeeded"
         )
     except (InvalidElementStateException, JavascriptException):
@@ -169,7 +169,7 @@ def assert_fail_to_select_acl_option(
         child_permission
     ].name_web_elem.get_attribute("class")
     if "disabled" not in child_permission_class:
-        raise Exception(
+        raise AssertionError(
             f"{child_permission} is not disabled and user can "
             "change ACL option which is not expected"
         )

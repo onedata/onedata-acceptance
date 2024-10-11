@@ -24,7 +24,7 @@ from tests.gui.utils.oneprovider import FileBrowser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
-class Files(PageObject, BrowserRow):
+class Files(BrowserRow):
     name = id = Label(".file-name")
     clickable_field = WebElement(".file-base-name")
 

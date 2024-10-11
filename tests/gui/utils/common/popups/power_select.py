@@ -19,8 +19,7 @@ class PowerSelect(PageObject):
             if item.text.lower() == property_name.lower():
                 item.click()
                 return
-        else:
-            raise Exception(f"{property_name} not found in popup menu")
+        raise RuntimeError(f"{property_name} not found in popup menu")
 
     def choose_item_with_id(self, property_name):
         separator = CONFLICT_NAME_SEPARATOR
@@ -28,8 +27,7 @@ class PowerSelect(PageObject):
             if item.text.split(separator)[0].strip() == property_name:
                 item.click()
                 return
-        else:
-            raise Exception(f"{property_name} not found in popup menu")
+        raise RuntimeError(f"{property_name} not found in popup menu")
 
     def __str__(self):
         return "Power select options"

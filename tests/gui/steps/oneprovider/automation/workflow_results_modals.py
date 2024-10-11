@@ -315,7 +315,7 @@ def open_url_from_store_content(
     driver = selenium[browser_id]
     driver.get(url)
     Wait(driver, WAIT_BACKEND).until(
-        url_to_be(url), message="waiting for page {:s} to load".format(url)
+        url_to_be(url), message=f"waiting for page {url:s} to load"
     )
 
 

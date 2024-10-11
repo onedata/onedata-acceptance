@@ -75,10 +75,9 @@ def assert_provider_hostname_matches_known_domain(
     driver = selenium[browser_id]
     displayed_domain = popups(driver).provider_map_popover.provider_hostname
     domain = hosts[host]["hostname"]
-    assert (
-        displayed_domain == domain
-    ), "displayed {} provider hostname instead of expected {}".format(
-        displayed_domain, domain
+    assert displayed_domain == domain, (
+        f"displayed {displayed_domain} provider hostname instead of expected"
+        f" {domain}"
     )
 
 
@@ -94,15 +93,14 @@ def assert_provider_hostname_matches_test_hostname(
     selenium, browser_id, provider, hosts, popups, oz_page, displays, clipboard
 ):
     driver = selenium[browser_id]
-    expected_domain = "{}.test".format(hosts[provider]["hostname"])
+    expected_domain = f"{hosts[provider]['hostname']}.test"
     page = oz_page(driver).get_page_and_click("providers")
     page.elements_list[0]()
     _click_copy_hostname(driver, popups)
     displayed_domain = clipboard.paste(display=displays[browser_id])
-    assert (
-        displayed_domain == expected_domain
-    ), "displayed {} provider hostname instead of expected {}".format(
-        displayed_domain, expected_domain
+    assert displayed_domain == expected_domain, (
+        f"displayed {displayed_domain} provider hostname instead of expected"
+        f" {expected_domain}"
     )
 
 
@@ -211,9 +209,8 @@ def assert_no_provider_popup_next_to_provider_circle(
     driver = selenium[browser_id]
     prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
     assert not prov_circle.is_displayed(), (
-        "provider popup for {} circle is "
-        "displayed while it should not be"
-        "".format(ordinal)
+        f"provider popup for {ordinal} circle is displayed while it should"
+        " not be"
     )
 
 
@@ -273,9 +270,8 @@ def assert_provider_popup_next_to_provider_circle(
     driver = selenium[browser_id]
     prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
     assert prov_circle.is_displayed(), (
-        "provider popup for {} circle is not "
-        "displayed while it should be"
-        "".format(ordinal)
+        f"provider popup for {ordinal} circle is not displayed while it"
+        " should be"
     )
 
 
@@ -313,11 +309,9 @@ def assert_consistent_list_of_spaces_for_provider(
         )
     }
     assert provider_record_spaces == provider_popup_spaces, (
-        'spaces (space_name, is_home) displayed in "{}" provider record in '
-        "GO TO YOUR FILES panel: {} does not match those displayed in "
-        "provider popup: {}".format(
-            provider, provider_record_spaces, provider_popup_spaces
-        )
+        f'spaces (space_name, is_home) displayed in "{provider}" provider'
+        f" record in GO TO YOUR FILES panel: {provider_record_spaces} does not"
+        f" match those displayed in provider popup: {provider_popup_spaces}"
     )
 
 
@@ -391,9 +385,7 @@ def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
 def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     count = oz_page(driver)["go to your files"].providers.count()
-    assert count == 0, "Providers count is {} instead of expected 0".format(
-        count
-    )
+    assert count == 0, f"Providers count is {count} instead of expected 0"
 
 
 @wt(
@@ -413,14 +405,11 @@ def assert_provider_working_in_oz_panel(
         provider_record = page.elements_list[provider]
         provider_record.click()
     except RuntimeError:
-        assert False, 'no provider "{}" found on providers list'.format(
-            provider
-        )
+        assert False, f'no provider "{provider}" found on providers list'
     else:
-        pass
         assert (
             page.is_working()
-        ), 'provider icon in Onezone for "{}" is not green'.format(provider)
+        ), f'provider icon in Onezone for "{provider}" is not green'
 
 
 @wt(
@@ -436,10 +425,9 @@ def assert_provider_not_working_in_oz_panel(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     provider_record = oz_page(driver)["go to your files"].providers[provider]
-    assert (
-        provider_record.is_not_working()
-    ), 'provider icon in GO TO YOUR FILES oz panel for "{}" is not gray'.format(
-        provider
+    assert provider_record.is_not_working(), (
+        f'provider icon in GO TO YOUR FILES oz panel for "{provider}" is not'
+        " gray"
     )
 
 
@@ -481,7 +469,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
     providers_list = oz_page(driver)["providers"].elements_list
     assert (
         provider not in providers_list
-    ), "{} is in providers list in data sidebar".format(provider)
+    ), f"{provider} is in providers list in data sidebar"
 
 
 @wt(
@@ -533,7 +521,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
     )
     assert (
         number == supported_spaces_number
-    ), "number of supported spaces is not equal {}".format(number)
+    ), f"number of supported spaces is not equal {number}"
 
 
 @wt(
@@ -549,7 +537,7 @@ def assert_len_of_spaces_list_in_provider_popover(
     spaces_list = popups(driver).provider_map_popover.spaces_list
     assert int(number) == len(
         spaces_list
-    ), "number of supported spaces is not equal {}".format(number)
+    ), f"number of supported spaces is not equal {number}"
 
 
 @wt(
@@ -669,7 +657,7 @@ def wait_for_provider_online(provider, hosts, users):
                 path=get_provider_rest_path("health"),
                 auth=(user, users[user].password),
             )
-            if res.status_code == requests.codes.ok:
+            if res.status_code == requests.codes["ok"]:
                 return
         except requests.exceptions.ConnectionError as e:
             exception = e

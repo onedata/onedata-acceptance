@@ -42,8 +42,7 @@ class _ArchiveFileBrowser(PageObject):
             self._empty_dir_icon
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
     def names_of_visible_elems(self):
         files = self._data

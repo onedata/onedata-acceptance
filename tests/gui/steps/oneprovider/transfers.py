@@ -291,27 +291,12 @@ def fail_to_click_option_in_data_distribution_popup(
     driver = selenium[browser_id]
     try:
         popups(driver).data_distribution_popup.menu[option]()
-        raise Exception(
-            'User can click on "{option}" option in in data row '
+        raise AssertionError(
+            f'User can click on "{option}" option in in data row '
             'menu in "Data distribution" panel'
         )
     except RuntimeError:
         pass
-
-
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*) evicts selected item"
-        ' from provider "(?P<provider>.*)"'
-    )
-)
-def evict_selected_item(selenium, browser_id, provider, hosts, popups):
-    menu_option = "Evict"
-    driver = selenium[browser_id]
-
-    provider_name = hosts[provider]["name"]
-    (modals(driver).data_distribution.providers[provider_name].menu_button())
-    popups(driver).menu_popup_with_text.menu[menu_option]()
 
 
 @wt(
@@ -342,7 +327,9 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
-    op_container(selenium[browser_id]).transfers.providers_table
+    assert op_container(
+        selenium[browser_id]
+    ).transfers.providers_table.is_displayed()
 
 
 @wt(

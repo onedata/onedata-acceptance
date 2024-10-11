@@ -14,7 +14,6 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

@@ -162,7 +162,7 @@ def see_files_with_order(selenium, browser_id, data_discovery, config):
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     assert len(files_list) == len(data_dict)
     for pair in zip(files_list, data_dict):
-        assert pair[0] == pair[1], f"Files are not in order"
+        assert pair[0] == pair[1], "Files are not in order"
 
 
 @wt(

@@ -8,7 +8,6 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import parsers, wt
@@ -78,7 +77,7 @@ def click_understand_consequences_checkbox_in_oz(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_delete_account_button_in_oz(selenium, browser_id, modals, users):
+def click_delete_account_button_in_oz(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modals(driver).delete_user_account.delete_account.click()
 

@@ -16,7 +16,7 @@ class ButtonPageObject(PageObject):
     item_not_found_msg = "{text} btn not found in {parent}"
 
     def __str__(self):
-        return "{} btn in {}".format(self.name, self.parent)
+        return f"{self.name} btn in {self.parent}"
 
     def __call__(self):
         self.click()
@@ -33,9 +33,7 @@ class ButtonPageObject(PageObject):
 
 class ButtonWithTextPageObject(ButtonPageObject):
     def __str__(self):
-        return '{} btn with "{}" text in {}'.format(
-            self.name, self.text, self.parent
-        )
+        return f'{self.name} btn with "{self.text}" text in {self.parent}'
 
     @property
     def text(self):
@@ -44,7 +42,7 @@ class ButtonWithTextPageObject(ButtonPageObject):
     id = text
 
 
-class PageObjectsSequence(object):
+class PageObjectsSequence:
 
     def __init__(self, driver, items, cls, parent=None):
         self.driver = driver
@@ -75,31 +73,22 @@ class PageObjectsSequence(object):
             item = self._getitem_by_idx(sel)
             if item:
                 return self.cls(self.driver, item, self.parent)
-            else:
-                raise RuntimeError(
-                    "Index out of bound. Requested item at "
-                    "{idx} while limit is {limit} in "
-                    "{parent}".format(
-                        idx=sel, limit=len(self), parent=self.parent
-                    )
-                )
-        elif isinstance(sel, str):
+            raise RuntimeError(
+                "Index out of bound. Requested item at "
+                f"{sel} while limit is {len(self)} in "
+                f"{self.parent}"
+            )
+        if isinstance(sel, str):
             item = self._getitem_by_id(sel)
             if item:
                 return item
-            else:
-                raise RuntimeError(
-                    'no "{id}" found in {parent}'.format(
-                        id=sel, parent=self.parent
-                    )
-                )
-        else:
-            return None
+            raise RuntimeError(f'no "{sel}" found in {self.parent}')
+        return None
 
     def __contains__(self, item):
         if isinstance(item, self.cls):
             item = item.id
-        return False if self._getitem_by_id(item) is None else True
+        return self._getitem_by_id(item) is not None
 
     def __len__(self):
         return len(self.items)

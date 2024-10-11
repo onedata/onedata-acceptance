@@ -23,25 +23,25 @@ def get_item_type(item_path):
 
 
 def get_content_type(item_type):
-    return "application/cdmi-{}".format(item_type)
+    return f"application/cdmi-{item_type}"
 
 
 def parse_path(path, item_type, add_cdmi_prefix=False):
     if item_type == "container" and path[-1] != "/":
-        parsed_path = "{}/".format(path)
+        parsed_path = f"{path}/"
     else:
         parsed_path = path
 
     if path[0] != "/":
-        parsed_path = "/{}".format(parsed_path)
+        parsed_path = f"/{parsed_path}"
 
     if add_cdmi_prefix:
-        parsed_path = "/cdmi{}".format(parsed_path)
+        parsed_path = f"/cdmi{parsed_path}"
 
     return parsed_path
 
 
-class CDMIClient(object):
+class CDMIClient:
     def __init__(
         self, provider_ip, auth, cdmi_version="1.1.1", port=OP_REST_PORT
     ):
@@ -76,9 +76,7 @@ class CDMIClient(object):
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {
             "Content-Type": "application/binary",
-            "content-range": "bytes {start}-{end}/*".format(
-                start=start, end=end
-            ),
+            "content-range": f"bytes {start}-{end}/*",
         }
         headers.update(self.auth_header)
         return http_put(
@@ -95,9 +93,7 @@ class CDMIClient(object):
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {}
         if read_range:
-            headers["Range"] = "bytes={start}-{end}".format(
-                start=read_range[0], end=read_range[1]
-            )
+            headers["Range"] = f"bytes={read_range[0]}-{read_range[1]}"
         headers.update(self.auth_header)
         return http_get(
             self.ip,
@@ -110,9 +106,7 @@ class CDMIClient(object):
     def read_metadata(self, path, metadata=""):
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
-        parsed_path = "{path}?metadata:{metadata}".format(
-            path=parsed_path, metadata=metadata
-        )
+        parsed_path = f"{parsed_path}?metadata:{metadata}"
         headers = {"X-CDMI-Specification-Version": self.cdmi_version}
         headers.update(self.auth_header)
         return http_get(

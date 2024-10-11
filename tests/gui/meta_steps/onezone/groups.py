@@ -8,6 +8,8 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+from selenium.webdriver.common.keys import Keys
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
     consume_received_token,
@@ -18,9 +20,27 @@ from tests.gui.steps.modals.modal import (
     click_modal_button,
     close_modal,
 )
-from tests.gui.steps.onezone.groups import *
-from tests.gui.steps.onezone.members import *
+from tests.gui.steps.onezone.groups import (
+    assert_group_exists,
+    click_create_group_button_in_panel,
+    click_on_confirmation_button_to_rename_group,
+    click_on_group_menu_button,
+    confirm_name_input_on_main_groups_page,
+    go_to_group_subpage,
+    input_name_into_input_box_on_main_groups_page,
+    input_new_group_name_into_rename_group_inpux_box,
+    press_enter_on_active_element,
+)
+from tests.gui.steps.onezone.members import (
+    assert_element_is_member_of_parent_in_memberships,
+    assert_element_is_not_member_of_parent_in_memberships,
+    click_element_in_members_list,
+    click_on_option_in_members_list_menu,
+    copy_token_from_modal,
+    remove_member_from_parent,
+)
 from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
@@ -58,6 +78,7 @@ def rename_group(
 def leave_group(selenium, browser_id, group, oz_page, popups):
     option = "Leave"
     modal = "LEAVE GROUP"
+    modals = selenium["request"].getfixturename("modals")
 
     click_on_group_menu_button(
         selenium, browser_id, option, group, oz_page, popups
@@ -70,6 +91,7 @@ def leave_group(selenium, browser_id, group, oz_page, popups):
 def remove_group(selenium, browser_id, group_list, oz_page, popups):
     option = "Remove"
     modal = "REMOVE GROUP"
+    modals = selenium["request"].getfixturevalue("modals")
 
     for group in parse_seq(group_list):
         click_on_group_menu_button(
@@ -171,10 +193,11 @@ def _create_group_token(
 ):
     item_type = "token"
     where = "group"
-    button = "Invite {} using token".format(member)
+    button = f"Invite {member} using token"
     member += "s"
     modal = "Invite using token"
     subpage = "members"
+    modals = selenium["request"].getfixturevalue("modals")
 
     go_to_group_subpage(selenium, user, name, subpage, oz_page)
     click_on_option_in_members_list_menu(
@@ -189,7 +212,7 @@ def _create_group_token(
 
 @wt(
     parsers.re(
-        "(?P<user>\w+) invites (?P<user2>\w+) to group "
+        r"(?P<user>\w+) invites (?P<user2>\w+) to group "
         '"(?P<name>.*)" using Oneprovider web GUI'
     )
 )
@@ -345,6 +368,7 @@ def fail_to_add_subgroups_using_op_gui(
         onepanel,
         popups,
     )
+    modals = selenium["request"].getfixturevalue("modals")
     for child in parse_seq(group_list):
         error = "Consuming token failed"
         modal = "error"

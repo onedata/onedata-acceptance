@@ -54,8 +54,18 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
     )
 
     if test_domain:
+        request = selenium["request"]
+        displays = request.getfixturevalue("displays")
+        clipboard = request.getfixturevalue("clipboard")
         assert_provider_hostname_matches_test_hostname(
-            selenium, user, domain_provider, hosts, popups
+            selenium,
+            user,
+            domain_provider,
+            hosts,
+            popups,
+            oz_page,
+            displays,
+            clipboard,
         )
     else:
         assert_provider_hostname_matches_known_domain(

@@ -11,11 +11,6 @@ __license__ = (
 
 from functools import partial
 
-try:
-    from itertools import izip
-except ImportError:
-    izip = zip
-
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebItem, WebItemsSequence
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
@@ -30,9 +25,7 @@ class _Breadcrumbs(PageObject):
     menu_button = Button(".fb-breadcrumbs-current-dir-button")
 
     def __str__(self):
-        return "Breadcrumbs({path}) in {parent}".format(
-            path=self.pwd(), parent=self.parent
-        )
+        return f"Breadcrumbs({self.pwd()}) in {self.parent}"
 
     def pwd(self):
         return "/".join(directory.text for directory in self._breadcrumbs)
@@ -65,7 +58,7 @@ class _Breadcrumbs(PageObject):
                     for i in range(2, 2 + (len(path) - len(breadcrumbs))):
                         path.remove(path[i])
 
-                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_name)):
+                for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs_name)):
                     if i == 0:
                         continue
                     assert dir1 == dir2, err_msg.format(
@@ -73,7 +66,7 @@ class _Breadcrumbs(PageObject):
                     )
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
-                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
+                for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs)):
                     if i == 0:
                         continue
                     assert dir1 == dir2.text, err_msg.format(
@@ -84,8 +77,12 @@ class _Breadcrumbs(PageObject):
     def go_one_back(self):
         breadcrumbs = self._breadcrumbs
         if len(breadcrumbs) - 2 < 0:
-            raise Exception(f"Cannot go back in breadcrumbs {breadcrumbs}")
+            raise RuntimeError(f"Cannot go back in breadcrumbs {breadcrumbs}")
         breadcrumbs[len(breadcrumbs) - 2].click()
+
+    @property
+    def breadcrumbs(self):
+        return self._breadcrumbs
 
 
 Breadcrumbs = partial(WebItem, cls=_Breadcrumbs)

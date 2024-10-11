@@ -47,14 +47,12 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 
             if node_number != "":
                 driver.get(
-                    "https://{}-{}.{}".format(
-                        hostname.split(".")[0], node_number, hostname
-                    )
+                    f"https://{hostname.split('.')[0]}-{node_number}.{hostname}"
                 )
             else:
-                driver.get("https://{}".format(hostname))
+                driver.get(f"https://{hostname}")
         else:
-            driver.get("https://{}".format(hosts[alias]["hostname"]))
+            driver.get(f"https://{hosts[alias]['hostname']}")
 
 
 @given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
@@ -84,7 +82,7 @@ def assert_being_redirected_to_page(page, selenium, browser_id):
     curr_page = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url).group(2)
     assert (
         curr_page == page
-    ), "currently on {} page instead of expected {}".format(curr_page, page)
+    ), f"currently on {curr_page} page instead of expected {page}"
 
 
 @wt(
@@ -119,7 +117,7 @@ def change_application_path(selenium, browser_id, path):
 def is_url_matching(selenium, browser_id, path):
     driver = selenium[browser_id]
     regexp = r"{}$".format(path.replace("\\", "\\\\"))
-    err_msg = r"expected url: {} does not match current one: {{}}".format(path)
+    err_msg = rf"expected url: {path} does not match current one: {{}}"
 
     @repeat_failed(timeout=WAIT_BACKEND)
     def assert_url_match(d, regex, msg):
@@ -136,7 +134,7 @@ def _open_url(selenium, browser_id, url):
 
     Wait(driver, WAIT_BACKEND).until(
         staleness_of(old_page),
-        message="waiting for page {:s} to load".format(url),
+        message=f"waiting for page {url:s} to load",
     )
 
 
@@ -172,12 +170,10 @@ def change_app_path_with_copied_item(
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
     item = clipboard.paste(display=displays[browser_id])
-    url = "{base_url}{path}/{item}".format(
-        base_url=base_url, path=path, item=item
-    )
+    url = f"{base_url}{path}/{item}"
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
-    driver.execute_script("window.location = '{}'".format(url))
+    driver.execute_script(f"window.location = '{url}'")
 
 
 @wt(
@@ -192,12 +188,10 @@ def change_app_path_with_recv_item(
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
     item = tmp_memory[browser_id]["mailbox"][item.lower()]
-    url = "{base_url}{path}/{item}".format(
-        base_url=base_url, path=path, item=item
-    )
+    url = f"{base_url}{path}/{item}"
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
-    driver.execute_script("window.location = '{}'".format(url))
+    driver.execute_script(f"window.location = '{url}'")
 
 
 @wt(
@@ -218,7 +212,7 @@ def open_site_url(selenium, browser_id, displays, clipboard):
     url = clipboard.paste(display=displays[browser_id])
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
-    driver.execute_script("window.location = '{}'".format(url))
+    driver.execute_script(f"window.location = '{url}'")
 
 
 @wt(

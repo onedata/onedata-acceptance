@@ -46,7 +46,7 @@ class TransferRecord(PageObject):
     icon = Icon(".transfer-file-icon")
 
     def __init__(self, driver, web_elem, parent, **kwargs):
-        super(TransferRecord, self).__init__(driver, web_elem, parent, **kwargs)
+        super().__init__(driver, web_elem, parent, **kwargs)
         status_class = self.status_icon.get_attribute("class").split()
         type_class = self.type_icon.get_attribute("class").split()
         self.status = [x for x in status_class if x in TransferStatusList][0]
@@ -76,7 +76,7 @@ class TransferRecord(PageObject):
         return "oneicon-browser-directory" in self.icon.get_attribute("class")
 
     def __str__(self):
-        return "Transfer row {} in {}".format(self.name, self.parent)
+        return f"Transfer row {self.name} in {self.parent}"
 
 
 class TransferRecordHistory(TransferRecord):
@@ -160,8 +160,7 @@ class _TransfersTab(PageObject):
         for tab in self.tabs:
             if name in tab.name.lower():
                 return tab
-        else:
-            raise RuntimeError("no tab named {} in transfer tab".format(name))
+        raise RuntimeError(f"no tab named {name} in transfer tab")
 
 
 TransfersTab = partial(WebItem, cls=_TransfersTab)

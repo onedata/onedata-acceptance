@@ -7,11 +7,7 @@ __license__ = (
 )
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import (
-    Button,
-    WebElement,
-    WebItemsSequence,
-)
+from tests.gui.utils.core.web_elements import Button, WebElement
 
 
 class UploadPresenter(PageObject):

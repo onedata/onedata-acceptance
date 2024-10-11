@@ -24,9 +24,7 @@ from tests.utils.utils import repeat_failed
         '"(?P<name>.*):(?P<passphrase>.*)"'
     )
 )
-def g_create_admin_in_panel(
-    selenium, browser_id_list, onepanel, name, passphrase
-):
+def g_create_admin_in_panel(selenium, browser_id_list, onepanel, passphrase):
     for browser_id in parse_seq(browser_id_list):
         init_page = onepanel(selenium[browser_id]).init_page
         init_page.create_new_cluster()
@@ -115,9 +113,9 @@ def wt_type_second_host_to_in_box_in_deployment_step(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_property_to_in_box_in_deployment_step(
-    selenium, browser_id, alias, property, input_box, step, onepanel, hosts
+    selenium, browser_id, alias, name_property, input_box, step, onepanel, hosts
 ):
-    text = hosts[alias][property]
+    text = hosts[alias][name_property]
     step = getattr(
         onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
@@ -182,9 +180,7 @@ def wt_await_finish_of_cluster_deployment(
             time.sleep(1)
             continue
     else:
-        raise RuntimeError(
-            "cluster deployment exceeded time limit: {}".format(timeout)
-        )
+        raise RuntimeError(f"cluster deployment exceeded time limit: {timeout}")
 
 
 @wt(
@@ -240,7 +236,7 @@ def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
 @wt(
     parsers.re(
         'user of (?P<browser_id>.*) types "(?P<new_ip>'
-        '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})" for "(?P<hostname>.*)" '
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})" for "(?P<hostname>.*)" '
         "hostname in deployment setup IP step"
     )
 )
@@ -256,8 +252,8 @@ def wt_type_ip_address_for_hostname_in_deployment_setup_ip(
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*) sees that IP address for "
-        '"(?P<hostname>.*)" hostname is "(?P<expected_ip>\d{1,3}\.\d'
-        '{1,3}\.\d{1,3}\.\d{1,3})" in deployment setup IP step'
+        r'"(?P<hostname>.*)" hostname is "(?P<expected_ip>\d{1,3}\.\d'
+        r'{1,3}\.\d{1,3}\.\d{1,3})" in deployment setup IP step'
     )
 )
 def wt_assert_ip_address_in_deployment_setup_ip(
@@ -289,9 +285,7 @@ def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(
     for node in nodes:
         assert (
             node.ip_address == expected_ip
-        ), "{} ip is {} instead of {}".format(
-            hostname, node.ip_address, expected_ip
-        )
+        ), f"{hostname} ip is {node.ip_address} instead of {expected_ip}"
 
 
 @wt(
@@ -420,7 +414,7 @@ def wt_assert_storage_attr_in_deployment_step5(
     displayed_val = getattr(storages[st], transform(attr)).lower()
     assert (
         displayed_val == val.lower()
-    ), "expected {} as storage attribute; got {}".format(displayed_val, val)
+    ), f"expected {displayed_val} as storage attribute; got {val}"
 
 
 @wt(

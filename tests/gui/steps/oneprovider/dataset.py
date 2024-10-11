@@ -98,7 +98,9 @@ def click_protection_toggle(
     )
     toggle.check()
     if toggle.is_unchecked():
-        raise Exception(f"Cannot check {toggle_type} write protection toggle")
+        raise AssertionError(
+            f"Cannot check {toggle_type} write protection toggle"
+        )
 
 
 @wt(
@@ -117,7 +119,7 @@ def can_not_click_protection_toggle(
             getattr(modals(driver), transform(modal_name)),
             f"{toggle_type}_protection_toggle",
         ).check()
-        raise Exception(f"{toggle_type}_protection_toggle is clickable")
+        raise AssertionError(f"{toggle_type}_protection_toggle is clickable")
     except RuntimeError:
         pass
 
@@ -177,8 +179,8 @@ def assert_one_of_two_dataset_has_deleted_root(browser_id, tmp_memory, name):
     for dataset in browser.data:
         if dataset.name == name:
             try:
-                dataset.deleted_root_file_icon
-                number_of_deleted_icon += 1
+                if dataset.deleted_root_file_icon.is_visible():
+                    number_of_deleted_icon += 1
             except RuntimeError:
                 pass
     err_msg = (
@@ -219,7 +221,7 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
 def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
     try:
         click_modal_button(selenium, browser_id, button, modal, modals)
-        raise Exception(f'User can click on "{button}" in modal "{modal}"')
+        raise AssertionError(f'User can click on "{button}" in modal "{modal}"')
     except RuntimeError:
         pass
 
@@ -241,6 +243,6 @@ def click_protection_toggle_in_ancestor_list(
     )
     toggle.check()
     if toggle.is_unchecked():
-        raise Exception(
+        raise AssertionError(
             f'Cannot check {toggle_type} on "{name}" write protection toggle'
         )

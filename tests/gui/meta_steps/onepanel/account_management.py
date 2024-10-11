@@ -9,11 +9,28 @@ __license__ = (
 )
 
 
-from tests.gui.steps.common.login import *
-from tests.gui.steps.common.notifies import *
-from tests.gui.steps.onepanel.account_management import *
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.login import (
+    notify_visible_with_text,
+    wt_assert_login_page,
+    wt_enter_text_to_field_in_login_form,
+    wt_press_sign_in_btn_on_login_page,
+)
+from tests.gui.steps.onepanel.account_management import (
+    wt_click_confirm_btn_in_chpasswd_form,
+    wt_click_on_btn_in_account_management,
+    wt_click_on_user_account_btn_panel,
+    wt_click_option_in_user_account_popover,
+    wt_type_password_of_user_to_curr_passwd,
+    wt_type_text_to_in_box_in_chpasswd_form,
+)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
-from tests.gui.steps.onepanel.emergency_passphrase import *
+from tests.gui.steps.onepanel.emergency_passphrase import (
+    click_button_on_emergency_passphrase_page,
+    type_text_to_input_on_emergency_passphrase_page,
+)
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def change_user_password_in_oz_panel_using_gui(

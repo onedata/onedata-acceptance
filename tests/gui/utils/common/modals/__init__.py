@@ -71,7 +71,7 @@ from .workflows_modals.unlink_lambda import UnlinkLambda
 from .workflows_modals.upload_workflow import UploadWorkflow
 
 
-class Modals(object):
+class Modals:
     # basic modals
     remove_modal = WebItem(".modal-dialog", cls=RemoveModal)
     leave_modal = WebItem(".modal-dialog", cls=LeaveElementModal)

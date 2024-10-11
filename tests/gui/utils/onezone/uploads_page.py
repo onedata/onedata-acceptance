@@ -7,17 +7,8 @@ __license__ = (
 )
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import (
-    Button,
-    Label,
-    NamedButton,
-    WebElement,
-    WebItem,
-    WebItemsSequence,
-)
+from tests.gui.utils.core.web_elements import Label, WebItem, WebItemsSequence
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
-
-from .common import EditBox, InputBox
 
 
 class Provider(Element):

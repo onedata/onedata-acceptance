@@ -8,14 +8,22 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+import time
+
 from tests import OZ_REST_PORT
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
-from tests.gui.steps.common.copy_paste import *
-from tests.gui.steps.common.notifies import *
+from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
-from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.onepanel.spaces import (
+    wt_clicks_on_btn_in_cease_support_modal,
+    wt_clicks_on_btn_in_space_toolbar_in_panel,
+    wt_clicks_on_understand_risk_in_cease_support_modal,
+    wt_expands_toolbar_icon_for_space_in_onepanel,
+)
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
@@ -25,11 +33,38 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
 )
-from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests.gui.steps.onezone.overview import *
-from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.multibrowser_spaces import (
+    send_invitation_token_to_browser,
+)
+from tests.gui.steps.onezone.overview import (
+    confirm_rename_the_space,
+    type_space_name_on_rename_space_input_on_overview_page,
+)
+from tests.gui.steps.onezone.spaces import (
+    assert_new_created_space_has_appeared_on_spaces,
+    assert_no_provider_for_space,
+    assert_number_of_supporting_providers_of_space,
+    assert_providers_list_contains_provider,
+    assert_space_has_disappeared_on_spaces,
+    check_remove_space_understand_notice,
+    click_button_in_space_harvesters_page,
+    click_button_on_spaces_sidebar_menu,
+    click_confirm_or_cancel_button_on_leave_space_page,
+    click_copy_button_on_request_support_page,
+    click_element_on_lists_on_left_sidebar_menu,
+    click_get_support_button_on_providers_page,
+    click_on_option_in_space_menu,
+    click_on_option_in_the_sidebar,
+    click_on_option_of_space_on_left_sidebar_menu,
+    confirm_create_new_space,
+    copy_token,
+    type_space_name_on_input_on_create_new_space_page,
+    wt_wait_for_modal_to_appear,
+)
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -105,7 +140,6 @@ def leave_spaces_in_oz_using_gui(
     driver.switch_to.default_content()
 
     if space_list == "all":
-        oz_page(selenium[user])["data"].spaces_header_list
         space_list = [
             elem.name
             for elem in oz_page(selenium[user])["data"].spaces_header_list
@@ -227,10 +261,8 @@ def invite_other_users_to_space_using_gui(
     )
     copy_token_from_modal(selenium, user)
     send_invitation_token_to_browser(
-        selenium,
         user,
         item_type,
-        oz_page,
         displays,
         clipboard,
         user_list,

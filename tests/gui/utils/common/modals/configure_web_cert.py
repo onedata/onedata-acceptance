@@ -8,7 +8,7 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-from tests.gui.utils.core.web_elements import Input, NamedButton
+from tests.gui.utils.core.web_elements import NamedButton
 
 from .modal import Modal
 

@@ -10,14 +10,16 @@ __license__ = (
 
 import time
 
+from tests.gui.utils.core.base import PageObject
 
-class BrowserRow(object):
+
+class BrowserRow(PageObject):
 
     def is_selected(self):
         return "file-selected" in self.web_elem.get_attribute("class")
 
     def wait_for_selected(self):
-        for i in range(30):
+        for _ in range(30):
             time.sleep(0.1)
             if self.is_selected():
                 return

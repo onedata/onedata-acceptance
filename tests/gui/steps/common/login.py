@@ -146,7 +146,7 @@ def wt_assert_successful_login(selenium, browser_id, onepage, service):
     logged_in_service = onepage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
-    ), "logged in {} instead of {}".format(logged_in_service, service)
+    ), f"logged in {logged_in_service} instead of {service}"
 
 
 @wt(

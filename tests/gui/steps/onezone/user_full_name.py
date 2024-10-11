@@ -63,10 +63,8 @@ def assert_correct_usr_full_name_in_oz(
 ):
     displayed_full_name = oz_page(selenium[browser_id])["profile"].full_name
     err_msg = (
-        'expected "{}" as user full name, but instead displayed is "{}" '
-        "in USER FULL NAME oz panel".format(
-            expected_full_name, displayed_full_name
-        )
+        f'expected "{expected_full_name}" as user full name, but instead'
+        f' displayed is "{displayed_full_name}" in USER FULL NAME oz panel'
     )
 
     assert displayed_full_name == expected_full_name, err_msg

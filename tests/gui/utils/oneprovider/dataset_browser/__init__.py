@@ -48,8 +48,7 @@ class _DatasetBrowser(PageObject):
             self._empty_dir_icon
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
     def scroll_to_bottom(self):
         self.driver.execute_script(

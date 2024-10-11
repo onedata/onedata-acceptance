@@ -270,8 +270,7 @@ def get_old_or_new_cluster_record_from_list(
 
     if new_list:
         return new_list[0]
-    else:
-        raise AssertionError(f"No {provider} cluster record in clusters menu")
+    raise AssertionError(f"No {provider} cluster record in clusters menu")
 
 
 @wt(

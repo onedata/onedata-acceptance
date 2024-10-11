@@ -12,8 +12,8 @@ from .common.modals import Modals
 from .common.popups import Popups
 from .onepanel import Onepanel
 from .oneprovider import OPLoggedIn
-from .oneprovider.shares.private_share import PrivateShareView
 from .oneprovider.shares.public_share import PublicShareView
+from .oneprovider.shares.private_share import PrivateShareView
 from .oneservices.cdmi import CDMIClient
 from .onezone import OZLoggedIn
 from .onezone.data_discovery_page import DataDiscoveryPage

@@ -96,10 +96,10 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
 ):
     driver = selenium[browser_id]
     item_name = hosts[item_name]["name"]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
-    assert item_name in items, 'no {} named "{}" found in {} oz panel'.format(
-        item_type, item_name, oz_panel
-    )
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
+    assert (
+        item_name in items
+    ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
 
 
 @wt(
@@ -149,10 +149,10 @@ def assert_there_is_item_named_in_oz_panel_list(
     selenium, browser_id, item_type, item_name, oz_panel, oz_page
 ):
     driver = selenium[browser_id]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
-    assert item_name in items, 'no {} named "{}" found in {} oz panel'.format(
-        item_type, item_name, oz_panel
-    )
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
+    assert (
+        item_name in items
+    ), f'no {item_type} named "{item_name}" found in {oz_panel} oz panel'
 
 
 @wt(
@@ -206,12 +206,11 @@ def assert_there_is_no_item_named_in_oz_panel_list(
         item_name = hosts[item_name]["name"]
     items = {
         item.name
-        for item in getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
+        for item in getattr(oz_page(driver)[oz_panel], f"{item_type}s")
     }
-    assert (
-        item_name not in items
-    ), '{} named "{}" found in {} oz panel while it should not be found'.format(
-        item_type, item_name, oz_panel
+    assert item_name not in items, (
+        f'{item_type} named "{item_name}" found in {oz_panel} oz panel while it'
+        " should not be found"
     )
 
 
@@ -247,9 +246,9 @@ def assert_item_counter_match_given_num(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
     item = items[item_name]
-    item_counter = int(getattr(item, "{}s_count".format(counter_type)))
+    item_counter = int(getattr(item, f"{counter_type}s_count"))
 
     msg = (
         "expected {counter_type}s number {num} does not match "
@@ -298,10 +297,10 @@ def assert_number_of_items_match_items_counter(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
     item = items[item_name]
-    subitems = getattr(item, "{}s".format(counter_type))
-    counter = int(getattr(item, "{}s_count".format(counter_type)))
+    subitems = getattr(item, f"{counter_type}s")
+    counter = int(getattr(item, f"{counter_type}s_count"))
 
     err_msg = (
         "{type}s counter number {counter} does not match displayed "
@@ -335,7 +334,7 @@ def expand_items_submenu_in_oz_panel(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
     item = items[item_name]
     item.expand()
     err_msg = 'submenu for {type} named "{name}" has not been expanded'
@@ -376,11 +375,9 @@ def assert_item_in_submenu_of_item_in_oz_panel(
         item_name = hosts[item_name]["name"]
     if subitem_type == "provider":
         subitem_name = hosts[subitem_name]["name"]
-    items = getattr(oz_page(driver)[oz_panel], "{}s".format(item_type))
+    items = getattr(oz_page(driver)[oz_panel], f"{item_type}s")
     item = items[item_name]
-    subitems = getattr(item, "{}s".format(subitem_type))
+    subitems = getattr(item, f"{subitem_type}s")
     assert (
         subitem_name in subitems
-    ), 'no "{}" found in subitems of "{}" in {}'.format(
-        subitem_name, item_name, oz_panel
-    )
+    ), f'no "{subitem_name}" found in subitems of "{item_name}" in {oz_panel}'

@@ -27,4 +27,6 @@ class GenericPage(PageObject):
     get_started = NamedButton(".btn-default", text="Get started")
 
     def __getitem__(self, item):
-        return self.elements_list[item]
+        if hasattr(self, "elements_list"):
+            return self.elements_list[item]
+        raise ValueError("there is not elements_list member in class instance")

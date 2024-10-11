@@ -33,7 +33,7 @@ class ArchiveState(PageObject):
         return self.state_details.split(",")[-1].strip()
 
 
-class DataRow(PageObject, BrowserRow):
+class DataRow(BrowserRow):
     name = id = Label(".file-name-inner")
     description = Label(".secondary-description")
     state = WebItem(".fb-table-col-state .file-item-text", cls=ArchiveState)
@@ -59,5 +59,4 @@ class DataRow(PageObject, BrowserRow):
             getattr(self, f"{transform(name)}_tag")
         except RuntimeError:
             return False
-        else:
-            return True
+        return True

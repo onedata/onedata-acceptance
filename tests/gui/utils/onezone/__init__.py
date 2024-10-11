@@ -40,7 +40,7 @@ panels_dict = {
 }
 
 
-class OZLoggedIn(object):
+class OZLoggedIn:
     _atlas = WebElement(".onezone-atlas")
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
     _profile = WebElement(".app-layout")
@@ -84,11 +84,14 @@ class OZLoggedIn(object):
                 return False
         panel = self._panels[panels_dict[item]]
         return any(
-            [
-                el in panel.get_attribute("class")
-                for el in ["active", "selected"]
-            ]
+            el in panel.get_attribute("class") for el in ["active", "selected"]
         )
+
+    def get_panels(self):
+        return self._panels
+
+    def get_profile(self):
+        return self._profile
 
 
 def get_page(oz_page, item, click=True):
@@ -96,24 +99,24 @@ def get_page(oz_page, item, click=True):
     cls = oz_page.panels.get(item, None)
     if cls:
         item = item.replace("_", " ").lower()
-        panel = oz_page._panels[panels_dict[item]]
+        panel = oz_page.get_panels()[panels_dict[item]]
         if click:
             panel.click()
             # wait till panel will open
             wait_for_panel_to_expand(oz_page)
         return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
-    elif item == "profile":
-        return ManageAccountPage(oz_page.web_elem, oz_page._profile, oz_page)
-    elif item == "uploads":
+    if item == "profile":
+        return ManageAccountPage(
+            oz_page.web_elem, oz_page.get_profile(), oz_page
+        )
+    if item == "uploads":
         return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
-    else:
-        raise RuntimeError('no "{}" on {} found'.format(item, str(oz_page)))
+    raise RuntimeError(f'no "{item}" on {oz_page} found')
 
 
 def wait_for_panel_to_expand(oz_page):
     for _ in range(20):
-        if oz_page._panels[0].text == "DATA":
+        if oz_page.get_panels()[0].text == "DATA":
             return
-        else:
-            time.sleep(0.1)
+        time.sleep(0.1)
     raise RuntimeError("did not manage to expand main panel")

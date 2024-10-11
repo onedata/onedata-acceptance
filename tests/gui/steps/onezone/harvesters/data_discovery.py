@@ -171,7 +171,7 @@ def assert_properties_on_condition_properties_list(
     properties = parse_seq(properties_list)
     query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
     for prop in properties:
-        query_builder_popup.assert_property(
+        assert query_builder_popup.assert_property(
             prop
         ), f"{prop} property not found in condition properties list"
 

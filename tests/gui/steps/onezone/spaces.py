@@ -8,13 +8,9 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import (
-    press_enter_on_active_element,
-    switch_to_iframe,
-)
+from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -140,9 +136,9 @@ def assert_no_provider_for_space(
     except RuntimeError:
         pass
     else:
-        assert False, 'provider "{}" found on space "{}" providers list'.format(
-            provider, space_name
-        )
+        assert (
+            False
+        ), f'provider "{provider}" found on space "{space_name}" providers list'
 
 
 @wt(
@@ -158,7 +154,7 @@ def assert_new_created_space_has_appeared_on_spaces(
     driver = selenium[browser_id]
     assert (
         space_name in oz_page(driver)["data"].elements_list
-    ), 'space "{}" not found'.format(space_name)
+    ), f'space "{space_name}" not found'
 
 
 @wt(
@@ -199,12 +195,10 @@ def _click_on_option_in_the_sidebar(
     driver.switch_to.default_content()
     name = str(option).lower()
     # call get_page in Onezone page
-    if force:
+    if force or not oz_page(driver).is_panel_clicked(name):
         page = oz_page(driver).get_page_and_click(name)
         return page
-    else:
-        if not oz_page(driver).is_panel_clicked(name):
-            oz_page(driver).get_page_and_click(name)
+    return oz_page(driver)[name]
 
 
 @wt(
@@ -303,7 +297,7 @@ def assert_space_has_disappeared_on_spaces(
 ):
     driver = selenium[browser_id]
     spaces = oz_page(driver)["data"].elements_list
-    assert space_name not in spaces, 'space "{}" found'.format(space_name)
+    assert space_name not in spaces, f'space "{space_name}" found'
 
 
 @wt(
@@ -340,7 +334,7 @@ def assert_size_of_space_on_left_sidebar_menu(
     driver = selenium[browser_id]
     assert (
         number == oz_page(driver)["data"].elements_list[space_name].support_size
-    ), 'size of space "{}" is not equal {}'.format(space_name, number)
+    ), f'size of space "{space_name}" is not equal {number}'
 
 
 def _get_subpage_name(subpage):
@@ -386,7 +380,7 @@ def hover_provider_on_the_map_on_data_page(
         "page"
     )
 )
-def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
+def click_the_map_on_data_page(selenium, browser_id, oz_page, page):
     driver = selenium[browser_id]
     getattr(oz_page(driver)["data"], _get_subpage_name(page)).map()
 
@@ -442,7 +436,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
     driver = selenium[browser_id]
     element_list = _parse_tabs_list(element_list)
     space = oz_page(driver)["data"].elements_list[space_name]
-    error_msg = f"Number of disabled elements is incorrect"
+    error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
         element_list
     ), error_msg
@@ -461,7 +455,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_providers_on_the_map_on_data_page(
-    selenium, browser_id, correct_number, space_name, page, oz_page
+    selenium, browser_id, correct_number, page, oz_page
 ):
     if correct_number == "no":
         correct_number = 0
@@ -538,9 +532,7 @@ def assert_providers_list_contains_provider(
     if provider in hosts:
         provider = hosts[provider]["name"]
     providers_list = oz_page(driver)["data"].providers_page.providers_list
-    assert provider in providers_list, 'provider "{}" not found'.format(
-        provider
-    )
+    assert provider in providers_list, f'provider "{provider}" not found'
 
 
 @wt(
@@ -578,7 +570,7 @@ def assert_length_of_providers_list(selenium, browser_id, space_name, oz_page):
     )
     assert len(providers_list) == number_of_providers, (
         "length of providers list is not equal to number of "
-        'supporting providers of space "{}"'.format(space_name)
+        f'supporting providers of space "{space_name}"'
     )
 
 
@@ -594,10 +586,9 @@ def assert_length_of_providers_list_of_space(
 ):
     driver = selenium[browser_id]
     providers_list = oz_page(driver)["data"].providers_page.providers_list
-    assert len(providers_list) == int(
-        number_of_providers
-    ), 'length of providers list of space "{}" is not equal {}'.format(
-        space_name, number_of_providers
+    assert len(providers_list) == int(number_of_providers), (
+        f'length of providers list of space "{space_name}" is not equal'
+        f" {number_of_providers}"
     )
 
 
@@ -672,7 +663,6 @@ def remove_harvester_from_harvesters_list(
     harvester_name,
     popups,
     modals,
-    space_name,
     tmp_memory,
 ):
     modal_name = "remove harvester from space"
@@ -720,7 +710,7 @@ def assert_copy_token_and_input_token_are_the_same(
 
 @wt(parsers.parse("user of {browser_id} sees that copied token is non-empty"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
+def assert_copy_token_is_not_empty(browser_id, tmp_memory):
     token = tmp_memory[browser_id]["mailbox"]["token"]
     assert len(token) > 0, "token is empty, while it should be non-empty"
 

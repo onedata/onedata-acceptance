@@ -10,13 +10,9 @@ __license__ = (
 
 
 import os
-import re
-import time
 from itertools import cycle
 
 from pytest_bdd import given
-from selenium.webdriver import Chrome
-from tests import gui
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
@@ -30,7 +26,6 @@ def create_instances_of_webdriver(
     browser_id_list,
     tmpdir,
     tmp_memory,
-    driver_kwargs,
     driver_type,
     xvfb,
     xvfb_recorder,
@@ -40,45 +35,44 @@ def create_instances_of_webdriver(
     capabilities,
 ):
 
+    _ = xvfb_recorder
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
         if browser_id in selenium:
-            raise AttributeError("{:s} already in use".format(browser_id))
-        else:
-            tmp_memory[browser_id] = {
-                "shares": {},
-                "spaces": {},
-                "groups": {},
-                "mailbox": {},
-                "oz": {},
-                "window": {"modal": None},
-            }
+            raise AttributeError(f"{browser_id:s} already in use")
+        tmp_memory[browser_id] = {
+            "shares": {},
+            "spaces": {},
+            "groups": {},
+            "mailbox": {},
+            "oz": {},
+            "window": {"modal": None},
+        }
 
-            with redirect_display(display):
-                temp_dir = str(tmpdir)
-                download_dir = os.path.join(temp_dir, browser_id, "download")
-                browser_data = os.path.join(
-                    temp_dir, browser_id, "browser_data"
+        with redirect_display(display):
+            temp_dir = str(tmpdir)
+            download_dir = os.path.join(temp_dir, browser_id, "download")
+            browser_data = os.path.join(temp_dir, browser_id, "browser_data")
+            os.makedirs(download_dir, exist_ok=True)
+            os.makedirs(browser_data, exist_ok=True)
+
+            if driver_type.lower() == "chrome":
+                chrome_prefs = {"download.default_directory": download_dir}
+                capabilities["options"].add_experimental_option(
+                    "prefs", chrome_prefs
                 )
-                os.makedirs(download_dir, exist_ok=True)
-                os.makedirs(browser_data, exist_ok=True)
+                capabilities["options"].add_argument(
+                    f"--user-data-dir={browser_data}"
+                )
 
-                if driver_type.lower() == "chrome":
-                    chrome_prefs = {"download.default_directory": download_dir}
-                    capabilities["options"].add_experimental_option(
-                        "prefs", chrome_prefs
-                    )
-                    capabilities["options"].add_argument(
-                        f"--user-data-dir={browser_data}"
-                    )
+            browser = driver()
+            _config_driver(browser, screen_width, screen_height)
 
-                browser = driver()
-                _config_driver(browser, screen_width, screen_height)
-
-            displays[browser_id] = display
-            selenium[browser_id] = browser
+        displays[browser_id] = display
+        selenium[browser_id] = browser
 
 
-# TODO: configure different window sizes for responsiveness tests: https://jira.plgrid.pl/jira/browse/VFS-2205
+# TODO: configure different window sizes for responsiveness
+#  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
 def _config_driver(driver, window_width, window_height):
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
     driver.set_window_size(window_width, window_height)

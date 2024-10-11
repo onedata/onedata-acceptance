@@ -77,8 +77,7 @@ class PrivilegeRow(PageObject):
                 self.deactivate()
         if granted:
             return self.toggle.is_checked()
-        else:
-            return self.toggle.is_unchecked()
+        return self.toggle.is_unchecked()
 
 
 class PrivilegeGroup(PageObject):
@@ -165,7 +164,7 @@ class PrivilegeGroup(PageObject):
                     "document.querySelector('.col-content').scrollTo(0, 0)"
                 )
                 elem_id = self._checkbox.get_attribute("id")
-                for i in range(count):
+                for _ in range(count):
                     try:
                         driver.find_element(
                             By.CSS_SELECTOR, "#" + elem_id
@@ -179,8 +178,7 @@ class PrivilegeGroup(PageObject):
                 self.deactivate()
         if granted:
             return self.toggle.is_checked()
-        else:
-            return self.toggle.is_unchecked()
+        return self.toggle.is_unchecked()
 
 
 class PrivilegeTree(PageObject):
@@ -326,9 +324,9 @@ class PrivilegeTree(PageObject):
     def wait_for_load_privileges(self):
         for _ in range(50):
             try:
-                self.spinner
+                assert not self.spinner.is_displayed()
                 time.sleep(0.1)
-            except RuntimeError:
+            except AssertionError:
                 return
         raise RuntimeError(
             "Did not manage to set privileges, exceeded loading time"

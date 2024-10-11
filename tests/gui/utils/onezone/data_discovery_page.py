@@ -49,7 +49,7 @@ class FilterTree(PageObject):
     tree_nodes = WebItemsSequence(".tree-node", cls=TreeNode)
 
 
-class DataDiscoveryPage(object):
+class DataDiscoveryPage:
     page_size = Label(".page-size-selector .ember-power-select-selected-item")
     next_page = Button(".next-page")
     query_button = Button(".submit-query")

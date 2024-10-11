@@ -8,13 +8,28 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+import re
+import time
+
 import yaml
 from tests.gui.meta_steps.onezone.provider import (
     send_copied_invite_token_in_oz_gui,
 )
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.onepanel.deployment import *
+from tests.gui.steps.onepanel.deployment import (
+    wt_assert_begin_of_cluster_deployment,
+    wt_check_host_options_list_in_deployment_step1,
+    wt_click_on_add_btn_in_storage_add_form,
+    wt_click_on_btn_in_deployment_step,
+    wt_click_perform_check_in_dns_setup_step,
+    wt_click_proceed_in_dns_setup_step,
+    wt_click_yes_in_warning_modal_in_dns_setup_step,
+    wt_select_storage_type_in_deployment_step5,
+    wt_type_property_to_in_box_in_deployment_step,
+    wt_type_text_to_in_box_in_deployment_step,
+    wt_type_text_to_in_box_in_deployment_step5,
+)
 from tests.gui.steps.onepanel.provider import (
     deactivate_request_subdomain_toggle,
 )

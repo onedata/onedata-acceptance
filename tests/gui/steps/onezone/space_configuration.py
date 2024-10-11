@@ -8,7 +8,6 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-import json
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform

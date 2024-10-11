@@ -33,14 +33,14 @@ class BaseContent(PageObject):
     )
 
     def __str__(self):
-        return "content in {}".format(self.parent)
+        return f"content in {self.parent}"
 
 
 class EmergencyInterfaceWarningBar(PageObject):
     info = Button(".oneicon-sign-info-rounded")
 
 
-class OnePage(object):
+class OnePage:
     loading_error = Label(".application-error-message")
     service = Label(".brand-info")
     logout = WebElement(".user-account-button-main")
@@ -61,7 +61,7 @@ class OnePage(object):
         return self.service
 
 
-class PublicOnePage(object):
+class PublicOnePage:
     loading_error = Label(".application-error-message")
 
     def __init__(self, driver):
@@ -75,7 +75,7 @@ class _Toggle(PageObject):
     _lock = WebElement(".one-way-toggle-readonly-icon")
 
     def __str__(self):
-        return "toggle switch in {}".format(self.parent)
+        return f"toggle switch in {self.parent}"
 
     def is_checked(self):
         return "checked" in self.web_elem.get_attribute("class")
@@ -102,8 +102,7 @@ class _Toggle(PageObject):
             self._lock
         except RuntimeError:
             return True
-        else:
-            return False
+        return False
 
 
 class _DropdownSelector(PageObject, ExpandableMixin):
@@ -125,7 +124,7 @@ DropdownSelector = partial(WebItem, cls=_DropdownSelector)
 MigrateDropdownSelector = partial(WebItem, cls=_MigrateDropdownSelector)
 
 
-class LoginPage(object):
+class LoginPage:
     header = Label(".row-login-header")
     sign_in_to_emergency_interface = Button(".text-link")
     username = Input('input[placeholder="Username"]')

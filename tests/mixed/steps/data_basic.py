@@ -373,8 +373,8 @@ def read_from_file_in_op(client, user, text, file_name, space, host, users,
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_file_content_in_op_gui(text, file_name, space, selenium, user,
-                                      users, host, hosts, oz_page, op_container,
-                                      tmp_memory, tmpdir, modals)
+                                      oz_page, op_container,
+                                      tmp_memory, tmpdir)
     elif client_lower == 'rest':
         assert_file_content_in_op_rest(full_path, text, user, users,
                                        host, hosts)

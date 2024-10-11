@@ -21,7 +21,7 @@ from .transfers import TransfersTab
 from .user_profile import UserProfile
 
 
-class OPLoggedIn(object):
+class OPLoggedIn:
     file_browser = FileBrowser(".content-file-browser")
     shares_page = WebItem(".content-space-shares", cls=SharesContentPage)
     transfers = TransfersTab(".content-space-transfers")

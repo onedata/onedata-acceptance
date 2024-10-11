@@ -8,6 +8,7 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+import re
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
@@ -29,10 +30,9 @@ def wt_assert_value_of_provider_attribute(
 ):
     details = onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
-    assert (
-        displayed_val == val
-    ), "displayed {} instead of expected {} as provider's {}".format(
-        displayed_val, val, attr
+    assert displayed_val == val, (
+        f"displayed {displayed_val} instead of expected {val} as provider's"
+        f" {attr}"
     )
 
 
@@ -51,10 +51,9 @@ def wt_assert_value_of_provider_attribute_is_known(
     expected_val = hosts[host][prop]
     details = onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
-    assert (
-        displayed_val == expected_val
-    ), "displayed {} instead of expected {} as provider's {}".format(
-        displayed_val, expected_val, attr
+    assert displayed_val == expected_val, (
+        f"displayed {displayed_val} instead of expected {expected_val} as"
+        f" provider's {attr}"
     )
 
 
@@ -83,10 +82,10 @@ def wt_type_val_to_in_box_in_provider_details_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_host_domain_to_in_box_in_provider_details_form(
-    selenium, browser_id, property, host, attr, hosts, onepanel
+    selenium, browser_id, host_property, host, attr, hosts, onepanel
 ):
     form = onepanel(selenium[browser_id]).content.provider.form
-    setattr(form, transform(attr), hosts[host][property])
+    setattr(form, transform(attr), hosts[host][host_property])
 
 
 @wt(
@@ -128,8 +127,6 @@ def wt_click_on_discard_btn_in_domain_change_modal(
     try:
         modals(selenium[browser_id]).configure_web_cert.discard()
     except RuntimeError as e:
-        import re
-
         if re.match(r"no.*item found in modals", str(e)):
             pass
         else:
@@ -168,7 +165,7 @@ def wt_enter_test_domain_in_deployment_step2(
     selenium, browser_id, provider, hosts, onepanel
 ):
     onepanel(selenium[browser_id]).content.provider.form.domain = (
-        "{}.test".format(hosts[provider]["hostname"])
+        f"{hosts[provider]['hostname']}.test"
     )
 
 
@@ -187,11 +184,10 @@ def wt_assert_value_of_provider_domain(
     displayed_val = onepanel(
         selenium[browser_id]
     ).content.provider.details.domain
-    expected_val = "{}.test".format(hosts[provider]["hostname"])
-    assert (
-        displayed_val == expected_val
-    ), "displayed {} instead of expected {} as provider's domain".format(
-        displayed_val, expected_val
+    expected_val = f"{hosts[provider]['hostname']}.test"
+    assert displayed_val == expected_val, (
+        f"displayed {displayed_val} instead of expected {expected_val} as"
+        " provider's domain"
     )
 
 

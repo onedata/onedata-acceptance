@@ -11,7 +11,6 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
-    NamedButton,
     WebElement,
     WebItemsSequence,
 )

@@ -610,25 +610,27 @@ def assert_contents_downloaded_tar_file(
         downloaded_tar_filename
     ), f"{downloaded_tar_filename} is not valid TAR file archive"
 
-    tar = tarfile.open(downloaded_tar_filename)
-    files_list = tar.getnames()
-    tar.extractall(extract_path.strpath)
+    with tarfile.open(downloaded_tar_filename) as tar:
+        files_list = tar.getnames()
+        tar.extractall(extract_path.strpath)
 
-    dir_tree = yaml.load(contents, yaml.Loader)
-    _get_directory_contents(dir_tree)
+        dir_tree = yaml.load(contents, yaml.Loader)
+        _get_directory_contents(dir_tree)
 
-    for f in files_list:
-        assert (
-            f in configured_dir_contents
-        ), f"{f} is missing in downloaded tar file"
-        archive_file = tar.getmember(f)
-        if archive_file.isfile():
-            with open(extract_path.join(f).strpath, "r") as o:
-                file_contents = o.read()
-                assert str(file_contents) == str(configured_dir_contents[f]), (
-                    f"{f} content is different than expected "
-                    f"{file_contents}!={configured_dir_contents[f]}"
-                )
+        for f in files_list:
+            assert (
+                f in configured_dir_contents
+            ), f"{f} is missing in downloaded tar file"
+            archive_file = tar.getmember(f)
+            if archive_file.isfile():
+                with open(extract_path.join(f).strpath, "r") as o:
+                    file_contents = o.read()
+                    assert str(file_contents) == str(
+                        configured_dir_contents[f]
+                    ), (
+                        f"{f} content is different than expected "
+                        f"{file_contents}!={configured_dir_contents[f]}"
+                    )
 
 
 @wt(

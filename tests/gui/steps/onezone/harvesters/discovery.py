@@ -208,7 +208,7 @@ def click_button_in_harvester_spaces_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(
-    selenium, browser_id, element_name, modals, element, popups
+    selenium, browser_id, element_name, modals, _element, popups
 ):
     driver = selenium[browser_id]
     modal_name = "add_one_of_elements"
@@ -236,7 +236,7 @@ def assert_space_has_appeared_in_discovery_page(
     driver = selenium[browser_id]
     assert (
         space_name in oz_page(driver)["discovery"].spaces_list
-    ), 'space "{}" not found'.format(space_name)
+    ), f'space "{space_name}" not found'
 
 
 def click_remove_space_option_in_menu_in_discover_spaces_page(

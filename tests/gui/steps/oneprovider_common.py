@@ -21,7 +21,7 @@ def main_menu_tab_to_url(tab):
 
 def _click_on_tab_in_main_menu_sidebar(driver, tab):
     def _load_main_menu_tab_page(tab):
-        def _check_url(url):
+        def _check_url(_url):
             return tab in driver.current_url
 
         current_url = driver.current_url

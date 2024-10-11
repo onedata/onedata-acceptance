@@ -196,7 +196,7 @@ def fail_to_see_subgroups(client, user, group_list, host, hosts,
                r'Onezone service'))
 def invite_to_group(client, user1, user2, group, host, hosts,
                     users, selenium, oz_page, tmp_memory, displays,
-                    clipboard, onepanel, popups):
+                    clipboard, onepanel, popups, modals):
     
     if client.lower() == 'rest':
         create_group_token_using_rest(user1, user2, group, tmp_memory, users,
@@ -205,7 +205,7 @@ def invite_to_group(client, user1, user2, group, host, hosts,
         create_group_token_to_invite_user_using_op_gui(selenium, user1, user2,
                                                        oz_page, group, tmp_memory,
                                                        displays, clipboard,
-                                                       onepanel, popups)
+                                                       onepanel, popups, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

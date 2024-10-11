@@ -27,5 +27,4 @@ class Node:
     def get_path(self):
         if self.path == "":
             return "/"
-        else:
-            return self.path + "/"
+        return self.path + "/"

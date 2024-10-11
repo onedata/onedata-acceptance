@@ -8,7 +8,6 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
-from selenium.webdriver.common.keys import Keys
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils.common.modals import Modals as modals
@@ -160,7 +159,7 @@ def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     page = oz_page(selenium[browser_id])["groups"]
     assert (
         page.main_page.error_label == text
-    ), 'page with text "{}" not found'.format(text)
+    ), f'page with text "{text}" not found'
 
 
 @wt(
@@ -211,7 +210,9 @@ def click_on_group_trigger(selenium, browser_id, oz_page, group_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_trigger(selenium, browser_id, oz_page, group_name, relation):
+def click_on_group_relation_trigger(
+    selenium, browser_id, oz_page, group_name, relation
+):
     driver = selenium[browser_id]
     (
         oz_page(driver)["groups"]
@@ -263,7 +264,7 @@ def write_name_group_in_create_new_child_group_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_list_of_children_contains_group(
-    selenium, browser_id, oz_page, group_name, relation, active_group, option
+    selenium, browser_id, oz_page, group_name, relation, option
 ):
     relation = "children" if relation == "child" else "parents"
 
@@ -283,7 +284,7 @@ def assert_list_of_children_contains_group(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_list_of_children_contains_group(selenium, browser_id, oz_page):
+def click_show_parent_groups_in_hierarchy_page(selenium, browser_id, oz_page):
     (
         oz_page(selenium[browser_id])[
             "groups"

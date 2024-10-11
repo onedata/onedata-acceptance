@@ -33,7 +33,7 @@ def wt_select_storage_type_in_storage_page_op_panel(
         if storage.text.lower() == storage_type.lower():
             storage_selector.options[storage.text].click()
             return
-    raise Exception(f"storage {storage_type} not found")
+    raise RuntimeError(f"storage {storage_type} not found")
 
 
 @wt(
@@ -87,7 +87,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(
     storage_item.expand()
 
     if not storage_item.is_expanded():
-        raise Exception(f"did not manage to expand storage {storage}")
+        raise RuntimeError(f"did not manage to expand storage {storage}")
 
 
 @wt(
@@ -162,7 +162,6 @@ def click_modify_storage_in_onepanel(selenium, browser_id, name, onepanel):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.storages.storages["posix"].edit_form
     storage_posix = onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.set_last_key(key)
 
@@ -176,7 +175,6 @@ def type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.storages.storages["posix"].edit_form
     storage_posix = onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.click_value_in_modified_record()
 
@@ -223,7 +221,7 @@ def save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
 def assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
     storages_list = onepanel(driver).content.storages.storages
-    assert name not in storages_list, "found {} on storages list".format(name)
+    assert name not in storages_list, f"found {name} on storages list"
 
 
 @wt(

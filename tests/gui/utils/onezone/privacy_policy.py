@@ -9,7 +9,7 @@ __license__ = (
 from tests.gui.utils.core.web_elements import Button, WebElement
 
 
-class PrivacyPolicy(object):
+class PrivacyPolicy:
     message = WebElement(".wysiwyg-content")
     back_to_main_page = Button(".back-to-main-page")
 

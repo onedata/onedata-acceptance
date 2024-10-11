@@ -34,8 +34,8 @@ class Group(PageObject):
         self.group_menu_button.click()
 
     def click_relation_menu_button(self, driver, relation):
-        line_to = "line_to_{}".format(relation)
-        relation = "{}_relation_menu_button".format(relation)
+        line_to = f"line_to_{relation}"
+        relation = f"{relation}_relation_menu_button"
 
         ActionChains(driver).move_to_element(getattr(self, line_to)).perform()
         getattr(self, relation).click()

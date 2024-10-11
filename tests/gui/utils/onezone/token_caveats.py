@@ -120,9 +120,9 @@ class CaveatField(PageObject):
     def set_expiration_caveat(self, expire_caveat, tmp_memory):
         self.activate()
         min_delta = expire_caveat["after"]
-        time = self.get_time_after_delta(min_delta)
-        self.time_input = time
-        tmp_memory["expire_time"] = time
+        _time = self.get_time_after_delta(min_delta)
+        self.time_input = _time
+        tmp_memory["expire_time"] = _time
 
     def get_time_after_delta(self, delta):
         now = datetime.now()
@@ -248,7 +248,7 @@ class CaveatField(PageObject):
         popup.list_option()
 
         # this line is to load elements, test fails without it
-        [consumer.name for consumer in popup.consumers]
+        _ = [consumer.name for consumer in popup.consumers]
         time.sleep(0.5)
         popup.consumers[value]()
 
@@ -273,7 +273,12 @@ class CaveatField(PageObject):
         self.add_item()
         if not self.item_label == space:
             self.expander()
-            self.options[space]()
+            if hasattr(self, "options"):
+                self.options[space]()
+            else:
+                raise ValueError(
+                    "there is not options member in class instance"
+                )
         self.input = path
 
     # object id caveat

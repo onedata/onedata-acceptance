@@ -93,7 +93,7 @@ class PrivilegeGroup(PageObject):
                 driver.find_element(
                     By.CSS_SELECTOR, ".tree-circle .oneicon-square-minus-empty"
                 ).click()
-            except:
+            except RuntimeError:
                 self.expander.click()
 
     def minimalize(self):

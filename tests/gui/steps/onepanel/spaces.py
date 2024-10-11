@@ -165,9 +165,9 @@ def wt_assert_existence_of_space_support_record(
         space.name
         for space in onepanel(selenium[browser_id]).content.spaces.spaces
     }
-    assert space_name in spaces, 'not found "{}" in spaces in Onepanel'.format(
-        space_name
-    )
+    assert (
+        space_name in spaces
+    ), f'not found "{space_name}" in spaces in Onepanel'
 
 
 @wt(
@@ -181,9 +181,7 @@ def wt_assert_supported_spaces_list_is_empty(selenium, browser_id, onepanel):
     count = onepanel(selenium[browser_id]).content.spaces.spaces.count()
     assert (
         count == 0
-    ), "There is(are) {} supported spaces instead of expected none".format(
-        count
-    )
+    ), f"There is(are) {count} supported spaces instead of expected none"
 
 
 @wt(
@@ -327,10 +325,8 @@ def wt_assert_proper_space_configuration_in_panel(
     for attr, val in yaml.load(conf, yaml.Loader).items():
         displayed_val = displayed_conf[attr]
         assert str(val).lower() == displayed_val.lower(), (
-            "Displayed {} as {} instead of expected {} in {} strategy of "
-            '"{}" configuration'.format(
-                displayed_val, attr, val, sync_type, space_name
-            )
+            f"Displayed {displayed_val} as {attr} instead of expected {val} in"
+            f' {sync_type} strategy of "{space_name}" configuration'
         )
 
 
@@ -533,7 +529,7 @@ def are_nav_tabs_for_space_displayed(
     for tab in parse_seq(tab_list):
         assert (
             getattr(nav, transform(tab, strip_char='"')) is not None
-        ), "no navigation tab {} found".format(tab)
+        ), f"no navigation tab {tab} found"
 
 
 @wt(
@@ -574,8 +570,7 @@ def cannot_click_on_navigation_tab_in_space(
         getattr(nav, tab).click()
     except RuntimeError:
         return
-    else:
-        raise RuntimeError("can click on {}".format(tab_name))
+    raise RuntimeError(f"can click on {tab_name}")
 
 
 @wt(
@@ -588,7 +583,7 @@ def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
     driver = selenium[browser_id]
     option = option.replace("-", "_")
     tab = getattr(onepanel(driver).content.spaces.space, option)
-    toggle = "enable_{}".format(option)
+    toggle = f"enable_{option}"
     getattr(tab, toggle).check()
 
 
@@ -617,7 +612,7 @@ def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
 def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    for i in range(20):
+    for _ in range(20):
         time.sleep(0.2)
         if tab.selective_cleaning_form[rule].value_limit != option:
             tab.selective_cleaning_form[rule].dropdown_button()
@@ -637,7 +632,7 @@ def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_change_quota_button(selenium, browser_id, quota, onepanel):
-    button = "click_rename_{}_quota_button".format(quota)
+    button = f"click_rename_{quota}_quota_button"
     driver = selenium[browser_id]
     getattr(onepanel(driver).content.spaces.space.auto_cleaning, button)(driver)
 
@@ -650,7 +645,7 @@ def click_change_quota_button(selenium, browser_id, quota, onepanel):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
-    quota = "{}_quota".format(quota)
+    quota = f"{quota}_quota"
     driver = selenium[browser_id]
     _enter_text(
         getattr(
@@ -668,7 +663,7 @@ def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_quota_value_change(selenium, browser_id, quota, onepanel):
-    quota = "{}_quota".format(quota)
+    quota = f"{quota}_quota"
     driver = selenium[browser_id]
     getattr(
         onepanel(driver).content.spaces.space.auto_cleaning, quota
@@ -705,7 +700,7 @@ def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     ).content.spaces.space.auto_cleaning.cleaning_reports
     for cleaning_report in cleaning_reports:
         released_size = re.match(
-            r"((\d+) (MiB|B)) " r"\(out of (\d*\.\d+|\d+) MiB\)",
+            r"((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)",
             cleaning_report.released_size.text,
         ).group(1)
         if released_size == size:
@@ -750,5 +745,5 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     assert onepanel(
         driver
     ).content.spaces.space.sync_chart.start_scan_is_green(), (
-        f'Scanning did not finish correctly, "Start scan" button is not green'
+        'Scanning did not finish correctly, "Start scan" button is not green'
     )

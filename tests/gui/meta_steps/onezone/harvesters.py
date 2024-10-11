@@ -8,6 +8,7 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
 from tests.gui.steps.onezone.harvesters.configuration import (
@@ -23,7 +24,6 @@ from tests.gui.steps.onezone.harvesters.discovery import (
     click_button_on_discovery_on_left_sidebar_menu,
     click_create_button_in_discovery_page,
     click_on_option_in_harvester_menu,
-    click_on_option_of_harvester_on_left_sidebar_menu,
     click_option_in_discovery_page_menu,
     click_remove_space_option_in_menu_in_discover_spaces_page,
     confirm_harvester_rename_using_button,
@@ -41,11 +41,20 @@ from tests.gui.steps.onezone.harvesters.indices import (
     type_index_name_to_input_field_in_indices_page,
     uncheck_toggles_on_create_index_page,
 )
-from tests.gui.steps.onezone.members import *
+from tests.gui.steps.onezone.members import (
+    click_element_in_members_list,
+    click_on_option_in_members_list_menu,
+    click_on_option_of_harvester_on_left_sidebar_menu,
+    copy_token_from_modal,
+    try_setting_privileges_in_members_subpage,
+    wt_wait_for_modal_to_appear,
+)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -54,7 +63,9 @@ from tests.gui.steps.onezone.spaces import (
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
+def remove_space_from_harvester(
+    selenium, browser_id, oz_page, space_name, modals
+):
     button = "Remove"
     modal = "Remove space from harvester"
 
@@ -72,7 +83,7 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_given_harvester(
-    selenium, browser_id, oz_page, space_name, harvester_name
+    selenium, browser_id, oz_page, space_name, harvester_name, modals
 ):
     button = "Remove"
     modal = "Remove space from harvester"
@@ -94,7 +105,7 @@ def remove_space_from_given_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_harvester(selenium, browser_id, oz_page, harvester_name):
+def remove_harvester(selenium, browser_id, oz_page, harvester_name, modals):
     where = "Discovery"
     list_type = "harvesters"
     option = "Remove"
@@ -166,6 +177,7 @@ def join_space_to_harvester(
     harvester_name,
     tmp_memory,
     popups,
+    modals,
 ):
     option = "Spaces"
     option2 = "Discovery"
@@ -216,6 +228,7 @@ def add_group_to_harvester(
     onepanel,
     popups,
     tmp_memory,
+    modals,
 ):
     option = "Members"
     button = "Add one of your groups"
@@ -288,6 +301,7 @@ def send_invitation_token(
     clipboard,
     onepanel,
     popups,
+    modals,
 ):
     where = "Discovery"
     list_type = "harvester"

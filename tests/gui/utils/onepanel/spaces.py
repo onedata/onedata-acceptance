@@ -135,7 +135,7 @@ class SyncChart(PageObject):
 
     @staticmethod
     def _get_chart_bar_values(bars):
-        return sum(int(bar.get_attribute("ct:value")) for bar in bars)
+        return sum(int(data.get_attribute("ct:value")) for data in bars)
 
 
 class FilePopularity(PageObject):

@@ -24,7 +24,7 @@ class URLTypeSelector(PageObject):
     public_rest_endpoint = Button(".option-rest-link")
 
 
-class PublicShareView(object):
+class PublicShareView:
     share_name = Label(".share-name")
     link_type_selector = Button(".url-type-selector-trigger")
     url_type_popup = WebItem(

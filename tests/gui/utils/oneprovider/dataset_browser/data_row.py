@@ -11,13 +11,12 @@ __license__ = (
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
-class DataRow(PageObject, BrowserRow):
+class DataRow(BrowserRow):
     name = id = Label(".file-name-inner")
     number_of_archives = WebElement(".fb-table-col-archives .file-item-text")
     menu_button = Button(".fb-table-col-actions-menu .menu-toggle")
@@ -44,5 +43,4 @@ class DataRow(PageObject, BrowserRow):
             getattr(self, f"{transform(name)}_tag")
         except RuntimeError:
             return False
-        else:
-            return True
+        return True

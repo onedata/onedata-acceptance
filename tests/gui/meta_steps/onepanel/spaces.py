@@ -8,15 +8,47 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+import time
+
+import yaml
 from tests import OP_REST_PORT
-from tests.gui.steps.common.notifies import *
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
-from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.onepanel.spaces import (
+    click_change_quota_button,
+    click_on_navigation_tab_in_space,
+    confirm_quota_value_change,
+    remove_space_instead_of_revoke,
+    toggle_in_storage_import_configuration_is_enabled,
+    type_value_to_quota_input,
+    wt_assert_existence_of_space_support_record,
+    wt_assert_proper_space_configuration_in_panel,
+    wt_click_on_btn_in_space_support_form,
+    wt_click_on_support_space_btn_on_condition,
+    wt_clicks_on_btn_in_cease_support_modal,
+    wt_clicks_on_btn_in_space_toolbar_in_panel,
+    wt_clicks_on_button_in_space_record,
+    wt_clicks_on_option_in_spaces_page,
+    wt_clicks_on_understand_risk_in_cease_support_modal,
+    wt_copy_space_id_in_spaces_page_in_onepanel,
+    wt_disable_option_box_in_space_support_form,
+    wt_enable_option_box_in_space_support_form,
+    wt_expands_toolbar_icon_for_space_in_onepanel,
+    wt_open_space_item_in_spaces_page_op_panel,
+    wt_select_mode_in_space_support_form,
+    wt_select_storage_in_support_space_form,
+    wt_select_unit_in_space_support_form,
+    wt_type_received_token_to_support_token_field,
+    wt_type_text_to_input_box_in_space_support_form,
+    wt_type_text_to_input_box_in_storage_import_configuration,
+)
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.utils.bdd_utils import given
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -24,7 +56,7 @@ from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
         'user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
         'in "(?P<provider_name>.+?)" Oneprovider panel service '
         "with following configuration:\n"
-        "(?P<config>(.|\s)*)"
+        r"(?P<config>(.|\s)*)"
     )
 )
 def support_space_in_op_panel_using_gui(
@@ -214,9 +246,6 @@ def revoke_space_support_in_op_panel_using_gui(
     sidebar = "Clusters"
     sub_item = "Spaces"
     option = "Revoke space support"
-    button = "Cease support"
-    notify_type = "info"
-    notify_text_regexp = "Ceased.*[Ss]upport.*"
 
     wt_click_on_subitem_for_item(
         selenium, user, sidebar, sub_item, provider_name, onepanel, hosts
@@ -227,6 +256,9 @@ def revoke_space_support_in_op_panel_using_gui(
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
 
     # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
+    # button = "Cease support"
+    # notify_type = "info"
+    # notify_text_regexp = "Ceased.*[Ss]upport.*"
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
     # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
@@ -318,7 +350,7 @@ def revoke_all_space_supports(
 
 
 def _revoke_all_space_supports_using_rest(
-    selenium, hosts, users, provider_host
+    _selenium, hosts, users, provider_host
 ):
     user = "onepanel"
 

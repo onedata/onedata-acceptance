@@ -24,7 +24,7 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
-class FilesLog(PageObject, BrowserRow):
+class FilesLog(BrowserRow):
     name = id = Label(".file-name")
     event = Label(".message-text")
     clickable_field = WebElement(".file-name")

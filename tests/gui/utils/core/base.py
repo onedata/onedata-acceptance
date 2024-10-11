@@ -1,6 +1,6 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 
 from tests.gui.utils.generic import click_on_web_elem
 
@@ -11,7 +11,7 @@ __license__ = (
 )
 
 
-class AbstractWebElement(object):
+class AbstractWebElement(ABC):
     __metaclass__ = ABCMeta
 
     def __init__(self, css_sel, name=""):
@@ -29,14 +29,14 @@ class AbstractWebElement(object):
         pass
 
 
-class AbstractWebItem(AbstractWebElement):
+class AbstractWebItem(AbstractWebElement, ABC):
     __metaclass__ = ABCMeta
 
     def __init__(self, *args, **kwargs):
         self.cls = kwargs.pop("cls", None)
         if self.cls is None:
             raise ValueError("cls not specified")
-        super(AbstractWebItem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PageObjectMeta(ABCMeta):
@@ -47,7 +47,7 @@ class PageObjectMeta(ABCMeta):
         super(PageObjectMeta, cls).__init__(cls_name, bases, cls_dict)
 
 
-class AbstractPageObject(object):
+class AbstractPageObject:
     __metaclass__ = PageObjectMeta
 
     def __init__(self, driver, web_elem, parent=None, name=""):
@@ -64,7 +64,7 @@ class AbstractPageObject(object):
 
 class PageObject(AbstractPageObject):
     def __init__(self, driver, web_elem, parent=None, **kwargs):
-        super(PageObject, self).__init__(driver, web_elem, parent, **kwargs)
+        super().__init__(driver, web_elem, parent, **kwargs)
         if not hasattr(self, "_click_area"):
             self._click_area = web_elem
 
@@ -81,16 +81,16 @@ class PageObject(AbstractPageObject):
         click_on_web_elem(
             self.driver,
             self._click_area,
-            lambda: "cannot click on {}".format(self),
+            lambda: f"cannot click on {self}",
         )
 
 
-class ExpandableMixin(object):
+class ExpandableMixin:
     __slots__ = ()
 
     def is_expanded(self):
         aria_expanded = self._toggle.get_attribute("aria-expanded")
-        return True if (aria_expanded and "true" == aria_expanded) else False
+        return bool(aria_expanded and "true" == aria_expanded)
 
     def expand(self):
         if not self.is_expanded():
@@ -104,5 +104,5 @@ class ExpandableMixin(object):
         click_on_web_elem(
             self.driver,
             self._toggle,
-            lambda: "cannot click on toggle for {}".format(self),
+            lambda: f"cannot click on toggle for {self}",
         )

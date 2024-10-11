@@ -18,7 +18,7 @@ class OZPanel(PageObject, ExpandableMixin):
     _toggle = WebElement("a.main-accordion-toggle")
 
     def __str__(self):
-        return "{} panel in {}".format(self.name, self.parent)
+        return f"{self.name} panel in {self.parent}"
 
 
 class EditBox(PageObject):

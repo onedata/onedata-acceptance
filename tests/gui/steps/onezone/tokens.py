@@ -97,8 +97,7 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
             if "clickable" in button_clean.web_elem.get_attribute("class"):
                 button_clean.click()
                 return
-            else:
-                time.sleep(0.1)
+            time.sleep(0.1)
         raise RuntimeError(f"did not menage to click {button} button")
     else:
         sidebar = oz_page(driver)["tokens"].sidebar
@@ -255,7 +254,7 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_token_filter(
+def choose_invite_token_filter(
     selenium, browser_id, token_filter, filter_type, oz_page, hosts
 ):
     invite_filter = oz_page(selenium[browser_id])[
@@ -281,7 +280,7 @@ def choose_token_filter(
 def assert_all_tokens_are_type(selenium, browser_id, token_type, oz_page):
     tokens = oz_page(selenium[browser_id])["tokens"].sidebar.tokens
     assert all(
-        [token.is_type_of(token_type) for token in tokens]
+        token.is_type_of(token_type) for token in tokens
     ), f"Not all visible tokens are type of {token_type}"
 
 
@@ -348,9 +347,7 @@ def click_save_button_on_tokens_page(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def append_token_name_in_sidebar(
-    selenium, browser_id, text, token_name, oz_page
-):
+def append_token_name_in_sidebar(selenium, browser_id, text, oz_page):
     driver = selenium[browser_id]
     input_box = oz_page(driver)["tokens"].sidebar.name_input
     oz_page(driver)["tokens"].sidebar.name_input = input_box + text
@@ -362,7 +359,7 @@ def append_token_name_in_sidebar(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_token_changes_in_sidebar(selenium, browser_id, token_name, oz_page):
+def confirm_token_changes_in_sidebar(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)["tokens"].sidebar.confirm()
 

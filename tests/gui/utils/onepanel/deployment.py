@@ -14,7 +14,6 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     NamedButton,
-    WebElement,
     WebItem,
     WebItemsSequence,
 )
@@ -124,4 +123,4 @@ class Deployment(PageObject):
     laststep = WebItem(_deployment_step_css, cls=LastStep)
 
     def __str__(self):
-        return "{} deployment step in {}".format(self.title, self.parent)
+        return f"{self.title} deployment step in {self.parent}"

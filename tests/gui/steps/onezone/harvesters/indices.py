@@ -84,7 +84,7 @@ def assert_index_has_appeared_in_indices_page(
 ):
     driver = selenium[browser_id]
     indices_list = oz_page(driver)["discovery"].indices_page.indices_list
-    assert index_name in indices_list, 'index "{}" not found'.format(index_name)
+    assert index_name in indices_list, f'index "{index_name}" not found'
 
 
 @wt(
@@ -152,8 +152,8 @@ def uncheck_toggles_on_create_index_page(
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
     indices_page = oz_page(driver)["discovery"].indices_page
-    for toggles_group in CREATE_INDEX_TOGGLES:
-        for toggle in CREATE_INDEX_TOGGLES[toggles_group]:
+    for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
+        for toggle in toggle_group_types:
             if toggle not in stay_checked:
                 if toggles_group == "rejection_toggles":
                     getattr(indices_page, toggle).click()
@@ -318,7 +318,6 @@ def assert_info_on_data_discovery_page(
 def set_key(text):
     if text == "rejected":
         return "__rejected"
-    elif text == "archives description":
+    if text == "archives description":
         return "archiveDescription"
-    else:
-        return "fileName"
+    return "fileName"

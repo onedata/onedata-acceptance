@@ -11,6 +11,7 @@ __license__ = (
 import time
 
 import yaml
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
 )
@@ -24,7 +25,37 @@ from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.onezone.tokens import *
+from tests.gui.steps.onezone.tokens import (
+    assert_alert_on_tokens_page,
+    assert_invite_target,
+    assert_invite_type,
+    assert_token_name,
+    assert_token_revoked,
+    assert_token_type,
+    assert_token_usage_count_value,
+    choose_invite_select,
+    choose_invite_type_in_oz_token_page,
+    choose_token_template,
+    choose_token_type_to_create,
+    click_copy_button_in_token_view,
+    click_create_custom_token,
+    click_create_token_button_in_create_token_page,
+    click_menu_button_of_tokens_page,
+    click_on_button_in_tokens_sidebar,
+    click_on_confirm_button_on_tokens_page,
+    click_on_token_on_tokens_list,
+    click_option_for_token_row_menu,
+    click_option_in_token_page_menu,
+    click_save_button_on_tokens_page,
+    get_caveat_by_name,
+    get_privileges_tree,
+    select_member_from_dropdown,
+    select_token_usage_limit,
+    show_inactive_caveats,
+    switch_toggle_to_change_token,
+    type_new_token_name,
+    wt_click_on_btn_for_oz_token,
+)
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -805,7 +836,7 @@ def create_token_with_basic_template(
         "set for object which ID was copied to clipboard"
     )
 )
-def create_token_with_object_id(
+def create_token_with_copied_object_id(
     displays,
     clipboard,
     user,

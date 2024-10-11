@@ -9,6 +9,7 @@ __license__ = (
 
 from contextlib import contextmanager
 from functools import partial
+from platform import system as get_system
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -63,15 +64,14 @@ class _FileBrowser(PageObject):
     )
 
     def __str__(self):
-        return "file browser in {}".format(self.parent)
+        return f"file browser in {self.parent}"
 
     def is_empty(self):
         try:
             self._empty_dir_icon
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
     def scroll_visible_fragment(self):
         self.driver.execute_script(
@@ -98,8 +98,6 @@ class _FileBrowser(PageObject):
 
     @contextmanager
     def select_files(self):
-        from platform import system as get_system
-
         ctrl_or_cmd_key = (
             Keys.COMMAND if get_system() == "Darwin" else Keys.LEFT_CONTROL
         )

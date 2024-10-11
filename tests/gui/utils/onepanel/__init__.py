@@ -29,7 +29,7 @@ class Sidebar(PageObject):
     clusters = WebItem(".one-sidebar", cls=ClustersSidebar)
 
     def __str__(self):
-        return "{} sidebar in {}".format(self.title, self.parent)
+        return f"{self.title} sidebar in {self.parent}"
 
 
 class Content(BaseContent):

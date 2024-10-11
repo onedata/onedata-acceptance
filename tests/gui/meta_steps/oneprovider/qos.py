@@ -6,8 +6,10 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
+    click_modal_button,
     click_panel_button,
     write_name_into_text_field_in_panel,
 )
@@ -22,7 +24,6 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.qos import (
     click_enter_as_text_link,
     confirm_entering_text,
@@ -31,6 +32,8 @@ from tests.gui.steps.oneprovider.qos import (
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def _add_qos_requirement_in_modal(
@@ -177,7 +180,7 @@ def add_id_qos_requirement_in_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} creates "anyStorage \ storageId=" QoS '
+        'user of {browser_id} creates "anyStorage \\ storageId=" QoS '
         "requirement and pastes storage id from clipboard for "
         '"{item_name}" from file browser'
     )
@@ -192,7 +195,7 @@ def add_no_id_qos_requirement_in_modal(
     clipboard,
     displays,
 ):
-    expression = "anyStorage \ storageId=" + clipboard.paste(
+    expression = r"anyStorage \ storageId=" + clipboard.paste(
         display=displays[browser_id]
     )
     replicas_number = 1

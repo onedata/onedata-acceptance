@@ -7,11 +7,10 @@ __license__ = (
 )
 
 from selenium.webdriver.common.by import By
+from tests.gui.utils.core import scroll_to_css_selector_bottom
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItem
-
-from ... import PublicShareView
-from ...core import scroll_to_css_selector_bottom
-from ...core.base import PageObject
+from tests.gui.utils.oneprovider.shares.public_share import PublicShareView
 
 
 class DublinCoreMetadata(PageObject):
@@ -35,7 +34,7 @@ class DublinCoreMetadata(PageObject):
                 button.click()
                 break
         else:
-            raise Exception(
+            raise RuntimeError(
                 f'{button_name} was not found in "Dublin Core Metadata" form'
             )
 

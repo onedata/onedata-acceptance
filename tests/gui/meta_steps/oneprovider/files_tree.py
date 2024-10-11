@@ -7,6 +7,7 @@ __license__ = (
 )
 
 
+import yaml
 from tests.gui.steps.oneprovider.browser import (
     assert_num_of_files_are_displayed_in_browser,
     assert_only_expected_items_presence_in_browser,
@@ -17,8 +18,9 @@ from tests.gui.steps.oneprovider.data_tab import (
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
 )
-from tests.gui.steps.oneprovider.file_browser import *
+from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
+from tests.utils.bdd_utils import parsers, wt
 
 
 def build_tree_config(data):

@@ -6,6 +6,9 @@ __license__ = (
     "This software is released under the MIT license cited in LICENSE.txt"
 )
 
+import time
+
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
     open_modal_for_file_browser_item,
@@ -17,12 +20,27 @@ from tests.gui.steps.modals.details_modal import (
 )
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
+    click_modal_button,
     click_panel_button,
 )
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser,
 )
-from tests.gui.steps.oneprovider.metadata import *
+from tests.gui.steps.oneprovider.metadata import (
+    assert_no_basic_metadata_for_item,
+    assert_textarea_contains_record,
+    assert_textarea_is_empty_for_metadata,
+    assert_textarea_not_contain_record,
+    assert_there_is_no_such_meta_record,
+    assert_there_is_such_basic_meta_record,
+    clean_tab_textarea_in_metadata_modal,
+    click_on_del_metadata_record_button,
+    type_text_to_attr_input_in_new_basic_entry,
+    type_text_to_metadata_textarea,
+    type_text_to_val_of_attr_in_new_basic_entry,
+)
+from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -44,8 +62,7 @@ def add_basic_entry(selenium, browser_id, modals, key_name, value):
 def get_modal_name_from_item_name(item_name):
     if "file" in item_name:
         return "File details"
-    else:
-        return "Directory details"
+    return "Directory details"
 
 
 @wt(

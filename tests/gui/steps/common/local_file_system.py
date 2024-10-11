@@ -14,6 +14,7 @@ import subprocess
 
 import requests
 import yaml
+from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
@@ -81,7 +82,7 @@ def _mkdirs(cwd, dir_content=None):
                 _mkfile(cwd.join(item), content)
     else:
         for i in range(files_num):
-            _mkfile(cwd.join("file{}.txt".format(i)))
+            _mkfile(cwd.join(f"file{i}.txt"))
 
 
 def specify_size(size_string):
@@ -116,8 +117,9 @@ def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
     home_dir = tmpdir.join(browser_id)
     os.makedirs(home_dir, exist_ok=True)
 
-    r = requests.get(file_url, allow_redirects=True)
-    open(home_dir.join(file_name), "wb").write(r.content)
+    r = requests.get(file_url, allow_redirects=True, timeout=REQUEST_TIMEOUT)
+    with open(home_dir.join(file_name), "wb") as f:
+        f.write(r.content)
 
 
 @given(

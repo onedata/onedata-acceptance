@@ -266,9 +266,8 @@ class DataPage(GenericPage):
 
     def choose_space(self, name):
         for space in self.elements_list:
-            if space.name == name or space.name == "":
+            if space.name in (name, ""):
                 space.click()
                 if space.name == name:
                     return
-        else:
-            raise RuntimeError(f"{name} space not found")
+        raise RuntimeError(f"{name} space not found")

@@ -11,7 +11,7 @@ __license__ = (
 import yaml
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -103,7 +103,7 @@ def assert_name_label_of_space_on_overview_page(
     driver = selenium[browser_id]
     assert (
         oz_page(driver)["data"].overview_page.space_name == space_name
-    ), 'space "{}" not found on overview page'.format(space_name)
+    ), f'space "{space_name}" not found on overview page'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

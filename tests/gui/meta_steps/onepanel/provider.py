@@ -9,21 +9,33 @@ __license__ = (
 )
 
 
+import time
+
 import yaml
-from tests.gui.steps.common.miscellaneous import *
-from tests.gui.steps.common.notifies import *
-from tests.gui.steps.common.url import *
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.common import (
     wt_click_on_btn_in_content,
     wt_click_on_subitem_for_item,
     wt_click_on_subitem_for_item_with_name,
 )
-from tests.gui.steps.onepanel.deployment import *
-from tests.gui.steps.onepanel.provider import *
-from tests.gui.steps.onepanel.provider import (
-    wt_click_on_discard_btn_in_domain_change_modal,
+from tests.gui.steps.onepanel.deployment import (
+    wt_click_on_btn_in_deployment_step,
+    wt_click_proceed_button_in_step2,
+    wt_type_property_to_in_box_in_deployment_step,
+    wt_type_registration_token_in_step2,
+    wt_type_text_to_in_box_in_deployment_step,
 )
-from tests.utils.bdd_utils import given
+from tests.gui.steps.onepanel.provider import (
+    deactivate_request_subdomain_toggle,
+    wt_assert_value_of_provider_attribute,
+    wt_click_on_discard_btn_in_domain_change_modal,
+    wt_save_changes_in_modify_provider_detail_form,
+    wt_type_val_to_in_box_in_provider_details_form,
+)
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
@@ -33,9 +45,9 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     provider_name,
     new_provider_name,
     new_domain,
-    panel_login_page,
-    users,
-    hosts,
+    _panel_login_page,
+    _users,
+    _hosts,
     browser_id,
     modals,
 ):

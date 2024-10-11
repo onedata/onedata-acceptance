@@ -47,8 +47,7 @@ class Index(PageObject):
             self.used_by_gui_tag
         except RuntimeError:
             return False
-        else:
-            return True
+        return True
 
 
 class IncludeMetadata(PageObject):

@@ -31,7 +31,6 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -52,8 +51,7 @@ def _find_members_page(onepanel, oz_page, driver, where):
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return onepanel(driver).content.members
-    else:
-        return oz_page(driver)[tab_name].members_page
+    return oz_page(driver)[tab_name].members_page
 
 
 def _change_membership_to_name(membership_type, subject_type):
@@ -72,8 +70,7 @@ def get_privilege_tree(
     for _ in range(40):
         if "active" in elem.web_elem.get_attribute("class"):
             break
-        else:
-            time.sleep(0.1)
+        time.sleep(0.1)
     else:
         assert "active" in elem.web_elem.get_attribute(
             "class"
@@ -104,18 +101,17 @@ def assert_element_is_member_of_parent_in_memberships(
     where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
 
-    def fun(record, member_index):
+    def fun(_record, member_index):
         if member_type != "user":
             return True
-        elif member_index == 0:
+        if member_index == 0:
             return True
         return False
 
     if not search_for_members(driver, records, member_name, parent_name, fun):
         raise RuntimeError(
-            'not found "{}" {} as a member of "{}" {}'.format(
-                member_name, member_type, parent_name, parent_type
-            )
+            f'not found "{member_name}" {member_type} as a member of'
+            f' "{parent_name}" {parent_type}'
         )
 
 
@@ -142,18 +138,16 @@ def assert_element_is_not_member_of_parent_in_memberships(
     where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
 
-    def fun(record, member_index):
+    def fun(_record, member_index):
         if member_type != "user":
             raise RuntimeError(
-                'found "{}" {} as a member of "{}" {}'.format(
-                    member_name, member_type, parent_name, parent_type
-                )
+                f'found "{member_name}" {member_type} as a member of'
+                f' "{parent_name}" {parent_type}'
             )
-        elif member_index == 0:
+        if member_index == 0:
             raise RuntimeError(
-                'found "{}" {} as a member of "{}" {}'.format(
-                    member_name, member_type, parent_name, parent_type
-                )
+                f'found "{member_name}" {member_type} as a member of'
+                f' "{parent_name}" {parent_type}'
             )
         return False
 
@@ -175,7 +169,7 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
 
     assert count_records == int(
         number
-    ), "found {} membership rows instead of {}".format(number, count_records)
+    ), f"found {number} membership rows instead of {count_records}"
 
 
 @wt(
@@ -224,7 +218,7 @@ def assert_all_members_number_in_space_members_tile(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<number>\d+) "
+        r"user of (?P<browser_id>.*) sees (?P<number>\d+) "
         "(?P<membership_type>direct|effective) "
         "(?P<subject_type>groups?|users?) in space members tile"
     )
@@ -364,23 +358,24 @@ def click_on_option_in_members_list_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_area_appeared(selenium, browser_id, who, tmp_memory):
-    modal_name = "invite {} using token".format(who)
+    modal_name = f"invite {who} using token"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in token area"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_generated_token_is_present(selenium, browser_id):
+def assert_generated_token_is_present(selenium, browser_id, modals):
     try:
         text = modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
-    except RuntimeError:
-        raise RuntimeError("No token area found on page")
+    except RuntimeError as exc:
+        raise RuntimeError("No token area found on page") from exc
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium, browser_id):
+    modals = selenium["request"].getfixturevalue("modals")
     modals(selenium[browser_id]).invite_using_token.copy()
 
 
@@ -401,11 +396,9 @@ def assert_element_is_groups_child(
     try:
         page.members_page.groups.items[child]
     except RuntimeError:
-        assert option == "does not see", '"{}" is not "{}" child'.format(
-            child, parent
-        )
+        assert option == "does not see", f'"{child}" is not "{parent}" child'
     else:
-        assert option == "sees", '"{}" is "{}" child'.format(child, parent)
+        assert option == "sees", f'"{child}" is "{parent}" child'
 
 
 @wt(
@@ -432,21 +425,24 @@ def assert_member_is_in_parent_members_list(
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, parent_type)
 
-    try:
+    if option == "sees":
+        err_msg = (
+            f'{member_type} "{member_name}" not found on'
+            f' {parent_type} "{parent_name}" members list'
+        )
         if member_type == "user":
-            page.users.items[member_name]
+            assert page.users.items[member_name].is_displated(), err_msg
         else:
-            page.groups.items[member_name]
-    except RuntimeError:
-        assert (
-            option == "does not see"
-        ), '{} "{}" not found on {} "{}" members list'.format(
-            member_type, member_name, parent_type, parent_name
-        )
+            assert page.groups.items[member_name].is_displated(), err_msg
     else:
-        assert option == "sees", '{} "{}" found on {} "{}" members list'.format(
-            member_type, member_name, parent_type, parent_name
+        err_msg = (
+            f'{member_type} "{member_name}" found on'
+            f' {parent_type} "{parent_name}" members list'
         )
+        if member_type == "user":
+            assert not page.users.items[member_name].is_displated(), err_msg
+        else:
+            assert not page.groups.items[member_name].is_displated(), err_msg
 
 
 @wt(
@@ -469,15 +465,11 @@ def check_user_in_space_members_list(
     except RuntimeError:
         assert (
             option == "does not see"
-        ), 'user "{}" not found on "{}" space members list'.format(
-            username, space_name
-        )
+        ), f'user "{username}" not found on "{space_name}" space members list'
     else:
         assert (
             option == "sees"
-        ), 'user "{}" found on "{}" space members list'.format(
-            username, space_name
-        )
+        ), f'user "{username}" found on "{space_name}" space members list'
 
 
 @wt(
@@ -501,6 +493,7 @@ def remove_member_from_parent(
     popups,
 ):
     driver = selenium[browser_id]
+    modals = selenium["request"].getfixturevalue("modals")
     if where != "cluster":
         main_page = oz_page(selenium[browser_id]).get_page_and_click(
             _change_to_tab_name(where)
@@ -540,7 +533,7 @@ def remove_member_from_parent(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_option_on_members_page(
-    selenium, browser_id, option, oz_page, popups, tmp_memory, username
+    selenium, browser_id, option, oz_page, popups, username
 ):
     driver = selenium[browser_id]
 
@@ -627,14 +620,14 @@ def assert_user_not_in_cluster_members_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_invitation_token(
-    selenium, browser_id, group, who, oz_page, tmp_memory, popups
+    selenium, browser_id, group, who, oz_page, tmp_memory, popups, modals
 ):
     driver = selenium[browser_id]
     page = oz_page(driver).get_page_and_click("groups")
     page.elements_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
-    button = "Invite {} using token".format(who)
+    button = f"Invite {who} using token"
 
     popups(driver).menu_popup_with_text.menu[button].click()
 
@@ -813,7 +806,7 @@ def set_privileges_in_members_subpage_on_modal(
         "(?P<option>effective |)privileges of "
         '"(?P<member_name>.*)" (?P<member_type>user|group) '
         "in (?P<where>space|group|harvester|automation|cluster) "
-        "members subpage:\n(?P<config>(.|\s)*)"
+        r"members subpage:\n(?P<config>(.|\s)*)"
     )
 )
 def assert_privileges_in_members_subpage(
@@ -832,7 +825,7 @@ def assert_privileges_in_members_subpage(
     tree = get_privilege_tree(
         selenium, browser_id, onepanel, oz_page, where, member_type, member_name
     )
-    is_direct_privileges = False if option == "effective " else True
+    is_direct_privileges = option != "effective "
     # wait for set privileges to be visible in gui
     try:
         tree.assert_privileges(
@@ -851,7 +844,7 @@ def assert_privileges_in_members_subpage(
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*) sees following privileges on modal:"
-        "\n(?P<config>(.|\s)*)"
+        r"\n(?P<config>(.|\s)*)"
     )
 )
 def assert_privileges_in_members_subpage_on_modal(
@@ -961,7 +954,7 @@ def see_insufficient_permissions_alert_for_member(
     forbidden_alert = members_list.items[member_name].forbidden_alert.text
     assert (
         alert_text in forbidden_alert
-    ), 'alert with text "{}" not found'.format(alert_text)
+    ), f'alert with text "{alert_text}" not found'
 
 
 @wt(
@@ -1021,20 +1014,20 @@ def check_element_in_members_subpage(
         try:
             err_msg = f"{member_name} {member_type} not found"
             assert member_name in member_list, err_msg
-        except RuntimeError:
-            raise AssertionError(err_msg)
+        except RuntimeError as exc:
+            raise AssertionError(err_msg) from exc
     else:
         try:
             assert (
                 member_name not in member_list
             ), f"{member_name} {member_type}"
         except RuntimeError:
-            return True
+            pass
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees (?P<number>\d+) "
+        r"user of (?P<browser_id>.*) sees (?P<number>\d+) "
         "(?P<member_type>user|group)s? in "
         "(?P<where>space|group|cluster|harvester) members subpage"
     )
