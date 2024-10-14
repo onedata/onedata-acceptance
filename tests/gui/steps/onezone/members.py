@@ -431,18 +431,18 @@ def assert_member_is_in_parent_members_list(
             f' {parent_type} "{parent_name}" members list'
         )
         if member_type == "user":
-            assert page.users.items[member_name].is_displated(), err_msg
+            assert page.users.items[member_name].is_displayed(), err_msg
         else:
-            assert page.groups.items[member_name].is_displated(), err_msg
+            assert page.groups.items[member_name].is_displayed(), err_msg
     else:
         err_msg = (
             f'{member_type} "{member_name}" found on'
             f' {parent_type} "{parent_name}" members list'
         )
         if member_type == "user":
-            assert not page.users.items[member_name].is_displated(), err_msg
+            assert not page.users.items[member_name].is_displayed(), err_msg
         else:
-            assert not page.groups.items[member_name].is_displated(), err_msg
+            assert not page.groups.items[member_name].is_displayed(), err_msg
 
 
 @wt(

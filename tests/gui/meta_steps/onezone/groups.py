@@ -78,7 +78,7 @@ def rename_group(
 def leave_group(selenium, browser_id, group, oz_page, popups):
     option = "Leave"
     modal = "LEAVE GROUP"
-    modals = selenium["request"].getfixturename("modals")
+    modals = selenium["request"].getfixturevalue("modals")
 
     click_on_group_menu_button(
         selenium, browser_id, option, group, oz_page, popups

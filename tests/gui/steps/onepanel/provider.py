@@ -74,7 +74,7 @@ def wt_type_val_to_in_box_in_provider_details_form(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) types (?P<property>name|"
+        "user of (?P<browser_id>.*?) types (?P<host_property>name|"
         'hostname) of "(?P<host>.*?)" provider to '
         "(?P<attr>Provider name|Domain) input box in modify provider"
         " details form in Provider panel"

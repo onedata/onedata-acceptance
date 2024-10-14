@@ -105,7 +105,7 @@ def wt_type_second_host_to_in_box_in_deployment_step(
 @wt(
     parsers.re(
         "user of (?P<browser_id>.+?) types "
-        '(?P<property>name|hostname) of "(?P<alias>.+?)" '
+        '(?P<name_property>name|hostname) of "(?P<alias>.+?)" '
         "(zone|provider) to (?P<input_box>.+?) field in "
         "(?P<step>step 1|step 2) of deployment "
         "process in Onepanel"

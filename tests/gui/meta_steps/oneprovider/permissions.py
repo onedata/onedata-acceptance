@@ -408,7 +408,7 @@ def read_items_acl(
     parsers.re(
         r"user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space "
         r'"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
-        "(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record"
+        "(?P<acl_type>.*?) (?P<name>.*) in (?P<num>.*) ACL record"
     )
 )
 def assert_ace_in_op_gui(

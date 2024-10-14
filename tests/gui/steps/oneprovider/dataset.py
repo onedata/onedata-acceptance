@@ -179,7 +179,7 @@ def assert_one_of_two_dataset_has_deleted_root(browser_id, tmp_memory, name):
     for dataset in browser.data:
         if dataset.name == name:
             try:
-                if dataset.deleted_root_file_icon.is_visible():
+                if dataset.deleted_root_file_icon.is_displayed():
                     number_of_deleted_icon += 1
             except RuntimeError:
                 pass
