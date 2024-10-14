@@ -4,25 +4,28 @@ using REST API.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = ("This software is released under the MIT license cited in "
-               "LICENSE.txt")
+__license__ = (
+    "This software is released under the MIT license cited in LICENSE.txt"
+)
 
 
-from tests.mixed.utils.common import *
 from onepanel_client import OnepanelApi, UserModifyRequest
+from tests.mixed.utils.common import login_to_panel
 
 
-def change_user_password_in_oz_panel_using_rest(user, new_password, zone_host,
-                                                users, hosts):
-    user_client = login_to_panel(user, users[user].password,
-                                 hosts[zone_host]['hostname'])
+def change_user_password_in_oz_panel_using_rest(
+    user, new_password, zone_host, users, hosts
+):
+    user_client = login_to_panel(
+        user, users[user].password, hosts[zone_host]["hostname"]
+    )
     onepanel_api = OnepanelApi(user_client)
     user_mod_rq = UserModifyRequest(users[user].password, new_password)
     onepanel_api.modify_user(user, user_mod_rq)
 
 
 def login_to_oz_panel_using_new_password_rest(user, password, hosts, zone_host):
-    client = login_to_panel(user, password, hosts[zone_host]['hostname'])
+    client = login_to_panel(user, password, hosts[zone_host]["hostname"])
 
     # to confirm that new credentials are correct we have to perform some
     # operation
