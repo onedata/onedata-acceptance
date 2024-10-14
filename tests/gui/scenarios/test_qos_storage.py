@@ -37,9 +37,9 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onepanel.storages import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
-from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.metadata import *

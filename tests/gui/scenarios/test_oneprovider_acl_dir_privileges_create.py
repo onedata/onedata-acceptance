@@ -28,13 +28,13 @@ from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.onezone.providers import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
-from tests.gui.steps.oneprovider.browser import *
 
 
 @fixture(scope="module")
