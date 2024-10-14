@@ -135,9 +135,7 @@ def purge_spaces(client):
 
 
 def pytest_bdd_before_scenario(request, feature, scenario):
-    print(
-        "\n================================================================="
-    )
+    print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
     print("-----------------------------------------------------------------")
@@ -156,6 +154,4 @@ def pytest_bdd_step_error(
 
 
 def pytest_bdd_after_scenario(request, feature, scenario):
-    print(
-        "=================================================================\n"
-    )
+    print("=================================================================\n")
