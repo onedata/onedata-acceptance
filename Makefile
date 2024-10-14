@@ -86,6 +86,7 @@ endif
 .PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
 .PHONY: test_performance, test_performance_pkg, test_performance_src
 .PHONY: test_upgrade
+.PHONY: format
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_TEST_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
@@ -150,3 +151,35 @@ clean_swaggers:
 
 codetag-tracker:
 	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-files=.pylintrc
+
+
+##
+## Formatting
+##
+
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
+ tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
+ tests/oneclient/steps tests/oneclient/__init__.py
+ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
+ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
+FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+
+format:
+	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
+	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
+
+
+black-check:
+	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
+	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
+
+
+##
+## Static analysis
+##
+
+static-analysis:
+	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) pylint $(ALL_FILES) --output-format=colorized --recursive=y --rcfile=tests/configs/.pylintrc
+	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) pylint $(ALL_CONFTEST_FILES) --output-format=colorized --recursive=y \
+	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
