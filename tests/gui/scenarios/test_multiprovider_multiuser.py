@@ -55,7 +55,6 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.rest.cdmi import *
-from tests.mixed.steps.space_basic import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
