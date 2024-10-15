@@ -16,7 +16,7 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.parse(
-        'using REST, {user} changes storage "{type}" named "{storage}" '
+        'using REST, {user} changes storage "{storage_type}" named "{storage}" '
         'parameter "{parameter}" to "{value}" at provider "{provider}"'
     )
 )

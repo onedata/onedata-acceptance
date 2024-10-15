@@ -38,6 +38,7 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.mixed.steps.archive import *
 from tests.mixed.steps.data_basic import *
+from tests.mixed.utils.common import *
 from tests.mixed.steps.dataset import *
 from tests.mixed.steps.qos import *
 from tests.mixed.steps.rest.oneprovider.archives import *

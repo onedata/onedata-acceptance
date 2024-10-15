@@ -44,7 +44,7 @@ def _remove_parent_acl_from_string(priv):
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sets new ACE for "
         '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
-        "privileges? set for (?P<type>.*?) (?P<name>.*) "
+        "privileges? set for (?P<item_type>.*?) (?P<name>.*) "
         "in (?P<host>.*)"
     )
 )
