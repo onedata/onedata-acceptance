@@ -130,17 +130,6 @@ def strip_path(path_string, separator="/"):
     )
 
 
-# @contextmanager
-# def rm_css_cls(driver, web_elem, css_cls):
-#     driver.execute_script(
-#         f"$(arguments[0]).removeClass('{css_cls}')", web_elem
-#     )
-#     yield web_elem
-#     driver.execute_script(
-#         f"$(arguments[0]).addClass('{css_cls}')", web_elem
-#     )
-
-
 @contextmanager
 def implicit_wait(driver, timeout, prev_timeout):
     driver.implicitly_wait(timeout)

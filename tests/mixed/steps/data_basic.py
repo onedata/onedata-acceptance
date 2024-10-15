@@ -1608,7 +1608,7 @@ def assert_file_stats(client, user, path, space, uid, gid, res, users):
         raise NoSuchClientException(f"Client: {client} not found")
 
 
-# TODO uncomment after implementing "assert_file_uid" function
+# TODO VFS-12393 uncomment after implementing "assert_file_uid" function
 # @wt(
 #     parsers.re(
 #         r"using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID "

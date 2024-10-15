@@ -472,7 +472,7 @@ def fail_to_remove_groups(
 
     if client.lower() == "rest":
         fail_to_remove_groups_using_rest(user, users, hosts, group_list, host)
-    # TODO uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
+    # TODO VFS-12393 uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
     #  and writing suitable scenario
     # elif client.lower() == 'web gui':
     #     fail_to_remove_groups_using_op_gui(selenium, user, op_container, group_list,
