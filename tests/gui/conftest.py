@@ -387,7 +387,7 @@ def capabilities(request, capabilities, tmpdir):
         prefs = {"download.default_directory": str(tmpdir)}
         options.add_experimental_option("prefs", prefs)
         capabilities.update({"options": options})
-    # TODO: use Firefox Marionette driver (geckodriver)
+    # TODO: VFS-2203 use Firefox Marionette driver (geckodriver)
     #  for Firefox 47: https://jira.plgrid.pl/jira/browse/VFS-2203
     # but currently this driver is buggy...
     # elif 'browserName' in capabilities and capabilities['browserName'] == /

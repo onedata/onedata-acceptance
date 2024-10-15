@@ -71,7 +71,7 @@ def create_instances_of_webdriver(
         selenium[browser_id] = browser
 
 
-# TODO: configure different window sizes for responsiveness
+# TODO: VFS-2205 configure different window sizes for responsiveness
 #  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
 def _config_driver(driver, window_width, window_height):
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
