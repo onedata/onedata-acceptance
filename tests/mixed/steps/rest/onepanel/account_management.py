@@ -9,8 +9,9 @@ __license__ = (
 )
 
 
-from onepanel_client import OnepanelApi, UserModifyRequest
 from tests.mixed.utils.common import login_to_panel
+from onepanel_client import OnepanelApi, UserModifyRequest
+# from tests.mixed.utils.common import login_to_panel
 
 
 def change_user_password_in_oz_panel_using_rest(

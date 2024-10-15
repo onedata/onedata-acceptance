@@ -7,11 +7,12 @@ __license__ = (
 )
 
 import yaml
-from onezone_client.rest import ApiException
+# from onezone_client.rest import ApiException
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.utils.common import login_to_oz
+from onezone_client.rest import ApiException
 
 PRIVILEGES_TRANSLATION = {
     "View space": "space_view",
