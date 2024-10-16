@@ -4,9 +4,7 @@ or symlinks modal.
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -36,9 +34,7 @@ class Files(BrowserRow):
 
 
 class SelectFiles(Modal):
-    file_browser = FileBrowser(
-        ".items-select-browser-part.upload-drop-zone-container"
-    )
+    file_browser = FileBrowser(".items-select-browser-part.upload-drop-zone-container")
     confirm_button = Button(".submit-selection-btn")
     files = WebItemsSequence(".fb-table-tbody .data-row", cls=Files)
     error_msg = Label(".selection-validation-error")

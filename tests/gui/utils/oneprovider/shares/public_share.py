@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -27,9 +25,7 @@ class URLTypeSelector(PageObject):
 class PublicShareView:
     share_name = Label(".share-name")
     link_type_selector = Button(".url-type-selector-trigger")
-    url_type_popup = WebItem(
-        ".compact-url-type-selector-actions", cls=URLTypeSelector
-    )
+    url_type_popup = WebItem(".compact-url-type-selector-actions", cls=URLTypeSelector)
     url = Input(".clipboard-input.form-control")
     copy_icon = Button(".oneicon-browser-copy")
     breadcrumbs = Breadcrumbs(".file-browser-head-container")

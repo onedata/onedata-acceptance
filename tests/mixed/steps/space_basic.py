@@ -4,9 +4,7 @@ basic operations on spaces in Onezone using REST API mixed with web GUI.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
@@ -113,9 +111,7 @@ def leave_spaces_in_oz(
 
     if client.lower() == "rest":
 
-        leave_spaces_in_oz_using_rest(
-            user, users, host, hosts, space_list, spaces
-        )
+        leave_spaces_in_oz_using_rest(user, users, host, hosts, space_list, spaces)
     elif client.lower() == "web gui":
 
         leave_spaces_in_oz_using_gui(
@@ -177,9 +173,7 @@ def remove_spaces_in_oz(client, user, space_list, host, users, hosts, spaces):
 
     if client.lower() == "rest":
 
-        remove_spaces_in_oz_using_rest(
-            user, users, host, hosts, space_list, spaces
-        )
+        remove_spaces_in_oz_using_rest(user, users, host, hosts, space_list, spaces)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -363,14 +357,10 @@ def assert_there_are_spaces_in_oz(
 
     if client.lower() == "web gui":
 
-        assert_spaces_have_appeared_in_oz_gui(
-            selenium, user, oz_page, space_list
-        )
+        assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list)
     elif client.lower() == "rest":
 
-        assert_spaces_have_appeared_in_oz_rest(
-            user, users, hosts, host, space_list
-        )
+        assert_spaces_have_appeared_in_oz_rest(user, users, hosts, host, space_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -401,9 +391,7 @@ def assert_there_are_no_spaces_in_oz(
         )
     elif client.lower() == "web gui":
 
-        assert_there_are_no_spaces_in_oz_gui(
-            selenium, user, oz_page, space_list
-        )
+        assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

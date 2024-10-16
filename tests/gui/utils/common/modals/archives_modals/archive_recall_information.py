@@ -4,9 +4,7 @@ modal.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -31,9 +29,7 @@ class ArchiveRecallInformation(Modal):
     items_failed = Label(".recall-info-row-files-failed .property-value")
     last_error = Label(".recall-info-row-last-error .property-value")
     cancel_recall = Button(".cancel-recall-btn")
-    recalling_oneprovider = Label(
-        ".recall-info-row-recalling-provider .property-value"
-    )
+    recalling_oneprovider = Label(".recall-info-row-recalling-provider .property-value")
     recall_destination = Label(".recall-info-row-target-path .property-value")
     error_log = Button(".logs-nav-link")
     error_file_row = WebElementsSequence(".table-entry.data-row")

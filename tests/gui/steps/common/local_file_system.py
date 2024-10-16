@@ -4,9 +4,7 @@ interacting with local file system.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
 import stat
@@ -23,9 +21,7 @@ from tests.utils.utils import repeat_failed
 PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
 
-@given(
-    parsers.parse("directory tree structure on local file system:\n{structure}")
-)
+@given(parsers.parse("directory tree structure on local file system:\n{structure}"))
 def create_dir_tree_structure_on_local_fs(structure, tmpdir):
     """Create directory tree structure on local storage.
 
@@ -109,8 +105,7 @@ def _mkfile(file_, file_content=None):
 
 @given(
     parsers.parse(
-        "user of {browser_id} downloads {file_url} as "
-        "{file_name} to local file system"
+        "user of {browser_id} downloads {file_url} as {file_name} to local file system"
     )
 )
 def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
@@ -140,11 +135,7 @@ def create_file_on_local_file_system(
     _mkfile(path.join(file_name), content)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} removes "{path}" from local file system'
-    )
-)
+@wt(parsers.parse('user of {browser_id} removes "{path}" from local file system'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def remove_file_from_local_file_system(browser_id, path, tmpdir):
     home_dir = tmpdir.join(browser_id)

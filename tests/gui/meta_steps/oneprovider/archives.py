@@ -4,9 +4,7 @@ using web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -52,9 +50,7 @@ from tests.gui.steps.oneprovider.dataset import click_on_dataset
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-)
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -207,9 +203,7 @@ def _create_archive(
             DATASET_BROWSER,
         )
         item_name = item_name.split("/")[-1]
-    click_menu_for_elem_in_browser(
-        browser_id, item_name, tmp_memory, DATASET_BROWSER
-    )
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, DATASET_BROWSER)
     if option in ("succeeds", "tries"):
         click_option_in_data_row_menu_in_browser(
             selenium,
@@ -238,9 +232,7 @@ def _create_archive(
             )
         if create_nested_archives:
             option = "create_nested_archives"
-            check_toggle_in_create_archive_modal(
-                browser_id, selenium, modals, option
-            )
+            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
         if incremental:
             if incremental["enabled"]:
                 option = "incremental"
@@ -249,14 +241,10 @@ def _create_archive(
                 )
         if include_dip:
             option = "include_dip"
-            check_toggle_in_create_archive_modal(
-                browser_id, selenium, modals, option
-            )
+            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
         if not follow_symbolic_links:
             option = "follow_symbolic_links"
-            check_toggle_in_create_archive_modal(
-                browser_id, selenium, modals, option
-            )
+            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
         click_modal_button(
             selenium, browser_id, button_name, option_in_data_row_menu, modals
         )
@@ -303,9 +291,7 @@ def copy_archive_id_to_tmp_memory(
         assert_browser_in_tab_in_op(
             selenium, browser_id, op_container, tmp_memory, ARCHIVE_BROWSER
         )
-        click_menu_for_archive(
-            browser_id, tmp_memory, description, popups, selenium
-        )
+        click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
         )
@@ -385,9 +371,7 @@ def assert_archive_in_op_gui(
                 tmp_memory,
                 item_browser=ARCHIVE_BROWSER,
             )
-            assert_not_archive_with_description(
-                tmp_memory, browser_id, description
-            )
+            assert_not_archive_with_description(tmp_memory, browser_id, description)
 
 
 def remove_archive_in_op_gui(
@@ -425,9 +409,7 @@ def remove_archive_in_op_gui(
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    click_menu_for_archive(
-        browser_id, tmp_memory, description, popups, selenium
-    )
+    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
 
     if option == "succeeds":
         click_option_in_data_row_menu_in_browser(
@@ -438,9 +420,7 @@ def remove_archive_in_op_gui(
             which_browser=ARCHIVE_BROWSER,
         )
         write_in_confirmation_input(browser_id, modals, text, selenium)
-        click_modal_button(
-            selenium, browser_id, button_name, option_in_menu, modals
-        )
+        click_modal_button(selenium, browser_id, button_name, option_in_menu, modals)
     elif option == "fails":
         assert_option_state_in_data_row_menu(
             selenium,
@@ -576,9 +556,7 @@ def assert_archive_callback_in_op_gui(
     option_in_menu = "Properties"
     info = f"{option} callback URL"
     button_name = "X"
-    click_menu_for_archive(
-        browser_id, tmp_memory, description, popups, selenium
-    )
+    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
     click_option_in_data_row_menu_in_browser(
         selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
     )
@@ -595,9 +573,7 @@ def recall_archive_for_archive_in_op_gui(
     modal_name = "Recall archive"
     name_textfield = "target name input"
     button_name = "Recall"
-    click_menu_for_archive(
-        browser_id, tmp_memory, description, popups, selenium
-    )
+    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
     click_option_in_data_row_menu_in_browser(
         selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
     )

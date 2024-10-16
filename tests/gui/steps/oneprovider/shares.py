@@ -4,9 +4,7 @@ shares in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -38,11 +36,9 @@ def assert_item_in_file_browser_in_shares_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_share_abs_path_correct(selenium, browser_id, path, op_container):
     displayed_path = op_container(selenium[browser_id]).shares_page.path.pwd()
-    assert displayed_path == path, (
-        "displayed share absolute path "
-        f"is {displayed_path} "
-        f"instead of expected {path}"
-    )
+    assert (
+        displayed_path == path
+    ), f"displayed share absolute path is {displayed_path} instead of expected {path}"
 
 
 @wt(
@@ -53,9 +49,7 @@ def is_share_abs_path_correct(selenium, browser_id, path, op_container):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_cwd_correct(selenium, browser_id, cwd, op_container):
-    displayed_cwd = op_container(
-        selenium[browser_id]
-    ).shares_page.breadcrumbs.pwd()
+    displayed_cwd = op_container(selenium[browser_id]).shares_page.breadcrumbs.pwd()
     assert displayed_cwd == cwd, (
         "displayed share cwd in file browser"
         f" is {displayed_cwd} "
@@ -95,10 +89,9 @@ def copy_current_url(selenium, browser_id, clipboard, displays):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_selected_share_named(selenium, browser_id, share_name, op_container):
     displayed_name = op_container(selenium[browser_id]).shares_page.name
-    assert displayed_name == share_name, (
-        f'displayed share name is "{displayed_name}" instead of '
-        f'expected "{share_name}"'
-    )
+    assert (
+        displayed_name == share_name
+    ), f'displayed share name is "{displayed_name}" instead of expected "{share_name}"'
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu on share view"))
@@ -109,8 +102,7 @@ def click_menu_button_on_shares_page(selenium, browser_id, op_container):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{option}" option '
-        "in shares actions row menu"
+        'user of {browser_id} clicks "{option}" option in shares actions row menu'
     )
 )
 @wt(
@@ -124,11 +116,7 @@ def click_option_in_share_row_menu(selenium, browser_id, option, popups):
     popups(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees there are no shares on shares view"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees there are no shares on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_shares_message(selenium, browser_id, op_container):
     driver = selenium[browser_id]
@@ -145,38 +133,28 @@ def no_shares_message(selenium, browser_id, op_container):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that there is no "{share_name}" '
-        "share on shares view"
+        'user of {browser_id} sees that there is no "{share_name}" share on shares view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_share_in_shares_browser_in_shares_page(
     selenium, browser_id, op_container, share_name
 ):
-    shares_browser = op_container(
-        selenium[browser_id]
-    ).shares_page.shares_browser
-    assert (
-        share_name not in shares_browser
-    ), f"Share {share_name} in shares browser"
+    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+    assert share_name not in shares_browser, f"Share {share_name} in shares browser"
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that there is "{share_name}" '
-        "share on shares view"
+        'user of {browser_id} sees that there is "{share_name}" share on shares view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_in_shares_browser_in_shares_page(
     selenium, browser_id, op_container, share_name
 ):
-    shares_browser = op_container(
-        selenium[browser_id]
-    ).shares_page.shares_browser
-    assert (
-        share_name in shares_browser
-    ), f"Share {share_name} not in shares browser"
+    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+    assert share_name in shares_browser, f"Share {share_name} not in shares browser"
 
 
 @wt(
@@ -190,12 +168,8 @@ def assert_share_in_shares_browser_in_shares_page(
 def assert_share_point_to_del_dir_on_list(
     selenium, browser_id, op_container, share_name
 ):
-    shares_browser = op_container(
-        selenium[browser_id]
-    ).shares_page.shares_browser
-    assert (
-        share_name in shares_browser
-    ), f"Share {share_name} not in shares browser"
+    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+    assert share_name in shares_browser, f"Share {share_name} not in shares browser"
     share = shares_browser[share_name]
     assert (
         share.points_to_del_dir()
@@ -204,8 +178,7 @@ def assert_share_point_to_del_dir_on_list(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on menu "
-        'for "{item_name}" share in shares browser'
+        'user of {browser_id} clicks on menu for "{item_name}" share in shares browser'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -223,16 +196,12 @@ def click_menu_for_elem_in_shares_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_in_shares_browser(
-    selenium, browser_id, share_name, op_container
-):
+def click_share_in_shares_browser(selenium, browser_id, share_name, op_container):
     browser = op_container(selenium[browser_id]).shares_page.shares_browser
     browser[share_name].click()
 
 
-@wt(
-    parsers.parse("user of {browser_id} sees file browser on single share view")
-)
+@wt(parsers.parse("user of {browser_id} sees file browser on single share view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_shares_browser_to_file_browser(
     selenium, browser_id, op_container, tmp_memory
@@ -266,34 +235,25 @@ def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that share's "
-        "URL is the same as URL from clipboard"
+        "user of {browser_id} sees that share's URL is the same as URL from clipboard"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_urls_are_equal(
-    selenium, browser_id, op_container, clipboard, displays
-):
+def check_urls_are_equal(selenium, browser_id, op_container, clipboard, displays):
     share_url = op_container(selenium[browser_id]).shares_page.url
     modal_url = clipboard.paste(display=displays[browser_id])
     err_msg = f"modal URL is {modal_url} and share URL is {share_url}"
     assert share_url == modal_url, err_msg
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} copies public REST endpoint on shares view"
-    )
-)
+@wt(parsers.parse("user of {browser_id} copies public REST endpoint on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_share_link(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).shares_page.copy_icon()
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} clicks share link type selector on shares view"
-    )
+    parsers.parse("user of {browser_id} clicks share link type selector on shares view")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_link_type_selector(selenium, browser_id, op_container):
@@ -302,8 +262,7 @@ def click_share_link_type_selector(selenium, browser_id, op_container):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{url_type}" share link type '
-        "on shares view"
+        'user of {browser_id} chooses "{url_type}" share link type on shares view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -320,8 +279,7 @@ def open_description_tab(selenium, browser_id, op_container):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on add description button "
-        "on share description tab"
+        "user of {browser_id} clicks on add description button on share description tab"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -347,8 +305,7 @@ def append_description(selenium, browser_id, description, op_container):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on save changes button "
-        "in description share"
+        "user of {browser_id} clicks on save changes button in description share"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

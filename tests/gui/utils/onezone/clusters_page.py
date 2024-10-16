@@ -2,9 +2,7 @@
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -36,12 +34,8 @@ class GuiSettingsPage(PageObject):
     save_terms_of_use = Button(".terms-of-use .btn-save")
 
     cookie_consent_notification = Button(".cookie-consent-notification-item")
-    cookie_consent_notification_input = WebElement(
-        ".cookie-consent-notification-input"
-    )
-    save_cookie_consent_notification = Button(
-        ".cookie-consent-notification .btn-save"
-    )
+    cookie_consent_notification_input = WebElement(".cookie-consent-notification-input")
+    save_cookie_consent_notification = Button(".cookie-consent-notification .btn-save")
     insert_privacy_policy_link = Button(".insert-privacy-policy-link")
     insert_terms_of_use_link = Button(".insert-terms-of-use-link")
 
@@ -81,9 +75,7 @@ class ClustersPage(GenericPage):
         ".sidebar-clusters .two-level-sidebar .one-list-item.resource-item",
         cls=MenuItem,
     )
-    submenu = WebItemsSequence(
-        ".second-level-items .item-header", cls=SubmenuItem
-    )
+    submenu = WebItemsSequence(".second-level-items .item-header", cls=SubmenuItem)
 
     deregister_label = Button(".text-danger")
     deregister_provider = Button(".btn-danger.btn-deregister-provider")
@@ -94,7 +86,5 @@ class ClustersPage(GenericPage):
     confirm_modify_provider_details = NamedButton(
         "button", text="Modify provider details"
     )
-    gui_settings_page = WebItem(
-        ".content-clusters-gui-settings", cls=GuiSettingsPage
-    )
+    gui_settings_page = WebItem(".content-clusters-gui-settings", cls=GuiSettingsPage)
     page_name = Label(".header-row .one-label")

@@ -2,9 +2,7 @@
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND
@@ -23,9 +21,7 @@ from tests.gui.steps.modals.modal import (
     click_modal_button,
     click_panel_button,
 )
-from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser,
-)
+from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
 from tests.gui.steps.oneprovider.data_tab import (
     choose_option_for_file_from_selection_menu,
 )
@@ -76,9 +72,7 @@ def open_permission_modal(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory, oz_page, op_container
     )
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
 
     try:
@@ -136,9 +130,7 @@ def assert_posix_permissions_in_op_gui(
     modal_name = "Details modal"
     close_button = "X"
     try:
-        click_modal_button(
-            selenium, browser_id, close_button, modal_name, modals
-        )
+        click_modal_button(selenium, browser_id, close_button, modal_name, modals)
         _assert_posix_permissions(
             selenium,
             browser_id,
@@ -237,9 +229,7 @@ def fail_to_set_posix_permissions_in_op_gui(
         popups,
     )
     fail_to_set_posix_permission(selenium, browser_id, perm, modals)
-    assert_there_is_no_button_in_panel(
-        selenium, browser_id, button, panel, modals
-    )
+    assert_there_is_no_button_in_panel(selenium, browser_id, button, panel, modals)
     click_modal_button(selenium, browser_id, x_button, details_modal, modals)
 
 
@@ -254,13 +244,9 @@ def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups):
 
     select_permission_type(selenium, browser_id, permission_type, modals)
     select_acl_subject(selenium, browser_id, name, modals, popups)
-    expand_subject_record_in_edit_permissions_modal(
-        selenium, browser_id, modals, name
-    )
+    expand_subject_record_in_edit_permissions_modal(selenium, browser_id, modals, name)
     select_acl_options(selenium, browser_id, priv, modals, name)
-    click_on_record_header_in_edit_permissions_modal(
-        selenium, browser_id, modals, name
-    )
+    click_on_record_header_in_edit_permissions_modal(selenium, browser_id, modals, name)
 
 
 def _set_acl_privilages_for_selected(
@@ -288,9 +274,7 @@ def _set_acl_privilages_for_selected(
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     click_panel_button(selenium, browser_id, button, panel, modals)
     if check_warning_modal(selenium, browser_id):
-        click_modal_button(
-            selenium, browser_id, proceed_button, warning_modal, modals
-        )
+        click_modal_button(selenium, browser_id, proceed_button, warning_modal, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -343,9 +327,7 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     path = item_list.replace('"', "")
 
-    click_on_option_in_the_sidebar(
-        selenium, browser_id, option_in_menu, oz_page
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, oz_page)
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, option, space, oz_page
     )
@@ -397,9 +379,7 @@ def read_items_acl(
             selenium, browser_id, modals
         )
     else:
-        check_permissions_list_in_edit_permissions_modal(
-            selenium, browser_id, modals
-        )
+        check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modals)
 
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
@@ -442,9 +422,7 @@ def assert_ace_in_op_gui(
         popups,
     )
     if acl_type != "unknown":
-        assert_acl_subject(
-            selenium, browser_id, modals, num, numerals, acl_type, name
-        )
+        assert_acl_subject(selenium, browser_id, modals, num, numerals, acl_type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
@@ -489,9 +467,7 @@ def assert_user_id_in_ace_in_op_gui(
         selenium, browser_id, modals, num, numerals
     )
     user_id = users[name].user_id
-    err_msg = (
-        f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
-    )
+    err_msg = f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
     assert visible_id == user_id, err_msg
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
@@ -515,9 +491,7 @@ def change_acl_privileges(
     name,
     popups,
 ):
-    privileges_option_list = (
-        "[attributes]" if res == "succeeds" else "[acl:change acl]"
-    )
+    privileges_option_list = "[attributes]" if res == "succeeds" else "[acl:change acl]"
     button_save = "Save"
     button_close = "Close"
     panel = "Edit permissions"
@@ -534,9 +508,7 @@ def change_acl_privileges(
         "acl",
         popups,
     )
-    expand_subject_record_in_edit_permissions_modal(
-        selenium, browser_id, modals, name
-    )
+    expand_subject_record_in_edit_permissions_modal(selenium, browser_id, modals, name)
 
     if res == "fails":
         assert_fail_to_select_acl_option(
@@ -544,9 +516,7 @@ def change_acl_privileges(
         )
 
     else:
-        select_acl_options(
-            selenium, browser_id, privileges_option_list, modals, name
-        )
+        select_acl_options(selenium, browser_id, privileges_option_list, modals, name)
         click_panel_button(selenium, browser_id, button_save, panel, modals)
         click_panel_button(selenium, browser_id, button_close, panel, modals)
         open_permission_modal(
@@ -561,6 +531,4 @@ def change_acl_privileges(
             "acl",
             popups,
         )
-        check_permissions_list_in_edit_permissions_modal(
-            selenium, browser_id, modals
-        )
+        check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modals)

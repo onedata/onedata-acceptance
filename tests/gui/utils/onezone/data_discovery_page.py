@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
@@ -31,9 +29,7 @@ class OnedataTreeNode(PageObject):
     name = id = Label(".tree-label")
     checkbox = Button(".tree-checkbox")
     expander = Button(".tree-toggle")
-    xattrs_tree_nodes = WebItemsSequence(
-        ".tree-branch .tree-node", cls=XattrsTreeNode
-    )
+    xattrs_tree_nodes = WebItemsSequence(".tree-branch .tree-node", cls=XattrsTreeNode)
 
 
 class TreeNode(PageObject):

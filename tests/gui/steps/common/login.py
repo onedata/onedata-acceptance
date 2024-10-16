@@ -4,9 +4,7 @@ login page in web GUI.
 
 __author__ = "Bartosz Walkowicz, Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import time
@@ -51,13 +49,9 @@ def _login_to_service(
         driver = selenium[browser_id]
 
         if "emergency interface" in service:
-            click_sign_in_to_emergency_interface(
-                selenium, browser_id, login_page
-            )
+            click_sign_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)
-            _login_using_passphrase(
-                login_page(driver), users[username].password
-            )
+            _login_using_passphrase(login_page(driver), users[username].password)
         else:
             _login_using_basic_auth(
                 login_page(driver), username, users[username].password
@@ -118,9 +112,7 @@ def wt_enter_text_to_field_in_login_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enter_password_of_user(
-    selenium, browser_id, username, login_page, users
-):
+def wt_enter_password_of_user(selenium, browser_id, username, login_page, users):
     password = users[username].password
     setattr(login_page(selenium[browser_id]), "password", password)
 
@@ -136,11 +128,7 @@ def wt_press_sign_in_btn_on_login_page(selenium, browser_id, login_page):
     login_page(selenium[browser_id]).sign_in()
 
 
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"
-    )
-)
+@wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_successful_login(selenium, browser_id, onepage, service):
     logged_in_service = onepage(selenium[browser_id]).service
@@ -151,8 +139,7 @@ def wt_assert_successful_login(selenium, browser_id, onepage, service):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that he was logged out "
-        "from (Onepanel|Onezone)"
+        "user of (?P<browser_id>.*) sees that he was logged out from (Onepanel|Onezone)"
     )
 )
 @wt(parsers.re("user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))

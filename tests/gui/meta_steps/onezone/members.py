@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.steps.modals.modal import assert_element_text_in_modal
 from tests.gui.steps.onezone.members import (
@@ -16,9 +14,7 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu,
     try_setting_privileges_in_members_subpage,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-)
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 
 
 def fail_to_set_privileges_using_op_gui(

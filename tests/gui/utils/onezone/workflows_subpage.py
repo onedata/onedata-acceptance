@@ -3,9 +3,7 @@ Onezone gui"""
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -38,9 +36,7 @@ class EmptyParallelBox(Element):
 class WorkflowLane(Element):
     name = id = Label(".lane-name")
     add_parallel_box_button = Button(".create-parallel-box-action-trigger")
-    parallel_box = WebItem(
-        ".workflow-visualiser-parallel-box ", cls=ParallelBox
-    )
+    parallel_box = WebItem(".workflow-visualiser-parallel-box ", cls=ParallelBox)
     empty_parallel_box = WebItem(
         ".workflow-visualiser-parallel-box .space-position-empty",
         cls=EmptyParallelBox,
@@ -130,9 +126,7 @@ class Workflow(Element):
     name = id = Label(".name-field .text-like-field")
 
     menu_button = Button(".workflow-actions-trigger")
-    create_new_revision = Button(
-        ".create-atm-workflow-schema-revision-action-trigger"
-    )
+    create_new_revision = Button(".create-atm-workflow-schema-revision-action-trigger")
     show_revisions_button = Button(".expand-button")
     revision_list = WebItemsSequence(
         ".revisions-table .revisions-table-revision-entry", cls=Revision
@@ -152,9 +146,7 @@ class WorkflowsPage(PageObject):
 
     navigation_tab = WebItemsSequence(".nav-tabs li", cls=NavigationTab)
 
-    workflow_visualiser = WebItem(
-        ".workflow-visualiser", cls=WorkflowVisualiser
-    )
+    workflow_visualiser = WebItem(".workflow-visualiser", cls=WorkflowVisualiser)
 
     revision_details = WebItem(".revision-details-form", cls=RevisionDetails)
 

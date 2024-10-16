@@ -4,9 +4,7 @@ relation menu popup.
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.utils.core.base import PageObject

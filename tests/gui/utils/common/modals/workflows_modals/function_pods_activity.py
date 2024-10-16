@@ -2,9 +2,7 @@
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from selenium.webdriver.common.by import By
@@ -70,7 +68,5 @@ class FunctionPodsActivity(Modal):
         return elem_in_row
 
     def get_number_of_data_rows(self, driver):
-        element = driver.find_elements(
-            By.CSS_SELECTOR, f".audit-log-table-entry"
-        )[0]
+        element = driver.find_elements(By.CSS_SELECTOR, f".audit-log-table-entry")[0]
         return element.get_attribute("data-row-id")

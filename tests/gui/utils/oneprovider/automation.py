@@ -2,16 +2,11 @@
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from tests.gui.utils.core import (
-    scroll_to_css_selector,
-    scroll_to_css_selector_bottom,
-)
+from tests.gui.utils.core import scroll_to_css_selector, scroll_to_css_selector_bottom
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -91,9 +86,7 @@ class Task(Element):
 
 
 class ParallelBox(Element):
-    task_list = WebItemsSequence(
-        ".box-elements .workflow-visualiser-task", cls=Task
-    )
+    task_list = WebItemsSequence(".box-elements .workflow-visualiser-task", cls=Task)
 
     def scroll_to_bottom_of_task_in_parallel_box(self, task_id):
         box_sel = f"#{task_id} .detail-entry.actions-detail"
@@ -195,9 +188,7 @@ class WorkflowExecutionPage(PageObject):
         ".atm-workflow-executions-table tr.data-row", cls=ExecutionRecord
     )
 
-    workflow_visualiser = WebItem(
-        ".workflow-visualiser", cls=WorkflowVisualiser
-    )
+    workflow_visualiser = WebItem(".workflow-visualiser", cls=WorkflowVisualiser)
     workflow_header = WebElement(".workflow-visualiser")
     stores = WebItemsSequence(
         ".workflow-visualiser-stores-list .tag-item", cls=WorkflowExecutionStore

@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import time
@@ -103,9 +101,7 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_btn_in_content(
         selenium, browser_id, "Deregister provider", content, onepanel
     )
-    wt_click_on_btn_in_popup(
-        selenium, browser_id, "Yes, deregister", popup, popups
-    )
+    wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup, popups)
     notify_visible_with_text(
         selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
     )
@@ -167,9 +163,7 @@ def register_provider_in_op_using_gui(
         selenium, user, options["admin email"], "Admin email", step2, onepanel
     )
 
-    wt_click_on_btn_in_deployment_step(
-        selenium, user, "Register", step2, onepanel
-    )
+    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2, onepanel)
 
 
 @given(

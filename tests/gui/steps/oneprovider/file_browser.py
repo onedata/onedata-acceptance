@@ -4,9 +4,7 @@ file browser in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import tarfile
 import time
@@ -75,9 +73,7 @@ def assert_only_given_items_in_file_browser(browser_id, item_list, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_presence_in_file_browser_with_order(
-    browser_id, item_list, tmp_memory
-):
+def assert_presence_in_file_browser_with_order(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
     items = iter(parse_seq(item_list))
     curr_item = next(items)
@@ -129,9 +125,7 @@ def assert_item_in_file_browser_is_of_mdate(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_item_in_file_browser_is_of_size(
-    browser_id, item_name, size, tmp_memory
-):
+def assert_item_in_file_browser_is_of_size(browser_id, item_name, size, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
     item_size = browser.data[item_name].size
     err_msg = "displayed size {} for {} does not match expected {}"
@@ -193,8 +187,7 @@ def assert_item_in_file_browser_is_of_type(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks once on item "
-        'named "{item_name}" in file browser'
+        'user of {browser_id} clicks once on item named "{item_name}" in file browser'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -302,9 +295,7 @@ def _deselect_files(browser, selector, item_list):
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} deselects all selected items from file browser"
-    )
+    parsers.parse("user of {browser_id} deselects all selected items from file browser")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_all_items_from_file_browser(browser_id, tmp_memory):
@@ -317,20 +308,16 @@ def deselect_all_items_from_file_browser(browser_id, tmp_memory):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "item is selected in file browser"
+        "user of {browser_id} sees that {item_list} item is selected in file browser"
     )
 )
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {item_list} "
-        "items are selected in file browser"
+        "user of {browser_id} sees that {item_list} items are selected in file browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_items_are_selected_in_file_browser(
-    browser_id, item_list, tmp_memory
-):
+def assert_items_are_selected_in_file_browser(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is not selected while it should be'
     for item_name in parse_seq(item_list):
@@ -351,9 +338,7 @@ def assert_items_are_selected_in_file_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_items_are_not_selected_in_file_browser(
-    browser_id, item_list, tmp_memory
-):
+def assert_items_are_not_selected_in_file_browser(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
     for item_name in parse_seq(item_list):
@@ -367,9 +352,7 @@ def assert_items_are_not_selected_in_file_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_none_item_is_selected_in_file_browser(
-    browser_id, item_list, tmp_memory
-):
+def assert_none_item_is_selected_in_file_browser(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
     for item_name in parse_seq(item_list):
@@ -377,11 +360,7 @@ def assert_none_item_is_selected_in_file_browser(
         assert not item.is_selected(), err_msg.format(name=item_name)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees empty directory message in file browser"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees empty directory message in file browser"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_dir_msg_in_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
@@ -397,8 +376,7 @@ def assert_empty_dir_msg_in_file_browser(browser_id, tmp_memory):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms create new directory "
-        "using (?P<option>.*)"
+        "user of (?P<browser_id>.*) confirms create new directory using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -413,8 +391,7 @@ def confirm_create_new_directory(selenium, browser_id, option, modals):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms rename directory "
-        "using (?P<option>.*)"
+        "user of (?P<browser_id>.*) confirms rename directory using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -496,9 +473,7 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
         'hardlinks in "File details" modal'
     )
 )
-def assert_num_of_hardlinks_in_file_dets_modal(
-    selenium, browser_id, number, modals
-):
+def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, modals):
     assert_num_of_hardlinks_in_file_dets_tab_name_modal(
         selenium, browser_id, number, modals
     )
@@ -513,9 +488,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(
         'is "{path}" in "File details" modal'
     )
 )
-def assert_hardlink_path_in_file_dets_modal(
-    selenium, browser_id, file, path, modals
-):
+def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
     entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
     assert (
@@ -525,13 +498,10 @@ def assert_hardlink_path_in_file_dets_modal(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees paths {paths} "
-        'of hardlinks in "File details" modal'
+        'user of {browser_id} sees paths {paths} of hardlinks in "File details" modal'
     )
 )
-def assert_hardlinks_paths_in_file_dets_modal(
-    selenium, browser_id, paths, modals
-):
+def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modals):
     entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
@@ -549,9 +519,7 @@ def assert_property_in_symlink_dets_modal(
     selenium, browser_id, link_property, value, modals, clipboard, displays
 ):
     modal = modals(selenium[browser_id]).symbolic_link_details
-    actual_value = modal.get_property(
-        link_property, clipboard, displays, browser_id
-    )
+    actual_value = modal.get_property(link_property, clipboard, displays, browser_id)
     assert (
         actual_value == value
     ), f"{link_property} has {actual_value} not expected {value}"
@@ -625,9 +593,7 @@ def assert_contents_downloaded_tar_file(
             if archive_file.isfile():
                 with open(extract_path.join(f).strpath, "r") as o:
                     file_contents = o.read()
-                    assert str(file_contents) == str(
-                        configured_dir_contents[f]
-                    ), (
+                    assert str(file_contents) == str(configured_dir_contents[f]), (
                         f"{f} content is different than expected "
                         f"{file_contents}!={configured_dir_contents[f]}"
                     )
@@ -641,9 +607,7 @@ def assert_contents_downloaded_tar_file(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_displayed_on_page(
-    browser_id, item_list, tmp_memory, option, which
-):
+def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option, which):
     browser = tmp_memory[browser_id][f"{which}_browser"]
     visible_files = browser.names_of_visible_elems()
     items = parse_seq(item_list)

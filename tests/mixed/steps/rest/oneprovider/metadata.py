@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import base64
@@ -14,9 +12,7 @@ from oneprovider_client import CustomFileMetadataApi
 from tests.mixed.utils.common import login_to_provider
 
 
-def assert_metadata_in_op_rest(
-    user, users, host, hosts, cdmi, path, tab_name, val
-):
+def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name.lower() == "basic":
@@ -28,9 +24,7 @@ def assert_metadata_in_op_rest(
         if "onedata_base64" in metadata:
 
             metadata = metadata["onedata_base64"]
-            metadata = base64.b64decode(metadata.encode("ascii")).decode(
-                "ascii"
-            )
+            metadata = base64.b64decode(metadata.encode("ascii")).decode("ascii")
 
         if tab_name.lower() == "json":
             assert val == json.dumps(
@@ -42,9 +36,7 @@ def assert_metadata_in_op_rest(
             ), f'{path} has no {val} {tab_name} metadata but "{metadata}"'
 
 
-def set_metadata_in_op_rest(
-    user, users, host, hosts, cdmi, path, tab_name, val
-):
+def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if tab_name == "basic":
         (attr, val) = val.split("=")
@@ -55,9 +47,7 @@ def set_metadata_in_op_rest(
     client.write_metadata(path, {attr: val})
 
 
-def add_json_metadata_to_file_rest(
-    user, users, hosts, host, expression, file_id
-):
+def add_json_metadata_to_file_rest(user, users, hosts, host, expression, file_id):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     cfm_api = CustomFileMetadataApi(user_client_op)
     cfm_api.set_json_metadata(file_id, expression)

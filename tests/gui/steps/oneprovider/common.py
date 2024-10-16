@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import time
@@ -38,8 +36,7 @@ def _wait_for_op_session_to_start(selenium, browser_id_list):
 
 @given(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) seen that "
-        "Oneprovider session has started"
+        "users? of (?P<browser_id_list>.*?) seen that Oneprovider session has started"
     )
 )
 def g_wait_for_op_session_to_start(selenium, browser_id_list):
@@ -48,8 +45,7 @@ def g_wait_for_op_session_to_start(selenium, browser_id_list):
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) sees that "
-        "Oneprovider session has started"
+        "users? of (?P<browser_id_list>.*?) sees that Oneprovider session has started"
     )
 )
 def wt_wait_for_op_session_to_start(selenium, browser_id_list):
@@ -63,9 +59,7 @@ def wt_wait_for_op_session_to_start(selenium, browser_id_list):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_prov_in_op(
-    selenium, browser_id, val, op_container, hosts
-):
+def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, op_container, hosts):
     val = hosts[val]["name"]
     displayed_name = op_container(selenium[browser_id]).provider_name
     assert displayed_name == val, (
@@ -90,9 +84,7 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container):
 
 
 @given(
-    parsers.parse(
-        "possible exception messages appearing for workflow files:\n{config}"
-    )
+    parsers.parse("possible exception messages appearing for workflow files:\n{config}")
 )
 def load_exceptions_for_input_files(tmp_memory, config):
     """

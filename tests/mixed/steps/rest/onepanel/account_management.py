@@ -4,9 +4,7 @@ using REST API.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 def change_user_password_in_oz_panel_using_rest(

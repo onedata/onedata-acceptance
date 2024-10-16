@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -14,19 +12,11 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.common import (
-    navigate_to_tab_in_op_using_gui,
-)
-from tests.gui.meta_steps.oneprovider.files_tree import (
-    check_file_structure_in_browser,
-)
-from tests.gui.steps.common.miscellaneous import (
-    click_option_in_popup_labeled_menu,
-)
+from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
+from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
+from tests.gui.steps.common.miscellaneous import click_option_in_popup_labeled_menu
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modals.details_modal import (
-    click_on_navigation_tab_in_modal,
-)
+from tests.gui.steps.modals.details_modal import click_on_navigation_tab_in_modal
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     close_modal,
@@ -145,9 +135,7 @@ def rename_item(
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_presence_in_browser(
-            selenium, browser_id, new_name, tmp_memory
-        )
+        assert_items_presence_in_browser(selenium, browser_id, new_name, tmp_memory)
 
 
 @wt(
@@ -206,9 +194,7 @@ def remove_dir_and_parents_in_op_gui(
     oz_page,
     popups,
 ):
-    item_name = _select_item(
-        selenium, browser_id, tmp_memory, path, op_container
-    )
+    item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
     remove_item_in_op_gui(
         selenium,
         browser_id,
@@ -258,9 +244,7 @@ def see_items_in_op_gui(
         _click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option, oz_page, force=False
         )
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
     except NoSuchElementException:
         go_to_filebrowser(
             selenium, browser_id, oz_page, op_container, tmp_memory, space
@@ -273,13 +257,9 @@ def see_items_in_op_gui(
             )
 
     if res == "fails":
-        assert_items_absence_in_browser(
-            selenium, browser_id, subfiles, tmp_memory
-        )
+        assert_items_absence_in_browser(selenium, browser_id, subfiles, tmp_memory)
     else:
-        assert_items_presence_in_browser(
-            selenium, browser_id, subfiles, tmp_memory
-        )
+        assert_items_presence_in_browser(selenium, browser_id, subfiles, tmp_memory)
 
 
 @wt(
@@ -324,9 +304,7 @@ def create_item_in_op_gui(
         _open_menu_for_item_in_file_browser()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
-    write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, modals
-    )
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, modals)
     confirm_create_new_directory(selenium, browser_id, option, modals)
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
@@ -334,14 +312,8 @@ def create_item_in_op_gui(
         assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} creates dir "{dir_name}" in current dir'
-    )
-)
-def create_dir_in_current_dir(
-    selenium, browser_id, tmp_memory, modals, dir_name
-):
+@wt(parsers.parse('user of {browser_id} creates dir "{dir_name}" in current dir'))
+def create_dir_in_current_dir(selenium, browser_id, tmp_memory, modals, dir_name):
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"
@@ -411,9 +383,7 @@ def go_to_and_assert_browser(
 ):
     option = "Data"
     element = "spaces"
-    _click_on_option_in_the_sidebar(
-        selenium, browser_id, option, oz_page, force=False
-    )
+    _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page, force=False)
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, element, space_name, oz_page
     )
@@ -511,24 +481,16 @@ def assert_file_content_in_op_gui(
     cwd = "space root"
     try:
         assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
-        go_to_path_without_last_elem(
-            selenium, user, tmp_memory, path, op_container
-        )
+        go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
-        go_to_filebrowser(
-            selenium, user, oz_page, op_container, tmp_memory, space
-        )
-        go_to_path_without_last_elem(
-            selenium, user, tmp_memory, path, op_container
-        )
+        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     click_and_press_enter_on_item_in_browser(
         selenium, user, item_name, tmp_memory, op_container
     )
     has_downloaded_file_content(user, item_name, text, tmpdir)
-    change_cwd_using_breadcrumbs_in_data_tab_in_op(
-        selenium, user, cwd, op_container
-    )
+    change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user, cwd, op_container)
 
 
 @given(
@@ -684,12 +646,8 @@ def _create_content(
 def successfully_upload_file_to_op_gui(
     path, selenium, browser_id, space, op_container, tmp_memory, oz_page, popups
 ):
-    go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space
-    )
-    upload_file_to_cwd_in_file_browser(
-        selenium, browser_id, path, op_container, popups
-    )
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container, popups)
     assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
 
 
@@ -712,9 +670,7 @@ def upload_file_to_op_gui(
     popups,
 ):
     try:
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(
@@ -725,9 +681,7 @@ def upload_file_to_op_gui(
         upload_file_to_cwd_in_file_browser(
             selenium, browser_id, filename, op_container, popups
         )
-        assert_items_presence_in_browser(
-            selenium, browser_id, filename, tmp_memory
-        )
+        assert_items_presence_in_browser(selenium, browser_id, filename, tmp_memory)
     else:
         upload_file_to_cwd_in_file_browser_no_waiting(
             selenium, browser_id, filename, op_container
@@ -746,27 +700,19 @@ def assert_mtime_not_earlier_than_op_gui(
         tmp_memory,
         item_browser="file browser",
     )
-    item_name = _select_item(
-        selenium, browser_id, tmp_memory, path, op_container
-    )
-    assert_item_in_file_browser_is_of_mdate(
-        browser_id, item_name, mtime, tmp_memory
-    )
+    item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
+    assert_item_in_file_browser_is_of_mdate(browser_id, item_name, mtime, tmp_memory)
 
 
 def _select_item(selenium, browser_id, tmp_memory, path, op_container):
     item_name, path = get_item_name_and_containing_dir_path(path)
-    go_to_path_without_last_elem(
-        selenium, browser_id, tmp_memory, path, op_container
-    )
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path, op_container)
     select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
     return item_name
 
 
 @wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
-def go_to_path_(
-    selenium, browser_id, tmp_memory, path, op_container, which_browser
-):
+def go_to_path_(selenium, browser_id, tmp_memory, path, op_container, which_browser):
     go_to_path(
         selenium,
         browser_id,
@@ -838,12 +784,8 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
-@wt(
-    parsers.parse('user of {browser_id} opens file browser for "{space}" space')
-)
-def go_to_filebrowser(
-    selenium, browser_id, oz_page, op_container, tmp_memory, space
-):
+@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" space'))
+def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space):
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
 
@@ -876,9 +818,7 @@ def open_modal_for_file_browser_item(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory, oz_page, op_container
     )
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
@@ -889,9 +829,7 @@ def check_file_owner(
     modal_name = "File details"
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
     close_modal(selenium, browser_id, modal_name, modals)
@@ -1064,9 +1002,7 @@ def _create_link_in_file_browser(
     )
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(0.5)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     click_file_browser_button(browser_id, button, tmp_memory)
@@ -1187,9 +1123,7 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
     )
     click_on_breadcrumbs_menu(selenium, browser_id, op_container, browser)
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
-    click_on_navigation_tab_in_modal(
-        selenium, browser_id, tab_name, modals, modal
-    )
+    click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals, modal)
     expand_size_statistics_for_providers(selenium, browser_id, modals)
 
 

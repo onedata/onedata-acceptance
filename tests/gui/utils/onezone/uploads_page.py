@@ -2,9 +2,7 @@
 
 __author__ = "Emilia Kwolek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItem, WebItemsSequence
@@ -20,9 +18,7 @@ class UploadedObject(Element):
 
 
 class UploadedContentPage(PageObject):
-    uploaded_items_list = WebItemsSequence(
-        ".up-upload-object-info", cls=UploadedObject
-    )
+    uploaded_items_list = WebItemsSequence(".up-upload-object-info", cls=UploadedObject)
 
 
 class UploadsPage(GenericPage):

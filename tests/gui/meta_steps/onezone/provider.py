@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
@@ -116,15 +114,9 @@ def revoke_support_of_provider_in_list(
         selenium, browser_id, provider, oz_page, hosts
     )
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
-    wt_clicks_on_understand_risk_in_cease_support_modal(
-        selenium, browser_id, modals
-    )
-    wt_clicks_on_btn_in_cease_support_modal(
-        selenium, browser_id, button, modals
-    )
-    notify_visible_with_text(
-        selenium, browser_id, notify_type, notify_text_regexp
-    )
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
+    notify_visible_with_text(selenium, browser_id, notify_type, notify_text_regexp)
 
 
 @wt(

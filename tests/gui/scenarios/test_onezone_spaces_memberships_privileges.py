@@ -4,9 +4,7 @@ management using Onezone GUI and multiple browsers instance.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from pytest import fixture
@@ -64,12 +62,6 @@ def screens():
 
 
 scenarios("../features/onezone/space/spaces_memberships_privileges.feature")
-scenarios(
-    "../features/onezone/space/spaces_memberships_data_privileges.feature"
-)
-scenarios(
-    "../features/onezone/space/spaces_memberships_group_privileges.feature"
-)
-scenarios(
-    "../features/onezone/space/spaces_memberships_user_privileges.feature"
-)
+scenarios("../features/onezone/space/spaces_memberships_data_privileges.feature")
+scenarios("../features/onezone/space/spaces_memberships_group_privileges.feature")
+scenarios("../features/onezone/space/spaces_memberships_user_privileges.feature")

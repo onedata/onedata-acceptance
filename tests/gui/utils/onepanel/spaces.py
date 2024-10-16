@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import re
@@ -86,8 +84,7 @@ class SpaceInfo(PageObject):
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
-            attr.text.strip(":"): val.text
-            for attr, val in zip(items[::2], items[1::2])
+            attr.text.strip(":"): val.text for attr, val in zip(items[::2], items[1::2])
         }
 
 
@@ -142,9 +139,7 @@ class FilePopularity(PageObject):
     enable_file_popularity = Toggle(".one-way-toggle-control")
 
     lastOpenHourWeightGroup = Input(".lastOpenHourWeightGroup input")
-    avgOpenCountPerDayWeightGroup = Input(
-        ".avgOpenCountPerDayWeightGroup input"
-    )
+    avgOpenCountPerDayWeightGroup = Input(".avgOpenCountPerDayWeightGroup input")
     maxAvgOpenCountPerDayGroup = Input(".maxAvgOpenCountPerDayGroup input")
 
 
@@ -175,12 +170,8 @@ class SelectiveCleaningRecord(PageObject):
 
 
 class AutoCleaning(PageObject):
-    enable_auto_cleaning = Toggle(
-        ".cleaning-enabled-toggle .one-way-toggle-control"
-    )
-    selective_cleaning = Toggle(
-        ".selective-cleaning-toggle .one-way-toggle-control"
-    )
+    enable_auto_cleaning = Toggle(".cleaning-enabled-toggle .one-way-toggle-control")
+    selective_cleaning = Toggle(".selective-cleaning-toggle .one-way-toggle-control")
     selective_cleaning_form = WebItemsSequence(
         ".selective-cleaning-rules-form > div", cls=SelectiveCleaningRecord
     )
@@ -192,9 +183,7 @@ class AutoCleaning(PageObject):
     _hard_quota = WebElement(".hard-quota-editor")
     hard_quota = WebItem(".hard-quota-editor", cls=QuotaEditor)
 
-    cleaning_reports = WebItemsSequence(
-        "tbody tr.data-item-base", cls=CleaningReport
-    )
+    cleaning_reports = WebItemsSequence("tbody tr.data-item-base", cls=CleaningReport)
 
     def click_rename_soft_quota_button(self, driver):
         ActionChains(driver).move_to_element(self._soft_quota).perform()
@@ -221,9 +210,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
 
     def is_expanded(self):
         return bool(
-            re.match(
-                r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class")
-            )
+            re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
     def expand_menu(self, driver):
@@ -246,9 +233,7 @@ class SpacesContentPage(PageObject):
         "ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord
     )
     support_space = NamedButton(".btn-support-space", text="Support space")
-    form = WebItem(
-        '.form-title~.ember-view>[role="form"]', cls=SpaceSupportForm
-    )
+    form = WebItem('.form-title~.ember-view>[role="form"]', cls=SpaceSupportForm)
     cancel_supporting_space = NamedButton(
         ".btn-support-space", text="Cancel supporting space"
     )

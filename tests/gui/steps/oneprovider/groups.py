@@ -4,9 +4,7 @@ groups in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -15,9 +13,7 @@ from tests.utils.utils import repeat_failed
 
 
 def _is_group_present_in_sidebar(driver, op_container, group_name):
-    groups = {
-        group.name for group in op_container(driver).groups.sidebar.groups
-    }
+    groups = {group.name for group in op_container(driver).groups.sidebar.groups}
     return group_name in groups
 
 
@@ -42,9 +38,7 @@ def is_present_on_groups_list(selenium, browser_id, name, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_settings_icon_for_group(
-    selenium, browser_id, group_name, op_container
-):
+def click_settings_icon_for_group(selenium, browser_id, group_name, op_container):
     (
         op_container(selenium[browser_id])
         .groups.sidebar.groups[group_name]
@@ -82,9 +76,7 @@ def assert_item_appeared_in_groups_perm_table(
     selenium, browser_id, name, caption, op_container
 ):
     driver = selenium[browser_id]
-    items = getattr(
-        op_container(driver).groups.permission_table, caption.lower()
-    )
+    items = getattr(op_container(driver).groups.permission_table, caption.lower())
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()

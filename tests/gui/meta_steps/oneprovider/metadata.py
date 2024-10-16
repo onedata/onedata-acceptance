@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -23,9 +21,7 @@ from tests.gui.steps.modals.modal import (
     click_modal_button,
     click_panel_button,
 )
-from tests.gui.steps.oneprovider.browser import (
-    assert_status_tag_for_file_in_browser,
-)
+from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.oneprovider.metadata import (
     assert_no_basic_metadata_for_item,
     assert_textarea_contains_record,
@@ -51,9 +47,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_basic_entry(selenium, browser_id, modals, key_name, value):
-    type_text_to_attr_input_in_new_basic_entry(
-        selenium, browser_id, key_name, modals
-    )
+    type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, key_name, modals)
     type_text_to_val_of_attr_in_new_basic_entry(
         selenium, browser_id, value, modals, key_name
     )
@@ -93,12 +87,8 @@ def add_json_rdf_metadata_for_item(
         selenium, browser_id, popups, item_name, tmp_memory, panel
     )
     assert_tab_in_modal(selenium, browser_id, panel, modals, modal_name)
-    click_on_navigation_tab_in_panel(
-        selenium, browser_id, input_type, modals, panel
-    )
-    type_text_to_metadata_textarea(
-        selenium, browser_id, text, input_type, modals
-    )
+    click_on_navigation_tab_in_panel(selenium, browser_id, input_type, modals, panel)
+    type_text_to_metadata_textarea(selenium, browser_id, text, input_type, modals)
     click_panel_button(selenium, browser_id, button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
@@ -168,27 +158,19 @@ def set_metadata_in_op_gui(
     )
     if tab_name == "basic":
         attr, val = val.split("=")
-        type_text_to_attr_input_in_new_basic_entry(
-            selenium, browser_id, attr, modals
-        )
+        type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, attr, modals)
         type_text_to_val_of_attr_in_new_basic_entry(
             selenium, browser_id, val, modals, attr
         )
     else:
-        click_on_navigation_tab_in_panel(
-            selenium, browser_id, tab_name, modals, option
-        )
-        type_text_to_metadata_textarea(
-            selenium, browser_id, val, tab_name, modals
-        )
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, option)
+        type_text_to_metadata_textarea(selenium, browser_id, val, tab_name, modals)
     click_panel_button(selenium, browser_id, button, option, modals)
 
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_status_tag_for_file_in_browser(
-            browser_id, status_type, path, tmp_memory
-        )
+        assert_status_tag_for_file_in_browser(browser_id, status_type, path, tmp_memory)
 
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
@@ -251,9 +233,7 @@ def assert_metadata_in_op_gui(
             click_on_navigation_tab_in_panel(
                 selenium, browser_id, tab_name, modals, option
             )
-            assert_textarea_contains_record(
-                selenium, browser_id, val, tab_name, modals
-            )
+            assert_textarea_contains_record(selenium, browser_id, val, tab_name, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -293,12 +273,8 @@ def assert_such_metadata_not_exist_in_op_gui(
         attr, val = val.split("=")
         assert_there_is_no_such_meta_record(selenium, browser_id, attr, modals)
     else:
-        click_on_navigation_tab_in_panel(
-            selenium, browser_id, tab_name, modals, option
-        )
-        assert_textarea_not_contain_record(
-            selenium, browser_id, val, tab_name, modals
-        )
+        click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, option)
+        assert_textarea_not_contain_record(selenium, browser_id, val, tab_name, modals)
     click_modal_button(selenium, browser_id, x_button, details_modal, modals)
 
 
@@ -341,21 +317,15 @@ def remove_all_metadata_in_op_gui(
         oz_page,
         op_container,
     )
-    click_on_navigation_tab_in_panel(
-        selenium, browser_id, "Basic", modals, option
-    )
+    click_on_navigation_tab_in_panel(selenium, browser_id, "Basic", modals, option)
     remove_all_basic_metadata(selenium, browser_id, modals)
 
-    click_on_navigation_tab_in_panel(
-        selenium, browser_id, "JSON", modals, option
-    )
+    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, option)
     clean_tab_textarea_in_metadata_modal(selenium, browser_id, "JSON", modals)
 
     click_save_button_metadata(selenium, browser_id, modals)
 
-    click_on_navigation_tab_in_panel(
-        selenium, browser_id, "RDF", modals, option
-    )
+    click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", modals, option)
     clean_tab_textarea_in_metadata_modal(selenium, browser_id, "RDF", modals)
     click_save_button_metadata(selenium, browser_id, modals)
 
@@ -378,9 +348,7 @@ def assert_no_metadata_in_modal(selenium, browser_id, modals):
     panel = "Metadata"
 
     assert_no_basic_metadata_for_item(selenium, browser_id, modals)
-    click_on_navigation_tab_in_panel(
-        selenium, browser_id, "JSON", modals, panel
-    )
+    click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, panel)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, "JSON", modals)
     click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", modals, panel)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, "RDF", modals)
@@ -408,9 +376,7 @@ def open_filebrowser_and_remove_meta(
     button = "Save"
     option = "Metadata"
 
-    go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space
-    )
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
     open_modal_for_file_browser_item(
         selenium,
         browser_id,

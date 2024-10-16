@@ -4,9 +4,7 @@ spaces management in space overview page in onezone web GUI.
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
 from tests.gui.conftest import WAIT_FRONTEND
@@ -18,8 +16,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} writes "{space_name}" '
-        "into rename space text field"
+        'user of {browser_id} writes "{space_name}" into rename space text field'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -28,15 +25,11 @@ def type_space_name_on_rename_space_input_on_overview_page(
 ):
     driver = selenium[browser_id]
     oz_page(driver)["data"].overview_page.info_tile.rename()
-    oz_page(driver)[
-        "data"
-    ].overview_page.info_tile.edit_name_box.value = space_name
+    oz_page(driver)["data"].overview_page.info_tile.edit_name_box.value = space_name
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} clicks on confirmation button on overview page"
-    )
+    parsers.parse("user of {browser_id} clicks on confirmation button on overview page")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_space_by_click_on_confirmation_button_on_overview_page(
@@ -46,11 +39,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
     oz_page(driver)["data"].overview_page.info_tile.edit_name_box.confirm()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on cancel button on overview page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -59,8 +48,7 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms rename the space "
-        "using (?P<option>.*)"
+        "user of (?P<browser_id>.*) confirms rename the space using (?P<option>.*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -83,19 +71,13 @@ def assert_number_of_shares_on_overview_page(
     browser_id, selenium, oz_page, number: int
 ):
     driver = selenium[browser_id]
-    shares_count = int(
-        oz_page(driver)["data"].overview_page.info_tile.shares_count
-    )
+    shares_count = int(oz_page(driver)["data"].overview_page.info_tile.shares_count)
     assert (
         number == shares_count
     ), f"number of shares equals {shares_count}, not {{number}} as expected"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{space_name}" label on overview page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" label on overview page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_name_label_of_space_on_overview_page(
     selenium, browser_id, space_name, oz_page
@@ -148,15 +130,10 @@ def assert_space_advertised_in_space_marketplace_in_overview(
     marketplace_tile = oz_page(driver)["data"].overview_page.marketplace_tile
     advertise_info = marketplace_tile.advertise_info
     if option == "is":
-        err_msg = (
-            f"space should be advertised but visible info is {advertise_info}"
-        )
+        err_msg = f"space should be advertised but visible info is {advertise_info}"
         assert advertise_info == "Space advertised", err_msg
     elif option == "is not":
-        err_msg = (
-            "space should not be advertised but visible info is "
-            f"{advertise_info}"
-        )
+        err_msg = f"space should not be advertised but visible info is {advertise_info}"
         assert advertise_info == "Not advertised", err_msg
 
 
@@ -167,9 +144,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_link_in_space_marketplace_in_overview(
-    browser_id, link, selenium, oz_page
-):
+def click_link_in_space_marketplace_in_overview(browser_id, link, selenium, oz_page):
     driver = selenium[browser_id]
     marketplace_tile = oz_page(driver)["data"].overview_page.marketplace_tile
     link = getattr(marketplace_tile, transform(link))
@@ -204,9 +179,7 @@ def assert_space_in_overview_with_config(browser_id, selenium, oz_page, config):
     _assert_space_in_overview_with_config(browser_id, config, selenium, oz_page)
 
 
-def _assert_space_in_overview_with_config(
-    browser_id, config, selenium, oz_page
-):
+def _assert_space_in_overview_with_config(browser_id, config, selenium, oz_page):
     data = yaml.load(config, yaml.Loader)
 
     organization_name_option = "organization name"
@@ -228,6 +201,4 @@ def _assert_space_in_overview_with_config(
     )
 
     if tags:
-        assert_tags_in_space_details_in_overview(
-            selenium, browser_id, tags, oz_page
-        )
+        assert_tags_in_space_details_in_overview(selenium, browser_id, tags, oz_page)

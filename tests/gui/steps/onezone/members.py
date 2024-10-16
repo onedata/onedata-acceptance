@@ -4,9 +4,7 @@ management in onezone web GUI
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -233,8 +231,7 @@ def assert_members_number_in_space_members_tile(
     members_count = getattr(members_tile, name)
 
     error_msg = (
-        f"found {number} {membership_type} {subject_type} instead of "
-        f"{members_count}"
+        f"found {number} {membership_type} {subject_type} instead of {members_count}"
     )
     assert int(members_count) == number, error_msg
 
@@ -247,9 +244,7 @@ def assert_members_number_in_space_members_tile(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_relation_menu_button(
-    selenium, browser_id, member_name, name, oz_page, where
-):
+def click_relation_menu_button(selenium, browser_id, member_name, name, oz_page, where):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
@@ -576,17 +571,14 @@ def _get_cluster_members(selenium, browser_id, oz_page, onepanel):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
-        "user in cluster members"
+        'user of (?P<browser_id>.*) sees "(?P<member_name>.*)" user in cluster members'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_user_in_cluster_members_page(
     selenium, browser_id, member_name, oz_page, onepanel
 ):
-    cluster_members = _get_cluster_members(
-        selenium, browser_id, oz_page, onepanel
-    )
+    cluster_members = _get_cluster_members(selenium, browser_id, oz_page, onepanel)
 
     assert (
         member_name in cluster_members
@@ -603,9 +595,7 @@ def assert_user_in_cluster_members_page(
 def assert_user_not_in_cluster_members_page(
     selenium, browser_id, member_name, oz_page, onepanel
 ):
-    cluster_members = _get_cluster_members(
-        selenium, browser_id, oz_page, onepanel
-    )
+    cluster_members = _get_cluster_members(selenium, browser_id, oz_page, onepanel)
 
     assert (
         member_name not in cluster_members
@@ -643,9 +633,7 @@ def copy_invitation_token(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_invitation_token(
-    selenium, browser_id, group, who, oz_page, tmp_memory, popups
-):
+def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)["groups"]
     page.elements_list[group]()
@@ -706,10 +694,9 @@ def try_setting_privileges_in_members_subpage(
                 selenium, browser_id, button, oz_page, where, onepanel, tree
             )
         else:
-            assert not result, (
-                f"Modify {member_type} privilege on {where} "
-                "page should not be possible"
-            )
+            assert (
+                not result
+            ), f"Modify {member_type} privilege on {where} page should not be possible"
 
 
 @wt(
@@ -790,9 +777,7 @@ def set_some_privileges_in_members_subpage_other_granted(
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def set_privileges_in_members_subpage_on_modal(
-    selenium, browser_id, config, modals
-):
+def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config, modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
     tree = modals(driver).change_privileges.privilege_tree
@@ -828,14 +813,10 @@ def assert_privileges_in_members_subpage(
     is_direct_privileges = option != "effective "
     # wait for set privileges to be visible in gui
     try:
-        tree.assert_privileges(
-            selenium, browser_id, privileges, is_direct_privileges
-        )
+        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
     except AssertionError:
         time.sleep(2)
-        tree.assert_privileges(
-            selenium, browser_id, privileges, is_direct_privileges
-        )
+        tree.assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
@@ -847,9 +828,7 @@ def assert_privileges_in_members_subpage(
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def assert_privileges_in_members_subpage_on_modal(
-    selenium, browser_id, config, modals
-):
+def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config, modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
     tree = modals(driver).change_privileges.privilege_tree
@@ -873,9 +852,7 @@ def click_button_on_element_header_in_members(
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
     time.sleep(1)
-    driver.find_element(
-        By.CSS_SELECTOR, ".list-header-row " + option_selector
-    ).click()
+    driver.find_element(By.CSS_SELECTOR, ".list-header-row " + option_selector).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -887,9 +864,7 @@ def click_button_on_element_header_in_members_and_wait(
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     driver.execute_script("window.scrollBy(0,0)")
-    driver.find_element(
-        By.CSS_SELECTOR, ".list-header-row " + option_selector
-    ).click()
+    driver.find_element(By.CSS_SELECTOR, ".list-header-row " + option_selector).click()
     tree.wait_for_load_privileges()
     page.close_member(driver)
 
@@ -920,9 +895,7 @@ def ckeck_status_labels_for_member_of_space(
     status_labels = [x.text for x in member.status_labels]
     labels = parse_seq(labels)
 
-    assert len(status_labels) == len(
-        labels
-    ), f"Invalid status labels for {member_name}"
+    assert len(status_labels) == len(labels), f"Invalid status labels for {member_name}"
     for x in labels:
         assert x in status_labels, f'"{x}" label not found for {member_name}'
 
@@ -952,9 +925,7 @@ def see_insufficient_permissions_alert_for_member(
 
     members_list = getattr(page, member_type)
     forbidden_alert = members_list.items[member_name].forbidden_alert.text
-    assert (
-        alert_text in forbidden_alert
-    ), f'alert with text "{alert_text}" not found'
+    assert alert_text in forbidden_alert, f'alert with text "{alert_text}" not found'
 
 
 @wt(
@@ -1007,9 +978,7 @@ def check_element_in_members_subpage(
     selenium, browser_id, option, oz_page, member_name, member_type, list_type
 ):
     driver = selenium[browser_id]
-    member_list = getattr(
-        oz_page(driver)["discovery"].members_page, list_type
-    ).items
+    member_list = getattr(oz_page(driver)["discovery"].members_page, list_type).items
     if option == "sees":
         try:
             err_msg = f"{member_name} {member_type} not found"
@@ -1018,9 +987,7 @@ def check_element_in_members_subpage(
             raise AssertionError(err_msg) from exc
     else:
         try:
-            assert (
-                member_name not in member_list
-            ), f"{member_name} {member_type}"
+            assert member_name not in member_list, f"{member_name} {member_type}"
         except RuntimeError:
             pass
 
@@ -1087,9 +1054,7 @@ def assert_privilege_config_for_user(
             selenium, browser_id, item_name, option2, oz_page
         )
     elif where == "group":
-        go_to_group_subpage(
-            selenium, browser_id, item_name, option2.lower(), oz_page
-        )
+        go_to_group_subpage(selenium, browser_id, item_name, option2.lower(), oz_page)
     elif where == "cluster":
         click_on_record_in_clusters_menu(
             selenium, browser_id, oz_page, item_name, hosts
@@ -1109,8 +1074,7 @@ def assert_privilege_config_for_user(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on "
-        "(?P<member_type>users|groups) checkbox"
+        "user of (?P<browser_id>.*) clicks on (?P<member_type>users|groups) checkbox"
     )
 )
 def click_on_bulk_checkbox(browser_id, member_type, selenium, oz_page):
@@ -1127,9 +1091,7 @@ def click_on_bulk_checkbox(browser_id, member_type, selenium, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_member_checkbox(
-    selenium, browser_id, member_name, oz_page, member_type
-):
+def click_member_checkbox(selenium, browser_id, member_name, oz_page, member_type):
     driver = selenium[browser_id]
     page = oz_page(driver)["groups"].members_page
 

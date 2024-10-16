@@ -3,9 +3,7 @@ workflows initial values in oneprovider web GUI"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -58,8 +56,7 @@ def open_select_initial_files_modal(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "Add groups..." link in '
-        '"{store_name}" store'
+        'user of {browser_id} clicks "Add groups..." link in "{store_name}" store'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -98,9 +95,7 @@ def get_select_option_from_initial_value_popup(option, popup_menu):
 
 
 def get_initial_value_store(driver, op_container, store_name):
-    initial_value_stores = op_container(
-        driver
-    ).automation_page.initial_value_store
+    initial_value_stores = op_container(driver).automation_page.initial_value_store
     if store_name + ":" in initial_value_stores:
         return initial_value_stores[store_name + ":"]
     if store_name + ": " in initial_value_stores:
@@ -128,9 +123,7 @@ def get_data_type_in_initial_value_store(driver, op_container, store_name):
     return store.data_type
 
 
-def get_data_type_of_array_initial_value_store(
-    driver, op_container, store_name
-):
+def get_data_type_of_array_initial_value_store(driver, op_container, store_name):
     store = get_initial_value_store(driver, op_container, store_name)
     link_name = store.input_link.web_elem.text
 

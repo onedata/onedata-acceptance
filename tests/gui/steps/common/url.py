@@ -4,9 +4,7 @@ url handling.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -27,9 +25,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     node[0-9] of oneprovider-[0-9] provider panel,
     emergency interface of Onepanel
     """
-    for browser_id, host in zip(
-        parse_seq(browser_id_list), parse_seq(hosts_list)
-    ):
+    for browser_id, host in zip(parse_seq(browser_id_list), parse_seq(hosts_list)):
         driver = selenium[browser_id]
         if host == "emergency interface of Onepanel":
             host = "oneprovider-1 provider panel"
@@ -46,9 +42,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
             hostname = hosts[alias]["panel"]["hostname"]
 
             if node_number != "":
-                driver.get(
-                    f"https://{hostname.split('.')[0]}-{node_number}.{hostname}"
-                )
+                driver.get(f"https://{hostname.split('.')[0]}-{node_number}.{hostname}")
             else:
                 driver.get(f"https://{hostname}")
         else:
@@ -63,19 +57,14 @@ def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+) opens "
-        "(?P<hosts_list>.*one.*|.*One.*) page"
+        "users? of (?P<browser_id_list>.+) opens (?P<hosts_list>.*one.*|.*One.*) page"
     )
 )
 def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"
-    )
-)
+@wt(parsers.re("user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_being_redirected_to_page(page, selenium, browser_id):
     driver = selenium[browser_id]
@@ -87,8 +76,7 @@ def assert_being_redirected_to_page(page, selenium, browser_id):
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.+) changes "
-        r"the relative URL to (?P<path>.+)"
+        r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"
     )
 )
 def change_relative_url(selenium, browser_id, path):
@@ -109,8 +97,7 @@ def change_application_path(selenium, browser_id, path):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) sees that "
-        "(?:url|URL) matches: (?P<path>.+)"
+        "user of (?P<browser_id>.+?) sees that (?:url|URL) matches: (?P<path>.+)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -164,9 +151,7 @@ def open_exactly_received_url(selenium, browser_id, tmp_memory):
         r'"?(?P<path>.+?)"? concatenated with copied item'
     )
 )
-def change_app_path_with_copied_item(
-    selenium, browser_id, path, displays, clipboard
-):
+def change_app_path_with_copied_item(selenium, browser_id, path, displays, clipboard):
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
     item = clipboard.paste(display=displays[browser_id])
@@ -182,9 +167,7 @@ def change_app_path_with_copied_item(
         r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'
     )
 )
-def change_app_path_with_recv_item(
-    selenium, browser_id, path, tmp_memory, item
-):
+def change_app_path_with_recv_item(selenium, browser_id, path, tmp_memory, item):
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
     item = tmp_memory[browser_id]["mailbox"][item.lower()]
@@ -194,19 +177,13 @@ def change_app_path_with_recv_item(
     driver.execute_script(f"window.location = '{url}'")
 
 
-@wt(
-    parsers.parse("user of {browser_id} copies url from browser's location bar")
-)
+@wt(parsers.parse("user of {browser_id} copies url from browser's location bar"))
 def copy_site_url(selenium, browser_id, displays, clipboard):
     driver = selenium[browser_id]
     clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} opens copied URL in browser's location bar"
-    )
-)
+@wt(parsers.parse("user of {browser_id} opens copied URL in browser's location bar"))
 def open_site_url(selenium, browser_id, displays, clipboard):
     driver = selenium[browser_id]
     url = clipboard.paste(display=displays[browser_id])
@@ -215,11 +192,7 @@ def open_site_url(selenium, browser_id, displays, clipboard):
     driver.execute_script(f"window.location = '{url}'")
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} copies a first resource {item} from URL"
-    )
-)
+@wt(parsers.parse("user of {browser_id} copies a first resource {item} from URL"))
 def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
     driver = selenium[browser_id]
     clipboard.copy(
@@ -237,8 +210,7 @@ def refresh_site(selenium, browser_id_list):
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.*?) refreshes site and waits "
-        "for page to load"
+        "users? of (?P<browser_id_list>.*?) refreshes site and waits for page to load"
     )
 )
 def refresh_site_and_wait(selenium, browser_id_list):
@@ -277,8 +249,7 @@ def switch_to_last_tab(selenium, browser_id):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} switches to the previously opened"
-        " tab in the web browser"
+        "user of {browser_id} switches to the previously opened tab in the web browser"
     )
 )
 def switch_to_first_tab(selenium, browser_id):
@@ -286,11 +257,7 @@ def switch_to_first_tab(selenium, browser_id):
     driver.switch_to.window(driver.window_handles[0])
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees image named "{image_name}" in browser'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
 def assert_image_in_browser(browser_id, selenium, image_name):
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")

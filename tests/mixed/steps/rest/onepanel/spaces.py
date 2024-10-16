@@ -4,9 +4,7 @@ using REST API.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -129,9 +127,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
     ).storage_import.auto_storage_import_config
 
     max_depth = options.get("max depth", space_details.max_depth)
-    continuous_scan = options.get(
-        "continuous scan", space_details.continuous_scan
-    )
+    continuous_scan = options.get("continuous scan", space_details.continuous_scan)
     modifications = options.get(
         "detect modifications", space_details.detect_modifications
     )

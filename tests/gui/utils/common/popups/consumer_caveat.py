@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -41,9 +39,7 @@ class ConsumerCaveat(PageObject):
     list_option = Button(".btn-list")
     id_option = Button(".btn-by-id")
     consumer_type = WebElement(".ember-basic-dropdown-trigger--in-place")
-    consumer_types = WebItemsSequence(
-        ".ember-power-select-option", cls=TypeItem
-    )
+    consumer_types = WebItemsSequence(".ember-power-select-option", cls=TypeItem)
     consumers = WebItemsSequence(".selector-list .selector-item", cls=Consumer)
     input = Input(".record-id")
     add_button = Button(".add-id")

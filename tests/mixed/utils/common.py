@@ -2,9 +2,7 @@
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests import (
@@ -18,13 +16,9 @@ from tests import (
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
-from tests.mixed.onepanel_client.configuration import (
-    Configuration as Conf_panel,
-)
+from tests.mixed.onepanel_client.configuration import Configuration as Conf_panel
 from tests.mixed.oneprovider_client import ApiClient as ApiClient_provider
-from tests.mixed.oneprovider_client.configuration import (
-    Configuration as Conf_provider,
-)
+from tests.mixed.oneprovider_client.configuration import Configuration as Conf_provider
 from tests.mixed.onezone_client import ApiClient as ApiClient_OZ
 from tests.mixed.onezone_client.configuration import Configuration as Conf_OZ
 from tests.utils.bdd_utils import parsers, wt
@@ -78,14 +72,10 @@ def login_to_panel(username, password, host):
     return ApiClient_panel(configuration=configuration)
 
 
-def login_to_cdmi(
-    username, users, host, access_token=None, identity_token=None
-):
+def login_to_cdmi(username, users, host, access_token=None, identity_token=None):
 
     configuration = Conf_CDMI()
-    setup_basic_configuration(
-        configuration, host, OZ_REST_PORT, CDMI_REST_PATH_PREFIX
-    )
+    setup_basic_configuration(configuration, host, OZ_REST_PORT, CDMI_REST_PATH_PREFIX)
 
     header_value = access_token if access_token else users[username].token
 

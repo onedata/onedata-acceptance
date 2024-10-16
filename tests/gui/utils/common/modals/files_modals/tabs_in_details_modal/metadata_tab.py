@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from decorator import contextmanager
 from selenium.webdriver import ActionChains

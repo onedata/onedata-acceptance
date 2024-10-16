@@ -4,14 +4,10 @@ common operations in onepanel web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.onezone.clusters import (
-    get_old_or_new_cluster_record_from_list,
-)
+from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -25,13 +21,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_content(
-    selenium, browser_id_list, btn, content, onepanel
-):
+def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content, onepanel):
     for browser_id in parse_seq(browser_id_list):
-        content = getattr(
-            onepanel(selenium[browser_id]).content, transform(content)
-        )
+        content = getattr(onepanel(selenium[browser_id]).content, transform(content))
         getattr(content, transform(btn)).click()
 
 
@@ -48,9 +40,7 @@ def wt_click_on_subitem_for_item(
 ):
     record = hosts[record]["name"]
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(
-            onepanel(selenium[browser_id]).sidebar, transform(sidebar)
-        )
+        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
@@ -82,9 +72,7 @@ def wt_click_on_subitem_for_item_with_name(
     selenium, browser_id_list, sidebar, sub_item, record, onepanel
 ):
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(
-            onepanel(selenium[browser_id]).sidebar, transform(sidebar)
-        )
+        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
@@ -95,20 +83,15 @@ def wt_click_on_subitem_for_item_with_name(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_sidebar_item(
-    selenium, browser_id_list, sidebar, record, onepanel
-):
+def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record, onepanel):
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(
-            onepanel(selenium[browser_id]).sidebar, transform(sidebar)
-        )
+        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].click()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks info button on warning bar "
-        "in Onepanel page"
+        "user of {browser_id} clicks info button on warning bar in Onepanel page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -123,11 +106,7 @@ def click_open_in_onezone_in_modal(selenium, browser_id, modals):
     modal.emergency_interface.open_in_onezone()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks open in onezone in Onepanel login page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks open in onezone in Onepanel login page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_open_in_onezone(selenium, browser_id, login_page):
     login_page(selenium[browser_id]).open_in_onezone()
@@ -152,15 +131,9 @@ def assert_not_working_in_clusters_sidebar(
     assert item.is_not_working(), f"{record} is working in clusters sidebar"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees Overview page of "{cluster}" cluster'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees Overview page of "{cluster}" cluster'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def assert_overview_page_of_cluster(
-    selenium, browser_id, cluster, onepanel, hosts
-):
+def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel, hosts):
     found = onepanel(selenium[browser_id]).content.overview.cluster_name
     expected = hosts[cluster]["name"]
     assert found == expected, f"Overview of {expected} not visible"

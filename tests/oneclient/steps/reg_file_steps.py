@@ -2,9 +2,7 @@
 
 __author__ = "Jakub Kudzia, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -54,11 +52,7 @@ def replace(user, text1, text2, file, users):
     multi_reg_file_steps.replace(user, text1, text2, file, "client1", users)
 
 
-@when(
-    parsers.re(
-        r"(?P<user>\w+) copies regular file (?P<file>.*) to (?P<path>.*)"
-    )
-)
+@when(parsers.re(r"(?P<user>\w+) copies regular file (?P<file>.*) to (?P<path>.*)"))
 def copy_reg_file(user, file, path, users):
     multi_reg_file_steps.copy_reg_file(user, file, path, "client1", users)
 
@@ -68,25 +62,18 @@ def check_md5(user, file, users, context):
     multi_reg_file_steps.check_md5(user, file, "client1", users, context)
 
 
-@when(
-    parsers.re(
-        r"(?P<user>\w+) changes (?P<file>.*) size to (?P<new_size>.*) bytes"
-    )
-)
+@when(parsers.re(r"(?P<user>\w+) changes (?P<file>.*) size to (?P<new_size>.*) bytes"))
 def do_truncate(user, file, new_size, users):
     multi_reg_file_steps.do_truncate(user, file, new_size, "client1", users)
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to change (?P<file>.*) size to (?P<new_size>.*)"
-        " bytes"
+        r"(?P<user>\w+) fails to change (?P<file>.*) size to (?P<new_size>.*) bytes"
     )
 )
 def do_truncate_fail(user, file, new_size, users):
-    multi_reg_file_steps.do_truncate_fail(
-        user, file, new_size, "client1", users
-    )
+    multi_reg_file_steps.do_truncate_fail(user, file, new_size, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) executes (?P<file>.*)"))

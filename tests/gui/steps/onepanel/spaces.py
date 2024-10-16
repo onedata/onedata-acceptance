@@ -4,9 +4,7 @@ spaces management in onepanel web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -14,11 +12,7 @@ from subprocess import CalledProcessError
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
-from tests.gui.conftest import (
-    SELENIUM_IMPLICIT_WAIT,
-    WAIT_BACKEND,
-    WAIT_FRONTEND,
-)
+from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -35,9 +29,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_storage_in_support_space_form(
-    selenium, browser_id, storage, onepanel
-):
+def wt_select_storage_in_support_space_form(selenium, browser_id, storage, onepanel):
     storage_selector = onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_selector
@@ -133,18 +125,14 @@ def wt_type_text_to_input_box_in_space_support_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_option_box_in_space_support_form(
-    selenium, browser_id, toggle, onepanel
-):
+def wt_enable_option_box_in_space_support_form(selenium, browser_id, toggle, onepanel):
     storage_import_configuration = onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration
     getattr(storage_import_configuration, transform(toggle)).check()
 
 
-def wt_disable_option_box_in_space_support_form(
-    selenium, browser_id, toggle, onepanel
-):
+def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle, onepanel):
     storage_import_configuration = onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration
@@ -162,12 +150,9 @@ def wt_assert_existence_of_space_support_record(
     selenium, browser_id, space_name, onepanel
 ):
     spaces = {
-        space.name
-        for space in onepanel(selenium[browser_id]).content.spaces.spaces
+        space.name for space in onepanel(selenium[browser_id]).content.spaces.spaces
     }
-    assert (
-        space_name in spaces
-    ), f'not found "{space_name}" in spaces in Onepanel'
+    assert space_name in spaces, f'not found "{space_name}" in spaces in Onepanel'
 
 
 @wt(
@@ -223,8 +208,7 @@ def wt_type_text_to_input_box_in_storage_import_configuration(
         setattr(form.storage_import_configuration, input_name, text)
     else:
         raise RuntimeError(
-            f"failed typing text into {input_box} input field in "
-            "support space form "
+            f"failed typing text into {input_box} input field in support space form "
         )
 
 
@@ -288,9 +272,7 @@ def wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_open_space_item_in_spaces_page_op_panel(
-    selenium, browser_id, space, onepanel
-):
+def wt_open_space_item_in_spaces_page_op_panel(selenium, browser_id, space, onepanel):
     onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 
 
@@ -332,8 +314,7 @@ def wt_assert_proper_space_configuration_in_panel(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} copies Id of "{space}" space '
-        "in Spaces page in Onepanel"
+        'user of {browser_id} copies Id of "{space}" space in Spaces page in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -368,9 +349,7 @@ def wt_expands_toolbar_icon_for_space_in_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_space_toolbar_in_panel(
-    selenium, browser_id, option, popups
-):
+def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, popups):
     toolbar = popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
@@ -386,9 +365,7 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_cease_support_modal(
-    selenium, browser_id, button, modals
-):
+def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals):
     modal = modals(selenium[browser_id]).cease_support_for_space
     if button == "Cease support":
         modal.cease_support()
@@ -427,9 +404,7 @@ def login_and_remove_space_instead_of_revoke(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    wt_login_using_basic_auth(
-        selenium, browser_id, user, login_page, users, "Onezone"
-    )
+    wt_login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).remove_modal.understand_notice()
@@ -443,14 +418,8 @@ def login_and_remove_space_instead_of_revoke(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_understand_risk_in_cease_support_modal(
-    selenium, browser_id, modals
-):
-    (
-        modals(
-            selenium[browser_id]
-        ).cease_support_for_space.understand_risk_checkbox()
-    )
+def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals):
+    (modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
 
 
 @wt(
@@ -512,19 +481,14 @@ def assert_correct_number_displayed_on_sync_charts(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {tab_list} navigation tabs for "
-        'space "{space_name}"'
+        'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_space_displayed(
     selenium, browser_id, tab_list, space_name, onepanel
 ):
-    nav = (
-        onepanel(selenium[browser_id])
-        .content.spaces.spaces[space_name]
-        .navigation
-    )
+    nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
 
     for tab in parse_seq(tab_list):
         assert (
@@ -561,9 +525,7 @@ def click_on_interval_update(browser_id, interval, onepanel, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def cannot_click_on_navigation_tab_in_space(
-    browser_id, tab_name, onepanel, selenium
-):
+def cannot_click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
     nav = onepanel(selenium[browser_id]).content.spaces.space.navigation
     tab = transform(tab_name, strip_char='"')
     try:
@@ -648,9 +610,7 @@ def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
     quota = f"{quota}_quota"
     driver = selenium[browser_id]
     _enter_text(
-        getattr(
-            onepanel(driver).content.spaces.space.auto_cleaning, quota
-        ).edit_input,
+        getattr(onepanel(driver).content.spaces.space.auto_cleaning, quota).edit_input,
         value,
     )
 
@@ -665,9 +625,7 @@ def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
 def confirm_quota_value_change(selenium, browser_id, quota, onepanel):
     quota = f"{quota}_quota"
     driver = selenium[browser_id]
-    getattr(
-        onepanel(driver).content.spaces.space.auto_cleaning, quota
-    ).accept_button()
+    getattr(onepanel(driver).content.spaces.space.auto_cleaning, quota).accept_button()
 
 
 @wt(
@@ -684,8 +642,7 @@ def click_start_cleaning_now(selenium, browser_id, onepanel):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {size} released size "
-        "in cleaning report in Onepanel"
+        "user of {browser_id} sees {size} released size in cleaning report in Onepanel"
     )
 )
 @repeat_failed(
@@ -724,9 +681,7 @@ def toggle_in_storage_import_configuration_is_enabled(
         "in storage import tab in Onepanel"
     )
 )
-def click_start_scan_button_in_storage_import_tab(
-    selenium, browser_id, onepanel
-):
+def click_start_scan_button_in_storage_import_tab(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.spaces.space.sync_chart.start_scan()
 

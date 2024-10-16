@@ -4,9 +4,7 @@ Onezone GUI and multiple browsers instance.
 
 __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from pytest import fixture

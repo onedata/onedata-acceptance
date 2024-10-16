@@ -2,9 +2,7 @@
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
 
@@ -54,14 +52,10 @@ def check_files_tree(subtree, children, cwd, ls_fun, assert_file_content_fun):
                         assert_file_content_fun,
                     )
             else:
-                assert_file_content_fun(
-                    os.path.join(cwd, item_name), str(item_desc)
-                )
+                assert_file_content_fun(os.path.join(cwd, item_name), str(item_desc))
 
 
-def create_content(
-    user, users, cwd, content, create_item_fun, host, hosts, request
-):
+def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -128,9 +122,7 @@ def assert_ace(priv, item_type, ace, name, num, path):
     keys = ACL_MASK[item_type].keys()
     set_priv = [ACL_MASK[item_type][key] for key in keys if mask & key == key]
     set_priv.sort()
-    assert ace["identifier"].startswith(
-        name
-    ), f"Identifier in {num} ACE is not {name}"
+    assert ace["identifier"].startswith(name), f"Identifier in {num} ACE is not {name}"
     assert ace["acetype"] == acetype, f"Type in {num} ACE is not {acetype}"
     assert (
         ace["aceflags"] == aceflags

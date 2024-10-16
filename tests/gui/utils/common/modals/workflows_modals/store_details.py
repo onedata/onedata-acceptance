@@ -2,9 +2,7 @@
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.utils.core.base import PageObject
@@ -66,9 +64,7 @@ class StoreDetails(Modal):
     )
     raw_view = AceEditor(".value-container-presenter")
     array_view = WebItem(".array-visual-presenter", cls=ArrayView)
-    single_file_container = WebItem(
-        ".content-container", cls=SingleFileContainer
-    )
+    single_file_container = WebItem(".content-container", cls=SingleFileContainer)
     close_details = Button(".close-details")
 
     def __str__(self):

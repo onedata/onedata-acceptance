@@ -4,9 +4,7 @@ Definitions of fixtures used in acceptance tests.
 
 __author__ = "Jakub Kudzia, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import copy
 import os
@@ -19,23 +17,11 @@ import pytest
 import yaml
 from py.xml import html  # pylint: disable=import-error, no-name-in-module
 from selenium.webdriver import Chrome
-from selenium.webdriver.support.event_firing_webdriver import (
-    EventFiringWebDriver,
-)
-from tests import (
-    ENTITIES_CONFIG_DIR,
-    ENV_DIRS,
-    LOGDIRS,
-    PATCHES_DIR,
-    SCENARIO_DIRS,
-)
+from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
+from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
 from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.environment_utils import clean_env, start_environment
-from tests.utils.path_utils import (
-    absolute_path_to_env_file,
-    get_file_name,
-    make_logdir,
-)
+from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import AdminUser
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
@@ -82,9 +68,7 @@ def pytest_addoption(parser):
             "will be downloaded."
         ),
     )
-    parser.addoption(
-        "--ignore-xfail", action="store_true", help="Ignores xfail mark"
-    )
+    parser.addoption("--ignore-xfail", action="store_true", help="Ignores xfail mark")
     parser.addoption(
         "--env-file",
         action="store",
@@ -92,9 +76,7 @@ def pytest_addoption(parser):
         help="description of environment that will be tested",
     )
 
-    parser.addoption(
-        "--oz-image", action="store", help="onezone imageto use in tests"
-    )
+    parser.addoption("--oz-image", action="store", help="onezone imageto use in tests")
     parser.addoption(
         "--op-image", action="store", help="oneprovider imageto use in tests"
     )
@@ -135,9 +117,7 @@ def pytest_addoption(parser):
                     regular file in a space, all created files are symlinks to a different file""",
     )
 
-    group = parser.getgroup(
-        "onedata", description="option specific to onedata tests"
-    )
+    group = parser.getgroup("onedata", description="option specific to onedata tests")
 
     group.addoption(
         "--admin",
@@ -164,9 +144,7 @@ def pytest_addoption(parser):
     )
 
     onenv = parser.getgroup("onenv", description="option specific to onenv")
-    onenv.addoption(
-        "--local-charts-path", action="store", help="Path to local charts"
-    )
+    onenv.addoption("--local-charts-path", action="store", help="Path to local charts")
     onenv.addoption(
         "--no-clean",
         action="store_true",
@@ -294,9 +272,7 @@ def onepanel_credentials(users, hosts, emergency_passphrase):
 def emergency_passphrase(users, hosts):
     zone_pod_name = hosts["onezone"]["pod-name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
-    passphrase = onenv_utils.get_env_variable(
-        zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE"
-    )
+    passphrase = onenv_utils.get_env_variable(zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE")
     return passphrase
 
 
@@ -653,11 +629,7 @@ def _gather_movie(item, report, extras):
     failure = (report.skipped and xfail) or (report.failed and not xfail)
     if xvfb_rec != "none":
         movie_name = f"{item.name}.mp4"
-        if (
-            (xvfb_rec == "failed")
-            and (movie_name not in _movies)
-            and not failure
-        ):
+        if (xvfb_rec == "failed") and (movie_name not in _movies) and not failure:
             movie_path = os.path.join(log_dir, "movies", movie_name)
             if os.path.isfile(movie_path):
                 os.remove(movie_path)
@@ -854,9 +826,7 @@ def xfail_by_env(request, env_description_file):
         ignore = request.config.getoption("--ignore-xfail")
         if env in arg_envs and not ignore:
             request.node.add_marker(
-                pytest.mark.xfail(
-                    reason=f"xfailed on env: {env} with reason: {reason}"
-                )
+                pytest.mark.xfail(reason=f"xfailed on env: {env} with reason: {reason}")
             )
 
 

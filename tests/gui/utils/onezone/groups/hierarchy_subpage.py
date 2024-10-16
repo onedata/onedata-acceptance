@@ -3,9 +3,7 @@ subpage page in Onezone gui"""
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from selenium.webdriver import ActionChains
@@ -43,9 +41,7 @@ class Group(PageObject):
 
 class GroupHierarchyPage(PageObject):
     show_parent_groups = Button(".group-box.active .group-box-relation.parents")
-    show_children_groups = Button(
-        ".group-box.active .group-box-relation.children"
-    )
+    show_children_groups = Button(".group-box.active .group-box-relation.children")
 
     groups = WebItemsSequence(
         ".content-groups-hierarchy .group-boxes-container .group-box", cls=Group

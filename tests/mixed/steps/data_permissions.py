@@ -4,9 +4,7 @@ basic operations on permissions on data using web GUI and REST.
 
 __author__ = "Michal Stanisz, Michal Cwiertnia, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -238,9 +236,7 @@ def assert_posix_permissions_in_op(
             popups,
         )
     elif client_lower == "rest":
-        assert_posix_permissions_in_op_rest(
-            full_path, mode, user, users, host, hosts
-        )
+        assert_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_posix_permissions_in_op_oneclient(

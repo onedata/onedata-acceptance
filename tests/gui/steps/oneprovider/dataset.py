@@ -4,9 +4,7 @@ datasets in oneprovider web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
@@ -25,9 +23,7 @@ DATASET_BROWSER = "dataset browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_general_toggle_checked_for_ancestors(
-    browser_id, selenium, modals, kind
-):
+def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals, kind):
     driver = selenium[browser_id]
     protection_kind = f"ancestor_{kind}_protection"
     toggle = getattr(modals(driver).datasets, protection_kind)
@@ -88,9 +84,7 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_protection_toggle(
-    browser_id, selenium, modals, toggle_type, modal_name
-):
+def click_protection_toggle(browser_id, selenium, modals, toggle_type, modal_name):
     driver = selenium[browser_id]
     toggle = getattr(
         getattr(modals(driver), transform(modal_name)),
@@ -98,9 +92,7 @@ def click_protection_toggle(
     )
     toggle.check()
     if toggle.is_unchecked():
-        raise AssertionError(
-            f"Cannot check {toggle_type} write protection toggle"
-        )
+        raise AssertionError(f"Cannot check {toggle_type} write protection toggle")
 
 
 @wt(
@@ -126,9 +118,7 @@ def can_not_click_protection_toggle(
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_protected_tag_label_in_dataset_modal(
-    browser_id, selenium, modals, text
-):
+def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
     error = f"Text: {text} not found in label "
 
@@ -160,9 +150,7 @@ def click_on_dataset(browser_id, tmp_memory, name):
 def assert_path_to_root_file(browser_id, tmp_memory, path, name):
     browser = tmp_memory[browser_id][transform(DATASET_BROWSER)]
     path_to_root = browser.data[name].path_to_root_file
-    err_msg = (
-        f'Path to root: "{path_to_root} does not match expected path: "{path}"'
-    )
+    err_msg = f'Path to root: "{path_to_root} does not match expected path: "{path}"'
     assert path == path_to_root, err_msg
 
 
@@ -214,8 +202,7 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} fails to click on "{button}" button'
-        ' in modal "{modal}"'
+        'user of {browser_id} fails to click on "{button}" button in modal "{modal}"'
     )
 )
 def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):

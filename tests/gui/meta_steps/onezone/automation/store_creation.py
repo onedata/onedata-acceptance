@@ -4,9 +4,7 @@ store creation in Onezone using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
 from tests.gui.steps.modals.modal import (
@@ -15,9 +13,7 @@ from tests.gui.steps.modals.modal import (
     switch_toggle_in_modal,
     write_name_into_text_field_in_modal,
 )
-from tests.gui.steps.onezone.automation.workflow_creation import (
-    click_add_store_button,
-)
+from tests.gui.steps.onezone.automation.workflow_creation import click_add_store_button
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -28,9 +24,7 @@ from tests.utils.bdd_utils import parsers, wt
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(
-    browser_id, config, selenium, oz_page, modals, popups
-):
+def create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups):
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -45,14 +39,10 @@ def create_store_for_workflow(
         type dropdown: List
         data type dropdown: Object
     """
-    _create_store_for_workflow(
-        browser_id, config, selenium, oz_page, modals, popups
-    )
+    _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups)
 
 
-def _create_store_for_workflow(
-    browser_id, config, selenium, oz_page, modals, popups
-):
+def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups):
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 

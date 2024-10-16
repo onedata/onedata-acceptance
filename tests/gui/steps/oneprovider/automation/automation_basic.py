@@ -3,9 +3,7 @@ workflows and their execution in oneprovider web GUI"""
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -40,15 +38,9 @@ def get_input_element(op_container, driver, input_type):
     return getattr(op_container(driver).automation_page, input_type)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{tab_name}" in the automation tab bar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "{tab_name}" in the automation tab bar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_button_in_navigation_tab(
-    selenium, browser_id, op_container, tab_name
-):
+def click_button_in_navigation_tab(selenium, browser_id, op_container, tab_name):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     try:
@@ -98,18 +90,14 @@ def search_for_lane_status(driver, page, lane_name, box_number=None):
     number_of_lanes = len(workflow_visualiser.workflow_lanes)
 
     for i in range(number_of_lanes):
-        lane_id = workflow_visualiser.workflow_lanes[
-            i
-        ].lane_web_elem.get_attribute("id")
+        lane_id = workflow_visualiser.workflow_lanes[i].lane_web_elem.get_attribute(
+            "id"
+        )
         scroll_to_css_selector(driver, f"#{lane_id}")
-        found_lane = driver.find_element(
-            By.CSS_SELECTOR, f"#{lane_id} .lane-name"
-        ).text
+        found_lane = driver.find_element(By.CSS_SELECTOR, f"#{lane_id} .lane-name").text
         if found_lane == lane_name:
             if box_number is not None:
-                return workflow_visualiser.workflow_lanes[i].parallel_boxes[
-                    box_number
-                ]
+                return workflow_visualiser.workflow_lanes[i].parallel_boxes[box_number]
             status = driver.find_element(
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
@@ -152,9 +140,7 @@ def click_on_task_in_lane(
     if len(parallel_box.task_list) == 1:
         task = parallel_box.task_list[0]
     else:
-        task, task_id = search_for_task_in_parallel_box(
-            driver, parallel_box, task_name
-        )
+        task, task_id = search_for_task_in_parallel_box(driver, parallel_box, task_name)
     # wait a moment to find parallel box
     time.sleep(1)
     if option == "closes":
@@ -195,9 +181,7 @@ def click_on_link_in_task_box(
     driver = selenium[browser_id]
 
     parallel_box = search_for_lane_status(driver, page, lane_name, number)
-    task, task_id = search_for_task_in_parallel_box(
-        driver, parallel_box, task_name
-    )
+    task, task_id = search_for_task_in_parallel_box(driver, parallel_box, task_name)
 
     scroll_to_css_selector(driver, f"#{task_id}")
     parallel_box.scroll_to_bottom_of_task_in_parallel_box(task_id)
@@ -211,9 +195,7 @@ def click_on_link_in_task_box(
         'user of {browser_id} clicks on "{tab_name}" tab in automation subpage'
     )
 )
-def change_tab_in_automation_subpage(
-    selenium, browser_id, op_container, tab_name
-):
+def change_tab_in_automation_subpage(selenium, browser_id, op_container, tab_name):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     page.navigation_tab[tab_name].click()
     time.sleep(0.25)
@@ -223,9 +205,7 @@ def change_tab_in_automation_subpage(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_first_executed_workflow_record(selenium, browser_id, op_container):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    change_tab_in_automation_subpage(
-        selenium, browser_id, op_container, "Ended"
-    )
+    change_tab_in_automation_subpage(selenium, browser_id, op_container, "Ended")
     page.workflow_executions_list[0].click()
 
 
@@ -279,16 +259,11 @@ def assert_workflow_on_executed_workflows_list(
         "data row menu in automation workflows page is disabled"
     )
 )
-def assert_option_disabled_in_automation_page(
-    selenium, browser_id, option, popups
-):
+def assert_option_disabled_in_automation_page(selenium, browser_id, option, popups):
     err_msg = (
-        f"Option {option} is not disabled in data row menu"
-        " in automation workflows page"
+        f"Option {option} is not disabled in data row menu in automation workflows page"
     )
-    disabled_options = popups(
-        selenium[browser_id]
-    ).workflow_menu.disabled_options
+    disabled_options = popups(selenium[browser_id]).workflow_menu.disabled_options
     assert option in disabled_options, err_msg
 
 

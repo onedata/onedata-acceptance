@@ -4,9 +4,7 @@ and nested archives using Oneprovider GUI and single browser instance.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial

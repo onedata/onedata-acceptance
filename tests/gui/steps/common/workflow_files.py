@@ -4,9 +4,7 @@ in acc tests.
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
 
@@ -35,9 +33,7 @@ def check_using_all_workflows():
     for dir_path, _, files in os.walk(TESTS_DIR):
         for file in files:
             used_workflows.update(
-                check_names_in_file(
-                    os.path.join(dir_path, file), workflows_names
-                )
+                check_names_in_file(os.path.join(dir_path, file), workflows_names)
             )
     err_msg = (
         "there are workflows not included in tests: "

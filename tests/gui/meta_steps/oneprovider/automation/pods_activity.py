@@ -4,9 +4,7 @@ pods activity in Oneprovider using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -57,16 +55,12 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
         'name "{lambda_name}"'
     )
 )
-def assert_lambda_name_in_tab_name(
-    selenium, browser_id, modals, tab, lambda_name
-):
+def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_name):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
-    err_msg = (
-        f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
-    )
+    err_msg = f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
     assert lambda_name in pod_name, err_msg
 
 
@@ -161,9 +155,7 @@ def assert_events_containing_lambda_name(
                 matching.append(elem)
                 break
 
-        err_msg = (
-            f"{option}: {event} that contains {lambda_name} has not been found"
-        )
+        err_msg = f"{option}: {event} that contains {lambda_name} has not been found"
         assert matching != [], err_msg
 
 
@@ -259,9 +251,7 @@ def assert_pod_name_for_task(
     click_on_link_in_task_box(
         selenium, browser_id, op_container, lane, task, link, ordinal
     )
-    assert_lambda_name_in_tab_name(
-        selenium, browser_id, modals, tab, lambda_name
-    )
+    assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_name)
     click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(
         selenium, browser_id, op_container, lane, task, ordinal, close

@@ -2,9 +2,7 @@
 
 __author__ = "Tomasz Lichon"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -52,9 +50,7 @@ def test_remote_file_override(env_description_file):
     pass
 
 
-@scenario(
-    "Create nonempty file on one provider and remove it on the other provider"
-)
+@scenario("Create nonempty file on one provider and remove it on the other provider")
 def test_remote_file_removal(env_description_file):
     pass
 
@@ -64,8 +60,6 @@ def test_sequential_appends(env_description_file):
     pass
 
 
-@scenario(
-    "Concurrently write disjoint ranges and read the same on both providers"
-)
+@scenario("Concurrently write disjoint ranges and read the same on both providers")
 def test_conflict_on_disjoint_blocks(env_description_file):
     pass

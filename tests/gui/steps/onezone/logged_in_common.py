@@ -4,9 +4,7 @@ common operations in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -204,10 +202,7 @@ def assert_there_is_no_item_named_in_oz_panel_list(
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
-    items = {
-        item.name
-        for item in getattr(oz_page(driver)[oz_panel], f"{item_type}s")
-    }
+    items = {item.name for item in getattr(oz_page(driver)[oz_panel], f"{item_type}s")}
     assert item_name not in items, (
         f'{item_type} named "{item_name}" found in {oz_panel} oz panel while it'
         " should not be found"

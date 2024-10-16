@@ -4,9 +4,7 @@ task creation in Onezone using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -121,9 +119,7 @@ def _create_task_using_previously_created_lambda(
     time.sleep(0.5)
     add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name)
     time.sleep(0.5)
-    add_lambda_revision_to_workflow(
-        selenium, browser_id, oz_page, lambda_name, ordinal
-    )
+    add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name, ordinal)
 
     if task_name:
         write_task_name_in_task_edition_text_field(
@@ -192,9 +188,7 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(
-    oz_page, selenium, browser_id, lane, popups, modals, task
-):
+def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals, task):
     modal = "Remove task"
     option = "Remove"
 
@@ -271,6 +265,4 @@ def modify_task_results(
                 conf_param_option,
             )
 
-    confirm_lambda_creation_or_edition(
-        selenium, browser_id, oz_page, task_option
-    )
+    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, task_option)

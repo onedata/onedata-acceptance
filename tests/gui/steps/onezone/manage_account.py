@@ -4,9 +4,7 @@ account management in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz, Piotr Duleba"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -33,9 +31,7 @@ def expand_account_settings_in_oz(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_account_settings_in_oz(
-    selenium, browser_id, option, popups
-):
+def click_on_option_in_account_settings_in_oz(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     popups(driver).user_account_menu.options[option].click()
 
@@ -49,8 +45,7 @@ def click_on_user_menu_button_in_oz(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on remove user button in menu "
-        "on Profile page"
+        "user of {browser_id} clicks on remove user button in menu on Profile page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -71,11 +66,7 @@ def click_understand_consequences_checkbox_in_oz(selenium, browser_id, modals):
     modals(driver).delete_user_account.understand_consequences.click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on delete account button in modal"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on delete account button in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_delete_account_button_in_oz(selenium, browser_id, modals):
     driver = selenium[browser_id]
@@ -89,9 +80,7 @@ def click_delete_account_button_in_oz(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_correct_user_name_in_oz(
-    selenium, browser_id, expected_user_name, oz_page
-):
+def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name, oz_page):
     driver = selenium[browser_id]
     displayed_user_name = oz_page(driver)["profile"].user_name
     err_msg = (
@@ -103,8 +92,7 @@ def assert_correct_user_name_in_oz(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in '
-        "the sidebar panel"
+        'user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in the sidebar panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

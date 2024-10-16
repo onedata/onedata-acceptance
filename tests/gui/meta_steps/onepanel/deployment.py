@@ -4,17 +4,13 @@ deployment management in onezone web GUI.
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
 
 import yaml
-from tests.gui.meta_steps.onezone.provider import (
-    send_copied_invite_token_in_oz_gui,
-)
+from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.deployment import (
@@ -30,9 +26,7 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step,
     wt_type_text_to_in_box_in_deployment_step5,
 )
-from tests.gui.steps.onepanel.provider import (
-    deactivate_request_subdomain_toggle,
-)
+from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -43,9 +37,7 @@ from tests.utils.bdd_utils import parsers, wt
         "configuration:\n{config}"
     )
 )
-def setup_step1(
-    selenium, browser_id, onepanel, host_regexp, config, hosts, modals
-):
+def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts, modals):
     """
     config:
 
@@ -57,9 +49,7 @@ def setup_step1(
      - Cluster Manager
      - Primary Cluster Manager
     """
-    _setup_step1(
-        selenium, browser_id, onepanel, host_regexp, config, hosts, modals
-    )
+    _setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts, modals)
 
 
 def _setup_step1(
@@ -85,14 +75,10 @@ def _setup_step1(
             onepanel,
             hosts,
         )
-        wt_click_on_btn_in_deployment_step(
-            selenium, browser_id, btn, step, onepanel
-        )
+        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel)
         wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals)
     else:
-        wt_click_on_btn_in_deployment_step(
-            selenium, browser_id, btn, step, onepanel
-        )
+        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel)
 
 
 def _parse_zone_data(zone_name, zone_domain):
@@ -141,9 +127,7 @@ def _setup_onezone_in_step1(
 def setup_dns(selenium, browser_id, onepanel, modals):
     wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel)
     wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel)
-    wt_click_yes_in_warning_modal_in_dns_setup_step(
-        selenium, browser_id, modals
-    )
+    wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals)
 
 
 @wt(
@@ -254,9 +238,7 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
 
 def _parse_provider(provider_name, provider_domain):
     provider_for_name = re.match(r"/name of (.+)/", provider_name).group(1)
-    provider_for_domain = re.match(r"/domain of (.+)/", provider_domain).group(
-        1
-    )
+    provider_for_domain = re.match(r"/domain of (.+)/", provider_domain).group(1)
     return provider_for_name, provider_for_domain
 
 

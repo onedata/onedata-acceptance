@@ -4,9 +4,7 @@ and directories).
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.utils.bdd_utils import parsers, then, when, wt
@@ -48,9 +46,7 @@ def ls_present(user, files, path, users):
     )
 )
 def ls_children(user, parent_dir, lower: int, upper: int, users):
-    multi_file_steps.ls_children(
-        user, parent_dir, lower, upper, "client1", users
-    )
+    multi_file_steps.ls_children(user, parent_dir, lower, upper, "client1", users)
 
 
 @wt(parsers.re(r"(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)"))
@@ -98,11 +94,7 @@ def check_size(user, file, size, users):
     multi_file_steps.check_size(user, file, size, "client1", users)
 
 
-@then(
-    parsers.re(
-        r"file type of (?P<user>\w+)'s (?P<file>.*) is (?P<file_type>.*)"
-    )
-)
+@then(parsers.re(r"file type of (?P<user>\w+)'s (?P<file>.*) is (?P<file_type>.*)"))
 def check_type(user, file, file_type, users):
     multi_file_steps.check_type(user, file, file_type, "client1", users)
 
@@ -127,11 +119,7 @@ def change_mode(user, file, mode, users):
     multi_file_steps.change_mode(user, file, mode, "client1", users)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) fails to change (?P<file>.*) mode to (?P<mode>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) fails to change (?P<file>.*) mode to (?P<mode>.*)"))
 def change_mode_fail(user, file, mode, users):
     multi_file_steps.change_mode_fail(user, file, mode, "client1", users)
 
@@ -149,9 +137,7 @@ def change_mode_fail(user, file, mode, users):
     )
 )
 def check_time(user, time1, time2, comparator, file, users):
-    multi_file_steps.check_time(
-        user, time1, time2, comparator, file, "client1", users
-    )
+    multi_file_steps.check_time(user, time1, time2, comparator, file, "client1", users)
 
 
 @when(parsers.re(r"(?P<user>\w+) updates (?P<files>.*) timestamps"))

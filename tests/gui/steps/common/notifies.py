@@ -4,9 +4,7 @@ ember notifies in web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import re
@@ -45,9 +43,7 @@ def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_visible_notifies(selenium, browser_id):
     driver = selenium[browser_id]
-    notifies = driver.find_elements(
-        By.CSS_SELECTOR, ".ember-notify a.close-button"
-    )
+    notifies = driver.find_elements(By.CSS_SELECTOR, ".ember-notify a.close-button")
 
     with suppress(StaleElementReferenceException):
         map(lambda btn: btn.click(), notifies)
@@ -57,11 +53,7 @@ def close_visible_notifies(selenium, browser_id):
     ), "not all notifies were closed"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees "{error_msg}" error on Onedata page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_loading_error(selenium, browser_id, onepage, error_msg):
     given_msg = onepage(selenium[browser_id]).loading_error.lower()
@@ -76,9 +68,7 @@ def assert_loading_error(selenium, browser_id, onepage, error_msg):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error_public_page(
-    selenium, browser_id, public_onepage, error_msg
-):
+def assert_loading_error_public_page(selenium, browser_id, public_onepage, error_msg):
     given_msg = public_onepage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg

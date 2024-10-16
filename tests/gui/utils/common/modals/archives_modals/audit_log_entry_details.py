@@ -4,9 +4,7 @@ panel.
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.utils.common.modals.modal import Modal
@@ -15,9 +13,7 @@ from tests.gui.utils.core.web_elements import Button, Input, Label
 
 class AuditLogEntryDetails(Modal):
     event = Label(".event-message")
-    relative_location = Input(
-        ".entry-info-row-relative-location .clipboard-input"
-    )
+    relative_location = Input(".entry-info-row-relative-location .clipboard-input")
     started_at = Label(".entry-info-row-start-time .property-value")
     finished_at = Label(".entry-info-row-end-time .property-value")
     time_taken = Label(".entry-info-row-event .time-taken-text")

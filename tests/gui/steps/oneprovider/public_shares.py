@@ -4,9 +4,7 @@ public shares interface in oneprovider web GUI.
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -22,9 +20,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_public_share_cwd_using_breadcrumbs(
-    selenium, browser_id, path, public_share
-):
+def change_public_share_cwd_using_breadcrumbs(selenium, browser_id, path, public_share):
     public_share(selenium[browser_id]).breadcrumbs.chdir(path)
 
 
@@ -51,9 +47,7 @@ def _change_iframe_for_public_share_page(selenium, browser_id):
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that public share is named "{share_name}"'
-    )
+    parsers.parse('user of {browser_id} sees that public share is named "{share_name}"')
 )
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
 def assert_public_share_named(selenium, browser_id, share_name, public_share):
@@ -83,23 +77,15 @@ def is_public_share_cwd_correct(selenium, browser_id, cwd, public_share):
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees file browser on share's public interface"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees file browser on share's public interface"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_file_browser_in_public_share(
-    selenium, browser_id, public_share, tmp_memory
-):
+def assert_file_browser_in_public_share(selenium, browser_id, public_share, tmp_memory):
     file_browser = public_share(selenium[browser_id]).file_browser
     tmp_memory[browser_id]["file_browser"] = file_browser
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees "{expected_msg}" sign in the file browser'
-    )
+    parsers.parse('user of {browser_id} sees "{expected_msg}" sign in the file browser')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_empty_file_browser_in_public_share(
@@ -181,8 +167,7 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} copies public REST endpoint "
-        "on share's public interface"
+        "user of {browser_id} copies public REST endpoint on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -257,9 +242,7 @@ def check_item_presence_in_dublin_core_metadata(item, data):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_data_in_dublin_core_metadata(
-    browser_id, data, selenium, public_share
-):
+def assert_data_in_dublin_core_metadata(browser_id, data, selenium, public_share):
     driver = selenium[browser_id]
     dublin_core = public_share(driver).dublin_core_metadata_data
 
@@ -289,6 +272,4 @@ def assert_xml_data_in_shares(selenium, browser_id, data, public_share):
     driver = selenium[browser_id]
     xml_data = public_share(driver).xml_data
     for item in parse_seq(data):
-        assert (
-            item in xml_data
-        ), f"{item} not in XML data on share's public interface"
+        assert item in xml_data, f"{item} not in XML data on share's public interface"

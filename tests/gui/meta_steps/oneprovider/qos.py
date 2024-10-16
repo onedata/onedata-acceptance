@@ -2,9 +2,7 @@
 
 __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
@@ -29,9 +27,7 @@ from tests.gui.steps.oneprovider.qos import (
     confirm_entering_text,
     delete_all_qualities_of_service,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-)
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -69,9 +65,7 @@ def _add_qos_requirement_in_modal(
             selenium, browser_id, replicas_number, panel, modals, replicas_field
         )
     click_panel_button(selenium, browser_id, save_button, panel, modals)
-    click_modal_button(
-        selenium, browser_id, close_button, details_modal, modals
-    )
+    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
 
 
 @wt(
@@ -229,9 +223,7 @@ def assert_qos_file_status_in_op_gui(
     )
     assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
     if option == "has some":
-        assert_status_tag_for_file_in_browser(
-            user, status_type, file_name, tmp_memory
-        )
+        assert_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
     else:
         assert_not_status_tag_for_file_in_browser(
             user, status_type, file_name, tmp_memory

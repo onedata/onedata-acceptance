@@ -4,9 +4,7 @@ management in Onezone using REST API mixed with web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import (

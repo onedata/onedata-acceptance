@@ -4,13 +4,9 @@ storage parameter modifications in Onepanel using REST API in Oneclient tests.
 
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.oneclient.steps.rest.onepanel.storages import (
-    modify_storage_parameters,
-)
+from tests.oneclient.steps.rest.onepanel.storages import modify_storage_parameters
 from tests.utils.bdd_utils import parsers, wt
 
 

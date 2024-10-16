@@ -4,9 +4,7 @@ tokens management in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -18,9 +16,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(oz_page, token_name, driver):
-    return (
-        oz_page(driver).get_page_and_click("tokens").sidebar.tokens[token_name]
-    )
+    return oz_page(driver).get_page_and_click("tokens").sidebar.tokens[token_name]
 
 
 def _open_menu_for_token(driver, oz_page, token_name):
@@ -36,9 +32,7 @@ def _click_on_btn_for_token(driver, oz_page, token_name, btn, popups):
     click_option_for_token_row_menu(driver, btn, popups)
 
 
-@wt(
-    parsers.parse('user of {browser_id} clicks on "{token_name}" on token list')
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{token_name}" on token list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page):
     driver = selenium[browser_id]
@@ -66,9 +60,7 @@ def wt_click_on_btn_for_oz_token(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_oz_tokens_list_has_num_tokens(
-    selenium, browser_id, expected_num, oz_page
-):
+def assert_oz_tokens_list_has_num_tokens(selenium, browser_id, expected_num, oz_page):
     driver = selenium[browser_id]
     displayed_tokens_num = len(oz_page(driver)["tokens"].sidebar.tokens)
     assert displayed_tokens_num == expected_num, (
@@ -77,19 +69,15 @@ def assert_oz_tokens_list_has_num_tokens(
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{button}" button in tokens sidebar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
 
     if button == "Create new token":
-        oz_page(driver).get_page_and_click(
-            "tokens"
-        ).sidebar.click_create_new_token(driver)
+        oz_page(driver).get_page_and_click("tokens").sidebar.click_create_new_token(
+            driver
+        )
     elif button == "Clean up obsolete tokens":
         sidebar = oz_page(driver)["tokens"].sidebar
         button_clean = getattr(sidebar, transform(button))
@@ -129,9 +117,7 @@ def show_inactive_caveats(selenium, browser_id, oz_page):
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} clicks on Confirm button on consume token page"
-    )
+    parsers.parse("user of {browser_id} clicks on Confirm button on consume token page")
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
@@ -145,9 +131,7 @@ def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def select_member_from_dropdown(
-    selenium, browser_id, member_name, popups, oz_page
-):
+def select_member_from_dropdown(selenium, browser_id, member_name, popups, oz_page):
     driver = selenium[browser_id]
 
     oz_page(driver)["tokens"].expand_dropdown()
@@ -161,9 +145,7 @@ def select_member_from_dropdown(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_token_button_in_create_token_page(
-    selenium, browser_id, oz_page
-):
+def click_create_token_button_in_create_token_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)["tokens"].create_token_page.create_token()
 
@@ -223,8 +205,7 @@ def select_token_usage_limit(selenium, browser_id, limit, oz_page):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{token_name}" '
-        "token's type is {token_type}"
+        'user of {browser_id} sees that "{token_name}" token\'s type is {token_type}'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -257,9 +238,7 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
 def choose_invite_token_filter(
     selenium, browser_id, token_filter, filter_type, oz_page, hosts
 ):
-    invite_filter = oz_page(selenium[browser_id])[
-        "tokens"
-    ].sidebar.invite_filter
+    invite_filter = oz_page(selenium[browser_id])["tokens"].sidebar.invite_filter
     if filter_type == "name Invite":
         if "oneprovider" in token_filter:
             token_filter = hosts[token_filter]["name"]
@@ -308,22 +287,14 @@ def click_menu_button_of_tokens_page(selenium, browser_id, oz_page):
     oz_page(driver)["tokens"].menu()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{option}" option in tokens view menu'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option in tokens view menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_token_page_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     popups(driver).menu_popup_with_text.menu[option]()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Revoke" toggle to {action} token'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Revoke" toggle to {action} token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_to_change_token(selenium, browser_id, action, oz_page):
     driver = selenium[browser_id]
@@ -342,8 +313,7 @@ def click_save_button_on_tokens_page(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} appends "{text}" to name of token '
-        'named "{token_name}'
+        'user of {browser_id} appends "{text}" to name of token named "{token_name}'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -353,11 +323,7 @@ def append_token_name_in_sidebar(selenium, browser_id, text, oz_page):
     oz_page(driver)["tokens"].sidebar.name_input = input_box + text
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} confirms changes in token named {token_name}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} confirms changes in token named {token_name}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_token_changes_in_sidebar(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -406,9 +372,7 @@ def assert_token_revoked(selenium, browser_id, oz_page, revoke_expectation):
         msg = "Token is not revoked while should be"
     else:
         msg = "Token is revoked while should not be"
-    assert (
-        oz_page(driver)["tokens"].is_token_revoked() == revoke_expectation
-    ), msg
+    assert oz_page(driver)["tokens"].is_token_revoked() == revoke_expectation, msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -424,18 +388,13 @@ def assert_token_type(selenium, browser_id, oz_page, expected_type):
 def assert_invite_type(selenium, browser_id, oz_page, expected_type):
     driver = selenium[browser_id]
     actual_type = oz_page(driver)["tokens"].invite_type
-    assert actual_type == expected_type, (
-        "Expected invite type "
-        f"{expected_type} "
-        "does not match actual "
-        f"{actual_type}"
-    )
+    assert (
+        actual_type == expected_type
+    ), f"Expected invite type {expected_type} does not match actual {actual_type}"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_invite_target(
-    selenium, browser_id, oz_page, expected_target, hosts, spaces
-):
+def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts, spaces):
     if "oneprovider" in expected_target:
         expected_target = hosts[expected_target]["name"]
 
@@ -444,19 +403,12 @@ def assert_invite_target(
     if expected_target.startswith("$(resolve_id"):
         space_name = expected_target.split(" ")[1].replace(")", "")
         expected_target = "ID: " + spaces[space_name]
-    assert actual_type == expected_target, (
-        "Expected invite target "
-        f"{expected_target} "
-        "does not match actual "
-        f"{actual_type}"
-    )
+    assert (
+        actual_type == expected_target
+    ), f"Expected invite target {expected_target} does not match actual {actual_type}"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that token usage count is "{count}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that token usage count is "{count}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
     driver = selenium[browser_id]
@@ -467,12 +419,8 @@ def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
 def parse_and_compare_usage_count(text_given, text_expected):
     no1, no2 = text_given.split("/")
     exp1, exp2 = text_expected.split("/")
-    assert (
-        str(no1).strip() == str(exp1).strip()
-    ), f"First number should be {exp1}"
-    assert (
-        str(no2).strip() == str(exp2).strip()
-    ), f"Second number should be {exp2}"
+    assert str(no1).strip() == str(exp1).strip(), f"First number should be {exp1}"
+    assert str(no2).strip() == str(exp2).strip(), f"Second number should be {exp2}"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -532,14 +480,10 @@ def assert_token_on_token_page_sidebar(
 
     if ability_to_see == "sees":
         err_msg = f"token list on sidebar should contain {token_name}"
-        assert token_name in {
-            token.name for token in tokens_page.tokens
-        }, err_msg
+        assert token_name in {token.name for token in tokens_page.tokens}, err_msg
     if ability_to_see == "does not see":
         err_msg = f"token list on sidebar should not contain {token_name}"
-        assert token_name not in {
-            token.name for token in tokens_page.tokens
-        }, err_msg
+        assert token_name not in {token.name for token in tokens_page.tokens}, err_msg
 
 
 def choose_token_template(selenium, browser_id, template, oz_page):
@@ -548,11 +492,7 @@ def choose_token_template(selenium, browser_id, template, oz_page):
     getattr(tokens_page, f"{transform(template)}_template").click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees alert with text: "{text}" on tokens page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on tokens page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
     alert = oz_page(selenium[browser_id])["tokens"].alert
@@ -560,9 +500,5 @@ def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
 
 
 @given(parsers.parse("{sender} sends {item_type} to {receiver}"))
-def given_send_copied_item_to_other_user(
-    sender, receiver, item_type, tmp_memory
-):
-    tmp_memory[receiver]["mailbox"][item_type.lower()] = tmp_memory[sender][
-        item_type
-    ]
+def given_send_copied_item_to_other_user(sender, receiver, item_type, tmp_memory):
+    tmp_memory[receiver]["mailbox"][item_type.lower()] = tmp_memory[sender][item_type]

@@ -4,9 +4,7 @@ archives in oneprovider web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -31,8 +29,7 @@ def assert_number_of_archives_for_item_in_dataset_browser(
     browser = tmp_memory[browser_id]["dataset_browser"]
     item_number = browser.data[name].number_of_archives.text
     err_msg = (
-        f"displayed {item_number} archives for {name} does not match"
-        f" expected {number}"
+        f"displayed {item_number} archives for {name} does not match expected {number}"
     )
     assert number == item_number, err_msg
 
@@ -44,9 +41,7 @@ def assert_number_of_archives_for_item_in_dataset_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_description_in_create_archive_modal(
-    selenium, browser_id, modals, text
-):
+def write_description_in_create_archive_modal(selenium, browser_id, modals, text):
     driver = selenium[browser_id]
     modals(driver).create_archive.description = text
 
@@ -140,14 +135,11 @@ def from_ordinal_number_to_int(ordinal_number):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} checks "{toggle_type}" toggle '
-        'in modal "Create Archive"'
+        'user of {browser_id} checks "{toggle_type}" toggle in modal "Create Archive"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_toggle_in_create_archive_modal(
-    browser_id, selenium, modals, toggle_type
-):
+def check_toggle_in_create_archive_modal(browser_id, selenium, modals, toggle_type):
     driver = selenium[browser_id]
     getattr(modals(driver).create_archive, transform(toggle_type)).check()
 
@@ -155,12 +147,9 @@ def check_toggle_in_create_archive_modal(
 def compare_base_archive_name_with_archive_with_description(
     browser, base_description, item_base_archive
 ):
-    base_archive_name = get_archive_with_description(
-        browser, base_description
-    ).name
+    base_archive_name = get_archive_with_description(browser, base_description).name
     err_msg = (
-        f"Item base archive: {item_base_archive} does not"
-        f" match  {base_archive_name}"
+        f"Item base archive: {item_base_archive} does not match  {base_archive_name}"
     )
     assert item_base_archive == base_archive_name, err_msg
 
@@ -196,18 +185,14 @@ def assert_base_archive_description(
     browser_id, tmp_memory, base_description, description
 ):
     browser = tmp_memory[browser_id]["archive_browser"]
-    item_base_archive = get_archive_with_description(
-        browser, description
-    ).base_archive
+    item_base_archive = get_archive_with_description(browser, description).base_archive
     compare_base_archive_name_with_archive_with_description(
         browser, base_description, item_base_archive
     )
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "{button}" button in archive browser'
-    )
+    parsers.parse('user of {browser_id} clicks on "{button}" button in archive browser')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_archive_browser(browser_id, tmp_memory, button):
@@ -222,9 +207,7 @@ def click_button_in_archive_browser(browser_id, tmp_memory, button):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_name_same_as_latest_created(
-    browser_id, tmp_memory, modals, selenium
-):
+def assert_name_same_as_latest_created(browser_id, tmp_memory, modals, selenium):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id]["archive_browser"]
     latest_created_name = browser.data[0].name
@@ -243,16 +226,12 @@ def assert_name_same_as_latest_created(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_menu_for_archive(
-    browser_id, tmp_memory, description, popups, selenium
-):
+def click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium):
     browser = tmp_memory[browser_id]["archive_browser"]
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
     if popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
-        raise RuntimeError(
-            f"Archive with description {description} did not open"
-        )
+        raise RuntimeError(f"Archive with description {description} did not open")
 
 
 @wt(
@@ -276,9 +255,7 @@ def write_in_confirmation_input(browser_id, modals, text, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_description_for_archive(
-    browser_id, tmp_memory, description, ordinal
-):
+def assert_description_for_archive(browser_id, tmp_memory, description, ordinal):
     browser = tmp_memory[browser_id]["archive_browser"]
     number = from_ordinal_number_to_int(ordinal)
     archive_description = browser.data[number - 1].description
@@ -318,9 +295,7 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
     archives = browser.data
     for item in archives:
         if description in item.name:
-            raise RuntimeError(
-                f'Archive with description: "{description}" found'
-            )
+            raise RuntimeError(f'Archive with description: "{description}" found')
 
 
 @wt(
@@ -365,11 +340,7 @@ def waits_for_preserved_state(browser_id, status, description, tmp_memory):
         )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees archive ID in Archive details modal"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees archive ID in Archive details modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_id_in_properties_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
@@ -412,9 +383,7 @@ def assert_toggle_checked_in_archive_details_modal(
     selenium, browser_id, modals, toggle
 ):
     driver = selenium[browser_id]
-    is_checked = getattr(
-        modals(driver).archive_details, transform(toggle)
-    ).is_checked()
+    is_checked = getattr(modals(driver).archive_details, transform(toggle)).is_checked()
 
     err_msg = f"Toggle {toggle} is not checked in modal Archive details"
     assert is_checked, err_msg
@@ -429,16 +398,13 @@ def assert_toggle_checked_in_archive_details_modal(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_base_archive_for_archive(browser_id, description, tmp_memory):
     browser = tmp_memory[browser_id]["archive_browser"]
-    base_archive = get_archive_with_description(
-        browser, description
-    ).base_archive
+    base_archive = get_archive_with_description(browser, description).base_archive
     tmp_memory["base_archive"] = base_archive
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {item} in {modal} modal"
-        " is the same as copied"
+        "user of {browser_id} sees that {item} in {modal} modal is the same as copied"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -460,9 +426,7 @@ def assert_item_from_modal_with_copied(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_description_in_archive_details_modal(
-    browser_id, modals, text, selenium
-):
+def write_description_in_archive_details_modal(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
     modals(driver).archive_details.description = text
     modals(driver).archive_details.save_modification.click()
@@ -492,9 +456,7 @@ def assert_presence_of_creator_column_for_archive(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_presence_of_creator_in_archive_details(
-    browser_id, name, modals, selenium
-):
+def assert_presence_of_creator_in_archive_details(browser_id, name, modals, selenium):
     driver = selenium[browser_id]
     creator = modals(driver).archive_details.creator
     err_msg = f"visible creator name is {creator} but should be {name}"
@@ -507,9 +469,7 @@ def assert_presence_of_creator_in_archive_details(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def hover_over_button_in_archive_browser(
-    browser_id, tmp_memory, selenium, button
-):
+def hover_over_button_in_archive_browser(browser_id, tmp_memory, selenium, button):
     browser = tmp_memory[browser_id]["archive_browser"]
     driver = selenium[browser_id]
     browser.move_to_elem(driver, transform(button))
@@ -542,9 +502,7 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
     if res == "does not see":
         try:
             visible_link = getattr(browser, transform(link))
-            raise AssertionError(
-                f"link {visible_link} is visible in archive browser"
-            )
+            raise AssertionError(f"link {visible_link} is visible in archive browser")
         except RuntimeError:
             pass
     elif res == "sees":

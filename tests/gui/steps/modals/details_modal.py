@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from datetime import datetime
@@ -22,8 +20,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that {which_title} is "{title}" '
-        'in modal "{modal}"'
+        'user of {browser_id} sees that {which_title} is "{title}" in modal "{modal}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -47,9 +44,7 @@ def assert_chart_title_in_details_modal(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_chart_in_modal(browser_id, modals, selenium, modal):
     modal = check_modal_name(modal)
-    getattr(modals(selenium[browser_id]), modal).size_statistics.chart[
-        0
-    ].chart.click()
+    getattr(modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
 
 @wt(
@@ -59,9 +54,7 @@ def click_on_chart_in_modal(browser_id, modals, selenium, modal):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_button_in_modal_not_active(
-    browser_id, modal, element, modals, selenium
-):
+def assert_button_in_modal_not_active(browser_id, modal, element, modals, selenium):
     driver = selenium[browser_id]
     modal = getattr(modals(driver), check_modal_name(modal))
     err_msg = f'"{element}" button is in active state'
@@ -91,9 +84,7 @@ def assert_tooltip_on_chart_in_modal(browser_id, selenium, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_modal(
-    selenium, browser_id, tab_name, modals, modal
-):
+def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals, modal):
     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal))
     tab = modal.navigation[tab_name]
     tab.web_elem.click()
@@ -106,20 +97,15 @@ def click_on_navigation_tab_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_panel(
-    selenium, browser_id, tab_name, modals, modal
-):
-    modal = getattr(
-        modals(selenium[browser_id]).details_modal, check_modal_name(modal)
-    )
+def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, modal):
+    modal = getattr(modals(selenium[browser_id]).details_modal, check_modal_name(modal))
     tab = modal.navigation[tab_name]
     tab.web_elem.click()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{modal_name}" modal is '
-        'opened on "{tab}" tab'
+        'user of {browser_id} sees that "{modal_name}" modal is opened on "{tab}" tab'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

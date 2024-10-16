@@ -3,9 +3,7 @@ workflows run indicators in oneprovider web GUI"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -51,9 +49,7 @@ def assert_run_indicator_for_lane(
 def assert_certain_indicator_is_only_one_in_lane(
     selenium, browser_id, op_container, lane_name, number
 ):
-    assert_run_indicator_for_lane(
-        selenium, browser_id, op_container, lane_name, number
-    )
+    assert_run_indicator_for_lane(selenium, browser_id, op_container, lane_name, number)
     run_indicators = get_run_indicators_for_lane(
         selenium, browser_id, op_container, lane_name
     )
@@ -122,10 +118,7 @@ def assert_status_for_run_in_popup(
     )
     info = popups(selenium[browser_id]).run_info
     info_dict_list = {
-        elem.split(": ")[0].lower(): elem.split(": ")[1]
-        for elem in info.split("\n")
+        elem.split(": ")[0].lower(): elem.split(": ")[1] for elem in info.split("\n")
     }
-    err_msg = (
-        f'{option} is not {value} for "{number}" run for "{lane_name}" lane'
-    )
+    err_msg = f'{option} is not {value} for "{number}" run for "{lane_name}" lane'
     assert info_dict_list[option] == value.lower(), err_msg

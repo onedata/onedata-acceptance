@@ -6,9 +6,7 @@ from .base import PageObject
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 class ButtonPageObject(PageObject):
@@ -64,8 +62,7 @@ class PageObjectsSequence:
 
     def __reversed__(self):
         return (
-            self.cls(self.driver, item, self.parent)
-            for item in reversed(self.items)
+            self.cls(self.driver, item, self.parent) for item in reversed(self.items)
         )
 
     def __getitem__(self, sel):

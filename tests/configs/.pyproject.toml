@@ -1,5 +1,5 @@
 [tool.black]
-line-length = 80
+line-length = 88
 target-version = ['py312']
 fast = true
 include = '\.pyi?$'
@@ -17,6 +17,6 @@ enable-unstable-feature = ["string_processing"]
 [tool.isort]
 py_version = 312
 profile = "black"                  # Use Black's import style
-line_length = 80                   # Maximum line length for imports
+line_length = 88                   # Maximum line length for imports
 overwrite_in_place = true
 skip = ["tests/gui/utils/__init__.py"]

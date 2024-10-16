@@ -2,9 +2,7 @@
 
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -50,15 +48,9 @@ def check_modal_name(modal_name):
         return modal_name
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that modal "Add storage" has appeared'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_add_storage_modal_to_appear(
-    selenium, browser_id, tmp_memory, modals
-):
+def wait_for_add_storage_modal_to_appear(selenium, browser_id, tmp_memory, modals):
     driver = selenium[browser_id]
     modal = modals(driver).add_storage
     tmp_memory[browser_id]["window"]["modal"] = modal
@@ -71,22 +63,14 @@ def cp_token_from_add_storage_modal(browser_id, tmp_memory):
     modal.copy()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} generate another token in "Add storage" modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} generate another token in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def gen_another_token_in_add_storage_modal(browser_id, tmp_memory):
     modal = tmp_memory[browser_id]["window"]["modal"]
     modal.generate_token()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees non-empty token in "Add storage" modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees non-empty token in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
     token = tmp_memory[browser_id]["window"]["modal"].token
@@ -128,9 +112,7 @@ def _find_modal(driver, modal_name):
                 By.CSS_SELECTOR, ".modal, .modal .modal-header h1"
             )
         elif "leave this space" in modal_name:
-            modals = driver.find_elements(
-                By.CSS_SELECTOR, ".modal.in, .modal.in h1"
-            )
+            modals = driver.find_elements(By.CSS_SELECTOR, ".modal.in, .modal.in h1")
         else:
             modals = driver.find_elements(
                 By.CSS_SELECTOR, ".modal.in, .modal.in .modal-title"
@@ -174,20 +156,14 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
         pass
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{modal_name}" modal has appeared'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has appeared'))
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
 
 @given(
-    parsers.parse(
-        'user of {browser_id} seen that "{modal_name}" modal has appeared'
-    )
+    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
 )
 def g_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
@@ -203,9 +179,7 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
     tmp_memory[browser_id]["window"]["modal"] = None
 
 
-def wait_for_named_modal_to_disappear(
-    driver, modal_name, wait_time=WAIT_FRONTEND
-):
+def wait_for_named_modal_to_disappear(driver, modal_name, wait_time=WAIT_FRONTEND):
     modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(modals(driver), transform(modal_name))
@@ -230,17 +204,13 @@ def wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory):
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
 
 
-@given(
-    parsers.parse("user of {browser_id} seen that the modal has disappeared")
-)
+@given(parsers.parse("user of {browser_id} seen that the modal has disappeared"))
 def g_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
 
 
-def _click_on_confirmation_btn_in_modal(
-    driver, browser_id, button_name, tmp_memory
-):
+def _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory):
     @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
     def click_on_btn(d, elem, msg):
         click_on_web_elem(d, elem, msg)
@@ -267,9 +237,7 @@ def wt_click_on_confirmation_btn_in_modal(
     selenium, browser_id, button_name, tmp_memory
 ):
     driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(
-        driver, browser_id, button_name, tmp_memory
-    )
+    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
 
 
 @given(
@@ -278,19 +246,14 @@ def wt_click_on_confirmation_btn_in_modal(
         "confirmation button in displayed modal"
     )
 )
-def g_click_on_confirmation_btn_in_modal(
-    selenium, browser_id, button_name, tmp_memory
-):
+def g_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name, tmp_memory):
     driver = selenium[browser_id]
-    _click_on_confirmation_btn_in_modal(
-        driver, browser_id, button_name, tmp_memory
-    )
+    _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that message "
-        "displayed in modal matches: {regexp}"
+        "user of {browser_id} sees that message displayed in modal matches: {regexp}"
     )
 )
 def is_modal_msg_matching(browser_id, regexp, tmp_memory):
@@ -327,20 +290,14 @@ def activate_input_box_in_modal(browser_id, in_type, tmp_memory):
     in_box.send_keys(Keys.NULL)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {option} button in active modal"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on {option} button in active modal"))
 def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
     if option == "copy":
         button = modal.find_element(By.CSS_SELECTOR, "button.copy-btn")
     else:
-        button = modal.find_element(
-            By.CSS_SELECTOR, ".modal-footer button.btn-default"
-        )
+        button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
     def click_on_btn(d, btn, err_msg):
@@ -351,8 +308,7 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{text}" option '
-        "in modal is not selected"
+        'user of {browser_id} sees that "{text}" option in modal is not selected'
     )
 )
 def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
@@ -385,11 +341,7 @@ def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
         raise RuntimeError(f"no button named {button_name} found")
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} selects "{text}" option in displayed modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} selects "{text}" option in displayed modal'))
 def select_option_with_text_in_modal(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]["window"]["modal"]
     options = modal.find_elements(
@@ -404,8 +356,7 @@ def select_option_with_text_in_modal(browser_id, text, tmp_memory):
 
 @wt(
     parsers.parse(
-        'user of browser sees that "{btn_name}" item displayed '
-        "in modal is enabled"
+        'user of browser sees that "{btn_name}" item displayed in modal is enabled'
     )
 )
 def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
@@ -427,9 +378,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_element_text_in_modal(
-    selenium, browser_id, modals, modal, text, element
-):
+def assert_element_text_in_modal(selenium, browser_id, modals, modal, text, element):
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
     element_sel = "forbidden_alert" if element == "alert" else "info"
@@ -449,9 +398,7 @@ def assert_element_text(elem, selector, elem_text):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_panel_button(selenium, browser_id, button, panel_name, modals):
-    tab = getattr(
-        modals(selenium[browser_id]).details_modal, transform(panel_name)
-    )
+    tab = getattr(modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, transform(button))()
 
 
@@ -572,9 +519,7 @@ def write_name_into_text_field_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_shares_in_modal(
-    selenium, browser_id, item_name, number, modals
-):
+def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number, modals):
     name = "Shares"
     driver = selenium[browser_id]
     shares_tab = modals(driver).details_modal.shares
@@ -602,9 +547,7 @@ def _assert_number_of_shares_in_modal(number, links, info):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_details_link_in_shares_panel(
-    selenium, browser_id, modals, share_name
-):
+def click_share_details_link_in_shares_panel(selenium, browser_id, modals, share_name):
     modal = modals(selenium[browser_id]).details_modal.shares
 
     icon = modal.share_options[share_name].share_details_link
@@ -622,9 +565,7 @@ def click_share_details_link_in_shares_panel(
 def click_icon_in_share_directory_modal(
     selenium, browser_id, modal_name, modals, owner_name, icon_name
 ):
-    elem_groups = modals(
-        selenium[browser_id]
-    ).details_modal.shares.share_options
+    elem_groups = modals(selenium[browser_id]).details_modal.shares.share_options
     icon_name = transform(icon_name) + "_icon"
     if owner_name:
         icon = getattr(elem_groups[owner_name], icon_name)
@@ -645,11 +586,7 @@ def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     assert text.lower().replace("\\", "") in modal_text, message
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{title}" error modal appeared'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{title}" error modal appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_titled_error_modal_appeared(selenium, browser_id, title):
     message = f'Modal is not titled "{title}"'
@@ -679,8 +616,7 @@ def assert_invalid_id_in_error_modal(
         "is invalid" in modal_text
     ), "There is no info about invalid target in error modal"
     err_msg = (
-        "There is no info about id of invalid target "
-        f"{target_name} in error modal"
+        f"There is no info about id of invalid target {target_name} in error modal"
     )
     if target_type == "group":
         assert groups[target_name] in modal_text, err_msg
@@ -694,11 +630,7 @@ def assert_invalid_id_in_error_modal(
         raise ValueError(f"Unknown type {target_type}")
 
 
-@wt(
-    parsers.re(
-        'user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'
-    )
-)
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal, modals):
     modal = check_modal_name(modal)
@@ -715,11 +647,7 @@ def close_modal(selenium, browser_id, modal, modals):
     wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks copy command icon in REST API modal"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
@@ -750,9 +678,7 @@ def choose_option_in_dropdown_menu_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_path_where_symbolic_link_points(
-    selenium, browser_id, expected_path, modal
-):
+def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, modal):
     driver = selenium[browser_id]
     modal = transform(modal)
     modal = getattr(modals(driver), modal)

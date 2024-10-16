@@ -4,9 +4,7 @@ Onezone Groups GUI and multiple browsers instances.
 
 __author__ = "Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from pytest import fixture
@@ -69,8 +67,7 @@ def screens():
 
 
 scenarios(
-    "../features/onezone/groups/"
-    "groups_multiple_users_with_multiple_groups.feature"
+    "../features/onezone/groups/groups_multiple_users_with_multiple_groups.feature"
 )
 scenarios("../features/onezone/groups/groups_memberships_multibrowser.feature")
 scenarios("../features/onezone/groups/groups_effective_privileges.feature")

@@ -4,9 +4,7 @@ Oneprovider using web GUI
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -69,9 +67,7 @@ def select_initial_items_for_workflow_in_modal(
                 # wait a moment for modal to close
                 time.sleep(0.25)
                 if file_name != files[-1].split("/")[-1]:
-                    open_initial_modal(
-                        data_type, op_container, driver, popups, modals
-                    )
+                    open_initial_modal(data_type, op_container, driver, popups, modals)
                     # wait a moment for modal to open
                     time.sleep(0.25)
                 break
@@ -93,9 +89,7 @@ def choose_file_as_initial_workflow_value_for_store(
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(
-        op_container, driver, popups, modals, store_name
-    )
+    open_select_initial_files_modal(op_container, driver, popups, modals, store_name)
     select_initial_items_for_workflow_in_modal(
         file_list, modals, driver, data_type, op_container, popups
     )
@@ -178,8 +172,7 @@ def choose_file_as_initial_workflow_value(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) waits for all workflows to "
-        "(?P<option>start|finish)"
+        "user of (?P<browser_id>.*) waits for all workflows to (?P<option>start|finish)"
     )
 )
 @repeat_failed(
@@ -219,14 +212,10 @@ def _wait_for_workflows_in_automation_subpage(
 ):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     if option == "start":
-        change_tab_in_automation_subpage(
-            selenium, browser_id, op_container, "Waiting"
-        )
+        change_tab_in_automation_subpage(selenium, browser_id, op_container, "Waiting")
         err = "Waiting workflows did not start"
     else:
-        change_tab_in_automation_subpage(
-            selenium, browser_id, op_container, "Ongoing"
-        )
+        change_tab_in_automation_subpage(selenium, browser_id, op_container, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
     assert len(page.workflow_executions_list) == 0, err
@@ -262,9 +251,7 @@ def await_for_task_status(
         ' "{resolution}" in modal "{modal}"'
     )
 )
-def change_time_resolution_in_modal(
-    selenium, browser_id, modals, popups, resolution
-):
+def change_time_resolution_in_modal(selenium, browser_id, modals, popups, resolution):
     button = "Time resolution"
     modal_name = "Task time series"
     click_modal_button(selenium, browser_id, button, modal_name, modals)

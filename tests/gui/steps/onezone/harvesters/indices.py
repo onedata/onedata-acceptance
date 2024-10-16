@@ -4,9 +4,7 @@ harvester indices management in onezone web GUI.
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 from datetime import datetime
@@ -34,9 +32,7 @@ CREATE_INDEX_TOGGLES = {
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{text}" in harvester indices page menu'
-    )
+    parsers.parse('user of {browser_id} clicks "{text}" in harvester indices page menu')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_member_menu_option_in_harvester_indices_page(
@@ -49,8 +45,7 @@ def click_on_member_menu_option_in_harvester_indices_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} types "{index_name}" '
-        "to name input field in indices page"
+        'user of {browser_id} types "{index_name}" to name input field in indices page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -61,11 +56,7 @@ def type_index_name_to_input_field_in_indices_page(
     oz_page(driver)["discovery"].indices_page.name_input = index_name
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on Create button in indices page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_button_in_indices_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -74,8 +65,7 @@ def click_create_button_in_indices_page(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{index_name}" '
-        "has appeared on the indices list"
+        'user of {browser_id} sees that "{index_name}" has appeared on the indices list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -89,14 +79,11 @@ def assert_index_has_appeared_in_indices_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} expands "{index_name}" index record '
-        "in indices page"
+        'user of {browser_id} expands "{index_name}" index record in indices page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_index_record_in_indices_page(
-    selenium, browser_id, oz_page, index_name
-):
+def expand_index_record_in_indices_page(selenium, browser_id, oz_page, index_name):
     driver = selenium[browser_id]
     indices_list = oz_page(driver)["discovery"].indices_page.indices_list
     indices_list[index_name].click()
@@ -108,16 +95,12 @@ def expand_index_record_in_indices_page(
         '"{index}" index record in indices page'
     )
 )
-def assert_used_by_gui_tag_on_indices_page(
-    selenium, browser_id, oz_page, index
-):
+def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page, index):
     driver = selenium[browser_id]
     indices_list = oz_page(driver)["discovery"].indices_page.indices_list
     assert indices_list[
         index
-    ].is_used_by_gui_tag_visible(), (
-        f"Used by GUI tag is not visible for {index}"
-    )
+    ].is_used_by_gui_tag_visible(), f"Used by GUI tag is not visible for {index}"
 
 
 @wt(
@@ -146,9 +129,7 @@ def assert_progress_in_harvesting(selenium, browser_id, oz_page, index_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def uncheck_toggles_on_create_index_page(
-    selenium, browser_id, oz_page, stay_checked
-):
+def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page, stay_checked):
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
     indices_page = oz_page(driver)["discovery"].indices_page
@@ -169,13 +150,9 @@ def uncheck_toggles_on_create_index_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_indices_on_gui_plugin_tab(
-    selenium, browser_id, oz_page, index_name, popups
-):
+def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name, popups):
     driver = selenium[browser_id]
-    gui_plugin_tab = oz_page(driver)[
-        "discovery"
-    ].configuration_page.gui_plugin_tab
+    gui_plugin_tab = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
     gui_plugin_tab.indices_edit()
     gui_plugin_tab.choose_indices_expand()
     popups(driver).power_select.choose_item(index_name)
@@ -189,9 +166,7 @@ def change_indices_on_gui_plugin_tab(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_text_on_data_discovery_page(
-    selenium, browser_id, data_discovery, name
-):
+def assert_not_text_on_data_discovery_page(selenium, browser_id, data_discovery, name):
     driver = selenium[browser_id]
     results_list = data_discovery(driver).results_list
     for item in results_list:
@@ -251,8 +226,7 @@ def assert_rejection_reason_on_data_discovery_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees archives ID in results list on "
-        "data discovery page"
+        "user of {browser_id} sees archives ID in results list on data discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -284,8 +258,7 @@ def assert_creation_time_on_data_discovery_page(
         data_discovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
     )
     err_msg = (
-        "archive creation time is not compatible with creation time on"
-        " archives page"
+        "archive creation time is not compatible with creation time on archives page"
     )
     assert (created_at - 60) < timestamp < (created_at + 60), err_msg
 

@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from functools import partial
 
@@ -90,15 +88,11 @@ class TransferRecordActive(TransferRecord):
 
 
 class TransferChart(PageObject):
-    minute = WebItemsSequence(
-        "button.btn-default", cls=ButtonWithTextPageObject
-    )
+    minute = WebItemsSequence("button.btn-default", cls=ButtonWithTextPageObject)
     hour = WebItemsSequence("button.btn-default", cls=ButtonWithTextPageObject)
     active = Label("button.btn-default.active")
     # We take only last point in the chart
-    _speed = WebElement(
-        ".transfers-transfer-chart .ct-series line:last-of-type"
-    )
+    _speed = WebElement(".transfers-transfer-chart .ct-series line:last-of-type")
 
     def get_speed(self):
         return self._speed.get_attribute("ct:value").split(",")[1]

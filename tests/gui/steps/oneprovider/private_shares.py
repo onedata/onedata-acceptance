@@ -4,9 +4,7 @@ private shares interface in oneprovider web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
@@ -79,17 +77,14 @@ def clicks_button_in_form_in_shares_interface(
         ' "Description" form on share\'s private interface'
     )
 )
-def click_button_in_description_form(
-    browser_id, selenium, button, private_share
-):
+def click_button_in_description_form(browser_id, selenium, button, private_share):
     driver = selenium[browser_id]
     getattr(private_share(driver).description_form, transform(button))()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that link on share's private "
-        'interface is "{link}"'
+        'user of {browser_id} sees that link on share\'s private interface is "{link}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -114,8 +109,7 @@ def write_description_in_description_form(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that share in private "
-        'view is named "{share_name}"'
+        'user of {browser_id} sees that share in private view is named "{share_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)

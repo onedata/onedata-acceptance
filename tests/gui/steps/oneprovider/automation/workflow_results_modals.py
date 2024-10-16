@@ -3,9 +3,7 @@ workflow results modals in oneprovider web GUI"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import time
@@ -25,11 +23,7 @@ from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that chart with processing stats exist"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_processing_chart(browser_id, selenium, modals):
     switch_to_iframe(selenium, browser_id)
@@ -64,9 +58,7 @@ def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
         " with processing stats is greater than zero"
     )
 )
-def assert_value_of_last_column_is_bigger_than_zero(
-    browser_id, selenium, modals
-):
+def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
@@ -92,25 +84,19 @@ def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
             break
     else:
         raise Exception(
-            f"There is no {resolution} in time resolution"
-            f' list in modal "{modal}".'
+            f'There is no {resolution} in time resolution list in modal "{modal}".'
         )
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{message}" message on chart '
-        "with processing stats"
+        'user of {browser_id} sees "{message}" message on chart with processing stats'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_data_message_processing_chart(
-    browser_id, selenium, modals, message
-):
+def assert_no_data_message_processing_chart(browser_id, selenium, modals, message):
     switch_to_iframe(selenium, browser_id)
-    actual_message = modals(
-        selenium[browser_id]
-    ).task_time_series.no_data_message
+    actual_message = modals(selenium[browser_id]).task_time_series.no_data_message
     err_msg = (
         f'Actual message: "{actual_message}" on chart with processing'
         f' stats is not "{message}" as expected'
@@ -146,8 +132,7 @@ def assert_number_of_proceeded_files(
             break
     else:
         raise Exception(
-            f"There is no {option} processing speed on chart with"
-            " processing stat."
+            f"There is no {option} processing speed on chart with processing stat."
         )
 
 
@@ -185,15 +170,9 @@ def get_audit_log_json_and_write_to_file(
     append_log_to_file(path, audit_log)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} opens "{store_name}" store details modal'
-    )
-)
+@wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(
-    selenium, browser_id, op_container, modals, store_name
-):
+def open_store_details_modal(selenium, browser_id, op_container, modals, store_name):
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(op_container, driver)
     page.stores_list[store_name].click()
@@ -213,18 +192,14 @@ def compare_datasets_in_store_details_modal(item_list, modal, store_name):
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_booleans_in_store_details_modal(item_list, modal):
     actual = [elem.value for elem in modal.store_content_list]
-    err_msg = (
-        f"Actual boolean list {actual} does not match expected {item_list}"
-    )
+    err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
     assert actual.count("true") == item_list.count(True) and actual.count(
         "false"
     ) == item_list.count(False), err_msg
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_string_in_store_details_modal(
-    item, modal, variable_type, store_name
-):
+def compare_string_in_store_details_modal(item, modal, variable_type, store_name):
     actual = modal.raw_view.replace('"', "")
     err_msg = (
         f"expected {variable_type} {item} does not contain"
@@ -265,15 +240,12 @@ def open_raw_view_for_elem(store_content_list, index, modal):
                 break
     else:
         raise Exception(
-            "Did not manage to open raw view for "
-            f"{index} element in store content list"
+            f"Did not manage to open raw view for {index} element in store content list"
         )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_store_content(
-    modal, store_type, index, clipboard, displays, browser_id
-):
+def get_store_content(modal, store_type, index, clipboard, displays, browser_id):
     store_content_type = "store_content_" + store_type
     store_content_list = getattr(modal, store_content_type)
     try:

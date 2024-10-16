@@ -2,9 +2,7 @@
 
 __author__ = "Jakub Kudzia, Piotr Ociepka"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.utils.bdd_utils import parsers, when, wt
@@ -32,11 +30,7 @@ def delete_empty(user, dirs, users):
     multi_dir_steps.delete_empty(user, dirs, "client1", users)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) fails to delete directories \(rmdir\) (?P<dirs>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) fails to delete directories \(rmdir\) (?P<dirs>.*)"))
 def fail_to_delete_empty(user, dirs, users):
     multi_dir_steps.fail_to_delete_empty(user, dirs, "client1", users)
 
@@ -61,8 +55,6 @@ def cannot_list_dir(user, directory, users):
     multi_dir_steps.cannot_list_dir(user, directory, "client1", users)
 
 
-@when(
-    parsers.re(r"(?P<user>\w+) copies directory (?P<dir1>.*) to (?P<dir2>.*)")
-)
+@when(parsers.re(r"(?P<user>\w+) copies directory (?P<dir1>.*) to (?P<dir2>.*)"))
 def copy_dir(user, dir1, dir2, users):
     multi_dir_steps.copy_dir(user, dir1, dir2, "client1", users)

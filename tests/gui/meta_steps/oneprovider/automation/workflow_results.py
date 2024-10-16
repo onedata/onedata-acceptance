@@ -4,9 +4,7 @@ concerning workflow results in Oneprovider using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import time
@@ -26,9 +24,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     assert_processing_chart,
     get_store_content,
 )
-from tests.gui.steps.oneprovider.browser import (
-    click_and_press_enter_on_item_in_browser,
-)
+from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )

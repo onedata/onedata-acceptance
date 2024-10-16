@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.keys import Keys
 from tests.gui.conftest import WAIT_FRONTEND
@@ -52,22 +50,16 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(
-    selenium, browser_id, group, new_group, confirm_type, oz_page, popups
-):
+def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page, popups):
     option = "Rename"
     text = new_group
 
-    click_on_group_menu_button(
-        selenium, browser_id, option, group, oz_page, popups
-    )
+    click_on_group_menu_button(selenium, browser_id, option, group, oz_page, popups)
     input_new_group_name_into_rename_group_inpux_box(
         selenium, browser_id, text, oz_page
     )
     if confirm_type == "button":
-        click_on_confirmation_button_to_rename_group(
-            selenium, browser_id, oz_page
-        )
+        click_on_confirmation_button_to_rename_group(selenium, browser_id, oz_page)
     else:
         press_enter_on_active_element(selenium, browser_id)
         selenium[browser_id].switch_to.active_element.send_keys(Keys.RETURN)
@@ -80,9 +72,7 @@ def leave_group(selenium, browser_id, group, oz_page, popups):
     modal = "LEAVE GROUP"
     modals = selenium["request"].getfixturevalue("modals")
 
-    click_on_group_menu_button(
-        selenium, browser_id, option, group, oz_page, popups
-    )
+    click_on_group_menu_button(selenium, browser_id, option, group, oz_page, popups)
     click_modal_button(selenium, browser_id, option, modal, modals)
 
 
@@ -94,9 +84,7 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
     modals = selenium["request"].getfixturevalue("modals")
 
     for group in parse_seq(group_list):
-        click_on_group_menu_button(
-            selenium, browser_id, option, group, oz_page, popups
-        )
+        click_on_group_menu_button(selenium, browser_id, option, group, oz_page, popups)
         click_modal_button(selenium, browser_id, option, modal, modals)
 
 
@@ -118,15 +106,11 @@ def see_groups_using_op_gui(selenium, user, oz_page, group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def rename_groups_using_op_gui(
-    selenium, user, oz_page, group_list, new_names, popups
-):
+def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names, popups):
     confirm_type = "enter"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_group(
-            selenium, user, group, new_name, confirm_type, oz_page, popups
-        )
+        rename_group(selenium, user, group, new_name, confirm_type, oz_page, popups)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -274,8 +258,7 @@ def create_group_token_to_invite_group_using_op_gui(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) joins group he was invited to in "
-        "Onezone service"
+        "user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
     )
 )
 def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
@@ -338,9 +321,7 @@ def fail_to_rename_groups_using_op_gui(
     text = "failed"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(
-            selenium, user, oz_page, group, new_name, popups
-        )
+        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name, popups)
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 

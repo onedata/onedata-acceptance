@@ -3,9 +3,7 @@ subpage page in Onezone gui"""
 
 __author__ = "Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
@@ -87,9 +85,7 @@ class MembersList(PageObject):
 
 
 class MembersUserList(MembersList):
-    items = WebItemsSequence(
-        ".one-collapsible-list-item", cls=MembersUsersItemRow
-    )
+    items = WebItemsSequence(".one-collapsible-list-item", cls=MembersUsersItemRow)
 
 
 class MembershipElement(PageObject):

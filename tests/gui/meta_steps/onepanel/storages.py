@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import re
@@ -45,20 +43,11 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import (
-    get_panel_rest_path,
-    http_delete,
-    http_get,
-    http_post,
-)
+from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} removes "{name}" storage in Onepanel page'
-    )
-)
+@wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
 def remove_storage_in_op_panel_using_gui(
     selenium, browser_id, name, onepanel, popups, modals
 ):
@@ -66,12 +55,8 @@ def remove_storage_in_op_panel_using_gui(
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
 
-    wt_expands_toolbar_for_storage_in_onepanel(
-        selenium, browser_id, name, onepanel
-    )
-    wt_clicks_on_btn_in_storage_toolbar_in_panel(
-        selenium, browser_id, option, popups
-    )
+    wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepanel)
+    wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option, popups)
     click_modal_button(selenium, browser_id, button, modal, modals)
     assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel)
 
@@ -98,9 +83,7 @@ def add_storage_in_op_panel_using_gui(
     _go_to_storage_view_in_clusters(
         selenium, browser_id, provider_name, oz_page, hosts, onepanel
     )
-    _add_storage_in_op_panel_using_gui(
-        selenium, browser_id, config, onepanel, name
-    )
+    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel, name)
 
 
 def _go_to_storage_view_in_clusters(
@@ -187,13 +170,10 @@ def safely_create_storage_rest(
 
 @given(
     parsers.parse(
-        'there is no "{storage_name}" storage in "{provider}" '
-        "Oneprovider panel service"
+        'there is no "{storage_name}" storage in "{provider}" Oneprovider panel service'
     )
 )
-def remove_all_storages_named(
-    storage_name, provider, hosts, onepanel_credentials
-):
+def remove_all_storages_named(storage_name, provider, hosts, onepanel_credentials):
     _remove_storage_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
@@ -227,17 +207,9 @@ def _remove_storage_by_id(
     )
 
 
-@given(
-    parsers.parse(
-        'there is no "{name}" storage in "{provider}" Oneprovider panel'
-    )
-)
-def remove_storage_in_op_panel_rest(
-    onepanel_credentials, hosts, provider, name
-):
-    _remove_storage_in_op_panel_using_rest(
-        name, provider, hosts, onepanel_credentials
-    )
+@given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
+def remove_storage_in_op_panel_rest(onepanel_credentials, hosts, provider, name):
+    _remove_storage_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
 
 
 def _get_storages_ids(provider_hostname, onepanel_username, onepanel_password):
@@ -249,9 +221,7 @@ def _get_storages_ids(provider_hostname, onepanel_username, onepanel_password):
     ).json()["ids"]
 
 
-def _get_storage_id_list_by_name(
-    storage_name, provider, hosts, onepanel_credentials
-):
+def _get_storage_id_list_by_name(storage_name, provider, hosts, onepanel_credentials):
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -272,9 +242,7 @@ def _get_storage_id_list_by_name(
     return selected_ids
 
 
-def get_first_storage_id_by_name(
-    storage_name, provider, hosts, onepanel_credentials
-):
+def get_first_storage_id_by_name(storage_name, provider, hosts, onepanel_credentials):
     return _get_storage_id_list_by_name(
         storage_name, provider, hosts, onepanel_credentials
     )[0]
@@ -316,9 +284,7 @@ def _add_storage_in_op_panel_using_rest(
         "QoS parameters form in storage edit page"
     )
 )
-def add_key_value_in_storage_page(
-    selenium, browser_id, key, val, onepanel, modals
-):
+def add_key_value_in_storage_page(selenium, browser_id, key, val, onepanel, modals):
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
@@ -327,18 +293,10 @@ def add_key_value_in_storage_page(
     confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} deletes additional param in storage edit page"
-    )
-)
-def delete_additional_param_in_storage_page(
-    selenium, browser_id, onepanel, modals
-):
+@wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
+def delete_additional_param_in_storage_page(selenium, browser_id, onepanel, modals):
 
-    delete_additional_param_in_posix_storage_edit_page(
-        selenium, browser_id, onepanel
-    )
+    delete_additional_param_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
 
@@ -360,9 +318,7 @@ def _delete_all_additional_params_in_storage_page(
                 selenium, browser_id, onepanel
             )
         save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-        _try_confirm_changes_in_modify_storage_modal(
-            selenium, browser_id, modals
-        )
+        _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
 
 
 @given(
@@ -410,8 +366,7 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} confirms committed changes in modal "
-        '"Modify Storage"'
+        'user of {browser_id} confirms committed changes in modal "Modify Storage"'
     )
 )
 def confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):

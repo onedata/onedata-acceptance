@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
@@ -17,9 +15,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.onezone.spaces import (
     assert_new_created_space_has_appeared_on_spaces,
 )
-from tests.mixed.steps.rest.onezone.space_management import (
-    join_space_in_oz_using_rest,
-)
+from tests.mixed.steps.rest.onezone.space_management import join_space_in_oz_using_rest
 from tests.mixed.steps.rest.onezone.tokens import (
     assert_token_with_config_rest,
     create_token_with_config_rest,
@@ -32,8 +28,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "using {client}, {user} creates token with "
-        "following configuration:\n{config}"
+        "using {client}, {user} creates token with following configuration:\n{config}"
     )
 )
 def create_token(
@@ -111,22 +106,15 @@ def assert_token(
 
 
 @wt(parsers.parse("if {client} is web gui, {user} copies created token"))
-def copy_token_if_gui(
-    selenium, oz_page, client, user, displays, clipboard, tmp_memory
-):
+def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_memory):
     if client.lower() == "web gui":
         copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory)
 
 
+@wt(parsers.parse('using {client}, {user} copies created token named "{token_name}"'))
 @wt(
     parsers.parse(
-        'using {client}, {user} copies created token named "{token_name}"'
-    )
-)
-@wt(
-    parsers.parse(
-        "if {client} is web gui, {user} copies created token "
-        'named "{token_name}"'
+        'if {client} is web gui, {user} copies created token named "{token_name}"'
     )
 )
 def copy_named_token_if_gui(
@@ -163,9 +151,7 @@ def revoke_token_in_oz(
         zone_name = "onezone"
         revoke_token_rest(user, users, hosts, zone_name, tokens, token_name)
     elif client_lower == "web gui":
-        choose_and_revoke_token_in_oz_gui(
-            selenium, user, token_name, oz_page, popups
-        )
+        choose_and_revoke_token_in_oz_gui(selenium, user, token_name, oz_page, popups)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 

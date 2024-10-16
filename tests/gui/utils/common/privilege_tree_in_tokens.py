@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -55,9 +53,7 @@ class PrivilegeRow(PageObject):
                 )
                 elem_class = self._checkbox.get_attribute("class").split(" ")[0]
                 try:
-                    driver.find_element(
-                        By.CSS_SELECTOR, "." + elem_class
-                    ).click()
+                    driver.find_element(By.CSS_SELECTOR, "." + elem_class).click()
                 except ElementNotInteractableException:
                     self.toggle.click()
 
@@ -73,9 +69,7 @@ class PrivilegeGroup(PageObject):
     expander = Button(".tree-circle")
     toggle = Toggle(".one-way-toggle")
 
-    sub_privileges = WebItemsSequence(
-        ".one-tree-item-content", cls=PrivilegeRow
-    )
+    sub_privileges = WebItemsSequence(".one-tree-item-content", cls=PrivilegeRow)
 
     def expand(self):
         if not self.is_expanded():
@@ -121,9 +115,7 @@ class PrivilegeGroup(PageObject):
 
 
 class PrivilegeTree(PageObject):
-    privilege_groups = WebItemsSequence(
-        ".has-checkbox-group", cls=PrivilegeGroup
-    )
+    privilege_groups = WebItemsSequence(".has-checkbox-group", cls=PrivilegeGroup)
     privileges = WebItemsSequence(".one-tree-item-content", cls=PrivilegeRow)
 
     def get_privilege_row(self, name):
@@ -172,9 +164,7 @@ class PrivilegeTree(PageObject):
             privilege_row.collapse(driver)
         privilege_row.assert_privilege_granted(granted)
 
-    def set_privileges(
-        self, selenium, browser_id, privileges, with_scroll=False
-    ):
+    def set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
         """Set privileges according to given config.
         For this method only dict should be passed!
 
@@ -197,9 +187,7 @@ class PrivilegeTree(PageObject):
         """
         self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
-    def _set_privileges(
-        self, selenium, browser_id, privileges, with_scroll=False
-    ):
+    def _set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
         for privilege_name, privilege_group in privileges.items():
             self._set_privilege_group(
                 selenium,
@@ -223,9 +211,7 @@ class PrivilegeTree(PageObject):
                 sub_row.set_privilege(driver, sub_granted, with_scroll)
             privilege_row.collapse(driver)
         else:
-            privilege_row.get_sub_privilege_row(name).set_privilege(
-                driver, granted
-            )
+            privilege_row.get_sub_privilege_row(name).set_privilege(driver, granted)
 
     def set_all_true(self):
         for priv_group in self.privilege_groups:

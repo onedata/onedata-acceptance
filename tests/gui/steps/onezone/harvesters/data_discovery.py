@@ -4,9 +4,7 @@ harvester data discovery management in onezone web GUI.
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -32,9 +30,7 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
 def _wait_for_files_list(selenium, browser_id, data_discovery):
     button_name = "Query"
 
-    click_button_on_data_disc_page(
-        selenium, browser_id, data_discovery, button_name
-    )
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
     assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
 
 
@@ -46,17 +42,14 @@ def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees public data discovery page with "
-        "no harvested data"
+        "user of {browser_id} sees public data discovery page with no harvested data"
     )
 )
 def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
     button_name = "Query"
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    click_button_on_data_disc_page(
-        selenium, browser_id, data_discovery, button_name
-    )
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
 
 
 @wt(
@@ -74,29 +67,18 @@ def assert_alert_text_on_data_disc_page(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{error_msg}" alert on empty Data '
-        "discovery page"
+        'user of {browser_id} sees "{error_msg}" alert on empty Data discovery page'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_alert_on_data_discovery_page(
-    selenium, browser_id, data_discovery, error_msg
-):
+def see_alert_on_data_discovery_page(selenium, browser_id, data_discovery, error_msg):
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    assert_alert_text_on_data_disc_page(
-        selenium, browser_id, error_msg, data_discovery
-    )
+    assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg, data_discovery)
 
 
+@wt(parsers.parse("user of {browser_id} sees Data Discovery page with Ecrin GUI"))
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees Data Discovery page with Ecrin GUI"
-    )
-)
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees public data discovery page with Ecrin GUI"
-    )
+    parsers.parse("user of {browser_id} sees public data discovery page with Ecrin GUI")
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
@@ -109,8 +91,7 @@ def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on add query block icon in data "
-        "discovery page"
+        "user of {browser_id} clicks on add query block icon in data discovery page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -146,8 +127,7 @@ def start_query_block_no(selenium, browser_id, data_discovery, number: str):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on condition properties "
-        "expander in query builder"
+        "user of {browser_id} clicks on condition properties expander in query builder"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -159,8 +139,7 @@ def open_condition_properties_list(selenium, browser_id, popups):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees {properties_list} on condition "
-        "properties list"
+        "user of {browser_id} sees {properties_list} on condition properties list"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -196,9 +175,7 @@ def choose_property_for_query(selenium, browser_id, property_name, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_comparator_in_query_builder(
-    selenium, browser_id, comparator, popups
-):
+def choose_comparator_in_query_builder(selenium, browser_id, comparator, popups):
     driver = selenium[browser_id]
     query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_comparator(comparator)
@@ -206,8 +183,7 @@ def choose_comparator_in_query_builder(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} writes "{value}" to value input in '
-        "query builder popup"
+        'user of {browser_id} writes "{value}" to value input in query builder popup'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -230,11 +206,7 @@ def choose_value_in_query_builder(selenium, browser_id, value: str, popups):
     query_builder_popup.choose_value(value)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add" button in query builder popup'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_button_in_query_builder(selenium, browser_id, popups):
     driver = selenium[browser_id]
@@ -256,33 +228,24 @@ def click_operator_in_query_builder(selenium, browser_id, operator, popups):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{button_name}" button on Data '
-        "discovery page"
+        'user of {browser_id} clicks "{button_name}" button on Data discovery page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_data_disc_page(
-    selenium, browser_id, data_discovery, button_name
-):
+def click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name):
     driver = selenium[browser_id]
     page = data_discovery(driver)
     getattr(page, f"{transform(button_name)}_button")()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that paging is set for {number} pages"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that paging is set for {number} pages"))
 def assert_page_size(selenium, browser_id, data_discovery, number: str):
     driver = selenium[browser_id]
     given = data_discovery(driver).page_size
     assert given == number, f"Expected page size was {number}, but got {given}"
 
 
-@wt(
-    parsers.parse("user of {browser_id} opens next page of data discovery page")
-)
+@wt(parsers.parse("user of {browser_id} opens next page of data discovery page"))
 def open_next_data_disc_page(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     data_discovery(driver).next_page()

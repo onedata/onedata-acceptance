@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -13,11 +11,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
 from .base import AbstractWebElement, AbstractWebItem
-from .web_objects import (
-    ButtonPageObject,
-    ButtonWithTextPageObject,
-    PageObjectsSequence,
-)
+from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjectsSequence
 
 
 class WebElement(AbstractWebElement):
@@ -32,9 +26,7 @@ class WebElement(AbstractWebElement):
         return find_web_elem(
             instance.web_elem,
             self.css_sel,
-            lambda: self._format_msg(
-                "no {item} item found in {parent}", instance
-            ),
+            lambda: self._format_msg("no {item} item found in {parent}", instance),
         )
 
     def _format_msg(self, err_msg, parent, **kwargs):
@@ -69,9 +61,7 @@ class WebItem(AbstractWebItem, WebElement):
         return (
             elem
             if instance is None
-            else self.cls(
-                instance.driver, elem, parent=instance, name=self.name
-            )
+            else self.cls(instance.driver, elem, parent=instance, name=self.name)
         )
 
 
@@ -109,10 +99,7 @@ class Input(WebElement):
 class AceEditor(WebElement):
     def __get__(self, instance, owner):
         selector = self.css_sel + " .ace_content"
-        script = (
-            f"var textarea = document.querySelector('{selector}');"
-            "return textarea"
-        )
+        script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         return driver.execute_script(script).text
 

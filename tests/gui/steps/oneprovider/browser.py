@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -41,9 +39,7 @@ def click_and_press_enter_on_item_in_browser(
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError("waited too long")
 
-    click_and_enter_with_check(
-        driver, op_container, browser, which_browser, item_name
-    )
+    click_and_enter_with_check(driver, op_container, browser, which_browser, item_name)
 
 
 @wt(
@@ -66,9 +62,7 @@ def wt_click_and_press_enter_on_item_in_browser(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_and_enter_with_check(
-    driver, op_container, browser, which_browser, item_name
-):
+def click_and_enter_with_check(driver, op_container, browser, which_browser, item_name):
     # this function does not check correctly if parent and children directory
     # have the same name
     browser.data[item_name].click_and_enter()
@@ -124,9 +118,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         breadcrumbs = re.split("/", breadcrumbs, 2)[-1]
         path = re.split("/", path, 2)[-1]
 
-    assert (
-        path == breadcrumbs
-    ), f"expected breadcrumbs {path}; displayed: {breadcrumbs}"
+    assert path == breadcrumbs, f"expected breadcrumbs {path}; displayed: {breadcrumbs}"
 
 
 @wt(
@@ -134,9 +126,7 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         "user of {browser_id} clicks on menu on breadcrumbs in {which_browser}"
     )
 )
-def wt_click_on_breadcrumbs_menu(
-    selenium, browser_id, op_container, which_browser
-):
+def wt_click_on_breadcrumbs_menu(selenium, browser_id, op_container, which_browser):
     click_on_breadcrumbs_menu(
         selenium, browser_id, op_container, which_browser=which_browser
     )
@@ -147,9 +137,7 @@ def click_on_breadcrumbs_menu(
     selenium, browser_id, op_container, which_browser="file browser"
 ):
     driver = selenium[browser_id]
-    breadcrumbs = getattr(
-        op_container(driver), transform(which_browser)
-    ).breadcrumbs
+    breadcrumbs = getattr(op_container(driver), transform(which_browser)).breadcrumbs
     breadcrumbs.menu_button()
 
 
@@ -220,9 +208,7 @@ def wt_assert_items_presence_in_browser(
 def assert_items_presence_in_browser(
     selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
 ):
-    data = _get_items_list_from_browser(
-        selenium, browser_id, tmp_memory, which_browser
-    )
+    data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
     if not isinstance(item_list, list):
         item_list = parse_seq(item_list)
     for item_name in item_list:
@@ -233,9 +219,7 @@ def assert_items_presence_in_browser(
 def assert_only_expected_items_presence_in_browser(
     selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
 ):
-    data = _get_items_list_from_browser(
-        selenium, browser_id, tmp_memory, which_browser
-    )
+    data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
 
     assert len(item_list) == len(data), (
         f"there is different number of items in {which_browser}, "
@@ -299,9 +283,7 @@ def wt_assert_items_absence_in_browser(
 def assert_items_absence_in_browser(
     selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
 ):
-    data = _get_items_list_from_browser(
-        selenium, browser_id, tmp_memory, which_browser
-    )
+    data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
     for item_name in parse_seq(item_list):
         assert (
             item_name not in data
@@ -356,12 +338,8 @@ def assert_status_tag_for_file_in_browser(
     browser_id, status_type, item_name, tmp_memory, which_browser="file browser"
 ):
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = (
-        f"{status_type} tag for {item_name} in {which_browser} not visible"
-    )
-    assert browser.data[item_name].is_tag_visible(
-        transform(status_type)
-    ), err_msg
+    err_msg = f"{status_type} tag for {item_name} in {which_browser} not visible"
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
 
 
 @wt(
@@ -478,8 +456,7 @@ def assert_option_state_in_data_row_menu(
     selenium, browser_id, option, popups, option_state, which_browser
 ):
     err_msg = (
-        f"{option} option is not {option_state} in opened item menu"
-        " in file browser"
+        f"{option} option is not {option_state} in opened item menu in file browser"
     )
 
     menu = _choose_menu(selenium, browser_id, which_browser, popups)
@@ -489,8 +466,7 @@ def assert_option_state_in_data_row_menu(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {state} view mode "
-        "on {which} browser page"
+        "user of {browser_id} clicks on {state} view mode on {which} browser page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -517,9 +493,7 @@ def click_on_state_view_mode_tab(
         "(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
     )
 )
-def wt_click_menu_for_elem_in_browser(
-    browser_id, item_name, tmp_memory, which_browser
-):
+def wt_click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser):
     click_menu_for_elem_in_browser(
         browser_id, item_name, tmp_memory, which_browser=which_browser
     )
@@ -621,9 +595,7 @@ def compare_value_in_column_for_item(
     old_value = tmp_memory["columns-content"][item_name]
     new_value = datetime.strptime(new_value, "%d %b %Y %H:%M:%S")
     old_value = datetime.strptime(old_value, "%d %b %Y %H:%M:%S")
-    err_msg = (
-        f"visible date time: {new_value} is not more current than {old_value}"
-    )
+    err_msg = f"visible date time: {new_value} is not more current than {old_value}"
     assert new_value > old_value, err_msg
 
 
@@ -665,9 +637,7 @@ def select_columns_to_be_visible_in_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_visible_columns_in_browser(
-    browser_id, tmp_memory, columns, which_browser
-):
+def assert_visible_columns_in_browser(browser_id, tmp_memory, columns, which_browser):
     columns = parse_seq(columns)
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser_columns = browser.column_headers
@@ -680,9 +650,7 @@ def assert_visible_columns_in_browser(
     assert len(columns) == len(browser_columns), err_msg
     for column in columns:
         if column.lower() not in browser_columns:
-            raise AssertionError(
-                f"column {column} is not visible in {which_browser}"
-            )
+            raise AssertionError(f"column {column} is not visible in {which_browser}")
 
 
 @wt(
@@ -690,14 +658,10 @@ def assert_visible_columns_in_browser(
         'user of {browser_id} does not see button "{button}" in {which_browser}'
     )
 )
-def assert_button_not_visible_in_browser(
-    browser_id, tmp_memory, button, which_browser
-):
+def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_browser):
     browser = tmp_memory[browser_id][transform(which_browser)]
     try:
         getattr(browser, transform(button) + "_button")
-        raise AssertionError(
-            f"button {button} is visible in {which_browser} browser"
-        )
+        raise AssertionError(f"button {button} is visible in {which_browser} browser")
     except RuntimeError:
         pass

@@ -4,9 +4,7 @@ It also append useful modules to sys.path to make them available in tests.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 import os
 import sys
 
@@ -24,9 +22,7 @@ UTILS_DIR = os.path.join(TEST_DIR, "utils")
 ONECLIENT_DIR = os.path.join(TEST_DIR, "oneclient")
 ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, "environments")
 ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, "scenarios")
-ONECLIENT_ENTITIES_CONFIG_DIR = os.path.join(
-    ONECLIENT_ENV_DIR, "entities_config"
-)
+ONECLIENT_ENTITIES_CONFIG_DIR = os.path.join(ONECLIENT_ENV_DIR, "entities_config")
 ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, "logs")
 
 ONEDATA_FS_DIR = os.path.join(TEST_DIR, "onedata_fs")

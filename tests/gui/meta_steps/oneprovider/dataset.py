@@ -4,9 +4,7 @@ using web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -15,9 +13,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
 )
-from tests.gui.meta_steps.oneprovider.files_tree import (
-    check_file_structure_in_browser,
-)
+from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.browser import (
     assert_items_absence_in_browser,
@@ -33,9 +29,7 @@ from tests.gui.steps.oneprovider.dataset import (
     click_protection_toggle,
     fail_to_click_button_in_modal,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-)
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -250,9 +244,7 @@ def remove_dataset_in_op_gui(
         popups,
         which_browser=item_browser,
     )
-    click_modal_button(
-        selenium, browser_id, option_in_data_row_menu, modal, modals
-    )
+    click_modal_button(selenium, browser_id, option_in_data_row_menu, modal, modals)
 
 
 def check_dataset_structure_in_op_gui(
@@ -332,9 +324,7 @@ def check_effective_protection_flag(
     browser_id, selenium, modals, kind, item_name, tmp_memory
 ):
     try:
-        assert_general_toggle_checked_for_ancestors(
-            browser_id, selenium, modals, kind
-        )
+        assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals, kind)
     except AssertionError:
         status_type = kind + " protected"
         assert_status_tag_for_file_in_browser(

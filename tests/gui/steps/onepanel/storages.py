@@ -4,9 +4,7 @@ storages management in onepanel web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
@@ -81,9 +79,7 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(
 def wt_expand_storage_item_in_storages_page_op_panel(
     selenium, browser_id, storage, onepanel
 ):
-    storage_item = onepanel(selenium[browser_id]).content.storages.storages[
-        storage
-    ]
+    storage_item = onepanel(selenium[browser_id]).content.storages.storages[storage]
     storage_item.expand()
 
     if not storage_item.is_expanded():
@@ -115,9 +111,7 @@ def wt_assert_storage_attr_in_storages_page_op_panel(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_expands_toolbar_for_storage_in_onepanel(
-    selenium, browser_id, name, onepanel
-):
+def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.storages.storages[name].expand_menu(driver)
 
@@ -130,9 +124,7 @@ def wt_expands_toolbar_for_storage_in_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_storage_toolbar_in_panel(
-    selenium, browser_id, option, popups
-):
+def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option, popups):
     toolbar = popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
@@ -186,19 +178,13 @@ def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_additional_param_in_posix_storage_edit_page(
-    selenium, browser_id, onepanel
-):
+def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     storage_posix = onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.delete_first_additional_param()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} saves changes in posix storage edit page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} saves changes in posix storage edit page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
@@ -208,15 +194,10 @@ def save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{name}" has disappeared '
-        "from the storages list"
+        'user of {browser_id} sees that "{name}" has disappeared from the storages list'
     )
 )
-@wt(
-    parsers.parse(
-        'user of {browser_id} does not see "{name}" on the storages list'
-    )
-)
+@wt(parsers.parse('user of {browser_id} does not see "{name}" on the storages list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
@@ -226,8 +207,7 @@ def assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{name}" is visible '
-        "on the storages list"
+        'user of {browser_id} sees that "{name}" is visible on the storages list'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -302,9 +282,7 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
     driver = selenium[browser_id]
     button = name.lower() + "_button"
     getattr(
-        onepanel(driver)
-        .content.storages.storages[storage]
-        .edit_form.posix_editor,
+        onepanel(driver).content.storages.storages[storage].edit_form.posix_editor,
         button,
     )()
 

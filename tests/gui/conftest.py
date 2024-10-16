@@ -4,9 +4,7 @@ Define fixtures used in web GUI acceptance/behavioral tests.
 
 __author__ = "Jakub Liput, Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import errno
@@ -60,9 +58,7 @@ def pytest_configure(config):
 
 def pytest_addoption(parser):
     selenium_group = parser.getgroup("selenium", "selenium")
-    selenium_group.addoption(
-        "--xvfb", action="store_true", help="run Xvfb for tests"
-    )
+    selenium_group.addoption("--xvfb", action="store_true", help="run Xvfb for tests")
     selenium_group.addoption(
         "--no-mosaic-filter",
         action="store_true",
@@ -381,9 +377,7 @@ def capabilities(request, capabilities, tmpdir):
             {"performance": "ALL", "driver": "ALL", "browser": "ALL"},
         )
 
-        options.add_experimental_option(
-            "excludeSwitches", ["enable-automation"]
-        )
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
         prefs = {"download.default_directory": str(tmpdir)}
         options.add_experimental_option("prefs", prefs)
         capabilities.update({"options": options})

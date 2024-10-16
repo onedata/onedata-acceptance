@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -57,15 +55,9 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} removes "{space_name}" space from harvester'
-    )
-)
+@wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_harvester(
-    selenium, browser_id, oz_page, space_name, modals
-):
+def remove_space_from_harvester(selenium, browser_id, oz_page, space_name, modals):
     button = "Remove"
     modal = "Remove space from harvester"
 
@@ -100,8 +92,7 @@ def remove_space_from_given_harvester(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} removes "{harvester_name}" '
-        "harvester in Onezone page"
+        'user of {browser_id} removes "{harvester_name}" harvester in Onezone page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -123,8 +114,7 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name, modals):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} creates "{harvester_name}" harvester '
-        "in Onezone page"
+        'user of {browser_id} creates "{harvester_name}" harvester in Onezone page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -389,9 +379,7 @@ def change_privilege_config_in_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_harvester(
-    selenium, browser_id, oz_page, harvester_name, harvester_renamed
-):
+def rename_harvester(selenium, browser_id, oz_page, harvester_name, harvester_renamed):
     option = "harvesters"
     menu_option = "Rename"
 
@@ -413,9 +401,7 @@ def rename_harvester(
         'the spaces list of "{harvester}" harvester'
     )
 )
-def assert_space_on_harvester_list(
-    selenium, browser_id, space, harvester, oz_page
-):
+def assert_space_on_harvester_list(selenium, browser_id, space, harvester, oz_page):
     option = "Discovery"
     option2 = "harvesters"
     option3 = "Spaces"
@@ -427,16 +413,10 @@ def assert_space_on_harvester_list(
     click_on_option_of_harvester_on_left_sidebar_menu(
         selenium, browser_id, harvester, option3, oz_page
     )
-    assert_space_has_appeared_in_discovery_page(
-        selenium, browser_id, space, oz_page
-    )
+    assert_space_has_appeared_in_discovery_page(selenium, browser_id, space, oz_page)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} configures "{harvester}" harvester as public'
-    )
-)
+@wt(parsers.parse('user of {browser_id} configures "{harvester}" harvester as public'))
 def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
     action = "checks"
     discovery_tab = "Discovery"
@@ -458,9 +438,7 @@ def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
     click_button_in_tab_of_harvester_config_page(
         selenium, browser_id, oz_page, edit_button, general_tab
     )
-    check_public_toggle_on_harvester_config_page(
-        selenium, browser_id, oz_page, action
-    )
+    check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page, action)
     click_button_in_tab_of_harvester_config_page(
         selenium, browser_id, oz_page, save_button, general_tab
     )
@@ -521,9 +499,7 @@ def create_index_with_toggles_list(
     type_index_name_to_input_field_in_indices_page(
         selenium, browser_id, oz_page, index_name
     )
-    uncheck_toggles_on_create_index_page(
-        selenium, browser_id, oz_page, toggles_list
-    )
+    uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page, toggles_list)
     click_create_button_in_indices_page(selenium, browser_id, oz_page)
 
 
@@ -542,9 +518,5 @@ def change_indices_for_harvester(
     click_on_option_of_harvester_on_left_sidebar_menu(
         selenium, browser_id, harvester_name, option, oz_page
     )
-    click_on_tab_of_harvester_config_page(
-        selenium, browser_id, tab_name, oz_page
-    )
-    change_indices_on_gui_plugin_tab(
-        selenium, browser_id, oz_page, index_name, popups
-    )
+    click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name, oz_page)
+    change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name, popups)

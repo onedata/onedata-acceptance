@@ -4,9 +4,7 @@ common operations in onepanel web GUI.
 
 __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform
@@ -16,8 +14,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "{button}" button on cluster '
-        "members page"
+        'user of {browser_id} clicks on "{button}" button on cluster members page'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)

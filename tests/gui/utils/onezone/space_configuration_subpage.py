@@ -4,9 +4,7 @@ in Onezone GUI
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver import ActionChains
 from tests.gui.utils.common.common import Toggle
@@ -61,6 +59,4 @@ class SpaceConfigurationPage(PageObject):
     header_label_warning = Label(".label.label-warning")
 
     def move_to_toggle(self, driver):
-        ActionChains(driver).move_to_element(
-            self.advertise_toggle_web
-        ).perform()
+        ActionChains(driver).move_to_element(self.advertise_toggle_web).perform()

@@ -5,9 +5,7 @@ browser instance.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from pytest import fixture
@@ -40,6 +38,4 @@ def screens():
     return [0, 1]
 
 
-scenarios(
-    "../features/oneprovider/data/dir_acl_privileges_change_and_upload.feature"
-)
+scenarios("../features/oneprovider/data/dir_acl_privileges_change_and_upload.feature")

@@ -4,9 +4,7 @@ management.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import os
@@ -46,9 +44,7 @@ def mount_new_oneclient_with_token_fail(
 ):
     if "oneclient" in client:
         token = tmp_memory[user]["mailbox"]["token"]
-        users[user].mount_client(
-            "oneclient-1", "client1", hosts, env_desc, token
-        )
+        users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
         failure(user, users)
 
 
@@ -126,9 +122,7 @@ def see_items_in_op_oneclient(items, space, user, users, result, host):
 
 def assert_num_of_files_in_path_in_op_oneclient(num, path, user, users, host):
     items = multi_dir_steps.list_dirs_base(user, path, host, users)
-    assert_msg = (
-        f"Expected exactly {num} items in {path} but found {len(items)} items"
-    )
+    assert_msg = f"Expected exactly {num} items in {path} but found {len(items)} items"
     assert len(items) == num, assert_msg
 
 
@@ -155,15 +149,11 @@ def create_item_in_op_oneclient(
     if name.startswith("dir"):
         multi_dir_steps.create(user, f"{cwd}/{name}", host, users)
     else:
-        multi_file_steps.create_reg_file(
-            user, f"{cwd}/{name}", host, users, request
-        )
+        multi_file_steps.create_reg_file(user, f"{cwd}/{name}", host, users, request)
     if not content:
         return
     cwd += "/" + name
-    create_content(
-        user, users, cwd, content, create_item_fun, host, hosts, request
-    )
+    create_content(user, users, cwd, content, create_item_fun, host, hosts, request)
 
 
 def assert_file_content_in_op_oneclient(path, text, user, users, host):
@@ -174,9 +164,7 @@ def ls_dir_in_op_oneclient(path, user, users, host):
     return multi_dir_steps.list_dirs_base(user, path, host, users)
 
 
-def get_time_for_file_in_op_oneclient(
-    users, user, client_node, time_name, file
-):
+def get_time_for_file_in_op_oneclient(users, user, client_node, time_name, file):
     user = users[user]
     client = user.clients[client_node]
     attr = time_attr(time_name)
@@ -227,9 +215,7 @@ def copy_item_in_op_oneclient(item_type, src_path, dst_path, user, users, host):
     if item_type == "directory":
         multi_dir_steps.copy_dir(user, src_path, dst_path, host, users)
     else:
-        multi_reg_file_steps.copy_reg_file(
-            user, src_path, dst_path, host, users
-        )
+        multi_reg_file_steps.copy_reg_file(user, src_path, dst_path, host, users)
 
 
 def move_item_in_op_oneclient(user, src_path, dst_path, users, result, host):
@@ -244,9 +230,7 @@ def assert_posix_permissions_in_op_oneclient(user, path, perm, host, users):
     multi_file_steps.check_mode(user, path, perm, host, users)
 
 
-def set_posix_permissions_in_op_oneclient(
-    user, path, perm, host, users, result
-):
+def set_posix_permissions_in_op_oneclient(user, path, perm, host, users, result):
     if result == "fails":
         multi_file_steps.change_mode_fail(user, path, perm, host, users)
     else:
@@ -262,9 +246,7 @@ def set_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
     multi_file_steps.set_xattr(user, path, attr, attr_val, host, users)
 
 
-def assert_metadata_in_op_oneclient(
-    attr_val, attr_type, path, user, users, host
-):
+def assert_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
     if attr_type == "basic":
         attr, val = attr_val.split("=")
         multi_file_steps.check_string_xattr(user, path, attr, val, host, users)
@@ -284,9 +266,7 @@ def remove_all_metadata_in_op_oneclient(user, users, host, path):
     multi_file_steps.remove_all_xattr(user, path, host, users)
 
 
-def assert_no_such_metadata_in_op_oneclient(
-    user, users, host, path, tab_name, val
-):
+def assert_no_such_metadata_in_op_oneclient(user, users, host, path, tab_name, val):
     metadata = multi_file_steps.get_metadata(user, path, host, users)
     if tab_name == "basic":
         attr, val = val.split("=")
@@ -324,9 +304,7 @@ def grant_acl_privileges_in_op_oneclient(
     except KeyError:
         acl = []
     acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
-    multi_file_steps.set_xattr(
-        user, path, "cdmi_acl", json.dumps(acl), host, users
-    )
+    multi_file_steps.set_xattr(user, path, "cdmi_acl", json.dumps(acl), host, users)
 
 
 def remove_file_in_op_oneclient(user, path, host, users, res):
@@ -345,8 +323,6 @@ def list_children_in_op_oneclient(name, user, users):
 
 
 @given(parsers.parse("{user} mounts oneclient using received token"))
-def given_mount_new_oneclient_with_token(
-    user, hosts, users, env_desc, tmp_memory
-):
+def given_mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]["mailbox"]["token"]
     users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)

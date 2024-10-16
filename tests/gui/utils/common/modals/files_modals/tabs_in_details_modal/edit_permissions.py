@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
@@ -78,8 +76,7 @@ class MemberAclPermission(PageObject):
     name = id = Label(".subject-name")
     menu_button = Button(".btn-menu-toggle")
     menu = WebItem(
-        ".webui-popover-content "
-        ".one-webui-popover.one-collapsible-toolbar-popover",
+        ".webui-popover-content .one-webui-popover.one-collapsible-toolbar-popover",
         cls=MenuPopupWithLabel,
     )
     acl_permission_group = WebItemsSequence(

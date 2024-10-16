@@ -4,9 +4,7 @@ data tab in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from selenium.webdriver import ActionChains
@@ -68,9 +66,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
     name = Label(".item-label")
     _toggle = WebElement(".item-icon .one-icon")
     _header = WebElement(".secondary-sidebar-item.dir-item")
-    _click_area = WebElement(
-        ".secondary-sidebar-item.dir-item .item-click-area"
-    )
+    _click_area = WebElement(".secondary-sidebar-item.dir-item .item-click-area")
     _header_label = WebElement(
         ".secondary-sidebar-item.dir-item .truncate-secondary-sidebar-item"
     )
@@ -86,9 +82,7 @@ class DirectoryTree(PageObject, ExpandableMixin):
         css_sel = "ul.data-files-tree-list li:not(.clickable)"
         return (
             DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
-            for dir_tree in self._children.find_elements(
-                By.CSS_SELECTOR, css_sel
-            )
+            for dir_tree in self._children.find_elements(By.CSS_SELECTOR, css_sel)
         )
 
     def __getitem__(self, name):

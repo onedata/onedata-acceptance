@@ -2,9 +2,7 @@
 
 __author__ = "Michal Dronka, Natalia Organek"
 __copyright__ = "Copyright (C) 2020-2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
@@ -32,29 +30,20 @@ def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
         popups(driver).delete_qos_popup.confirm.click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that all QoS requirements are {state}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that all QoS requirements are {state}"))
 @repeat_failed(
     interval=1, timeout=90, exceptions=(NoSuchElementException, RuntimeError)
 )
-def assert_all_qualities_of_service_are_fulfilled(
-    selenium, browser_id, modals, state
-):
+def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, state):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.qos
     for requirement in modal.requirements:
-        assert hasattr(
-            requirement, state
-        ), f"No all QoS requirements are {state}"
+        assert hasattr(requirement, state), f"No all QoS requirements are {state}"
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that replicas number is equal "
-        "{number} in QoS panel"
+        "user of {browser_id} sees that replicas number is equal {number} in QoS panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -85,9 +74,7 @@ def process_provider_expression(expression, hosts, users):
     provider_name = hosts[provider]["name"]
     provider_id = get_provider_short_id(provider, hosts, users)
     id_separator = CONFLICT_NAME_SEPARATOR
-    return (
-        f"{split_expression[0]} is {provider_name} {id_separator}{provider_id}"
-    )
+    return f"{split_expression[0]} is {provider_name} {id_separator}{provider_id}"
 
 
 def get_provider_short_id(provider, hosts, users):
@@ -160,8 +147,7 @@ def process_whole_nested_expression(expression, hosts, users):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees nested QoS requirement "
-        "in QoS panel:\n{expression}"
+        "user of {browser_id} sees nested QoS requirement in QoS panel:\n{expression}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -177,21 +163,14 @@ def assert_nested_expression_in_qos_panel(
         if expression_in_modal == ready_expression:
             assert True
             return
-    assert False, (
-        f'Not found "{ready_expression}" QoS requirement '
-        'in modal "Quality of Service"'
-    )
+    assert (
+        False
+    ), f'Not found "{ready_expression}" QoS requirement in modal "Quality of Service"'
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} doesn't see any QoS requirement in QoS panel"
-    )
-)
+@wt(parsers.parse("user of {browser_id} doesn't see any QoS requirement in QoS panel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_expression_in_qualities_of_service_modal(
-    selenium, browser_id, modals
-):
+def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     try:
         modals(driver).details_modal.qos.requirements
@@ -201,11 +180,7 @@ def assert_no_expression_in_qualities_of_service_modal(
         assert False, 'Found QoS requirement in modal "Quality of Service"'
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "enter as text" label in QoS panel'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "enter as text" label in QoS panel'))
 def click_enter_as_text_link(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modals(driver).details_modal.qos.enter_as_text()
@@ -222,11 +197,7 @@ def confirm_entering_text(selenium, browser_id, modals):
     modals(driver).details_modal.qos.confirm_text()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on add query block icon in QoS panel"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on add query block icon in QoS panel"))
 def click_add_query_block(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.qos.query_builder
@@ -253,9 +224,7 @@ def start_query_block_no(selenium, browser_id, modals, number):
         '"Add QoS condition" popup'
     )
 )
-def choose_property_in_add_condition_popup(
-    selenium, browser_id, property_name, popups
-):
+def choose_property_in_add_condition_popup(selenium, browser_id, property_name, popups):
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.choose_property(property_name)
@@ -276,9 +245,7 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = PROVIDER_PREFIX_CHAR
-    popups(driver).power_select.choose_item(
-        f"{item} {separator}{provider_name}"
-    )
+    popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
 
 
 @wt(
@@ -296,9 +263,7 @@ def assert_list_of_providers_in_add_cond_popup(
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = f" {PROVIDER_PREFIX_CHAR}"
-    actual = [
-        v.text.split(separator)[0] for v in popups(driver).power_select.items
-    ]
+    actual = [v.text.split(separator)[0] for v in popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -343,11 +308,7 @@ def choose_value_of_provider_item_in_add_cond_popup(
     popups(driver).power_select.choose_item_with_id(f"{provider_name}")
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks "Add" in "Add QoS condition" popup'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks "Add" in "Add QoS condition" popup'))
 def click_add_in_add_cond_popup(selenium, browser_id, popups):
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
@@ -369,9 +330,7 @@ def assert_num_of_matching_storages(selenium, browser_id, number, modals):
         number = "No storage backends match"
     else:
         actual = modal.storage_matching
-    assert (
-        number == actual
-    ), f"{number} storages should match but {actual} matches"
+    assert number == actual, f"{number} storages should match but {actual} matches"
 
 
 @wt(
@@ -393,9 +352,7 @@ def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
     scroll_to_css_selector_bottom(driver, css_sel)
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
 
-    actual = [
-        elem.text for elem in popups(driver).storages_matching_popover.storages
-    ]
+    actual = [elem.text for elem in popups(driver).storages_matching_popover.storages]
     compare_lists(expected, actual)
     # unclick element
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
@@ -433,16 +390,13 @@ def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{button}" button is '
-        "disabled in QoS panel"
+        'user of {browser_id} sees that "{button}" button is disabled in QoS panel'
     )
 )
 def assert_button_disabled_in_qos_panel(selenium, browser_id, modals, button):
 
     driver = selenium[browser_id]
-    enabled = getattr(
-        modals(driver).details_modal.qos, transform(button)
-    ).is_enabled()
+    enabled = getattr(modals(driver).details_modal.qos, transform(button)).is_enabled()
     assert not enabled, f"{button} is not disabled"
 
 
@@ -461,14 +415,9 @@ def assert_qos_status_in_browser(
     browser = getattr(op_container(driver), transform(which_browser))
     vis_status = getattr(browser.data[item_name], "qos_status")
     err_msg = (
-        f"status {status} for item {item_name} is not "
-        f"displayed in {which_browser}"
+        f"status {status} for item {item_name} is not displayed in {which_browser}"
     )
     if status.lower() == "impossible":
-        assert "qos-status-impossible" in vis_status.get_attribute(
-            "class"
-        ), err_msg
+        assert "qos-status-impossible" in vis_status.get_attribute("class"), err_msg
     elif status.lower() == "fulfilled":
-        assert "qos-status-fulfilled" in vis_status.get_attribute(
-            "class"
-        ), err_msg
+        assert "qos-status-fulfilled" in vis_status.get_attribute("class"), err_msg

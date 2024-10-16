@@ -3,21 +3,15 @@ workflow creation in onezone web GUI"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import (
-    press_backspace_on_active_element,
-)
+from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.steps.onezone.automation.automation_basic import (
-    collapse_revision_list,
-)
+from tests.gui.steps.onezone.automation.automation_basic import collapse_revision_list
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -43,9 +37,7 @@ def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_text_into_lambda_form(
-    selenium, browser_id, oz_page, text, text_field
-):
+def write_text_into_lambda_form(selenium, browser_id, oz_page, text, text_field):
     page = oz_page(selenium[browser_id])["automation"]
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, "value", text)
@@ -133,19 +125,13 @@ def write_text_into_editor_bracket(
         if tab.data_type == "STRING":
             tab.string_editor = input_value
         elif tab.data_type == "OBJECT":
-            clean_tab_textarea_in_json_argument_editor(
-                tab.json, selenium, browser_id
-            )
+            clean_tab_textarea_in_json_argument_editor(tab.json, selenium, browser_id)
             tab.json.text_area = json.dumps(input_value)
     elif object_type == "configuration parameters":
         page.conf_parameters[object_name + ":"].value_editor = str(input_value)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} writes "{text}" into workflow name text field'
-    )
-)
+@wt(parsers.parse('user of {browser_id} writes "{text}" into workflow name text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_text_into_workflow_name_on_main_workflows_page(
     selenium, browser_id, oz_page, text
@@ -156,8 +142,7 @@ def write_text_into_workflow_name_on_main_workflows_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} confirms creating new workflow using "
-        '"Create" button'
+        'user of {browser_id} confirms creating new workflow using "Create" button'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -212,14 +197,10 @@ def click_add_lane_button_in_workflow_visualizer(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees "{lane_name}" lane in workflow visualizer'
-    )
+    parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow visualizer')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lane_in_workflow_visualizer(
-    selenium, browser_id, oz_page, lane_name
-):
+def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page, lane_name):
     page = oz_page(selenium[browser_id])["automation"]
     workflow_visualizer = page.workflows_page.workflow_visualiser.workflow_lanes
 
@@ -236,9 +217,7 @@ def assert_lane_in_workflow_visualizer(
 def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
     page = oz_page(selenium[browser_id])["automation"]
     workflow_visualiser = page.workflows_page.workflow_visualiser
-    workflow_visualiser.workflow_lanes[
-        lane_name
-    ].add_parallel_box_button.click()
+    workflow_visualiser.workflow_lanes[lane_name].add_parallel_box_button.click()
 
 
 @wt(
@@ -310,8 +289,7 @@ def click_option_in_task_menu_button(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} writes "{text}" in name textfield of '
-        "selected workflow"
+        'user of {browser_id} writes "{text}" in name textfield of selected workflow'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

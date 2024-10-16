@@ -2,9 +2,7 @@
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import hashlib
 import hmac
@@ -55,9 +53,7 @@ def create_s3_bucket_rest(bucket_name):
         '"{dst_bucket}" bucket'
     )
 )
-def copy_item_s3_bucket(
-    browser_id, dst_bucket, src_bucket, clipboard, displays
-):
+def copy_item_s3_bucket(browser_id, dst_bucket, src_bucket, clipboard, displays):
     path = clipboard.paste(display=displays[browser_id])
     copy_item_between_buckets(
         dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
@@ -79,9 +75,7 @@ def get_signature_key(key, date_stamp):
 def create_canonical_request(
     method, uri, query_string, headers, signed_headers, payload_hash
 ):
-    canonical_headers = "".join(
-        f"{k}:{v}\n" for k, v in sorted(headers.items())
-    )
+    canonical_headers = "".join(f"{k}:{v}\n" for k, v in sorted(headers.items()))
     return (
         f"{method}\n"
         f"{uri}\n"
@@ -92,9 +86,7 @@ def create_canonical_request(
     )
 
 
-def create_string_to_sign(
-    date_stamp, credential_scope, hashed_canonical_request
-):
+def create_string_to_sign(date_stamp, credential_scope, hashed_canonical_request):
     return (
         "AWS4-HMAC-SHA256\n"
         f"{date_stamp}\n"

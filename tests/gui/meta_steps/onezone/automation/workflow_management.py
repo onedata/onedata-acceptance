@@ -4,9 +4,7 @@ workflow creation in Onezone using web GUI
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import time
@@ -56,9 +54,7 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_workflow_using_gui(selenium, browser_id, oz_page, workflow_name):
-    click_add_new_button_in_menu_bar(
-        selenium, browser_id, oz_page, "Add new workflow"
-    )
+    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
         selenium, browser_id, oz_page, workflow_name
     )
@@ -83,9 +79,7 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     tmp_memory,
 ):
     driver = selenium[browser_id]
-    click_on_automation_option_in_the_sidebar(
-        selenium, browser_id, oz_page, tmp_memory
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
     go_to_inventory_subpage(
         selenium, browser_id, inventory, "workflows", oz_page, tmp_memory
     )
@@ -170,9 +164,7 @@ def _upload_workflow_from_automation_examples(
     button = "Apply"
     driver = selenium[browser_id]
 
-    click_on_automation_option_in_the_sidebar(
-        selenium, browser_id, oz_page, tmp_memory
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
     go_to_inventory_subpage(
         selenium, browser_id, inventory, subpage, oz_page, tmp_memory
     )
@@ -281,9 +273,7 @@ def _execute_workflow_with_input_config(
     data = yaml.load(config, yaml.Loader)
     for store in data:
         driver = selenium[browser_id]
-        data_type = get_data_type_in_initial_value_store(
-            driver, op_container, store
-        )
+        data_type = get_data_type_in_initial_value_store(driver, op_container, store)
         if data_type == "FILE":
             file_list = data[store]
             choose_file_as_initial_workflow_value_for_store(
@@ -336,12 +326,8 @@ def _execute_workflow_with_input_config(
             raise ValueError(f"unknown data type {data_type}")
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, start
-    )
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, finish
-    )
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, start)
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, finish)
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
@@ -384,12 +370,8 @@ def execute_workflow_and_wait(
         data_type,
     )
 
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, start
-    )
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, finish
-    )
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, start)
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, finish)
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
@@ -446,9 +428,7 @@ def execute_workflow(
         items = eval(item_list)
         if type(items) is list:
             for number in items:
-                numbers = get_input_element(
-                    op_container, driver, "numbers_input"
-                )
+                numbers = get_input_element(op_container, driver, "numbers_input")
                 numbers[len(numbers) - 1].input = str(number)
         else:
             numbers = op_container(driver).automation_page.numbers_input
@@ -459,13 +439,9 @@ def execute_workflow(
         items = json.loads(item_list)
         if type(items) is list:
             for boolean in items:
-                booleans = get_input_element(
-                    op_container, driver, "booleans_input"
-                )
+                booleans = get_input_element(op_container, driver, "booleans_input")
                 booleans[len(booleans) - 1].click()
-                popups(driver).boolean_values.options[
-                    str(boolean).lower()
-                ].click()
+                popups(driver).boolean_values.options[str(boolean).lower()].click()
     else:
         choose_file_as_initial_workflow_value(
             selenium,

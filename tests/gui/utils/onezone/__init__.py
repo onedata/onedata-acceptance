@@ -2,19 +2,13 @@
 
 __author__ = "Bartosz Walkowicz Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 from time import sleep
 
 from selenium.webdriver.common.action_chains import ActionChains
-from tests.gui.utils.core.web_elements import (
-    Label,
-    WebElement,
-    WebElementsSequence,
-)
+from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
@@ -47,9 +41,7 @@ class OZLoggedIn:
 
     uploads = WebElement(".main-menu-column .main-menu-upload-item")
 
-    provider_alert_message = Label(
-        ".content-info-content-container .text-center"
-    )
+    provider_alert_message = Label(".content-info-content-container .text-center")
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
@@ -83,9 +75,7 @@ class OZLoggedIn:
             ):
                 return False
         panel = self._panels[panels_dict[item]]
-        return any(
-            el in panel.get_attribute("class") for el in ["active", "selected"]
-        )
+        return any(el in panel.get_attribute("class") for el in ["active", "selected"])
 
     def get_panels(self):
         return self._panels
@@ -106,9 +96,7 @@ def get_page(oz_page, item, click=True):
             wait_for_panel_to_expand(oz_page)
         return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
     if item == "profile":
-        return ManageAccountPage(
-            oz_page.web_elem, oz_page.get_profile(), oz_page
-        )
+        return ManageAccountPage(oz_page.web_elem, oz_page.get_profile(), oz_page)
     if item == "uploads":
         return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
     raise RuntimeError(f'no "{item}" on {oz_page} found')

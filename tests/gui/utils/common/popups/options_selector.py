@@ -2,9 +2,7 @@
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from selenium.webdriver.common.action_chains import ActionChains
@@ -38,9 +36,7 @@ class OptionsSelector(PageObject):
         raise RuntimeError(f"item {name} not found in popup")
 
     def hover_over(self):
-        ActionChains(self.driver).move_to_element(
-            self.menu[0].web_elem
-        ).perform()
+        ActionChains(self.driver).move_to_element(self.menu[0].web_elem).perform()
 
     def scroll_down(self):
         ActionChains(self.driver).key_down(Keys.DOWN).perform()

@@ -4,9 +4,7 @@ Onezone using web GUI
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -41,14 +39,10 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
-def assert_data_discovery_files(
-    selenium, browser_id, data_discovery, config, spaces
-):
+def assert_data_discovery_files(selenium, browser_id, data_discovery, config, spaces):
     button_name = "Query"
 
-    click_button_on_data_disc_page(
-        selenium, browser_id, data_discovery, button_name
-    )
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
     time.sleep(1)
     assert_files(selenium, browser_id, data_discovery, config, spaces)
 
@@ -71,11 +65,9 @@ def _assert_elem_num_equals(expected_data, data_dict):
     spaces = expected_data.get("spaces", [])
     if spaces:
         expected_num = expected_num - 1 + len(spaces)
-    assert expected_num == len(data_dict), (
-        f"There should be {expected_num} "
-        "files visible but there is "
-        f"{len(data_dict)}"
-    )
+    assert expected_num == len(
+        data_dict
+    ), f"There should be {expected_num} files visible but there is {len(data_dict)}"
 
 
 def _check_spaces_of_data_disc(expected, actual):
@@ -139,9 +131,7 @@ def _assert_unexpected_properties_of_files(unexpected, actual, spaces):
         "files in data discovery page:\n{config}"
     )
 )
-def assert_not_files_properties(
-    selenium, browser_id, data_discovery, config, spaces
-):
+def assert_not_files_properties(selenium, browser_id, data_discovery, config, spaces):
     unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     for file in unexpected_data:
@@ -167,8 +157,7 @@ def see_files_with_order(selenium, browser_id, data_discovery, config):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} opens Data Discovery page of "
-        '"{harvester_name}" harvester'
+        'user of {browser_id} opens Data Discovery page of "{harvester_name}" harvester'
     )
 )
 def open_data_discovery_of_harvester(
@@ -198,11 +187,7 @@ def go_to_source_of_file(selenium, browser_id, filename, data_discovery):
     data_dict[filename].source_button()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees {number} files on data discovery page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
     selenium, browser_id, data_discovery, number: int
@@ -280,9 +265,7 @@ def compare_files_with_curl(browser_id, tmp_memory, config):
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
-                assert (
-                    expected_data[file_name][prop] == curl_dict[file_name][prop]
-                ), msg
+                assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
 
 
 def _curl_data_to_dict(query_curl_data):

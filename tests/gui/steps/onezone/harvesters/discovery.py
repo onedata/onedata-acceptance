@@ -4,9 +4,7 @@ harvester management in onezone web GUI.
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -20,8 +18,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {button_name} button "
-        "in discovery sidebar"
+        "user of {browser_id} clicks on {button_name} button in discovery sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -33,11 +30,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
     getattr(oz_page(driver)["discovery"], button).click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} clicks on Create button in discovery page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -76,9 +69,7 @@ def check_element_exists_on_sidebar_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_harvester_menu(
-    selenium, browser_id, option, name, oz_page
-):
+def click_on_option_in_harvester_menu(selenium, browser_id, option, name, oz_page):
     page = oz_page(selenium[browser_id])["discovery"]
     page.elements_list[name]()
     page.elements_list[name].menu_button()
@@ -86,9 +77,7 @@ def click_on_option_in_harvester_menu(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} types "{text}" to rename harvester input field'
-    )
+    parsers.parse('user of {browser_id} types "{text}" to rename harvester input field')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_rename_input_field_in_discovery_page(
@@ -99,9 +88,7 @@ def type_text_to_rename_input_field_in_discovery_page(
     _enter_text(input_field, text)
 
 
-@wt(
-    parsers.parse("user of {browser_id} confirms harvester rename using button")
-)
+@wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_harvester_rename_using_button(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -125,9 +112,7 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
     ).click()
 
 
-def click_option_in_discovery_page_menu(
-    selenium, browser_id, oz_page, button_name
-):
+def click_option_in_discovery_page_menu(selenium, browser_id, oz_page, button_name):
     driver = selenium[browser_id]
     page = oz_page(driver)["discovery"]
     page.menu_button()
@@ -148,9 +133,7 @@ def see_insufficient_permissions_alert_on_discovery_page(
     driver = selenium[browser_id]
     forbidden_alert = oz_page(driver)["discovery"].forbidden_alert.text
 
-    assert (
-        alert_text in forbidden_alert
-    ), f'alert with text "{alert_text}" not found'
+    assert alert_text in forbidden_alert, f'alert with text "{alert_text}" not found'
 
 
 @wt(
@@ -187,14 +170,11 @@ def type_endpoint_to_input_field_in_discovery_page(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks {button_name} button "
-        "in harvester spaces page"
+        "user of {browser_id} clicks {button_name} button in harvester spaces page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_harvester_spaces_page(
-    selenium, browser_id, oz_page, button_name
-):
+def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page, button_name):
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
     getattr(oz_page(driver)["discovery"], button_name).click()

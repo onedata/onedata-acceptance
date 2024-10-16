@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -43,9 +41,7 @@ class SpacesSidebar(PageObject):
     title = Label(".secondary-sidebar-header .title")
     create = Button(".oneicon-space-add")
     join = Button(".oneicon-join")
-    spaces = WebItemsSequence(
-        "ul.spaces-list li.first-level", cls=SpaceSidebarRecord
-    )
+    spaces = WebItemsSequence("ul.spaces-list li.first-level", cls=SpaceSidebarRecord)
 
 
 class PermissionTableRow(PageObject):

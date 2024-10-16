@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from functools import partial
 
@@ -32,9 +30,7 @@ class _ArchiveBrowser(PageObject):
         ".archive-browser-container .data-row.fb-table-row", cls=DataRow
     )
     breadcrumbs = Breadcrumbs(".archive-browser .fb-breadcrumbs")
-    create_archive = Button(
-        ".hidden-xs .toolbar-buttons .oneicon-browser-archive-add"
-    )
+    create_archive = Button(".hidden-xs .toolbar-buttons .oneicon-browser-archive-add")
     create_archive_elem = WebElement(
         ".hidden-xs .toolbar-buttons .oneicon-browser-archive-add"
     )

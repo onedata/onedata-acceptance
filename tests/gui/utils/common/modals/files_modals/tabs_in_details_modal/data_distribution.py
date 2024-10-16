@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
@@ -37,9 +35,7 @@ class _Chunk(PageObject):
     def chunks(self, file_size):
         chunks = self.driver.execute_script(_canvas_fill, self._canvas)
         if chunks is not False:
-            return [
-                (chunk[0] * file_size, chunk[1] * file_size) for chunk in chunks
-            ]
+            return [(chunk[0] * file_size, chunk[1] * file_size) for chunk in chunks]
         else:
             raise RuntimeError(
                 "{} is not filled correctly: some columns "
@@ -62,9 +58,7 @@ class _DataDistributionRecord(PageObject):
 
 
 class MigrationRecord(PageObject):
-    source_provider = Label(
-        ".source-oneprovider-visualization .oneprovider-name"
-    )
+    source_provider = Label(".source-oneprovider-visualization .oneprovider-name")
     target_provider = Label(".ember-basic-dropdown-trigger .oneprovider-name")
     _toggle = WebElement(".ember-basic-dropdown-trigger")
 

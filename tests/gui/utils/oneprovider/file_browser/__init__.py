@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from contextlib import contextmanager
@@ -59,9 +57,7 @@ class _FileBrowser(PageObject):
     jump_input = Input(".jump-input")
 
     configure_columns = Button(".columns-configuration-button")
-    column_headers = WebItemsSequence(
-        ".fb-table-secondary-col", cls=FileColumnHeader
-    )
+    column_headers = WebItemsSequence(".fb-table-secondary-col", cls=FileColumnHeader)
 
     def __str__(self):
         return f"file browser in {self.parent}"
@@ -91,9 +87,7 @@ class _FileBrowser(PageObject):
     def names_of_visible_elems(self):
         files = self._data
         # make sure row is fully loaded in gui
-        names = [
-            f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1
-        ]
+        names = [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
         return names
 
     @contextmanager
@@ -143,9 +137,7 @@ class _FileBrowser(PageObject):
         return css_selector
 
     def scroll_to_number_file(self, driver, number, browser):
-        selector = (
-            browser.get_css_selector() + f" .data-row:nth-of-type({number})"
-        )
+        selector = browser.get_css_selector() + f" .data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
 
 

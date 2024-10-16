@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import os
@@ -33,9 +31,7 @@ def type_string_into_active_element(selenium, browser_id, text):
     _enter_text(selenium[browser_id].switch_to.active_element, text)
 
 
-@wt(
-    parsers.parse("user of {browser_id} types received {item_type} on keyboard")
-)
+@wt(parsers.parse("user of {browser_id} types received {item_type} on keyboard"))
 def type_item_into_active_element(selenium, browser_id, item_type, tmp_memory):
     item = tmp_memory[browser_id]["mailbox"][item_type]
     _enter_text(selenium[browser_id].switch_to.active_element, item)
@@ -92,9 +88,7 @@ def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
     getattr(popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
 
-@wt(
-    parsers.parse('user of {browser_id} clicks "{option}" option in menu popup')
-)
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu popup'))
 def click_option_in_popup_labeled_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     popups(driver).menu_popup_with_label.menu[option]()
@@ -121,8 +115,7 @@ def switch_to_iframe(selenium, browser_id, _selector=None):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sets copied {elem} as {var_name} "
-        "environment variable"
+        "user of {browser_id} sets copied {elem} as {var_name} environment variable"
     )
 )
 def set_env_variable_with_copied_val(clipboard, var_name, displays, browser_id):
@@ -134,11 +127,7 @@ def _set_env_variable(var_name, var_value):
     os.environ[var_name] = var_value
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} runs curl command copied from {page} page"
-    )
-)
+@wt(parsers.parse("user of {browser_id} runs curl command copied from {page} page"))
 def run_curl_command(clipboard, displays, browser_id, tmp_memory, page):
     curl_cmd = clipboard.paste(display=displays[browser_id])
 
@@ -176,8 +165,7 @@ def _process_curl_output(output, page):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that curl result matches "
-        "following config:\n{config}"
+        "user of {browser_id} sees that curl result matches following config:\n{config}"
     )
 )
 def assert_curl_result_with_config(browser_id, tmp_memory, config):

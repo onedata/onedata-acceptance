@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -54,9 +52,7 @@ class Space(Element):
     automation_workflows = NamedButton(
         ".one-list-level-2 .item-header", text="Automation Workflows"
     )
-    configuration = NamedButton(
-        ".one-list-level-2 .item-header", text="Configuration"
-    )
+    configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
     menu_button = Button(".collapsible-toolbar-toggle")
 
     def click_menu(self):
@@ -146,14 +142,10 @@ class ProvidersMap(Element):
 class SpaceOverviewPage(PageObject):
     space_name = Label(".header-row .one-label")
     info_tile = WebItem(".resource-info-tile", cls=SpaceInfoTile)
-    members_tile = WebItem(
-        ".resource-members-tile .tile-main", cls=SpaceMembersTile
-    )
+    members_tile = WebItem(".resource-members-tile .tile-main", cls=SpaceMembersTile)
     map = WebItem(".map-container", cls=ProvidersMap)
     space_details_tile = WebItem(".space-details-tile", cls=SpaceDetailsTile)
-    marketplace_tile = WebItem(
-        ".space-marketplace-tile", cls=SpaceMarketplaceTile
-    )
+    marketplace_tile = WebItem(".space-marketplace-tile", cls=SpaceMarketplaceTile)
 
 
 class WelcomePage(PageObject):
@@ -188,9 +180,7 @@ class HarvestersPage(PageObject):
 
 class GetSupportPage(PageObject):
     request_support_modal = NamedButton(".nav-link", text="Request support")
-    deploy_provider_modal = NamedButton(
-        ".nav-link", text="Deploy your own Oneprovider"
-    )
+    deploy_provider_modal = NamedButton(".nav-link", text="Deploy your own Oneprovider")
     expose_existing_data_modal = NamedButton(
         ".nav-link", text="Expose existing data set"
     )
@@ -224,9 +214,7 @@ class ArchiveHeader(PageObject):
 
 
 class DataPage(GenericPage):
-    create_space_button = Button(
-        ".one-sidebar-toolbar-button .oneicon-add-filled"
-    )
+    create_space_button = Button(".one-sidebar-toolbar-button .oneicon-add-filled")
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 

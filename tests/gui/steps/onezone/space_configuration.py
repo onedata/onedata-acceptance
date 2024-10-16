@@ -4,9 +4,7 @@ spaces configuration in onezone web GUI.
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -22,9 +20,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_advertise_in_marketplace_toggle(
-    selenium, browser_id, oz_page, checked
-):
+def assert_advertise_in_marketplace_toggle(selenium, browser_id, oz_page, checked):
     driver = selenium[browser_id]
     page = oz_page(driver)["data"].configuration_page
 
@@ -45,9 +41,7 @@ def assert_advertise_in_marketplace_toggle(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def advertise_space_on_space_configuration_page(
-    browser_id, selenium, oz_page, option
-):
+def advertise_space_on_space_configuration_page(browser_id, selenium, oz_page, option):
     driver = selenium[browser_id]
     page = oz_page(driver)["data"].configuration_page
     getattr(page.advertise_toggle, option)()
@@ -140,21 +134,16 @@ def add_tags_in_space_configuration_tab(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees "{label_info}" header label'
-        " in configuration space"
+        'user of {browser_id} sees "{label_info}" header label in configuration space'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_header_info_in_space_configuration(
-    selenium, browser_id, label_info, oz_page
-):
+def check_header_info_in_space_configuration(selenium, browser_id, label_info, oz_page):
     driver = selenium[browser_id]
     header_label_message = oz_page(driver)[
         "data"
     ].configuration_page.header_label_warning
-    err_msg = (
-        f"expected {label_info} header label instead of {header_label_message}"
-    )
+    err_msg = f"expected {label_info} header label instead of {header_label_message}"
     assert header_label_message == str(label_info), err_msg
 
 

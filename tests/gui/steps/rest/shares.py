@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 
@@ -27,9 +25,7 @@ from tests.utils.rest_utils import (
         '"{item_path}" supported by "{provider}" provider'
     )
 )
-def create_share_using_rest(
-    item_path, provider, user, share_name, hosts, users
-):
+def create_share_using_rest(item_path, provider, user, share_name, hosts, users):
     provider_hostname = hosts[provider]["hostname"]
     file_id = get_file_id_by_rest(item_path, provider_hostname, user, users)
 
@@ -50,15 +46,11 @@ def create_share_using_rest(
         '"{item_path}" supported by "{provider}" provider'
     )
 )
-def wt_create_share_using_rest(
-    item_path, provider, user, share_name, hosts, users
-):
+def wt_create_share_using_rest(item_path, provider, user, share_name, hosts, users):
     create_share_using_rest(item_path, provider, user, share_name, hosts, users)
 
 
-@given(
-    parsers.parse("using REST, user {user} creates following shares:\n{config}")
-)
+@given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))
 def create_many_shares_using_rest(user, config, hosts, users):
     """Config:
 

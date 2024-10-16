@@ -4,9 +4,7 @@ common operations between various services.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -28,9 +26,7 @@ from .account_management import AccountManagementContentPage
 
 class BaseContent(PageObject):
     _main_content = ".main-content"
-    account_management = WebItem(
-        _main_content, cls=AccountManagementContentPage
-    )
+    account_management = WebItem(_main_content, cls=AccountManagementContentPage)
 
     def __str__(self):
         return f"content in {self.parent}"
@@ -45,9 +41,7 @@ class OnePage:
     service = Label(".brand-info")
     logout = WebElement(".user-account-button-main")
     content = WebItem(".col-content", cls=BaseContent)
-    opened_tab = Label(
-        "#main-menu-container ul.main-menu li.main-menu-item.active"
-    )
+    opened_tab = Label("#main-menu-container ul.main-menu li.main-menu-item.active")
     main_menu = WebItemsSequence(
         "#main-menu-container ul.main-menu li.main-menu-item",
         cls=ButtonWithTextPageObject,

@@ -4,9 +4,7 @@ in Onezone using web GUI
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
 from tests.gui.steps.onezone.marketplace import (
@@ -22,9 +20,7 @@ from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sets space configuration as follows:\n{config}"
-    )
+    parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
 def configure_space_manually(browser_id, config, selenium, oz_page, popups):
     """Adjust space configuration according to given config.
@@ -139,9 +135,7 @@ def _configure_space_manually(
         "subpage with following parameters:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(
-    browser_id, selenium, oz_page, config
-):
+def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, config):
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:
@@ -168,14 +162,10 @@ def assert_space_in_marketplace_with_config(
 
     """
 
-    _assert_space_in_marketplace_with_config(
-        browser_id, config, selenium, oz_page
-    )
+    _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page)
 
 
-def _assert_space_in_marketplace_with_config(
-    browser_id, config, selenium, oz_page
-):
+def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page):
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"

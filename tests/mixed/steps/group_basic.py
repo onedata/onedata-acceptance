@@ -4,9 +4,7 @@ basic operation on groups using web GUI and swagger.
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 
@@ -56,9 +54,7 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def create_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page
-):
+def create_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
 
     if client.lower() == "rest":
         create_groups_using_rest(user, users, hosts, group_list, host)
@@ -115,9 +111,7 @@ def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
         ' "(?P<host>.*)" Onezone service'
     )
 )
-def assert_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page
-):
+def assert_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
 
     if client.lower() == "rest":
         see_groups_using_rest(user, users, hosts, group_list, host)
@@ -148,9 +142,7 @@ def rename_groups(
 ):
 
     if client.lower() == "rest":
-        rename_groups_using_rest(
-            user, users, hosts, group_list, new_names, host
-        )
+        rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
         rename_groups_using_op_gui(
             selenium, user, oz_page, group_list, new_names, popups
@@ -166,9 +158,7 @@ def rename_groups(
         "Onezone service"
     )
 )
-def fail_to_see_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page
-):
+def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
 
     if client.lower() == "rest":
         fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
@@ -280,9 +270,7 @@ def remove_subgroups(
 ):
 
     if client.lower() == "rest":
-        remove_subgroups_using_rest(
-            user, users, hosts, group_list, parent, host
-        )
+        remove_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
         remove_subgroups_using_op_gui(
             selenium,
@@ -319,9 +307,7 @@ def assert_subgroups(
 ):
 
     if client.lower() == "rest":
-        assert_subgroups_using_rest(
-            user, users, hosts, group_list, parent, host
-        )
+        assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
         assert_subgroups_using_op_gui(
             selenium, user, oz_page, group_list, parent, onepanel
@@ -351,9 +337,7 @@ def fail_to_see_subgroups(
 ):
 
     if client.lower() == "rest":
-        fail_to_see_subgroups_using_rest(
-            user, users, group_list, parent, hosts, host
-        )
+        fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
         fail_to_see_subgroups_using_op_gui(
             selenium, user, oz_page, group_list, parent, onepanel
@@ -506,9 +490,7 @@ def fail_to_add_subgroups(
 ):
 
     if client.lower() == "rest":
-        fail_to_add_subgroups_using_rest(
-            user, users, hosts, group_list, parent, host
-        )
+        fail_to_add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
         fail_to_add_subgroups_using_op_gui(
             selenium,

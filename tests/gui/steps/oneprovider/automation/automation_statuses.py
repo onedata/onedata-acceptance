@@ -3,9 +3,7 @@ workflows statuses in oneprovider web GUI"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -43,9 +41,7 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_status_in_workflow_visualizer(
-    selenium, browser_id, op_container, status
-):
+def assert_status_in_workflow_visualizer(selenium, browser_id, op_container, status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     assert (
         status in page.workflow_visualiser.status
@@ -89,9 +85,7 @@ def await_for_task_status_in_parallel_box(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_status_of_lane(
-    selenium, browser_id, op_container, lane, expected_status
-):
+def assert_status_of_lane(selenium, browser_id, op_container, lane, expected_status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     driver = selenium[browser_id]
     actual_status = search_for_lane_status(driver, page, lane)

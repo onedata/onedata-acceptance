@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -35,9 +33,7 @@ def translate_config_for_archive(config, tmp_memory):
         del config["include DIP"]
         config["includeDip"] = "true"
     if "incremental" in config and config["incremental"]["basedOn"]:
-        config["incremental"]["basedOn"] = tmp_memory[
-            config["incremental"]["basedOn"]
-        ]
+        config["incremental"]["basedOn"] = tmp_memory[config["incremental"]["basedOn"]]
 
 
 def create_archive_in_op_rest(
@@ -71,9 +67,7 @@ def create_archive_in_op_rest(
     elif option == "fails":
         try:
             _ = archive_api.create_archive(data).archive_id
-            raise AssertionError(
-                "function: create_archive worked but it should not"
-            )
+            raise AssertionError("function: create_archive worked but it should not")
         except OPException as err:
             if err.status == 400:
                 pass
@@ -286,10 +280,9 @@ def recalled_archive_details_in_op_rest(
         key="data recalled", name=name, value=data, expected_value=expected_data
     )
 
-    assert recall_details.finish_time >= recall_details.start_time, (
-        f'archive recall "{name}" finish time is not greater or equal recall '
-        "start time"
-    )
+    assert (
+        recall_details.finish_time >= recall_details.start_time
+    ), f'archive recall "{name}" finish time is not greater or equal recall start time'
 
 
 def assert_progress_of_recall_in_op_rest(

@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from functools import partial
 
@@ -61,17 +59,11 @@ class _ArchiveFileBrowser(PageObject):
         return css_selector
 
     def click_on_dip_aip_view_mode(self, driver, option):
-        selector = (
-            f".archive-filesystem-table-head-row .select-archive-{option}-btn"
-        )
+        selector = f".archive-filesystem-table-head-row .select-archive-{option}-btn"
         driver.find_element(By.CSS_SELECTOR, selector).click()
 
     def scroll_to_number_file(self, driver, number, browser):
-        selector = (
-            browser.get_css_selector()
-            + " "
-            + f".data-row:nth-of-type({number})"
-        )
+        selector = browser.get_css_selector() + " " + f".data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
 
     def click_on_background(self):

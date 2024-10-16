@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
@@ -14,9 +12,7 @@ from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.utils.common import login_to_provider
 
 
-def create_dataset_in_op_rest(
-    user, users, hosts, host, space_name, item_name, option
-):
+def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option):
     path = f"{space_name}/{item_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_id = _lookup_file_id(path, client)
@@ -33,17 +29,13 @@ def create_dataset_in_op_by_id_rest(user, users, hosts, host, file_id, option):
     dataset_api.establish_dataset(data)
 
 
-def fail_to_create_dataset_in_op_rest(
-    user, users, hosts, host, space_name, item_name
-):
+def fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name):
     try:
         option = ""
         create_dataset_in_op_rest(
             user, users, hosts, host, space_name, item_name, option
         )
-        raise AssertionError(
-            "function: establish_dataset worked but it should not"
-        )
+        raise AssertionError("function: establish_dataset worked but it should not")
     except OPException as err:
         if err.status == 400:
             pass
@@ -72,9 +64,7 @@ def assert_top_level_dataset_in_space_in_op_rest(
                 raise AssertionError(f"Dataset for item {item_name} found")
 
 
-def get_dataset_id(
-    item_name, spaces, space_name, dataset_api, state="attached"
-):
+def get_dataset_id(item_name, spaces, space_name, dataset_api, state="attached"):
     space_id = f"{spaces[space_name]}"
     datasets = dataset_api.list_space_top_datasets(space_id, state)
     if "/" in item_name:
@@ -101,9 +91,7 @@ def get_dataset_child_id(path_list, dataset_id, dataset_api):
     raise AssertionError("dataset child id not found")
 
 
-def remove_dataset_in_op_rest(
-    user, users, hosts, host, space_name, item_name, spaces
-):
+def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, spaces):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -142,9 +130,7 @@ def check_dataset_structure_in_op_rest(
                 )
                 break
         else:
-            raise AssertionError(
-                f"There is no dataset for item {excepted_dataset}"
-            )
+            raise AssertionError(f"There is no dataset for item {excepted_dataset}")
 
 
 def check_structure_of_dataset_children_in_op_rest(
@@ -205,9 +191,7 @@ def check_effective_protection_flags_for_dataset_in_op_rest(
         assert flag in dataset_info.effective_protection_flags, err_msg
 
 
-def detach_dataset_in_op_rest(
-    user, users, hosts, host, item_name, spaces, space_name
-):
+def detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     data = {"state": "detached"}
     dataset_api = DatasetApi(client)
@@ -239,7 +223,5 @@ def reattach_dataset_in_op_rest(
     data = {"state": "attached"}
     dataset_api = DatasetApi(client)
     state = "detached"
-    dataset_id = get_dataset_id(
-        item_name, spaces, space_name, dataset_api, state=state
-    )
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api, state=state)
     dataset_api.update_dataset(dataset_id, data)

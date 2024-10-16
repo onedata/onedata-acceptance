@@ -2,14 +2,9 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.utils.common.common import (
-    DropdownSelector,
-    MigrateDropdownSelector,
-)
+from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
     WebElementsSequence,
@@ -66,18 +61,14 @@ class Popups:
     menu_popup_with_label = WebItem(".webui-popover.in", cls=MenuPopupWithLabel)
     menu_popup_with_text = WebItem(".webui-popover.in", cls=MenuPopupWithText)
     selector_popup = WebItem(".webui-popover.in", cls=SelectorPopup)
-    consumer_caveat_popup = WebItem(
-        ".webui-popover-tags-selector", cls=ConsumerCaveat
-    )
+    consumer_caveat_popup = WebItem(".webui-popover-tags-selector", cls=ConsumerCaveat)
     user_delete_account_popover_menu = WebItem(
         ".in .webui-popover-inner", cls=UserDeleteAccountPopoverMenu
     )
     query_builder_popups = WebItemsSequence(
         ".query-builder-block-selector", cls=ExpressionBuilderPopup
     )
-    data_distribution_popup = WebItem(
-        ".webui-popover.in", cls=DataDistributionPopup
-    )
+    data_distribution_popup = WebItem(".webui-popover.in", cls=DataDistributionPopup)
     delete_qos_popup = WebItem(".webui-popover.in", cls=DeleteQosPopup)
     power_select = WebItem(".ember-power-select-dropdown", cls=PowerSelect)
     storages_matching_popover = WebItem(
@@ -87,9 +78,7 @@ class Popups:
     group_hierarchy_menu = WebItem(
         ".group-actions.one-webui-popover", cls=GroupHierarchyMenu
     )
-    relation_menu = WebItem(
-        ".line-actions.one-webui-popover", cls=GroupHierarchyMenu
-    )
+    relation_menu = WebItem(".line-actions.one-webui-popover", cls=GroupHierarchyMenu)
 
     membership_relation_menu = WebItem(
         ".relation-actions.one-webui-popover", cls=MembershipRelationMenu
@@ -142,9 +131,7 @@ class Popups:
     )
     logging_level = WebItem(".logLevel-field-dropdown", cls=PowerSelect)
     options_selector = WebItem(".webui-popover.in", cls=OptionsSelector)
-    workflow_creation_alert = WebItem(
-        ".alert.alert-success", cls=WorkflowCreationAlert
-    )
+    workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

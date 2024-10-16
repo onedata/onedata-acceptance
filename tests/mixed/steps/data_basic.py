@@ -4,9 +4,7 @@ basic operations on data using web GUI and REST.
 
 __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
 import re
@@ -35,9 +33,7 @@ from tests.gui.meta_steps.oneprovider.metadata import (
     remove_all_metadata_in_op_gui,
     set_metadata_in_op_gui,
 )
-from tests.gui.steps.oneprovider.browser import (
-    click_and_press_enter_on_item_in_browser,
-)
+from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
 from tests.mixed.steps.oneclient.data_basic import (
     assert_metadata_in_op_oneclient,
@@ -169,9 +165,7 @@ def create_file_in_op_with_token(
     client_lower = client.lower()
     if client_lower == "rest":
         token = tmp_memory[user]["mailbox"].get("token", None)
-        create_file_in_op_rest(
-            user, users, host, hosts, full_path, result, token
-        )
+        create_file_in_op_rest(user, users, host, hosts, full_path, result, token)
     elif "oneclient" in client_lower:
         create_file_in_op_oneclient_with_tokens(
             user,
@@ -206,9 +200,7 @@ def assert_file_in_op_with_token(
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(
-            name, space, user, users, result, oneclient_host
-        )
+        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -293,9 +285,7 @@ def create_dir_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         if "/" in abs_path:
-            go_to_filebrowser(
-                selenium, user, oz_page, op_container, tmp_memory, space
-            )
+            go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
             go_to_path_without_last_elem(
                 selenium, user, tmp_memory, abs_path, op_container
             )
@@ -333,9 +323,7 @@ def create_dir_in_op(
         create_dir_in_op_rest(user, users, host, hosts, full_path, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        create_dir_in_op_oneclient(
-            user, full_path, users, result, oneclient_host
-        )
+        create_dir_in_op_oneclient(user, full_path, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -346,9 +334,7 @@ def create_dir_in_op(
         'named "(?P<item_name>.*)" in "(?P<space>.*)"'
     )
 )
-def go_to_dir(
-    selenium, user, item_name, tmp_memory, op_container, space, oz_page
-):
+def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
     click_and_press_enter_on_item_in_browser(
         selenium, user, item_name, tmp_memory, op_container
@@ -400,9 +386,7 @@ def see_item_in_op(
         see_items_in_op_rest(user, users, host, hosts, name, result, space)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(
-            name, space, user, users, result, oneclient_host
-        )
+        see_items_in_op_oneclient(name, space, user, users, result, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -494,14 +478,10 @@ def remove_empty_dir_and_parents_in_op(
             popups,
         )
     elif client_lower == "rest":
-        remove_dir_in_op_rest(
-            user, users, host, hosts, f"{space}/{first_path_elem}"
-        )
+        remove_dir_in_op_rest(user, users, host, hosts, f"{space}/{first_path_elem}")
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_dir_steps.delete_parents(
-            user, f"{space}/{name}", oneclient_host, users
-        )
+        multi_dir_steps.delete_parents(user, f"{space}/{name}", oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -594,9 +574,7 @@ def remove_file_in_op(
         remove_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        remove_file_in_op_oneclient(
-            user, full_path, oneclient_host, users, result
-        )
+        remove_file_in_op_oneclient(user, full_path, oneclient_host, users, result)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -619,9 +597,7 @@ def remove_file_using_token_in_op(
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        remove_file_in_op_oneclient(
-            user, full_path, oneclient_host, users, result
-        )
+        remove_file_in_op_oneclient(user, full_path, oneclient_host, users, result)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -669,9 +645,7 @@ def rename_item_in_op(
             popups,
         )
     elif client_lower == "rest":
-        move_item_in_op_rest(
-            old_path, new_path, result, cdmi, host, hosts, user, users
-        )
+        move_item_in_op_rest(old_path, new_path, result, cdmi, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host, users)
@@ -761,9 +735,7 @@ def see_num_of_items_in_op(
             popups,
         )
     elif client_lower == "rest":
-        assert_num_of_files_in_path_in_op_rest(
-            num, space, user, users, host, hosts
-        )
+        assert_num_of_files_in_path_in_op_rest(num, space, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_num_of_files_in_path_in_op_oneclient(
@@ -780,20 +752,14 @@ def see_num_of_items_in_op(
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def write_to_file_in_op(
-    client, user, text, file_name, space, host, users, hosts, cdmi
-):
+def write_to_file_in_op(client, user, text, file_name, space, host, users, hosts, cdmi):
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        write_to_file_in_op_rest(
-            user, users, host, hosts, cdmi, full_path, text
-        )
+        write_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.write_text(
-            user, text, full_path, oneclient_host, users
-        )
+        multi_reg_file_steps.write_text(user, text, full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -836,14 +802,10 @@ def read_from_file_in_op(
             tmpdir,
         )
     elif client_lower == "rest":
-        assert_file_content_in_op_rest(
-            full_path, text, user, users, host, hosts
-        )
+        assert_file_content_in_op_rest(full_path, text, user, users, host, hosts)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.read_text(
-            user, text, full_path, oneclient_host, users
-        )
+        multi_reg_file_steps.read_text(user, text, full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -861,14 +823,10 @@ def append_to_file_in_op(
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        append_to_file_in_op_rest(
-            user, users, host, hosts, cdmi, full_path, text
-        )
+        append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.append(
-            user, text, full_path, oneclient_host, users
-        )
+        multi_reg_file_steps.append(user, text, full_path, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -881,9 +839,7 @@ def append_to_file_in_op(
         '"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def replace_in_file_in_op(
-    client, user, old_text, new_text, file_name, space, users
-):
+def replace_in_file_in_op(client, user, old_text, new_text, file_name, space, users):
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if "oneclient" in client_lower:
@@ -902,14 +858,10 @@ def replace_in_file_in_op(
         "in (?P<host>.*)"
     )
 )
-def move_file_in_op(
-    client, user, result, src_path, dst_path, host, users, cdmi, hosts
-):
+def move_file_in_op(client, user, result, src_path, dst_path, host, users, cdmi, hosts):
     client_lower = client.lower()
     if client_lower == "rest":
-        move_item_in_op_rest(
-            src_path, dst_path, result, cdmi, host, hosts, user, users
-        )
+        move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         move_item_in_op_oneclient(
@@ -1233,14 +1185,10 @@ def assert_directory_structure_is_as_previous_in_op(
             oz_page,
         )
     elif client_lower == "rest":
-        assert_space_content_in_op_rest(
-            user, users, hosts, config, space, spaces, host
-        )
+        assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_space_content_in_op_oneclient(
-            config, space, user, users, oneclient_host
-        )
+        assert_space_content_in_op_oneclient(config, space, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1280,14 +1228,10 @@ def assert_directory_structure_in_op(
             oz_page,
         )
     elif client_lower == "rest":
-        assert_space_content_in_op_rest(
-            user, users, hosts, config, space, spaces, host
-        )
+        assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_space_content_in_op_oneclient(
-            config, space, user, users, oneclient_host
-        )
+        assert_space_content_in_op_oneclient(config, space, user, users, oneclient_host)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1454,14 +1398,10 @@ def remove_all_metadata_in_op(
             popups,
         )
     elif client_lower == "rest":
-        remove_all_metadata_in_op_rest(
-            user, users, host, hosts, cdmi, full_path
-        )
+        remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        remove_all_metadata_in_op_oneclient(
-            user, users, oneclient_host, full_path
-        )
+        remove_all_metadata_in_op_oneclient(user, users, oneclient_host, full_path)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1578,9 +1518,7 @@ def upload_local_file_to_op(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        go_to_filebrowser(
-            selenium, user, oz_page, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
         upload_file_to_cwd_in_data_tab(
             selenium, user, path, tmpdir, op_container, popups
         )
@@ -1639,21 +1577,15 @@ def open_path_in_space(client, user, path, space, users):
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.open_file(
-            user, full_path, "664", oneclient_host, users
-        )
+        multi_reg_file_steps.open_file(user, full_path, "664", oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
 
 @wt(
-    parsers.parse(
-        'using web GUI, {user} sees that "{owner}" is owner of "{file_name}"'
-    )
+    parsers.parse('using web GUI, {user} sees that "{owner}" is owner of "{file_name}"')
 )
 def check_file_owner_web_gui(
     selenium, user, owner, file_name, tmp_memory, modals, popups
 ):
-    check_file_owner(
-        selenium, user, owner, file_name, tmp_memory, modals, popups
-    )
+    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals, popups)

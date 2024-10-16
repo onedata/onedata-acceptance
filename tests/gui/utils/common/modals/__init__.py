@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import WebItem
 
@@ -31,9 +29,7 @@ from .datasets_modals.detach_dataset import DetachDataset
 from .datasets_modals.reattach_dataset import ReattachDataset
 from .files_modals.create_dir import CreateDir
 from .files_modals.details_modal import DetailsModal
-from .files_modals.disable_directory_statistics import (
-    DisableDirectoryStatistics,
-)
+from .files_modals.disable_directory_statistics import DisableDirectoryStatistics
 from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
 from .files_modals.external_symbolic_link import ExternalSymbolicLink
 from .files_modals.share import Share
@@ -52,9 +48,7 @@ from .storage_modals.add_storage import AddStorage
 from .storage_modals.modify_storage import ModifyStorage
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .tokens_modals.invite_using_token import InviteUsingTokenModal
-from .troubles_modals.dns_configuration_warning import (
-    DNSConfigurationWarningModal,
-)
+from .troubles_modals.dns_configuration_warning import DNSConfigurationWarningModal
 from .troubles_modals.emergency_interface import EmergencyInterface
 from .troubles_modals.error_modal import ErrorModal
 from .troubles_modals.warning_modal import WarningModal
@@ -90,9 +84,7 @@ class Modals:
     share = WebItem(".share-modal .modal-dialog", cls=Share)
     write_protection = WebItem(".modal-dialog", cls=WriteProtection)
     details_modal = WebItem(".modal-dialog", cls=DetailsModal)
-    symbolic_link_details = WebItem(
-        ".modal-dialog", cls=SymbolicLinkDetailsModal
-    )
+    symbolic_link_details = WebItem(".modal-dialog", cls=SymbolicLinkDetailsModal)
     external_symbolic_link = WebItem(".modal-dialog", cls=ExternalSymbolicLink)
 
     # troubles modals
@@ -108,20 +100,14 @@ class Modals:
         ".generate-invite-token-modal.modal.in .modal-dialog",
         cls=InviteUsingTokenModal,
     )
-    clean_up_obsolete_tokens = WebItem(
-        ".modal-dialog", cls=CleanUpObsoleteTokensModal
-    )
+    clean_up_obsolete_tokens = WebItem(".modal-dialog", cls=CleanUpObsoleteTokensModal)
 
     # archives modals
     create_archive = WebItem(".modal-dialog", cls=CreateArchive)
     recall_archive = WebItem(".modal-dialog", cls=RecallArchive)
-    archive_recall_information = WebItem(
-        ".modal-dialog", cls=ArchiveRecallInformation
-    )
+    archive_recall_information = WebItem(".modal-dialog", cls=ArchiveRecallInformation)
     delete_archive = WebItem(".modal-dialog", cls=DeleteArchive)
-    cancel_recall = WebItem(
-        ".cancel-recall-modal .modal-dialog", cls=CancelRecall
-    )
+    cancel_recall = WebItem(".cancel-recall-modal .modal-dialog", cls=CancelRecall)
     archive_details = WebItem(".modal-dialog", cls=ArchiveDetails)
     archive_audit_log = WebItem(".modal-dialog", cls=ArchiveAuditLog)
     audit_log_entry_details = WebItem(
@@ -160,9 +146,7 @@ class Modals:
     )
 
     rest_api_modal = WebItem(".modal-dialog", cls=RESTApiModal)
-    configure_web_cert = WebItem(
-        "#configure-web-cert-modal", cls=ConfigureWebCertModal
-    )
+    configure_web_cert = WebItem("#configure-web-cert-modal", cls=ConfigureWebCertModal)
     enable_directory_statistics = WebItem(
         ".modal-dialog", cls=EnableDirectoryStatistics
     )
@@ -175,9 +159,7 @@ class Modals:
     advertise_space_in_the_marketplace = WebItem(
         ".modal-dialog", cls=AdvertiseSpaceInTheMarketplace
     )
-    there_are_unsaved_changes = WebItem(
-        ".modal-dialog", cls=ThereAreUnsavedChanges
-    )
+    there_are_unsaved_changes = WebItem(".modal-dialog", cls=ThereAreUnsavedChanges)
 
     def __init__(self, driver):
         self.driver = driver

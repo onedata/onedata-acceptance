@@ -4,9 +4,7 @@ datasets using web GUI and REST.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -22,9 +20,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
     remove_dataset_in_op_gui,
     set_protection_flags_for_dataset_in_op_gui,
 )
-from tests.gui.steps.oneprovider.browser import (
-    assert_status_tag_for_file_in_browser,
-)
+from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,
@@ -246,8 +242,7 @@ def assert_write_protection_flag_for_dataset(
     client_lower = client.lower()
     if client_lower == "web gui":
         flags = [
-            item.replace("_protection", "_protected")
-            for item in get_flags(option)
+            item.replace("_protection", "_protected") for item in get_flags(option)
         ]
         for flag in flags:
             assert_status_tag_for_file_in_browser(

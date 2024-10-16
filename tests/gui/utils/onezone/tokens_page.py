@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz, Natalia Organek"
 __copyright__ = "Copyright (C) 2018-2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
 from tests.gui.utils.common.common import Toggle
@@ -71,9 +69,7 @@ class TokensSidebar(PageObject):
     consume_token = Button(".oneicon-consume-token")
     clean_up_obsolete_tokens = Button(".clean-obsolete-tokens-trigger")
     filter = WebItem(".filter-control", cls=TokenFilter)
-    invite_filter = WebItem(
-        ".filter-control.target-filter", cls=TokenInviteFilter
-    )
+    invite_filter = WebItem(".filter-control.target-filter", cls=TokenInviteFilter)
 
     name_input = Input(".name-editor .form-control")
     confirm = Button(".save-icon")
@@ -82,9 +78,7 @@ class TokensSidebar(PageObject):
     def click_create_new_token(self, driver):
         driver.execute_script(
             "arguments[0].click();",
-            self.web_elem.find_element(
-                By.CSS_SELECTOR, ".create-token-link-trigger"
-            ),
+            self.web_elem.find_element(By.CSS_SELECTOR, ".create-token-link-trigger"),
         )
 
     def __str__(self):
@@ -163,9 +157,7 @@ class TokensPage(GenericPage):
     revoke_toggle = Toggle(".one-way-toggle")
     save_button = NamedButton(".submit-token", text="Save")
 
-    privilege_tree = WebItem(
-        ".invitePrivilegesDetails-field", cls=PrivilegeTree
-    )
+    privilege_tree = WebItem(".invitePrivilegesDetails-field", cls=PrivilegeTree)
 
     token_name = Label(".name-field .text-like-field")
     token_type = Label(".type-field .radio-field")
@@ -174,9 +166,7 @@ class TokensPage(GenericPage):
     usage_count = Label(".usageCount-field .static-text-field")
 
     input_name = Input(".token-consumer .token-container input")
-    _toggle = WebElement(
-        '.token-consumer .ember-basic-dropdown-trigger[role="button"]'
-    )
+    _toggle = WebElement('.token-consumer .ember-basic-dropdown-trigger[role="button"]')
     confirm_button = NamedButton("button", text="Confirm")
 
     onezone_rest_access_template = WebElement(".template-onezoneRest")

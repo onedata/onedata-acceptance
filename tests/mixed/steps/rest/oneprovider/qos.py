@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.mixed.oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
@@ -41,19 +39,15 @@ def assert_qos_file_status_in_op_rest(
     qos = qo_s_api.get_file_qos_summary(file_id).to_dict()["requirements"]
     if not qos and option == "has some":
         raise AssertionError(
-            f'there is no qos file status for "{file_name}" in space'
-            f' "{space_name}"'
+            f'there is no qos file status for "{file_name}" in space "{space_name}"'
         )
     if qos and option == "has not":
         raise AssertionError(
-            f'there is qos file status for "{file_name}" in space'
-            f' "{space_name}"'
+            f'there is qos file status for "{file_name}" in space "{space_name}"'
         )
 
 
-def delete_qos_requirement_in_op_rest(
-    user, users, hosts, host, space_name, file_name
-):
+def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name, file_name):
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qo_s_api = QoSApi(client)

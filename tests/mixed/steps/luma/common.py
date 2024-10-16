@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz, Natalia Organek"
 __copyright__ = "Copyright (C) 2018-2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import json
@@ -19,8 +17,7 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
 
 @wt(
     parsers.parse(
-        "LUMA local feed mappings are created with following "
-        "configuration:\n{config}"
+        "LUMA local feed mappings are created with following configuration:\n{config}"
     )
 )
 def wt_create_luma_mappings(config, users, spaces, hosts, onepanel_credentials):

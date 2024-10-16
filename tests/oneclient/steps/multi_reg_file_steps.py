@@ -2,9 +2,7 @@
 
 __author__ = "Jakub Kudzia, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 # pylint: disable=deprecated-method
 
 
@@ -157,20 +155,12 @@ def read_opened(user, text, file, client_node, users):
     assert_(client.perform, condition)
 
 
-@wt(
-    parsers.re(
-        r'(?P<user>\w+) reads "" from file (?P<file>.*) on (?P<client_node>.*)'
-    )
-)
+@wt(parsers.re(r'(?P<user>\w+) reads "" from file (?P<file>.*) on (?P<client_node>.*)'))
 def read_empty(user, file, client_node, users):
     read_text(user, "", file, client_node, users)
 
 
-@then(
-    parsers.re(
-        r"(?P<user>\w+) cannot read from (?P<file>.*) on (?P<client_node>.*)"
-    )
-)
+@then(parsers.re(r"(?P<user>\w+) cannot read from (?P<file>.*) on (?P<client_node>.*)"))
 def cannot_read(user, file, client_node, users):
     user = users[user]
     client = user.clients[client_node]
@@ -235,11 +225,7 @@ def copy_reg_file(user, file, path, client_node, users):
     assert_(client.perform, condition, timeout=0)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"))
 def check_md5(user, file, client_node, users, context):
     user = users[user]
     client = user.clients[client_node]
@@ -251,9 +237,7 @@ def check_md5(user, file, client_node, users, context):
     assert_(client.perform, condition)
 
 
-def do_truncate_base(
-    user, file, new_size, client_node, users, should_fail=False
-):
+def do_truncate_base(user, file, new_size, client_node, users, should_fail=False):
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
@@ -300,11 +284,7 @@ def execute_script(user, script, client_node, users):
     execute_script_base(user, script, client_node, users)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) fails to execute (?P<script>.*) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) fails to execute (?P<script>.*) on (?P<client_node>.*)"))
 def execute_script_fail(user, script, client_node, users):
     execute_script_base(user, script, client_node, users, should_fail=True)
 

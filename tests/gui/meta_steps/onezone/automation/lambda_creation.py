@@ -4,9 +4,7 @@ lambda creation in Onezone using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import os
@@ -15,10 +13,7 @@ import time
 import yaml
 from selenium.common.exceptions import ElementNotInteractableException
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.modals.modal import (
-    click_modal_button,
-    wt_wait_for_modal_to_appear,
-)
+from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import *
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
@@ -26,9 +21,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     switch_toggle_in_lambda_form,
     write_text_into_lambda_form,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_automation_option_in_the_sidebar,
-)
+from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.bdd_utils import parsers, wt
@@ -39,8 +32,7 @@ ALL_LAMBDA_NAMES = []
 
 @wt(
     parsers.parse(
-        "user of {browser_id} creates lambda with following "
-        "configuration:\n{config}"
+        "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
 def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
@@ -180,15 +172,11 @@ def create_lambda_using_gui(
     inventory,
     tmp_memory,
 ):
-    click_on_automation_option_in_the_sidebar(
-        selenium, browser_id, oz_page, tmp_memory
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
     go_to_inventory_subpage(
         selenium, browser_id, inventory, "lambdas", oz_page, tmp_memory
     )
-    click_add_new_button_in_menu_bar(
-        selenium, browser_id, oz_page, "Add new lambda"
-    )
+    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, "Add new lambda")
     write_text_into_lambda_form(
         selenium, browser_id, oz_page, lambda_name, "lambda name"
     )
@@ -410,9 +398,7 @@ def download_and_remove_lambda_dump_from_inventory(
         "dump has the same content as previously uploaded dump"
     )
 )
-def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
-    browser_id, tmpdir
-):
+def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, tmpdir):
     for lamda_name in ALL_LAMBDA_NAMES:
         assert_downloaded_and_uploaded_lambda_dumps_the_same(
             browser_id, lamda_name, tmpdir
@@ -422,9 +408,7 @@ def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
 def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     browser_id, lambda_name, tmpdir
 ):
-    has_downloaded_workflow_file_content(
-        browser_id, tmpdir, lambda_name + ".json"
-    )
+    has_downloaded_workflow_file_content(browser_id, tmpdir, lambda_name + ".json")
 
     downloaded_dump = None
     uploaded_dump = None
@@ -443,8 +427,7 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     except KeyError:
         pass
     err_msg = (
-        "Lambda dumps differ, "
-        f"uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
+        f"Lambda dumps differ, uploaded: {uploaded_dump}, downloaded: {downloaded_dump}"
     )
     # test may start failing, because correct order in dicts is not guaranteed
     # in order to fix implement keys sorting

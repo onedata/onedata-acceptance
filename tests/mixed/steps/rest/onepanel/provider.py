@@ -4,17 +4,11 @@ using REST API.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import yaml
-from onepanel_client import (
-    OneproviderApi,
-    ProviderDetails,
-    ProviderRegisterRequest,
-)
+from onepanel_client import OneproviderApi, ProviderDetails, ProviderRegisterRequest
 from tests.mixed.utils.common import login_to_panel
 
 
@@ -32,9 +26,7 @@ def modify_provider_in_op_panel_using_rest(
     provider_api.modify_provider(provider_mod_rq)
 
 
-def deregister_provider_in_op_panel_using_rest(
-    user, users, provider_host, hosts
-):
+def deregister_provider_in_op_panel_using_rest(user, users, provider_host, hosts):
     user_client = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )

@@ -4,9 +4,7 @@ account management in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from time import sleep
@@ -25,9 +23,7 @@ def wt_click_on_user_account_btn_panel(selenium, browser_id, onepage):
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} clicks on {btn} button in user account popover"
-    )
+    parsers.parse("user of {browser_id} clicks on {btn} button in user account popover")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_option_in_user_account_popover(selenium, browser_id, btn, popups):
@@ -42,12 +38,8 @@ def wt_click_option_in_user_account_popover(selenium, browser_id, btn, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_password_of_user_to_curr_passwd(
-    selenium, browser_id, user, users, onepage
-):
-    form = onepage(
-        selenium[browser_id]
-    ).content.account_management.chpasswd_form
+def wt_type_password_of_user_to_curr_passwd(selenium, browser_id, user, users, onepage):
+    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
     form.current_password = users[user].password
 
 
@@ -62,9 +54,7 @@ def wt_type_password_of_user_to_curr_passwd(
 def wt_type_text_to_in_box_in_chpasswd_form(
     selenium, browser_id, in_box, text, onepage
 ):
-    form = onepage(
-        selenium[browser_id]
-    ).content.account_management.chpasswd_form
+    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
     setattr(form, transform(in_box + " password"), text)
 
 
@@ -76,9 +66,7 @@ def wt_type_text_to_in_box_in_chpasswd_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_confirm_btn_in_chpasswd_form(selenium, browser_id, onepage):
-    form = onepage(
-        selenium[browser_id]
-    ).content.account_management.chpasswd_form
+    form = onepage(selenium[browser_id]).content.account_management.chpasswd_form
     form.confirm_password_change()
 
 

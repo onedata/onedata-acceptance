@@ -2,9 +2,7 @@
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -92,15 +90,11 @@ def test_provider_restart(env_description_file):
     pass
 
 
-@scenario(
-    "Restart provider network for short time with active oneclient connection"
-)
+@scenario("Restart provider network for short time with active oneclient connection")
 def test_network_restart_short(env_description_file):
     pass
 
 
-@scenario(
-    "Restart provider network for long time with active oneclient connection"
-)
+@scenario("Restart provider network for long time with active oneclient connection")
 def test_network_restart_long(env_description_file):
     pass

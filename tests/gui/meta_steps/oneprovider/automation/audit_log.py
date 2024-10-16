@@ -4,9 +4,7 @@ audit logs in Oneprovider using web GUI
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import os
@@ -219,8 +217,7 @@ def assert_content_in_audit_log_in_store(
         )
         expected_elem = expected_data[expected]
         err_msg2 = (
-            f"Actual {actual} {actual_elem} is not the same "
-            f"as expected {expected_elem}"
+            f"Actual {actual} {actual_elem} is not the same as expected {expected_elem}"
         )
         assert actual_elem == expected_elem, err_msg2
 
@@ -524,9 +521,7 @@ def assert_each_element_contains_some_information(
     elem_num = len(modal.store_content_object)
     for i in range(elem_num):
         store_content = json.loads(
-            get_store_content(
-                modal, store_type, i, clipboard, displays, browser_id
-            )
+            get_store_content(modal, store_type, i, clipboard, displays, browser_id)
         )
         modal.close_details()
         file_path = (
@@ -572,9 +567,7 @@ def assert_each_element_checksum_content_in_store(
     elem_num = len(modal.store_content_object)
     for i in range(elem_num):
         store_content = json.loads(
-            get_store_content(
-                modal, store_type, i, clipboard, displays, browser_id
-            )
+            get_store_content(modal, store_type, i, clipboard, displays, browser_id)
         )
         modal.close_details()
         expected_sha256 = expected_data["checksums"]["sha256"]["status"]
@@ -595,9 +588,7 @@ def assert_each_element_checksum_content_in_store(
         assert expected_md5 == actual_md5, err_msg
 
 
-def check_visual_in_store_details_modal(
-    modal, variable_type, item_list, store_name
-):
+def check_visual_in_store_details_modal(modal, variable_type, item_list, store_name):
     if variable_type == "booleans":
         item_list = json.loads(item_list)
         compare_booleans_in_store_details_modal(item_list, modal)
@@ -609,9 +600,7 @@ def check_visual_in_store_details_modal(
         assert modal.raw_view == item_list, err_msg
     else:
         item_list = (
-            eval(item_list)
-            if variable_type != "files"
-            else parse_seq(item_list)
+            eval(item_list) if variable_type != "files" else parse_seq(item_list)
         )
         for elem in modal.store_content_list:
             if variable_type == "ranges":
@@ -631,9 +620,7 @@ def check_visual_in_store_details_modal(
             elif variable_type == "strings" or variable_type == "numbers":
                 expected = eval(elem.value)
             else:
-                raise Exception(
-                    f"this {variable_type} is not handled in this function"
-                )
+                raise Exception(f"this {variable_type} is not handled in this function")
 
             err_msg = (
                 f"expected {variable_type} {item_list} does not "
@@ -671,9 +658,7 @@ def assert_elements_in_store_details_modal(
         compare_array_in_store_details_modal(modal, item_list)
 
     else:
-        check_visual_in_store_details_modal(
-            modal, variable_type, item_list, store_name
-        )
+        check_visual_in_store_details_modal(modal, variable_type, item_list, store_name)
 
 
 @wt(
@@ -812,8 +797,7 @@ def compare_to_expected_if_element_exist_for_store(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that content of "{store_name}"'
-        " store is:\n{config}"
+        'user of {browser_id} sees that content of "{store_name}" store is:\n{config}'
     )
 )
 def assert_content_of_store(
@@ -877,9 +861,7 @@ def assert_content_of_store(
         pass
 
 
-def compare_to_expected_if_elem_exist_audit_log(
-    data, label, actual_items, task_name
-):
+def compare_to_expected_if_elem_exist_audit_log(data, label, actual_items, task_name):
     expected = data.get(label, False)
     if expected:
         actual = actual_items[label]
@@ -892,9 +874,7 @@ def compare_to_expected_if_elem_exist_audit_log(
         )
 
 
-def assert_elements_of_task_audit_log_are_the_same(
-    expected, actual, label, task_name
-):
+def assert_elements_of_task_audit_log_are_the_same(expected, actual, label, task_name):
     assert expected == actual, (
         f'{label} "{actual}" in audit log for "{task_name}" task is '
         f'not "{expected}" as expected'
@@ -1117,9 +1097,7 @@ def assert_element_content_in_task_audit_log(
     close = "closes"
     if isinstance(expected_data, list):
         expected_data = list(map(lambda x: x.replace('"', ""), expected_data))
-        expected_data = list(
-            map(lambda x: x.replace("\\n", "\n"), expected_data)
-        )
+        expected_data = list(map(lambda x: x.replace("\\n", "\n"), expected_data))
     else:
         expected_data = expected_data.replace('"', "")
         expected_data = expected_data.replace("\\n", "\n")
@@ -1275,14 +1253,11 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 idx = log_entries - i - 1
                 modal.logs_entry[idx].click()
                 modal.copy_json()
-                visible_log = json.loads(
-                    clipboard.paste(display=displays[browser_id])
-                )
+                visible_log = json.loads(clipboard.paste(display=displays[browser_id]))
                 # remove 'source' from dict
                 visible_log.pop("source")
                 err_msg = (
-                    f"logs in file: {file_log} and visible {visible_log}"
-                    "are different"
+                    f"logs in file: {file_log} and visible {visible_log}are different"
                 )
                 assert file_log == visible_log, err_msg
                 modal.close_details.click()
@@ -1362,8 +1337,7 @@ def assert_workflow_audit_log_contains_entry(
         except KeyError:
             pass
     err_msg = (
-        f"there is no entry containing data about {item_list} "
-        "in workflow audit log"
+        f"there is no entry containing data about {item_list} in workflow audit log"
     )
     raise RuntimeError(err_msg)
 

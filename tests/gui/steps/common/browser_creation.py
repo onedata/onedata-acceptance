@@ -4,9 +4,7 @@ browser creation.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import os
@@ -57,12 +55,8 @@ def create_instances_of_webdriver(
 
             if driver_type.lower() == "chrome":
                 chrome_prefs = {"download.default_directory": download_dir}
-                capabilities["options"].add_experimental_option(
-                    "prefs", chrome_prefs
-                )
-                capabilities["options"].add_argument(
-                    f"--user-data-dir={browser_data}"
-                )
+                capabilities["options"].add_experimental_option("prefs", chrome_prefs)
+                capabilities["options"].add_argument(f"--user-data-dir={browser_data}")
 
             browser = driver()
             _config_driver(browser, screen_width, screen_height)

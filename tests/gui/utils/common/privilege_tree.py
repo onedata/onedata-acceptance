@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -166,9 +164,7 @@ class PrivilegeGroup(PageObject):
                 elem_id = self._checkbox.get_attribute("id")
                 for _ in range(count):
                     try:
-                        driver.find_element(
-                            By.CSS_SELECTOR, "#" + elem_id
-                        ).click()
+                        driver.find_element(By.CSS_SELECTOR, "#" + elem_id).click()
                     except ElementNotInteractableException:
                         self.toggle.click()
         else:
@@ -182,9 +178,7 @@ class PrivilegeGroup(PageObject):
 
 
 class PrivilegeTree(PageObject):
-    privilege_groups = WebItemsSequence(
-        ".group-privilege-row", cls=PrivilegeGroup
-    )
+    privilege_groups = WebItemsSequence(".group-privilege-row", cls=PrivilegeGroup)
     privileges = WebItemsSequence(".privilege-row ", cls=PrivilegeRow)
     spinner = WebElement(".spin-spinner-block")
 
@@ -214,9 +208,7 @@ class PrivilegeTree(PageObject):
             User management:
               granted: False
         """
-        self._assert_privileges(
-            selenium, browser_id, privileges, is_direct_privileges
-        )
+        self._assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
 
     def _assert_privileges(
         self, selenium, browser_id, privileges, is_direct_privileges
@@ -241,22 +233,18 @@ class PrivilegeTree(PageObject):
             privilege_row.expand(driver)
             for sub_name, sub_granted in sub_privileges.items():
                 if is_direct_privileges:
-                    self.privileges[sub_name].assert_privilege_granted(
+                    self.privileges[sub_name].assert_privilege_granted(sub_granted)
+                else:
+                    self.privileges[sub_name].assert_effective_privilege_granted(
                         sub_granted
                     )
-                else:
-                    self.privileges[
-                        sub_name
-                    ].assert_effective_privilege_granted(sub_granted)
             privilege_row.collapse(driver)
         if is_direct_privileges:
             privilege_row.assert_privilege_granted(granted)
         else:
             privilege_row.assert_effective_privilege_granted(granted)
 
-    def set_privileges(
-        self, selenium, browser_id, privileges, with_scroll=False
-    ):
+    def set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
         """Set privileges according to given config.
         For this method only dict should be passed!
 
@@ -277,13 +265,9 @@ class PrivilegeTree(PageObject):
             User management:
               granted: False
         """
-        return self._set_privileges(
-            selenium, browser_id, privileges, with_scroll
-        )
+        return self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
-    def _set_privileges(
-        self, selenium, browser_id, privileges, with_scroll=False
-    ):
+    def _set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
         result = True
         for privilege_name, privilege_group in privileges.items():
             result = result and self._set_privilege_group(
@@ -328,6 +312,4 @@ class PrivilegeTree(PageObject):
                 time.sleep(0.1)
             except AssertionError:
                 return
-        raise RuntimeError(
-            "Did not manage to set privileges, exceeded loading time"
-        )
+        raise RuntimeError("Did not manage to set privileges, exceeded loading time")

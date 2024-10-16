@@ -4,9 +4,7 @@ emergency passphrase management in onepanel web GUI.
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -18,14 +16,11 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on {button} button on "
-        "emergency passphrase page"
+        "user of {browser_id} clicks on {button} button on emergency passphrase page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_emergency_passphrase_page(
-    selenium, browser_id, onepanel, button
-):
+def click_button_on_emergency_passphrase_page(selenium, browser_id, onepanel, button):
     driver = selenium[browser_id]
     button = transform(button) + "_button"
     getattr(onepanel(driver).content.emergency_passphrase, button).click()

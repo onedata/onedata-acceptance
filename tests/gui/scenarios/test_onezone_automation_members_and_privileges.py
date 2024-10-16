@@ -5,9 +5,7 @@ automation members and privileges using Onezone GUI and multiple browsers
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios

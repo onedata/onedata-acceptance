@@ -4,9 +4,7 @@ multiclient environment.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 # pylint: disable=cell-var-from-loop, deprecated-method
 
 import errno
@@ -20,9 +18,7 @@ from tests.utils.onenv_utils import cmd_exec
 from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 
 
-def create_base(
-    user, dirs, client_node, users, should_fail=False, exists_ok=False
-):
+def create_base(user, dirs, client_node, users, should_fail=False, exists_ok=False):
     dirs = list_parser(dirs)
     user = users[user]
     client = user.clients[client_node]
@@ -41,8 +37,7 @@ def create_base(
 
 @when(
     parsers.re(
-        r"(?P<user>\w+) creates directories (?P<dirs>.*)\son"
-        r" (?P<client_node>.*)"
+        r"(?P<user>\w+) creates directories (?P<dirs>.*)\son (?P<client_node>.*)"
     )
 )
 def create_(user, dirs, client_node, users):
@@ -237,20 +232,12 @@ def list_dirs_base(user, directory, client_node, users, should_fail=False):
     return path_content
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) can list (?P<directory>.*) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) can list (?P<directory>.*) on (?P<client_node>.*)"))
 def list_dir(user, directory, client_node, users):
     list_dirs_base(user, directory, client_node, users)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) can't list (?P<directory>.*) on (?P<client_node>.*)"))
 def cannot_list_dir(user, directory, client_node, users):
     list_dirs_base(user, directory, client_node, users, should_fail=True)
 

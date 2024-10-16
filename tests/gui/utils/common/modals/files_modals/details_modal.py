@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver import ActionChains
 from tests.gui.utils.common.modals.modal import Modal
@@ -86,9 +84,7 @@ class DetailsModal(Modal):
     file_id = Button(".file-info-row-cdmi-object-id .clipboard-btn")
     size_statistics = WebItem(".modal-content", cls=SizeStatistics)
     hardlinks = WebItem(".modal-content", cls=Hardlinks)
-    navigation = WebItemsSequence(
-        ".nav-tabs-file-info .tab-bar-li", cls=NavigationTab
-    )
+    navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
 
     qos = WebItem(".modal-content", cls=QoSTab)

@@ -3,9 +3,7 @@ Onezone gui"""
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
@@ -33,14 +31,10 @@ class ParameterSetting(PageObject):
 class LambdaParameter(PageObject):
     add_button = Button(".add-field-button")
     name = WebItem(".entryName-field .text-like-field", cls=InputBox)
-    type_dropdown = WebElement(
-        ".entryDataSpec-field .ember-power-select-trigger"
-    )
+    type_dropdown = WebElement(".entryDataSpec-field .ember-power-select-trigger")
     remove_element = Button(".remove-trigger")
     settings = Button(".oneicon-settings")
-    parameter_settings = WebItem(
-        ".dataTypeEditor-children", cls=ParameterSetting
-    )
+    parameter_settings = WebItem(".dataTypeEditor-children", cls=ParameterSetting)
 
 
 class LambdaParameters(PageObject):
@@ -59,9 +53,7 @@ class LambdaAddForm(PageObject):
 
     argument = WebItem(".arguments-field", cls=LambdaParameters)
     result = WebItem(".results-field", cls=LambdaParameters)
-    configuration_parameters = WebItem(
-        ".configParameters-field", cls=LambdaParameters
-    )
+    configuration_parameters = WebItem(".configParameters-field", cls=LambdaParameters)
     create_button = Button(".btn-primary")
 
 

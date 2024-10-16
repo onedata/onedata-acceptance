@@ -2,9 +2,7 @@
 
 __author__ = "Jakub Liput, Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import os
@@ -40,9 +38,7 @@ def parse_url(url):
 
 
 def go_to_relative_url(selenium, relative_url):
-    new_url = (
-        RE_URL.match(selenium.current_url).group("base_url") + relative_url
-    )
+    new_url = RE_URL.match(selenium.current_url).group("base_url") + relative_url
     selenium.get(new_url)
 
 
@@ -180,9 +176,7 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
         if delay:
             sleep(delay if isinstance(delay, float) else 0.25)
         action = ActionChains(driver)
-        action.move_to_element(web_elem).click_and_hold(web_elem).release(
-            web_elem
-        )
+        action.move_to_element(web_elem).click_and_hold(web_elem).release(web_elem)
         action.perform()
     else:
         with suppress(TypeError):
@@ -210,9 +204,7 @@ def suppress(*exceptions):
 
 @contextmanager
 def rm_css_cls(driver, web_elem, css_cls):
-    driver.execute_script(
-        f"arguments[0].classList.remove('{css_cls}')", web_elem
-    )
+    driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 

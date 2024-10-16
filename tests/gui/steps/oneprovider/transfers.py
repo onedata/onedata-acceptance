@@ -2,9 +2,7 @@
 
 __author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
 from selenium.common.exceptions import (
@@ -142,9 +140,7 @@ def assert_waiting_transfer(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def cancel_or_rerun_transfer(
-    selenium, browser_id, op_container, popups, option, state
-):
+def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups, option, state):
     transfers = _get_transfers_and_enable_initial_cols(
         browser_id, selenium, op_container, popups
     )
@@ -268,9 +264,7 @@ def replicate_item(selenium, browser_id, provider, hosts, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_button_in_data_distribution_panel(
-    selenium, browser_id, provider, hosts
-):
+def click_menu_button_in_data_distribution_panel(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     modals(driver).details_modal.data_distribution.providers[
@@ -301,8 +295,7 @@ def fail_to_click_option_in_data_distribution_popup(
 
 @wt(
     parsers.re(
-        'user of {browser_id} sees "see history" button in data '
-        "distribution modal"
+        'user of {browser_id} sees "see history" button in data distribution modal'
     )
 )
 @repeat_failed(interval=1, timeout=90, exceptions=RuntimeError)
@@ -315,8 +308,7 @@ def assert_see_history_btn_shown(selenium, browser_id):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) selects "(?P<space>.*)" space '
-        "in transfers tab"
+        'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'
     )
 )
 def change_transfer_space(selenium, browser_id, space, op_container):
@@ -327,9 +319,7 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
-    assert op_container(
-        selenium[browser_id]
-    ).transfers.providers_table.is_displayed()
+    assert op_container(selenium[browser_id]).transfers.providers_table.is_displayed()
 
 
 @wt(
@@ -378,9 +368,7 @@ def _select_columns_to_be_visible_in_transfers(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_transfers_and_enable_initial_cols(
-    browser_id, selenium, op_container, popups
-):
+def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container, popups):
     columns = ["user", "type", "status"]
     _select_columns_to_be_visible_in_transfers(
         selenium, browser_id, columns, op_container, popups
@@ -405,14 +393,11 @@ def select_columns_to_be_visible_in_transfers(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees only (?P<columns>.*) columns "
-        "in transfers"
+        "user of (?P<browser_id>.*) sees only (?P<columns>.*) columns in transfers"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_visible_columns_in_transfers(
-    browser_id, op_container, columns, selenium
-):
+def assert_visible_columns_in_transfers(browser_id, op_container, columns, selenium):
     columns = parse_seq(columns)
     transfers = op_container(selenium[browser_id]).transfers
     transfers_columns = transfers.column_headers

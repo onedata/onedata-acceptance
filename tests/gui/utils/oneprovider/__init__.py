@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from ..core.web_elements import WebItem
 from .archive_browser import ArchiveBrowser
@@ -32,9 +30,7 @@ class OPLoggedIn:
     archive_browser = ArchiveBrowser(".content-space-datasets .archive-browser")
     archive_container = ArchiveContainer(".archive-browser-container")
     provider_configuration = ProviderConfiguration(".provider-config")
-    automation_page = WebItem(
-        ".content-space-automation", cls=WorkflowExecutionPage
-    )
+    automation_page = WebItem(".content-space-automation", cls=WorkflowExecutionPage)
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

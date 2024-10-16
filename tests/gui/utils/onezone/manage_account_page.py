@@ -2,9 +2,7 @@
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItem
 from tests.gui.utils.onezone.common import EditBox
@@ -24,6 +22,4 @@ class ManageAccountPage(GenericPage):
     type_new_password_box = Input(".field-change-newPassword")
     retype_new_password_box = Input(".field-change-newPasswordRetype")
     user_name = Label(".username-editor .one-label")
-    show_user_account_menu_toolbar = Button(
-        ".btn-toolbar .collapsible-toolbar-toggle"
-    )
+    show_user_account_menu_toolbar = Button(".btn-toolbar .collapsible-toolbar-toggle")

@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -32,23 +30,19 @@ from tests.gui.steps.oneprovider.shares import (
     click_share_in_shares_browser,
     is_selected_share_named,
 )
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_of_space_on_left_sidebar_menu,
-)
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} creates "{share_name}" share of'
-        ' "{item_name}" file'
+        'user of {browser_id} creates "{share_name}" share of "{item_name}" file'
     )
 )
 @wt(
     parsers.parse(
-        'user of {browser_id} creates "{share_name}" share of'
-        ' "{item_name}" directory'
+        'user of {browser_id} creates "{share_name}" share of "{item_name}" directory'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -60,9 +54,7 @@ def create_share(
     button = "Create"
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(
         selenium, browser_id, share_name, modal_name, modals
@@ -92,20 +84,14 @@ def open_single_share_view_by_modal(
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
     )
-    click_share_details_link_in_shares_panel(
-        selenium, browser_id, modals, share_name
-    )
+    click_share_details_link_in_shares_panel(selenium, browser_id, modals, share_name)
     assert_browser_in_tab_in_op(
         selenium, browser_id, op_container, tmp_memory, items_browser
     )
     is_selected_share_named(selenium, browser_id, share_name, op_container)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} creates another share named "{share_name}"'
-    )
-)
+@wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_another_share(selenium, browser_id, share_name, modals):
     button = "Create another share"
@@ -169,9 +155,7 @@ def open_single_share_view_by_sidebar(
     open_shares_view_of_given_space(
         selenium, browser_id, oz_page, space_name, op_container, tmp_memory
     )
-    click_share_in_shares_browser(
-        selenium, browser_id, share_name, op_container
-    )
+    click_share_in_shares_browser(selenium, browser_id, share_name, op_container)
     change_shares_browser_to_file_browser(
         selenium, browser_id, op_container, tmp_memory
     )
@@ -199,9 +183,7 @@ def hand_share_url_to_another_user(
     item_type = "URL"
     button = "X"
 
-    copy_url_of_share(
-        selenium, browser_id, share_name, item_name, modals, tmp_memory
-    )
+    copy_url_of_share(selenium, browser_id, share_name, item_name, modals, tmp_memory)
     send_copied_item_to_other_users(
         browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
     )
@@ -210,13 +192,10 @@ def hand_share_url_to_another_user(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} copies share URL of "{share_name}" '
-        'share of "{item_name}"'
+        'user of {browser_id} copies share URL of "{share_name}" share of "{item_name}"'
     )
 )
-def copy_url_of_share(
-    selenium, browser_id, share_name, item_name, modals, tmp_memory
-):
+def copy_url_of_share(selenium, browser_id, share_name, item_name, modals, tmp_memory):
     modal_name = "Shares"
     icon_name = "copy"
     status_type = "shared"

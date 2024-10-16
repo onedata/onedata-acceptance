@@ -4,9 +4,7 @@ and directories)in multi-client environment.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 # pylint: disable=cell-var-from-loop, deprecated-method
 
 
@@ -21,12 +19,7 @@ import time
 
 import jsondiff
 from tests.oneclient.steps.multi_dir_steps import create
-from tests.utils.acceptance_utils import (
-    compare,
-    list_parser,
-    make_arg_list,
-    time_attr,
-)
+from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.utils import (
@@ -96,8 +89,7 @@ def create_target_file(user, client, client_node, users, file_name, dir_name):
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) creates regular files (?P<files>.*) "
-        "on (?P<client_node>.*)"
+        r"(?P<user>\w+) creates regular files (?P<files>.*) on (?P<client_node>.*)"
     )
 )
 def create_reg_file(user, files, client_node, users, request):
@@ -121,14 +113,10 @@ def create_reg_file_fail(user, files, client_node, users, request):
         "(?P<client_node>.*)"
     )
 )
-def create_many(
-    user, lower: int, upper: int, parent_dir, client_node, users, request
-):
+def create_many(user, lower: int, upper: int, parent_dir, client_node, users, request):
     for i in range(lower, upper):
         new_file = os.path.join(parent_dir, str(i))
-        create_reg_file(
-            user, make_arg_list(new_file), client_node, users, request
-        )
+        create_reg_file(user, make_arg_list(new_file), client_node, users, request)
 
 
 @wt(
@@ -152,8 +140,7 @@ def stat_present(user, path, files, client_node, users):
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) sees (?P<files>.*) in (?P<path>.*) "
-        "on (?P<client_node>.*)"
+        r"(?P<user>\w+) sees (?P<files>.*) in (?P<path>.*) on (?P<client_node>.*)"
     )
 )
 def ls_present(user, files, path, client_node, users):
@@ -170,11 +157,7 @@ def ls_present(user, files, path, client_node, users):
     assert_(client.perform, condition)
 
 
-@wt(
-    parsers.re(
-        r"(?P<directory>.*) is empty for (?P<user>\w+) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<directory>.*) is empty for (?P<user>\w+) on (?P<client_node>.*)"))
 def ls_empty(directory, user, client_node, users):
     user = users[user]
     client = user.clients[client_node]
@@ -350,19 +333,14 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
             assert_(client.perform, condition)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) deletes files (?P<files>.*) on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) deletes files (?P<files>.*) on (?P<client_node>.*)"))
 def delete_file(user, files, client_node, users):
     delete_file_base(user, files, client_node, users)
 
 
 @wt(
     parsers.re(
-        r"(?P<user>\w+) fails to delete files (?P<files>.*) "
-        "on (?P<client_node>.*)"
+        r"(?P<user>\w+) fails to delete files (?P<files>.*) on (?P<client_node>.*)"
     )
 )
 def delete_file_fail(user, files, client_node, users):
@@ -514,9 +492,7 @@ def check_time(user, time1, time2, comparator, file, client_node, users):
     assert_(client.perform, condition)
 
 
-def check_files_time(
-    user, time1, time2, comparator, file, file2, client_node, users
-):
+def check_files_time(user, time1, time2, comparator, file, file2, client_node, users):
     user = users[user]
     client = user.clients[client_node]
     attr1 = time_attr(time1)
@@ -548,9 +524,7 @@ def check_files_time(
         "(?P<client_node>.*)"
     )
 )
-def cmp_time_to_previous(
-    user, time1, comparator, file1, file2, users, client_node
-):
+def cmp_time_to_previous(user, time1, comparator, file1, file2, users, client_node):
     user = users[user]
     client = user.clients[client_node]
     attr = time_attr(time1)
@@ -585,9 +559,7 @@ def touch_file_base(user, files, client_node, users, should_fail=False):
 
 
 @when(
-    parsers.re(
-        r"(?P<user>\w+) updates (?P<files>.*) timestamps on (?P<client_node>.*)"
-    )
+    parsers.re(r"(?P<user>\w+) updates (?P<files>.*) timestamps on (?P<client_node>.*)")
 )
 def touch_file(user, files, client_node, users):
     touch_file_base(user, files, client_node, users)
@@ -758,11 +730,7 @@ def check_json_xattr(user, file, name, value, client_node, users):
     assert_(client.perform, condition)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) records (?P<files>.*) stats on (?P<client_node>.*)"
-    )
-)
+@wt(parsers.re(r"(?P<user>\w+) records (?P<files>.*) stats on (?P<client_node>.*)"))
 def record_stats(user, files, client_node, users):
     user = users[user]
     client = user.clients[client_node]
@@ -798,15 +766,9 @@ def assert_file_ownership(user, path, res, uid, gid, client_node, users):
     def condition():
         stat_result = client.stat(file_path)
         if res == "equal":
-            wrong_id_fmt = (
-                "Expected owner's {} of file {} to be {}, but found {}"
-            )
-            wrong_uid_msg = wrong_id_fmt.format(
-                "UID", path, uid, stat_result.st_uid
-            )
-            wrong_gid_msg = wrong_id_fmt.format(
-                "GID", path, gid, stat_result.st_gid
-            )
+            wrong_id_fmt = "Expected owner's {} of file {} to be {}, but found {}"
+            wrong_uid_msg = wrong_id_fmt.format("UID", path, uid, stat_result.st_uid)
+            wrong_gid_msg = wrong_id_fmt.format("GID", path, gid, stat_result.st_gid)
             assert stat_result.st_uid == uid, wrong_uid_msg
             assert stat_result.st_gid == gid, wrong_gid_msg
         else:

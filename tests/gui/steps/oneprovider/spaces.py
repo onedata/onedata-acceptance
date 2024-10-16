@@ -4,9 +4,7 @@ spaces in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -19,9 +17,7 @@ from tests.utils.utils import repeat_failed
         'user of {browser_id} selects "{space_name}" from spaces sidebar list'
     )
 )
-def select_space_from_sidebar_list(
-    selenium, browser_id, space_name, op_container
-):
+def select_space_from_sidebar_list(selenium, browser_id, space_name, op_container):
     op_container(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
 
 
@@ -32,9 +28,7 @@ def select_space_from_sidebar_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_settings_icon_for_space(
-    selenium, browser_id, space_name, op_container
-):
+def click_settings_icon_for_space(selenium, browser_id, space_name, op_container):
     (
         op_container(selenium[browser_id])
         .spaces.sidebar.spaces[space_name]
@@ -72,9 +66,7 @@ def assert_item_appeared_in_spaces_perm_table(
     selenium, browser_id, name, caption, op_container
 ):
     driver = selenium[browser_id]
-    items = getattr(
-        op_container(driver).spaces.permission_table, caption.lower()
-    )
+    items = getattr(op_container(driver).spaces.permission_table, caption.lower())
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()

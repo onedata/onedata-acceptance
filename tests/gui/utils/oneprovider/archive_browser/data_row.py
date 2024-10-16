@@ -4,9 +4,7 @@ browser in oneprovider web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -40,9 +38,7 @@ class DataRow(BrowserRow):
     bagit_tag = WebElement(".archive-bagit-tag")
     dip_tag = WebElement(".archive-dip-tag")
     base_archive = Label(".base-archive-name")
-    base_archive_description = Label(
-        ".fb-table-col-incremental .secondary-description"
-    )
+    base_archive_description = Label(".fb-table-col-incremental .secondary-description")
     creator = Label(".fb-table-col-creator .file-item-text .file-owner-line")
     menu_button = Button(".file-row-actions-trigger")
     clickable_field = WebElement(".file-name")

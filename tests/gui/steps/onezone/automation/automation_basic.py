@@ -3,9 +3,7 @@ automation management in onezone web GUI"""
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -37,15 +35,11 @@ def get_oz_workflow_visualizer(oz_page, driver):
     if page.is_panel_clicked("automation"):
         return page["automation"].workflows_page.workflow_visualiser
     else:
-        return page.get_page_and_click(
-            "automation"
-        ).workflows_page.workflow_visualiser
+        return page.get_page_and_click("automation").workflows_page.workflow_visualiser
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} writes "{text}" into inventory name text field'
-    )
+    parsers.parse('user of {browser_id} writes "{text}" into inventory name text field')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_name_into_input_box_on_main_automation_page(
@@ -98,15 +92,12 @@ def input_new_inventory_name_into_rename_inventory_input_box(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) confirms inventory rename with "
-        "confirmation button"
+        "user of (?P<browser_id>.*) confirms inventory rename with confirmation button"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])["automation"].elements_list[
-        0
-    ].edit_box.confirm()
+    oz_page(selenium[browser_id])["automation"].elements_list[0].edit_box.confirm()
 
 
 @wt(
@@ -173,9 +164,7 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
 
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_workflow_from_repository(
-    selenium, browser_id, workflow_name, oz_page
-):
+def upload_workflow_from_repository(selenium, browser_id, workflow_name, oz_page):
     driver = selenium[browser_id]
     workflows_in_directories = [
         "detect-file-formats",
@@ -253,14 +242,11 @@ def assert_number_of_lambdas(selenium, browser_id, oz_page, number: int):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "Create new revision" '
-        'in "{lambda_name}"'
+        'user of {browser_id} clicks on "Create new revision" in "{lambda_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_create_new_revision_button(
-    selenium, browser_id, oz_page, lambda_name
-):
+def click_on_create_new_revision_button(selenium, browser_id, oz_page, lambda_name):
     page = oz_page(selenium[browser_id])["automation"]
     page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
 
@@ -269,9 +255,7 @@ def collapse_revision_list(subpage):
     subpage.show_revisions_button.click()
 
 
-def get_lambda_or_workflow_bracket(
-    selenium, browser_id, oz_page, page, object_name
-):
+def get_lambda_or_workflow_bracket(selenium, browser_id, oz_page, page, object_name):
     page_name = page + "s_page"
     subpage = getattr(oz_page(selenium[browser_id])["automation"], page_name)
 
@@ -313,9 +297,7 @@ def assert_revision_description_in_object_bracket(
     if option == "does not see":
         assert revision.name != description, f"Revision: {object_name} found"
     else:
-        assert (
-            revision.name == description
-        ), f"Revision: {object_name} not found"
+        assert revision.name == description, f"Revision: {object_name} not found"
 
 
 @wt(
@@ -334,13 +316,9 @@ def assert_revision_of_object(
     )
 
     if option == "does not see":
-        assert (
-            ordinal[:-2] not in object.revision_list
-        ), f"{ordinal} revision found"
+        assert ordinal[:-2] not in object.revision_list, f"{ordinal} revision found"
     else:
-        assert (
-            ordinal[:-2] in object.revision_list
-        ), f"{ordinal} revision not found"
+        assert ordinal[:-2] in object.revision_list, f"{ordinal} revision not found"
 
 
 @wt(
@@ -392,22 +370,14 @@ def click_option_in_workflow_menu_button(
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that "{file_name}" has been downloaded'
-    )
-)
+@wt(parsers.parse('user of {browser_id} sees that "{file_name}" has been downloaded'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
     assert downloaded_file.exists(), f"file {file_name} has not been downloaded"
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} changes workflow view to "{tab_name}" tab'
-    )
-)
+@wt(parsers.parse('user of {browser_id} changes workflow view to "{tab_name}" tab'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_navigation_tab_in_workflow(selenium, browser_id, oz_page, tab_name):
     page = oz_page(selenium[browser_id])["automation"]

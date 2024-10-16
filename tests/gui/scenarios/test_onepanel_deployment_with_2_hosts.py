@@ -4,9 +4,7 @@ Onepanel GUI and multiple browsers instances.
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from pytest import fixture

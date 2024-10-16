@@ -4,9 +4,7 @@ basic operations in Onepanel using REST API mixed with web GUI.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onepanel.account_management import (
@@ -60,9 +58,7 @@ from tests.mixed.steps.rest.onepanel.spaces import (
     revoke_space_support_in_op_panel_using_rest,
     support_space_in_op_panel_using_rest,
 )
-from tests.mixed.steps.rest.oneprovider.data import (
-    assert_space_content_in_op_rest,
-)
+from tests.mixed.steps.rest.oneprovider.data import assert_space_content_in_op_rest
 from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
     assert_there_is_no_provider_in_oz_rest,
@@ -143,9 +139,7 @@ def login_to_oz_panel_using_new_password(
 
     if client.lower() == "web gui":
 
-        login_to_oz_panel_using_new_password_gui(
-            selenium, user, password, login_page
-        )
+        login_to_oz_panel_using_new_password_gui(selenium, user, password, login_page)
     elif client.lower() == "rest":
 
         login_to_oz_panel_using_new_password_rest(user, password, hosts, host)
@@ -338,9 +332,7 @@ def assert_there_is_no_provider_in_oz(
 
     if client.lower() == "rest":
 
-        assert_there_is_no_provider_in_oz_rest(
-            user, users, host, hosts, provider_name
-        )
+        assert_there_is_no_provider_in_oz_rest(user, users, host, hosts, provider_name)
     elif client.lower() == "web gui":
 
         assert_there_is_no_provider_in_oz_gui(
@@ -643,13 +635,9 @@ def cp_files_to_storage_mount_point(user, src_path, tmpdir, hosts):
         "to (?P<dst_path>.+?) provider's storage mount point"
     )
 )
-def cp_files_to_path_in_storage_mount_point(
-    user, src_path, tmpdir, hosts, dst_path
-):
+def cp_files_to_path_in_storage_mount_point(user, src_path, tmpdir, hosts, dst_path):
 
-    wt_cp_files_to_dir_in_storage_mount_point(
-        user, src_path, tmpdir, hosts, dst_path
-    )
+    wt_cp_files_to_dir_in_storage_mount_point(user, src_path, tmpdir, hosts, dst_path)
 
 
 @wt(
@@ -658,13 +646,9 @@ def cp_files_to_path_in_storage_mount_point(
         'to the root directory of "(?P<space_name>.+?)" space'
     )
 )
-def cp_files_to_space_root_dir(
-    user, src_path, space_name, tmpdir, tmp_memory, hosts
-):
+def cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory, hosts):
 
-    wt_cp_files_to_space_root_dir(
-        user, src_path, space_name, tmpdir, tmp_memory, hosts
-    )
+    wt_cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory, hosts)
 
 
 @wt(

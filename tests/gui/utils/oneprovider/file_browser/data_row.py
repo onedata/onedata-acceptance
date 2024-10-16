@@ -4,9 +4,7 @@ in oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -86,9 +84,7 @@ class DataRow(BrowserRow):
 
     def click_on_status_tag(self, name):
         tag = getattr(self, f"{name.lower()}_tag")
-        click_on_web_elem(
-            self.driver, tag, f'cannot click on "{name}" in {self}'
-        )
+        click_on_web_elem(self.driver, tag, f'cannot click on "{name}" in {self}')
 
     def click_and_enter(self):
         time.sleep(0.1)

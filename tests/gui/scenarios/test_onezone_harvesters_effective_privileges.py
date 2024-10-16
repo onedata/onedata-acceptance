@@ -4,9 +4,7 @@ management using Onezone Harvesters GUI and multiple browsers instance.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
@@ -73,6 +71,4 @@ def screens():
     return [0, 1]
 
 
-scenarios(
-    "../features/onezone/harvesters/harvesters_effective_privileges.feature"
-)
+scenarios("../features/onezone/harvesters/harvesters_effective_privileges.feature")

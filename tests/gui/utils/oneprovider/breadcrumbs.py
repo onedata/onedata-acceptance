@@ -4,9 +4,7 @@ Oneprovider web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -36,18 +34,14 @@ class _Breadcrumbs(PageObject):
         else:
             path = path.split("/")
             breadcrumbs = self._breadcrumbs
-            assert len(path) <= len(breadcrumbs), (
-                f"specified path {path} "
-                "exceeded one displayed in "
-                f"breadcrumbs {self}"
-            )
+            assert len(path) <= len(
+                breadcrumbs
+            ), f"specified path {path} exceeded one displayed in breadcrumbs {self}"
 
             i, dir1, dir2 = None, None, None
             err_msg = "{dir} not found on {idx}th position in {item}"
             if archive:
-                breadcrumbs = [
-                    elem for i, elem in enumerate(breadcrumbs) if i != 1
-                ]
+                breadcrumbs = [elem for i, elem in enumerate(breadcrumbs) if i != 1]
 
             breadcrumbs_name = [item.text for item in breadcrumbs]
 
@@ -61,17 +55,13 @@ class _Breadcrumbs(PageObject):
                 for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs_name)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2, err_msg.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2, err_msg.format(dir=dir1, idx=i, item=self)
                 breadcrumbs[breadcrumbs_name.index(dir2) - 1].click()
             else:
                 for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs)):
                     if i == 0:
                         continue
-                    assert dir1 == dir2.text, err_msg.format(
-                        dir=dir1, idx=i, item=self
-                    )
+                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
                 dir2.click()
 
     def go_one_back(self):

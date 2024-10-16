@@ -4,9 +4,7 @@ deployment management in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 import time
@@ -130,13 +128,9 @@ def wt_type_property_to_in_box_in_deployment_step(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_btn_in_deployment_step(
-    selenium, browser_id, btn, step, onepanel
-):
+def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel):
     driver = selenium[browser_id]
-    step = getattr(
-        onepanel(driver).content.deployment, step.lower().replace(" ", "")
-    )
+    step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
     if btn == "Add host":
 
@@ -150,11 +144,7 @@ def wt_click_on_btn_in_deployment_step(
                 break
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that cluster deployment has started"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that cluster deployment has started"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
     _ = modals(selenium[browser_id]).cluster_deployment
@@ -166,9 +156,7 @@ def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
         "for cluster deployment to finish"
     )
 )
-def wt_await_finish_of_cluster_deployment(
-    selenium, browser_id, timeout, modals
-):
+def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout, modals):
     driver = selenium[browser_id]
     limit = time.time() + timeout
     while time.time() < limit:
@@ -212,9 +200,7 @@ def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_yes_in_warning_modal_in_dns_setup_step(
-    selenium, browser_id, modals
-):
+def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals):
     modals(selenium[browser_id]).dns_configuration_warning.yes()
 
 
@@ -294,9 +280,7 @@ def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(
         "web cert step of deployment process in Onepanel"
     )
 )
-def wt_activate_lets_encrypt_toggle_in_deployment_step4(
-    selenium, browser_id, onepanel
-):
+def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id, onepanel):
     (
         onepanel(
             selenium[browser_id]
@@ -392,9 +376,7 @@ def wt_click_on_add_btn_in_storage_add_form(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_expand_storage_item_in_deployment_step5(
-    selenium, browser_id, storage, onepanel
-):
+def wt_expand_storage_item_in_deployment_step5(selenium, browser_id, storage, onepanel):
     storages = onepanel(selenium[browser_id]).content.deployment.step5.storages
     storages[storage].expand()
 
@@ -424,9 +406,7 @@ def wt_assert_storage_attr_in_deployment_step5(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_registration_token_in_step2(
-    selenium, browser_id, onepanel, tmp_memory
-):
+def wt_type_registration_token_in_step2(selenium, browser_id, onepanel, tmp_memory):
     token = tmp_memory[browser_id]["mailbox"]["token"]
     onepanel(selenium[browser_id]).content.deployment.step2.token = token
 

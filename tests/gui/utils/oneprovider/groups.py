@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -38,9 +36,7 @@ class GroupsSidebar(PageObject):
     title = Label(".secondary-sidebar-header .title")
     create = Button(".oneicon-group-add")
     join = Button(".oneicon-join")
-    groups = WebItemsSequence(
-        "ul.groups-list li.first-level", cls=GroupSidebarRecord
-    )
+    groups = WebItemsSequence("ul.groups-list li.first-level", cls=GroupSidebarRecord)
 
 
 class PermissionTableRow(PageObject):

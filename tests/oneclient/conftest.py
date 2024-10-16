@@ -4,9 +4,7 @@ of onedata.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import pytest
 from tests.conftest import export_logs
@@ -15,9 +13,7 @@ from tests.utils.entities_setup.groups import groups_creation as setup_groups
 from tests.utils.entities_setup.spaces import (
     create_and_configure_spaces as setup_spaces,
 )
-from tests.utils.entities_setup.users import (
-    users_creation_with_cleanup as setup_users,
-)
+from tests.utils.entities_setup.users import users_creation_with_cleanup as setup_users
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
     add_user_luma_mapping,
@@ -109,15 +105,11 @@ def setup_entities(
 
 def setup_luma(users_config, users, admin_credentials, hosts):
     spaces = get_all_spaces_details(admin_credentials, hosts)
-    local_feed_luma_storages = get_local_feed_luma_storages(
-        admin_credentials, hosts
-    )
+    local_feed_luma_storages = get_local_feed_luma_storages(admin_credentials, hosts)
 
     for username in users_config:
         new_user = users[username]
-        add_user_luma_mapping(
-            admin_credentials, new_user, local_feed_luma_storages
-        )
+        add_user_luma_mapping(admin_credentials, new_user, local_feed_luma_storages)
 
     add_spaces_luma_mapping(admin_credentials, local_feed_luma_storages, spaces)
 

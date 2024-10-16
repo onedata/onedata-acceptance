@@ -2,9 +2,7 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
 from tests.gui.utils.core import scroll_to_css_selector_bottom
@@ -24,9 +22,7 @@ class DublinCoreMetadata(PageObject):
         inputs[-1].send_keys(val)
 
     def click_add_button(self, button_name):
-        buttons = self.driver.find_elements(
-            By.CSS_SELECTOR, ".btn-add-entry .text"
-        )
+        buttons = self.driver.find_elements(By.CSS_SELECTOR, ".btn-add-entry .text")
         for button in buttons:
             if button.text == button_name:
                 css_sel = ".metadata-text .one-icon"

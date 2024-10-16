@@ -4,9 +4,7 @@ providers management in onezone web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 from itertools import zip_longest
@@ -75,10 +73,9 @@ def assert_provider_hostname_matches_known_domain(
     driver = selenium[browser_id]
     displayed_domain = popups(driver).provider_map_popover.provider_hostname
     domain = hosts[host]["hostname"]
-    assert displayed_domain == domain, (
-        f"displayed {displayed_domain} provider hostname instead of expected"
-        f" {domain}"
-    )
+    assert (
+        displayed_domain == domain
+    ), f"displayed {displayed_domain} provider hostname instead of expected {domain}"
 
 
 @wt(
@@ -150,9 +147,7 @@ def g_click_on_btn_in_provider_popup(
 def wt_click_on_btn_in_provider_popup(
     selenium, browser_id, btn, provider, oz_page, hosts
 ):
-    _click_on_btn_in_provider_popup(
-        selenium[browser_id], btn, provider, oz_page, hosts
-    )
+    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, oz_page, hosts)
 
 
 @given(
@@ -161,9 +156,7 @@ def wt_click_on_btn_in_provider_popup(
         '"(?P<btn_name>.+?)" button in provider popup'
     )
 )
-def g_click_on_go_to_files_provider(
-    selenium, browser_id_list, btn_name, oz_page
-):
+def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)["world map"].get_provider_with_displayed_popup()
@@ -176,9 +169,7 @@ def g_click_on_go_to_files_provider(
         '"(?P<btn_name>.+?)" button in provider popup'
     )
 )
-def wt_click_on_go_to_files_provider(
-    selenium, browser_id_list, btn_name, oz_page
-):
+def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)["world map"].get_provider_with_displayed_popup()
@@ -208,10 +199,9 @@ def assert_no_provider_popup_next_to_provider_circle(
 ):
     driver = selenium[browser_id]
     prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
-    assert not prov_circle.is_displayed(), (
-        f"provider popup for {ordinal} circle is displayed while it should"
-        " not be"
-    )
+    assert (
+        not prov_circle.is_displayed()
+    ), f"provider popup for {ordinal} circle is displayed while it should not be"
 
 
 @wt(
@@ -269,10 +259,9 @@ def assert_provider_popup_next_to_provider_circle(
 ):
     driver = selenium[browser_id]
     prov_circle = oz_page(driver)["world map"].providers[int(ordinal[:-2]) - 1]
-    assert prov_circle.is_displayed(), (
-        f"provider popup for {ordinal} circle is not displayed while it"
-        " should be"
-    )
+    assert (
+        prov_circle.is_displayed()
+    ), f"provider popup for {ordinal} circle is not displayed while it should be"
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Onezone world map"))
@@ -296,16 +285,12 @@ def assert_consistent_list_of_spaces_for_provider(
     provider = hosts[provider]["name"]
     provider_record_spaces = {
         (space.name, space.is_home())
-        for space in (
-            oz_page(driver)["go to your files"].providers[provider].spaces
-        )
+        for space in (oz_page(driver)["go to your files"].providers[provider].spaces)
     }
     provider_popup_spaces = {
         (space.name, space.is_home())
         for space in (
-            oz_page(driver)["world map"]
-            .get_provider_with_displayed_popup()
-            .spaces
+            oz_page(driver)["world map"].get_provider_with_displayed_popup().spaces
         )
     }
     assert provider_record_spaces == provider_popup_spaces, (
@@ -350,11 +335,7 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
     selenium, browser_id, provider, oz_page, hosts
 ):
     provider = hosts[provider]["name"]
-    (
-        oz_page(selenium[browser_id])["go to your files"]
-        .providers[provider]
-        .click()
-    )
+    (oz_page(selenium[browser_id])["go to your files"].providers[provider].click())
 
 
 @wt(
@@ -368,11 +349,7 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(
 def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
     selenium, browser_id, provider, oz_page
 ):
-    (
-        oz_page(selenium[browser_id])["go to your files"]
-        .providers[provider]
-        .click()
-    )
+    (oz_page(selenium[browser_id])["go to your files"].providers[provider].click())
 
 
 @wt(
@@ -390,14 +367,11 @@ def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that provider "{provider}" '
-        "in Onezone is working"
+        'user of {browser_id} sees that provider "{provider}" in Onezone is working'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_working_in_oz_panel(
-    selenium, browser_id, provider, oz_page, hosts
-):
+def assert_provider_working_in_oz_panel(selenium, browser_id, provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     page = oz_page(driver).get_page_and_click("providers")
@@ -425,10 +399,9 @@ def assert_provider_not_working_in_oz_panel(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     provider_record = oz_page(driver)["go to your files"].providers[provider]
-    assert provider_record.is_not_working(), (
-        f'provider icon in GO TO YOUR FILES oz panel for "{provider}" is not'
-        " gray"
-    )
+    assert (
+        provider_record.is_not_working()
+    ), f'provider icon in GO TO YOUR FILES oz panel for "{provider}" is not gray'
 
 
 def click_on_provider_in_providers_sidebar_with_provider_name(
@@ -440,14 +413,11 @@ def click_on_provider_in_providers_sidebar_with_provider_name(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on provider "{provider}" '
-        "in providers sidebar"
+        'user of {browser_id} clicks on provider "{provider}" in providers sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_provider_in_data_sidebar(
-    selenium, browser_id, oz_page, provider, hosts
-):
+def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page, provider, hosts):
     provider = hosts[provider]["name"]
     click_on_provider_in_providers_sidebar_with_provider_name(
         selenium, browser_id, oz_page, provider
@@ -480,9 +450,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_visit_provider_in_provider_popover(
-    selenium, browser_id, option, popups
-):
+def click_on_visit_provider_in_provider_popover(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     getattr(popups(driver).provider_map_popover, transform(option)).click()
 
@@ -515,9 +483,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     supported_spaces_number = (
-        oz_page(driver)["providers"]
-        .elements_list[provider]
-        .supported_spaces_number
+        oz_page(driver)["providers"].elements_list[provider].supported_spaces_number
     )
     assert (
         number == supported_spaces_number
@@ -530,9 +496,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
         "provider popover is {number}"
     )
 )
-def assert_len_of_spaces_list_in_provider_popover(
-    selenium, browser_id, number, popups
-):
+def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id, number, popups):
     driver = selenium[browser_id]
     spaces_list = popups(driver).provider_map_popover.spaces_list
     assert int(number) == len(
@@ -572,9 +536,7 @@ def click_on_button_on_providers_list(
     )()
 
 
-def click_on_cease_support_in_menu_of_provider_on_providers_list(
-    driver, popups
-):
+def click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups):
     popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
 
 

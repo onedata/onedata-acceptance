@@ -6,15 +6,11 @@ from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 class UserAccountPopup(PageObject):
-    options = WebItemsSequence(
-        "ul.dropdown-menu li", cls=ButtonWithTextPageObject
-    )
+    options = WebItemsSequence("ul.dropdown-menu li", cls=ButtonWithTextPageObject)
 
     def __str__(self):
         return "User account popup"

@@ -4,9 +4,7 @@ uploads management in onezone web GUI.
 
 __author__ = "Emilia Kwolek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.utils.bdd_utils import parsers, wt
@@ -15,14 +13,11 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks cancel button on upload popup number"
-        " {number}"
+        "user of {browser_id} clicks cancel button on upload popup number {number}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_cancel_upload_button_on_popup(
-    selenium, browser_id, popups, number: int
-):
+def click_on_cancel_upload_button_on_popup(selenium, browser_id, popups, number: int):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     popups(driver).upload_presenter[number - 1].cancel_button.click()
@@ -36,11 +31,7 @@ def click_on_confirm_cancel_upload(selenium, browser_id, popups):
     popups(driver).menu_popup_with_text.confirm_cancel_button.click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} sees that number of uploads is equal {number}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} sees that number of uploads is equal {number}"))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def assert_number_of_files_in_uploaded_files_list(
     selenium, browser_id, oz_page, number: int
@@ -50,10 +41,9 @@ def assert_number_of_files_in_uploaded_files_list(
     uploaded_files_list = oz_page(driver)[
         "uploads"
     ].uploaded_content_page.uploaded_items_list
-    assert number == len(uploaded_files_list), (
-        f"number of files uploaded {len(uploaded_files_list)}"
-        f" is not equal {number}"
-    )
+    assert number == len(
+        uploaded_files_list
+    ), f"number of files uploaded {len(uploaded_files_list)} is not equal {number}"
 
 
 @wt(
@@ -66,13 +56,9 @@ def assert_number_of_files_in_uploaded_files_list(
 def assert_file_is_uploaded(selenium, browser_id, oz_page, file_name, option):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    item_list = oz_page(driver)[
-        "uploads"
-    ].uploaded_content_page.uploaded_items_list
+    item_list = oz_page(driver)["uploads"].uploaded_content_page.uploaded_items_list
     if option == "is":
-        assert (
-            file_name in item_list
-        ), "searched file name not in files uploaded list"
+        assert file_name in item_list, "searched file name not in files uploaded list"
     else:
         assert (
             file_name not in item_list
@@ -81,8 +67,7 @@ def assert_file_is_uploaded(selenium, browser_id, oz_page, file_name, option):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
-        "(?P<option>Uploads) in the main menu"
+        "user of (?P<browser_id>.*?) clicks on (?P<option>Uploads) in the main menu"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -101,8 +86,7 @@ def click_on_provider_in_uploads_sidebar_with_provider_name(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on provider "{provider_name}" '
-        "in uploads sidebar"
+        'user of {browser_id} clicks on provider "{provider_name}" in uploads sidebar'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -115,11 +99,7 @@ def click_on_provider_in_uploads_sidebar(
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "All uploads" in uploads sidebar'
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "All uploads" in uploads sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_all_uploads_in_uploads_sidebar_with_provider_name(
     selenium, browser_id, oz_page

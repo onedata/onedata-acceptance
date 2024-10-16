@@ -4,9 +4,7 @@ Oneprovider GUI and single browser instance.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -69,6 +67,5 @@ def screens():
 
 scenarios("../features/oneprovider/data/archive_recall.feature")
 scenarios(
-    "../features/oneprovider/multiprovider/"
-    "archive_recall_multiple_providers.feature"
+    "../features/oneprovider/multiprovider/archive_recall_multiple_providers.feature"
 )

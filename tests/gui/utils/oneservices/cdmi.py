@@ -7,9 +7,7 @@ from tests.utils.rest_utils import http_get, http_put
 
 __author__ = "Bartosz Walkowicz, Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 CONTAINER_TYPE = "container"
@@ -17,9 +15,7 @@ OBJECT_TYPE = "object"
 
 
 def get_item_type(item_path):
-    return (
-        "container" if item_path.split("/")[-1].startswith("dir") else "object"
-    )
+    return "container" if item_path.split("/")[-1].startswith("dir") else "object"
 
 
 def get_content_type(item_type):
@@ -42,9 +38,7 @@ def parse_path(path, item_type, add_cdmi_prefix=False):
 
 
 class CDMIClient:
-    def __init__(
-        self, provider_ip, auth, cdmi_version="1.1.1", port=OP_REST_PORT
-    ):
+    def __init__(self, provider_ip, auth, cdmi_version="1.1.1", port=OP_REST_PORT):
         self.ip = provider_ip
         # We use token header to authenticate
         self.auth_header = {"X-Auth-Token": auth}

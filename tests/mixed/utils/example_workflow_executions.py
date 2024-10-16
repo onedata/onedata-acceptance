@@ -5,9 +5,7 @@ REST request.
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import os
@@ -32,23 +30,17 @@ class ExampleWorkflowExecutionInitialStoreContent:
 
     def bagit_uploader(self, input_file=None, dest_dir="space1/dir1"):
         input_files = (
-            self.gather_input_files("bagit-uploader")
-            if not input_file
-            else input_file
+            self.gather_input_files("bagit-uploader") if not input_file else input_file
         )
         for file in input_files:
             path = upload_workflow_path("bagit-uploader") + "/" + file
             self.upload_file(path, file)
-        file_paths = [
-            f'{dest_dir.split("/")[0]}/{file}' for file in input_files
-        ]
+        file_paths = [f'{dest_dir.split("/")[0]}/{file}' for file in input_files]
 
         return [
             {
                 "input-bagit-archives": {"fileId": self.resolve_file_id(path)},
-                "destination-directory": {
-                    "fileId": self.resolve_file_id(dest_dir)
-                },
+                "destination-directory": {"fileId": self.resolve_file_id(dest_dir)},
             }
             for path in file_paths
         ], input_files
@@ -85,16 +77,12 @@ class ExampleWorkflowExecutionInitialStoreContent:
 
     def download_files(self, input_file=None, destination="space1/dir1"):
         input_files = (
-            self.gather_input_files("download-files")
-            if not input_file
-            else input_file
+            self.gather_input_files("download-files") if not input_file else input_file
         )
         for file in input_files:
             path = upload_workflow_path("download-files") + "/" + file
             self.upload_file(path, file)
-        file_paths = [
-            f'{destination.split("/")[0]}/{file}' for file in input_files
-        ]
+        file_paths = [f'{destination.split("/")[0]}/{file}' for file in input_files]
         return [
             {
                 "fetch-files": [{"fileId": self.resolve_file_id(path)}],
@@ -104,24 +92,22 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def calculate_checksums_mounted(self, input_file="space1/file1"):
-        return [
-            {"input-files": [{"fileId": self.resolve_file_id(input_file)}]}
-        ], [input_file]
-
-    def calculate_checksums_rest(self, input_file="space1/file1"):
-        return [
-            {"input-files": [{"fileId": self.resolve_file_id(input_file)}]}
-        ], [input_file]
-
-    def demo(self, input_file="space1/dir1"):
-        return [
-            {"input_files": [{"fileId": self.resolve_file_id(input_file)}]}
-        ], [input_file]
-
-    def echo(self, input_file="space1/file1"):
-        return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
+
+    def calculate_checksums_rest(self, input_file="space1/file1"):
+        return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
+            input_file
+        ]
+
+    def demo(self, input_file="space1/dir1"):
+        return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [
+            input_file
+        ]
+
+    def echo(self, input_file="space1/file1"):
+        return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
     def initialize_eureka3D_project(  # pylint: disable=invalid-name
         self,
@@ -131,9 +117,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
     ):
         return [
             {
-                "Parent directory": {
-                    "fileId": self.resolve_file_id(parent_directory)
-                },
+                "Parent directory": {"fileId": self.resolve_file_id(parent_directory)},
                 "Project name": project_name,
                 "Managing groups": [{"groupId": self.resolve_group_id(group)}],
             }

@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -33,9 +31,7 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu,
     copy_token_from_modal,
 )
-from tests.gui.steps.onezone.multibrowser_spaces import (
-    send_invitation_token_to_browser,
-)
+from tests.gui.steps.onezone.multibrowser_spaces import send_invitation_token_to_browser
 from tests.gui.steps.onezone.overview import (
     confirm_rename_the_space,
     type_space_name_on_rename_space_input_on_overview_page,
@@ -92,8 +88,7 @@ def create_spaces_in_oz_using_gui(
 
 @wt(
     parsers.parse(
-        'user of {user} sends support token for "{space_name}" '
-        "to user of {browser_id}"
+        'user of {user} sends support token for "{space_name}" to user of {browser_id}'
     )
 )
 def send_support_token_in_oz_using_gui(
@@ -125,14 +120,11 @@ def send_support_token_in_oz_using_gui(
 
 @wt(
     parsers.re(
-        'user of (?P<user>.*) leaves "(?P<space_list>.+?)" spaces? '
-        "in Onezone page"
+        'user of (?P<user>.*) leaves "(?P<space_list>.+?)" spaces? in Onezone page'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(
-    selenium, user, space_list, oz_page, popups, modals
-):
+def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups, modals):
     where = "spaces"
     option = "Leave"
     confirmation_button = "Leave"
@@ -141,8 +133,7 @@ def leave_spaces_in_oz_using_gui(
 
     if space_list == "all":
         space_list = [
-            elem.name
-            for elem in oz_page(selenium[user])["data"].spaces_header_list
+            elem.name for elem in oz_page(selenium[user])["data"].spaces_header_list
         ]
     else:
         space_list = parse_seq(space_list)
@@ -186,9 +177,7 @@ def remove_spaces_in_oz_using_gui(
         click_modal_button(selenium, browser_id, option, modal, modals)
 
 
-def rename_spaces_in_oz_using_gui(
-    selenium, user, oz_page, space_list, new_names_list
-):
+def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, new_names_list):
     where = "spaces"
     option = "enter"
 
@@ -218,14 +207,10 @@ def remove_provider_support_for_space_in_oz_using_gui(
     wt_click_on_subitem_for_item(
         selenium, user, sidebar, record, provider_name, onepanel, hosts
     )
-    wt_expands_toolbar_icon_for_space_in_onepanel(
-        selenium, user, space_name, onepanel
-    )
+    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name, onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
-    wt_clicks_on_btn_in_cease_support_modal(
-        selenium, user, confirmation_button, modals
-    )
+    wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button, modals)
     notify_visible_with_text(selenium, user, notify_type, text_regexp)
 
 
@@ -318,9 +303,7 @@ def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):
 
 def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list):
     for space_name in parse_seq(space_list):
-        assert_space_has_disappeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        assert_space_has_disappeared_on_spaces(selenium, user, space_name, oz_page)
 
 
 def assert_spaces_have_been_renamed_in_oz_gui(
@@ -332,9 +315,7 @@ def assert_spaces_have_been_renamed_in_oz_gui(
         assert_new_created_space_has_appeared_on_spaces(
             selenium, user, new_space_name, oz_page
         )
-        assert_space_has_disappeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        assert_space_has_disappeared_on_spaces(selenium, user, space_name, oz_page)
 
 
 def assert_there_is_no_provider_for_space_in_oz_gui(
@@ -411,13 +392,10 @@ def assert_space_is_supported_by_provider_in_oz_gui(
 
 @given(
     parsers.parse(
-        'there is no "{space_name}" space in Onezone used '
-        "by user of {browser_id}"
+        'there is no "{space_name}" space in Onezone used by user of {browser_id}'
     )
 )
-def leave_space_in_onezone(
-    selenium, browser_id, space_name, oz_page, popups, modals
-):
+def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups, modals):
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
@@ -452,8 +430,7 @@ def _leave_users_space_in_onezone_using_rest(hosts, users, user):
 @given(parsers.parse("{user} user does not have access to any space"))
 @given(
     parsers.parse(
-        "{user} user does not have access to any space other "
-        "than defined in next steps"
+        "{user} user does not have access to any space other than defined in next steps"
     )
 )
 def g_leave_users_space_in_onezone_using_rest(hosts, users, user):
@@ -497,9 +474,7 @@ def add_harvester_to_existing_space(
         selenium, browser_id, space_name, option, oz_page
     )
 
-    click_button_in_space_harvesters_page(
-        selenium, browser_id, oz_page, button_name
-    )
+    click_button_in_space_harvesters_page(selenium, browser_id, oz_page, button_name)
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
@@ -562,11 +537,7 @@ def add_group_to_space_or_group(
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} copies invite token to "{space_name}" space'
-    )
-)
+@wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(
     browser_id, space_name, selenium, oz_page, onepanel, popups, modals

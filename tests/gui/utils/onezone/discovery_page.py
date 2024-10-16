@@ -2,9 +2,7 @@
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import PageObject
@@ -23,9 +21,7 @@ from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class WelcomePage(PageObject):
-    create_harvester = NamedButton(
-        ".info .ember-view", text="Create a harvester"
-    )
+    create_harvester = NamedButton(".info .ember-view", text="Create a harvester")
     join_existing_harvester = NamedButton(
         ".info .ember-view", text="join an existing harvester"
     )
@@ -77,16 +73,12 @@ class IndicesPage(PageObject):
     )
     menu_button = Button(".with-menu .collapsible-toolbar-toggle")
     include_metadata = WebItem(".includeMetadata-field", cls=IncludeMetadata)
-    include_file_details = WebItem(
-        ".includeFileDetails-field", cls=IncludeFileDetails
-    )
+    include_file_details = WebItem(".includeFileDetails-field", cls=IncludeFileDetails)
 
     include_rejection_reason = Toggle(
         ".includeRejectionReason-field .one-way-toggle-control"
     )
-    retry_on_rejection = Toggle(
-        ".retryOnRejection-field .one-way-toggle-control"
-    )
+    retry_on_rejection = Toggle(".retryOnRejection-field .one-way-toggle-control")
 
 
 class GeneralTab(PageObject):
@@ -137,9 +129,7 @@ class Harvester(Element):
     data_discovery = NamedButton(
         ".one-list-level-2 .item-header", text="Data discovery"
     )
-    configuration = NamedButton(
-        ".one-list-level-2 .item-header", text="Configuration"
-    )
+    configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
 
 
 class MenuItem(PageObject):
@@ -159,9 +149,7 @@ class Space(PageObject):
 
 
 class DiscoveryPage(GenericPage):
-    add_one_of_your_spaces_button = NamedButton(
-        "button", text="Add one of your spaces"
-    )
+    add_one_of_your_spaces_button = NamedButton("button", text="Add one of your spaces")
     invite_space_using_token_button = NamedButton(
         "button", text="Invite space using token"
     )

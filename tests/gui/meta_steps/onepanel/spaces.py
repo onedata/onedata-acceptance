@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -109,9 +107,7 @@ def result_to_support_space_in_op_panel_using_gui(
         selenium, user, config, onepanel, tmp_memory, provider_name, hosts
     )
     if result == "succeeds":
-        notify_visible_with_text(
-            selenium, user, notify_type, notify_text_regexp
-        )
+        notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
         wt_assert_existence_of_space_support_record(
             selenium, user, space_name, onepanel
         )
@@ -192,9 +188,7 @@ def _support_space_in_op_panel_using_gui(
     wt_select_storage_in_support_space_form(
         selenium, user, options["storage"], onepanel
     )
-    wt_type_received_token_to_support_token_field(
-        selenium, user, onepanel, tmp_memory
-    )
+    wt_type_received_token_to_support_token_field(selenium, user, onepanel, tmp_memory)
     wt_type_text_to_input_box_in_space_support_form(
         selenium, user, str(options["size"]), input_box, onepanel
     )
@@ -203,9 +197,7 @@ def _support_space_in_op_panel_using_gui(
     storage_import_configuration = options.get("storage import", False)
     if storage_import_configuration:
         if storage_import_configuration.get("mode") == "manual":
-            wt_select_mode_in_space_support_form(
-                selenium, user, "manual", onepanel
-            )
+            wt_select_mode_in_space_support_form(selenium, user, "manual", onepanel)
         else:
             _handle_configure_auto_storage_import(
                 selenium, onepanel, user, storage_import_configuration
@@ -250,9 +242,7 @@ def revoke_space_support_in_op_panel_using_gui(
     wt_click_on_subitem_for_item(
         selenium, user, sidebar, sub_item, provider_name, onepanel, hosts
     )
-    wt_expands_toolbar_icon_for_space_in_onepanel(
-        selenium, user, space_name, onepanel
-    )
+    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name, onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
 
     # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
@@ -278,9 +268,7 @@ def configure_sync_parameters_for_space_in_op_panel_gui(
 
 
 def copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory):
-    wt_open_space_item_in_spaces_page_op_panel(
-        selenium, user, space_name, onepanel
-    )
+    wt_open_space_item_in_spaces_page_op_panel(selenium, user, space_name, onepanel)
     wt_copy_space_id_in_spaces_page_in_onepanel(
         selenium, user, space_name, onepanel, tmp_memory
     )
@@ -317,9 +305,7 @@ def revoke_all_space_supports(
     button = "Cease support"
 
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, record, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts)
     # wait for load cluster
     time.sleep(5)
     wt_click_on_subitem_for_item(
@@ -334,24 +320,18 @@ def revoke_all_space_supports(
         wt_expands_toolbar_icon_for_space_in_onepanel(
             selenium, browser_id, space.name, onepanel
         )
-        wt_clicks_on_btn_in_space_toolbar_in_panel(
-            selenium, browser_id, option, popups
-        )
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, popups)
         wt_clicks_on_understand_risk_in_cease_support_modal(
             selenium, browser_id, modals
         )
-        wt_clicks_on_btn_in_cease_support_modal(
-            selenium, browser_id, button, modals
-        )
+        wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
         # wait for update spaces list
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
     selenium[browser_id].refresh()
 
 
-def _revoke_all_space_supports_using_rest(
-    _selenium, hosts, users, provider_host
-):
+def _revoke_all_space_supports_using_rest(_selenium, hosts, users, provider_host):
     user = "onepanel"
 
     provider_hostname = hosts[provider_host]["hostname"]
@@ -372,27 +352,15 @@ def _revoke_all_space_supports_using_rest(
         )
 
 
-@given(
-    parsers.parse(
-        "there are no spaces supported by {provider_host} in Onepanel"
-    )
-)
+@given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_revoke_all_space_supports_using_rest(
-    selenium, hosts, users, provider_host
-):
+def g_revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
 
-@wt(
-    parsers.parse(
-        "{provider_host} revokes all spaces support in Onepanel using REST"
-    )
-)
+@wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_revoke_all_space_supports_using_rest(
-    selenium, hosts, users, provider_host
-):
+def wt_revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
 

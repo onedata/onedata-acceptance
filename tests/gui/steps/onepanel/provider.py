@@ -4,9 +4,7 @@ provider management in onepanel web GUI.
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -25,15 +23,12 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_value_of_provider_attribute(
-    selenium, browser_id, attr, val, onepanel
-):
+def wt_assert_value_of_provider_attribute(selenium, browser_id, attr, val, onepanel):
     details = onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
-    assert displayed_val == val, (
-        f"displayed {displayed_val} instead of expected {val} as provider's"
-        f" {attr}"
-    )
+    assert (
+        displayed_val == val
+    ), f"displayed {displayed_val} instead of expected {val} as provider's {attr}"
 
 
 @wt(
@@ -90,14 +85,11 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} saves changes in provider details "
-        "form in Provider panel"
+        "user of {browser_id} saves changes in provider details form in Provider panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_save_changes_in_modify_provider_detail_form(
-    selenium, browser_id, onepanel
-):
+def wt_save_changes_in_modify_provider_detail_form(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.provider.form.save()
 
@@ -107,23 +99,18 @@ def wt_save_changes_in_modify_provider_detail_form(
         "user of {browser_id} clicks Discard button on modal in Provider panel"
     )
 )
-def click_discard_button_on_modal_in_provider_panel(
-    selenium, browser_id, onepanel
-):
+def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).discard_button()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks on Discard "
-        "button in the configure web cert modal"
+        "user of {browser_id} clicks on Discard button in the configure web cert modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_discard_btn_in_domain_change_modal(
-    selenium, browser_id, modals
-):
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals):
     try:
         modals(selenium[browser_id]).configure_web_cert.discard()
     except RuntimeError as e:
@@ -142,9 +129,7 @@ def activate_request_subdomain_toggle(selenium, browser_id, onepanel):
     )
 
 
-@wt(
-    parsers.parse("user of {browser_id} deactivates Request a subdomain toggle")
-)
+@wt(parsers.parse("user of {browser_id} deactivates Request a subdomain toggle"))
 def deactivate_request_subdomain_toggle(selenium, browser_id, onepanel):
     (
         onepanel(
@@ -178,12 +163,8 @@ matcher_wt_assert_value_of_provider_domain = parsers.re(
 
 @wt(matcher_wt_assert_value_of_provider_domain)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_value_of_provider_domain(
-    selenium, browser_id, provider, hosts, onepanel
-):
-    displayed_val = onepanel(
-        selenium[browser_id]
-    ).content.provider.details.domain
+def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts, onepanel):
+    displayed_val = onepanel(selenium[browser_id]).content.provider.details.domain
     expected_val = f"{hosts[provider]['hostname']}.test"
     assert displayed_val == expected_val, (
         f"displayed {displayed_val} instead of expected {expected_val} as"
@@ -200,6 +181,4 @@ def wt_assert_value_of_provider_domain(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_emergency_interface(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    popups(driver).deregister_provider.buttons[
-        "Go to emergency interface"
-    ].click()
+    popups(driver).deregister_provider.buttons["Go to emergency interface"].click()

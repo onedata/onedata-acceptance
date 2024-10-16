@@ -2,9 +2,7 @@
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 from datetime import datetime, timedelta
@@ -53,9 +51,7 @@ class CaveatField(PageObject):
     time_label = Label(".datetime-field")
     inner_input = Input(".tag-creator .text-editor-input")
     input = Input(".text-like-field .form-control")
-    input_object_id = Input(
-        ".objectIdCaveat-field .text-like-field .form-control"
-    )
+    input_object_id = Input(".objectIdCaveat-field .text-like-field .form-control")
 
     rest_control = Button(".option-rest .one-way-radio-control")
     oneclient_control = Button(".option-oneclient .one-way-radio-control")
@@ -64,9 +60,7 @@ class CaveatField(PageObject):
     interface_label = Label(".radio-field")
     readonly_toggle = Toggle(".readonlyView-field .one-way-toggle")
     path_entries = WebItemsSequence(".pathEntry-collapse", cls=PathEntry)
-    object_id_entries = WebItemsSequence(
-        ".objectIdEntry-field", cls=ObjectIdEntry
-    )
+    object_id_entries = WebItemsSequence(".objectIdEntry-field", cls=ObjectIdEntry)
 
     def activate(self):
         self.toggle.check()
@@ -97,9 +91,7 @@ class CaveatField(PageObject):
         if allow:
             assert self.is_allow(), "Caveat type should be Allow but is Deny"
         else:
-            assert (
-                not self.is_allow()
-            ), "Caveat type should be Deny but is Allow"
+            assert not self.is_allow(), "Caveat type should be Deny but is Allow"
 
     def assert_num_caveats_equal(self, exp_items):
         msg = (
@@ -137,9 +129,7 @@ class CaveatField(PageObject):
         regions = region_caveat.get("region codes")
         self.set_allowance(caveat_allow, popups, selenium, browser_id)
         for region in regions:
-            self.set_region_in_region_caveat(
-                selenium, browser_id, region, popups
-            )
+            self.set_region_in_region_caveat(selenium, browser_id, region, popups)
 
     def set_region_in_region_caveat(self, selenium, browser_id, region, popups):
         self.new_item()
@@ -199,9 +189,7 @@ class CaveatField(PageObject):
             self.set_consumer_in_consumer_caveat(
                 selenium, browser_id, popups, consumer_type, method, value
             )
-        oz_page(selenium[browser_id])[
-            "tokens"
-        ].create_token_page.expand_caveats()
+        oz_page(selenium[browser_id])["tokens"].create_token_page.expand_caveats()
 
     def set_consumer_in_consumer_caveat(
         self, selenium, browser_id, popups, consumer_type, method, value
@@ -220,9 +208,7 @@ class CaveatField(PageObject):
             popup.add_button()
 
     # service caveat
-    def set_service_caveats(
-        self, selenium, browser_id, service_caveats, popups
-    ):
+    def set_service_caveats(self, selenium, browser_id, service_caveats, popups):
         self.activate()
         service_cav = service_caveats.get("Service", [])
         service_onepanel_cav = service_caveats.get("Service Onepanel", [])
@@ -276,9 +262,7 @@ class CaveatField(PageObject):
             if hasattr(self, "options"):
                 self.options[space]()
             else:
-                raise ValueError(
-                    "there is not options member in class instance"
-                )
+                raise ValueError("there is not options member in class instance")
         self.input = path
 
     # object id caveat
@@ -299,10 +283,7 @@ class CaveatField(PageObject):
         if value_set:
             expected_time = tmp_memory.get("expire_time", None)
             actual_time = self.time_label
-            msg = (
-                f"Expected time {expected_time} does not match actual "
-                f"{actual_time}"
-            )
+            msg = f"Expected time {expected_time} does not match actual {actual_time}"
             assert expected_time == actual_time, msg
         else:
             msg = "Time should not be set but it is"
@@ -343,9 +324,7 @@ class CaveatField(PageObject):
             self.assert_asn_in_asn_caveats(str(asn))
 
     def assert_asn_in_asn_caveats(self, asn):
-        assert (
-            asn in self.tags
-        ), f"{asn} should be amongst asn caveats but is not"
+        assert asn in self.tags, f"{asn} should be amongst asn caveats but is not"
 
     # ip caveat
     def assert_ip_caveats(self, ips):
@@ -359,9 +338,7 @@ class CaveatField(PageObject):
     # consumer caveat
     # creation parameter is to check if assertion is done directly after
     # creation - then consumer is checked only by name
-    def assert_consumer_caveats(
-        self, consumer_caveats, users, groups, hosts, creation
-    ):
+    def assert_consumer_caveats(self, consumer_caveats, users, groups, hosts, creation):
         for consumer in consumer_caveats:
             consumer_type = consumer.get("type")
             if creation:
@@ -380,9 +357,7 @@ class CaveatField(PageObject):
                 and "Any" not in value
             ):
                 value = hosts[value]["name"]
-            self.assert_consumer_in_consumer_caveat(
-                consumer_type, method, value
-            )
+            self.assert_consumer_in_consumer_caveat(consumer_type, method, value)
 
     def assert_consumer_in_consumer_caveat(self, consumer_type, method, value):
         if method == "name":
@@ -421,10 +396,9 @@ class CaveatField(PageObject):
         space = path_caveat["space"]
         path = path_caveat["path"]
         entry = self.path_entries[space]
-        assert entry.path == path, (
-            f"Invalid path: {space} {path}. Actual: "
-            f"{entry.space_name} {entry.path}"
-        )
+        assert (
+            entry.path == path
+        ), f"Invalid path: {space} {path}. Actual: {entry.space_name} {entry.path}"
 
     # object id caveat
     def assert_object_id_caveats(self, ids):

@@ -2,9 +2,7 @@
 
 __author__ = "Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from datetime import datetime
 from functools import partial
@@ -56,8 +54,7 @@ def _list_files(path, user, users, provider, hosts):
 def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
     file_content = _read_file(path, user, users, provider, hosts)
     assert_msg = (
-        f"Expected file named {path} content to be {text} but found"
-        f" {file_content}"
+        f"Expected file named {path} content to be {text} but found {file_content}"
     )
     assert file_content == text, assert_msg
 
@@ -67,9 +64,7 @@ def assert_space_content_in_op_rest(
 ):
     children = _list_files(space_name, user, users, host, hosts)
     cwd = "/" + space_name
-    ls_fun = partial(
-        _list_files, user=user, users=users, provider=host, hosts=hosts
-    )
+    ls_fun = partial(_list_files, user=user, users=users, provider=host, hosts=hosts)
     assert_file_content_fun = partial(
         assert_file_content_in_op_rest,
         user=user,
@@ -92,8 +87,7 @@ def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host, hosts):
     file_id = _lookup_file_id(path, user_client_op)
     children = file_api.list_children(file_id).children
     assert_msg = (
-        f"Expected exactly {num} items in {path} but found"
-        f" {len(children)} items"
+        f"Expected exactly {num} items in {path} but found {len(children)} items"
     )
     assert num == len(children), assert_msg
 
@@ -221,9 +215,7 @@ def create_item_in_op_rest(
     if not content:
         return
     cwd += "/" + name
-    create_content(
-        user, users, cwd, content, create_item_fun, host, hosts, request
-    )
+    create_content(user, users, cwd, content, create_item_fun, host, hosts, request)
 
 
 def assert_ace_in_op_rest(
@@ -246,9 +238,7 @@ def grant_acl_privileges_in_op_rest(
     client.write_metadata(path, {"cdmi_acl": acl})
 
 
-def write_to_file_in_op_rest(
-    user, users, host, hosts, cdmi, path, text, offset=0
-):
+def write_to_file_in_op_rest(user, users, host, hosts, cdmi, path, text, offset=0):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_to_file(path, text, offset)
 
@@ -264,9 +254,7 @@ def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path, text):
         client.write_to_file(path, text, file_size)
 
 
-def move_item_in_op_rest(
-    src_path, dst_path, result, cdmi, host, hosts, user, users
-):
+def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user, users):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if result == "fails":
         with pytest.raises(HTTPError):
@@ -296,23 +284,18 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
-    file_attrs = file_api.get_attrs(
-        file_id, data={"attributes": ["posix_permissions"]}
-    )
+    file_attrs = file_api.get_attrs(file_id, data={"attributes": ["posix_permissions"]})
     try:
         file_perms = int(file_attrs.posix_permissions) % 1000
     except KeyError:
         assert False, f"File {path} has no mode metadata"
 
-    assert file_perms == int(perms), (
-        f"Expected file POSIX permissions for {path} to be {perms} but got"
-        f" {file_perms}"
-    )
+    assert file_perms == int(
+        perms
+    ), f"Expected file POSIX permissions for {path} to be {perms} but got {file_perms}"
 
 
-def set_posix_permissions_in_op_rest(
-    path, perm, user, users, host, hosts, result
-):
+def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts, result):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
@@ -324,9 +307,7 @@ def set_posix_permissions_in_op_rest(
         file_api.set_attr(file_id, attribute={"mode": perm})
 
 
-def get_time_for_file_in_op_rest(
-    path, user, users, cdmi, host, hosts, time_name
-):
+def get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts, time_name):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     attr = time_attr(time_name, "cdmi")
@@ -335,9 +316,7 @@ def get_time_for_file_in_op_rest(
     try:
         time = datetime.strptime(metadata[attr], date_fmt)
     except KeyError as ex:
-        raise AssertionError(
-            f"File {path} has no {ex.args[0]} metadata"
-        ) from ex
+        raise AssertionError(f"File {path} has no {ex.args[0]} metadata") from ex
 
     return time
 
@@ -419,9 +398,7 @@ def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
     _ = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
-        path=get_provider_rest_path(
-            "data", parent_id, f"children?name={file_name}"
-        ),
+        path=get_provider_rest_path("data", parent_id, f"children?name={file_name}"),
         headers={
             "X-Auth-Token": users[user].token,
             "Content-Type": "application/octet-stream",
@@ -447,9 +424,7 @@ def get_share_details_rest(users, user, hosts, host, share_id):
 def create_share_rest(users, user, hosts, host, file_id, name):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     share_api = ShareApi(user_client_op)
-    share_id = share_api.create_share(
-        data={"name": name, "rootFileId": file_id}
-    )
+    share_id = share_api.create_share(data={"name": name, "rootFileId": file_id})
     return share_id
 
 

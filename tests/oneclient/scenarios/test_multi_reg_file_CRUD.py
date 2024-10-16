@@ -4,9 +4,7 @@ in multi-client environment.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -55,8 +53,7 @@ def test_delete_by_other_user(env_description_file):
 
 
 @scenario(
-    "Fail to delete regular file by other user without write permission on"
-    " parent"
+    "Fail to delete regular file by other user without write permission on parent"
 )
 def test_fail_to_delete_by_other_user_without_write_permission(
     env_description_file,
@@ -134,9 +131,7 @@ def test_delete_file_opened_for_rdwr(env_description_file):
     pass
 
 
-@scenario(
-    "Fail to delete file without permission, file is opened by other user"
-)
+@scenario("Fail to delete file without permission, file is opened by other user")
 def test_delete_opened_file_without_permission(env_description_file):
     pass
 

@@ -2,19 +2,14 @@
 
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import time
 
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import run_kubectl_command, verify_env_ready
-from tests.utils.onenv_utils import (
-    run_onenv_command,
-    service_name_to_alias_mapping,
-)
+from tests.utils.onenv_utils import run_onenv_command, service_name_to_alias_mapping
 
 
 @wt(parsers.re(r"(?P<user>\w+) restarts oneprovider (?P<name>.*)"))
@@ -56,11 +51,7 @@ def restart_network(name, stop_time, hosts):
 
 # NOTE: because of underlying escript implementation this step currently works
 # only for krakow oneprovider (TODO VFS-11324)
-@wt(
-    parsers.re(
-        "user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"
-    )
-)
+@wt(parsers.re("user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))
 def mock_archive_verification(
     name, hosts, run_unmock
 ):  # pylint: disable=unused-argument

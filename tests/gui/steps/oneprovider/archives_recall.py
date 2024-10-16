@@ -4,9 +4,7 @@ archives recall in oneprovider web GUI.
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import re
@@ -21,8 +19,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees {info}: "{text}" in archive '
-        "recall information modal"
+        'user of {browser_id} sees {info}: "{text}" in archive recall information modal'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -99,9 +96,7 @@ def assert_recall_duration_in_archive_recall_information_modal(
     stop variable could be the time of canceling or finishing the recall
     """
 
-    archive_recall_information = modals(
-        selenium[browser_id]
-    ).archive_recall_information
+    archive_recall_information = modals(selenium[browser_id]).archive_recall_information
     start = f"{start}_at"
     stop = f"{stop}_at"
 
@@ -114,9 +109,7 @@ def assert_recall_duration_in_archive_recall_information_modal(
     assert begin <= finish, err_msg
 
 
-@wt(
-    parsers.parse("user of {browser_id} sees that not all {kind} were recalled")
-)
+@wt(parsers.parse("user of {browser_id} sees that not all {kind} were recalled"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
     kind = kind + " recalled"
@@ -133,8 +126,7 @@ def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that number of items failed is"
-        " greater than 0"
+        "user of {browser_id} sees that number of items failed is greater than 0"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -150,8 +142,7 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} chooses "{option}" in dropdown menu '
-        'in modal "{modal}"'
+        'user of {browser_id} chooses "{option}" in dropdown menu in modal "{modal}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -254,9 +245,7 @@ def assert_entries_with_file_names_in_archive_recall(
                 f"file name {entry_name} does not match name or name "
                 f"duplicated of {file_name}"
             )
-            assert (
-                file_name_p == file_name_p_ and file_name_s == file_name_s_
-            ), err_msg
+            assert file_name_p == file_name_p_ and file_name_s == file_name_s_, err_msg
 
     _scroll_and_check_condition(browser_id, selenium, modals, condition)
 

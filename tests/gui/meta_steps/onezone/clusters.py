@@ -4,9 +4,7 @@ using web GUI
 
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
 
@@ -71,9 +69,7 @@ def invite_user_to_cluster(
     item_type = "token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, cluster, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster, hosts)
     wt_click_on_subitem_for_item(
         selenium, browser_id, option, sub_item, cluster, onepanel, hosts
     )
@@ -91,9 +87,7 @@ def invite_user_to_cluster(
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
-    consume_token_from_copied_token(
-        selenium, browser_id, oz_page, clipboard, displays
-    )
+    consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, displays)
 
 
 @wt(
@@ -131,8 +125,7 @@ def change_privilege_config_in_cluster(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} adds "{group_name}" group to '
-        '"{cluster_name}" cluster'
+        'user of {browser_id} adds "{group_name}" group to "{cluster_name}" cluster'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -158,9 +151,7 @@ def add_group_to_cluster(
     element_type = "group"
     modal_name = "add one of your groups"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, cluster_name, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster_name, hosts)
     wt_click_on_subitem_for_item(
         selenium,
         browser_id,
@@ -175,9 +166,7 @@ def add_group_to_cluster(
     )
     for _ in range(5):
         try:
-            wt_wait_for_modal_to_appear(
-                selenium, browser_id, modal_name, tmp_memory
-            )
+            wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
             break
         except TimeoutException:
             click_on_option_in_members_list_menu(
@@ -247,9 +236,7 @@ def remember_cluster_id(
     displays,
 ):
     option = "Copy ID"
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, provider, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider, hosts)
     click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)
     click_option_in_popup_text_menu(selenium, browser_id, option, popups)
     cluster_id = clipboard.paste(display=displays[browser_id])
@@ -286,17 +273,11 @@ def set_gui_settings(
     box = kind_of_agreement + " input"
     button = "save " + kind_of_agreement
     click_on_option_in_the_sidebar(selenium, browser_id, menu, oz_page)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, record, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts)
     click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
-    click_button_in_gui_settings_page(
-        selenium, browser_id, oz_page, kind_of_agreement
-    )
+    click_button_in_gui_settings_page(selenium, browser_id, oz_page, kind_of_agreement)
     if operation == "sets":
-        write_input_in_gui_settings_page(
-            selenium, browser_id, oz_page, box, text
-        )
+        write_input_in_gui_settings_page(selenium, browser_id, oz_page, box, text)
     else:
         remove_notification_in_gui_settings_page(
             selenium, browser_id, oz_page, kind_of_agreement

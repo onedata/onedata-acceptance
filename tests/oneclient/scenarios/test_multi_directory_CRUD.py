@@ -4,9 +4,7 @@ in multi-client environment.
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 from functools import partial
@@ -30,9 +28,7 @@ def test_clean(env_description_file):
     pass
 
 
-@scenario(
-    "Fail to rename someone's directory without write permission on parent"
-)
+@scenario("Fail to rename someone's directory without write permission on parent")
 def test_rename_someone_without_write_permission_on_parent(
     env_description_file,
 ):
@@ -54,10 +50,7 @@ def test_delete_someone(env_description_file):
     pass
 
 
-@scenario(
-    "Fail to delete someone's empty directory without write permission on"
-    " parent"
-)
+@scenario("Fail to delete someone's empty directory without write permission on parent")
 def test_fail_to_delete_someones_empty_directory(env_description_file):
     pass
 
@@ -77,9 +70,7 @@ def test_fail_to_create_subfile_without_permission(env_description_file):
     pass
 
 
-@scenario(
-    "Delete directory right after deleting its subdirectory by other client"
-)
+@scenario("Delete directory right after deleting its subdirectory by other client")
 def test_delete_dir_right_after_deleting_subdir(env_description_file):
     pass
 

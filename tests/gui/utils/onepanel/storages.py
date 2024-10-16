@@ -2,9 +2,7 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
 
@@ -69,9 +67,7 @@ class POSIXEditorKeyValue(PageObject):
 
 
 class QOSParams(PageObject):
-    key_values = WebItemsSequence(
-        ".text-input.group-with-tip", cls=POSIXEditorKeyValue
-    )
+    key_values = WebItemsSequence(".text-input.group-with-tip", cls=POSIXEditorKeyValue)
     last_key = WebItem(
         ".text-input.group-with-tip.last-record .text-left", cls=InputBox
     )
@@ -144,9 +140,7 @@ class StorageRecord(PageObject, ExpandableMixin):
 
     def is_expanded(self):
         return bool(
-            re.match(
-                r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class")
-            )
+            re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
     def expand_menu(self, driver):

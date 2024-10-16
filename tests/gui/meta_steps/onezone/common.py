@@ -7,9 +7,7 @@ from itertools import zip_longest
 
 from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.browser_creation import (
-    create_instances_of_webdriver,
-)
+from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
@@ -100,9 +98,7 @@ def click_visit_provider(driver, popups):
     popups(driver).provider_map_popover.visit_provider()
 
 
-def g_wt_visit_op(
-    selenium, oz_page, browser_id_list, providers_list, hosts, popups
-):
+def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups):
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(
         list_parser(browser_id_list),
@@ -119,12 +115,8 @@ def g_wt_visit_op(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_visit_op(
-    selenium, oz_page, browser_id_list, providers_list, hosts, popups
-):
-    g_wt_visit_op(
-        selenium, oz_page, browser_id_list, providers_list, hosts, popups
-    )
+def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups)
 
 
 @wt(
@@ -134,12 +126,8 @@ def g_visit_op(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_visit_op(
-    selenium, oz_page, browser_id_list, providers_list, hosts, modals
-):
-    g_wt_visit_op(
-        selenium, oz_page, browser_id_list, providers_list, hosts, modals
-    )
+def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals)
 
 
 def visit_file_browser(
@@ -166,15 +154,9 @@ def visit_file_browser(
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option_in_submenu, oz_page
         )
-        click_choose_other_oneprovider_on_file_browser(
-            selenium, browser_id, oz_page
-        )
-        choose_provider_in_selected_page(
-            selenium, browser_id, provider, hosts, oz_page
-        )
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory
-        )
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
+        choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
 
 
 @given(
@@ -261,11 +243,7 @@ def logout_from_onezone_page(selenium, browser_id, oz_page, popups):
     popups(driver).user_account_menu.options["Logout"].click()
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} changes {username} username to {new_username}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_username(
     selenium, browser_id, username, new_username, oz_page, popups, users
@@ -280,11 +258,7 @@ def change_username(
     users[username].username = new_username
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} changes {username} password to {new_password}"
-    )
-)
+@wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_password(
     selenium, browser_id, new_password, username, oz_page, users, popups

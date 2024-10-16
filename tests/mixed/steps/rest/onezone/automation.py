@@ -2,9 +2,7 @@
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
-__license__ = (
-    "This software is released under the MIT license cited in LICENSE.txt"
-)
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
 import os
@@ -15,10 +13,7 @@ from tests.gui.utils.generic import upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
-from tests.mixed.steps.rest.oneprovider.data import (
-    _lookup_file_id,
-    upload_file_rest,
-)
+from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
 from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
@@ -49,9 +44,7 @@ def upload_all_workflows_from_automation_examples_rest(
         workflow_name = f.split(".")[0]
         if os.path.isdir(upload_workflow_path(f)):
             tmp_memory["workflows_with_input_files"].append(workflow_name)
-            dump_path = (
-                f"{upload_workflow_path(workflow_name)}/{workflow_name}.json"
-            )
+            dump_path = f"{upload_workflow_path(workflow_name)}/{workflow_name}.json"
         else:
             tmp_memory["workflows_without_input_files"].append(workflow_name)
             dump_path = upload_workflow_path(workflow_name + ".json")
@@ -156,9 +149,7 @@ def execute_all_workflows(
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
         partial(_lookup_file_id, user_client_op=client),
-        partial(
-            upload_file_rest, users, user, hosts, host, parent_id=spaces[space]
-        ),
+        partial(upload_file_rest, users, user, hosts, host, parent_id=spaces[space]),
         partial(get_group_id, groups),
     )
     for workflow in workflows:
@@ -171,9 +162,7 @@ def execute_all_workflows(
             example_initial_store_content, input_files = getattr(
                 example_execution, workflow.replace("-", "_")
             )()
-            for file, content in zip(
-                input_files, example_initial_store_content
-            ):
+            for file, content in zip(input_files, example_initial_store_content):
                 # map store name into store_id
                 content = {
                     get_store_schema_id_of_workflow(key, path): content[key]
@@ -273,8 +262,7 @@ def assert_empty_workflow_phase(
 
 @wt(
     parsers.parse(
-        "using REST, {user} sees successful execution of all "
-        "workflows in {host}"
+        "using REST, {user} sees successful execution of all workflows in {host}"
     )
 )
 def assert_successful_workflow_executions(
