@@ -65,8 +65,8 @@ ignore-patterns=^\.#
 # deduced by static analysis). It supports qualified module names, as well as
 # Unix pattern matching.
 ignored-modules=cdmi_client, onepanel_client, oneprovider_client, onezone_client,
-                tests.mixed.cdmi_client, tests.mixed.oneprovider_client,
-                tests.mixed.onezone_client, tests.mixed.onezone_client
+                tests.mixed.cdmi_client, tests.mixed.onepanel_client,
+                tests.mixed.oneprovider_client, tests.mixed.onezone_client
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
