@@ -175,7 +175,6 @@ def join_space_to_harvester(
     button_name = "add one of your spaces"
     button_in_modal = "Add"
     modal = "Add one of spaces"
-    element_type = "space"
     modal_name = "Add one of your spaces"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
@@ -196,7 +195,7 @@ def join_space_to_harvester(
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, space_name, modals, element_type, popups
+        selenium, browser_id, space_name, modals, popups
     )
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
@@ -243,7 +242,7 @@ def add_group_to_harvester(
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, where, popups
+        selenium, browser_id, group_name, modals, popups
     )
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 

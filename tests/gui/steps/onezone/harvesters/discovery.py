@@ -192,7 +192,6 @@ def choose_element_from_dropdown_in_add_element_modal(
     browser_id,
     element_name,
     modals,
-    element,  # pylint: disable=unused-argument
     popups,
 ):
     driver = selenium[browser_id]

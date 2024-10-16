@@ -74,11 +74,7 @@ def assert_being_redirected_to_page(page, selenium, browser_id):
     ), f"currently on {curr_page} page instead of expected {page}"
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"
-    )
-)
+@wt(parsers.re(r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"))
 def change_relative_url(selenium, browser_id, path):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + path)

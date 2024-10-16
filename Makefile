@@ -164,14 +164,16 @@ ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__in
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
 FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+DOCKER_RUN := docker run --rm -i -v `pwd`:`pwd` -w `pwd` $(STATIC_ANALYSER_IMAGE)
+
 
 format:
-	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
-	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
+	$(DOCKER_RUN) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
+	$(DOCKER_RUN) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
 
 
 black-check:
-	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
+	$(DOCKER_RUN) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
 	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
 
 
@@ -180,6 +182,6 @@ black-check:
 ##
 
 static-analysis:
-	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) pylint $(ALL_FILES) --output-format=colorized --recursive=y --rcfile=tests/configs/.pylintrc
-	docker run --rm -i -v `pwd`:`pwd` -w `pwd`  $(STATIC_ANALYSER_IMAGE) pylint $(ALL_CONFTEST_FILES) --output-format=colorized --recursive=y \
+	$(DOCKER_RUN) pylint $(ALL_FILES) --output-format=colorized --recursive=y --rcfile=tests/configs/.pylintrc
+	$(DOCKER_RUN) pylint $(ALL_CONFTEST_FILES) --output-format=colorized --recursive=y \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc

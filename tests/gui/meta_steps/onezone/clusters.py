@@ -148,7 +148,6 @@ def add_group_to_cluster(
     modal = "Add one of groups"
     where = "cluster"
     member = "groups"
-    element_type = "group"
     modal_name = "add one of your groups"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster_name, hosts)
@@ -181,7 +180,7 @@ def add_group_to_cluster(
             )
 
     choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, element_type, popups
+        selenium, browser_id, group_name, modals, popups
     )
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 

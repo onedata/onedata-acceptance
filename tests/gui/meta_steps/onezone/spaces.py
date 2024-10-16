@@ -464,7 +464,6 @@ def add_harvester_to_existing_space(
     button_name = "add one of harvesters"
     button_in_modal = "Add"
     modal = "Add one of spaces"
-    element_type = "harvester"
     modal_name = "Add one of your harvesters"
     panel_name = "Data"
 
@@ -479,7 +478,7 @@ def add_harvester_to_existing_space(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, harvester_name, modals, element_type, popups
+        selenium, browser_id, harvester_name, modals, popups
     )
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
@@ -508,7 +507,6 @@ def add_group_to_space_or_group(
     button = "Add one of your groups"
     modal = "Add one of groups"
     member = "groups"
-    element = "group"
     button_in_modal = "Add"
 
     click_element_on_lists_on_left_sidebar_menu(
@@ -531,7 +529,7 @@ def add_group_to_space_or_group(
         selenium, browser_id, button, where, member, oz_page, onepanel, popups
     )
     choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, element, popups
+        selenium, browser_id, group_name, modals, popups
     )
 
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
