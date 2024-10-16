@@ -244,24 +244,6 @@ _Codetag Tracker:
   requirements: []
   artifact-subscriptions: []
 
-Black formatting:
-  key: BLFR
-  tasks:
-    - script:
-        <<: *run-script-working-dir
-        scripts:
-          - make black-check
-        description: Black formatting
-
-Static analysis:
-  key: STAN
-  tasks:
-    - script:
-        <<: *run-script-working-dir
-        scripts:
-          - make static-analysis
-        description: Static analysis
-
 automation-examples workflows: &acceptance-tests-in-chrome-job
   key: COAWEX
   other: *common-opts
