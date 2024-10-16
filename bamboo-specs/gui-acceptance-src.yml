@@ -60,6 +60,8 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
+        - Black formatting
+        - Static analysis
         - automation-examples workflows
         - Atm stores basic
         - Atm workflow execution
@@ -242,6 +244,24 @@ _Codetag Tracker:
         description: Codetag Tracker
   requirements: []
   artifact-subscriptions: []
+
+Black formatting:
+  key: BLFR
+  tasks:
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make black-check
+        description: Black formatting
+
+Static analysis:
+  key: STAN
+  tasks:
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make static-analysis
+        description: Static analysis
 
 automation-examples workflows: &acceptance-tests-in-chrome-job
   key: COAWEX
