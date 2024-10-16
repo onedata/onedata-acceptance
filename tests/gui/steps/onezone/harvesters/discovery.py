@@ -208,7 +208,12 @@ def click_button_in_harvester_spaces_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(
-    selenium, browser_id, element_name, modals, element, popups  # pylint: disable=unused-argument
+    selenium,
+    browser_id,
+    element_name,
+    modals,
+    element,  # pylint: disable=unused-argument
+    popups,
 ):
     driver = selenium[browser_id]
     modal_name = "add_one_of_elements"

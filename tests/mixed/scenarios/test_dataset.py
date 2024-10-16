@@ -40,11 +40,11 @@ from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.dataset import *
 from tests.mixed.steps.qos import *
 from tests.mixed.steps.tokens_basic import *
+from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
-from tests.mixed.utils.common import *
 
 
 @pytest.fixture(scope="module")

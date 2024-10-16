@@ -120,7 +120,7 @@ def grant_acl_privileges_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)"
         ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
-        "privileges? set for (?P<type>.*?) (?P<name>.*) in "
+        "privileges? set for (?P<item_type>.*?) (?P<name>.*) in "
         "(?P<num>.*) ACL record in (?P<host>.*)"
     )
 )
