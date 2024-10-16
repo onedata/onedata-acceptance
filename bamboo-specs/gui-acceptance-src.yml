@@ -260,8 +260,8 @@ Static analysis:
   key: STAN
   other: *common-opts
   tasks:
+    - checkout: *checkout-default-repository
     - script:
-        checkout: *checkout-default-repository
         <<: *run-script-working-dir
         scripts:
           - make static-analysis
