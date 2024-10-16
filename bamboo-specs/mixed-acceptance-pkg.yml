@@ -56,7 +56,7 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
-        - _Black check
+        - _Autoformatter check
         - _Static analysis
         - Access tokens
         - Access tokens id caveats
@@ -196,7 +196,7 @@ _Codetag Tracker:
   requirements: []
   artifact-subscriptions: []
 
-_Black check:
+_Autoformatter check:
   key: BLFR
   other: *common-opts
   tasks:
