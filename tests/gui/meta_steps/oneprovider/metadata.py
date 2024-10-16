@@ -317,7 +317,7 @@ def remove_all_metadata_in_op_gui(
         oz_page,
         op_container,
     )
-    click_on_navigation_tab_in_panel(selenium, browser_id, "Basic", modals, option)
+    click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", modals, option)
     remove_all_basic_metadata(selenium, browser_id, modals)
 
     click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, option)

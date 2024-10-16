@@ -8,8 +8,11 @@ import json
 import os
 from functools import partial
 
+import yaml
+from oneprovider_client.rest import ApiException
 from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.gui.utils.generic import upload_workflow_path
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
@@ -18,7 +21,8 @@ from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
 )
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
     get_provider_rest_path,
     get_zone_rest_path,
@@ -26,6 +30,54 @@ from tests.utils.rest_utils import (
     http_post,
 )
 from tests.utils.utils import repeat_failed
+
+
+@given(
+    parsers.parse(
+        'there is "{workflow_name}" workflow dump uploaded '
+        "from automation examples by user {user} in inventory "
+        '"{inventory}" in "{zone_name}" Onezone service'
+    )
+)
+def upload_workflow_from_automation_examples_rest(
+    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
+):
+    dump_path = upload_workflow_path(workflow_name + ".json")
+    upload_workflow_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflow_name,
+        dump_path,
+        workflows,
+    )
+
+
+@given(
+    parsers.parse(
+        'there is "{workflow_name}" workflow dump uploaded by '
+        'user {user} in inventory "{inventory}" in "{zone_name}" '
+        "Onezone service"
+    )
+)
+def upload_workflow_from_upload_files_rest(
+    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
+):
+    dump_path = upload_file_path(f"automation/workflow/{workflow_name}.json")
+    upload_workflow_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflow_name,
+        dump_path,
+        workflows,
+    )
 
 
 @wt(
@@ -111,21 +163,228 @@ def _upload_workflow_rest(
 
 
 def get_store_schema_id_of_workflow(store_name, workflow_name):
-    with open(upload_workflow_path(workflow_name + ".json")) as f:
+    if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
+        path = upload_workflow_path(f"{workflow_name}.json")
+    elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
+        path = upload_file_path(f"automation/workflow/{workflow_name}.json")
+    else:
+        raise FileNotFoundError(f"Path to {workflow_name} not found")
+    with open(path) as f:
         data = json.load(f)
     stores = data["revision"]["atmWorkflowSchemaRevision"]["_data"]["stores"]
     for store in stores:
         if store["_data"]["name"] == store_name:
             return store["_data"]["id"]
-    raise RuntimeError(
+    raise AssertionError(
         f"did not find store {store_name} in workflow dump {workflow_name}"
     )
 
 
 def get_revision_num_of_workflow(workflow_name):
-    with open(upload_workflow_path(workflow_name + ".json")) as f:
+    if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
+        path = upload_workflow_path(f"{workflow_name}.json")
+    elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
+        path = upload_file_path(f"automation/workflow/{workflow_name}.json")
+    else:
+        raise FileNotFoundError(f"Path to {workflow_name} not found")
+    with open(path) as f:
         data = json.load(f)
         return data["revision"]["originalRevisionNumber"]
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} executes "{workflow_name}" workflow on '
+        'space "{space}" in {host} with following '
+        "configuration:\n{config}"
+    )
+)
+def wt_execute_workflow_rest(
+    user,
+    users,
+    hosts,
+    host,
+    spaces,
+    space,
+    workflow_name,
+    workflows,
+    workflow_executions,
+    config,
+):
+    """
+    Expected format of config
+    store: {arg: val}
+    or
+    store: [{arg1: val1}, ...]
+    """
+
+    content = yaml.load(config, yaml.Loader)
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    for key, val in content.items():
+        if isinstance(val, list):
+            for el in val:
+                for key2, val2 in el.items():
+                    if "$(resolve_file_id" in val2:
+                        path = val2.replace("$(resolve_file_id ", "").replace(")", "")
+                        el[key2] = _lookup_file_id(path, client)
+
+    rev_num = get_revision_num_of_workflow(workflow_name)
+    content = {
+        get_store_schema_id_of_workflow(key, workflow_name): content[key]
+        for key in content
+    }
+    wid = execute_workflow_rest(
+        user,
+        users,
+        hosts,
+        host,
+        spaces,
+        space,
+        workflow_name,
+        content,
+        workflows,
+        rev_number=rev_num,
+        loglevel="info",
+    )
+    workflow_executions[wid] = {workflow_name: []}
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'
+    )
+)
+def pause_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    workflow_execution_api.pause_workflow_execution(wid)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} resumes execution of "{workflow_name}" workflow in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    workflow_execution_api.resume_workflow_execution(wid)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} cancels execution of "{workflow_name}" workflow in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def cancel_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    workflow_execution_api.cancel_workflow_execution(wid)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} deletes execution of "{workflow_name}" workflow in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def delete_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    workflow_execution_api.delete_workflow_execution(wid)
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} fails to resume execution of "
+        '"{workflow_name}" workflow in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def fail_to_resume_workflow_rest(
+    user, users, hosts, host, workflow_name, workflow_executions
+):
+    try:
+        resume_workflow_rest(
+            user, users, hosts, host, workflow_name, workflow_executions
+        )
+        raise AssertionError("Resuming workflow execution should have failed")
+    except ApiException as e:
+        if e.status == 400:
+            return
+        raise
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} forces continue execution of "
+        '"{workflow_name}" workflow in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def force_continue_workflow_rest(
+    user, users, hosts, host, workflow_name, workflow_executions
+):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    workflow_execution_api.force_continue_workflow_execution(wid)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} reruns execution of "{workflow_name}"'
+        " workflow from lane run {lane_run}, lane index {lane_id} "
+        "in {host}"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def rerun_workflow_rest(
+    user,
+    users,
+    hosts,
+    host,
+    workflow_name,
+    workflow_executions,
+    lane_id: int,
+    lane_run: int,
+):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    workflow_execution_api.rerun_workflow_execution(wid, data)
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} retries execution of "{workflow_name}" '
+        "workflow from lane run {lane_run}, lane index {lane_id} "
+        "in {host}"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def retry_workflow_rest(
+    user,
+    users,
+    hosts,
+    host,
+    workflow_name,
+    workflow_executions,
+    lane_id: int,
+    lane_run: int,
+):
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    workflow_execution_api = WorkflowExecutionApi(client)
+    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    workflow_execution_api.retry_workflow_execution(wid, data)
 
 
 @wt(
@@ -184,7 +443,7 @@ def execute_all_workflows(
                 )
                 workflow_executions[wid] = {workflow: file}
         else:
-            raise AssertionError(
+            raise NotImplementedError(
                 f"Example execution of workflow {workflow} is not implemented"
             )
 
@@ -262,6 +521,31 @@ def assert_empty_workflow_phase(
 
 @wt(
     parsers.parse(
+        "using REST, {user} sees there are {num} workflow executions "
+        'in phase "{phase}" on space "{space}" in {host}'
+    )
+)
+@wt(
+    parsers.parse(
+        "using REST, {user} sees there is {num} workflow execution "
+        'in phase "{phase}" on space "{space}" in {host}'
+    )
+)
+def assert_num_workflow_executions_in_phase(
+    user, users, host, hosts, space, spaces, phase, num: int
+):
+    executions = list_workflow_executions(
+        user, users, host, hosts, space, spaces, phase=phase
+    )
+    if len(executions) != num:
+        raise AssertionError(
+            f"Expected {num} of workflows executions to be in "
+            f"phase {phase}, but there are {len(executions)}"
+        )
+
+
+@wt(
+    parsers.parse(
         "using REST, {user} sees successful execution of all workflows in {host}"
     )
 )
@@ -276,7 +560,37 @@ def assert_successful_workflow_executions(
         if mes["status"] != "finished":
             err_msgs.append((workflow_executions[wid], mes["status"]))
     if any(err_msgs):
-        raise RuntimeError(f"workflows: {err_msgs} did not finish successfully")
+        raise AssertionError(f"workflows: {err_msgs} did not finish successfully")
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} sees there are {num} workflow executions "
+        'of status "{status}" on space "{space}" in {host}'
+    )
+)
+@wt(
+    parsers.parse(
+        "using REST, {user} sees there is {num} workflow execution "
+        'of status "{status}" on space "{space}" in {host}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_num_workflow_executions_in_status(
+    user, users, host, hosts, status, num: int, workflow_executions
+):
+    executions = []
+    for wid in workflow_executions.keys():
+        mes = get_workflow_execution_details(
+            user, users, host, hosts, wid, details=["name", "status"]
+        )
+        if mes["status"] == status:
+            executions.append((workflow_executions[wid], mes["status"]))
+    if len(executions) != num:
+        raise AssertionError(
+            f"Expected {num} of workflows executions to be of "
+            f"status {status}, but there are {len(executions)}"
+        )
 
 
 def list_workflow_executions(
@@ -288,6 +602,83 @@ def list_workflow_executions(
         spaces[space], phase=phase, limit=limit
     )
     return response.atm_workflow_executions
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} sees following "{workflow_name}" '
+        "workflow execution details in {host}:\n{config}"
+    )
+)
+def assert_workflow_execution_details(
+    user, users, host, hosts, workflow_name, workflow_executions, inventories, config
+):
+    data = yaml.load(config, yaml.Loader)
+
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    for key, val in data.items():
+        if "$(resolve_user_id" in val:
+            val = val.replace("$(resolve_user_id ", "").replace(")", "")
+            val = users[val].user_id
+        elif "$(resolve_inventory_id" in val:
+            val = val.replace("$(resolve_inventory_id ", "").replace(")", "")
+            val = inventories[val]
+        err_msg = f"Value of {key} is expected to be {val}, but got {details[key]}"
+        assert details[key] == val, err_msg
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} sees that iteratedStoreId is the same "
+        'as the exceptionStoreId from previous run in "{workflow_name}" '
+        "workflow execution details in {host}"
+    )
+)
+def compare_stores_id_after_retry_from_workflow_execution_details(
+    user, users, host, hosts, workflow_name, workflow_executions
+):
+    wid = get_workflow_execution_id(workflow_name, workflow_executions)
+    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    # first run
+    exception_store_id = details["lanes"][0]["runs"][1]["exceptionStoreId"]
+    # second run
+    iterated_store_id = details["lanes"][0]["runs"][0]["iteratedStoreId"]
+    err_msg = (
+        f"Exception store id from previous run {exception_store_id} "
+        f"should be the same as iterated store id {iterated_store_id}"
+    )
+    assert exception_store_id == iterated_store_id, err_msg
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} sees the resource not found error when "
+        'trying to get "{workflow_name}" workflow execution '
+        "details in {host}"
+    )
+)
+def fail_to_get_workflow_execution_details(
+    user, users, host, hosts, workflow_name, workflow_executions
+):
+    try:
+        wid = get_workflow_execution_id(workflow_name, workflow_executions)
+        _ = get_workflow_execution_details(user, users, host, hosts, wid)
+        raise AssertionError(
+            "Expected to get error 404 workflow not found, but succeed"
+        )
+    except HTTPNotFound as e:
+        if e.status_code == 404:
+            return
+        raise
+
+
+def get_workflow_execution_id(workflow_name, workflow_executions):
+    return [
+        wid
+        for wid in workflow_executions.keys()
+        if workflow_name in workflow_executions[wid].keys()
+    ][0]
 
 
 def get_workflow_execution_details(
