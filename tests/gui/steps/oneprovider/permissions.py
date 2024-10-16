@@ -435,9 +435,7 @@ def check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modal
 
 
 @wt(
-    parsers.re(
-        r'user of (?P<browser_id>\w+) sees "no access" tag on "(?P<item_name>.*)"'
-    )
+    parsers.re(r'user of (?P<browser_id>\w+) sees "no access" tag on (?P<item_name>.*)')
 )
 def assert_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
