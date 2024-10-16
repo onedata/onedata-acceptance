@@ -235,21 +235,3 @@ def docker_ls(path, hosts):
     except Exception:
         pass
     return files
-
-
-from tests.utils.onenv_utils import run_onenv_command
-# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test
-@wt(parsers.parse('elasticsearch plugin stops working'))
-def pause_elasticsearch_container(hosts):
-    import pdb
-    pdb.set_trace()
-    container_id = hosts['elasticsearch']['container-id']
-    run_onenv_command('service', ['stop', 'elasticsearch'])
-
-
-# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test
-@wt(parsers.parse('elasticsearch plugin starts working'))
-def unpause_elasticsearch_container(hosts):
-    run_onenv_command('service', ['start', 'elasticsearch'])

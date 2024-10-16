@@ -11,6 +11,7 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from tests.utils.onenv_utils import run_onenv_command
 
 
 @wt(parsers.parse('user of {browser_id} {action} Public toggle on '
@@ -115,3 +116,13 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page,
     assert actual_conf == configuration, (f'Actual injected plugin config is '
                                           f'{actual_conf} when expected '
                                           f'{configuration}')
+
+
+@wt(parsers.parse('elasticsearch plugin stops working'))
+def pause_elasticsearch_container():
+    run_onenv_command('service', ['stop', 'elasticsearch'])
+
+
+@wt(parsers.parse('elasticsearch plugin starts working'))
+def unpause_elasticsearch_container():
+    run_onenv_command('service', ['start', 'elasticsearch'])
