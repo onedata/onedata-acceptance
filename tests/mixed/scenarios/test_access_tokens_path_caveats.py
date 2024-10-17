@@ -15,6 +15,7 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.oneprovider_common import *
+from tests.gui.steps.onezone.tokens import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.group_basic import *
 from tests.mixed.steps.onepanel_basic import *

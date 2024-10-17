@@ -308,8 +308,8 @@ class PrivilegeTree(PageObject):
     def wait_for_load_privileges(self):
         for _ in range(50):
             try:
-                assert self.spinner.is_displayed()
+                self.spinner  # pylint: disable=pointless-statement
                 time.sleep(0.1)
-            except (AssertionError, RuntimeError):
+            except RuntimeError:
                 return
         raise RuntimeError("Did not manage to set privileges, exceeded loading time")
