@@ -2,14 +2,13 @@
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.utils.core.web_elements import WebItem, Button, Input, Label
-from ... import PublicShareView
-from ...core import scroll_to_css_selector_bottom
-from ...core.base import PageObject
 from selenium.webdriver.common.by import By
+from tests.gui.utils.core import scroll_to_css_selector_bottom
+from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_elements import Button, Input, Label, WebItem
+from tests.gui.utils.oneprovider.shares.public_share import PublicShareView
 
 
 class DublinCoreMetadata(PageObject):
@@ -23,36 +22,36 @@ class DublinCoreMetadata(PageObject):
         inputs[-1].send_keys(val)
 
     def click_add_button(self, button_name):
-        buttons = self.driver.find_elements(By.CSS_SELECTOR,
-                                            '.btn-add-entry .text')
+        buttons = self.driver.find_elements(By.CSS_SELECTOR, ".btn-add-entry .text")
         for button in buttons:
             if button.text == button_name:
-                css_sel = '.metadata-text .one-icon'
+                css_sel = ".metadata-text .one-icon"
                 scroll_to_css_selector_bottom(self.driver, css_sel)
                 button.click()
                 break
         else:
-            raise Exception(f'{button_name} was not found in '
-                            f'"Dublin Core Metadata" form')
+            raise RuntimeError(
+                f'{button_name} was not found in "Dublin Core Metadata" form'
+            )
 
 
 class Description(PageObject):
-    create_description = Button('.btn-content-info')
-    description_field = Input('.textarea-source-editor')
-    save = Button('.btn-primary')
+    create_description = Button(".btn-content-info")
+    description_field = Input(".textarea-source-editor")
+    save = Button(".btn-primary")
 
 
 class PrivateShareView(PublicShareView):
-    dublin_core_metadata_form = WebItem('.opendata-one-carousel',
-                                        cls=DublinCoreMetadata)
-    description_form = WebItem('.content-space-shares', cls=Description)
+    dublin_core_metadata_form = WebItem(
+        ".opendata-one-carousel", cls=DublinCoreMetadata
+    )
+    description_form = WebItem(".content-space-shares", cls=Description)
 
-    choose_a_handle_service = Button('.select-handle-service')
-    choose_a_metadata_type = Button('.select-metadata-type')
-    proceed = Button('.btn-content-info')
-    publish_as_open_data = Button('.btn-submit')
-    link_name = Label('.ember-power-select-selected-item')
+    choose_a_handle_service = Button(".select-handle-service")
+    choose_a_metadata_type = Button(".select-metadata-type")
+    proceed = Button(".btn-content-info")
+    publish_as_open_data = Button(".btn-submit")
+    link_name = Label(".ember-power-select-selected-item")
 
     def __str__(self):
-        return 'Private Share View'
-
+        return "Private Share View"

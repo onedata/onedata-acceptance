@@ -36,7 +36,10 @@ sources_info.yaml
 .DS_Store
 
 # VSCode
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
 
 # Emacs
 *~

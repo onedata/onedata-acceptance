@@ -1,0 +1,22 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+fast = true
+include = '\.pyi?$'
+# 'extend-exclude' excludes files or directories in addition to the defaults
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+(
+  | gui/utils/__init__\.py
+)
+'''
+preview = true
+enable-unstable-feature = ["string_processing"]
+
+[tool.isort]
+py_version = 312
+profile = "black"                  # Use Black's import style
+line_length = 88                   # Maximum line length for imports
+overwrite_in_place = true
+skip = ["tests/gui/utils/__init__.py"]

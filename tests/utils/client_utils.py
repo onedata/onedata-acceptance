@@ -303,6 +303,9 @@ class Client:
 
         return None if output else proc.returncode
 
+    def get_mount_path(self):
+        return self._mount_path
+
 
 def user_home_dir(user='root'):
     return os.path.join('/home', user)
