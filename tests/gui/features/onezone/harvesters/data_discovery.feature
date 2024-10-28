@@ -327,7 +327,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     And user of browser sees that ["file1_3", "file3_3"] items are not selected in file browser
 
 
-   Scenario: Data could not be presented when elasticsearch does not respond
+  Scenario: User cannot see data when elasticsearch stops working and when it starts again user can see previous data
     Given space "space2" belongs to "harvester1" harvester of user admin
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees only following files in Data discovery page:
@@ -347,7 +347,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
             - space2
 
     And elasticsearch plugin stops working
-    And user of browser is idle for 2 seconds
+    And user of browser is idle for 120 seconds
     And user of browser clicks "Query" button on Data discovery page
     Then user of browser sees "This resource could not be loaded." alert on Data discovery page
 

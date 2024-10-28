@@ -13,6 +13,7 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.utils.environment_utils import run_kubectl_command, run_onenv_command
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page"))
@@ -271,9 +272,12 @@ def choose_sorting_parameter_or_order(
 def wait_for_harvester_page_after_restart_es(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     page = data_discovery(driver)
-    for _ in range(120):
+    for _ in range(60 * 10):  # wait up to 10 min
         try:
             _ = page.error_message
             time.sleep(1)
         except RuntimeError:
             return
+    # prints for debug
+    print(run_kubectl_command("get", ["pods"]))
+    raise AssertionError("Elasticsearch did not start successfully")
