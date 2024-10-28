@@ -12,8 +12,8 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.environment_utils import run_kubectl_command
 from tests.utils.utils import repeat_failed
-from tests.utils.environment_utils import run_kubectl_command, run_onenv_command
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page"))
