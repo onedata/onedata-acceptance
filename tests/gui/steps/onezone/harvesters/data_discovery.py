@@ -7,7 +7,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -266,7 +267,7 @@ def choose_sorting_parameter_or_order(
     data_discovery(driver).choose_item(parameter)
 
 
-@wt(parsers.parse('user of {browser_id} waits for data discovery page to be available'))
+@wt(parsers.parse("user of {browser_id} waits for data discovery page to be available"))
 def wait_for_harvester_page_after_restart_es(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     page = data_discovery(driver)
