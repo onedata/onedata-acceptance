@@ -43,6 +43,8 @@ stages:
       final: false
       jobs:
         - _Codetag Tracker
+        - _Autoformatter check
+        - _Static analysis
         - authorization
         - directory CRUD
         - directory CRUD hardlinks
@@ -255,6 +257,28 @@ _Codetag Tracker:
         description: Codetag Tracker
   requirements: []
   artifact-subscriptions: []
+
+_Autoformatter check:
+  key: BLFR
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make black-check
+        description: Black formatting
+
+_Static analysis:
+  key: STAN
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make static-analysis
+        description: Static analysis
 
 authorization: &acceptance-oneclient-tests-job
   key: AUT

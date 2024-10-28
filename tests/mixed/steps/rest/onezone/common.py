@@ -4,12 +4,11 @@ REST API.
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = ("This software is released under the MIT license cited in "
-               "LICENSE.txt")
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from onezone_client import (ProviderApi, UserApi,
-                            GroupApi, SpaceApi)
+from onezone_client import GroupApi, ProviderApi, SpaceApi, UserApi
+
 
 def get_provider_with_name(client, provider_name):
     provider_api = ProviderApi(client)
@@ -19,8 +18,7 @@ def get_provider_with_name(client, provider_name):
         provider = provider_api.get_provider_details(pid)
         if provider.name == provider_name:
             return provider
-    else:
-        return None
+    return None
 
 
 def get_user_space_with_name(client, space_name):
@@ -30,8 +28,7 @@ def get_user_space_with_name(client, space_name):
         space = user_api.get_user_space(sid)
         if space.name == space_name:
             return space
-    else:
-        return None
+    return None
 
 
 def get_space_with_name(client, space_name):
@@ -41,8 +38,7 @@ def get_space_with_name(client, space_name):
         space = space_api.get_space(sid)
         if space.name == space_name:
             return space
-    else:
-        return None
+    return None
 
 
 def get_group(group_name, user_client):
@@ -52,5 +48,4 @@ def get_group(group_name, user_client):
         g = group_api.get_group(group)
         if g.name == group_name:
             return g
-    else:
-        return None
+    return None

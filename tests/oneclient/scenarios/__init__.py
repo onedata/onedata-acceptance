@@ -2,7 +2,7 @@
 onedata. Files contains mapping to .feature files from tests/acceptance/features
 that define tests scenarios.
 """
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"

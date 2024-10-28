@@ -1,7 +1,5 @@
-"""Meta steps for operations in Onezone
-"""
+"""Meta steps for operations in Onezone"""
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
-__license__ = ("This software is released under the MIT license cited in "
-               "LICENSE.txt")
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
