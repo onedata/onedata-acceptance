@@ -352,7 +352,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     Then user of browser sees "This resource could not be loaded." alert on Data discovery page
 
     And elasticsearch plugin starts working
-    And user of browser is idle for 5 seconds
+    And user of browser waits for data discovery page to be available
     And user of browser clicks "Query" button on Data discovery page
     And user of browser sees Data Discovery page
     And user of browser sees only following files in Data discovery page:

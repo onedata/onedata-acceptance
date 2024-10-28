@@ -394,10 +394,12 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
 
 
 def parse_elasticsearch_cfg(pod_cfg, hosts):
-    ip, container_id = (pod_cfg.get('ip'),
-                        pod_cfg.get('container-id'))
+    ip, container_id, name = (pod_cfg.get('ip'),
+                                pod_cfg.get('container-id'),
+                                pod_cfg.get('name'))
     hosts['elasticsearch'] = {'ip': ip,
-                              'container-id': container_id}
+                              'container-id': container_id,
+                              'name': name}
 
 
 def add_etc_hosts_entries(service_ip, service_host):
