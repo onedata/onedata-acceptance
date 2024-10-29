@@ -78,7 +78,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
 
     And user of browser_user1 clicks on Data in the main menu
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Overview" of "space1" space in the sidebar
+    And user of browser_user1 clicks "Overview" of "space1" space in the sidebar
     And user of browser_user1 writes "space2" into rename space text field
     And user of browser_user1 confirms rename the space using confirmation button
     Then user of browser_user1 sees that error modal with text "Changing name failed" appeared

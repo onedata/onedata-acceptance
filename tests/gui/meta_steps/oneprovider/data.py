@@ -1098,6 +1098,12 @@ def get_file_id_from_details_modal(
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, "file_id", modal_name, modals)
+
+    try:
+        click_modal_button(selenium, browser_id, "x", modal_name, modals)
+    except RuntimeError:
+        pass
+
     return clipboard.paste(display=displays[browser_id])
 
 
