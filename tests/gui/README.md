@@ -80,8 +80,8 @@ happening "live" in your browser.
 
 ### Prerequisites
 
-* **Python 3.8:**
-  we recommend using Python 3.8. Python 3.7 and Python 3.6 are also supported.
+* **Python 3.12:**
+  we recommend using Python 3.12. Python 3.8 and newer are also supported.
 
 * **required Python packages:** [tests/gui/requirements.txt](requirements.txt).
   To install Python dependencies run (invoke from repo root):
