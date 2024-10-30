@@ -421,3 +421,18 @@ def assert_qos_status_in_browser(
         assert "qos-status-impossible" in vis_status.get_attribute("class"), err_msg
     elif status.lower() == "fulfilled":
         assert "qos-status-fulfilled" in vis_status.get_attribute("class"), err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on status in QoS column '
+        'for "{item_name}" in {which_browser}'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_qos_status_in_browser(
+    selenium, browser_id, op_container, item_name, which_browser
+):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    getattr(browser.data[item_name], "qos_status").click()
