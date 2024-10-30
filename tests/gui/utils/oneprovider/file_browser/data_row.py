@@ -30,7 +30,7 @@ class DataRow(BrowserRow):
     _status_tag = WebElement(".file-status-tag")
     shared_tag = WebElement(".file-status-shared")
     metadata_tag = WebElement(".file-status-metadata")
-    qos_tag = WebElement(".file-status-qos")
+    qos_tag = WebElement(".qos-status-icon")
     dataset_tag = WebElement(".file-status-dataset")
     inherited_tag = WebElement(".item-inheritance-icon")
     data_protected_tag = WebElement(".file-data-protected-icon")
