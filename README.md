@@ -19,7 +19,7 @@ As the testing framework, `pytest` with `pytest-bdd` extension is used.
 
 # Prerequisites
 
-* python 3.6+ (3.8+ is recommended)
+* python 3.8+ (3.12+ is recommended)
 * docker
 * kubernetes cluster (e.g. minikube)
 
@@ -122,6 +122,7 @@ Example of a 2 provider deployment with specified onezone and oneprovider images
 * `-k="test_posix_storage_operations"` - used to select specific test, runs tests 
   which contain names that match given string expression (case-insensitive). For more
   information see: [pytest documentation](https://docs.pytest.org/en/6.2.x/usage.html#specifying-tests-selecting-tests).
+* `--pdb` - used to run the pdb debugger just after encountering a failure. For more information see: [pytest documentation](https://docs.pytest.org/en/stable/how-to/failures.html)
 * `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient service docker image
 * `--sources` - optional, if used, Onedata deployment starts using sources. Sources have
   to be located in appropriate directories.

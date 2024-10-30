@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import copy
 import os
 import re
+import warnings
 from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -658,6 +659,20 @@ def format_log(log):
 def extract_timestamp(filename):
     s = re.findall(r"\d+\.\d+$", filename)
     return float(s[0]) if s else -1
+
+
+@pytest.fixture(autouse=True)
+def capture_all_warnings():
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        yield w
+
+        with open("warnings.log", "a") as log_file:
+            for warning in w:
+                log_file.write(
+                    f"{warning.filename}:{warning.lineno}: {warning.category.__name__}:"
+                    f" {warning.message}\n"
+                )
 
 
 # =============================================================================
