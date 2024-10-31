@@ -425,7 +425,7 @@ def assert_qos_status_in_browser(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on status in QoS column '
+        "user of {browser_id} clicks on status in QoS column "
         'for "{item_name}" in {which_browser}'
     )
 )
