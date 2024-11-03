@@ -409,7 +409,7 @@ ACL two entries:
 
 Api file details:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CATE
+  key: CAFD
   tasks:
     - script: *clear-env
     - script: *restart-minikube
