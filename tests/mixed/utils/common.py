@@ -5,6 +5,9 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import subprocess as sp
+
+import yaml
 from tests import (
     CDMI_REST_PATH_PREFIX,
     OZ_REST_PATH_PREFIX,
@@ -110,3 +113,34 @@ def login_to_provider(username, users, host, access_token=None):
 def send_copied_token_to_other_user(sender, receiver, tmp_memory):
 
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
+
+
+@wt(parsers.parse("user of {browser_id} executes copied command"))
+def execute_copied_command_rest(browser_id, displays, clipboard, tmp_memory):
+    cmd = clipboard.paste(display=displays[browser_id])
+    cmd += " -k"  # ignore ssl certs
+    output = sp.run(
+        cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
+    )
+    tmp_memory["output"] = output.stdout
+
+
+@wt(parsers.parse("{user} sees that output of executed command contains:\n{config}"))
+def assert_command_output_contains(tmp_memory, config):
+    output = tmp_memory["output"]
+    output = yaml.load(output, yaml.Loader)
+    expected = yaml.load(config, yaml.Loader)
+    for k, v in expected.items():
+        err_msg = f"expected command output to contain {k}: {v}, but got {output[k]}"
+        assert output[k] == v, err_msg
+
+
+@wt(
+    parsers.parse(
+        '{user} sees that output of executed command is equal to: "{expected_output}"'
+    )
+)
+def assert_command_output_equals(tmp_memory, expected_output):
+    output = tmp_memory["output"]
+    err_msg = f"expected command output to be {expected_output}, but got {output}"
+    assert expected_output == output, err_msg
