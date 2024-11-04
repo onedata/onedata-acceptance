@@ -6,9 +6,14 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import json
+
+import requests
+from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.environment_utils import get_pods_config, run_kubectl_command
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
 
@@ -149,5 +154,32 @@ def pause_elasticsearch_container():
 
 
 @wt(parsers.parse("elasticsearch plugin starts working"))
-def unpause_elasticsearch_container():
+def unpause_elasticsearch_container(hosts):
     run_onenv_command("service", ["start", "elasticsearch"])
+    # Necessary for pod to reach 1/1 running status
+    set_elasticsearch_replicas_number(hosts)
+
+
+def set_elasticsearch_replicas_number(hosts):
+    wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
+    pods = get_pods_config()
+    es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]
+    hosts["elasticsearch"]["ip"] = es_pod["ip"]
+    response = requests.put(
+        f"http://{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}/_settings?pretty",
+        headers={
+            "content-type": "application/json",
+        },
+        json={"index.number_of_replicas": 0},
+        timeout=10,
+    )
+    return response
+
+
+@repeat_failed(timeout=60 * 4)
+def wait_for_pod_running_phase(pod_name):
+    out = run_kubectl_command(
+        "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
+    )
+    out = json.loads(out)
+    assert out["status"]["phase"] == "Running"
