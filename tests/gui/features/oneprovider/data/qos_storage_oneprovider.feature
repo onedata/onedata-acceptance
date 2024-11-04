@@ -29,7 +29,7 @@ Feature: Quality of Service tests for 1 provider using multiple browsers in Onep
     When user of browser_unified creates "type2=posix2" QoS requirement for "file1" in space "space1"
     And user of browser_unified enables only ["QoS"] column in columns configuration popover in file browser table
     And user of browser_unified sees "Impossible" status in QoS column for "file1" in file browser
-    And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified clicks on status in QoS column for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are impossible
     And user of browser_unified sees that no storage matches condition in QoS panel
     And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
