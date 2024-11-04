@@ -234,7 +234,7 @@ def rename_share_from_single_view(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} copies command "{command}" in api section from file'
+        'user of {browser_id} copies command "{command}" in API section from file'
         " details modal"
     )
 )

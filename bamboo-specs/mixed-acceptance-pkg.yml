@@ -63,7 +63,7 @@ stages:
         - Access tokens path caveats
         - ACL one entry
         - ACL two entries
-        - Api file details
+        - File details API
         - Archive privileges
         - Archives
         - Automation
@@ -408,7 +408,7 @@ ACL two entries:
         scripts:
           - make SUITE=test_acl_two_entries test_mixed_pkg
 
-Api file details:
+File details API:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAFD
   tasks:
@@ -422,7 +422,7 @@ Api file details:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_api_file_details test_mixed_pkg
+          - make SUITE=test_file_details_api test_mixed_pkg
 
 Archive privileges:
   <<: *acceptance-mixed-tests-in-chrome-job
