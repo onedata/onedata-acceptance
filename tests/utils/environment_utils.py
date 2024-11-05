@@ -25,6 +25,7 @@ from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces
                                     gen_gid)
 from tests.utils.user_utils import User, AdminUser
 from tests.utils.rest_utils import get_zone_rest_path, http_get
+from tests.utils.utils import repeat_failed
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = 'one-env'
@@ -456,3 +457,21 @@ def is_provider_online(admin_user, zone_hostname, provider):
                             'Content-Type': 'application/json'
                         })
     return json.loads(response.content)['online']
+
+
+@repeat_failed(timeout=60 * 4)
+def wait_for_pod_running_phase(pod_name):
+    out = run_kubectl_command(
+        "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
+    )
+    out = json.loads(out)
+    assert out["status"]["phase"] == "Running"
+
+
+@repeat_failed(timeout=60 * 4)
+def wait_for_pod_to_stop(pod_name):
+    try:
+        _ = run_kubectl_command("get", ["pod", pod_name], verbose=False)
+        raise AssertionError(f"pod: {pod_name} is still visible")
+    except OnenvError:
+        return

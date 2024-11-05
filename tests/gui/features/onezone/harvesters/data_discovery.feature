@@ -347,7 +347,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
             - space2
 
     And elasticsearch plugin stops working
-    And user of browser is idle for 10 seconds
+    And user of browser is idle for 2 seconds
     And user of browser clicks "Query" button on Data discovery page
     Then user of browser sees "This resource could not be loaded." alert on Data discovery page
 
