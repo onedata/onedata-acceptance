@@ -444,6 +444,8 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
 
 
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
+    # TODO: VFS-12424 Add class to fully-transitioned file details panel
+    time.sleep(3)
     actual = modals(selenium[browser_id]).details_modal.owner
     assert actual == owner, f"Expected {owner} as file owner but got {actual}"
 

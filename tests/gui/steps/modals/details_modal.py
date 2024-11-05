@@ -117,7 +117,7 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     # that the transition ended, so the tests could wait for it. For now, we can wait
     # some time to be sure, that animation has ended.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
-    sleep(2)
+    sleep(3)
     active_tab = getattr(
         modals(selenium[browser_id]), check_modal_name(transform(modal_name))
     ).active_tab
