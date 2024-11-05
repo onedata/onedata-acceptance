@@ -36,6 +36,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser writes "share_dir1" into text field in modal "Share / Publish directory"
     And user of browser clicks on "Create" button in modal "Share / Publish directory"
 
+    And user of browser_user1 sees that "Directory details" modal is opened on "Shares" tab
     And user of browser sees that item named "dir1" is shared 1 time in modal
     And user of browser clicks on "X" button in modal "Directory details"
 
@@ -61,6 +62,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on "Create another share" button in shares panel
     And user of browser writes "share2_dir1" into text field in modal "Share / Publish directory"
     And user of browser clicks on "Create" button in modal "Share / Publish directory"
+    And user of browser_user1 sees that "Directory details" modal is opened on "Shares" tab
     Then user of browser sees that item named "dir1" is shared 2 times in modal
 
     # open shares view
