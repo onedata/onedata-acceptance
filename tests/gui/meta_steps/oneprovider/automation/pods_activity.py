@@ -245,6 +245,8 @@ def assert_pod_name_for_task(
     button = "X"
     modal = "Function pods activity"
 
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
     click_on_task_in_lane(
         selenium, browser_id, op_container, lane, task, ordinal, click
     )

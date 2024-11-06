@@ -454,6 +454,7 @@ def execute_workflow(
         )
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
 
 @wt(
