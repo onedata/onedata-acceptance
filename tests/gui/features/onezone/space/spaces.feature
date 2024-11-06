@@ -21,6 +21,7 @@ Feature: Basic management of spaces
   Scenario Outline: User successfully renames space in space info tile
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
     And user of space_owner_browser confirms rename the space using <confirmation_method>
     Then user of space_owner_browser sees that "space2" has appeared on the spaces list in the sidebar
@@ -44,6 +45,7 @@ Scenario: User successfully renames space in the sidebar
   Scenario: User successfully cancels rename space
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
     And user of space_owner_browser clicks on cancel button on overview page
     Then user of space_owner_browser sees that "space1" has appeared on the spaces list in the sidebar

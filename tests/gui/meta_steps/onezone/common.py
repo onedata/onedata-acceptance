@@ -73,6 +73,9 @@ def login_using_gui(
         if test_type == "gui":
             selenium[browser] = selenium[user]
             selenium.pop(user, None)
+        # some mixed tests steps also use browser instances
+        elif test_type == "mixed":
+            selenium[browser] = selenium[user]
         tmp_memory[browser] = tmp_memory[user]
         displays[browser] = displays[user]
 

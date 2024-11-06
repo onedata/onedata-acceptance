@@ -75,7 +75,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
              View transfers: True
              Schedule replication: True
 
-    And user of browser_user1 is idle for 2 seconds
+    And user of browser_user1 refreshes site
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is "space1"
@@ -122,6 +122,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
                Schedule eviction: True
 
      And user of browser_user1 clicks on "X" button in modal "File details"
+     And user of browser_user1 refreshes site
      And user of browser_user1 clicks "Files" of "space1" space in the sidebar
      And user of browser_user1 sees file browser in files tab in Oneprovider page
      And user of browser_user1 sees file chunks for file "file1" as follows:

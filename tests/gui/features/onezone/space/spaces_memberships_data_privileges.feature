@@ -45,6 +45,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Read files: True
 
     # Non-space-owner checks if he can view file in file browser
+    And user of browser_user1 refreshes site
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     Then user of browser_user1 sees item(s) named dir1 in file browser
@@ -108,7 +109,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
            privilege subtypes:
              Manage shares: True
 
-    And user of browser_user1 is idle for 2 seconds
+    And user of browser_user1 refreshes site
     And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" file in file browser

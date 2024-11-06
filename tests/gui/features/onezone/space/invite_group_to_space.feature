@@ -50,6 +50,7 @@ Feature: Multi Browser invitation group to spaces
 
     # Space-owner-user renames space
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks "Overview" of "space1" space in the sidebar
     And user of space_owner_browser writes "space2" into rename space text field
     And user of space_owner_browser clicks on confirmation button on overview page
 

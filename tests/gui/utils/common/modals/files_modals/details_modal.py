@@ -40,6 +40,12 @@ class Hardlinks(PageObject):
         return "active" in self.tab.get_attribute("class")
 
 
+class ApiTab(PageObject):
+    tab = WebElement(".nav-link-apiSamples")
+    operations = WebElement(".api-command-type-selector-trigger")
+    copy_button = WebElement(".copy-btn")
+
+
 class Charts(PageObject):
     title = Label(".title-content")
     chart = WebElement(".chart")
@@ -92,6 +98,7 @@ class DetailsModal(Modal):
     shares = WebItem(".modal-content", cls=SharesTab)
     edit_permissions = WebItem(".modal-content", cls=EditPermissionsTab)
     data_distribution = WebItem(".modal-content", cls=DataDistributionTab)
+    api = WebItem(".modal-content", cls=ApiTab)
 
     def __str__(self):
         return "Details modal"
