@@ -111,13 +111,14 @@ def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, mod
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
-    # A hack to avoid browser crash when trying to get active tab, when file details
-    # panel is being animated. This strange bug in Google Chrome appears from version
-    # 128.0.6613.119. There are plans to add special class to the modal/panel saying
-    # that the transition ended, so the tests could wait for it. For now, we can wait
-    # some time to be sure, that animation has ended.
+    # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
+    # trying to get active tab, when file details panel is being animated. There are
+    # plans to add special class to the modal/panel saying that the transition ended, so
+    # the tests could wait for it. For now, we can wait some time to be sure, that
+    # animation has ended. However, this hack does not guarantee that the browser will
+    # not crash (although the probability is lower), so for now we use Chrome < 128.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
-    sleep(5)
+    sleep(2)
     active_tab = getattr(
         modals(selenium[browser_id]), check_modal_name(transform(modal_name))
     ).active_tab

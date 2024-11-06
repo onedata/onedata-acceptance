@@ -9,7 +9,8 @@ GIT_URL := $(shell if [ "${GIT_URL}" = "file:/" ]; then echo 'ssh://git@git.plgr
 ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL}; else echo ${ONEDATA_GIT_URL}; fi)
 export ONEDATA_GIT_URL
 
-ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v1.130
+# TODO: VFS-12424 Try latest Chrome (newer than 128.0.6613.86) with fix from this issue
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v1.125
 
 unpack = tar xzf $(1).tar.gz
 
