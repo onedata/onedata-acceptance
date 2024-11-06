@@ -230,3 +230,22 @@ def rename_share_from_single_view(
     )
     click_modal_button(selenium, browser_id, button, modal_name, modals)
     is_selected_share_named(selenium, browser_id, new_name, op_container)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} copies command "{command}" in API section from file'
+        " details modal"
+    )
+)
+def copy_command_from_api_in_file_details_modal(
+    modals, selenium, browser_id, command, popups
+):
+    driver = selenium[browser_id]
+    modal = modals(driver).details_modal
+    command = f"{command}\nREST"
+
+    modal.navigation["API"].click()
+    modal.api.operations.click()
+    popups(driver).power_select.choose_item(command)
+    modal.api.copy_button.click()
