@@ -39,6 +39,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 sees group "group1" on groups list
 
     And user of browser1 clicks "space1" on the spaces list in the sidebar
+    And user of browser1 clicks "Overview" of "space1" space in the sidebar
     And user of browser1 sees 1 direct, 1 effective groups and 1 direct, 2 effective users in space members tile
 
 
@@ -77,7 +78,7 @@ Feature: Joining a group in Onezone GUI
     Then user of browser1 sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on groups page
 
 
-  Scenario: User sees incrementatation of effective users and groups on space overview after a subgroup is added
+  Scenario: User sees incrementation of effective users and groups on space overview after a subgroup is added
     When user of browser1 creates group "group2"
     And user of space_owner_browser opens group "group1" members subpage
     And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
@@ -88,5 +89,6 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 adds group "group2" as subgroup using copied token
 
     And user of browser1 clicks "space1" on the spaces list in the sidebar
+    And user of browser1 clicks "Overview" of "space1" space in the sidebar
     Then user of browser1 sees 1 direct, 2 effective groups and 1 direct, 2 effective users in space members tile
 

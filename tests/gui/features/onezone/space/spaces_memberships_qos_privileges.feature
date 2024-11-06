@@ -49,6 +49,7 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
           QoS management:
             granted: True
 
+    And user of browser_user1 refreshes site
     Then user of browser_user1 creates "hello=WORLD" QoS requirement for "dir1" in space "space1"
 
 
