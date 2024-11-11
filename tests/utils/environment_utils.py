@@ -25,6 +25,7 @@ from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces
                                     gen_gid)
 from tests.utils.user_utils import User, AdminUser
 from tests.utils.rest_utils import get_zone_rest_path, http_get
+from tests.utils.utils import repeat_failed
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = 'one-env'
@@ -394,10 +395,14 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
 
 
 def parse_elasticsearch_cfg(pod_cfg, hosts):
-    ip, container_id = (pod_cfg.get('ip'),
-                        pod_cfg.get('container-id'))
+    ip, container_id, name, hostname = (pod_cfg.get('ip'),
+                                        pod_cfg.get('container-id'),
+                                        pod_cfg.get('name'),
+                                        pod_cfg.get('hostname'))
     hosts['elasticsearch'] = {'ip': ip,
-                              'container-id': container_id}
+                              'container-id': container_id,
+                              'name': name,
+                              'hostname': hostname}
 
 
 def add_etc_hosts_entries(service_ip, service_host):
@@ -452,3 +457,21 @@ def is_provider_online(admin_user, zone_hostname, provider):
                             'Content-Type': 'application/json'
                         })
     return json.loads(response.content)['online']
+
+
+@repeat_failed(timeout=60 * 4)
+def wait_for_pod_running_phase(pod_name):
+    out = run_kubectl_command(
+        "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
+    )
+    out = json.loads(out)
+    assert out["status"]["phase"] == "Running"
+
+
+@repeat_failed(timeout=60 * 4)
+def wait_for_pod_to_stop(pod_name):
+    try:
+        _ = run_kubectl_command("get", ["pod", pod_name], verbose=False)
+        raise AssertionError(f"pod: {pod_name} is still visible")
+    except OnenvError:
+        return

@@ -360,21 +360,3 @@ def docker_ls(path, hosts):
     except ValueError:
         pass
     return files
-
-
-# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test
-# @wt(parsers.parse('elasticsearch plugin stops working'))
-# def pause_elasticsearch_container(hosts):
-#     pause_cmd = ['docker', 'pause']
-#     container_id = hosts['elasticsearch']['container-id']
-#     subprocess.call(pause_cmd + [container_id])
-
-
-# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test
-# @wt(parsers.parse('elasticsearch plugin starts working'))
-# def unpause_elasticsearch_container(hosts):
-#     unpause_cmd = ['docker', 'unpause']
-#     container_id = hosts['elasticsearch']['container-id']
-#     subprocess.call(unpause_cmd + [container_id])

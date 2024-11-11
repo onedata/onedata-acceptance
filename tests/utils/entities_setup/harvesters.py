@@ -25,7 +25,7 @@ def create_harvesters_rest(user, harvesters_list, service, hosts, users,
     zone_hostname = hosts[service]['hostname']
     owner = users[user]
     plugin = 'elasticsearch_harvesting_backend'
-    endpoint = f'{hosts["elasticsearch"]["ip"]}:{ELASTICSEARCH_PORT}'
+    endpoint = f'{hosts["elasticsearch"]["name"]}:{ELASTICSEARCH_PORT}'
 
     for harvester in parse_seq(harvesters_list):
         _create_harvester(zone_hostname, owner.username, owner.password,

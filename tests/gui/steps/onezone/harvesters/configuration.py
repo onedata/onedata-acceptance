@@ -6,9 +6,19 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import time
+
+import requests
+from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.environment_utils import (
+    get_pods_config,
+    wait_for_pod_running_phase,
+    wait_for_pod_to_stop,
+)
+from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
 
 
@@ -140,3 +150,46 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page, configuration):
     assert (
         actual_conf == configuration
     ), f"Actual injected plugin config is {actual_conf} when expected {configuration}"
+
+
+@wt(parsers.parse("elasticsearch plugin stops working"))
+def pause_elasticsearch_container(hosts):
+    run_onenv_command("service", ["stop", "elasticsearch"])
+    wait_for_pod_to_stop(hosts["elasticsearch"]["hostname"].split(".")[0])
+
+
+@wt(parsers.parse("elasticsearch plugin starts working"))
+def unpause_elasticsearch_container(hosts):
+    run_onenv_command("service", ["start", "elasticsearch"])
+    # Necessary for pod to reach 1/1 running status
+    set_elasticsearch_replicas_number(hosts)
+
+
+def set_elasticsearch_replicas_number(hosts):
+    wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
+    pods = get_pods_config()
+    es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]
+    hosts["elasticsearch"]["ip"] = es_pod["ip"]
+    url = f"http://{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}/_settings?pretty"
+    # even after reaching running phase by pod, ip address may not be accessible,
+    # need to wait then
+    for _ in range(60 * 4):
+        try:
+            response = requests.put(
+                url,
+                headers={
+                    "content-type": "application/json",
+                },
+                json={"index.number_of_replicas": 0},
+                timeout=10,
+            )
+            break
+        except requests.exceptions.ConnectionError:
+            time.sleep(0.5)
+    else:
+        raise AssertionError(
+            "Did not manage to connect to elasticsearch ip:"
+            f" {hosts['elasticsearch']['ip']}"
+        )
+    response.raise_for_status()
+    return response

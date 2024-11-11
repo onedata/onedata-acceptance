@@ -26,7 +26,7 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
     _wait_for_files_list(selenium, browser_id, data_discovery)
 
 
-@repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
+@repeat_failed(timeout=WAIT_BACKEND * 4, interval=1.5)
 def _wait_for_files_list(selenium, browser_id, data_discovery):
     button_name = "Query"
 
