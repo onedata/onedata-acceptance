@@ -180,10 +180,14 @@ def remove_spaces_in_oz_using_gui(
 def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, new_names_list):
     where = "spaces"
     option = "enter"
+    option_in_submenu = "overview"
 
     for space_name, new_space_name in zip(
         parse_seq(space_list), parse_seq(new_names_list)
     ):
+        click_on_option_of_space_on_left_sidebar_menu(
+            selenium, user, space_name, option_in_submenu, oz_page
+        )
         click_element_on_lists_on_left_sidebar_menu(
             selenium, user, where, space_name, oz_page
         )
