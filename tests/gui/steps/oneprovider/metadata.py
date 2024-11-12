@@ -7,13 +7,9 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-import time
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import (
-    press_backspace_on_active_element,
-    press_tab_on_active_element,
-)
+from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -204,21 +200,10 @@ def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name, modals
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name, modals):
-    modal = modals(selenium[browser_id]).details_modal.metadata
+    driver = selenium[browser_id]
+    modal = modals(driver).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
-    if tab.text_area or len(tab.lines) > 1:
-        while tab.text_area or len(tab.lines) > 1:
-            tab.area.click()
-            with tab.select_lines() as selector:
-                selector.backspace_down()
-                selector.backspace_down()
-
-        # when deleting all text with backspace button does not activate
-        # so the trick is that last sign is deleted after a moment
-        tab.text_area = " "
-        time.sleep(0.5)
-        tab.area.click()
-        press_backspace_on_active_element(selenium, browser_id)
+    tab.clear_editor()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))

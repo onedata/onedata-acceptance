@@ -520,13 +520,25 @@ def upload_file_to_cwd_in_data_tab_no_waiting(
         raise RuntimeError(f"file {file} does not exist")
 
 
-def network_throttling_upload(driver):
+@wt(parsers.parse("user of {browser_id} sets slow upload network conditions"))
+def network_throttling_upload(selenium, browser_id):
+    driver = selenium[browser_id]
     upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
         latency=5,
         download_throughput=500 * 1024,
         upload_throughput=float(upload_kb) / 8 * 1024,
+    )
+
+
+@wt(parsers.parse("user of {browser_id} sets normal network conditions"))
+def network_normal_conditions(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=500 * 1024,
+        upload_throughput=500 * 1024,
     )
 
 
@@ -542,7 +554,7 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
     selenium, browser_id, file_path, tmpdir, op_container, popups
 ):
     driver = selenium[browser_id]
-    network_throttling_upload(driver)
+    network_throttling_upload(selenium, browser_id)
     file = tmpdir.join(browser_id, file_path)
     if file.isfile():
         op_container(driver).file_browser.upload_files(upload_file_path(file))

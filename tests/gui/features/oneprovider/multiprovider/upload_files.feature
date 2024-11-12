@@ -62,8 +62,10 @@ Feature: Uploading files to multiple providers
     # upload file and cancel
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir without waiting for upload to finish
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
+    And user of browser sets slow upload network conditions
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
+    And user of browser sets normal network conditions
     And user of browser waits for file uploads to finish
 
     # Go to uploads and see that there is only 200 files
@@ -74,4 +76,5 @@ Feature: Uploading files to multiple providers
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
     And user of browser scrolls to the bottom of file browser and sees there are 200 files

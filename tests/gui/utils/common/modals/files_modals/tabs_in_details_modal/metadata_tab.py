@@ -57,6 +57,12 @@ class AceEditorMetadataPanel(PageObject):
         yield action
         action.perform()
 
+    def clear_editor(self):
+        script = (
+            "ace.edit(document.querySelector('.ember-ace > .ace_editor')).setValue('')"
+        )
+        self.driver.execute_script(script)
+
 
 class JSONMetadataPanel(AceEditorMetadataPanel):
     text_area = AceEditor(".file-metadata-json")
