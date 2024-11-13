@@ -32,6 +32,8 @@ sources_info.yaml
 
 .gitmodules
 
+warnings.log
+
 # OSX
 .DS_Store
 
@@ -39,7 +41,6 @@ sources_info.yaml
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
-
 
 # Emacs
 *~

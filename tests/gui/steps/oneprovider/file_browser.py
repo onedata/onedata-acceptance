@@ -15,6 +15,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
@@ -444,6 +445,7 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
 
 
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
+    assert_tab_in_modal(selenium, browser_id, "Info", modals, "File details")
     actual = modals(selenium[browser_id]).details_modal.owner
     assert actual == owner, f"Expected {owner} as file owner but got {actual}"
 
