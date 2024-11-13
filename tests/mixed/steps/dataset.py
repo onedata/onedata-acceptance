@@ -21,6 +21,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
     set_protection_flags_for_dataset_in_op_gui,
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
+from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,
@@ -287,6 +288,10 @@ def check_dataset_structure_in_op(
     # fail if there are more datasets
     client_lower = client.lower()
     if client_lower == "web gui":
+        option_in_submenu = "datasets, archives"
+        click_on_option_of_space_on_left_sidebar_menu(
+            selenium, user, space_name, option_in_submenu, oz_page
+        )
         assert_space_content_in_op_gui(
             config,
             selenium,
