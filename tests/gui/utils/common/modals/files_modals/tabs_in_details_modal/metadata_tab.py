@@ -57,9 +57,10 @@ class AceEditorMetadataPanel(PageObject):
         yield action
         action.perform()
 
-    def clear_editor(self):
+    def clear_editor(self, metadata_type):
         script = (
-            "ace.edit(document.querySelector('.ember-ace > .ace_editor')).setValue('')"
+            f"ace.edit(document.querySelector('.file-metadata-{metadata_type} "
+            ".ember-ace > .ace_editor')).setValue('')"
         )
         self.driver.execute_script(script)
 

@@ -203,7 +203,7 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name, modals)
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
-    tab.clear_editor()
+    tab.clear_editor(tab_name.lower())
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
