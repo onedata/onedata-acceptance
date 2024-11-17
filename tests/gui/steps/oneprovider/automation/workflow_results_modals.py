@@ -83,7 +83,7 @@ def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
             option.click()
             break
     else:
-        raise Exception(
+        raise RuntimeError(
             f'There is no {resolution} in time resolution list in modal "{modal}".'
         )
 
@@ -131,7 +131,7 @@ def assert_number_of_proceeded_files(
                 assert value[0] == float(number), err_msg
             break
     else:
-        raise Exception(
+        raise RuntimeError(
             f"There is no {option} processing speed on chart with processing stat."
         )
 
@@ -219,10 +219,10 @@ def compare_array_in_store_details_modal(modal, item_list):
         " of element in array does not"
         f" match actual: {actual_num}"
     )
-    for i in range(len(item_list)):
+    for i, item in enumerate(item_list):
         actual_elem = modal.array_view.items[i].text
-        assert str(item_list[i]) == actual_elem, (
-            f"element {item_list[i]} does not match actual element "
+        assert str(item) == actual_elem, (
+            f"element {item} does not match actual element "
             f"{actual_elem} on {i} position in array in store details "
             "modal"
         )
@@ -239,7 +239,7 @@ def open_raw_view_for_elem(store_content_list, index, modal):
             if modal.single_file_container.name != "":
                 break
     else:
-        raise Exception(
+        raise RuntimeError(
             f"Did not manage to open raw view for {index} element in store content list"
         )
 

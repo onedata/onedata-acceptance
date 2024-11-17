@@ -183,6 +183,6 @@ black-check:
 ##
 
 static-analysis:
-	$(LINTER_DOCKER_RUN) pylint $(ALL_FILES) --output-format=colorized --recursive=y --rcfile=tests/configs/.pylintrc
-	$(LINTER_DOCKER_RUN) pylint $(ALL_CONFTEST_FILES) --output-format=colorized --recursive=y \
+	$(LINTER_DOCKER_RUN) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
+	$(LINTER_DOCKER_RUN) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc

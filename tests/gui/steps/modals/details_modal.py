@@ -75,7 +75,9 @@ def assert_tooltip_on_chart_in_modal(browser_id, selenium, popups):
     try:
         datetime.strptime(header, "%H:%M %d/%m/%Y")
     except ValueError:
-        raise Exception("Header: {header} of tooltip does not have date format")
+        raise ValueError(
+            f"Header: {header} of tooltip does not have date format"
+        ) from ValueError
 
 
 @wt(
@@ -143,7 +145,7 @@ def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
     ).edit_permissions.is_hidden(elem_name)
     assert (
         not posix_hidden
-    ), f'sees that "Permissions" panel is not opened on "POSIX" tab'
+    ), 'sees that "Permissions" panel is not opened on "POSIX" tab'
 
 
 @wt(

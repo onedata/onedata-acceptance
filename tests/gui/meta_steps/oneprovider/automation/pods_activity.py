@@ -106,7 +106,7 @@ def gather_events_list(modal, driver, option):
     parsers.re(
         "user of (?P<browser_id>.*) sees events in modal "
         '"Function pods activity" with following '
-        "(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
+        r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -129,7 +129,7 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events, option):
         "user of (?P<browser_id>.*) sees events in modal "
         '"Function pods activity" that contains lambda name '
         '"(?P<lambda_name>.*)" and following '
-        "(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
+        r"(?P<option>reason|message)s:\n(?P<events>(.|\s)*)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -156,7 +156,7 @@ def assert_events_containing_lambda_name(
                 break
 
         err_msg = f"{option}: {event} that contains {lambda_name} has not been found"
-        assert matching != [], err_msg
+        assert matching, err_msg
 
 
 def get_lambda_name(events):
@@ -169,6 +169,7 @@ def get_lambda_name(events):
                 .split(" + ")[0]
             )
             return lambda_name
+    raise ValueError("lambda name not found")
 
 
 @wt(
@@ -177,7 +178,7 @@ def get_lambda_name(events):
         '(?P<option>reason|message)s for task "(?P<task>.*)" in '
         '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
         "(?P<if_finished>after workflow execution is finished|during "
-        "workflow execution):\n(?P<events>(.|\s)*)"
+        r"workflow execution):\n(?P<events>(.|\s)*)"
     )
 )
 def checks_events_for_task(

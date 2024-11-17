@@ -17,7 +17,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import Modals as modals
+from tests.gui.meta_steps.oneprovider.data import (  # pylint: disable=cyclic-import
+    get_item_name_and_containing_dir_path,
+)
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -30,22 +32,21 @@ in_type_to_id = {
 
 def check_modal_name(modal_name):
     modal_name = transform(modal_name)
-    if "remove" in modal_name:
-        return "remove_modal"
-    elif "leave" in modal_name:
-        return "leave_modal"
-    elif "add_one" in modal_name:
-        return "add_one_of_elements"
-    elif "rename" in modal_name:
-        return "rename_modal"
-    elif "invite" in modal_name:
-        return "invite_using_token"
-    elif modal_name in ["file_details", "directory_details"]:
-        return "details_modal"
-    elif "share" in modal_name:
-        return "share"
-    else:
-        return modal_name
+    # dict mapping part of the modal name into the used modal name in tests
+    s = {
+        "remove": "remove_modal",
+        "leave": "leave_modal",
+        "add_one": "add_one_of_elements",
+        "rename": "rename_modal",
+        "invite": "invite_using_token",
+        "file_details": "details_modal",
+        "directory_details": "details_modal",
+        "share": "share",
+    }
+    for k, v in s.items():
+        if k in modal_name:
+            return v
+    return modal_name
 
 
 @wt(parsers.parse('user of {browser_id} sees that modal "Add storage" has appeared'))
@@ -107,7 +108,7 @@ def _find_modal(driver, modal_name):
             "create",
             "unlink",
         ]
-        if any([name for name in elements_list if name in modal_name.lower()]):
+        if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(
                 By.CSS_SELECTOR, ".modal, .modal .modal-header h1"
             )
@@ -121,6 +122,7 @@ def _find_modal(driver, modal_name):
         for name, modal in zip(modals[1::2], modals[::2]):
             if name.text.lower() == modal_name.lower():
                 return modal
+        raise NoSuchElementException(f"modal {modal_name} not found")
 
     modal_name = modal_name.lower()
     return Wait(driver, WAIT_BACKEND).until(
@@ -138,8 +140,7 @@ def check_warning_modal(selenium, browser_id):
     driver = selenium[browser_id]
     if not driver.find_elements(By.CSS_SELECTOR, ".question-modal"):
         return False
-    else:
-        return True
+    return True
 
 
 @wt(
@@ -151,7 +152,7 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     try:
         _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
-        raise Exception(f"Modal {modal_name} has appeared")
+        raise RuntimeError(f"Modal {modal_name} has appeared")
     except TimeoutException:
         pass
 
@@ -179,7 +180,11 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
     tmp_memory[browser_id]["window"]["modal"] = None
 
 
-def wait_for_named_modal_to_disappear(driver, modal_name, wait_time=WAIT_FRONTEND):
+def wait_for_named_modal_to_disappear(
+    selenium, browser_id, modal_name, wait_time=WAIT_FRONTEND
+):
+    modals = selenium["request"].getfixturevalue("modals")
+    driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(modals(driver), transform(modal_name))
@@ -418,7 +423,7 @@ def assert_there_is_no_button_in_panel(
 
     try:
         getattr(modal, transform(button))
-        raise Exception(
+        raise AssertionError(
             f'There is a "{button}" button visible in {panel_name}'
             " panel when it shouldn't be"
         )
@@ -526,7 +531,7 @@ def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number, mo
     navigation = modals(driver).details_modal.navigation
     links = shares_tab.share_options
     info = look_for_tab_name(navigation, name)
-    err_msg = "Item {item_name} is not shared {number} times"
+    err_msg = f"Item {item_name} is not shared {number} times"
     assert _assert_number_of_shares_in_modal(number, links, info), err_msg
 
 
@@ -534,6 +539,7 @@ def look_for_tab_name(navigation, name):
     for elem in navigation:
         if name in elem.name:
             return elem.name
+    raise RuntimeError(f"tab {name} not found")
 
 
 def _assert_number_of_shares_in_modal(number, links, info):
@@ -563,7 +569,7 @@ def click_share_details_link_in_shares_panel(selenium, browser_id, modals, share
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(
-    selenium, browser_id, modal_name, modals, owner_name, icon_name
+    selenium, browser_id, modals, owner_name, icon_name
 ):
     elem_groups = modals(selenium[browser_id]).details_modal.shares.share_options
     icon_name = transform(icon_name) + "_icon"
@@ -581,6 +587,7 @@ def click_icon_in_share_directory_modal(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
+    modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal does not contain text "{text}"'
     modal_text = modals(selenium[browser_id]).error.content.lower()
     assert text.lower().replace("\\", "") in modal_text, message
@@ -589,6 +596,7 @@ def assert_error_modal_with_text_appeared(selenium, browser_id, text):
 @wt(parsers.parse('user of {browser_id} sees that "{title}" error modal appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_titled_error_modal_appeared(selenium, browser_id, title):
+    modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal is not titled "{title}"'
     modal_text = modals(selenium[browser_id]).error.title.lower()
     assert title.lower() in modal_text, message
@@ -611,6 +619,7 @@ def assert_invalid_id_in_error_modal(
     inventories,
     harvesters,
 ):
+    modals = selenium["request"].getfixturevalue("modals")
     modal_text = modals(selenium[browser_id]).error.content.lower()
     assert (
         "is invalid" in modal_text
@@ -644,7 +653,7 @@ def close_modal(selenium, browser_id, modal, modals):
     except RuntimeError:
         return
 
-    wait_for_named_modal_to_disappear(selenium[browser_id], modal)
+    wait_for_named_modal_to_disappear(selenium, browser_id, modal)
 
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
@@ -680,6 +689,7 @@ def choose_option_in_dropdown_menu_in_modal(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, modal):
     driver = selenium[browser_id]
+    modals = selenium["request"].getfixturevalue("modals")
     modal = transform(modal)
     modal = getattr(modals(driver), modal)
     time.sleep(0.1)
@@ -708,16 +718,11 @@ def switch_toggle_in_modal(
 def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
     modal = getattr(modals(driver), transform(modal_name))
     if "/" in path:
-        from tests.gui.meta_steps.oneprovider.data import (
-            get_item_name_and_containing_dir_path,
-        )
-
         file_name, path_list = get_item_name_and_containing_dir_path(path)
         for item in path_list:
             modal.files[item].click_and_enter()
         return file_name
-    else:
-        return path
+    return path
 
 
 @wt(

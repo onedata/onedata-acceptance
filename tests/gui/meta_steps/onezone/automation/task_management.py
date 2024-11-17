@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -23,7 +22,6 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 @wt(

@@ -96,8 +96,9 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane, expected_sta
 def get_status(page, option, name):
     if option == "lane":
         return page.workflow_visualiser.workflow_lanes[name].status
-    elif option == "workflow":
+    if option == "workflow":
         return page.workflow_visualiser.status
+    raise ValueError(f"unknown option {option}")
 
 
 @wt(

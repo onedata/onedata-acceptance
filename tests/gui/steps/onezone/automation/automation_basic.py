@@ -5,8 +5,6 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     parse_seq,
@@ -34,8 +32,7 @@ def get_oz_workflow_visualizer(oz_page, driver):
     page = oz_page(driver)
     if page.is_panel_clicked("automation"):
         return page["automation"].workflows_page.workflow_visualiser
-    else:
-        return page.get_page_and_click("automation").workflows_page.workflow_visualiser
+    return page.get_page_and_click("automation").workflows_page.workflow_visualiser
 
 
 @wt(
@@ -143,7 +140,7 @@ def go_to_inventory_subpage(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_inventory_exists(selenium, browser_ids, oz_page, text):
+def assert_text_in_inventory_page(selenium, browser_ids, oz_page, text):
     for browser_id in parse_seq(browser_ids):
         err_msg = oz_page(selenium[browser_id])["automation"].privileges_err_msg
 
@@ -259,14 +256,14 @@ def get_lambda_or_workflow_bracket(selenium, browser_id, oz_page, page, object_n
     page_name = page + "s_page"
     subpage = getattr(oz_page(selenium[browser_id])["automation"], page_name)
 
-    object = subpage.elements_list[object_name]
+    bracket = subpage.elements_list[object_name]
 
     try:
-        collapse_revision_list(object)
+        collapse_revision_list(bracket)
     except (RuntimeError, AttributeError):
         pass
 
-    return object
+    return bracket
 
 
 @wt(
@@ -288,11 +285,11 @@ def assert_revision_description_in_object_bracket(
     page,
     description,
 ):
-    object = get_lambda_or_workflow_bracket(
+    bracket = get_lambda_or_workflow_bracket(
         selenium, browser_id, oz_page, page, object_name
     )
 
-    revision = object.revision_list[ordinal[:-2]]
+    revision = bracket.revision_list[ordinal[:-2]]
 
     if option == "does not see":
         assert revision.name != description, f"Revision: {object_name} found"
@@ -311,20 +308,20 @@ def assert_revision_description_in_object_bracket(
 def assert_revision_of_object(
     selenium, browser_id, oz_page, ordinal, option, object_name, page
 ):
-    object = get_lambda_or_workflow_bracket(
+    bracket = get_lambda_or_workflow_bracket(
         selenium, browser_id, oz_page, page, object_name
     )
 
     if option == "does not see":
-        assert ordinal[:-2] not in object.revision_list, f"{ordinal} revision found"
+        assert ordinal[:-2] not in bracket.revision_list, f"{ordinal} revision found"
     else:
-        assert ordinal[:-2] in object.revision_list, f"{ordinal} revision not found"
+        assert ordinal[:-2] in bracket.revision_list, f"{ordinal} revision not found"
 
 
 @wt(
     parsers.re(
         'user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
-        'new revision|Duplicate to...|Download \(json\)|Remove)" button '
+        r'new revision|Duplicate to...|Download \(json\)|Remove)" button '
         "from (?P<ordinal>1st|2nd|3rd|4th) revision of "
         '"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'
     )
