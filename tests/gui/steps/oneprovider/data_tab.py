@@ -535,11 +535,7 @@ def network_throttling_upload(selenium, browser_id):
 @wt(parsers.parse("user of {browser_id} sets normal network conditions"))
 def network_normal_conditions(selenium, browser_id):
     driver = selenium[browser_id]
-    driver.set_network_conditions(
-        latency=5,
-        download_throughput=500 * 1024,
-        upload_throughput=500 * 1024,
-    )
+    driver.delete_network_conditions()
 
 
 @wt(

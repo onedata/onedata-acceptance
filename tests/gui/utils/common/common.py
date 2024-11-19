@@ -52,7 +52,7 @@ class OnePage:
         self.driver = self.web_elem = driver
 
     def __str__(self):
-        return "OnePage Service"
+        return "OnePage"
 
 
 class PublicOnePage:
