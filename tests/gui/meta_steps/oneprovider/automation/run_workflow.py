@@ -10,11 +10,9 @@ import time
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
+from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modals.modal import (
-    click_modal_button,
-    go_to_path_and_return_file_name_in_modal,
-)
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     change_tab_in_automation_subpage,
     click_on_task_in_lane,
@@ -33,7 +31,7 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
 )
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -43,6 +41,16 @@ def open_initial_modal(data_type, op_container, driver, popups, modals):
         open_select_initial_datasets_modal(op_container, driver, popups, modals)
     else:
         open_select_initial_files_modal(op_container, driver, popups, modals)
+
+
+def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
+    modal = getattr(modals(driver), transform(modal_name))
+    if "/" in path:
+        file_name, path_list = get_item_name_and_containing_dir_path(path)
+        for item in path_list:
+            modal.files[item].click_and_enter()
+        return file_name
+    return path
 
 
 def select_initial_items_for_workflow_in_modal(

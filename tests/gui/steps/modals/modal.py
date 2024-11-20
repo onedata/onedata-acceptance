@@ -17,9 +17,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.data import (  # pylint: disable=cyclic-import
-    get_item_name_and_containing_dir_path,
-)
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -713,16 +710,6 @@ def switch_toggle_in_modal(
     modal = getattr(modals(driver), check_modal_name(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
-
-
-def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
-    modal = getattr(modals(driver), transform(modal_name))
-    if "/" in path:
-        file_name, path_list = get_item_name_and_containing_dir_path(path)
-        for item in path_list:
-            modal.files[item].click_and_enter()
-        return file_name
-    return path
 
 
 @wt(
