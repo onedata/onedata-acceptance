@@ -21,15 +21,17 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_storage_page_op_panel(
-    selenium, browser_id, storage_type, onepanel
+    selenium, browser_id, storage_type, onepanel, popups
 ):
     storage_selector = onepanel(
         selenium[browser_id]
     ).content.storages.form.storage_selector
     storage_selector.expand()
-    for storage in storage_selector.options:
+    storage_selector_list = popups(selenium[browser_id]).dropdown
+
+    for storage in storage_selector_list.options:
         if storage.text.lower() == storage_type.lower():
-            storage_selector.options[storage.text].click()
+            storage_selector_list.options[storage.text].click()
             return
     raise RuntimeError(f"storage {storage_type} not found")
 

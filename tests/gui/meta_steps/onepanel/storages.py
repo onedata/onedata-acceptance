@@ -70,7 +70,7 @@ def remove_storage_in_op_panel_using_gui(
     )
 )
 def add_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, provider_name, config, oz_page, hosts, onepanel
+    selenium, browser_id, name, provider_name, config, oz_page, hosts, onepanel, popups
 ):
     """Create storage according to given config.
 
@@ -83,7 +83,9 @@ def add_storage_in_op_panel_using_gui(
     _go_to_storage_view_in_clusters(
         selenium, browser_id, provider_name, oz_page, hosts, onepanel
     )
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel, name)
+    _add_storage_in_op_panel_using_gui(
+        selenium, browser_id, config, onepanel, name, popups
+    )
 
 
 def _go_to_storage_view_in_clusters(
@@ -106,7 +108,7 @@ def _go_to_storage_view_in_clusters(
 
 
 def _add_storage_in_op_panel_using_gui(
-    selenium, browser_id, config, onepanel, storage_name
+    selenium, browser_id, config, onepanel, storage_name, popups
 ):
     content = "storages"
     btn = "Add storage backend"
@@ -122,7 +124,7 @@ def _add_storage_in_op_panel_using_gui(
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
-        selenium, browser_id, storage_type, onepanel
+        selenium, browser_id, storage_type, onepanel, popups
     )
     wt_type_text_to_in_box_in_storages_page_op_panel(
         selenium, browser_id, storage_name, form, onepanel, input_box

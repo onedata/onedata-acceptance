@@ -52,7 +52,7 @@ class Ceph(StorageForm):
 
 
 class StorageAddForm(PageObject):
-    storage_selector = DropdownSelector(".ember-basic-dropdown")
+    storage_selector = DropdownSelector(".storage-type-select-group")
     add = Button(".submit-group button")
     posix = WebItem("form", cls=POSIX)
     s3 = WebItem("form", cls=S3)
