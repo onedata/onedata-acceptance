@@ -312,13 +312,14 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_deployment_step5(
-    selenium, browser_id, storage_type, onepanel
+    selenium, browser_id, storage_type, onepanel, popups
 ):
     storage_selector = onepanel(
         selenium[browser_id]
     ).content.deployment.step5.form.storage_selector
     storage_selector.expand()
-    storage_selector.options[storage_type].click()
+    storage_selector_list = popups(selenium[browser_id]).dropdown
+    storage_selector_list.options[storage_type].click()
 
 
 @wt(

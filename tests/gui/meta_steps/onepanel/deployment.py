@@ -248,15 +248,15 @@ def _parse_provider(provider_name, provider_domain):
         "process in Onepanel with following config:\n{config}"
     )
 )
-def add_storage_in_step5(selenium, browser_id, onepanel, config):
+def add_storage_in_step5(selenium, browser_id, onepanel, config, popups):
     """
     storage type: type of storage
     storage name: name of storage
     """
-    _add_storage_in_step5(selenium, browser_id, onepanel, config)
+    _add_storage_in_step5(selenium, browser_id, onepanel, config, popups)
 
 
-def _add_storage_in_step5(selenium, browser_id, onepanel, configuration):
+def _add_storage_in_step5(selenium, browser_id, onepanel, configuration, popups):
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]
@@ -265,7 +265,7 @@ def _add_storage_in_step5(selenium, browser_id, onepanel, configuration):
     text_regexp = ".*[Ss]torage.*added.*"
 
     wt_select_storage_type_in_deployment_step5(
-        selenium, browser_id, storage_type, onepanel
+        selenium, browser_id, storage_type, onepanel, popups
     )
     wt_type_text_to_in_box_in_deployment_step5(
         selenium, browser_id, name, storage_type, onepanel, name_box
