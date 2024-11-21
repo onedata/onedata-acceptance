@@ -272,11 +272,19 @@ def wait_for_storage_details(provider_hostname, storage_id, onepanel_username,
     return storage_details
 
 
+@repeat_failed(attempts=10, interval=5)
+def wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password):
+    storages_id = http_get(
+        ip=provider_hostname, port=PANEL_REST_PORT,
+        path=get_panel_rest_path('provider', 'storages'),
+        auth=(onepanel_username, onepanel_password))
+    return storages_id
+
+
 def _get_storage_id(provider_hostname, onepanel_username,
                     onepanel_password, storage_name):
-    storages_id = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
-                           path=get_panel_rest_path('provider', 'storages'),
-                           auth=(onepanel_username, onepanel_password))
+    storages_id = wait_for_storages_id(provider_hostname, onepanel_username,
+                                       onepanel_password)
     for storage_id in storages_id.json()['ids']:
         storage_details = wait_for_storage_details(provider_hostname, storage_id,
                                                    onepanel_username, onepanel_password)
