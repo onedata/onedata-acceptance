@@ -262,17 +262,26 @@ def wait_for_space_support(space_id, provider_hostname, members, users):
                                                               user))
 
 
+@repeat_failed(attempts=10, interval=5)
+def wait_for_storage_details(provider_hostname, storage_id, onepanel_username,
+                             onepanel_password):
+    storage_details = http_get(
+        ip=provider_hostname, port=PANEL_REST_PORT,
+        path=get_panel_rest_path('provider', 'storages', storage_id),
+        auth=(onepanel_username, onepanel_password))
+    return storage_details
+
+
 def _get_storage_id(provider_hostname, onepanel_username,
                     onepanel_password, storage_name):
     storages_id = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
                            path=get_panel_rest_path('provider', 'storages'),
                            auth=(onepanel_username, onepanel_password))
     for storage_id in storages_id.json()['ids']:
-        storage_details = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
-                                   path=get_panel_rest_path('provider',
-                                                            'storages',
-                                                            storage_id),
-                                   auth=(onepanel_username, onepanel_password))
+        storage_details = wait_for_storage_details(provider_hostname, storage_id,
+                                                   onepanel_username, onepanel_password)
+        if storage_details is None:
+            raise AssertionError()
         if storage_details.json()['name'] == storage_name:
             return storage_id
 
