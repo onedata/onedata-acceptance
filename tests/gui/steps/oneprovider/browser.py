@@ -105,7 +105,7 @@ def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
     )
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
     selenium, browser_id, path, op_container, which_browser="file browser"
 ):

@@ -541,7 +541,7 @@ def assert_property_in_symlink_dets_modal(
         " structure:\n{contents}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_contents_downloaded_tar_file(
     browser_id, contents, tmpdir, clipboard, displays, name
 ):
