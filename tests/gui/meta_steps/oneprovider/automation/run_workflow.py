@@ -44,8 +44,8 @@ def open_initial_modal(data_type, op_container, driver, popups, modals):
 
 
 def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
-    modal = getattr(modals(driver), transform(modal_name))
     if "/" in path:
+        modal = getattr(modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)
         for item in path_list:
             modal.files[item].click_and_enter()
