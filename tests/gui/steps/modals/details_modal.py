@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from datetime import datetime
-from time import sleep
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import check_modal_name
@@ -17,6 +16,8 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+# from time import sleep
 
 
 @wt(
@@ -118,7 +119,7 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     # animation has ended. However, this hack does not guarantee that the browser will
     # not crash (although the probability is lower), so for now we use Chrome < 128.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
-    sleep(2)
+    # sleep(2)
     active_tab = getattr(
         modals(selenium[browser_id]), check_modal_name(transform(modal_name))
     ).active_tab

@@ -17,6 +17,8 @@ from datetime import datetime, timezone
 import pytest
 import yaml
 from py.xml import html  # pylint: disable=import-error, no-name-in-module
+from urllib3.exceptions import MaxRetryError
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
@@ -547,7 +549,7 @@ def pytest_runtest_makereport(item, call):
 def _gather_url(item, report, driver, summary, extras, browser_name):
     try:
         url = driver.current_url
-    except RuntimeError as e:
+    except (WebDriverException, MaxRetryError, TypeError) as e:
         summary.append(f"WARNING: Failed to gather URL: {e}")
         return
     pytest_html = item.config.pluginmanager.getplugin("html")
@@ -560,7 +562,7 @@ def _gather_url(item, report, driver, summary, extras, browser_name):
 def _gather_screenshot(item, report, driver, summary, extras, browser_name):
     try:
         screenshot = driver.get_screenshot_as_base64()
-    except RuntimeError as e:
+    except (WebDriverException, MaxRetryError, TypeError) as e:
         summary.append(f"WARNING: Failed to gather screenshot: {e}")
         return
     pytest_html = item.config.pluginmanager.getplugin("html")
@@ -574,7 +576,7 @@ def _gather_screenshot(item, report, driver, summary, extras, browser_name):
 def _gather_html(item, report, driver, summary, extras, browser_name):
     try:
         html = driver.page_source
-    except RuntimeError as e:
+    except (WebDriverException, MaxRetryError, TypeError) as e:
         summary.append(f"WARNING: Failed to gather HTML: {e}")
         return
     pytest_html = item.config.pluginmanager.getplugin("html")
@@ -586,7 +588,7 @@ def _gather_html(item, report, driver, summary, extras, browser_name):
 def _gather_logs(item, report, driver, summary, extras, browser_name):
     try:
         log_types = driver.log_types
-    except RuntimeError as e:
+    except (WebDriverException, MaxRetryError, TypeError) as e:
         # note that some drivers may not implement log types
         summary.append(f"WARNING: Failed to gather log types: {e}")
         return
@@ -594,7 +596,7 @@ def _gather_logs(item, report, driver, summary, extras, browser_name):
         try:
             driver.get_log(log_name)
             log = driver.get_all_logs()[log_name]
-        except RuntimeError as e:
+        except (WebDriverException, MaxRetryError, TypeError) as e:
             summary.append(f"WARNING: Failed to gather {log_name} log: {e}")
             break
         pytest_html = item.config.pluginmanager.getplugin("html")
@@ -663,7 +665,7 @@ def extract_timestamp(filename):
 
 @pytest.fixture(autouse=True)
 def capture_all_warnings():
-    with warnings.catch_warnings(record=True) as w:
+    with warnings.catch_warnings(record=True, category=DeprecationWarning) as w:
         warnings.simplefilter("always")
         yield w
 
