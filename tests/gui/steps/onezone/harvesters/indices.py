@@ -269,7 +269,7 @@ def assert_creation_time_on_data_discovery_page(
         " in results list on data discovery page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_on_data_discovery_page(
     selenium, browser_id, data_discovery, info, text
 ):

@@ -57,6 +57,14 @@ class AceEditorMetadataPanel(PageObject):
         yield action
         action.perform()
 
+    # TODO VFS-12496 remove metadata_type from clear_editor function
+    def clear_editor(self, metadata_type):
+        script = (
+            f"ace.edit(document.querySelector('.file-metadata-{metadata_type} "
+            ".ember-ace > .ace_editor')).setValue('')"
+        )
+        self.driver.execute_script(script)
+
 
 class JSONMetadataPanel(AceEditorMetadataPanel):
     text_area = AceEditor(".file-metadata-json")
