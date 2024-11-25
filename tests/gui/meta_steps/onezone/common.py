@@ -32,7 +32,6 @@ from tests.utils.utils import repeat_failed
         "signed in to (?P<host_list>.*) service"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def login_using_gui(
     host_list,
     selenium,

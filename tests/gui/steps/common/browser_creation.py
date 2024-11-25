@@ -8,9 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import os
+import time
 from itertools import cycle
 
 from pytest_bdd import given
+from selenium.common.exceptions import SessionNotCreatedException, WebDriverException
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
@@ -58,7 +60,15 @@ def create_instances_of_webdriver(
                 capabilities["options"].add_experimental_option("prefs", chrome_prefs)
                 capabilities["options"].add_argument(f"--user-data-dir={browser_data}")
 
-            browser = driver()
+            for i in range(5):
+                try:
+                    browser = driver()
+                    break
+                except (WebDriverException, SessionNotCreatedException) as e:
+                    if i == 4:
+                        raise e
+                    time.sleep(2)
+
             _config_driver(browser, screen_width, screen_height)
 
         displays[browser_id] = display
@@ -69,8 +79,15 @@ def create_instances_of_webdriver(
 #  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
 def _config_driver(driver, window_width, window_height):
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
-    driver.set_window_size(window_width, window_height)
-    # possible solution to chromedriver cruches: Timed out receiving message from renderer
+
+    for i in range(5):
+        try:
+            driver.set_window_size(window_width, window_height)
+            break
+        except WebDriverException as e:
+            if i == 4:
+                raise e
+            time.sleep(2)
+
+    # possible solution to chromedriver crushes: Timed out receiving message from renderer
     driver.set_page_load_timeout(60)
-    # currenlty, we rather set window size
-    # driver.maximize_window()
