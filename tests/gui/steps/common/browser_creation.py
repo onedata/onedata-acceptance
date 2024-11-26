@@ -12,7 +12,8 @@ import time
 from itertools import cycle
 
 from pytest_bdd import given
-from selenium.common.exceptions import SessionNotCreatedException, WebDriverException
+from urllib3.exceptions import HTTPError
+from selenium.common.exceptions import WebDriverException
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
@@ -63,8 +64,13 @@ def create_instances_of_webdriver(
             for i in range(5):
                 try:
                     browser = driver()
+                    assert_driver_working_properly(browser)
                     break
-                except (WebDriverException, SessionNotCreatedException) as e:
+                except (WebDriverException, HTTPError) as e:
+                    print(
+                        f"failed to start webdriver instance at attempt: {i + 1} "
+                        f"due to:\n {e}"
+                    )
                     if i == 4:
                         raise e
                     time.sleep(2)
@@ -91,3 +97,11 @@ def _config_driver(driver, window_width, window_height):
 
     # possible solution to chromedriver crushes: Timed out receiving message from renderer
     driver.set_page_load_timeout(60)
+
+
+def assert_driver_working_properly(driver):
+    try:
+        _ = driver.get_screenshot_as_base64()
+    except (WebDriverException, HTTPError) as e:
+        driver.quit()
+        raise e
