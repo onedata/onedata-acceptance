@@ -22,7 +22,7 @@ from tests.gui.utils.core.web_elements import (
 )
 
 
-class BasicMetadataEntry(PageObject):
+class XattrsMetadataEntry(PageObject):
     key = id = Label(".one-label")
     edit_key = Input('.form-control[placeholder="Key"]')
     key_input = Input(".one-inline-editor .form-control")
@@ -33,15 +33,15 @@ class BasicMetadataEntry(PageObject):
         return "metadata basic entry"
 
 
-class BasicMetadataNewEntry(PageObject):
+class XattrsMetadataNewEntry(PageObject):
     key = Input('.form-control[placeholder="Key"]')
     value = Input('.form-control[placeholder="Value"]')
 
 
-class BasicMetadataPanel(PageObject):
-    new_entry = WebItem(".last-record", cls=BasicMetadataNewEntry)
+class XattrsMetadataPanel(PageObject):
+    new_entry = WebItem(".last-record", cls=XattrsMetadataNewEntry)
     entries = WebItemsSequence(
-        ".form-group-editable:not([class~=last-record])", cls=BasicMetadataEntry
+        ".form-group-editable:not([class~=last-record])", cls=XattrsMetadataEntry
     )
 
 
@@ -85,7 +85,7 @@ class NavigationTab(PageObject):
 class MetadataTab(Modal):
     modal_name = Label(".modal-header")
     navigation = WebItemsSequence(".metadata-type-btn", cls=NavigationTab)
-    basic = WebItem(".relative", cls=BasicMetadataPanel)
+    xattrs = WebItem(".relative", cls=XattrsMetadataPanel)
     json = WebItem(".tab-pane-metadata-json", cls=JSONMetadataPanel)
     rdf = WebItem(".tab-pane-metadata-rdf", cls=RDFMetadataPanel)
 

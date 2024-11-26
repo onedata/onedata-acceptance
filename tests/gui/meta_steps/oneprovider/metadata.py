@@ -23,17 +23,17 @@ from tests.gui.steps.modals.modal import (
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.oneprovider.metadata import (
-    assert_no_basic_metadata_for_item,
+    assert_no_xattrs_metadata_for_item,
     assert_textarea_contains_record,
     assert_textarea_is_empty_for_metadata,
     assert_textarea_not_contain_record,
     assert_there_is_no_such_meta_record,
-    assert_there_is_such_basic_meta_record,
+    assert_there_is_such_xattrs_meta_record,
     clean_tab_textarea_in_metadata_modal,
     click_on_del_metadata_record_button,
-    type_text_to_attr_input_in_new_basic_entry,
+    type_text_to_attr_input_in_new_xattrs_entry,
     type_text_to_metadata_textarea,
-    type_text_to_val_of_attr_in_new_basic_entry,
+    type_text_to_val_of_attr_in_new_xattrs_entry,
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -41,14 +41,14 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds basic entry with "
+        "user of (?P<browser_id>.*?) adds xattrs entry with "
         'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_basic_entry(selenium, browser_id, modals, key_name, value):
-    type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, key_name, modals)
-    type_text_to_val_of_attr_in_new_basic_entry(
+def add_xattrs_entry(selenium, browser_id, modals, key_name, value):
+    type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, key_name, modals)
+    type_text_to_val_of_attr_in_new_xattrs_entry(
         selenium, browser_id, value, modals, key_name
     )
 
@@ -117,7 +117,7 @@ def open_json_rdf_metadata_for_item(
     parsers.re(
         "user of (?P<browser_id>.*?) (?P<res>.*) to write "
         '"(?P<path>.*)" (?P<item>file|directory)'
-        " (?P<tab_name>basic|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
+        " (?P<tab_name>xattrs|JSON|RDF) metadata: ('|\")(?P<val>.*)('|\")"
         ' in "(?P<space>.*)"'
     )
 )
@@ -156,10 +156,10 @@ def set_metadata_in_op_gui(
         oz_page,
         op_container,
     )
-    if tab_name == "basic":
+    if tab_name == "xattrs":
         attr, val = val.split("=")
-        type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, attr, modals)
-        type_text_to_val_of_attr_in_new_basic_entry(
+        type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, attr, modals)
+        type_text_to_val_of_attr_in_new_xattrs_entry(
             selenium, browser_id, val, modals, attr
         )
     else:
@@ -184,7 +184,7 @@ def _assert_metadata_loading_alert(selenium, browser_id, modals):
     parsers.re(
         "user of (?P<browser_id>.*) (?P<res>.*) to read "
         '"(?P<path>.*)" (?P<item>file|directory) '
-        "(?P<tab_name>basic|JSON|RDF) "
+        "(?P<tab_name>xattrs|JSON|RDF) "
         'metadata: "(?P<val>.*)"'
         ' in "(?P<space>.*)"'
     )
@@ -224,9 +224,9 @@ def assert_metadata_in_op_gui(
     if res == "fails":
         _assert_metadata_loading_alert(selenium, browser_id, modals)
     else:
-        if tab_name == "basic":
+        if tab_name == "xattrs":
             attr, val = val.split("=")
-            assert_there_is_such_basic_meta_record(
+            assert_there_is_such_xattrs_meta_record(
                 selenium, browser_id, attr, val, modals
             )
         else:
@@ -269,7 +269,7 @@ def assert_such_metadata_not_exist_in_op_gui(
         op_container,
     )
 
-    if tab_name == "basic":
+    if tab_name == "xattrs":
         attr, val = val.split("=")
         assert_there_is_no_such_meta_record(selenium, browser_id, attr, modals)
     else:
@@ -278,13 +278,13 @@ def assert_such_metadata_not_exist_in_op_gui(
     click_modal_button(selenium, browser_id, x_button, details_modal, modals)
 
 
-def remove_all_basic_metadata(selenium, browser_id, modals):
+def remove_all_xattrs_metadata(selenium, browser_id, modals):
     button = "Save"
     panel = "Metadata"
     modal = modals(selenium[browser_id]).details_modal.metadata
-    if len(modal.basic.entries) > 0:
-        while len(modal.basic.entries) > 0:
-            modal.basic.entries[0].remove()
+    if len(modal.xattrs.entries) > 0:
+        while len(modal.xattrs.entries) > 0:
+            modal.xattrs.entries[0].remove()
             time.sleep(0.5)
 
         click_panel_button(selenium, browser_id, button, panel, modals)
@@ -318,7 +318,7 @@ def remove_all_metadata_in_op_gui(
         op_container,
     )
     click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", modals, option)
-    remove_all_basic_metadata(selenium, browser_id, modals)
+    remove_all_xattrs_metadata(selenium, browser_id, modals)
 
     click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, option)
     clean_tab_textarea_in_metadata_modal(selenium, browser_id, "JSON", modals)
@@ -347,7 +347,7 @@ def click_save_button_metadata(selenium, browser_id, modals):
 def assert_no_metadata_in_modal(selenium, browser_id, modals):
     panel = "Metadata"
 
-    assert_no_basic_metadata_for_item(selenium, browser_id, modals)
+    assert_no_xattrs_metadata_for_item(selenium, browser_id, modals)
     click_on_navigation_tab_in_panel(selenium, browser_id, "JSON", modals, panel)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, "JSON", modals)
     click_on_navigation_tab_in_panel(selenium, browser_id, "RDF", modals, panel)
@@ -356,7 +356,7 @@ def assert_no_metadata_in_modal(selenium, browser_id, modals):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} removes basic metadata entry with key "
+        "user of {browser_id} removes xattrs metadata entry with key "
         '"{key}" for "{path}" file in "{space}" space'
     )
 )

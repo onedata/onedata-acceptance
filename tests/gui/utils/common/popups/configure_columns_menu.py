@@ -3,7 +3,14 @@ columns menu popup.
 """
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebElement, WebItemsSequence
+from tests.gui.utils.core.web_elements import (
+    Button,
+    Label,
+    NamedButton,
+    WebElement,
+    WebItem,
+    WebItemsSequence,
+)
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
@@ -23,5 +30,14 @@ class ColumnOption(PageObject):
             self.checkbox.click()
 
 
+class NewXattrColumn(PageObject):
+    extended_attribute_key = Button(".xattrKey-field")
+    enter_an_xattr_key = WebElement(".custom-value-dropdown-field-trigger")
+    create = NamedButton(".add-new-column-btn", text="Create")
+    column_label = WebElement(".new-item-name")
+
+
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
+    new_xattr_column_button = Button(".new-column-item")
+    new_xattr_column = WebItem(".xattr-column-add", cls=NewXattrColumn)

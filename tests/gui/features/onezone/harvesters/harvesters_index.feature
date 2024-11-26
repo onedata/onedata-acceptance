@@ -24,7 +24,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
 
   Scenario: User does not see file name after creating index that does not include file name file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
     And user of browser creates new index "index1" that includes ["rdf", "basic", "json"] toggles for "harvester1"
@@ -36,7 +36,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
 
   Scenario: User sees file type after creating index that includes file type file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
     And user of browser creates new index "index1" that includes ["basic", "file_name", "file_type"] toggles for "harvester1"
@@ -56,7 +56,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
 
   Scenario: User sees space ID after creating index that includes space_id file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
     And user of browser creates new index "index1" that includes ["basic", "file_name", "space_id"] toggles for "harvester1"
@@ -74,7 +74,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
 
   Scenario: User sees dataset info after creating index that includes dataset info file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
@@ -93,7 +93,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
 
   Scenario: User sees archive info after creating index that includes archive info file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And  user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
        description: first_archive
