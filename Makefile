@@ -173,16 +173,15 @@ ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__in
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
 FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
-LINTER_DOCKER_RUN := docker run --rm -i -v `pwd`:`pwd` -w `pwd` $(STATIC_ANALYSER_IMAGE)
 
 
 format:
-	$(LINTER_DOCKER_RUN) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
-	$(LINTER_DOCKER_RUN) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
+	$(docker_run) isort $(FILES_TO_FORMAT) --settings-file tests/configs/.pyproject.toml
+	$(docker_run) black $(FILES_TO_FORMAT) --config tests/configs/.pyproject.toml
 
 
 black-check:
-	$(LINTER_DOCKER_RUN) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
+	$(docker_run) black $(FILES_TO_FORMAT) --check --config tests/configs/.pyproject.toml || \
 	 (echo "Code failed Black format checking. Please run 'make format' before commiting your changes. "; exit 1)
 
 
@@ -191,6 +190,6 @@ black-check:
 ##
 
 static-analysis:
-	$(LINTER_DOCKER_RUN) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
-	$(LINTER_DOCKER_RUN) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
+	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
+	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
