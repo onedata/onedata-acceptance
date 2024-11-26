@@ -159,6 +159,14 @@ codetag-tracker:
 ##
 
 STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+UID := $(shell id -u)
+GID := $(shell id -g)
+
+define docker_run
+	docker run --rm -i -v $(CURDIR):$(CURDIR) -w $(CURDIR) -u $(UID):$(GID) $(STATIC_ANALYSER_IMAGE) $1
+endef
+
+
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
  tests/oneclient/steps tests/oneclient/__init__.py
