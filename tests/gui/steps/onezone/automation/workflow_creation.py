@@ -328,11 +328,11 @@ def add_lambda_revision_to_workflow(
     selenium, browser_id, oz_page, lambda_name, ordinal
 ):
     subpage = oz_page(selenium[browser_id])["automation"].lambdas_page
-    object = subpage.elements_list[lambda_name]
-    revision = object.revision_list[ordinal[:-2]]
+    lambda_object = subpage.elements_list[lambda_name]
+    revision = lambda_object.revision_list[ordinal[:-2]]
 
     try:
-        collapse_revision_list(object)
+        collapse_revision_list(lambda_object)
     except (RuntimeError, AttributeError):
         pass
 

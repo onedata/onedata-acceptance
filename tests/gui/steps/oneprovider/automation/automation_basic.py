@@ -102,11 +102,11 @@ def search_for_lane_status(driver, page, lane_name, box_number=None):
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
             return status
-        else:
-            try:
-                page.workflow_visualiser.right_arrow_scroll.click()
-            except RuntimeError:
-                pass
+        try:
+            page.workflow_visualiser.right_arrow_scroll.click()
+        except RuntimeError:
+            pass
+    raise ValueError(f"lane {lane_name} found")
 
 
 def search_for_task_in_parallel_box(driver, parallel_box, task_name):
@@ -118,6 +118,7 @@ def search_for_task_in_parallel_box(driver, parallel_box, task_name):
 
         if found_task == task_name:
             return parallel_box.task_list[j], task_id
+    raise ValueError(f"task {task_name} not found")
 
 
 @wt(
@@ -148,7 +149,7 @@ def click_on_task_in_lane(
             try:
                 task.click_on_drag_handle()
             except ElementNotInteractableException:
-                scroll_to_css_selector(driver, f".task-drag-handle")
+                scroll_to_css_selector(driver, ".task-drag-handle")
                 time.sleep(1)
                 task.click_on_drag_handle()
         # wait for task to be closed

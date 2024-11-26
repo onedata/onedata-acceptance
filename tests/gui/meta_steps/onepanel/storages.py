@@ -360,7 +360,7 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
         click_modal_button(selenium, browser_id, checkbox, modal, modals)
         click_modal_button(selenium, browser_id, button, modal, modals)
         wait_for_named_modal_to_disappear(
-            selenium[browser_id], modal, wait_time=WAIT_BACKEND * 2
+            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 2
         )
     except (NoSuchElementException, RuntimeError):
         pass

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import time
+from ast import literal_eval
 from datetime import date
 
 import yaml
@@ -600,7 +601,9 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list, store_n
         assert modal.raw_view == item_list, err_msg
     else:
         item_list = (
-            eval(item_list) if variable_type != "files" else parse_seq(item_list)
+            literal_eval(item_list)
+            if variable_type != "files"
+            else parse_seq(item_list)
         )
         for elem in modal.store_content_list:
             if variable_type == "ranges":
@@ -617,10 +620,12 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list, store_n
                 }
             elif variable_type == "files":
                 expected = elem.path
-            elif variable_type == "strings" or variable_type == "numbers":
-                expected = eval(elem.value)
+            elif variable_type in ["strings", "numbers"]:
+                expected = literal_eval(elem.value)
             else:
-                raise Exception(f"this {variable_type} is not handled in this function")
+                raise ValueError(
+                    f"this {variable_type} is not handled in this function"
+                )
 
             err_msg = (
                 f"expected {variable_type} {item_list} does not "
@@ -1019,8 +1024,8 @@ def assert_content_of_user_task_audit_log(
     time.sleep(1)
     modal = modals(driver).audit_log
     try:
-        modal.user_log
-        raise Exception(
+        modal.user_log  # pylint: disable=pointless-statement
+        raise AssertionError(
             f'Audit log in task "{task_name}" in lane'
             f' "{lane_name}" contains user\'s entry'
         )
@@ -1179,7 +1184,7 @@ def assert_content_of_task_audit_log(
     # wait a moment for modal to open
     time.sleep(1)
     modal = modals(driver).audit_log
-    if severity == "Error" or severity == "Debug":
+    if severity in ["Error", "Debug"]:
         modal.logs_entry[severity].click()
     elif source == "user":
         modal.user_log.click()
@@ -1262,7 +1267,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
                 assert file_log == visible_log, err_msg
                 modal.close_details.click()
     else:
-        raise RuntimeError("file {} has not been downloaded".format(file_name))
+        raise RuntimeError(f"file {file_name} has not been downloaded")
 
 
 @wt(
@@ -1289,8 +1294,8 @@ def _assert_workflow_audit_log_contains_entries(
         browser_id, selenium, tmp_memory, modals, tmpdir
     )
 
-    f = open(file_path)
-    data_file = json.load(f)
+    with open(file_path) as f:
+        data_file = json.load(f)
     for expected_entry in data:
         if assert_expected_in_entries(expected_entry, data_file):
             continue
@@ -1324,8 +1329,8 @@ def assert_workflow_audit_log_contains_entry(
     file_path = _get_workflow_audit_log(
         browser_id, selenium, tmp_memory, modals, tmpdir
     )
-    f = open(file_path)
-    data_file = json.load(f)
+    with open(file_path) as f:
+        data_file = json.load(f)
     item_list = parse_seq(item_list)
     for entry in data_file:
         try:

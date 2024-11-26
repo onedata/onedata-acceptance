@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from ast import literal_eval
 
 import yaml
 from tests.gui.conftest import WAIT_FRONTEND
@@ -36,7 +37,13 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
     get_data_type_in_initial_value_store,
     get_data_type_of_array_initial_value_store,
 )
-from tests.gui.steps.onezone.automation.automation_basic import *
+from tests.gui.steps.onezone.automation.automation_basic import (
+    assert_workflow_exists,
+    get_oz_workflow_visualizer,
+    go_to_inventory_subpage,
+    upload_workflow_as_json,
+    upload_workflow_from_repository,
+)
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
     confirm_workflow_creation,
@@ -414,8 +421,8 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        item_list = eval(item_list)
-        if type(item_list) is list:
+        item_list = literal_eval(item_list)
+        if isinstance(item_list, list):
             for item in item_list:
                 choose_range_as_initial_workflow_value(
                     selenium, browser_id, op_container, item
@@ -425,8 +432,8 @@ def execute_workflow(
                 selenium, browser_id, op_container, item_list, False
             )
     elif "number" in data_type:
-        items = eval(item_list)
-        if type(items) is list:
+        items = literal_eval(item_list)
+        if isinstance(items, list):
             for number in items:
                 numbers = get_input_element(op_container, driver, "numbers_input")
                 numbers[len(numbers) - 1].input = str(number)
@@ -437,7 +444,7 @@ def execute_workflow(
         op_container(driver).automation_page.string_input.input = item_list
     elif "boolean" in data_type:
         items = json.loads(item_list)
-        if type(items) is list:
+        if isinstance(items, list):
             for boolean in items:
                 booleans = get_input_element(op_container, driver, "booleans_input")
                 booleans[len(booleans) - 1].click()

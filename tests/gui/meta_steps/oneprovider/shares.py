@@ -196,7 +196,6 @@ def hand_share_url_to_another_user(
     )
 )
 def copy_url_of_share(selenium, browser_id, share_name, item_name, modals, tmp_memory):
-    modal_name = "Shares"
     icon_name = "copy"
     status_type = "shared"
 
@@ -204,7 +203,7 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, modals, tmp_m
         browser_id, status_type, item_name, tmp_memory
     )
     click_icon_in_share_directory_modal(
-        selenium, browser_id, modal_name, modals, share_name, icon_name
+        selenium, browser_id, modals, share_name, icon_name
     )
 
 

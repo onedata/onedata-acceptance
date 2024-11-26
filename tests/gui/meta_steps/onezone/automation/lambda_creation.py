@@ -14,7 +14,13 @@ import yaml
 from selenium.common.exceptions import ElementNotInteractableException
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
-from tests.gui.steps.onezone.automation.automation_basic import *
+from tests.gui.steps.onezone.automation.automation_basic import (
+    assert_lambda_exists,
+    click_option_in_revision_menu_button,
+    go_to_inventory_subpage,
+    has_downloaded_workflow_file_content,
+    upload_lambda_from_repository,
+)
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
     confirm_lambda_creation_or_edition,
@@ -109,10 +115,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     )
 
     def ordinal(n):
-        return "%d%s" % (
-            n,
-            "tsnrhtdd"[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10 :: 4],
-        )
+        return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10:: 4]}"
 
     if configuration_parameters:
         for i, config_param in enumerate(configuration_parameters):
@@ -197,14 +200,14 @@ def create_lambda_using_gui(
     parsers.re(
         "user of (?P<browser_id>.*) changes (?P<ordinal>|1st |2nd |3rd "
         "|4th )(?P<option>argument|result|configuration parameters) "
-        'named "(?P<name>.*)" to be "(?P<type>.*)" type'
+        'named "(?P<name>.*)" to be "(?P<param_type>.*)" type'
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium, browser_id, oz_page, popups, option, type, ordinal
+    selenium, browser_id, oz_page, popups, option, param_type, ordinal
 ):
     driver = selenium[browser_id]
-    type = type.lower()
+    param_type = param_type.lower()
     page = oz_page(driver)["automation"].lambdas_page.form
     subpage = getattr(page, transform(option))
 
@@ -219,8 +222,8 @@ def change_parameter_type_in_lambda_form(
 
     scroll_to_css_selector(driver, css_sel)
 
-    split_type = type.replace(")", "").split(" (")
-    new_type = split_type[0] if "array" in type else type
+    split_type = param_type.replace(")", "").split(" (")
+    new_type = split_type[0] if "array" in param_type else param_type
 
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(1)
@@ -229,7 +232,7 @@ def change_parameter_type_in_lambda_form(
 
     popups(driver).power_select.choose_item(new_type)
 
-    if "array" in type:
+    if "array" in param_type:
         object_bracket.type_dropdown.click()
         popups(driver).power_select.choose_item(split_type[1])
 
@@ -239,12 +242,12 @@ def change_parameter_type_in_lambda_form(
         "user of (?P<browser_id>.*) adds "
         "(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result"
         '|configuration parameters) named "(?P<name>.*)" '
-        'of "(?P<type>.*)" type'
+        'of "(?P<param_type>.*)" type'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
-    selenium, browser_id, oz_page, popups, option, name, type, ordinal
+    selenium, browser_id, oz_page, popups, option, name, param_type, ordinal
 ):
     driver = selenium[browser_id]
     page = oz_page(driver)["automation"].lambdas_page.form
@@ -261,14 +264,14 @@ def add_parameter_into_lambda_form(
     name_input.value = name
 
     object_bracket.type_dropdown.click()
-    popups(driver).power_select.choose_item(type)
+    popups(driver).power_select.choose_item(param_type)
 
 
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*) modifies "
         "(?P<ordinal>|1st |2nd |3rd |4th )argument named "
-        '"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
+        r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
     )
 )
 def modify_parameter_in_lambda_form(
