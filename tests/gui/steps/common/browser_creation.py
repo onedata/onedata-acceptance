@@ -12,9 +12,9 @@ import time
 from itertools import cycle
 
 from pytest_bdd import given
-from urllib3.exceptions import HTTPError
 from selenium.common.exceptions import WebDriverException
-from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT
+from urllib3.exceptions import HTTPError
+from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
 
@@ -61,7 +61,7 @@ def create_instances_of_webdriver(
                 capabilities["options"].add_experimental_option("prefs", chrome_prefs)
                 capabilities["options"].add_argument(f"--user-data-dir={browser_data}")
 
-            for i in range(5):
+            for i in range(DRIVER_CREATION_RETRIES):
                 try:
                     browser = driver()
                     assert_driver_working_properly(browser)
@@ -86,7 +86,8 @@ def create_instances_of_webdriver(
 def _config_driver(driver, window_width, window_height):
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
 
-    for i in range(5):
+    # perform attempts to change window size
+    for i in range(DRIVER_CREATION_RETRIES):
         try:
             driver.set_window_size(window_width, window_height)
             break

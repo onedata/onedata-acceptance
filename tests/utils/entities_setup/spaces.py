@@ -289,7 +289,7 @@ def _get_storage_id(provider_hostname, onepanel_username,
         storage_details = wait_for_storage_details(provider_hostname, storage_id,
                                                    onepanel_username, onepanel_password)
         if storage_details is None:
-            raise AssertionError()
+            raise AssertionError("Did not manage to get storage details")
         if storage_details.json()['name'] == storage_name:
             return storage_id
 
