@@ -483,8 +483,14 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
         finally:
             stop_recording(ffmpeg_proc)
             # if setup and call of this given passed then whole test passed
-            setup_passed = request.node.setup_xvfb_recorder.passed
-            call_passed = request.node.call_xvfb_recorder.passed
+            if hasattr(request.node, "setup_xvfb_recorder"):
+                setup_passed = request.node.setup_xvfb_recorder.passed
+            else:
+                setup_passed = False
+            if hasattr(request.node, "call_xvfb_recorder"):
+                call_passed = request.node.call_xvfb_recorder.passed
+            else:
+                call_passed = False
             if recording == "failed" and setup_passed and call_passed:
                 for movie in movies:
                     try:
