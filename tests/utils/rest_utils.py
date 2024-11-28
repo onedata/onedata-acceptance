@@ -79,31 +79,30 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
     request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
     if headers:
         request_headers.update(headers)
-    try:
-        response = http_method('{0}://{1}:{2}{3}'.format(protocol, ip, port, path),
-                               verify=verify, headers=request_headers, timeout=40,
-                               cert=cert, auth=auth, data=data)
-        if 200 <= response.status_code < 300:
-            return response
-        else:
-            raise_http_exception(response)
-    except HTTPServiceUnavailable as e:
-        if retries > 0:
+    for i in range(retries):
+        try:
+            response = http_method(
+                '{0}://{1}:{2}{3}'.format(protocol, ip, port, path),
+                verify=verify, headers=request_headers, timeout=40, cert=cert,
+                auth=auth, data=data)
+            if 200 <= response.status_code < 300:
+                return response
+            else:
+                raise_http_exception(response)
+        except HTTPServiceUnavailable as e:
+            if i == retries - 1:
+                raise e
             time.sleep(5.0)
-            return http_request(http_method, ip, port, path, use_ssl, headers,
-                                verify, cert, auth, data,
-                                default_headers, retries-1)
-        raise e
-    except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable) as t:
-        print("""
-         _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
-        | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
-        | |__| |  | |     | |  | |__) |       | |       /  \  | |    | |            | |__| | |  | |  \| | |  __   | | | |
-        |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
-        | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
-        |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
-        """)
-        traceback.print_stack()
-        print("Test will freeze to allow debugging!")
-        while True:
-            time.sleep(365*24*60*60)
+        except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable) as t:
+            print("""
+             _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
+            | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
+            | |__| |  | |     | |  | |__) |       | |       /  \  | |    | |            | |__| | |  | |  \| | |  __   | | | |
+            |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
+            | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
+            |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
+            """)
+            traceback.print_stack()
+            print("Test will freeze to allow debugging!")
+            while True:
+                time.sleep(365*24*60*60)

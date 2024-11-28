@@ -42,6 +42,10 @@ WAIT_NORMAL_UPLOAD = 60
 WAIT_EXTENDED_UPLOAD = 1500
 
 
+# number of times tests will try to start Webdriver instance
+DRIVER_CREATION_RETRIES = 5
+
+
 # ============================================================================
 # PYTEST CONFIGURATION
 # =============================================================================
