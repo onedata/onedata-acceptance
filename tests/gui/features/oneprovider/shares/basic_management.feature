@@ -313,4 +313,4 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser runs curl command copied from shares page
     Then user of browser sees that curl result matches following config:
           name: share_file1
-          file type: file
+          file type: REG
