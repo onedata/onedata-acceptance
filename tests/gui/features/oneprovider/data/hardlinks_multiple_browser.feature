@@ -90,12 +90,12 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
 
     And user of browser1 opens file browser for "space1" space
     And user of browser1 clicks on "Metadata" in context menu for "file1(1)"
-    And user of browser1 adds xattrs entry with key "attr1" and value "val1"
+    And user of browser1 adds xattr entry with key "attr1" and value "val1"
     And user of browser1 clicks on "Save" button in metadata panel
 
     And user of space_owner_browser clicks on "Metadata" in context menu for "file1"
     And user of space_owner_browser sees that "File details" modal is opened on "Metadata" tab
-    Then user of space_owner_browser sees xattrs metadata entry with attribute named "attr1" and value "val1"
+    Then user of space_owner_browser sees xattr metadata entry with attribute named "attr1" and value "val1"
 
 
   Scenario: User creates QoS for non-owned hardlink and owner user sees them on original file

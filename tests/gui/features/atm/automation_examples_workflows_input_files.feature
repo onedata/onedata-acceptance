@@ -49,9 +49,9 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
-    And user of browser sees xattrs metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
-    And user of browser sees xattrs metadata entry with attribute named "format.is-extension-matching-format" and value "True"
-    And user of browser sees xattrs metadata entry with attribute named "format.format-name" and value "<meta_entry_val2>"
+    And user of browser sees xattr metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
+    And user of browser sees xattr metadata entry with attribute named "format.is-extension-matching-format" and value "True"
+    And user of browser sees xattr metadata entry with attribute named "format.format-name" and value "<meta_entry_val2>"
 
 
     Examples:
@@ -83,7 +83,7 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
-    And user of browser sees xattrs metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
+    And user of browser sees xattr metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
 
 
     Examples:

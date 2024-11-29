@@ -28,12 +28,12 @@ from tests.gui.steps.oneprovider.metadata import (
     assert_textarea_is_empty_for_metadata,
     assert_textarea_not_contain_record,
     assert_there_is_no_such_meta_record,
-    assert_there_is_such_xattrs_meta_record,
+    assert_there_is_such_xattr_meta_record,
     clean_tab_textarea_in_metadata_modal,
     click_on_del_metadata_record_button,
-    type_text_to_attr_input_in_new_xattrs_entry,
+    type_text_to_attr_input_in_new_xattr_entry,
     type_text_to_metadata_textarea,
-    type_text_to_val_of_attr_in_new_xattrs_entry,
+    type_text_to_val_of_attr_in_new_xattr_entry,
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -41,14 +41,14 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) adds xattrs entry with "
+        "user of (?P<browser_id>.*?) adds xattr entry with "
         'key "(?P<key_name>.*?)" and value "(?P<value>.*?)"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_xattrs_entry(selenium, browser_id, modals, key_name, value):
-    type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, key_name, modals)
-    type_text_to_val_of_attr_in_new_xattrs_entry(
+def add_xattr_entry(selenium, browser_id, modals, key_name, value):
+    type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name, modals)
+    type_text_to_val_of_attr_in_new_xattr_entry(
         selenium, browser_id, value, modals, key_name
     )
 
@@ -158,8 +158,8 @@ def set_metadata_in_op_gui(
     )
     if tab_name == "xattrs":
         attr, val = val.split("=")
-        type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, attr, modals)
-        type_text_to_val_of_attr_in_new_xattrs_entry(
+        type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, attr, modals)
+        type_text_to_val_of_attr_in_new_xattr_entry(
             selenium, browser_id, val, modals, attr
         )
     else:
@@ -226,7 +226,7 @@ def assert_metadata_in_op_gui(
     else:
         if tab_name == "xattrs":
             attr, val = val.split("=")
-            assert_there_is_such_xattrs_meta_record(
+            assert_there_is_such_xattr_meta_record(
                 selenium, browser_id, attr, val, modals
             )
         else:
@@ -356,7 +356,7 @@ def assert_no_metadata_in_modal(selenium, browser_id, modals):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} removes xattrs metadata entry with key "
+        "user of {browser_id} removes xattr metadata entry with key "
         '"{key}" for "{path}" file in "{space}" space'
     )
 )

@@ -22,7 +22,7 @@ from tests.gui.utils.core.web_elements import (
 )
 
 
-class XattrsMetadataEntry(PageObject):
+class XattrMetadataEntry(PageObject):
     key = id = Label(".one-label")
     edit_key = Input('.form-control[placeholder="Key"]')
     key_input = Input(".one-inline-editor .form-control")
@@ -33,15 +33,15 @@ class XattrsMetadataEntry(PageObject):
         return "metadata basic entry"
 
 
-class XattrsMetadataNewEntry(PageObject):
+class XattrMetadataNewEntry(PageObject):
     key = Input('.form-control[placeholder="Key"]')
     value = Input('.form-control[placeholder="Value"]')
 
 
 class XattrsMetadataPanel(PageObject):
-    new_entry = WebItem(".last-record", cls=XattrsMetadataNewEntry)
+    new_entry = WebItem(".last-record", cls=XattrMetadataNewEntry)
     entries = WebItemsSequence(
-        ".form-group-editable:not([class~=last-record])", cls=XattrsMetadataEntry
+        ".form-group-editable:not([class~=last-record])", cls=XattrMetadataEntry
     )
 
 

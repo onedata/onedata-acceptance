@@ -52,11 +52,11 @@ def assert_no_xattrs_metadata_for_item(selenium, browser_id, modals):
 @wt(
     parsers.parse(
         'user of {browser_id} types "{text}" to key input '
-        "box of new metadata xattrs entry"
+        "box of new metadata xattr entry"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, text, modals):
+def type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, text, modals):
     modal = modals(selenium[browser_id]).details_modal.metadata
     modal.xattrs.new_entry.key = text
     press_tab_on_active_element(selenium, browser_id)
@@ -65,11 +65,11 @@ def type_text_to_attr_input_in_new_xattrs_entry(selenium, browser_id, text, moda
 @wt(
     parsers.parse(
         'user of {browser_id} types "{text}" to value input '
-        "box of new metadata xattrs entry"
+        "box of new metadata xattr entry"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_val_input_in_new_xattrs_entry(selenium, browser_id, text, modals):
+def type_text_to_val_input_in_new_xattr_entry(selenium, browser_id, text, modals):
     modal = modals(selenium[browser_id]).details_modal.metadata
     modal.xattrs.new_entry.value = text
 
@@ -77,11 +77,11 @@ def type_text_to_val_input_in_new_xattrs_entry(selenium, browser_id, text, modal
 @wt(
     parsers.parse(
         'user of {browser_id} types "{text}" to value input box of '
-        'attribute "{attribute_name}" metadata xattrs entry'
+        'attribute "{attribute_name}" metadata xattr entry'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_val_of_attr_in_new_xattrs_entry(
+def type_text_to_val_of_attr_in_new_xattr_entry(
     selenium, browser_id, text, modals, attribute_name
 ):
     modal = modals(selenium[browser_id]).details_modal.metadata
@@ -90,12 +90,12 @@ def type_text_to_val_of_attr_in_new_xattrs_entry(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees xattrs metadata entry "
+        "user of {browser_id} sees xattr metadata entry "
         'with attribute named "{attr_name}" and value "{attr_val}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_there_is_such_xattrs_meta_record(
+def assert_there_is_such_xattr_meta_record(
     selenium, browser_id, attr_name, attr_val, modals
 ):
     attr_val = attr_val.lower()
@@ -106,7 +106,7 @@ def assert_there_is_such_xattrs_meta_record(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} does not see xattrs metadata entry "
+        "user of {browser_id} does not see xattr metadata entry "
         'with attribute named "{attribute_name}"'
     )
 )
@@ -120,7 +120,7 @@ def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name, mo
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on delete "
-        "icon for xattrs metadata entry with attribute named "
+        "icon for xattr metadata entry with attribute named "
         '"{attr_name}"'
     )
 )

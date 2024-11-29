@@ -13,7 +13,7 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattrs column named "(?P<name>.*)" in '
+        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" in '
         "(?P<which_browser>file browser|archive browser|"
         "dataset browser) table"
     )
@@ -28,7 +28,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattrs column named "(?P<name>.*)" with'
+        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
         ' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
         " browser|archive browser|dataset browser) table"
     )

@@ -42,7 +42,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: User adds xattrs metadata entry and checks their presence with metadata status tag
+  Scenario Outline: User adds xattr metadata entry and checks their presence with metadata status tag
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -50,14 +50,14 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser types "attr" to key input box of new metadata xattrs entry
-    And user of browser types "val" to value input box of attribute "attr" metadata xattrs entry
+    And user of browser types "attr" to key input box of new metadata xattr entry
+    And user of browser types "val" to value input box of attribute "attr" metadata xattr entry
     And user of browser clicks on "Save" button in metadata panel
     Then user of browser sees metadata status tag for "<item>" in file browser
     And user of browser clicks on metadata status tag for "<item>" in file browser
     And user of browser sees that "<modal>" modal has appeared
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser sees xattrs metadata entry with attribute named "attr" and value "val"
+    And user of browser sees xattr metadata entry with attribute named "attr" and value "val"
 
     Examples:
     | modal              | item  |
@@ -72,17 +72,17 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr1" and value "val1"
-    And user of browser adds xattrs entry with key "attr2" and value "val2"
+    And user of browser adds xattr entry with key "attr1" and value "val1"
+    And user of browser adds xattr entry with key "attr2" and value "val2"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser clicks on delete icon for xattrs metadata entry with attribute named "attr1"
-    Then user of browser does not see xattrs metadata entry with attribute named "attr1"
-    And user of browser sees xattrs metadata entry with attribute named "attr2" and value "val2"
+    And user of browser clicks on delete icon for xattr metadata entry with attribute named "attr1"
+    Then user of browser does not see xattr metadata entry with attribute named "attr1"
+    And user of browser sees xattr metadata entry with attribute named "attr2" and value "val2"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser does not see xattrs metadata entry with attribute named "attr1"
-    And user of browser sees xattrs metadata entry with attribute named "attr2" and value "val2"
+    And user of browser does not see xattr metadata entry with attribute named "attr1"
+    And user of browser sees xattr metadata entry with attribute named "attr2" and value "val2"
 
     Examples:
     | modal              | item  |
@@ -97,10 +97,10 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr" and value "val"
+    And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser clicks on delete icon for xattrs metadata entry with attribute named "attr"
+    And user of browser clicks on delete icon for xattr metadata entry with attribute named "attr"
     Then user of browser sees that there is no xattrs metadata
     And user of browser clicks on "Save" button in metadata panel
     And user of browser does not see metadata status tag for "<item>" in file browser
@@ -113,16 +113,16 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: Delete single xattrs metadata entry (one visit in modal)
+  Scenario Outline: Delete single xattr metadata entry (one visit in modal)
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr" and value "val"
-    And user of browser sees xattrs metadata entry with attribute named "attr" and value "val"
-    And user of browser clicks on delete icon for xattrs metadata entry with attribute named "attr"
+    And user of browser adds xattr entry with key "attr" and value "val"
+    And user of browser sees xattr metadata entry with attribute named "attr" and value "val"
+    And user of browser clicks on delete icon for xattr metadata entry with attribute named "attr"
     Then user of browser sees that there is no xattrs metadata
 
     And user of browser clicks on "X" button in modal "<modal>"
@@ -145,9 +145,9 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr" and value "val"
+    And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Discard changes" button in metadata panel
-    Then user of browser does not see xattrs metadata entry with attribute named "attr"
+    Then user of browser does not see xattr metadata entry with attribute named "attr"
 
     Examples:
     | modal              | item  |
@@ -159,13 +159,13 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser creates new xattrs column named "attr" in file browser table
+    And user of browser creates new xattr column named "attr" in file browser table
     And user of browser enables only "attr" column in columns configuration popover in file browser table
     Then user of browser sees that item named "<item>" has "—" value in xattr column in file browser
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr" and value "val"
+    And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Save" button in metadata panel
     And user of browser clicks on "X" button in modal "<modal>"
     And user of browser sees that item named "<item>" has "val" value in xattr column in file browser
@@ -180,13 +180,13 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser creates new xattrs column named "attr" with custom label named "test" in file browser table
+    And user of browser creates new xattr column named "attr" with custom label named "test" in file browser table
     And user of browser enables only "test" column in columns configuration popover in file browser table
     Then user of browser sees that item named "dir1" has "—" value in xattr column in file browser
 
     And user of browser clicks on "Metadata" in context menu for "dir1"
     And user of browser sees that "Directory details" modal is opened on "Metadata" tab
-    And user of browser adds xattrs entry with key "attr" and value "val"
+    And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Save" button in metadata panel
     And user of browser clicks on "X" button in modal "Directory details"
     And user of browser sees that item named "dir1" has "val" value in xattr column in file browser

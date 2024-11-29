@@ -309,7 +309,7 @@ Feature: Public harvester site
          spaces:
            - space1
 
-    And user of browser_onedata removes xattrs metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+    And user of browser_onedata removes xattr metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
     Then user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
              jsonMetadataExists: false
