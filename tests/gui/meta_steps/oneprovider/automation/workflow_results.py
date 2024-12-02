@@ -28,6 +28,12 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
+from tests.gui.utils.common.count_checksums import (
+    adler32_sum,
+    md5_sum,
+    sha256_sum,
+    sha512_sum,
+)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -157,10 +163,16 @@ def count_checksums_for_file(
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
     checksums = parse_seq(checksum_list)
     results = {}
+    checksum_functions = {
+        "adler32_sum": adler32_sum,
+        "md5_sum": md5_sum,
+        "sha256_sum": sha256_sum,
+        "sha512_sum": sha512_sum,
+    }
 
     for checksum in checksums:
         sum_name = checksum + "_sum"
-        results[checksum] = globals()[sum_name](downloaded_file)
+        results[checksum] = checksum_functions[sum_name](downloaded_file)
 
     tmp_memory["checksums_" + file_name] = results
 
