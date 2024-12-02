@@ -12,6 +12,7 @@ import time
 
 import yaml
 from selenium.common.exceptions import ElementNotInteractableException
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (

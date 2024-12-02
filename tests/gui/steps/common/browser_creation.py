@@ -14,6 +14,7 @@ from itertools import cycle
 from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
 from urllib3.exceptions import HTTPError
+
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers

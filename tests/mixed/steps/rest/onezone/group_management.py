@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import pytest
 from onezone_client import GroupApi, GroupCreateRequest, UserApi
 from onezone_client.rest import ApiException
+
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.utils.common import login_to_oz

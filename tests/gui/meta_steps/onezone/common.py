@@ -6,6 +6,7 @@ import time
 from itertools import zip_longest
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import g_login_using_basic_auth

@@ -10,6 +10,7 @@ import re
 import time
 
 import yaml
+
 from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text

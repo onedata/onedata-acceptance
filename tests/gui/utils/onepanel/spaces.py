@@ -9,6 +9,7 @@ import re
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (

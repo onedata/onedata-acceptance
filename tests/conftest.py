@@ -17,10 +17,11 @@ from datetime import datetime, timezone
 import pytest
 import yaml
 from py.xml import html  # pylint: disable=import-error, no-name-in-module
-from urllib3.exceptions import MaxRetryError
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import Chrome
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
+from urllib3.exceptions import MaxRetryError
+
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
 from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.environment_utils import clean_env, start_environment

@@ -9,6 +9,7 @@ import time
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
