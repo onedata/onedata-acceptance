@@ -355,7 +355,7 @@ def check_metadata_for_file_in_directory(
         item.click_on_status_tag("Metadata")
         time.sleep(1)
         modal = modals(selenium[browser_id]).details_modal
-        entries = [entry.key for entry in modal.metadata.basic.entries]
+        entries = [entry.key for entry in modal.metadata.xattrs.entries]
         err_msg = (
             f"Number of expected metadata entries ({len(metadata)}) does"
             " not equal number of actual metadata entries "

@@ -23,8 +23,8 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser logged as admin to Onezone service
 
 
-  Scenario: User sees basic metadata values and keys after creating index that includes basic metadata
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+  Scenario: User sees xattrs metadata values and keys after creating index that includes basic metadata
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
     And user of browser creates new index "index1" that includes ["basic", "file_name"] toggles for "harvester1"
@@ -74,7 +74,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
 
 
   Scenario: User sees basic, JSON and RDF metadata values and keys after creating index that includes basic, JSON and RDF metadata
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser succeeds to write "dir1" directory JSON metadata: '{"id": 1}' in "space1"
     And user of browser succeeds to write "dir1" directory RDF metadata: "<a>first rdf</a>" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
@@ -96,7 +96,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
 
 
   Scenario: User sees metadata existence flags after creating index that includes metadata existence flags info file detail
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
     And user of browser creates new index "index1" that includes ["basic", "json", "rdf", "file_name", "metadata_existence_flags"] toggles for "harvester1"
