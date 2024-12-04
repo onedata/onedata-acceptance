@@ -718,6 +718,7 @@ def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} sees that opened space name is "{space}"'))
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_opened_space_name(selenium, browser_id, space, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()

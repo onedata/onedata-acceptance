@@ -16,12 +16,14 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def _login_using_basic_auth(login_page, username, password):
     login_page.username = username
     login_page.password = password
     login_page.sign_in()
 
 
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def _login_using_passphrase(login_page, password):
     login_page.passphrase = password
     login_page.sign_in()
@@ -67,7 +69,6 @@ def _login_to_service(
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def g_login_using_basic_auth(
     selenium, browser_id_list, user_id_list, login_page, users, service_list
 ):
@@ -82,7 +83,6 @@ def g_login_using_basic_auth(
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_login_using_basic_auth(
     selenium, browser_id_list, user_id_list, login_page, users, service_list
 ):
