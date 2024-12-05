@@ -18,7 +18,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 CREATE_INDEX_TOGGLES = {
-    "include_metadata": ["basic", "json", "rdf"],
+    "include_metadata": ["xattrs", "json", "rdf"],
     "include_file_details": [
         "file_name",
         "file_type",
