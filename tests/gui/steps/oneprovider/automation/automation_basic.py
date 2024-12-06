@@ -324,3 +324,16 @@ def select_logging_level_in_automation_subpage(
     op_container(driver).automation_page.logging_level()
     options = popups(driver).logging_level
     options.choose_item(level)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_elem_in_store_details_modal(modal, name, option=""):
+    if option == "archive":
+        modal.store_content_list[name].file_name.click()
+    elif option == "dataset":
+        modal.store_content_list[name].dataset_name.click()
+    else:
+        modal.single_file_container.clickable_name()
+
+    # wait a moment to open a tab
+    time.sleep(1)
