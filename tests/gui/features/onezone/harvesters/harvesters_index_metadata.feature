@@ -23,11 +23,11 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser logged as admin to Onezone service
 
 
-  Scenario: User sees xattrs metadata values and keys after creating index that includes basic metadata
+  Scenario: User sees xattrs metadata values and keys after creating index that includes xattrs metadata
     When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
-    And user of browser creates new index "index1" that includes ["basic", "file_name"] toggles for "harvester1"
+    And user of browser creates new index "index1" that includes ["xattrs", "file_name"] toggles for "harvester1"
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
@@ -73,13 +73,13 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
            - space1
 
 
-  Scenario: User sees basic, JSON and RDF metadata values and keys after creating index that includes basic, JSON and RDF metadata
+  Scenario: User sees basic, JSON and RDF metadata values and keys after creating index that includes xattrs, JSON and RDF metadata
     When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser succeeds to write "dir1" directory JSON metadata: '{"id": 1}' in "space1"
     And user of browser succeeds to write "dir1" directory RDF metadata: "<a>first rdf</a>" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
-    And user of browser creates new index "index1" that includes ["rdf", "file_name", "basic", "json"] toggles for "harvester1"
+    And user of browser creates new index "index1" that includes ["rdf", "file_name", "xattrs", "json"] toggles for "harvester1"
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
@@ -99,7 +99,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     When user of browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
-    And user of browser creates new index "index1" that includes ["basic", "json", "rdf", "file_name", "metadata_existence_flags"] toggles for "harvester1"
+    And user of browser creates new index "index1" that includes ["xattrs", "json", "rdf", "file_name", "metadata_existence_flags"] toggles for "harvester1"
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
