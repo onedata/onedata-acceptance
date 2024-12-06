@@ -195,7 +195,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
 
     # upload and add metadata to file in space2
     And user of browser uploads "20B-0.txt" to the root directory of "space2"
-    And user of browser succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
+    And user of browser succeeds to write "20B-0.txt" file xattrs metadata: "author=John Doe" in "space2"
 
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees only following files in Data discovery page:
@@ -276,7 +276,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
            - space1
 
     # delete part of metadata
-    And user of browser removes basic metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
+    And user of browser removes xattr metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees only following files in Data discovery page:
          dir1_1:
