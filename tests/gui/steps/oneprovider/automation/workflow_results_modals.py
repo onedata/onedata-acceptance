@@ -49,7 +49,7 @@ def assert_time_on_lower_right_corner_of_chart_is_current_actual_time(
     ts = datetime.timestamp(now)
     assert (
         abs(chart_time_in_right_corner - ts) < 30 * 60
-    ), "Difference between current time and time on chart is greater than 600s"
+    ), "Difference between current time and time on chart is greater than 30 min"
 
 
 @wt(
