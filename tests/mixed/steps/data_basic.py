@@ -1266,7 +1266,7 @@ def set_metadata_in_op(
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
-        tab_name = tab_name.upper() if tab_name != "basic" else tab_name
+        tab_name = tab_name.upper() if tab_name != "xattrs" else tab_name
         set_metadata_in_op_gui(
             selenium,
             user,
@@ -1328,7 +1328,7 @@ def assert_metadata_in_op(
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
-        tab_name = tab_name.upper() if tab_name != "basic" else tab_name
+        tab_name = tab_name.upper() if tab_name != "xattrs" else tab_name
         assert_metadata_in_op_gui(
             selenium,
             user,
@@ -1437,7 +1437,7 @@ def assert_no_such_metadata_in_op(
     full_path = f"{space}/{path}"
     client_lower = client.lower()
     if client_lower == "web gui":
-        tab_name = tab_name.upper() if tab_name != "basic" else tab_name
+        tab_name = tab_name.upper() if tab_name != "xattrs" else tab_name
         assert_such_metadata_not_exist_in_op_gui(
             selenium,
             user,
