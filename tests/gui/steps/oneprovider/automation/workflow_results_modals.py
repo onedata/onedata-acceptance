@@ -39,7 +39,7 @@ def assert_processing_chart(browser_id, selenium, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_time_on_lower_right_corner_of_chart_is_current_actual_time(
+def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
     browser_id, selenium, modals
 ):
     switch_to_iframe(selenium, browser_id)
