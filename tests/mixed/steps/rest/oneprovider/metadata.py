@@ -16,7 +16,7 @@ from tests.mixed.utils.common import login_to_provider
 def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
-    if tab_name.lower() == "basic":
+    if tab_name.lower() == "xattrs":
         (attr, val) = val.split("=")
         assert attr in metadata, f"{path} has no {attr} {tab_name} metadata"
         assert val == metadata[attr], f"{path} has no {attr} = {val} {tab_name}"
@@ -39,7 +39,7 @@ def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, v
 
 def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
-    if tab_name in ["basic", "xattrs"]:
+    if tab_name == "xattrs":
         (attr, val) = val.split("=")
     else:
         attr = f"onedata_{tab_name.lower()}"
@@ -64,7 +64,7 @@ def assert_no_such_metadata_in_op_rest(
 ):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
-    if tab_name == "basic":
+    if tab_name == "xattrs":
         attr, val = val.split("=")
     else:
         attr = f"onedata_{tab_name.lower()}"

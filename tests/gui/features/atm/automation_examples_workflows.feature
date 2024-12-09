@@ -413,7 +413,7 @@ Feature: Automation examples tests
     Then user of browser sees that status of "<workflow_name>" workflow is "Finished"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
     And user of browser sees that files processing speed is greater or equal 2.5 per second on chart with processing stats
@@ -422,7 +422,7 @@ Feature: Automation examples tests
     And user of browser closes task "md5" in 1st parallel box in "calculate-checksums" lane in workflow visualizer
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "sha256" in 1st parallel box in "calculate-checksums" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
     And user of browser sees that files processing speed is greater or equal 2 per second on chart with processing stats
