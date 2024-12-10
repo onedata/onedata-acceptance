@@ -181,7 +181,7 @@ def checksums_counted_in_workflow(metadata_modal):
     result = {}
     # wait for modal to load
     time.sleep(0.5)
-    for item in metadata_modal.basic.entries:
+    for item in metadata_modal.xattrs.entries:
         result[item.key.replace("_key", "")] = item.value
     return result
 
