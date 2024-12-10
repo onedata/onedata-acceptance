@@ -47,7 +47,7 @@ class Index(PageObject):
 
 
 class IncludeMetadata(PageObject):
-    basic = Toggle(".metadataXattrs-field .one-way-toggle-control")
+    xattrs = Toggle(".metadataXattrs-field .one-way-toggle-control")
     json = Toggle(".metadataJson-field .one-way-toggle-control")
     rdf = Toggle(".metadataRdf-field .one-way-toggle-control")
 

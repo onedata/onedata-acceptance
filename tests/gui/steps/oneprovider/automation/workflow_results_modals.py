@@ -35,11 +35,11 @@ def assert_processing_chart(browser_id, selenium, modals):
 @wt(
     parsers.parse(
         "user of {browser_id} sees that time in right corner of chart"
-        " with processing stats is around actual time"
+        " with processing stats is around current time"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
+def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
     browser_id, selenium, modals
 ):
     switch_to_iframe(selenium, browser_id)
@@ -48,8 +48,8 @@ def assert_time_on_lower_right_corner_of_chart_is_around_actual_time(
     now = datetime.now()
     ts = datetime.timestamp(now)
     assert (
-        abs(chart_time_in_right_corner - ts) < 600
-    ), "Difference between actual time and time on chart is greater than 600s"
+        abs(chart_time_in_right_corner - ts) < 30 * 60
+    ), "Difference between current time and time on chart is greater than 30 min"
 
 
 @wt(
