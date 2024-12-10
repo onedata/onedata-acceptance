@@ -39,6 +39,7 @@ from tests.gui.steps.onezone.tokens import (
     click_menu_button_of_tokens_page,
     click_on_button_in_tokens_sidebar,
     click_on_confirm_button_on_tokens_page,
+    click_on_token_containing_name,
     click_on_token_on_tokens_list,
     click_option_for_token_row_menu,
     click_option_in_token_page_menu,
@@ -938,3 +939,15 @@ def given_create_token(
 
     click_copy_button_in_token_view(selenium, user, oz_page)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
+
+
+@wt(parsers.parse('user of {browser_id} copies token "{token_name}" from tokens page'))
+def copy_token_and_store_value(
+    selenium, browser_id, token_name, oz_page, clipboard, displays, tmp_memory
+):
+    option = "Tokens"
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_token_containing_name(selenium, browser_id, token_name, oz_page)
+    click_copy_button_in_token_view(selenium, browser_id, oz_page)
+    copied_token = clipboard.paste(display=displays[browser_id])
+    tmp_memory["copied_token"] = copied_token

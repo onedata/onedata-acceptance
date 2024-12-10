@@ -351,6 +351,12 @@ def tokens():
 
 
 @pytest.fixture
+def shares():
+    """Dict to use to store mapping share_name: share_id"""
+    return {}
+
+
+@pytest.fixture
 def workflows():
     """Dict to use to store information about uploaded to zone workflow schemas,
     e.g. {'workflow_name': 'workflow_id'}"""

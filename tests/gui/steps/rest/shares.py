@@ -25,19 +25,22 @@ from tests.utils.rest_utils import (
         '"{item_path}" supported by "{provider}" provider'
     )
 )
-def create_share_using_rest(item_path, provider, user, share_name, hosts, users):
+def create_share_using_rest(
+    item_path, provider, user, share_name, hosts, users, shares
+):
     provider_hostname = hosts[provider]["hostname"]
     file_id = get_file_id_by_rest(item_path, provider_hostname, user, users)
 
     share_details = {"name": share_name, "fileId": file_id}
 
-    http_post(
+    res = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
         path=get_provider_rest_path("shares"),
         headers={"X-Auth-Token": users[user].token},
         data=json.dumps(share_details),
     )
+    shares[share_name] = res.json()["shareId"]
 
 
 @wt(
@@ -46,12 +49,14 @@ def create_share_using_rest(item_path, provider, user, share_name, hosts, users)
         '"{item_path}" supported by "{provider}" provider'
     )
 )
-def wt_create_share_using_rest(item_path, provider, user, share_name, hosts, users):
-    create_share_using_rest(item_path, provider, user, share_name, hosts, users)
+def wt_create_share_using_rest(
+    item_path, provider, user, share_name, hosts, users, shares
+):
+    create_share_using_rest(item_path, provider, user, share_name, hosts, users, shares)
 
 
 @given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))
-def create_many_shares_using_rest(user, config, hosts, users):
+def create_many_shares_using_rest(user, config, hosts, users, shares):
     """Config:
 
     - name: share name
@@ -59,17 +64,17 @@ def create_many_shares_using_rest(user, config, hosts, users):
       provider: provider that supports space
 
     """
-    _create_many_shares_using_rest(user, config, hosts, users)
+    _create_many_shares_using_rest(user, config, hosts, users, shares)
 
 
-def _create_many_shares_using_rest(user, config, hosts, users):
+def _create_many_shares_using_rest(user, config, hosts, users, shares):
     data = yaml.load(config, yaml.Loader)
     for share in data:
         name = share["name"]
         path = share["path"]
         provider = share["provider"]
 
-        create_share_using_rest(path, provider, user, name, hosts, users)
+        create_share_using_rest(path, provider, user, name, hosts, users, shares)
 
 
 def get_file_id_by_rest(file_path, provider_hostname, user, users):

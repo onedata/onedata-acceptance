@@ -562,3 +562,18 @@ def copy_user_space_invite_token(
     )
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} copies command "{command}" from "REST API" modal'
+    )
+)
+def copy_command_from_rest_api_modal(modals, selenium, browser_id, command, popups):
+    driver = selenium[browser_id]
+    modal = modals(driver).rest_api
+    command = f"{command}\nREST"
+
+    modal.api.operations.click()
+    popups(driver).power_select.choose_item(command)
+    modal.api.copy_button.click()
