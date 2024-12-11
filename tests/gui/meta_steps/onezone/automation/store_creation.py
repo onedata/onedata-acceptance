@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
+
 from tests.gui.steps.modals.modal import (
     choose_option_in_dropdown_menu_in_modal,
     click_modal_button,

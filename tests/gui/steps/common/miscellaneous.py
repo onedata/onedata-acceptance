@@ -12,6 +12,7 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt

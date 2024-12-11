@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 
 import yaml
+
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from pytest_bdd import scenario
+
 from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.dir_steps import *
 from tests.oneclient.steps.environment_steps import *

@@ -3,6 +3,7 @@ using web GUI
 """
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal

@@ -12,6 +12,7 @@ from datetime import datetime
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site

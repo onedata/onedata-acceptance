@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import yaml
+
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.notifies import notify_visible_with_text

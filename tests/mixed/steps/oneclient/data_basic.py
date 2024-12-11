@@ -11,6 +11,7 @@ import os
 from functools import partial
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (

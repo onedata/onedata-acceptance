@@ -12,6 +12,7 @@ from subprocess import CalledProcessError
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import wt_login_using_basic_auth

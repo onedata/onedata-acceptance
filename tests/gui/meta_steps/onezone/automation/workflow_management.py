@@ -11,6 +11,7 @@ import time
 from ast import literal_eval
 
 import yaml
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,

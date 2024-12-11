@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2018-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.core.base import PageObject

@@ -10,6 +10,7 @@ import time
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button

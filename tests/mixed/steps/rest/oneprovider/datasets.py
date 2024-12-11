@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
+
 from tests.gui.meta_steps.oneprovider.dataset import get_flags
 from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id

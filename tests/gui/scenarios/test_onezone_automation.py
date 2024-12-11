@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
+
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import *
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
