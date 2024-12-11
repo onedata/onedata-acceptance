@@ -14,7 +14,7 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.docker import docker_ls
-from tests.gui.steps.common.login import wt_login_using_basic_auth
+from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
@@ -404,7 +404,7 @@ def login_and_remove_space_instead_of_revoke(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    wt_login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
+    login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).remove_modal.understand_notice()

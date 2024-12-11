@@ -69,21 +69,13 @@ def _login_to_service(
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )
-def g_login_using_basic_auth(
-    selenium, browser_id_list, user_id_list, login_page, users, service_list
-):
-    _login_to_service(
-        selenium, browser_id_list, user_id_list, service_list, login_page, users
-    )
-
-
 @wt(
     parsers.re(
         "users? of (?P<browser_id_list>.*) logs? "
         "as (?P<user_id_list>.*) to (?P<service_list>.*) service"
     )
 )
-def wt_login_using_basic_auth(
+def login_using_basic_auth(
     selenium, browser_id_list, user_id_list, login_page, users, service_list
 ):
     _login_to_service(
