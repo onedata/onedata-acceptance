@@ -10,6 +10,7 @@ import os.path
 import subprocess
 
 import yaml
+
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 

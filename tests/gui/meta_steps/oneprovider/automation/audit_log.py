@@ -14,6 +14,7 @@ from datetime import date
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests import GUI_LOGDIR
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (

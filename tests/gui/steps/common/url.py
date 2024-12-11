@@ -11,6 +11,7 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt

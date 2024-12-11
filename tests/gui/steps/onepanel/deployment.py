@@ -10,6 +10,7 @@ import re
 import time
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt

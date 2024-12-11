@@ -11,6 +11,7 @@ import os
 from functools import partial
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
@@ -238,7 +239,7 @@ def set_posix_permissions_in_op_oneclient(user, path, perm, host, users, result)
 
 
 def set_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
-    if attr_type == "basic":
+    if attr_type == "xattrs":
         (attr, attr_val) = attr_val.split("=")
     else:
         attr = f"onedata_{attr_type.lower()}"
@@ -247,7 +248,7 @@ def set_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
 
 
 def assert_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
-    if attr_type == "basic":
+    if attr_type == "xattrs":
         attr, val = attr_val.split("=")
         multi_file_steps.check_string_xattr(user, path, attr, val, host, users)
     elif attr_type.lower() == "json":
@@ -268,7 +269,7 @@ def remove_all_metadata_in_op_oneclient(user, users, host, path):
 
 def assert_no_such_metadata_in_op_oneclient(user, users, host, path, tab_name, val):
     metadata = multi_file_steps.get_metadata(user, path, host, users)
-    if tab_name == "basic":
+    if tab_name == "xattrs":
         attr, val = val.split("=")
     else:
         attr = f"onedata_{tab_name.lower()}"

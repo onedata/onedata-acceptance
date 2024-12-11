@@ -10,6 +10,7 @@ import time
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button

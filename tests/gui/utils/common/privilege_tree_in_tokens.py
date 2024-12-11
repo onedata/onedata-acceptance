@@ -8,6 +8,7 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import yaml
+
 from tests.gui.steps.onezone.marketplace import (
     assert_element_in_space_marketplace,
     assert_elements_list_in_space_marketplace,

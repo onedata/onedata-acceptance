@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import subprocess as sp
 
 import yaml
+
 from tests import (
     CDMI_REST_PATH_PREFIX,
     OZ_REST_PATH_PREFIX,

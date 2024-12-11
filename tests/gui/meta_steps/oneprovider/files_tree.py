@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import yaml
+
 from tests.gui.steps.oneprovider.browser import (
     assert_num_of_files_are_displayed_in_browser,
     assert_only_expected_items_presence_in_browser,

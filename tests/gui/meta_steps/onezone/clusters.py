@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from selenium.common.exceptions import TimeoutException
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users

@@ -11,6 +11,7 @@ from datetime import datetime
 
 import requests
 from requests.exceptions import HTTPError
+
 from tests.conftest import REQUEST_TIMEOUT
 from tests.utils.bdd_utils import given, parsers, wt
 

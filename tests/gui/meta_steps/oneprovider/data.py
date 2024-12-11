@@ -11,6 +11,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser

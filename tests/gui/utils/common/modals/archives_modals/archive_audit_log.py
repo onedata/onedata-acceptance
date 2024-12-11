@@ -10,6 +10,7 @@ import time
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

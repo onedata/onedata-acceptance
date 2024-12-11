@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 
 import yaml
+
 from tests import PANEL_REST_PORT
 from tests.gui.meta_steps.onepanel.storages import get_first_storage_id_by_name
 from tests.gui.utils.generic import parse_seq

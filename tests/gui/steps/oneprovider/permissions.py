@@ -8,6 +8,7 @@ import re
 
 import pytest
 from selenium.common.exceptions import InvalidElementStateException, JavascriptException
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt

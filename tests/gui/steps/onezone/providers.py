@@ -10,6 +10,7 @@ import time
 from itertools import zip_longest
 
 import requests
+
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
