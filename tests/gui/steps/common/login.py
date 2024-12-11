@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -58,9 +58,7 @@ def _login_to_service(
             _login_using_basic_auth(
                 login_page(driver), username, users[username].password
             )
-        notify_visible_with_text(
-            selenium, browser_id, "info", "Authentication succeeded!"
-        )
+        assert_main_page_loaded(selenium, browser_id)
 
 
 @given(
