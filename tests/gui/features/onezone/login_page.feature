@@ -12,7 +12,7 @@ Feature: Onezone login page
     Then user of browser should see that the page title contains "Onezone"
 
 
-  Scenario: User successfully login and logout
+  Scenario: User successfully logins and logouts
     Given user of browser logged as user1 to Onezone service
     When user of browser sees an info notify with text matching to: Authentication succeeded!
     And user of browser expands account settings dropdown in the sidebar
