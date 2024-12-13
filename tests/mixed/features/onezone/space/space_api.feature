@@ -33,7 +33,8 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get space details" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       advertisedInMarketplace: false
       name: space1
@@ -44,26 +45,12 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List all space privileges" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
-      member: [space_read_data,space_view,space_view_transfers,space_write_data]
-      manager: [space_add_group,space_add_harvester,space_add_user,space_create_archives,
-        space_manage_archives,space_manage_datasets,space_manage_shares,space_query_views,
-        space_read_data,space_register_files,space_remove_group,space_remove_harvester,
-        space_remove_user,space_schedule_atm_workflow_executions,space_schedule_replication,
-        space_view,space_view_archives,space_view_atm_workflow_executions,
-        space_view_changes_stream,space_view_privileges,space_view_qos,space_view_statistics,
-        space_view_transfers,space_view_views,space_write_data]
-      admin: [space_add_group,space_add_harvester,space_add_support,space_add_user,
-        space_cancel_eviction,space_cancel_replication,space_create_archives,space_delete,
-        space_manage_archives,space_manage_atm_workflow_executions,space_manage_datasets,
-        space_manage_in_marketplace,space_manage_qos,space_manage_shares,space_manage_views,
-        space_query_views,space_read_data,space_recall_archives,space_register_files,space_remove_archives,
-        space_remove_group,space_remove_harvester,space_remove_support,space_remove_user,
-        space_schedule_atm_workflow_executions,space_schedule_eviction,space_schedule_replication,
-        space_set_privileges,space_update,space_view,space_view_archives,space_view_atm_workflow_executions,
-        space_view_changes_stream,space_view_privileges,space_view_qos,space_view_statistics,space_view_transfers,
-        space_view_views,space_write_data]
+      member: <space_member_privileges>
+      manager: <space_manager_privileges>
+      admin: <space_owner_privileges>
 
 
   Scenario: User reads direct space users using the command from "List direct space users" from REST API modal
@@ -71,7 +58,8 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List direct space users" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       users: [$(resolve_user_id user1)]
 
@@ -86,7 +74,8 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List effective space users" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       users: [$(resolve_user_id user1), $(resolve_user_id user2)]
 
@@ -101,7 +90,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get effective space user details" from "REST API" modal
-    And user of browser executes copied command with env variable "USER_ID" with value of "user1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      USER_ID: $(resolve_user_id user1)
     Then user1 sees that output of executed command contains:
       username: user1
       userId: $(resolve_user_id user1)
@@ -117,21 +108,15 @@ Feature: Space API tests
         type: access
         caveats:
           interface: REST
-    When user of browser copies token "access token" from tokens page
+    And user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List user's direct space privileges" from "REST API" modal
-    And user of browser executes copied command with env variable "USER_ID" with value of "user1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      USER_ID: $(resolve_user_id user1)
     Then user1 sees that output of executed command contains:
-      privileges: [space_add_group,space_add_harvester,space_add_support,space_add_user,
-        space_cancel_eviction,space_cancel_replication,space_create_archives,space_delete,space_manage_archives,
-        space_manage_atm_workflow_executions,space_manage_datasets,space_manage_in_marketplace,space_manage_qos,
-        space_manage_shares,space_manage_views,space_query_views,space_read_data,space_recall_archives,
-        space_register_files,space_remove_archives,space_remove_group,space_remove_harvester,space_remove_support,
-        space_remove_user,space_schedule_atm_workflow_executions,space_schedule_eviction,space_schedule_replication,
-        space_set_privileges,space_update,space_view,space_view_archives,space_view_atm_workflow_executions,
-        space_view_changes_stream,space_view_privileges,space_view_qos,space_view_statistics,space_view_transfers,
-        space_view_views,space_write_data]
+      privileges: <space_owner_privileges>
 
 
 
@@ -141,21 +126,15 @@ Feature: Space API tests
         type: access
         caveats:
           interface: REST
-    When user of browser copies token "access token" from tokens page
+    And user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List user's effective space privileges" from "REST API" modal
-    And user of browser executes copied command with env variable "USER_ID" with value of "user1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      USER_ID: $(resolve_user_id user1)
     Then user1 sees that output of executed command contains:
-      privileges: [space_add_group,space_add_harvester,space_add_support,space_add_user,
-        space_cancel_eviction,space_cancel_replication,space_create_archives,space_delete,space_manage_archives,
-        space_manage_atm_workflow_executions,space_manage_datasets,space_manage_in_marketplace,space_manage_qos,
-        space_manage_shares,space_manage_views,space_query_views,space_read_data,space_recall_archives,
-        space_register_files,space_remove_archives,space_remove_group,space_remove_harvester,space_remove_support,
-        space_remove_user,space_schedule_atm_workflow_executions,space_schedule_eviction,space_schedule_replication,
-        space_set_privileges,space_update,space_view,space_view_archives,space_view_atm_workflow_executions,
-        space_view_changes_stream,space_view_privileges,space_view_qos,space_view_statistics,space_view_transfers,
-        space_view_views,space_write_data]
+      privileges: <space_owner_privileges>
 
 
   Scenario: User reads direct space groups using the command from "List direct space groups" from REST API modal
@@ -164,11 +143,12 @@ Feature: Space API tests
         type: access
         caveats:
           interface: REST
-    When user of browser copies token "access token" from tokens page
+    And user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List direct space groups" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       groups: [$(resolve_group_id group1)]
 
@@ -179,11 +159,12 @@ Feature: Space API tests
         type: access
         caveats:
           interface: REST
-    When user of browser copies token "access token" from tokens page
+    And user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List effective space groups" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       groups: [$(resolve_group_id group1), $(resolve_group_id child_group)]
 
@@ -193,7 +174,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get effective space group details" from "REST API" modal
-    And user of browser executes copied command with env variable "GROUP_ID" with value of "group1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      GROUP_ID: $(resolve_group_id group1)
     Then user1 sees that output of executed command contains:
       type: team
       name: group1
@@ -204,7 +187,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List group's direct space privileges" from "REST API" modal
-    And user of browser executes copied command with env variable "GROUP_ID" with value of "group1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      GROUP_ID: $(resolve_group_id group1)
     Then user1 sees that output of executed command contains:
       privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
 
@@ -214,7 +199,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List group's effective space privileges" from "REST API" modal
-    And user of browser executes copied command with env variable "GROUP_ID" with value of "group1"
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
+      GROUP_ID: $(resolve_group_id group1)
     Then user1 sees that output of executed command contains:
       privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
 
@@ -225,6 +212,7 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List space shares" from "REST API" modal
-    And user of browser executes copied command
+    And user of browser executes copied command with env variables:
+      TOKEN: $(resolve_token "access token")
     Then user1 sees that output of executed command contains:
       shares: [$(resolve_share_id share_file1)]
