@@ -182,28 +182,21 @@ Feature: Space API tests
       name: group1
 
 
-  Scenario: User reads group1 direct space privileges using the command from "List group's direct space privileges" from REST API modal
+  Scenario Outline: User reads group1 <priv_type> space privileges using the command from <command> from REST API modal
     When user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
-    And user of browser copies command "List group's direct space privileges" from "REST API" modal
+    And user of browser copies command <command> from "REST API" modal
     And user of browser executes copied command with env variables:
       TOKEN: $(resolve_token "access token")
       GROUP_ID: $(resolve_group_id group1)
     Then user1 sees that output of executed command contains:
       privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
 
-
-  Scenario: User reads group1 effective space privileges using the command from "List group's effective space privileges" from REST API modal
-    When user of browser copies token "access token" from tokens page
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on "REST API" button in space "space1" menu
-    And user of browser copies command "List group's effective space privileges" from "REST API" modal
-    And user of browser executes copied command with env variables:
-      TOKEN: $(resolve_token "access token")
-      GROUP_ID: $(resolve_group_id group1)
-    Then user1 sees that output of executed command contains:
-      privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
+    Examples:
+    | priv_type | command                                   |
+    | direct    | "List group's direct space privileges"    |
+    | effective | "List group's effective space privileges" |
 
 
   Scenario: User reads space shares using the command from "List space shares" from REST API modal
