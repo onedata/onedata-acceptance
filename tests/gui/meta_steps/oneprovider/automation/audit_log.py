@@ -49,6 +49,9 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_store_content,
     open_store_details_modal,
 )
+from tests.gui.steps.oneprovider.common import (
+    wait_for_file_with_unknown_name_to_download,
+)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -1367,16 +1370,7 @@ def _get_workflow_audit_log(browser_id, selenium, tmp_memory, modals, tmpdir):
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modal = modals(driver).audit_log
     modal.download_as_json()
-    # wait for a file to download, we don`t know the name of the file
-    # so there is a way we can check that file was downloaded
-    n_files_after_download = len(os.listdir(path))
-    for _ in range(50):
-        n_files_after_download = len(os.listdir(path))
-        if n_files_after_download > n_files_before_download:
-            break
-        time.sleep(0.1)
-    if n_files_before_download == n_files_after_download:
-        raise AssertionError("file was not downloaded")
+    wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_path = os.listdir(path)[-1]
     file_path = tmpdir.join(browser_id, "download", file_path)
     return file_path

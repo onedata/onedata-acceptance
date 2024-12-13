@@ -42,9 +42,11 @@ WAIT_NORMAL_UPLOAD = 60
 # when waiting for extended uploads to finish
 WAIT_EXTENDED_UPLOAD = 1500
 
-
 # number of times tests will try to start Webdriver instance
 DRIVER_CREATION_RETRIES = 5
+
+# use when waiting for normal download to finish
+WAIT_NORMAL_DOWNLOAD = 10
 
 
 # ============================================================================
