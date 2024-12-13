@@ -319,7 +319,6 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
 
     And user of browser clicks on "Go to source file..." for "file2_3"
     Then user of browser is redirected to newly opened tab
-    And user of browser is idle for 4 seconds
     And user of browser sees that opened space name is "space3"
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees only items named ["file1_3", "file2_3", "file3_3"] in file browser

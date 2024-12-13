@@ -12,9 +12,10 @@ Feature: Onezone login page
     Then user of browser should see that the page title contains "Onezone"
 
 
-  Scenario: User successfully logout
+  Scenario: User successfully logins and logouts
     Given user of browser logged as user1 to Onezone service
-    When user of browser expands account settings dropdown in the sidebar
+    When user of browser sees an info notify with text matching to: Authentication succeeded!
+    And user of browser expands account settings dropdown in the sidebar
     And user of browser clicks on Logout item in expanded settings dropdown in the sidebar
     Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/login
     And user of browser should see that the page title contains "Onezone"

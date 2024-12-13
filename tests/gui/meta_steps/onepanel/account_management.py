@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.login import (
-    notify_visible_with_text,
     wt_assert_login_page,
     wt_enter_text_to_field_in_login_form,
     wt_press_sign_in_btn_on_login_page,
 )
+from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.account_management import (
     wt_click_confirm_btn_in_chpasswd_form,
     wt_click_on_btn_in_account_management,

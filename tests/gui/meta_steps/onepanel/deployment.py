@@ -12,7 +12,7 @@ import time
 import yaml
 
 from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
-from tests.gui.steps.common.login import wt_login_using_basic_auth
+from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.deployment import (
     wt_assert_begin_of_cluster_deployment,
@@ -157,9 +157,7 @@ def enable_provider_cluster_registration_for_user(
         selenium, browser_id, last_step_btn, last_step, onepanel
     )
     service = "Onezone"
-    wt_login_using_basic_auth(
-        selenium, browser_id, user_login, login_page, users, service
-    )
+    login_using_basic_auth(selenium, browser_id, user_login, login_page, users, service)
     send_copied_invite_token_in_oz_gui(
         selenium,
         browser_id,

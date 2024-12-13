@@ -217,7 +217,7 @@ def refresh_site_and_wait(selenium, browser_id_list):
         assert_main_page_loaded(selenium, browser_id)
 
 
-@repeat_failed(interval=0.1, timeout=10)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_main_page_loaded(selenium, browser_id):
     elems = selenium[browser_id].find_elements(
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"

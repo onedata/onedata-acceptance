@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
-from tests.gui.steps.common.login import g_login_using_basic_auth
+from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
@@ -82,9 +82,7 @@ def login_using_gui(
     # mixed tests use user_list instead of browser_id_list because
     # some mixed steps don't use browser
     login_ids = browser_id_list if test_type == "gui" else user_list
-    g_login_using_basic_auth(
-        selenium, login_ids, user_list, login_page, users, host_list
-    )
+    login_using_basic_auth(selenium, login_ids, user_list, login_page, users, host_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
