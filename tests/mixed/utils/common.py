@@ -120,7 +120,7 @@ def send_copied_token_to_other_user(sender, receiver, tmp_memory):
 
 
 @wt(parsers.parse("user of {browser_id} executes copied command"))
-def execute_copied_command_rest(
+def execute_copied_curl_command(
     browser_id, displays, clipboard, tmp_memory, config=None
 ):
     cmd = (
@@ -141,7 +141,7 @@ def execute_copied_command_rest(
         " variables:\n{config}"
     )
 )
-def execute_copied_command_rest_with_env_vars(
+def execute_copied_curl_command_with_env_vars(
     browser_id, displays, clipboard, tmp_memory, selenium, config
 ):
     """
@@ -153,7 +153,7 @@ def execute_copied_command_rest_with_env_vars(
     config = {
         k: try_to_resolve_items(v, selenium["request"]) for k, v in config.items()
     }
-    execute_copied_command_rest(
+    execute_copied_curl_command(
         browser_id, displays, clipboard, tmp_memory, config=config
     )
 
