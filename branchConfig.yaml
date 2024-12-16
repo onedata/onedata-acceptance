@@ -6,7 +6,7 @@ images:
   onezone: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
   oneprovider: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
   oneclient: current_branch
-  rest-cli: default
+  rest-cli: develop
   openfaas-pod-status-monitor: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
   openfaas-lambda-result-streamer: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
 
