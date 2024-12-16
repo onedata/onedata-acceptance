@@ -194,7 +194,7 @@ Feature: Space API tests
       privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
 
     Examples:
-    | priv_type | command_label                                   |
+    | priv_type | command_label                             |
     | direct    | "List group's direct space privileges"    |
     | effective | "List group's effective space privileges" |
 
