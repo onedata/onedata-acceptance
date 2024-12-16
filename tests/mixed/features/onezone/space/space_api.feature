@@ -33,9 +33,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get space details" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       advertisedInMarketplace: false
       name: space1
 
@@ -45,9 +45,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List all space privileges" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       member: <space_member_privileges>
       manager: <space_manager_privileges>
       admin: <space_owner_privileges>
@@ -58,9 +58,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List direct space users" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       users: [$(resolve_user_id user1)]
 
 
@@ -74,9 +74,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List effective space users" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       users: [$(resolve_user_id user1), $(resolve_user_id user2)]
 
 
@@ -90,10 +90,10 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get effective space user details" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
       USER_ID: $(resolve_user_id user1)
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       username: user1
       userId: $(resolve_user_id user1)
       name: user1
@@ -112,10 +112,10 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List user's direct space privileges" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
       USER_ID: $(resolve_user_id user1)
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       privileges: <space_owner_privileges>
 
 
@@ -130,10 +130,10 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List user's effective space privileges" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
       USER_ID: $(resolve_user_id user1)
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       privileges: <space_owner_privileges>
 
 
@@ -147,9 +147,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List direct space groups" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       groups: [$(resolve_group_id group1)]
 
 
@@ -163,9 +163,9 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List effective space groups" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       groups: [$(resolve_group_id group1), $(resolve_group_id child_group)]
 
 
@@ -174,27 +174,27 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "Get effective space group details" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
       GROUP_ID: $(resolve_group_id group1)
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       type: team
       name: group1
 
 
-  Scenario Outline: User reads group1 <priv_type> space privileges using the command from <command> from REST API modal
+  Scenario Outline: User reads group1 <priv_type> space privileges using the command from <command_label> from REST API modal
     When user of browser copies token "access token" from tokens page
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
-    And user of browser copies command <command> from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser copies command <command_label> from "REST API" modal
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
       GROUP_ID: $(resolve_group_id group1)
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       privileges: [space_read_data,space_view,space_view_transfers,space_write_data]
 
     Examples:
-    | priv_type | command                                   |
+    | priv_type | command_label                                   |
     | direct    | "List group's direct space privileges"    |
     | effective | "List group's effective space privileges" |
 
@@ -205,7 +205,7 @@ Feature: Space API tests
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
     And user of browser copies command "List space shares" from "REST API" modal
-    And user of browser executes copied command with env variables:
+    And user of browser executes copied command with environment variables:
       TOKEN: $(resolve_token "access token")
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
       shares: [$(resolve_share_id share_file1)]

@@ -137,7 +137,8 @@ def execute_copied_command_rest(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} executes copied command with env variables:\n{config}"
+        "user of {browser_id} executes copied command with environment"
+        " variables:\n{config}"
     )
 )
 def execute_copied_command_rest_with_env_vars(
@@ -203,7 +204,11 @@ def try_to_resolve_items(val: str, request):
     return val
 
 
-@wt(parsers.parse("{user} sees that output of executed command contains:\n{config}"))
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that output of executed command contains:\n{config}"
+    )
+)
 def assert_command_output_contains(request, tmp_memory, config):
     output = tmp_memory["output"]
     output = yaml.load(output, yaml.Loader)
@@ -227,7 +232,8 @@ def assert_command_output_contains(request, tmp_memory, config):
 
 @wt(
     parsers.parse(
-        '{user} sees that output of executed command is equal to: "{expected_output}"'
+        "user of {browser_id} sees that output of executed command is equal to:"
+        ' "{expected_output}"'
     )
 )
 def assert_command_output_equals(tmp_memory, expected_output):
