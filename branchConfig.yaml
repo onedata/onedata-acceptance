@@ -5,7 +5,7 @@ images:
   # Specification of branches from which docker images will be pulled.
   onezone: develop
   oneprovider: develop
-  oneclient: current_branch
+  oneclient: docker.onedata.org/oneclient-dev:VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
   rest-cli: develop
   openfaas-pod-status-monitor: develop
   openfaas-lambda-result-streamer: develop
