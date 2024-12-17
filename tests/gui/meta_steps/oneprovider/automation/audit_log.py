@@ -27,6 +27,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
+    click_on_elem_in_store_details_modal,
     click_on_link_in_task_box,
     click_on_task_in_lane,
     get_op_workflow_visualizer_page,
@@ -47,6 +48,9 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     get_modal_and_logs_for_task,
     get_store_content,
     open_store_details_modal,
+)
+from tests.gui.steps.oneprovider.common import (
+    wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
@@ -711,32 +715,14 @@ def assert_file_in_store_details(
 def wt_click_on_elem_in_store_details_modal(
     browser_id, selenium, op_container, name, store_name, modals, option
 ):
-    click_on_elem_in_store_details_modal(
-        browser_id,
-        selenium,
-        op_container,
-        name,
-        store_name,
-        modals,
-        option=option,
-    )
-
-
-def click_on_elem_in_store_details_modal(
-    browser_id, selenium, op_container, name, store_name, modals, option=""
-):
     modal = open_store_details_modal(
         selenium, browser_id, op_container, modals, store_name
     )
-    if option == "archive":
-        modal.store_content_list[name].file_name.click()
-    elif option == "dataset":
-        modal.store_content_list[name].dataset_name.click()
-    else:
-        modal.single_file_container.clickable_name()
-
-    # wait a moment to open a tab
-    time.sleep(1)
+    click_on_elem_in_store_details_modal(
+        modal,
+        name,
+        option=option,
+    )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -1378,13 +1364,13 @@ def assert_no_debug_entry_in_workflow_audit_log(
 def _get_workflow_audit_log(browser_id, selenium, tmp_memory, modals, tmpdir):
     driver = selenium[browser_id]
     modal_name = "Workflow audit log"
+    path = tmpdir.join(browser_id, "download")
+    n_files_before_download = len(os.listdir(path))
     # wait for modal to appear
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modal = modals(driver).audit_log
     modal.download_as_json()
-    # wait a while for file to download
-    time.sleep(0.5)
-    path = tmpdir.join(browser_id, "download")
+    wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_path = os.listdir(path)[-1]
     file_path = tmpdir.join(browser_id, "download", file_path)
     return file_path

@@ -5,12 +5,13 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import os
 import time
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -118,3 +119,11 @@ def wait_for_item_to_appear(item):
         except StaleElementReferenceException:
             time.sleep(0.1)
     raise RuntimeError(f"item {item} did not appear")
+
+
+@repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
+def wait_for_file_with_unknown_name_to_download(n_files_before_download, dir_path):
+    # wait for a file to download, we don`t know the name of the file
+    # so there is a way we can check that file was downloaded
+    n_files_after_download = len(os.listdir(dir_path))
+    assert n_files_after_download > n_files_before_download, "file was not downloaded"
