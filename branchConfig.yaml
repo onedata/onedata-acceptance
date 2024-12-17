@@ -1,19 +1,19 @@
 # Used when specific branch for given repo does not exist.
-default: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
+default: develop
 
 images:
   # Specification of branches from which docker images will be pulled.
-  onezone: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
-  oneprovider: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
+  onezone: develop
+  oneprovider: develop
   oneclient: current_branch
   rest-cli: develop
-  openfaas-pod-status-monitor: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
-  openfaas-lambda-result-streamer: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
+  openfaas-pod-status-monitor: develop
+  openfaas-lambda-result-streamer: develop
 
 sources:
   # Specification of branches from which sources for components will be pulled.
-  oz-worker: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
-  op-worker: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
-  onepanel: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
-  cluster-manager: feature/VFS-12098-test-couchbase-upgrade-to-6.x-from-4.1
+  oz-worker: develop
+  op-worker: develop
+  onepanel: develop
+  cluster-manager: develop
   oneclient: current_branch
