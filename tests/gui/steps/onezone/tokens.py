@@ -502,3 +502,14 @@ def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
 @given(parsers.parse("{sender} sends {item_type} to {receiver}"))
 def given_send_copied_item_to_other_user(sender, receiver, item_type, tmp_memory):
     tmp_memory[receiver]["mailbox"][item_type.lower()] = tmp_memory[sender][item_type]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_token_containing_name(selenium, browser_id, token_name, oz_page):
+    driver = selenium[browser_id]
+    tokens = oz_page(driver)["tokens"].sidebar.tokens
+    for token in tokens:
+        if token_name in token.name:
+            token.click()
+            return
+    raise ValueError(f"token {token_name} not found")

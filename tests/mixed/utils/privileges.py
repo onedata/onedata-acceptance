@@ -1,0 +1,83 @@
+"""Module containing lists of privileges for various user types."""
+
+__author__ = "Wojciech Szmelich"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+
+space_owner_privileges = [
+    "space_add_group",
+    "space_add_harvester",
+    "space_add_support",
+    "space_add_user",
+    "space_cancel_eviction",
+    "space_cancel_replication",
+    "space_create_archives",
+    "space_delete",
+    "space_manage_archives",
+    "space_manage_atm_workflow_executions",
+    "space_manage_datasets",
+    "space_manage_in_marketplace",
+    "space_manage_qos",
+    "space_manage_shares",
+    "space_manage_views",
+    "space_query_views",
+    "space_read_data",
+    "space_recall_archives",
+    "space_register_files",
+    "space_remove_archives",
+    "space_remove_group",
+    "space_remove_harvester",
+    "space_remove_support",
+    "space_remove_user",
+    "space_schedule_atm_workflow_executions",
+    "space_schedule_eviction",
+    "space_schedule_replication",
+    "space_set_privileges",
+    "space_update",
+    "space_view",
+    "space_view_archives",
+    "space_view_atm_workflow_executions",
+    "space_view_changes_stream",
+    "space_view_privileges",
+    "space_view_qos",
+    "space_view_statistics",
+    "space_view_transfers",
+    "space_view_views",
+    "space_write_data",
+]
+
+space_manager_privileges = [
+    "space_add_group",
+    "space_add_harvester",
+    "space_add_user",
+    "space_create_archives",
+    "space_manage_archives",
+    "space_manage_datasets",
+    "space_manage_shares",
+    "space_query_views",
+    "space_read_data",
+    "space_register_files",
+    "space_remove_group",
+    "space_remove_harvester",
+    "space_remove_user",
+    "space_schedule_atm_workflow_executions",
+    "space_schedule_replication",
+    "space_view",
+    "space_view_archives",
+    "space_view_atm_workflow_executions",
+    "space_view_changes_stream",
+    "space_view_privileges",
+    "space_view_qos",
+    "space_view_statistics",
+    "space_view_transfers",
+    "space_view_views",
+    "space_write_data",
+]
+
+space_member_privileges = [
+    "space_read_data",
+    "space_view",
+    "space_view_transfers",
+    "space_write_data",
+]

@@ -28,7 +28,7 @@ Feature: Shares API tests
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command "Download file content" in API section from file details modal
     And user of browser executes copied command
-    Then user1 sees that output of executed command is equal to: "11111"
+    Then user of browser sees that output of executed command is equal to: "11111"
 
 
   Scenario: User reads file attributes using the command from "Get attributes" from API section in share file details modal
@@ -40,7 +40,7 @@ Feature: Shares API tests
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command "Get attributes" in API section from file details modal
     And user of browser executes copied command
-    Then user1 sees that output of executed command contains:
+    Then user of browser sees that output of executed command contains:
         type: REG
         size: 5
         name: file1
@@ -56,7 +56,7 @@ Feature: Shares API tests
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command "<command_name>" in API section from file details modal
     And user of browser executes copied command
-    Then user1 sees that output of executed command is equal to: "<expected_output>"
+    Then user of browser sees that output of executed command is equal to: "<expected_output>"
 
     Examples:
     | fmt    | metadata        | command_name                     | expected_output |
