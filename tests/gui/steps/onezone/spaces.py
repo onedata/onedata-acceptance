@@ -138,7 +138,7 @@ def assert_no_provider_for_space(
         "on the spaces list in the sidebar"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_new_created_space_has_appeared_on_spaces(
     selenium, browser_id, space_name, oz_page
 ):
