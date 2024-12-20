@@ -80,6 +80,8 @@ class User:
         rpyc_connection.modules.os.environ['ONECLIENT_ACCESS_TOKEN'] = token
         rpyc_connection.modules.os.environ['ONECLIENT_PROVIDER_HOST'] = \
             hosts[client_conf.get('provider')]['hostname']
+        rpyc_connection.modules.os.environ['ONECLIENT_ONEZONE_HOST'] = \
+            hosts['onezone']['hostname']
 
         ret = client.mount(client_conf.get('mode'), additional_opts=opts)
         if ret == 0:
