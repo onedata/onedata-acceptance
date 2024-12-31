@@ -53,6 +53,10 @@ class Client:
 
         print(f"Mount command: {cmd}")
 
+        print(f"Waiting 15 seconds for OP to settle down...")
+
+        time.sleep(15)
+
         ret = self.run_cmd(cmd, verbose=True)
 
         return ret
