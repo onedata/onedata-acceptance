@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import errno
 import os.path
 import subprocess as sp
+import time
 
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
@@ -121,13 +122,18 @@ def purge_all_spaces(client):
         for space in spaces:
             space_path = client.absolute_path(space)
             try:
+                print(f"Cleaning space {space_path}")
                 client.rm(path=space_path, recursive=True)
             except FileNotFoundError:
                 pass
             except OSError as e:
-                # ignore EACCES errors during cleaning
-                if e.errno == errno.EACCES:
+                # ignore permission errors during cleaning
+
+                if e.errno == errno.EPERM or e.errno == errno.EACCES or e.errno == errno.EIO:
                     pass
+                else:
+                    print(f"Unexpected error '{e.errno}' when cleaning space: {space_path}")
+                    raise e
     except FileNotFoundError:
         pass
     except Exception as e:

@@ -48,14 +48,12 @@ class Client:
                    ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
                    ' \' -ex \'bt\'').format(mount_path=self._mount_path, mode=mode_flag)
         else:
-            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2', '--disable-log-buffering', '--insecure']
+            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2', '--insecure']
                            + additional_opts + [self._mount_path])
 
         print(f"Mount command: {cmd}")
 
-        print(f"Waiting 15 seconds for OP to settle down...")
-
-        time.sleep(15)
+        time.sleep(1)
 
         ret = self.run_cmd(cmd, verbose=True)
 
@@ -101,10 +99,11 @@ class Client:
 
     def ls(self, path='.'):
         res = self.rpyc_connection.modules.os.listdir(path)
+
         res.remove('.hardlinks') if '.hardlinks' in res else None
         res.remove('.symlinks') if '.symlinks' in res else None
-        return res
 
+        return res
 
     def osrename(self, src, dest):
         self.rpyc_connection.modules.os.rename(src, dest)
@@ -116,7 +115,9 @@ class Client:
         self.rpyc_connection.modules.os.chmod(file_path, mode)
 
     def stat(self, path):
-        return self.rpyc_connection.modules.os.stat(path)
+        attr = self.rpyc_connection.modules.os.stat(path)
+
+        return attr
 
     def rm(self, path, recursive=False, force=False, onerror=None):
         if recursive and force:
