@@ -18,10 +18,12 @@ from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import (
     click_change_quota_button,
     click_on_navigation_tab_in_space,
+    click_start_scan_button_in_storage_import_tab,
     confirm_quota_value_change,
     remove_space_instead_of_revoke,
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
+    wait_until_scanning_is_finished_in_storage_import_tab,
     wt_assert_existence_of_space_support_record,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_btn_in_space_support_form,
@@ -376,3 +378,18 @@ def set_quota_in_auto_cleaning(selenium, browser_id, quota, value, onepanel):
     click_change_quota_button(selenium, browser_id, quota, onepanel)
     type_value_to_quota_input(selenium, browser_id, quota, value, onepanel)
     confirm_quota_value_change(selenium, browser_id, quota, onepanel)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} starts scan using "Start scan" button and waits till'
+        " finished in Onepanel"
+    )
+)
+def run_scan_and_wait_till_finished(selenium, browser_id, onepanel):
+    tab_name = "Storage import"
+    click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium)
+    click_start_scan_button_in_storage_import_tab(selenium, browser_id, onepanel)
+    wait_until_scanning_is_finished_in_storage_import_tab(
+        selenium, browser_id, onepanel
+    )
