@@ -22,9 +22,9 @@ from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
 from tests.utils.bdd_utils import parsers, wt
 
 
-def build_tree_config(data):
+def build_tree_config(data, root_path=""):
     root = Node("root")
-    root.path = ""
+    root.path = root_path
     _build_tree_config(data, root)
     return root
 

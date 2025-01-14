@@ -63,7 +63,6 @@ def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
 def assert_space_content_in_op_rest(
     user, users, hosts, config, space_name, _spaces, host
 ):
-    children = _list_files(space_name, user, users, host, hosts)
     cwd = "/" + space_name
     ls_fun = partial(_list_files, user=user, users=users, provider=host, hosts=hosts)
     assert_file_content_fun = partial(
@@ -74,11 +73,7 @@ def assert_space_content_in_op_rest(
         hosts=hosts,
     )
     check_files_tree(
-        yaml.load(config, yaml.Loader),
-        children,
-        cwd,
-        ls_fun,
-        assert_file_content_fun,
+        config, cwd, user, users, host, hosts, ls_fun, assert_file_content_fun
     )
 
 

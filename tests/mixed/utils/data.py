@@ -4,55 +4,47 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import os
+import yaml
 
+from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
+from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 
 
-def check_files_tree(subtree, children, cwd, ls_fun, assert_file_content_fun):
-    """This function recursively checks files tree:
-    - for directory it checks if all elements listed in children are
-    present. Then if any directory listed in children has description of
-    its file tree, function make recursive call for that subdirectory.
-    - for file if description is specified function checks if content
-    of file is the same as provided
-    """
-    for item in subtree:
-        try:
-            [(item_name, item_desc)] = item.items()
-        except AttributeError:
-            assert_msg = f"{item} not found in {cwd}"
-            assert item in children, assert_msg
-            if item.startswith("dir"):
-                item_children = ls_fun(os.path.join(cwd, item))
-                assert_msg = f"Directory {item} in {cwd} is not empty"
-                assert len(item_children) == 0, assert_msg
-
-        else:
-            assert_msg = f"{item_name} not found in {cwd}"
-            assert item_name in children, assert_msg
-
-            # if item is directory go deeper
-            if item_name.startswith("dir"):
-                item_children = ls_fun(os.path.join(cwd, item_name))
-                if isinstance(item_desc, int):
-                    assert_msg = (
-                        f"Directory {item_name} in {cwd} has wrong number of "
-                        f"children. Expected: {item_desc}, got: {len(children)}"
-                    )
-                    assert len(item_children) == item_desc, assert_msg
-
-                else:
-                    check_files_tree(
-                        item_desc,
-                        item_children,
-                        os.path.join(cwd, item_name),
-                        ls_fun,
-                        assert_file_content_fun,
-                    )
+def _check_files_tree(
+    parent, user, users, host, hosts, ls_fun, assert_file_content_fun
+):
+    children = ls_fun(parent.path)
+    err_msg = (
+        f"expected item {parent.path} to have children {parent.get_items()} but got"
+        f" {children}"
+    )
+    assert set(parent.get_items()) == set(children), err_msg
+    for child in parent.nodes:
+        if see_item_is_dir_op_rest(user, users, host, hosts, child.path):
+            if child.content is not None:
+                # checking only number of children
+                n_items = len(ls_fun(child.path))
+                err_msg = (
+                    f"expected item {parent.path} to have children"
+                    f" {int(child.content)} but got {n_items}"
+                )
+                assert n_items == int(child.content), err_msg
             else:
-                assert_file_content_fun(os.path.join(cwd, item_name), str(item_desc))
+                _check_files_tree(
+                    child, user, users, host, hosts, ls_fun, assert_file_content_fun
+                )
+        elif child.content is not None:
+            assert_file_content_fun(child.path, str(child.content))
+
+
+def check_files_tree(
+    config, cwd, user, users, host, hosts, ls_fun, assert_file_content_fun
+):
+    tree = yaml.load(config, yaml.Loader)
+    root = build_tree_config(tree, root_path=cwd)
+    _check_files_tree(root, user, users, host, hosts, ls_fun, assert_file_content_fun)
 
 
 def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):

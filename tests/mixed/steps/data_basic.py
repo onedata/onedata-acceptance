@@ -1188,7 +1188,9 @@ def assert_directory_structure_is_as_previous_in_op(
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_space_content_in_op_oneclient(config, space, user, users, oneclient_host)
+        assert_space_content_in_op_oneclient(
+            config, space, user, users, oneclient_host, hosts
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1231,7 +1233,9 @@ def assert_directory_structure_in_op(
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_space_content_in_op_oneclient(config, space, user, users, oneclient_host)
+        assert_space_content_in_op_oneclient(
+            config, space, user, users, oneclient_host, hosts
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
