@@ -11,9 +11,7 @@ from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
 
 
-def _check_files_tree(
-    parent, is_dir_fun, ls_fun, assert_file_content_fun
-):
+def _check_files_tree(parent, is_dir_fun, ls_fun, assert_file_content_fun):
     children = ls_fun(parent.path)
     err_msg = (
         f"expected item {parent.path} to have children {parent.get_items()} but got"
@@ -31,16 +29,12 @@ def _check_files_tree(
                 )
                 assert n_items == int(child.content), err_msg
             else:
-                _check_files_tree(
-                    child, is_dir_fun, ls_fun, assert_file_content_fun
-                )
+                _check_files_tree(child, is_dir_fun, ls_fun, assert_file_content_fun)
         elif child.content is not None:
             assert_file_content_fun(child.path, str(child.content))
 
 
-def check_files_tree(
-    config, cwd, is_dir_fun, ls_fun, assert_file_content_fun
-):
+def check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun):
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree, root_path=cwd)
     _check_files_tree(root, is_dir_fun, ls_fun, assert_file_content_fun)

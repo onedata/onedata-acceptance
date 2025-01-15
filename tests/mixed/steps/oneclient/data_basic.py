@@ -189,13 +189,19 @@ def compare_file_time_with_copied_time_in_op_oneclient(
     assert compare(time1, time2, comparator), err_msg
 
 
-def assert_space_content_in_op_oneclient(config, space_name, user, users, host, hosts):
+def assert_space_content_in_op_oneclient(config, space_name, user, users, host):
     cwd = space_name
     ls_fun = partial(ls_dir_in_op_oneclient, user=user, users=users, host=host)
     assert_file_content_fun = partial(
         assert_file_content_in_op_oneclient, user=user, users=users, host=host
     )
-    is_dir_fun = partial(check_file_is_of_type_oc, file_type="directory", user=user, users=users, host=host)
+    is_dir_fun = partial(
+        check_file_is_of_type_oc,
+        file_type="directory",
+        user=user,
+        users=users,
+        host=host,
+    )
     check_files_tree(
         config,
         cwd,
