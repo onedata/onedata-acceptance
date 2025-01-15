@@ -195,13 +195,11 @@ def assert_space_content_in_op_oneclient(config, space_name, user, users, host, 
     assert_file_content_fun = partial(
         assert_file_content_in_op_oneclient, user=user, users=users, host=host
     )
+    is_dir_fun = partial(check_file_is_of_type_oc, file_type="directory", user=user, users=users, host=host)
     check_files_tree(
         config,
         cwd,
-        user,
-        users,
-        host,
-        hosts,
+        is_dir_fun,
         ls_fun,
         assert_file_content_fun,
     )
@@ -329,3 +327,11 @@ def list_children_in_op_oneclient(name, user, users):
 def given_mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]["mailbox"]["token"]
     users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
+
+
+def check_file_is_of_type_oc(file, file_type, user, users, host):
+    try:
+        multi_file_steps.check_type(user, file, file_type, host, users)
+    except AssertionError:
+        return False
+    return True

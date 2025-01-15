@@ -28,6 +28,7 @@ from tests.mixed.utils.data import (
     create_content,
     get_acl_metadata,
 )
+from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 from tests.utils.acceptance_utils import compare, time_attr
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.rest_utils import get_provider_rest_path, http_post
@@ -72,8 +73,9 @@ def assert_space_content_in_op_rest(
         provider=host,
         hosts=hosts,
     )
+    is_dir_fun = partial(see_item_is_dir_op_rest, user=user, users=users, host=host, hosts=hosts)
     check_files_tree(
-        config, cwd, user, users, host, hosts, ls_fun, assert_file_content_fun
+        config, cwd, is_dir_fun, ls_fun, assert_file_content_fun
     )
 
 

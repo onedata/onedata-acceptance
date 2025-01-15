@@ -9,11 +9,10 @@ import yaml
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
-from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 
 
 def _check_files_tree(
-    parent, user, users, host, hosts, ls_fun, assert_file_content_fun
+    parent, is_dir_fun, ls_fun, assert_file_content_fun
 ):
     children = ls_fun(parent.path)
     err_msg = (
@@ -22,7 +21,7 @@ def _check_files_tree(
     )
     assert set(parent.get_items()) == set(children), err_msg
     for child in parent.nodes:
-        if see_item_is_dir_op_rest(user, users, host, hosts, child.path):
+        if is_dir_fun(child.path):
             if child.content is not None:
                 # checking only number of children
                 n_items = len(ls_fun(child.path))
@@ -33,18 +32,18 @@ def _check_files_tree(
                 assert n_items == int(child.content), err_msg
             else:
                 _check_files_tree(
-                    child, user, users, host, hosts, ls_fun, assert_file_content_fun
+                    child, is_dir_fun, ls_fun, assert_file_content_fun
                 )
         elif child.content is not None:
             assert_file_content_fun(child.path, str(child.content))
 
 
 def check_files_tree(
-    config, cwd, user, users, host, hosts, ls_fun, assert_file_content_fun
+    config, cwd, is_dir_fun, ls_fun, assert_file_content_fun
 ):
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree, root_path=cwd)
-    _check_files_tree(root, user, users, host, hosts, ls_fun, assert_file_content_fun)
+    _check_files_tree(root, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
 def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):

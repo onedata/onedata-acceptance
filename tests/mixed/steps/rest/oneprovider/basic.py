@@ -9,7 +9,7 @@ from oneprovider_client import BasicFileOperationsApi, FilePathResolutionApi
 from tests.mixed.utils.common import login_to_provider
 
 
-def see_item_is_dir_op_rest(user, users, host, hosts, path):
+def see_item_is_dir_op_rest(path, user, users, host, hosts):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     resolve_file_path_api = FilePathResolutionApi(client)
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
