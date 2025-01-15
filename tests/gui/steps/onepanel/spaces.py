@@ -682,6 +682,7 @@ def toggle_in_storage_import_configuration_is_enabled(
         "in storage import tab in Onepanel"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_start_scan_button_in_storage_import_tab(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.spaces.space.sync_chart.start_scan()
