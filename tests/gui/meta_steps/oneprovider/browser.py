@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt

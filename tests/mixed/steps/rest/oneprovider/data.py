@@ -21,6 +21,7 @@ from oneprovider_client.rest import ApiException as OPException
 
 from tests import OP_REST_PORT
 from tests.gui.utils.generic import parse_seq
+from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 from tests.mixed.utils.common import login_to_cdmi, login_to_provider
 from tests.mixed.utils.data import (
     assert_ace,
@@ -63,7 +64,6 @@ def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
 def assert_space_content_in_op_rest(
     user, users, hosts, config, space_name, _spaces, host
 ):
-    children = _list_files(space_name, user, users, host, hosts)
     cwd = "/" + space_name
     ls_fun = partial(_list_files, user=user, users=users, provider=host, hosts=hosts)
     assert_file_content_fun = partial(
@@ -73,13 +73,10 @@ def assert_space_content_in_op_rest(
         provider=host,
         hosts=hosts,
     )
-    check_files_tree(
-        yaml.load(config, yaml.Loader),
-        children,
-        cwd,
-        ls_fun,
-        assert_file_content_fun,
+    is_dir_fun = partial(
+        see_item_is_dir_op_rest, user=user, users=users, host=host, hosts=hosts
     )
+    check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
 def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host, hosts):
