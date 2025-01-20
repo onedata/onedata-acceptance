@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-2op"
+scenario: "1oz_2op_deployed.yaml"
 
 spaces: false
 
