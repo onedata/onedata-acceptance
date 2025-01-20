@@ -36,8 +36,7 @@ def create_transfer_rest(
     if evicting_provider:
         evicting_provider_id = get_provider_id(evicting_provider, hosts, users)
         data.update({"evictingProviderId": evicting_provider_id})
-    tid = transfer_api.create_transfer(data=data)
-    transfer_api.cancel_transfer(tid.transfer_id)
+    transfer_api.create_transfer(data=data)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -91,4 +90,8 @@ def assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space
         user, users, host, hosts, spaces[space]
     )
     finished_statutes = ["skipped", "completed", "cancelled", "failed"]
-    assert transfer_status["transferStatus"] in finished_statutes
+    err_msg = (
+        f"transfer status {transfer_status['transferStatus']} is not in one of finished"
+        " states"
+    )
+    assert transfer_status["transferStatus"] in finished_statutes, err_msg
