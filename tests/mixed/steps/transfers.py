@@ -1,0 +1,250 @@
+"""This module contains meta steps for operations on transfers."""
+
+__author__ = "Wojciech Szmelich"
+__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from tests.gui.meta_steps.oneprovider.common import (
+    migrate_file_to_provider,
+    replicate_file_to_provider,
+)
+from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
+from tests.gui.meta_steps.oneprovider.transfers import (
+    evict_file,
+    open_transfers_page,
+    wait_for_all_transfers_to_start_and_finish,
+)
+from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
+from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
+from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
+from tests.mixed.steps.rest.oneprovider.transfers import (
+    assert_recent_transfer_details_rest,
+    assert_recent_transfer_finished_rest,
+    create_transfer_rest,
+)
+from tests.mixed.utils.common import NoSuchClientException
+from tests.utils.bdd_utils import parsers, wt
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} replicates {file_type} "{path}" in space "{space}" to'
+        " provider {provider_to}"
+    )
+)
+def replicate_file_to_provider_op(
+    client,
+    user,
+    path,
+    space,
+    provider_to,
+    users,
+    hosts,
+    selenium,
+    popups,
+    modals,
+    oz_page,
+    op_container,
+    tmp_memory,
+):
+    transfer_type = "replication"
+    if client.lower() == "rest":
+        path = space + "/" + path
+        create_transfer_rest(
+            user,
+            users,
+            provider_to,
+            hosts,
+            transfer_type,
+            path,
+            replicating_provider=provider_to,
+        )
+    elif client.lower() == "web gui":
+        result = "replicates"
+        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        replicate_file_to_provider(
+            selenium, user, path, tmp_memory, provider_to, hosts, popups, modals, result
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} migrates {file_type} "{path}" in space "{space}" to'
+        " provider {provider_to} from {provider_from}"
+    )
+)
+def migrate_file_to_provider_op(
+    client,
+    user,
+    path,
+    space,
+    provider_to,
+    provider_from,
+    users,
+    hosts,
+    selenium,
+    popups,
+    modals,
+    oz_page,
+    op_container,
+    tmp_memory,
+):
+    transfer_type = "migration"
+    if client.lower() == "rest":
+        path = space + "/" + path
+        create_transfer_rest(
+            user,
+            users,
+            provider_from,
+            hosts,
+            transfer_type,
+            path,
+            replicating_provider=provider_to,
+            evicting_provider=provider_from,
+        )
+    elif client.lower() == "web gui":
+        result = "migrates"
+        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        migrate_file_to_provider(
+            selenium,
+            user,
+            path,
+            tmp_memory,
+            provider_from,
+            provider_to,
+            hosts,
+            popups,
+            modals,
+            result,
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} evicts {file_type} "{path}" in space "{space}" from'
+        " provider {provider_from}"
+    )
+)
+def evict_file_to_provider_op(
+    client,
+    user,
+    path,
+    space,
+    provider_from,
+    users,
+    hosts,
+    selenium,
+    popups,
+    modals,
+    oz_page,
+    op_container,
+    tmp_memory,
+):
+    transfer_type = "eviction"
+    if client.lower() == "rest":
+        path = space + "/" + path
+        create_transfer_rest(
+            user,
+            users,
+            provider_from,
+            hosts,
+            transfer_type,
+            path,
+            evicting_provider=provider_from,
+        )
+    elif client.lower() == "web gui":
+        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        evict_file(
+            selenium, user, provider_from, popups, path, tmp_memory, modals, hosts
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
+
+
+@wt(
+    parsers.parse(
+        "using {client}, {user} sees details about last transfer of {item_type} in"
+        ' space "{space}" in provider {host}:\n{config}'
+    )
+)
+def assert_details_of_recent_transfer_op(
+    client,
+    user,
+    users,
+    host,
+    hosts,
+    spaces,
+    item_type,
+    space,
+    config,
+    selenium,
+    op_container,
+    popups,
+    oz_page,
+):
+    if client.lower() == "rest":
+        assert_recent_transfer_details_rest(
+            user, users, host, hosts, space, spaces, config
+        )
+    elif client.lower() == "web gui":
+        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
+        assert_ended_transfer(
+            selenium, user, item_type, config, hosts, op_container, popups
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} waits for last transfer to finish in space "{space}" in'
+        " provider {host}"
+    )
+)
+def wait_for_recent_transfer_to_finish_op(
+    client, user, users, host, hosts, space, spaces, selenium, oz_page, op_container
+):
+    if client.lower() == "rest":
+        assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
+    elif client.lower() == "web gui":
+        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
+        wait_for_all_transfers_to_start_and_finish(
+            selenium, user, host, space, hosts, oz_page, op_container
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} uploads file "{path}" to {provider} Oneprovider file'
+        ' browser in space "{space}"'
+    )
+)
+def upload_file_to_provider_browser(
+    selenium,
+    oz_page,
+    client,
+    user,
+    path,
+    provider,
+    space,
+    tmp_memory,
+    op_container,
+    hosts,
+    popups,
+    tmpdir,
+):
+    if client.lower() == "web gui":
+        wt_visit_file_browser(
+            selenium, oz_page, provider, space, user, op_container, tmp_memory, hosts
+        )
+        upload_file_to_cwd_in_data_tab(
+            selenium, user, path, tmpdir, op_container, popups
+        )
+    else:
+        raise NoSuchClientException(f"Client {client} not found")
