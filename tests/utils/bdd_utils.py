@@ -18,7 +18,7 @@ from pytest_bdd import (scenario,
                         then as pytest_bdd_then)
 
 
-__all__ = ['scenario', 'scenarios', 'parsers', 'given', 'when', 'then', 'wt']
+__all__ = ['scenario', 'scenarios', 'parsers', 'given', 'when', 'then', 'wt', 'scenarios_to_rerun']
 
 
 def given(name, fixture=None, converters=None, scope='function',
@@ -91,3 +91,10 @@ def _create_decorator(wrapped, wrappers):
         return fun
 
     return decorator
+
+
+scenarios_to_rerun = {
+    "test_user_resume_workflow_execution_after_pausing_execution_of_created_workflow_while_lane_had_preparing_status",
+    "test_user_sees_status_cancelled_in_lane1_and_unscheduled_in_lane2_after_cancelling_execution_of_uploaded_workflowwithsleeptwolanes_workflow",
+    "test_user_sees_status_status_in_lane2_after_stopping_execution_of_uploaded_workflowwithsleeptwolanes_workflow"
+}
