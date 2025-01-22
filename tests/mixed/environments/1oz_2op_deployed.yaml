@@ -1,0 +1,16 @@
+# Name of the scenario to run
+scenario: "1oz_2op_deployed.yaml"
+
+spaces: false
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+
+oneprovider-2:
+  batchConfig:
+    createUsers: false
