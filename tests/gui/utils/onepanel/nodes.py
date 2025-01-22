@@ -21,6 +21,7 @@ class HostRecord(PageObject):
     primary_cluster_manager = Toggle(
         ".one-way-toggle[data-option=primaryClusterManager]"
     )
+    ones3 = Toggle(".one-way-toggle[data-option=oneS3]")
 
     def __str__(self):
         return f"{self.name} record in {self.parent}"
