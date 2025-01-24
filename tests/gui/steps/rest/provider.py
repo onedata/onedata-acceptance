@@ -33,5 +33,5 @@ def assert_provider_ones3_status_ok(provider, hosts):
         port=ONES3_PORT,
         path="/.__onedata__status__",
     ).json()
-    err_msg = f"Status of OneS3 is of status {status["isOk"]}"
+    err_msg = f"Status of OneS3 is {status["isOk"]}"
     assert status["isOk"], err_msg

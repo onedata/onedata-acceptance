@@ -612,7 +612,7 @@ Onepanel deployment OneS3:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_1op_not_deployed test_gui_pkg
+          - make SUITE=test_onepanel_deployment_ones3 ENV_FILE=1oz_deployed_1op_not_deployed test_gui_pkg
 
 Onepanel login:
   <<: *acceptance-tests-in-chrome-job
