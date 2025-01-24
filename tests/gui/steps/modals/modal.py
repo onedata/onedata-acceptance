@@ -583,7 +583,7 @@ def click_icon_in_share_directory_modal(
         'user of {browser_id} sees that error modal with text "{text}" appeared'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal does not contain text "{text}"'

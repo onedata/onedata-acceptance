@@ -53,6 +53,23 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(
     setattr(form, transform(input_box), text)
 
 
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*?) checks "(?P<option>.*?)" in '
+        "Storage path type field in (?P<form>.*?) form "
+        "in storages page in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_check_option_in_box_in_storages_page_op_panel(
+    selenium, browser_id, option, form, onepanel
+):
+    form = getattr(
+        onepanel(selenium[browser_id]).content.storages.form, transform(form)
+    )
+    getattr(form.storage_path_type, option).click()
+
+
 def enable_import_in_add_storage_form(selenium, browser_id, onepanel):
     form = onepanel(selenium[browser_id]).content.storages.form
     form.posix.imported_storage.check()
