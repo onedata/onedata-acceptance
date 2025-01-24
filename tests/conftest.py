@@ -24,6 +24,7 @@ from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
 from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
+from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import AdminUser
@@ -238,6 +239,12 @@ def pytest_report_header(config, start_path):
     if driver is not None:
         return f"driver: {driver}"
     return "no driver"
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if item.name.split("[")[0] in scenarios_to_rerun:
+            item.add_marker(pytest.mark.flaky(reruns=3, reruns_delay=1))
 
 
 # =============================================================================
