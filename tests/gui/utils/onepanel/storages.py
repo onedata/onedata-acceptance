@@ -44,7 +44,6 @@ class POSIX(StorageForm):
 
 
 class S3(StorageForm):
-    hostname = Input("input.field-s3-hostname")
     bucket_name = Input("input.field-s3-bucketName")
     admin_access_key = Input("input.field-s3-accessKey")
     admin_secret_key = Input("input.field-s3-secretKey")
