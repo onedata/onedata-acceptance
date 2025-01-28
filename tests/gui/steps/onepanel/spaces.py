@@ -34,8 +34,9 @@ def wt_select_storage_in_support_space_form(selenium, browser_id, storage, onepa
     storage_selector = onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_selector
-    storage_selector.expand()
-    storage_selector.options[storage].click()
+    storage_selector.click()
+    popups = selenium["request"].getfixturevalue("popups")
+    popups(selenium[browser_id]).power_select.choose_item(storage)
 
 
 @wt(
