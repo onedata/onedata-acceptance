@@ -52,7 +52,7 @@ class StorageImportConfiguration(PageObject):
 
 
 class SpaceSupportForm(PageObject):
-    storage_selector = DropdownSelector(".ember-basic-dropdown")
+    storage_selector = DropdownSelector(".ember-basic-dropdown-trigger")
     token = Input("input.field-main-token")
     size = Input("input.field-main-size")
     units = WebItemsSequence(
