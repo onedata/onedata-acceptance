@@ -39,15 +39,13 @@ Feature: Onepanel features regarding storage sync (e.g. import)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-            continuous scan: true
+            continuous scan: false
             max depth: 2
-            scan interval [s]: 1
             detect modifications: true
             detect deletions: false
     And using <client2>, onepanel sees that import strategy configuration for "space1" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 2
-          Scan interval [s]: 1
           Detect modifications: true
           Detect deletions: false
     And using <client1>, user1 sees that list of supporting providers for space named "space1" contains "oneprovider-1" in "onezone" Onezone service
@@ -57,15 +55,14 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - dir22
               - file1.txt: 22222
     And using <client2>, onepanel configures import parameters for "space1" in "oneprovider-1" Oneprovider panel service as follow:
-          continuous scan: true
+          continuous scan: false
           max depth: 3
     And using <client2>, onepanel sees that import strategy configuration for "space1" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 3
-          Scan interval [s]: 1
           Detect modifications: true
           Detect deletions: false
-    And user is idle for 5 seconds
+    And using <client2>, onepanel forces start of storage import scan for "space1" at "oneprovider-1" and waits till finished
     Then using <client1>, user1 sees that content for "space1" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21:
@@ -91,11 +88,11 @@ Feature: Onepanel features regarding storage sync (e.g. import)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-            continuous scan: true
+            continuous scan: false
             max depth: 2
             detect deletions: false
     And using <client2>, onepanel sees that import strategy configuration for "space3" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 2
           Detect deletions: false
     And using <client1>, user1 sees that list of supporting providers for space named "space3" contains "oneprovider-1" in "onezone" Onezone service
@@ -105,17 +102,17 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - dir22
               - file1.txt: 22222
     And using <client2>, onepanel configures import parameters for "space3" in "oneprovider-1" Oneprovider panel service as follow:
-          continuous scan: true
+          continuous scan: false
           max depth: 3
           scan interval [s]: 1
           detect deletions: true
     And using <client2>, onepanel sees that import strategy configuration for "space3" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 3
           Scan interval [s]: 1
           Detect modifications: true
           Detect deletions: true
-    And user is idle for 5 seconds
+    And using <client2>, onepanel forces start of storage import scan for "space3" at "oneprovider-1" and waits till finished
     Then using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21:
@@ -125,7 +122,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And user is idle for 20 seconds
+    And using <client2>, user1 forces start of storage import scan for "space1" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
@@ -149,10 +146,10 @@ Feature: Onepanel features regarding storage sync (e.g. import)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-            continuous scan: true
+            continuous scan: false
             max depth: 2
     And using <client2>, onepanel sees that import strategy configuration for "space4" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 2
     And using <client1>, user1 sees that list of supporting providers for space named "space4" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space4" in "oneprovider-1" Oneprovider service is as follow:
@@ -161,16 +158,14 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - dir22
               - file1.txt: 22222
     And using <client2>, onepanel configures import parameters for "space4" in "oneprovider-1" Oneprovider panel service as follow:
-          continuous scan: true
+          continuous scan: false
           max depth: 3
-          scan interval [s]: 1
           detect modifications: false
     And using <client2>, onepanel sees that import strategy configuration for "space4" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 3
-          Scan interval [s]: 1
           Detect modifications: false
-    And user is idle for 5 seconds
+    And using <client2>, onepanel forces start of storage import scan for "space4" at "oneprovider-1" and waits till finished
     Then using <client1>, user1 sees that content for "space4" in "oneprovider-1" Oneprovider service is as follow:
            - dir2:
                - dir21:
@@ -196,10 +191,10 @@ Feature: Onepanel features regarding storage sync (e.g. import)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-            continuous scan: true
+            continuous scan: false
             max depth: 2
     And using <client2>, onepanel sees that import strategy configuration for "space5" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 2
     And using <client1>, user1 sees that list of supporting providers for space named "space5" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
@@ -208,18 +203,16 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - dir22
               - file1.txt: 22222
     And using <client2>, onepanel configures import parameters for "space5" in "oneprovider-1" Oneprovider panel service as follow:
-          continuous scan: true
+          continuous scan: false
           max depth: 3
-          scan interval [s]: 1
           detect modifications: false
           detect deletions: true
     And using <client2>, onepanel sees that import strategy configuration for "space5" in "oneprovider-1" is as follow:
-          Continuous scan: true
+          Continuous scan: false
           Max depth: 3
-          Scan interval [s]: 1
           Detect modifications: false
           Detect deletions: true
-    And user is idle for 10 seconds
+    And using <client2>, onepanel forces start of storage import scan for "space5" at "oneprovider-1" and waits till finished
     Then using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
            - dir2:
                - dir21:
@@ -229,7 +222,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
                - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And user is idle for 10 seconds
+    And using <client2>, user1 forces start of storage import scan for "space1" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir22: 10

@@ -35,6 +35,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     assert_space_is_supported_by_provider_in_oz_gui,
     request_space_support_using_gui,
 )
+from tests.gui.meta_steps.onepanel.spaces import run_scan_and_wait_till_finished
 from tests.gui.steps.common.docker import (
     wt_cp_files_to_dir_in_storage_mount_point,
     wt_cp_files_to_dst_path_in_space,
@@ -71,7 +72,7 @@ from tests.mixed.steps.rest.onezone.space_management import (
 )
 from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.spaces import force_start_storage_scan
+from tests.utils.entities_setup.spaces import force_start_storage_scan, wait_for_storage_scan_to_finish
 from tests.utils.utils import repeat_failed
 
 
@@ -929,3 +930,22 @@ def force_start_storage_import_scan(
 ):
     space_id = spaces[space]
     force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
+
+
+@wt(
+    parsers.parse(
+        "using {client}, {user} forces start of storage import scan for "
+        '"{space}" at "{provider}" and waits till finished'
+    )
+)
+def force_start_and_wait_to_finish_storage_import_scan(
+    client, user, provider, space, spaces, hosts, onepanel_credentials, selenium, onepanel
+):
+    if client.lower() == "rest":
+        space_id = spaces[space]
+        force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
+        wait_for_storage_scan_to_finish(space_id, provider, hosts, onepanel_credentials)
+    elif client.lower() == "web gui":
+        run_scan_and_wait_till_finished(selenium, user, onepanel)
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
