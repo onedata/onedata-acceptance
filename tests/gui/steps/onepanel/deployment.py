@@ -23,13 +23,18 @@ from tests.utils.utils import repeat_failed
         '"(?P<name>.*):(?P<passphrase>.*)"'
     )
 )
-def g_create_admin_in_panel(selenium, browser_id_list, onepanel, passphrase):
+def g_create_admin_in_panels(selenium, browser_id_list, onepanel, passphrase):
     for browser_id in parse_seq(browser_id_list):
-        init_page = onepanel(selenium[browser_id]).init_page
-        init_page.create_new_cluster()
-        init_page.passphrase = passphrase
-        init_page.confirm_passphrase = passphrase
-        init_page.submit_button()
+        g_create_admin_in_panel(selenium, browser_id, onepanel, passphrase)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def g_create_admin_in_panel(selenium, browser_id, onepanel, passphrase):
+    init_page = onepanel(selenium[browser_id]).init_page
+    init_page.create_new_cluster()
+    init_page.passphrase = passphrase
+    init_page.confirm_passphrase = passphrase
+    init_page.submit_button()
 
 
 @wt(
