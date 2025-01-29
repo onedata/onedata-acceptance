@@ -42,4 +42,4 @@ class NewXattrColumn(PageObject):
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
     new_xattr_column_button = Button(".new-column-item")
-    new_xattr_column = WebItem(".xattr-column-add", cls=NewXattrColumn)
+    new_xattr_column = WebItem(".column-editor", cls=NewXattrColumn)
