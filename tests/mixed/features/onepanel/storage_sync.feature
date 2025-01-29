@@ -104,12 +104,10 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using <client2>, onepanel configures import parameters for "space3" in "oneprovider-1" Oneprovider panel service as follow:
           continuous scan: false
           max depth: 3
-          scan interval [s]: 1
           detect deletions: true
     And using <client2>, onepanel sees that import strategy configuration for "space3" in "oneprovider-1" is as follow:
           Continuous scan: false
           Max depth: 3
-          Scan interval [s]: 1
           Detect modifications: true
           Detect deletions: true
     And using <client2>, onepanel forces start of storage import scan for "space3" at "oneprovider-1" and waits till finished
@@ -122,7 +120,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And using <client2>, user1 forces start of storage import scan for "space1" at "oneprovider-1" and waits till finished
+    And using <client2>, user1 forces start of storage import scan for "space3" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
@@ -222,7 +220,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
                - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And using <client2>, user1 forces start of storage import scan for "space1" at "oneprovider-1" and waits till finished
+    And using <client2>, user1 forces start of storage import scan for "space5" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir22: 10
