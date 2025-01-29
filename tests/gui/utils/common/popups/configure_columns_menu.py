@@ -35,7 +35,7 @@ class NewXattrColumn(PageObject):
     enter_an_xattr_key = WebElement(
         ".custom-value-dropdown-field-trigger .custom-value-trigger-input"
     )
-    create = NamedButton(".add-new-column-btn", text="Create")
+    create = NamedButton(".edit-column-btn", text="Create")
     column_label = WebElement(".new-item-name")
 
 
