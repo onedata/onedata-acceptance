@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import Button, Input, NamedButton
 class Share(Modal):
     input_name = Input(".form-control.new-share-name")
     create = NamedButton("button", text="Create")
-    publish_as_an_open_data_record = Toggle(".one-checkbox-base.one-checkbox")
+    expose_as_a_public_data_record = Toggle(".one-checkbox-base.one-checkbox")
 
     def __str__(self):
         return "Share / Publish modal"

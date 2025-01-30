@@ -67,7 +67,7 @@ Feature: Basic share management in Oneprovider GUI
 
     # open shares view
     And user of browser clicks on "X" button in modal "Directory details"
-    And user of browser clicks "Shares, Open Data" of "space1" space in the sidebar
+    And user of browser clicks "Shares, Public Data" of "space1" space in the sidebar
     And user of browser sees shares browser in files tab in Oneprovider page
     Then user of browser sees that there is "share_dir1" share on shares view
     And user of browser sees that there is "share2_dir1" share on shares view

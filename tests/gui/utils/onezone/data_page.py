@@ -38,8 +38,8 @@ class Space(Element):
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
-    shares_open_data = NamedButton(
-        ".one-list-level-2 .item-header", text="Shares, Open Data"
+    shares_public_data = NamedButton(
+        ".one-list-level-2 .item-header", text="Shares, Public Data"
     )
     transfers = NamedButton(".one-list-level-2 .item-header", text="Transfers")
     datasets_archives = NamedButton(

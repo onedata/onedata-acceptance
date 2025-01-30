@@ -17,7 +17,7 @@ from tests.utils.utils import repeat_failed
 SPACE_TABS = [
     "overview",
     "files",
-    "shares_open_data",
+    "shares_public_data",
     "transfers",
     "datasets_archives",
     "providers",
@@ -382,7 +382,7 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
     page_names = [
         "overview",
         "files",
-        "shares_open_data",
+        "shares_public_data",
         "transfers",
         "providers",
         "members",

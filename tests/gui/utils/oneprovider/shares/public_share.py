@@ -39,7 +39,7 @@ class PublicShareView:
     xml = Button(".btn-xml-editor")
     xml_data = Label(".open-data-xml-textarea")
     description_tab = Button(".nav-link-description")
-    publish_as_open_data_tab = Button(".nav-link-opendata")
+    expose_as_public_data_tab = Button(".nav-link-publicdata")
     files_tab = Button(".nav-link-files")
     dublin_core_metadata_data = WebElementsSequence(".open-data-value")
     copy_link = Button(
