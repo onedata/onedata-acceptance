@@ -13,6 +13,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import time
 import errno
+import signal
 from math import sqrt
 import subprocess as sp
 from itertools import chain, repeat
@@ -45,7 +46,7 @@ def start_recording(movie_dir, movie_name, displays, screen_width,
 
 def stop_recording(proc):
     with _suppress(IOError, errnos=(errno.EINVAL, errno.EPIPE)):
-        proc.communicate(input=b'q')
+        proc.send_signal(signal.SIGTERM)
 
 
 # ============================================================================
