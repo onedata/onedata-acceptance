@@ -37,11 +37,11 @@ class PublicShareView:
     share_not_found = Label(".text-center .col-xs-12")
 
     xml = Button(".btn-xml-editor")
-    xml_data = Label(".open-data-xml-textarea")
+    xml_data = Label(".public-data-xml-textarea")
     description_tab = Button(".nav-link-description")
     expose_as_public_data_tab = Button(".nav-link-publicdata")
     files_tab = Button(".nav-link-files")
-    dublin_core_metadata_data = WebElementsSequence(".open-data-value")
+    dublin_core_metadata_data = WebElementsSequence(".public-data-value")
     copy_link = Button(
         ".clipboard-btn-input[data-clipboard-target~="
         '".clipboard-line-public-url-input"]'

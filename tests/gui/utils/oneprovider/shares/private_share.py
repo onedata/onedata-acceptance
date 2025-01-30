@@ -44,14 +44,14 @@ class Description(PageObject):
 
 class PrivateShareView(PublicShareView):
     dublin_core_metadata_form = WebItem(
-        ".opendata-one-carousel", cls=DublinCoreMetadata
+        ".publicdata-one-carousel", cls=DublinCoreMetadata
     )
     description_form = WebItem(".content-space-shares", cls=Description)
 
     choose_a_handle_service = Button(".select-handle-service")
     choose_a_metadata_type = Button(".select-metadata-type")
     proceed = Button(".btn-content-info")
-    publish_as_open_data = Button(".btn-submit")
+    expose_as_public_data = Button(".btn-submit")
     link_name = Label(".ember-power-select-selected-item")
 
     def __str__(self):
