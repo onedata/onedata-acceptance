@@ -23,21 +23,21 @@ Feature: Directory set metadata tests
 
     Examples:
     | fmt   | metadata  | client1    | client2    |
-    | basic | attr=val  | REST       | web GUI    |
+    | xattrs | attr=val  | REST       | web GUI    |
     | JSON  | {"id": 1} | REST       | web GUI    |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | REST       | web GUI    |
-    | basic | attr=val  | web GUI    | REST       |
+    | xattrs | attr=val  | web GUI    | REST       |
     | JSON  | {"id": 1} | web GUI    | REST       |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | web GUI    | REST       |
-    | basic | attr=val  | oneclient1 | REST       |
+    | xattrs | attr=val  | oneclient1 | REST       |
     | JSON  | {"id": 1} | oneclient1 | REST       |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | oneclient1 | REST       |
-    | basic | attr=val  | REST       | oneclient1 |
+    | xattrs | attr=val  | REST       | oneclient1 |
     | JSON  | {"id": 1} | REST       | oneclient1 |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | REST       | oneclient1 |
-    | basic | attr=val  | web GUI    | oneclient1 |
+    | xattrs | attr=val  | web GUI    | oneclient1 |
     | JSON  | {"id": 1} | web GUI    | oneclient1 |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | web GUI    | oneclient1 |
-    | basic | attr=val  | oneclient1 | web GUI    |
+    | xattrs | attr=val  | oneclient1 | web GUI    |
     | JSON  | {"id": 1} | oneclient1 | web GUI    |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | oneclient1 | web GUI    |

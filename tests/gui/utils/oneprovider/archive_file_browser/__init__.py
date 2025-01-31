@@ -9,6 +9,7 @@ from functools import partial
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     WebElement,

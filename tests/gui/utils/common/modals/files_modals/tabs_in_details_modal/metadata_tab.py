@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from decorator import contextmanager
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -22,7 +23,7 @@ from tests.gui.utils.core.web_elements import (
 )
 
 
-class BasicMetadataEntry(PageObject):
+class XattrMetadataEntry(PageObject):
     key = id = Label(".one-label")
     edit_key = Input('.form-control[placeholder="Key"]')
     key_input = Input(".one-inline-editor .form-control")
@@ -33,15 +34,15 @@ class BasicMetadataEntry(PageObject):
         return "metadata basic entry"
 
 
-class BasicMetadataNewEntry(PageObject):
+class XattrMetadataNewEntry(PageObject):
     key = Input('.form-control[placeholder="Key"]')
     value = Input('.form-control[placeholder="Value"]')
 
 
-class BasicMetadataPanel(PageObject):
-    new_entry = WebItem(".last-record", cls=BasicMetadataNewEntry)
+class XattrsMetadataPanel(PageObject):
+    new_entry = WebItem(".last-record", cls=XattrMetadataNewEntry)
     entries = WebItemsSequence(
-        ".form-group-editable:not([class~=last-record])", cls=BasicMetadataEntry
+        ".form-group-editable:not([class~=last-record])", cls=XattrMetadataEntry
     )
 
 
@@ -56,6 +57,14 @@ class AceEditorMetadataPanel(PageObject):
         action.backspace_down = lambda: action.key_down(Keys.BACKSPACE)
         yield action
         action.perform()
+
+    # TODO VFS-12496 remove metadata_type from clear_editor function
+    def clear_editor(self, metadata_type):
+        script = (
+            f"ace.edit(document.querySelector('.file-metadata-{metadata_type} "
+            ".ember-ace > .ace_editor')).setValue('')"
+        )
+        self.driver.execute_script(script)
 
 
 class JSONMetadataPanel(AceEditorMetadataPanel):
@@ -77,7 +86,7 @@ class NavigationTab(PageObject):
 class MetadataTab(Modal):
     modal_name = Label(".modal-header")
     navigation = WebItemsSequence(".metadata-type-btn", cls=NavigationTab)
-    basic = WebItem(".relative", cls=BasicMetadataPanel)
+    xattrs = WebItem(".relative", cls=XattrsMetadataPanel)
     json = WebItem(".tab-pane-metadata-json", cls=JSONMetadataPanel)
     rdf = WebItem(".tab-pane-metadata-rdf", cls=RDFMetadataPanel)
 

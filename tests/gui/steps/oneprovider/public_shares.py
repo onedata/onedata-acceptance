@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -167,7 +168,7 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} copies public REST endpoint on share's public interface"
+        "user of {browser_id} copies Share REST endpoint on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

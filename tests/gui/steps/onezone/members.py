@@ -10,6 +10,7 @@ import time
 
 import yaml
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modals.modal import (

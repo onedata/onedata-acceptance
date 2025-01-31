@@ -11,6 +11,7 @@ import re
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
+
 from tests import PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (
@@ -360,7 +361,7 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
         click_modal_button(selenium, browser_id, checkbox, modal, modals)
         click_modal_button(selenium, browser_id, button, modal, modals)
         wait_for_named_modal_to_disappear(
-            selenium[browser_id], modal, wait_time=WAIT_BACKEND * 2
+            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 2
         )
     except (NoSuchElementException, RuntimeError):
         pass

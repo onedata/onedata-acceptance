@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import requests
+
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform

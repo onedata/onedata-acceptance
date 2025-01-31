@@ -12,6 +12,7 @@ from platform import system as get_system
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

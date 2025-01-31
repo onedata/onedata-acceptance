@@ -10,6 +10,7 @@ import time
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
@@ -42,6 +43,7 @@ class DataRow(BrowserRow):
     clickable_field = WebElement(".file-name")
     tag_label = Label(".file-status-tag")
     size_statistics_icon = WebElement(".dir-size-container .one-icon")
+    xattr = Label(".fb-table-col-xattr")
 
     def __str__(self):
         return f"{self.name} in {self.parent}"

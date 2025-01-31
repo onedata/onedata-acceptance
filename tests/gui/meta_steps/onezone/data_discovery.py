@@ -10,6 +10,7 @@ import re
 import time
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     assert_data_discovery_page,

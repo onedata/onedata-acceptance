@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR

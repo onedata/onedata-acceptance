@@ -11,6 +11,7 @@ import os
 from functools import partial
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
@@ -189,16 +190,22 @@ def compare_file_time_with_copied_time_in_op_oneclient(
 
 
 def assert_space_content_in_op_oneclient(config, space_name, user, users, host):
-    children = ls_dir_in_op_oneclient(space_name, user, users, host)
     cwd = space_name
     ls_fun = partial(ls_dir_in_op_oneclient, user=user, users=users, host=host)
     assert_file_content_fun = partial(
         assert_file_content_in_op_oneclient, user=user, users=users, host=host
     )
+    is_dir_fun = partial(
+        check_file_is_of_type_oc,
+        file_type="directory",
+        user=user,
+        users=users,
+        host=host,
+    )
     check_files_tree(
-        yaml.load(config, yaml.Loader),
-        children,
+        config,
         cwd,
+        is_dir_fun,
         ls_fun,
         assert_file_content_fun,
     )
@@ -238,7 +245,7 @@ def set_posix_permissions_in_op_oneclient(user, path, perm, host, users, result)
 
 
 def set_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
-    if attr_type == "basic":
+    if attr_type == "xattrs":
         (attr, attr_val) = attr_val.split("=")
     else:
         attr = f"onedata_{attr_type.lower()}"
@@ -247,7 +254,7 @@ def set_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
 
 
 def assert_metadata_in_op_oneclient(attr_val, attr_type, path, user, users, host):
-    if attr_type == "basic":
+    if attr_type == "xattrs":
         attr, val = attr_val.split("=")
         multi_file_steps.check_string_xattr(user, path, attr, val, host, users)
     elif attr_type.lower() == "json":
@@ -268,7 +275,7 @@ def remove_all_metadata_in_op_oneclient(user, users, host, path):
 
 def assert_no_such_metadata_in_op_oneclient(user, users, host, path, tab_name, val):
     metadata = multi_file_steps.get_metadata(user, path, host, users)
-    if tab_name == "basic":
+    if tab_name == "xattrs":
         attr, val = val.split("=")
     else:
         attr = f"onedata_{tab_name.lower()}"
@@ -326,3 +333,11 @@ def list_children_in_op_oneclient(name, user, users):
 def given_mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]["mailbox"]["token"]
     users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
+
+
+def check_file_is_of_type_oc(file, file_type, user, users, host):
+    try:
+        multi_file_steps.check_type(user, file, file_type, host, users)
+    except AssertionError:
+        return False
+    return True

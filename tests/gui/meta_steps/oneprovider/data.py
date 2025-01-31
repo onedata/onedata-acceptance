@@ -11,6 +11,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
 )
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
@@ -355,7 +356,7 @@ def check_metadata_for_file_in_directory(
         item.click_on_status_tag("Metadata")
         time.sleep(1)
         modal = modals(selenium[browser_id]).details_modal
-        entries = [entry.key for entry in modal.metadata.basic.entries]
+        entries = [entry.key for entry in modal.metadata.xattrs.entries]
         err_msg = (
             f"Number of expected metadata entries ({len(metadata)}) does"
             " not equal number of actual metadata entries "

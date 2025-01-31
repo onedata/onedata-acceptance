@@ -31,15 +31,15 @@ Feature: Storage modification
     | ceph         | Pool name   | wrong_name  | test           |
 
 
-  Scenario Outline: User fails to create <storage_name> storage with incorrect parameters using add storage form in Onepanel
+  Scenario: User fails to create posix storage with incorrect parameters using add storage form in Onepanel
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
     And user of browser clicks on Add storage backend button in storages page in Onepanel
-    And user of browser selects <storage_name> from storage selector in storages page in Onepanel
-    And user of browser types "test_storage" to Storage name field in <storage_name> form in storages page in Onepanel
-    And user of browser types "<param_val>" to <param_name> field in <storage_name> form in storages page in Onepanel
+    And user of browser selects posix from storage selector in storages page in Onepanel
+    And user of browser types "test_storage" to Storage name field in posix form in storages page in Onepanel
+    And user of browser types "/wrong/path" to Mount point field in posix form in storages page in Onepanel
     And user of browser clicks on Add button in add storage form in storages page in Onepanel
 
     Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
@@ -47,10 +47,22 @@ Feature: Storage modification
     And user of browser does not see "test_storage" on the storages list
 
 
-    Examples:
-    | storage_name | param_name  | param_val   |
-    | posix        | Mount point | /wrong/path |
-    | s3           | Bucket name | wrong_name  |
+  Scenario: User fails to create s3 storage with incorrect parameters using add storage form in Onepanel
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "oneprovider-1" in clusters menu
+    And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+
+    And user of browser clicks on Add storage backend button in storages page in Onepanel
+    And user of browser selects s3 from storage selector in storages page in Onepanel
+    And user of browser types "test_storage" to Storage name field in s3 form in storages page in Onepanel
+    And user of browser checks "canonical" in Storage path type field in s3 form in storages page in Onepanel
+    And user of browser types "wrong_name" to Bucket name field in s3 form in storages page in Onepanel
+    And user of browser types "https://s3.example.com" to Endpoint URL field in s3 form in storages page in Onepanel
+    And user of browser clicks on Add button in add storage form in storages page in Onepanel
+
+    Then user of browser sees that error modal with text "Adding \"test_storage\" storage backend failed!" appeared
+    And user of browser closes "error" modal
+    And user of browser does not see "test_storage" on the storages list
 
 
   Scenario: User fails to create Ceph storage with incorrect parameters using add storage form in Onepanel

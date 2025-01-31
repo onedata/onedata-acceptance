@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
 from .base import AbstractWebElement, AbstractWebItem

@@ -8,6 +8,7 @@ import re
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -37,8 +38,8 @@ class Space(Element):
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
-    shares_open_data = NamedButton(
-        ".one-list-level-2 .item-header", text="Shares, Open Data"
+    shares_public_data = NamedButton(
+        ".one-list-level-2 .item-header", text="Shares, Public Data"
     )
     transfers = NamedButton(".one-list-level-2 .item-header", text="Transfers")
     datasets_archives = NamedButton(

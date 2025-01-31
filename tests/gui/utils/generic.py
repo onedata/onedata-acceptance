@@ -15,6 +15,7 @@ from time import sleep
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+
 from tests import gui
 
 # RE_URL regexp is matched as shown below:

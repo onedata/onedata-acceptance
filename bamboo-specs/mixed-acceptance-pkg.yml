@@ -95,6 +95,7 @@ stages:
         - Spaces basic
         - Storage sync
         - Tokens
+        - Transfers
         - Workflows with input files
   - Qnthack - rerun:
       manual: false
@@ -919,6 +920,22 @@ Tokens:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_tokens test_mixed_pkg
+
+Transfers:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CTR
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_transfers ENV_FILE=1oz_2op_deployed test_mixed_pkg
 
 Workflows with input files:
   <<: *acceptance-mixed-tests-in-chrome-job

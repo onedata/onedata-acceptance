@@ -8,6 +8,7 @@ import time
 from time import sleep
 
 from selenium.webdriver.common.action_chains import ActionChains
+
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage

@@ -9,6 +9,7 @@ import time
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
@@ -102,11 +103,11 @@ def search_for_lane_status(driver, page, lane_name, box_number=None):
                 By.CSS_SELECTOR, f"#{lane_id} .visible-run-status-label"
             ).text
             return status
-        else:
-            try:
-                page.workflow_visualiser.right_arrow_scroll.click()
-            except RuntimeError:
-                pass
+        try:
+            page.workflow_visualiser.right_arrow_scroll.click()
+        except RuntimeError:
+            pass
+    raise ValueError(f"lane {lane_name} found")
 
 
 def search_for_task_in_parallel_box(driver, parallel_box, task_name):
@@ -118,6 +119,7 @@ def search_for_task_in_parallel_box(driver, parallel_box, task_name):
 
         if found_task == task_name:
             return parallel_box.task_list[j], task_id
+    raise ValueError(f"task {task_name} not found")
 
 
 @wt(
@@ -148,7 +150,7 @@ def click_on_task_in_lane(
             try:
                 task.click_on_drag_handle()
             except ElementNotInteractableException:
-                scroll_to_css_selector(driver, f".task-drag-handle")
+                scroll_to_css_selector(driver, ".task-drag-handle")
                 time.sleep(1)
                 task.click_on_drag_handle()
         # wait for task to be closed
@@ -323,3 +325,16 @@ def select_logging_level_in_automation_subpage(
     op_container(driver).automation_page.logging_level()
     options = popups(driver).logging_level
     options.choose_item(level)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_elem_in_store_details_modal(modal, name, option=""):
+    if option == "archive":
+        modal.store_content_list[name].file_name.click()
+    elif option == "dataset":
+        modal.store_content_list[name].dataset_name.click()
+    else:
+        modal.single_file_container.clickable_name()
+
+    # wait a moment to open a tab
+    time.sleep(1)

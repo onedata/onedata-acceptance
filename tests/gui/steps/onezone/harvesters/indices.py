@@ -18,7 +18,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 CREATE_INDEX_TOGGLES = {
-    "include_metadata": ["basic", "json", "rdf"],
+    "include_metadata": ["xattrs", "json", "rdf"],
     "include_file_details": [
         "file_name",
         "file_type",
@@ -269,7 +269,7 @@ def assert_creation_time_on_data_discovery_page(
         " in results list on data discovery page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_on_data_discovery_page(
     selenium, browser_id, data_discovery, info, text
 ):

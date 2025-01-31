@@ -18,7 +18,11 @@ from tests.gui.steps.oneprovider.data_tab import (
     choose_provider_in_selected_page,
     click_choose_other_oneprovider_on_file_browser,
 )
-from tests.gui.steps.oneprovider.transfers import wait_for_transfers_page_to_load
+from tests.gui.steps.oneprovider.transfers import (
+    wait_for_ongoing_tranfers_to_finish,
+    wait_for_transfers_page_to_load,
+    wait_for_waiting_transfer_to_start,
+)
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -93,3 +97,13 @@ def evict_file(
     data_distribution_modal.providers[provider_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
     click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+
+
+def wait_for_all_transfers_to_start_and_finish(
+    selenium, browser_id, provider, space, hosts, oz_page, op_container
+):
+    open_transfers_page(
+        selenium, browser_id, provider, space, hosts, oz_page, op_container
+    )
+    wait_for_waiting_transfer_to_start(selenium, browser_id, op_container)
+    wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container)

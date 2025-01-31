@@ -9,6 +9,7 @@ from functools import partial
 
 import pytest
 from pytest_bdd import scenario
+
 from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.file_steps import *
 from tests.oneclient.steps.reg_file_steps import *

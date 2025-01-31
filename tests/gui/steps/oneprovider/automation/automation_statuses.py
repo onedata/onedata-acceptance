@@ -12,6 +12,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -96,8 +97,9 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane, expected_sta
 def get_status(page, option, name):
     if option == "lane":
         return page.workflow_visualiser.workflow_lanes[name].status
-    elif option == "workflow":
+    if option == "workflow":
         return page.workflow_visualiser.status
+    raise ValueError(f"unknown option {option}")
 
 
 @wt(

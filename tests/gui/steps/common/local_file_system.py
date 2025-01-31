@@ -12,6 +12,7 @@ import subprocess
 
 import requests
 import yaml
+
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import suppress

@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from selenium.webdriver import ActionChains
+
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -17,6 +18,7 @@ from tests.gui.utils.core.web_elements import (
     NamedButton,
     WebElement,
     WebElementsSequence,
+    WebElementWithText,
     WebItem,
     WebItemsSequence,
 )
@@ -24,9 +26,15 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
 
 
+class StoragePathType(PageObject):
+    flat = WebElementWithText(".radio-inline", text="flat")
+    canonical = WebElementWithText(".radio-inline", text="canonical")
+
+
 class StorageForm(PageObject):
     storage_name = Input("input.field-generic-name")
     imported_storage = Toggle(".toggle-field-generic-importedStorage")
+    storage_path_type = WebItem(".field-generic-storagePathType", cls=StoragePathType)
 
 
 class POSIX(StorageForm):
@@ -36,10 +44,10 @@ class POSIX(StorageForm):
 
 
 class S3(StorageForm):
-    hostname = Input("input.field-s3-hostname")
     bucket_name = Input("input.field-s3-bucketName")
     admin_access_key = Input("input.field-s3-accessKey")
     admin_secret_key = Input("input.field-s3-secretKey")
+    endpoint_url = Input("input.field-s3-hostname")
 
 
 class Ceph(StorageForm):

@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+
 from tests.gui.utils.core import scroll_to_css_selector, scroll_to_css_selector_bottom
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (

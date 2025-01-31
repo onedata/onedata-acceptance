@@ -1,0 +1,12 @@
+# Name of the scenario to run
+scenario: "scenario-1oz-1op"
+
+spaces: false
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig: false
+  addTestDomain: true

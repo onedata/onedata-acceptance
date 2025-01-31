@@ -29,8 +29,8 @@ def choose_range_as_initial_workflow_value(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_if_select_files_modal_disappeared(modals, driver, files):
     try:
-        modals(driver).select_files
-        raise Exception(
+        modals(driver).select_files  # pylint: disable=expression-not-assigned
+        raise AssertionError(
             f"Files: {files} as initial value for workflow was not selected"
         )
     except RuntimeError:
@@ -51,7 +51,7 @@ def open_select_initial_files_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_files
+    modals(driver).select_files  # pylint: disable=expression-not-assigned
 
 
 @wt(
@@ -74,7 +74,7 @@ def open_select_initial_groups_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_groups
+    modals(driver).select_groups  # pylint: disable=expression-not-assigned
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -85,13 +85,14 @@ def open_select_initial_datasets_modal(op_container, driver, popups, modals):
     popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_dataset
+    modals(driver).select_dataset  # pylint: disable=expression-not-assigned
 
 
 def get_select_option_from_initial_value_popup(option, popup_menu):
     for elem in popup_menu:
         if option in elem.name:
             return elem
+    raise ValueError(f"{option} not found in popup menu")
 
 
 def get_initial_value_store(driver, op_container, store_name):
@@ -100,6 +101,7 @@ def get_initial_value_store(driver, op_container, store_name):
         return initial_value_stores[store_name + ":"]
     if store_name + ": " in initial_value_stores:
         return initial_value_stores[store_name + ": "]
+    raise ValueError()
 
 
 def click_input_link_in_automation_page(op_container, driver, store_name):

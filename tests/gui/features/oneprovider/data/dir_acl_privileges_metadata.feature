@@ -30,7 +30,7 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
 
   Scenario Outline: Write metadata to directory
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
+    Then user of browser_user1 <result> to write "dir1" directory xattrs metadata: "attr=val" in "space1"
 
     Examples:
     | result   |  privileges                                         | subject_type  | subject_name  |
@@ -43,9 +43,9 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
 
 
   Scenario Outline: Read directory metadata
-    When user of space_owner_browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of space_owner_browser succeeds to write "dir1" directory xattrs metadata: "attr=val" in "space1"
     And user of space_owner_browser sets "dir1" directory ACL <privileges> privileges for <subject_type> <subject_name>
-    Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
+    Then user of browser_user1 <result> to read "dir1" directory xattrs metadata: "attr=val" in "space1"
 
     Examples:
     | result   |  privileges                            | subject_type  | subject_name  |

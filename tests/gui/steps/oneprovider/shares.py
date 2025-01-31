@@ -246,7 +246,7 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard, displays
     assert share_url == modal_url, err_msg
 
 
-@wt(parsers.parse("user of {browser_id} copies public REST endpoint on shares view"))
+@wt(parsers.parse("user of {browser_id} copies Share REST endpoint on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_share_link(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).shares_page.copy_icon()

@@ -145,7 +145,7 @@ Feature: Public harvester site
 
     # upload and add metadata to file in space2
     And user of browser_onedata uploads "20B-0.txt" to the root directory of "space2"
-    And user of browser_onedata succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
+    And user of browser_onedata succeeds to write "20B-0.txt" file xattrs metadata: "author=John Doe" in "space2"
 
     Then user of browser_not_signed_in sees only following files on public data discovery page:
          dir1_2:
@@ -309,7 +309,7 @@ Feature: Public harvester site
          spaces:
            - space1
 
-    And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+    And user of browser_onedata removes xattr metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
     Then user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
              jsonMetadataExists: false

@@ -69,7 +69,7 @@ Feature: Bagit uploader tests
       archive: valid.zip
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 75000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -90,7 +90,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 2500 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -109,7 +109,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that bytes processing speed is greater or equal 150000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
@@ -131,7 +131,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 55000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -206,7 +206,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
     And user of browser sees that bytes processing speed is greater or equal 135000 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -295,7 +295,7 @@ Feature: Bagit uploader tests
     And user of browser sees expected exception for <input_archive> in "reason" content of audit log in task "bagit-uploader-validate" in 1st parallel box in lane "validate"
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
     And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -305,7 +305,7 @@ Feature: Bagit uploader tests
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 0
     And user of browser closes "Store details" modal
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
     And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -317,7 +317,7 @@ Feature: Bagit uploader tests
     And user of browser closes "Store details" modal
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that files processing speed is equal 0 per second on chart with processing stats
     And user of browser sees that bytes processing speed is equal 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
@@ -442,7 +442,7 @@ Feature: Bagit uploader tests
 
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
-    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that bytes processing speed is greater or equal 13500 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 

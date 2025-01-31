@@ -11,6 +11,7 @@ import time
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement, WebItem
 from tests.gui.utils.generic import transform

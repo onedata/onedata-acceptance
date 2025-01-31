@@ -10,6 +10,7 @@ from functools import partial
 
 import yaml
 from oneprovider_client.rest import ApiException
+
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path

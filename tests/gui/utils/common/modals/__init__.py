@@ -74,6 +74,7 @@ class Modals:
     rename_modal = WebItem(".modal-dialog", cls=RenameModal)
     login = WebItem("#login-form-modal", cls=LoginFormModal)
     create_group = WebItem(".modal-dialog", cls=CreateGroup)
+    rest_api = WebItem(".modal-dialog", cls=DetailsModal)
 
     # storage modals
     add_storage = WebItem(".panel-onezone-modal.in", cls=AddStorage)

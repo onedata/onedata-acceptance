@@ -108,7 +108,7 @@ Feature: Basic files tab operations on single file in file browser
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser enables only "changed" column in columns configuration popover in file browser table
     And user of browser saves content of "changed" column for "20B-0.txt" in file browser
-    And user of browser succeeds to write "20B-0.txt" file basic metadata: "attr=val" in "space1"
+    And user of browser succeeds to write "20B-0.txt" file xattrs metadata: "attr=val" in "space1"
     And user of browser opens file browser for "space1" space
     Then user of browser sees that date time in "changed" column for "20B-0.txt" has become more current in file browser
 

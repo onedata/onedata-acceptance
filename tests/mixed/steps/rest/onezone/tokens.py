@@ -11,6 +11,7 @@ import time
 
 import yaml
 from onezone_client import TokenApi
+
 from tests.mixed.steps.rest.onezone.members import translate_privileges
 from tests.mixed.utils.common import login_to_oz
 

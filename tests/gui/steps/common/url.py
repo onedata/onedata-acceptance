@@ -11,6 +11,7 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
@@ -216,7 +217,7 @@ def refresh_site_and_wait(selenium, browser_id_list):
         assert_main_page_loaded(selenium, browser_id)
 
 
-@repeat_failed(interval=0.1, timeout=10)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_main_page_loaded(selenium, browser_id):
     elems = selenium[browser_id].find_elements(
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"

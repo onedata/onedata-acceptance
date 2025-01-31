@@ -14,6 +14,7 @@ from onezone_client import (
     SpaceInviteToken,
     UserApi,
 )
+
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,

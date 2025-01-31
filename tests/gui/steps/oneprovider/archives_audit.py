@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 
 import yaml
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt

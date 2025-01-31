@@ -63,7 +63,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
             privilege subtypes:
               View space: False
 
-    Then user of browser_user1 sees that ["Members", "Shares, Open Data", "Harvesters, Discovery"] of "space1" in the sidebar are disabled
+    Then user of browser_user1 sees that ["Members", "Shares, Public Data", "Harvesters, Discovery"] of "space1" in the sidebar are disabled
 
 
   Scenario: User fails to rename space because of lack in privileges
@@ -122,7 +122,7 @@ Feature: Basic management of space management privileges for spaces in Onezone G
             granted: False
 
     And user of browser_user1 clicks on Data in the main menu
-    Then user of browser_user1 sees that ["Members", "Shares, Open Data", "Harvesters, Discovery"] of "space1" in the sidebar are disabled
+    Then user of browser_user1 sees that ["Members", "Shares, Public Data", "Harvesters, Discovery"] of "space1" in the sidebar are disabled
 
 
   Scenario: Non-owner-user sets privileges for other user

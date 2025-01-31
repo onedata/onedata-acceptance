@@ -10,6 +10,7 @@ import re
 import time
 
 import yaml
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,

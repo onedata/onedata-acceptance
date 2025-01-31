@@ -12,6 +12,7 @@ from datetime import datetime
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
@@ -541,7 +542,7 @@ def assert_property_in_symlink_dets_modal(
         " structure:\n{contents}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_contents_downloaded_tar_file(
     browser_id, contents, tmpdir, clipboard, displays, name
 ):

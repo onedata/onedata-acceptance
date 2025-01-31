@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from pytest import fixture
 from pytest_bdd import scenarios
+
 from tests.gui.conftest import *
 from tests.gui.meta_steps.onepanel.storages import *
 from tests.gui.meta_steps.oneprovider.data import *
