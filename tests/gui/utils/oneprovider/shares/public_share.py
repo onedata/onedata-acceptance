@@ -19,7 +19,7 @@ from ..file_browser import FileBrowser
 
 class URLTypeSelector(PageObject):
     public_share_link = Button(".option-share-link")
-    public_rest_endpoint = Button(".option-rest-link")
+    share_rest_endpoint = Button(".option-rest-link")
 
 
 class PublicShareView:
