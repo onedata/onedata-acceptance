@@ -111,7 +111,7 @@ def remove_current_share(
     selenium, browser_id, op_container, modals, tmp_memory, popups
 ):
     option = "Remove"
-    modal_name = "Remove share"
+    modal_name = "Remove Share"
     button = "Remove"
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
@@ -125,7 +125,7 @@ def remove_current_share(
 def open_shares_view_of_given_space(
     selenium, browser_id, oz_page, space_name, op_container, tmp_memory
 ):
-    option = "Shares, Open Data"
+    option = "Shares, Public Data"
     items_browser = "shares_browser"
 
     click_on_option_of_space_on_left_sidebar_menu(
