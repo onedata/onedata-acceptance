@@ -120,7 +120,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
               - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And using <client2>, user1 forces start of storage import scan for "space3" at "oneprovider-1" and waits till finished
+    And using <client2>, onepanel forces start of storage import scan for "space3" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
@@ -220,7 +220,7 @@ Feature: Onepanel features regarding storage sync (e.g. import)
                - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
-    And using <client2>, user1 forces start of storage import scan for "space5" at "oneprovider-1" and waits till finished
+    And using <client2>, onepanel forces start of storage import scan for "space5" at "oneprovider-1" and waits till finished
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir22: 10
