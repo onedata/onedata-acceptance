@@ -11,7 +11,7 @@ import json
 import yaml
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers
@@ -500,3 +500,16 @@ def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
               path=get_panel_rest_path('provider', 'spaces', space_id,
                                        'storage-import', 'auto', 'force-start'),
               auth=(onepanel_username, onepanel_password))
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_for_storage_scan_to_finish(space_id, provider, hosts, onepanel_credentials):
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+    resp = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('provider', 'spaces', space_id,
+                                       'storage-import', 'auto', 'info'),
+              auth=(onepanel_username, onepanel_password))
+    err_msg = f"status of storage scan is {resp.json()["status"]}"
+    assert resp.json()["status"] == "completed", err_msg

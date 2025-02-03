@@ -75,7 +75,7 @@ def save_date_of_archive_creation(browser_id, tmp_memory, description):
         r'(?P<files_count>\d+), size: "(?P<size>.*?)"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_archive_full_state_status(
     browser_id, tmp_memory, status, files_count, size, description
 ):
