@@ -307,7 +307,7 @@ def displays():
     return {}
 
 
-@fixture
+@fixture(scope="module")
 def ffmpeg_details():
     return {}
 
