@@ -121,7 +121,8 @@ def pytest_collection_modifyitems(items):
     items[:] = first
 
 
-def pytest_bdd_before_scenario(feature, scenario):
+def pytest_bdd_before_scenario(request, feature, scenario):
+    handle_start_recording(request)
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
@@ -157,6 +158,7 @@ def format_step_name(step_name):
 def finalize(request):
     yield
     export_logs(request)
+    handle_stop_recording(request)
 
 
 @fixture(scope="session")
@@ -302,6 +304,11 @@ def tmp_memory():
 @fixture
 def displays():
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
+    return {}
+
+
+@fixture
+def ffmpeg_details():
     return {}
 
 
@@ -456,8 +463,7 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
 
 
-@fixture(scope="function")
-def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
+def handle_start_recording(request):
     recording = request.config.getoption("--xvfb-recording")
     mosaic_filter = not request.config.getoption("--no-mosaic-filter")
 
@@ -471,6 +477,13 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
         # if there is '/' in file name ffmpeg is not starting
         file_name = file_name.replace("/", "_")
 
+        ffmpeg_details = request.getfixturevalue("ffmpeg_details")
+
+        movie_dir = request.getfixturevalue("movie_dir")
+        xvfb = request.getfixturevalue("xvfb")
+        screen_width = request.getfixturevalue("screen_width")
+        screen_height = request.getfixturevalue("screen_height")
+
         ffmpeg_proc, movies = start_recording(
             movie_dir,
             file_name,
@@ -479,30 +492,31 @@ def xvfb_recorder(request, xvfb, movie_dir, screen_width, screen_height):
             screen_height,
             mosaic_filter,
         )
+        ffmpeg_details["proc"] = ffmpeg_proc
+        ffmpeg_details["movies"] = movies
         request.node._movies = movies
 
-        try:
-            yield
-        finally:
-            stop_recording(ffmpeg_proc)
-            # if setup and call of this given passed then whole test passed
-            if hasattr(request.node, "setup_xvfb_recorder"):
-                setup_passed = request.node.setup_xvfb_recorder.passed
-            else:
-                setup_passed = False
-            if hasattr(request.node, "call_xvfb_recorder"):
-                call_passed = request.node.call_xvfb_recorder.passed
-            else:
-                call_passed = False
-            if recording == "failed" and setup_passed and call_passed:
-                for movie in movies:
-                    try:
-                        os.remove(movie)
-                    except IOError as ex:
-                        if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
-                            raise
+
+def handle_stop_recording(request):
+    recording = request.config.getoption("--xvfb-recording")
+    ffmpeg_details = request.getfixturevalue("ffmpeg_details")
+    stop_recording(ffmpeg_details["proc"])
+    # if setup and call of this given passed then whole test passed
+    if hasattr(request.node, "setup_xvfb_recorder"):
+        setup_passed = request.node.setup_xvfb_recorder.passed
     else:
-        yield
+        setup_passed = False
+    if hasattr(request.node, "call_xvfb_recorder"):
+        call_passed = request.node.call_xvfb_recorder.passed
+    else:
+        call_passed = False
+    if recording == "failed" and setup_passed and call_passed:
+        for movie in ffmpeg_details["movies"]:
+            try:
+                os.remove(movie)
+            except IOError as ex:
+                if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
+                    raise
 
 
 # ============================================================================

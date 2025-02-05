@@ -30,14 +30,12 @@ def create_instances_of_webdriver(
     tmp_memory,
     driver_type,
     xvfb,
-    xvfb_recorder,
     screen_width,
     screen_height,
     displays,
     capabilities,
 ):
 
-    _ = xvfb_recorder
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
         if browser_id in selenium:
             raise AttributeError(f"{browser_id:s} already in use")
