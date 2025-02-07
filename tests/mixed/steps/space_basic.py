@@ -6,6 +6,8 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from onezone_client import UserApi
+
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
 )
@@ -22,6 +24,8 @@ from tests.gui.meta_steps.onezone.spaces import (
     remove_provider_support_for_space_in_oz_using_gui,
     rename_spaces_in_oz_using_gui,
 )
+from tests.gui.utils.generic import parse_seq
+from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import (
     add_users_to_space_in_oz_using_rest,
     assert_user_is_member_of_space_rest,
@@ -43,7 +47,9 @@ from tests.mixed.steps.rest.onezone.space_management import (
     remove_spaces_in_oz_using_rest,
     rename_spaces_in_oz_using_rest,
 )
-from tests.mixed.utils.common import NoSuchClientException
+from tests.mixed.utils.common import NoSuchClientException, login_to_oz
+from tests.oneclient.steps.multi_file_steps import ls_present_spaces
+from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -70,8 +76,9 @@ def create_spaces_in_oz(
 ):
 
     if client.lower() == "rest":
-
-        create_spaces_in_oz_using_rest(user, users, hosts, host, space_list)
+        create_spaces_in_oz_using_rest(
+            user, users, hosts, host, parse_seq(space_list), spaces
+        )
     elif client.lower() == "web gui":
 
         create_spaces_in_oz_using_gui(
@@ -541,5 +548,50 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
         assert_provider_has_name_and_hostname_in_oz_gui(
             selenium, user, oz_page, provider_name, provider, hosts, popups
         )
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} sees spaces "{expected_spaces}" in mount point'
+    )
+)
+def assert_spaces_in_mount_point(client, user, users, expected_spaces):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        ls_present_spaces(user, list_parser(expected_spaces), oneclient_host, users)
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
+        " Onezone service, annotated with their ids in mount point"
+    )
+)
+def assert_spaces_with_ids_in_mount_point(
+    client, user, users, expected_spaces, zone_name, hosts
+):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        user_client = login_to_oz(
+            user, users[user].password, hosts[zone_name]["hostname"]
+        )
+
+        user_api = UserApi(user_client)
+        user_spaces = user_api.list_user_spaces().spaces
+
+        space_names_with_ids = []
+        expected_spaces = list_parser(expected_spaces)
+        for sid in user_spaces:
+            space = user_api.get_user_space(sid)
+            if space.name in expected_spaces:
+                space_names_with_ids.append(f"{space.name}@{space.space_id}")
+
+        ls_present_spaces(user, space_names_with_ids, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

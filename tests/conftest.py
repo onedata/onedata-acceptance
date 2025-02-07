@@ -328,6 +328,13 @@ def spaces():
 
 
 @pytest.fixture
+def space_aliases():
+    """Mapping space alias to space name and id, e.g.
+    {A: {name: space1, sid: UEIHSdft743dfjKEUgr}}"""
+    return {}
+
+
+@pytest.fixture
 def storages():
     """Mapping storage name to storage id, e.g. {st1: UEIHSdft743dfjKEUgr}"""
     return {}
