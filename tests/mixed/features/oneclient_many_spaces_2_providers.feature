@@ -87,15 +87,15 @@ Feature: Tests for oneclient interaction with spaces with the same name on 2 pro
         storage: posix
         size: 1000000
 
-    Then using <clien1>, user1 creates file named "file1" in space with alias "A" in oneprovider-1
+    Then using <client1>, user1 creates file named "file1" in space with alias "A" in oneprovider-1
     And using <client2>, user1 writes "TEST AAA" to file named "file1" in space with alias "A" in oneprovider-1
     And using <client2>, user1 creates file named "file2" in space with alias "A" in oneprovider-1
-    And using <client1>, user1 writes "TEST BBB" to file named "file1" in space with alias "A" in oneprovider-1
+    And using <client1>, user1 writes "TEST BBB" to file named "file2" in space with alias "A" in oneprovider-1
 
     And using <client1>, user1 reads "TEST AAA" from file named "file1" in space with alias "A" in oneprovider-1
     And using <client3>, user1 reads "TEST AAA" from file named "file1" in space with alias "A" in oneprovider-1
-    And using <client1>, user1 reads "TEST BBB" from file named "file2" in space with alias "A" in oneprovider-1
     And using <client3>, user1 reads "TEST BBB" from file named "file2" in space with alias "A" in oneprovider-1
+    And using <client1>, user1 reads "TEST BBB" from file named "file2" in space with alias "A" in oneprovider-1
 
   Examples:
     | client1    | client2    | client3    |
