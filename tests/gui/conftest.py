@@ -48,6 +48,8 @@ DRIVER_CREATION_RETRIES = 5
 # use when waiting for normal download to finish
 WAIT_NORMAL_DOWNLOAD = 10
 
+FFMPEG_DETAILS = {}
+
 
 # ============================================================================
 # PYTEST CONFIGURATION
@@ -307,11 +309,6 @@ def displays():
     return {}
 
 
-@fixture(scope="module")
-def ffmpeg_details():
-    return {}
-
-
 @fixture(scope="session")
 def clipboard():
     """utility simulating os clipboard"""
@@ -468,6 +465,7 @@ def handle_start_recording(request):
     mosaic_filter = not request.config.getoption("--no-mosaic-filter")
 
     if recording != "none":
+        global FFMPEG_DETAILS
         # add timestamp to video name
         file_name = f"{request.node.name}.{int(time())}"
 
@@ -476,8 +474,6 @@ def handle_start_recording(request):
 
         # if there is '/' in file name ffmpeg is not starting
         file_name = file_name.replace("/", "_")
-
-        ffmpeg_details = request.getfixturevalue("ffmpeg_details")
 
         movie_dir = request.getfixturevalue("movie_dir")
         xvfb = request.getfixturevalue("xvfb")
@@ -492,15 +488,14 @@ def handle_start_recording(request):
             screen_height,
             mosaic_filter,
         )
-        ffmpeg_details["proc"] = ffmpeg_proc
-        ffmpeg_details["movies"] = movies
+        FFMPEG_DETAILS["proc"] = ffmpeg_proc
+        FFMPEG_DETAILS["movies"] = movies
         request.node._movies = movies
 
 
 def handle_stop_recording(request):
     recording = request.config.getoption("--xvfb-recording")
-    ffmpeg_details = request.getfixturevalue("ffmpeg_details")
-    stop_recording(ffmpeg_details["proc"])
+    stop_recording(FFMPEG_DETAILS["proc"])
     # if setup and call of this given passed then whole test passed
     if hasattr(request.node, "setup_xvfb_recorder"):
         setup_passed = request.node.setup_xvfb_recorder.passed
@@ -511,7 +506,7 @@ def handle_stop_recording(request):
     else:
         call_passed = False
     if recording == "failed" and setup_passed and call_passed:
-        for movie in ffmpeg_details["movies"]:
+        for movie in FFMPEG_DETAILS["movies"]:
             try:
                 os.remove(movie)
             except IOError as ex:
