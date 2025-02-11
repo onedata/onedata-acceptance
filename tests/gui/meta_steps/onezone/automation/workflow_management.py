@@ -188,9 +188,17 @@ def _upload_workflow_from_automation_examples(
     go_to_inventory_subpage(
         selenium, browser_id, inventory, subpage, oz_page, tmp_memory
     )
-    if workflow == "initialize-eureka3D-project":
-        workflow = "Initialize Eureka3D project"
+    workflow = _change_workflow_dump_name_to_visible_name(workflow)
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, "sees")
+
+
+def _change_workflow_dump_name_to_visible_name(name):
+    s = {
+        "initialize-eureka3D-project": "Initialize Eureka3D project",
+        "annotate-images": "Annotate images",
+    }
+    new_name = s[name] if name in s else name
+    return new_name
 
 
 @wt(

@@ -15,7 +15,8 @@ Feature: Automation examples input files test
                 defaults:
                     provider: oneprovider-1
                 directory tree:
-                    - dir1
+                    - dir1:
+                      - file1
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
@@ -90,3 +91,40 @@ Feature: Automation examples input files test
     | example_file_name          | meta_entry_val1    |
     | "example_image.jpg"        | image/jpeg         |
     | "example_python_script.py" | text/x-python      |
+
+
+  Scenario: User sees successful execution of uploaded "annotate-images" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uploads "annotate-images" workflow from automation-examples repository to "inventory1" inventory
+
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser uses upload button from file browser menu bar to upload input file "automation/input_files/example_image.jpg" to current dir
+    And user of browser sees that item named "example_image.jpg" has appeared in file browser
+
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser executes 1st revision of "Annotate images" workflow in "space1" space with the following initial values:
+      Files to process:
+        - dir1
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
+    # check correct metadata for image file
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser clicks on "Metadata" in context menu for "example_image.jpg" in file browser
+    And user of browser sees xattr metadata entry with attribute named "width" and value "115"
+    And user of browser sees xattr metadata entry with attribute named "height" and value "126"
+    And user of browser sees xattr metadata entry with attribute named "orientation" and value "vertical"
+    And user of browser sees xattr metadata entry with attribute named "dominant_colour" and value "black"
+    And user of browser sees xattr metadata entry with attribute named "average_colour" and value "darkolivegreen"
+    And user of browser clicks on "X" button in modal "File details"
+    # check no metadata for no image file
+    And user of browser clicks on menu for "file1" directory in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees that "File details" modal has appeared
+    And user of browser sees that "File details" modal is opened on "Metadata" tab
+    And user of browser sees that all metadata tabs are marked as empty
+    And user of browser sees that there is no metadata in metadata panel
