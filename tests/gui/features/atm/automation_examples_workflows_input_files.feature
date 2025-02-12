@@ -119,7 +119,7 @@ Feature: Automation examples input files test
     And user of browser sees xattr metadata entry with attribute named "height" and value "126"
     And user of browser sees xattr metadata entry with attribute named "orientation" and value "vertical"
     And user of browser sees xattr metadata entry with attribute named "dominant_colour" and value "black"
-    And user of browser sees xattr metadata entry with attribute named "average_colour" and value "darkolivegreen"
+    And user of browser sees xattr metadata entry with attribute named "average_colour" and value "dark gray"
     And user of browser clicks on "X" button in modal "File details"
     # check no metadata for no image file
     And user of browser clicks on menu for "file1" directory in file browser
