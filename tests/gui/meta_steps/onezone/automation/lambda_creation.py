@@ -31,6 +31,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
+from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -357,6 +358,9 @@ def download_and_remove_all_lambda_dumps_from_inventory(
     selenium, browser_id, oz_page, popups, modals, tmp_memory
 ):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
+        visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
+            "atmLambdaRevision"
+        ]["_data"]["name"]
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
@@ -364,7 +368,7 @@ def download_and_remove_all_lambda_dumps_from_inventory(
             popups,
             modals,
             tmp_memory,
-            lamda_name,
+            visible_lambda_name,
         )
 
 
@@ -414,14 +418,10 @@ def assert_downloaded_and_uploaded_lambda_dumps_the_same(
 ):
     has_downloaded_workflow_file_content(browser_id, tmpdir, lambda_name + ".json")
 
-    downloaded_dump = None
-    uploaded_dump = None
     with open(tmpdir.join(browser_id, "download", lambda_name + ".json")) as f:
         downloaded_dump = json.load(f)
-    with open(
-        upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
-    ) as f:
-        uploaded_dump = json.load(f)
+
+    uploaded_dump = get_lambda_dump(lambda_name)
 
     # remove keys
     downloaded_dump.pop("originalAtmLambdaId")
