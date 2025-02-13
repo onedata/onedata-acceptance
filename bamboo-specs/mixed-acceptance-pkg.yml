@@ -82,8 +82,6 @@ stages:
         - Files times
         - Groups basic
         - LUMA
-        - Many spaces
-        - Many spaces 2 providers
         - Nested directories create
         - Nested directories remove
         - Onepanel
@@ -95,6 +93,8 @@ stages:
         - Single directory
         - Single directory 2
         - Spaces basic
+        - Spaces with same name
+        - Spaces with same name 2 providers
         - Storage sync
         - Tokens
         - Transfers
@@ -715,38 +715,6 @@ LUMA:
         scripts:
           - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma test_mixed_pkg
 
-Many spaces:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CMSS
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make SUITE=test_many_spaces test_mixed_pkg
-
-Many spaces 2 providers:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CMS2P
-  tasks:
-    - script: *clear-env
-    - script: *restart-minikube
-    - checkout: *checkout-default-repository
-    - script: *init-submodules
-    - script: *quarantine-hack-pull-surefire
-    - script: *download-artifacts
-    - script: *build-swaggers
-    - script:
-        <<: *run-acceptance-tests
-        scripts:
-          - make ENV_FILE=1oz_2op_3oc SUITE=test_many_spaces_2_providers test_mixed_pkg
-
 Nested directories create:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CNDC
@@ -922,6 +890,38 @@ Spaces basic:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_spaces_basic test_mixed_pkg
+
+Spaces with same name:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CMSS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_spaces_with_the_same_name test_mixed_pkg
+
+Spaces with same name 2 providers:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CMS2P
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_3oc SUITE=test_spaces_with_the_same_name_2_providers test_mixed_pkg
 
 Storage sync:
   <<: *acceptance-mixed-tests-in-chrome-job

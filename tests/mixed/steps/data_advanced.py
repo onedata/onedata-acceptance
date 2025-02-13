@@ -23,8 +23,8 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.parse(
-        'using {client}, {user} creates space named "{space_name}" with alias "{alias}"'
-        ' in "{host}" Onezone service'
+        'using {client}, {user} creates space named "{space_name}" with test alias'
+        ' "{alias}" in "{host}" Onezone service'
     )
 )
 def create_space_with_alias_in_oz(
@@ -40,7 +40,7 @@ def create_space_with_alias_in_oz(
 @wt(
     parsers.parse(
         "using {client}, {user} generates space support "
-        'token for space with alias "{alias}" in '
+        'token for space with test alias "{alias}" in '
         '"{host}" Onezone service and sends it to '
         "{supporting_user}"
     )
@@ -60,7 +60,7 @@ def request_space_support_using_rest_for_space_with_alias(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates "
-        'file named "(?P<file_name>.*)" in space with alias "(?P<alias>.*)" in'
+        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
         " (?P<host>.*)"
     )
 )
@@ -71,10 +71,9 @@ def create_file_in_op_in_space_with_alias(
     if "oneclient" in client_lower:
         result = "succeds"
         oneclient_host = change_client_name_to_hostname(client_lower)
-        if check_whether_space_names_repeats_for_alias(alias, space_aliases):
-            full_path = f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
-        else:
-            full_path = f"{space_aliases[alias]["name"]}/{file_name}"
+        full_path = create_path_for_item_in_space_with_alias(
+            space_aliases, alias, file_name
+        )
         create_file_in_op_oneclient(
             user, full_path, users, result, oneclient_host, request
         )
@@ -85,7 +84,7 @@ def create_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) writes "(?P<content>.*)" to '
-        'file named "(?P<file_name>.*)" in space with alias "(?P<alias>.*)" in'
+        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
         " (?P<host>.*)"
     )
 )
@@ -95,10 +94,9 @@ def write_to_file_in_op_in_space_with_alias(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        if check_whether_space_names_repeats_for_alias(alias, space_aliases):
-            full_path = f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
-        else:
-            full_path = f"{space_aliases[alias]["name"]}/{file_name}"
+        full_path = create_path_for_item_in_space_with_alias(
+            space_aliases, alias, file_name
+        )
         multi_reg_file_steps.write_text(
             user, str(content), full_path, oneclient_host, users
         )
@@ -109,7 +107,7 @@ def write_to_file_in_op_in_space_with_alias(
 @wt(
     parsers.re(
         r'using (?P<client>.*), (?P<user>\w+) reads "(?P<content>.*)" from '
-        'file named "(?P<file_name>.*)" in space with alias "(?P<alias>.*)" in'
+        'file named "(?P<file_name>.*)" in space with test alias "(?P<alias>.*)" in'
         " (?P<host>.*)"
     )
 )
@@ -119,10 +117,9 @@ def read_from_file_in_op_in_space_with_alias(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        if check_whether_space_names_repeats_for_alias(alias, space_aliases):
-            full_path = f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
-        else:
-            full_path = f"{space_aliases[alias]["name"]}/{file_name}"
+        full_path = create_path_for_item_in_space_with_alias(
+            space_aliases, alias, file_name
+        )
         multi_reg_file_steps.read_text(
             user, str(content), full_path, oneclient_host, users
         )
@@ -132,7 +129,7 @@ def read_from_file_in_op_in_space_with_alias(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) removes space with alias "
+        "using (?P<client>.*), (?P<user>.+?) removes space with test alias "
         '"(?P<alias>.*)" in "(?P<host>.+?)" Onezone service'
     )
 )
@@ -150,7 +147,7 @@ def remove_space_with_alias_in_oz(
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) renames space with alias "
+        "using (?P<client>.*), (?P<user>.+?) renames space with test alias "
         '"(?P<alias>.*)" to "(?P<new_space_name>.*)" in "(?P<host>.+?)" Onezone service'
     )
 )
@@ -167,6 +164,14 @@ def rename_space_with_alias_in_oz(
         space_api.modify_space(space.space_id, space)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
+
+
+def create_path_for_item_in_space_with_alias(space_aliases, alias, file_name):
+    if check_whether_space_names_repeats_for_alias(alias, space_aliases):
+        return (
+            f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
+        )
+    return f"{space_aliases[alias]["name"]}/{file_name}"
 
 
 def check_whether_space_names_repeats_for_alias(alias, space_aliases):

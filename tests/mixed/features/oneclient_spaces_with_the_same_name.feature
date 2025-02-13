@@ -23,7 +23,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     And oneclient mounted using token by user2
 
 
-  Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after removing one space can see the other without id
+  Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after removing one space user can see the other without id
     Given there are no spaces supported by oneprovider-1 in Onepanel
     When using REST, user1 creates space "helloworld" in "onezone" Onezone service
     And using REST, user1 generates space support token for space named "helloworld" in "onezone" Onezone service and sends it to onepanel
@@ -44,7 +44,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     And using oneclient1, user1 sees spaces "[helloworld]" in mount point
 
 
-  Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after renaming one space can see them without id
+  Scenario: Using oneclient user can see 2 spaces with the same name annotated with their ids in mount point, then after renaming one space user can see them without id
     Given there are no spaces supported by oneprovider-1 in Onepanel
     When using REST, user1 creates space "helloworld" in "onezone" Onezone service
     And using REST, user1 generates space support token for space named "helloworld" in "onezone" Onezone service and sends it to onepanel
@@ -101,7 +101,7 @@ Feature: Tests for oneclient interaction with spaces with the same name
     And using REST, user1 removes space with alias "B" in "onezone" Onezone service
     And using REST, user1 renames space with alias "C" to "helloworld2" in "onezone" Onezone service
 
-    And using oneclient1, user1 sees spaces "[helloworld]" in mount point
+    And using oneclient1, user1 sees spaces "[helloworld, helloworld2]" in mount point
 
     And using oneclient1, user1 creates file named "file2" in space with alias "A" in oneprovider-1
     And using oneclient1, user1 writes "TEST DDD" to file named "file2" in space with alias "A" in oneprovider-1
@@ -230,11 +230,11 @@ Feature: Tests for oneclient interaction with spaces with the same name
     Then using oneclient1, user1 sees spaces "[space_helloworld]" in mount point
     And using oneclient1, user2 sees spaces "[space_helloworld]" in mount point
 
-    And using oneclient1, user1 creates file named "file1" in space "space_helloworld" in oneprovider-1
+    And using oneclient1, user1 succeeds to create file named "file1" in space "space_helloworld" in oneprovider-1
     And using oneclient1, user1 writes "TEST AAA" to file named "file1" in space "space_helloworld" in oneprovider-1
     And using oneclient1, user1 reads "TEST AAA" from file named "file1" in space "space_helloworld" in oneprovider-1
 
-    And using oneclient1, user2 creates file named "file1" in space "space_helloworld" in oneprovider-1
+    And using oneclient1, user2 succeeds to create file named "file1" in space "space_helloworld" in oneprovider-1
     And using oneclient1, user2 writes "TEST BBB" to file named "file1" in space "space_helloworld" in oneprovider-1
     And using oneclient1, user2 reads "TEST BBB" from file named "file1" in space "space_helloworld" in oneprovider-1
 

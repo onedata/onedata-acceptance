@@ -487,7 +487,7 @@ def request_space_support(
 )
 @wt(
     parsers.re(
-        "using (?P<client>REST), (?P<user>.+?) supports space with alias "
+        "using (?P<client>REST), (?P<user>.+?) supports space with test alias "
         '"(?P<space_name>.*)" in "(?P<host>.+?)" Oneprovider '
         "panel service with following configuration:\n"
         r"(?P<config>(.|\s)*)"

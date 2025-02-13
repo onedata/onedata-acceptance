@@ -1,5 +1,5 @@
 """This module contains tests suite for acceptance tests checking oneclient
-interactions with spaces with the same name, using multiple providers."""
+interactions with spaces with the same name."""
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
@@ -56,7 +56,6 @@ from tests.mixed.steps.tokens_basic import *
 from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.environment_steps import *
-from tests.oneclient.steps.multi_auth_steps import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
@@ -68,4 +67,4 @@ def screens():
     return [0, 1]
 
 
-scenarios("../features/oneclient_many_spaces_2_providers.feature")
+scenarios("../features/oneclient_spaces_with_the_same_name.feature")
