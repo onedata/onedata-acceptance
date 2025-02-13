@@ -97,6 +97,8 @@ def compare(val1, val2, comparator):
 def get_workflow_dump(workflow_name):
     if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
         path = upload_workflow_path(f"{workflow_name}.json")
+    elif os.path.isfile(upload_workflow_path(f"{workflow_name}/{workflow_name}.json")):
+        path = upload_workflow_path(f"{workflow_name}/{workflow_name}.json")
     elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
         path = upload_file_path(f"automation/workflow/{workflow_name}.json")
     else:
