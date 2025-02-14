@@ -3,8 +3,8 @@ default: develop
 
 images:
   # Specification of branches from which docker images will be pulled.
-  onezone: develop
-  oneprovider: develop
+  onezone: release/22.02.0
+  oneprovider: release/22.02.0
   oneclient: current_branch
   rest-cli: develop
   openfaas-pod-status-monitor: develop
@@ -12,8 +12,8 @@ images:
 
 sources:
   # Specification of branches from which sources for components will be pulled.
-  oz-worker: develop
-  op-worker: develop
-  onepanel: develop
-  cluster-manager: develop
+  oz-worker: release/22.02.0
+  op-worker: release/22.02.0
+  onepanel: release/22.02.0
+  cluster-manager: release/22.02.0
   oneclient: current_branch
