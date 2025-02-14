@@ -416,12 +416,12 @@ def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, tmpdir)
 def assert_downloaded_and_uploaded_lambda_dumps_the_same(
     browser_id, lambda_name, tmpdir
 ):
-    has_downloaded_workflow_file_content(browser_id, tmpdir, lambda_name + ".json")
-
-    with open(tmpdir.join(browser_id, "download", lambda_name + ".json")) as f:
-        downloaded_dump = json.load(f)
-
     uploaded_dump = get_lambda_dump(lambda_name)
+    dump_lambda_name = uploaded_dump["revision"]["atmLambdaRevision"]["_data"]["name"]
+    has_downloaded_workflow_file_content(browser_id, tmpdir, dump_lambda_name + ".json")
+
+    with open(tmpdir.join(browser_id, "download", dump_lambda_name + ".json")) as f:
+        downloaded_dump = json.load(f)
 
     # remove keys
     downloaded_dump.pop("originalAtmLambdaId")
