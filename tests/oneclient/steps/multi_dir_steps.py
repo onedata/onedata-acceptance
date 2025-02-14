@@ -127,14 +127,7 @@ def purge_all_spaces(client):
                 pass
             except OSError as e:
                 # ignore permission errors during cleaning
-
-                if (
-                    e.errno == errno.EPERM
-                    or e.errno == errno.EACCES
-                    or e.errno == errno.EIO
-                ):
-                    pass
-                else:
+                if e.errno not in (errno.EPERM, errno.EACCES, errno.EIO):
                     print(
                         f"Unexpected error '{e.errno}' when cleaning space:"
                         f" {space_path}"
