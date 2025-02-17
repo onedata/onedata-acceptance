@@ -2,52 +2,59 @@
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import collections
 import os
 import re
-import sys
-import collections
 import subprocess as sp
+import sys
 
-import yaml
 import urllib3
-from kubernetes import client, config
+import yaml
+from kubernetes import client, config  # pylint: disable=import-error
 
 
 class OnenvError(BaseException):
     """Raised when one of one-env commands fails"""
-    pass
 
 
-def run_onenv_command(command, args=None, fail_with_error=True, sudo=False, return_output=True,
-                      cwd='one_env', onenv_path='./onenv'):
+def run_onenv_command(
+    command,
+    args=None,
+    fail_with_error=True,
+    sudo=False,
+    return_output=True,
+    cwd="one_env",
+    onenv_path="./onenv",
+):
     if sudo:
-        cmd = ['sudo', onenv_path, command]
+        cmd = ["sudo", onenv_path, command]
     else:
         cmd = [onenv_path, command]
 
     if args:
         cmd.extend(args)
-    return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd)
+    return run_command(
+        cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd
+    )
 
 
 def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose=True):
     if verbose:
-        print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
-    output, err = proc.communicate()
+        print(f"Running command: {cmd}")
+    with sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd) as proc:
+        output, err = proc.communicate()
 
     if verbose:
-        sys.stdout.write(output.decode('utf-8'))
-    sys.stderr.write(err.decode('utf-8'))
+        sys.stdout.write(output.decode("utf-8"))
+    sys.stderr.write(err.decode("utf-8"))
 
     if proc.returncode != 0 and fail_with_error:
-        raise OnenvError('Environment error.\n'
-                         'Command: {} failed.\n'
-                         'Captured output: {}'.format(cmd, output))
+        raise OnenvError(
+            f"Environment error.\nCommand: {cmd} failed.\nCaptured output: {output}"
+        )
 
     return output if return_output else proc.returncode
 
@@ -58,8 +65,7 @@ def client_alias_to_pod_mapping():
     prov_clients_mapping = collections.defaultdict(list)
     client_alias_mapping = {}
     pods_list = list_pods()
-    clients_pods = [pod for pod in pods_list
-                    if get_service_type(pod) == 'oneclient']
+    clients_pods = [pod for pod in pods_list if get_service_type(pod) == "oneclient"]
     for client_pod in clients_pods:
         provider = get_client_provider_host(client_pod)
         provider_alias = service_name_to_alias_mapping(provider)
@@ -67,10 +73,9 @@ def client_alias_to_pod_mapping():
 
     i = 1
     for prov_alias in sorted(list(prov_clients_mapping.keys())):
-        client_pods = sorted(prov_clients_mapping.get(prov_alias),
-                             key=get_name)
+        client_pods = sorted(prov_clients_mapping.get(prov_alias), key=get_name)
         for pod in client_pods:
-            key = 'oneclient-{}'.format(i)
+            key = f"oneclient-{i}"
             client_alias_mapping[key] = get_name(pod)
             client_alias_mapping[get_name(pod)] = key
             i += 1
@@ -78,20 +83,25 @@ def client_alias_to_pod_mapping():
 
 
 def service_name_to_alias_mapping(name):
-    return [val for key, val in
-            {'oneprovider-krakow': 'oneprovider-1',
-             'oneprovider-paris': 'oneprovider-2',
-             'oneprovider-lisbon': 'oneprovider-3',
-             'onezone': 'onezone'}.items() if key.lower() in name][0]
+    return [
+        val
+        for key, val in {
+            "oneprovider-krakow": "oneprovider-1",
+            "oneprovider-paris": "oneprovider-2",
+            "oneprovider-lisbon": "oneprovider-3",
+            "onezone": "onezone",
+        }.items()
+        if key.lower() in name
+    ][0]
 
 
 def get_service_type(pod):
     # returns SERVICE_ONEZONE | SERVICE_ONEPROVIDER
-    return pod.metadata.labels.get('component')
+    return pod.metadata.labels.get("component")
 
 
 def get_client_provider_host(pod):
-    return get_env_variable(pod, 'ONECLIENT_PROVIDER_HOST')
+    return get_env_variable(pod, "ONECLIENT_PROVIDER_HOST")
 
 
 def get_env_variable(pod, env_name):
@@ -111,17 +121,19 @@ def init_helm():
 
 
 def helm_init_cmd(client_only=None):
-    cmd = ['helm', 'init']
+    cmd = ["helm", "init"]
 
     if client_only:
-        cmd.append('--client-only')
+        cmd.append("--client-only")
 
     return cmd
 
 
 def get_kube_client():
     urllib3.disable_warnings()
-    config.load_kube_config(config_file=os.path.join(os.path.expanduser('~'), '.kube', 'config'))
+    config.load_kube_config(
+        config_file=os.path.join(os.path.expanduser("~"), ".kube", "config")
+    )
     kube = client.CoreV1Api()
     return kube
 
@@ -133,22 +145,22 @@ def list_pods_and_jobs():
 
 
 def cmd_exec(pod, command, interactive=False, tty=False, container=None):
-    cmd = ['kubectl', '--namespace', get_current_namespace(), 'exec']
+    cmd = ["kubectl", "--namespace", get_current_namespace(), "exec"]
 
     if interactive:
-        cmd.append('-i')
+        cmd.append("-i")
     if tty:
-        cmd.append('-t')
+        cmd.append("-t")
     cmd.append(pod)
 
     if container:
-        cmd.extend(['-c', container])
+        cmd.extend(["-c", container])
 
     if isinstance(command, list):
-        cmd.append('--')
+        cmd.append("--")
         cmd += command
     else:
-        cmd.extend(['--', command])
+        cmd.extend(["--", command])
 
     return cmd
 
@@ -163,27 +175,28 @@ def get_ip(pod):
 
 def is_pod(pod):
     if pod.metadata.owner_references:
-        return pod.metadata.owner_references[0].kind != 'Job'
+        return pod.metadata.owner_references[0].kind != "Job"
+    return False
 
 
 def list_pods():
-    return list(filter(lambda pod: is_pod(pod), list_pods_and_jobs()))
+    return list(filter(is_pod, list_pods_and_jobs()))
 
 
 def match_pods(substring):
     pods_list = list_pods()
     # Accept dashes as wildcard characters
-    pattern = '.*{}.*'.format(substring.replace('-', '.*'))
+    pattern = f".*{substring.replace("-", ".*")}.*"
     return list(filter(lambda pod: re.match(pattern, get_name(pod)), pods_list))
 
 
 def get_current_namespace():
-    return get('currentNamespace')
+    return get("currentNamespace")
 
 
 def get(key):
-    config = load_yaml(user_config_path())
-    return config[key]
+    loaded_config = load_yaml(user_config_path())
+    return loaded_config[key]
 
 
 def load_yaml(path):
@@ -192,30 +205,30 @@ def load_yaml(path):
 
 
 def user_config_path():
-    return os.path.join(one_env_directory(), 'config.yaml')
+    return os.path.join(one_env_directory(), "config.yaml")
 
 
 def one_env_directory():
-    return os.path.join(host_home(), '.one-env')
+    return os.path.join(host_home(), ".one-env")
 
 
 def host_home():
-    return os.path.expanduser('~')
+    return os.path.expanduser("~")
 
 
 def deployments_directory():
-    return os.path.join(one_env_directory(), 'deployments')
+    return os.path.join(one_env_directory(), "deployments")
 
 
 def current_deployment_dir():
     all_deployments = os.listdir(deployments_directory())
     all_deployments.sort()
     if len(all_deployments) == 0:
-        print('There are no deployments')
+        print("There are no deployments")
         sys.exit(1)
     else:
         return os.path.join(deployments_directory(), all_deployments[-1])
 
 
 def deployment_data_path():
-    return os.path.join(current_deployment_dir(), 'deployment_data.yml')
+    return os.path.join(current_deployment_dir(), "deployment_data.yml")
