@@ -58,9 +58,10 @@ Feature: Tests for oneclient interaction with spaces with the same name on 2 pro
     And using oneclient2, user1 reads "TEST BBB" from file named "file1" in space with test alias "B" in oneprovider-1
     And using oneclient3, user1 reads "TEST BBB" from file named "file1" in space with test alias "B" in oneprovider-1
 
-    And using oneclient1, user1 sees spaces "[helloworld]" in mount point
-    And using oneclient2, user1 sees spaces "[helloworld]" in mount point
-    And using oneclient3, user1 sees spaces "[helloworld]" in mount point
+    # Due to VFS-10923, space id is still visible
+    And using oneclient1, user1 sees spaces "[helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient2, user1 sees spaces "[helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
+    And using oneclient3, user1 sees spaces "[helloworld]" from "onezone" Onezone service, annotated with their ids in mount point
 
 
   Scenario: Using different oneclients user can see proper space contents after renaming one space

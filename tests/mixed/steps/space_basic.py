@@ -51,6 +51,7 @@ from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 @wt(
@@ -568,6 +569,17 @@ def assert_spaces_in_mount_point(client, user, users, expected_spaces):
 
 @wt(
     parsers.parse(
+        'using {client}, {user} sees spaces "{expected_spaces}" in mount point, waiting'
+        " up to 60s"
+    )
+)
+@repeat_failed(timeout=60)
+def assert_spaces_in_mount_point_with_waiting(client, user, users, expected_spaces):
+    assert_spaces_in_mount_point(client, user, users, expected_spaces)
+
+
+@wt(
+    parsers.parse(
         'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
         " Onezone service, annotated with their ids in mount point"
     )
@@ -595,3 +607,18 @@ def assert_spaces_with_ids_in_mount_point(
         ls_present_spaces(user, space_names_with_ids, oneclient_host, users)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.parse(
+        'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
+        " Onezone service, annotated with their ids in mount point, waiting up to 60s"
+    )
+)
+@repeat_failed(timeout=60)
+def assert_spaces_with_ids_in_mount_point_with_waiting(
+    client, user, users, expected_spaces, zone_name, hosts
+):
+    assert_spaces_with_ids_in_mount_point(
+        client, user, users, expected_spaces, zone_name, hosts
+    )
