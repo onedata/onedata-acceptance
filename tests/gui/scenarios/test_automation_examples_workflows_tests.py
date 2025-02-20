@@ -16,6 +16,7 @@ from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.files_tree import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.onezone.automation.task_management import *

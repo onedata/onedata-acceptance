@@ -27,7 +27,7 @@ Feature: Bagit uploader tests
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
 
 
-  Scenario: User sees desirable files in file browser after execution of uploaded "bagit-uploader" with valid.zip
+  Scenario: User sees desirable files in file browser after execution of uploaded "BagIt Uploader" with valid.zip
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -35,7 +35,7 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "valid.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
+    And user of browser executes 1st revision of "BagIt Uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
@@ -173,7 +173,7 @@ Feature: Bagit uploader tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "bagit-uploader" workflow
+    And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
     And user of browser chooses <xrootd_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
@@ -237,7 +237,7 @@ Feature: Bagit uploader tests
       | "bagit_archive_fetch_xrootd.zip" |
 
 
-  Scenario Outline: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - <input_archive>
+  Scenario Outline: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - <input_archive>
     Given possible exception messages appearing for workflow files:
       - "invalid_bagit_txt.tgz":
         - "Invalid 'Tag-File-Character-Encoding' definition in 1st line in bagit.txt"
@@ -276,7 +276,7 @@ Feature: Bagit uploader tests
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "bagit-uploader" workflow
+    And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
     And user of browser chooses <input_archive> file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
@@ -337,7 +337,7 @@ Feature: Bagit uploader tests
         | "missing_payload.zip"             |
 
 
-  Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_manifest_checksum.zip
+  Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_manifest_checksum.zip
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -345,20 +345,20 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "wrong_manifest_checksum.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
+    And user of browser executes 1st revision of "BagIt Uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
         - wrong_manifest_checksum.zip
 
     Then user of browser sees "Failed" status in status bar in workflow visualizer
-    And user of browser sees that status of "validate" lane in "bagit-uploader" is "Finished"
-    And user of browser sees that status of "unpack" lane in "bagit-uploader" is "Finished"
-    And user of browser sees that status of "download-files" lane in "bagit-uploader" is "Finished"
-    And user of browser sees that status of "register metadata" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "validate" lane in "BagIt Uploader" is "Finished"
+    And user of browser sees that status of "unpack" lane in "BagIt Uploader" is "Finished"
+    And user of browser sees that status of "download-files" lane in "BagIt Uploader" is "Finished"
+    And user of browser sees that status of "register metadata" lane in "BagIt Uploader" is "Finished"
 
 
-    And user of browser sees that status of "calculate checksums" lane in "bagit-uploader" is "Failed"
+    And user of browser sees that status of "calculate checksums" lane in "BagIt Uploader" is "Failed"
     And user of browser sees that status of task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane is "Failed"
     And user of browser sees that audit log in task "bagit-uploader-calculate-checksum" in 1st parallel box in lane "calculate checksums" contains following entry:
       timestamp: today
@@ -370,7 +370,7 @@ Feature: Bagit uploader tests
         description: Lambda exception occurred during item processing.
 
 
-  Scenario: User sees desirable exception in task audit log after executing bagit-uploader with invalid archive - wrong_fetch.zip
+  Scenario: User sees desirable exception in task audit log after executing BagIt Uploader with invalid archive - wrong_fetch.zip
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -378,17 +378,17 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "wrong_fetch.zip" has appeared in file browser
 
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser executes 1st revision of "bagit-uploader" workflow in "space1" space with the following initial values:
+    And user of browser executes 1st revision of "BagIt Uploader" workflow in "space1" space with the following initial values:
       destination-directory:
         - dir1
       input-bagit-archives:
         - wrong_fetch.zip
 
     Then user of browser sees "Failed" status in status bar in workflow visualizer
-    And user of browser sees that status of "validate" lane in "bagit-uploader" is "Finished"
-    And user of browser sees that status of "unpack" lane in "bagit-uploader" is "Finished"
+    And user of browser sees that status of "validate" lane in "BagIt Uploader" is "Finished"
+    And user of browser sees that status of "unpack" lane in "BagIt Uploader" is "Finished"
 
-    And user of browser sees that status of "download-files" lane in "bagit-uploader" is "Failed"
+    And user of browser sees that status of "download-files" lane in "BagIt Uploader" is "Failed"
     And user of browser sees that status of task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane is "Failed"
     And user of browser sees that audit log in task "bagit-uploader-download-files" in 1st parallel box in lane "download-files" contains following entry:
       timestamp: today
@@ -400,7 +400,7 @@ Feature: Bagit uploader tests
         description: Lambda exception occurred during item processing.
 
 
-  Scenario: User sees successful execution of uploaded "bagit-uploader" workflow and input file bagit_archive_unpack.tar
+  Scenario: User sees successful execution of uploaded "BagIt Uploader" workflow and input file bagit_archive_unpack.tar
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
@@ -412,7 +412,7 @@ Feature: Bagit uploader tests
     And user of browser sees that item named "bagit_archive_unpack.tar" has appeared in file browser
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "bagit-uploader" workflow
+    And user of browser chooses to run 1st revision of "BagIt Uploader" workflow
     And user of browser chooses "bagit_archive_unpack.tar" file as initial value of "input-bagit-archives" store for workflow in "Select files" modal
     And user of browser chooses "dir1" file as initial value of "destination-directory" store for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button

@@ -55,6 +55,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -188,9 +189,13 @@ def _upload_workflow_from_automation_examples(
     go_to_inventory_subpage(
         selenium, browser_id, inventory, subpage, oz_page, tmp_memory
     )
-    if workflow == "initialize-eureka3D-project":
-        workflow = "Initialize Eureka3D project"
-    assert_workflow_exists(selenium, browser_id, oz_page, workflow, "sees")
+    visible_workflow_name = change_workflow_dump_name_to_visible_name(workflow)
+    assert_workflow_exists(selenium, browser_id, oz_page, visible_workflow_name, "sees")
+
+
+def change_workflow_dump_name_to_visible_name(workflow_name):
+    data = get_workflow_dump(workflow_name)
+    return data["name"]
 
 
 @wt(

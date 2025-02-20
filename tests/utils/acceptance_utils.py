@@ -13,6 +13,10 @@ import subprocess
 import sys
 from functools import wraps
 from types import CodeType
+import json
+import os
+from tests.gui.utils.generic import upload_workflow_path, upload_file_path, upload_lambda_path
+
 
 from tests.utils.bdd_utils import wt, parsers
 
@@ -88,3 +92,25 @@ def compare(val1, val2, comparator):
         return val1 >= val2
     else:
         raise ValueError(f'Wrong argument comparator to function compare')
+
+
+def get_workflow_dump(workflow_name):
+    if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
+        path = upload_workflow_path(f"{workflow_name}.json")
+    elif os.path.isfile(upload_workflow_path(f"{workflow_name}/{workflow_name}.json")):
+        path = upload_workflow_path(f"{workflow_name}/{workflow_name}.json")
+    elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
+        path = upload_file_path(f"automation/workflow/{workflow_name}.json")
+    else:
+        raise FileNotFoundError(f"Path to {workflow_name} not found")
+    with open(path) as f:
+        data = json.load(f)
+    return data
+
+
+def get_lambda_dump(lambda_name):
+    with open(
+        upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
+    ) as f:
+        data = json.load(f)
+    return data
