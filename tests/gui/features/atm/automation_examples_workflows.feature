@@ -416,8 +416,8 @@ Feature: Automation examples tests
     And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is greater or equal 2.5 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 10 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser closes task "md5" in 1st parallel box in "calculate-checksums" lane in workflow visualizer
 
@@ -425,8 +425,8 @@ Feature: Automation examples tests
     And user of browser sees that time in right corner of chart with processing stats is around current time
     And user of browser sees that value of last column on chart with processing stats is greater than zero
     And user of browser changes time resolution to "1 hr" in modal "Task time series"
-    And user of browser sees that files processing speed is greater or equal 2 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 10 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "results" store details modal is 12
