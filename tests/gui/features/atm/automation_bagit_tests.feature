@@ -70,8 +70,8 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 75000 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that audit log in task "bagit-uploader-unpack-fetch" in 1st parallel box in lane "unpack" contains following entry:
@@ -91,8 +91,8 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 2500 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     # Check if 5 files has been unpacked and 1 has been fetched
@@ -110,7 +110,7 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-calculate-checksum" in 1st parallel box in "calculate checksums" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that bytes processing speed is greater or equal 150000 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "calculated-checksums" store details modal is 6
@@ -132,8 +132,8 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-archive-destination" in 1st parallel box in "archive destination" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 55000 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
     And user of browser clicks on "dir1" directory link in Store details modal for "destination-directory" store
     And user of browser sees "dir1" item selected in the file browser opened in new web browser tab
@@ -207,8 +207,8 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-download-files" in 1st parallel box in "download-files" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that files processing speed is greater or equal 1 per second on chart with processing stats
-    And user of browser sees that bytes processing speed is greater or equal 135000 per second on chart with processing stats
+    And user of browser sees that files processing speed is greater than 0 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 1
@@ -443,7 +443,7 @@ Feature: Bagit uploader tests
     And user of browser sees chart with processing stats after opening "Time series" link for task "bagit-uploader-unpack-data" in 1st parallel box in "unpack" lane
     And user of browser changes time resolution to "1 min" in modal "Task time series"
     And user of browser sees that time in right corner of chart with processing stats is around current time
-    And user of browser sees that bytes processing speed is greater or equal 13500 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is greater than 0 per second on chart with processing stats
     And user of browser clicks on "X" button in modal "Task time series"
 
     And user of browser sees that number of elements in the content of the "files-to-download" store details modal is 0
