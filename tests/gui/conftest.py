@@ -7,12 +7,10 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import errno
 import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from time import time
 
 from pytest import fixture, hookimpl, skip
 from selenium import webdriver
@@ -21,7 +19,7 @@ from tests import LOGDIRS
 from tests.conftest import export_logs
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import xvfb_utils
-from tests.utils.ffmpeg_utils import start_recording, stop_recording
+from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import make_logdir
 
 SELENIUM_IMPLICIT_WAIT = 0
@@ -47,8 +45,6 @@ DRIVER_CREATION_RETRIES = 5
 
 # use when waiting for normal download to finish
 WAIT_NORMAL_DOWNLOAD = 10
-
-FFMPEG_DETAILS = {}
 
 
 # ============================================================================
@@ -124,7 +120,7 @@ def pytest_collection_modifyitems(items):
 
 
 def pytest_bdd_before_scenario(request, feature, scenario):
-    handle_start_recording(request)
+    RecorderManager(request).handle_start_recording()
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
@@ -160,7 +156,6 @@ def format_step_name(step_name):
 def finalize(request):
     yield
     export_logs(request)
-    handle_stop_recording(request)
 
 
 @fixture(scope="session")
@@ -458,60 +453,6 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
             xvfb_utils.stop_session(xvfb_proc)
     else:
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
-
-
-def handle_start_recording(request):
-    recording = request.config.getoption("--xvfb-recording")
-    mosaic_filter = not request.config.getoption("--no-mosaic-filter")
-
-    if recording != "none":
-        global FFMPEG_DETAILS
-        # add timestamp to video name
-        file_name = f"{request.node.name}.{int(time())}"
-
-        # for len(file_name) > 180 ffmpeg is not starting
-        file_name = file_name[:180] if len(file_name) > 180 else file_name
-
-        # if there is '/' in file name ffmpeg is not starting
-        file_name = file_name.replace("/", "_")
-
-        movie_dir = request.getfixturevalue("movie_dir")
-        xvfb = request.getfixturevalue("xvfb")
-        screen_width = request.getfixturevalue("screen_width")
-        screen_height = request.getfixturevalue("screen_height")
-
-        ffmpeg_proc, movies = start_recording(
-            movie_dir,
-            file_name,
-            xvfb,
-            screen_width,
-            screen_height,
-            mosaic_filter,
-        )
-        FFMPEG_DETAILS["proc"] = ffmpeg_proc
-        FFMPEG_DETAILS["movies"] = movies
-        request.node._movies = movies
-
-
-def handle_stop_recording(request):
-    recording = request.config.getoption("--xvfb-recording")
-    stop_recording(FFMPEG_DETAILS["proc"])
-    # if setup and call of this given passed then whole test passed
-    if hasattr(request.node, "setup_xvfb_recorder"):
-        setup_passed = request.node.setup_xvfb_recorder.passed
-    else:
-        setup_passed = False
-    if hasattr(request.node, "call_xvfb_recorder"):
-        call_passed = request.node.call_xvfb_recorder.passed
-    else:
-        call_passed = False
-    if recording == "failed" and setup_passed and call_passed:
-        for movie in FFMPEG_DETAILS["movies"]:
-            try:
-                os.remove(movie)
-            except IOError as ex:
-                if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
-                    raise
 
 
 # ============================================================================

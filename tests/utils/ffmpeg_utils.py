@@ -45,9 +45,73 @@ def start_recording(movie_dir, movie_name, displays, screen_width,
 
 
 def stop_recording(proc):
-    with _suppress(IOError, errnos=(errno.EINVAL, errno.EPIPE)):
-        proc.send_signal(signal.SIGTERM)
+    proc.terminate()
+    try:
+        proc.wait(timeout=10)  # Wait for process to exit
+    except sp.TimeoutExpired:
+        proc.kill()  # Force kill if not stopped
+        proc.wait()
 
+
+class RecorderManager:
+    ffmpeg_details = {}
+
+    def __init__(self, request):
+        self.request = request
+
+    def handle_start_recording(self):
+        recording = self.request.config.getoption("--xvfb-recording")
+        mosaic_filter = not self.request.config.getoption("--no-mosaic-filter")
+
+        if recording != "none":
+            # add timestamp to video name
+            file_name = f"{self.request.node.name}.{int(time.time())}"
+
+            # for len(file_name) > 180 ffmpeg is not starting
+            file_name = file_name[:180] if len(file_name) > 180 else file_name
+
+            # if there is '/' in file name ffmpeg is not starting
+            file_name = file_name.replace("/", "_")
+
+            movie_dir = self.request.getfixturevalue("movie_dir")
+            xvfb = self.request.getfixturevalue("xvfb")
+            screen_width = self.request.getfixturevalue("screen_width")
+            screen_height = self.request.getfixturevalue("screen_height")
+
+            ffmpeg_proc, movies = start_recording(
+                movie_dir,
+                file_name,
+                xvfb,
+                screen_width,
+                screen_height,
+                mosaic_filter,
+            )
+            self.ffmpeg_details["proc"] = ffmpeg_proc
+            self.ffmpeg_details["movies"] = movies
+            self.request.node._movies = movies
+
+
+    def handle_stop_recording(self):
+        recording = self.request.config.getoption("--xvfb-recording")
+        if "proc" in self.ffmpeg_details:
+            print("STOPPING RECORDING")
+            stop_recording(self.ffmpeg_details["proc"])
+            # if setup and call of this given passed then whole test passed
+            if hasattr(self.request.node, "setup_xvfb_recorder"):
+                setup_passed = self.request.node.setup_xvfb_recorder.passed
+            else:
+                setup_passed = False
+            if hasattr(self.request.node, "call_xvfb_recorder"):
+                call_passed = self.request.node.call_xvfb_recorder.passed
+            else:
+                call_passed = False
+            if recording == "failed" and setup_passed and call_passed:
+                for movie in self.ffmpeg_details["movies"]:
+                    try:
+                        os.remove(movie)
+                    except IOError as ex:
+                        if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
+                            raise
 
 # ============================================================================
 # Internal functions
