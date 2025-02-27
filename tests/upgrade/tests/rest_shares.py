@@ -6,20 +6,25 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import filecmp
 import io
-import json
 import os
 import tarfile
 import time
 from functools import partial
 
-from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
-from tests.utils.rest_utils import (
-    get_provider_rest_path,
-    get_zone_rest_path,
-    http_get,
-    http_post,
+from tests.upgrade.utils.rest import (
+    create_archive,
+    create_share,
+    download_file_content,
+    establish_dataset,
+    get_archive_information,
+    get_handle,
+    get_share_info,
+    list_handle_services,
+    list_handles,
+    lookup_file_id,
+    register_handle,
 )
+from tests.upgrade.utils.upgrade_utils import UpgradeTest
 
 
 def get_tests(tests_controller):
@@ -35,137 +40,6 @@ def get_tests(tests_controller):
             partial(verify2, tests_controller),
         ),
     ]
-
-
-def get_file_id_by_rest(file_path, provider_hostname, token):
-    response = http_post(
-        ip=provider_hostname,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": token},
-    ).content
-    return json.loads(response)["fileId"]
-
-
-def download_file_content(provider_host, token, file_id):
-    res = http_get(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("data", file_id, "content"),
-        headers={"X-Auth-Token": token},
-    )
-    return res.content
-
-
-def create_share(provider_host, token, file_id, prov_version):
-    res = http_post(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("shares"),
-        headers={"X-Auth-Token": token, "Content-Type": "application/json"},
-        data=json.dumps(
-            {
-                "name": "testShare",
-                "rootFileId" if prov_version >= 21 else "fileId": file_id,
-            }
-        ),
-    )
-    return res.json()["shareId"]
-
-
-def get_share_info(provider_host, token, share_id):
-    res = http_get(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("shares", share_id),
-        headers={"X-Auth-Token": token},
-    )
-    return res.json()
-
-
-def list_handles(zone_host, token):
-    res = http_get(
-        ip=zone_host,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("handles"),
-        headers={"X-Auth-Token": token},
-    )
-    return res.json()
-
-
-def list_handle_services(zone_host, token):
-    res = http_get(
-        ip=zone_host,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("handle_services"),
-        headers={"X-Auth-Token": token},
-    )
-    return res.json()
-
-
-def register_handle(zone_host, token, config):
-    res = http_post(
-        ip=zone_host,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("handles"),
-        headers={
-            "X-Auth-Token": token,
-            "Content-Type": "application/json",
-        },
-        data=json.dumps(config),
-    )
-    return res
-
-
-def get_handle(zone_host, token, handle_id):
-    res = http_get(
-        ip=zone_host,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("handles", handle_id),
-        headers={"X-Auth-Token": token},
-    )
-    return res.json()
-
-
-def establish_dataset(provider_host, token, file_id):
-    res = http_post(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("datasets"),
-        headers={
-            "X-Auth-Token": token,
-            "Content-Type": "application/json",
-        },
-        data=json.dumps({"rootFileId": file_id}),
-    )
-    return res.json()
-
-
-def create_archive(provider_host, token, dataset_id, description, config=None):
-    data = {"datasetId": dataset_id, "description": description}
-    if config:
-        data.update(config)
-    res = http_post(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("archives"),
-        headers={
-            "X-Auth-Token": token,
-            "Content-Type": "application/json",
-        },
-        data=json.dumps(data),
-    )
-    return res.json()
-
-
-def get_archive_information(provider_host, token, archive_id):
-    res = http_get(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("archives", archive_id),
-        headers={"X-Auth-Token": token},
-    )
-    return res.json()
 
 
 def convert_bytes_and_unpack_tar(raw_bytes, path):
@@ -188,11 +62,11 @@ def setup1(tests_controller):
     client.mkdir(os.path.join(space_path, "dir1_shared"))
     client.create_file(os.path.join(space_path, "file1_shared"))
 
-    file_id = get_file_id_by_rest("space_posix/file1_shared", provider_host, token)
+    file_id = lookup_file_id("space_posix/file1_shared", provider_host, token)
     share_id = create_share(provider_host, token, file_id, prov_version)
     SHARES_ID["file1_shared"] = share_id
 
-    file_id = get_file_id_by_rest("space_posix/dir1_shared", provider_host, token)
+    file_id = lookup_file_id("space_posix/dir1_shared", provider_host, token)
     share_id = create_share(provider_host, token, file_id, prov_version)
     SHARES_ID["dir1_shared"] = share_id
     # sleep is necessary as events are processed asynchronously and there is possible race
@@ -223,7 +97,7 @@ def setup2(tests_controller):
     client.write("abc2", os.path.join(dir_path, "file2"))
     client.write("abc3", os.path.join(dir_path, "file3"))
 
-    file_id = get_file_id_by_rest("space_posix/dir2_shared", provider_host, token)
+    file_id = lookup_file_id("space_posix/dir2_shared", provider_host, token)
     share_id = create_share(provider_host, token, file_id, prov_version)
 
     handle_service_id = list_handle_services(zone_host, admin_token)["handle_services"][
