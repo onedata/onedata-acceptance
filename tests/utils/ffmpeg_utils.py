@@ -34,14 +34,14 @@ def start_recording(
             os.remove(path)
 
     with open(os.devnull, "w") as dev_null:
-        with sp.Popen(
+        proc = sp.Popen(  # pylint: disable=consider-using-with
             cmd, stdin=sp.PIPE, stdout=dev_null, stderr=dev_null, close_fds=True
-        ) as proc:
-            # let ffmpeg start
-            time.sleep(0.5)
-            if proc.poll() is not None:
-                raise RuntimeError("ffmpeg did not start")
-            return proc, paths
+        )
+    # let ffmpeg start
+    time.sleep(0.5)
+    if proc.poll() is not None:
+        raise RuntimeError("ffmpeg did not start")
+    return proc, paths
 
 
 def stop_recording(proc):

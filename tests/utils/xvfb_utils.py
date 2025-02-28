@@ -20,12 +20,15 @@ def start_session(display, screens, screen_width, screen_height, screen_depth):
         cmd.extend(["-screen", str(screen), whd])
 
     with open(os.devnull, "w") as dev_null:
-        with sp.Popen(cmd, stdout=dev_null, stderr=dev_null, close_fds=True) as proc:
-            # let Xvfb start
-            time.sleep(0.5)
-            if proc.poll() is not None:
-                raise RuntimeError("Xvfb did not start")
-            return proc
+        proc = sp.Popen(  # pylint: disable=consider-using-with
+            cmd, stdout=dev_null, stderr=dev_null, close_fds=True
+        )
+
+    # let Xvfb start
+    time.sleep(0.5)
+    if proc.poll() is not None:
+        raise RuntimeError("Xvfb did not start")
+    return proc
 
 
 def stop_session(proc):
