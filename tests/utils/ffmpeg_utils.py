@@ -91,20 +91,16 @@ class RecorderManager:
             self.request.node._movies = movies
 
 
-    def handle_stop_recording(self):
+    def handle_stop_recording(self, status):
         recording = self.request.config.getoption("--xvfb-recording")
         if "proc" in self.ffmpeg_details:
-            print("STOPPING RECORDING")
             stop_recording(self.ffmpeg_details["proc"])
             # if setup and call of this given passed then whole test passed
             if hasattr(self.request.node, "setup_xvfb_recorder"):
                 setup_passed = self.request.node.setup_xvfb_recorder.passed
             else:
                 setup_passed = False
-            if hasattr(self.request.node, "call_xvfb_recorder"):
-                call_passed = self.request.node.call_xvfb_recorder.passed
-            else:
-                call_passed = False
+            call_passed = status.passed
             if recording == "failed" and setup_passed and call_passed:
                 for movie in self.ffmpeg_details["movies"]:
                     try:
