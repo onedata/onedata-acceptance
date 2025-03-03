@@ -100,6 +100,10 @@ class CreateNewTokenPage(PageObject):
     identity_option = WebElement(".option-identity .one-way-radio-control")
     invite_option = WebElement(".option-invite .one-way-radio-control")
 
+    access_input = WebElement(".field--access")
+    identity_input = WebElement(".field--identity")
+    invite_input = WebElement(".field--invite")
+
     token_name_input = WebItem(".name-field .field-component", cls=InputBox)
 
     invite_type = WebElement(".inviteType-field .dropdown-field-trigger")
