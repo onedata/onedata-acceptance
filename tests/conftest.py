@@ -26,6 +26,7 @@ from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_
 from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
+from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import AdminUser
 
@@ -550,6 +551,7 @@ def pytest_runtest_makereport(item, call):
     failure = (report.skipped and xfail) or (report.failed and not xfail)
     when = item.config.getini("selenium_capture_debug").lower()
     capture_debug = when == "always" or (when == "failure" and failure)
+    RecorderManager(request).handle_stop_recording(report)
     for name, driver in drivers.items():
         if capture_debug:
             exclude = item.config.getini("selenium_exclude_debug").lower()
