@@ -503,7 +503,13 @@ def check_time(user, time1, time2, comparator, file, client_node, users):
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
         t2 = getattr(stat_result, attr2)
-        assert compare(t1, t2, comparator)
+
+        err_msg = (
+            f"Time comparison failed. \nTime1: {time1} = {t1} \n"
+            f"Time2: {time2} = {t2} \nComparator: {comparator}"
+        )
+
+        assert compare(t1, t2, comparator), err_msg
 
     assert_(client.perform, condition)
 
