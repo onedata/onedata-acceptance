@@ -3,10 +3,17 @@
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
+import json
 
-from tests import ONES3_PORT, OP_REST_PORT
+from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests.utils.rest_utils import (
+    get_panel_rest_path,
+    get_provider_rest_path,
+    http_get,
+    http_patch,
+    http_post,
+)
 
 
 def get_provider_id(provider, hosts, users):
@@ -35,3 +42,54 @@ def assert_provider_ones3_status_ok(provider, hosts):
     ).json()
     err_msg = f"Status of OneS3 is {status["isOk"]}"
     assert status["isOk"], err_msg
+
+
+def add_provider_cluster_workers(
+    hosts, provider, onepanel_credentials, data, ones3=False
+):
+    provider_hostname = hosts[provider]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    res = http_post(
+        ip=provider_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3"),
+        headers={"Content-Type": "application/json"},
+        auth=(onepanel_username, onepanel_password),
+        data=json.dumps(data),
+    )
+    return res.json()
+
+
+def get_provider_cluster_worker_status(
+    hosts, host, provider, onepanel_credentials, ones3=False
+):
+    provider_hostname = hosts[provider]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    res = http_get(
+        ip=provider_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3", host),
+        auth=(onepanel_username, onepanel_password),
+    )
+    return res.json()
+
+
+def start_stop_provider_cluster_worker(
+    hosts, host, provider, onepanel_credentials, ones3=False, start=True
+):
+    provider_hostname = hosts[provider]["hostname"]
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    res = http_patch(
+        ip=provider_hostname,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3", host)
+        + f"?started={"true" if start else "false"}",
+        auth=(onepanel_username, onepanel_password),
+    )
+    return res

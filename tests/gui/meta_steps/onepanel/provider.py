@@ -11,7 +11,7 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.common import (
@@ -32,6 +32,11 @@ from tests.gui.steps.onepanel.provider import (
     wt_click_on_discard_btn_in_domain_change_modal,
     wt_save_changes_in_modify_provider_detail_form,
     wt_type_val_to_in_box_in_provider_details_form,
+)
+from tests.gui.steps.rest.provider import (
+    add_provider_cluster_workers,
+    get_provider_cluster_worker_status,
+    start_stop_provider_cluster_worker,
 )
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -204,3 +209,41 @@ def change_provider_name_if_name_is_different_than_given(
             browser_id,
             modals,
         )
+
+
+@wt(
+    parsers.parse(
+        "user {user} sees that oneS3 node in provider cluster in {provider} is of"
+        ' status "{status}"'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_cluster_ones3_node_status_rest(
+    hosts, provider, onepanel_credentials, status
+):
+    host = "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
+    actual_status = get_provider_cluster_worker_status(
+        hosts, host, provider, onepanel_credentials, ones3=True
+    )
+    err_msg = f"expected status: {status} but actual status is {actual_status}"
+    assert actual_status == status, err_msg
+
+
+@wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
+def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
+    data = {
+        "hosts": [
+            "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
+        ]
+    }
+    add_provider_cluster_workers(
+        hosts, provider, onepanel_credentials, data, ones3=True
+    )
+
+
+@wt(parsers.parse("user {user} stops oneS3 node in provider cluster in {provider}"))
+def stop_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
+    host = "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
+    start_stop_provider_cluster_worker(
+        hosts, host, provider, onepanel_credentials, ones3=True, start=False
+    )
