@@ -294,7 +294,7 @@ def click_element_to_close_its_dropdown(
         "(?P<list_type>users|groups) list"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_element_in_members_list(
     selenium, browser_id, member_name, oz_page, where, list_type, onepanel
 ):

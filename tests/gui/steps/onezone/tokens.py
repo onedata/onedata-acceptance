@@ -161,6 +161,12 @@ def choose_token_type_to_create(selenium, browser_id, oz_page, token_type):
     driver = selenium[browser_id]
     option = f"{token_type}_option"
     getattr(oz_page(driver)["tokens"].create_token_page, option).click()
+    # ensure correct option is selected
+    option_input = f"{token_type}_input"
+    err_msg = f"did not manage to select {option}"
+    assert getattr(
+        oz_page(driver)["tokens"].create_token_page, option_input
+    ).is_selected(), err_msg
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy button in token view"))

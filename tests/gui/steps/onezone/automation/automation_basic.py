@@ -5,6 +5,8 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import os
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (
     parse_seq,
@@ -163,20 +165,12 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_workflow_from_repository(selenium, browser_id, workflow_name, oz_page):
     driver = selenium[browser_id]
-    workflows_in_directories = [
-        "detect-file-formats",
-        "detect-file-mime-formats",
-        "download-files",
-        "bagit-uploader",
-    ]
-
-    workflow_name = (
-        (workflow_name + ".json")
-        if workflow_name not in workflows_in_directories
-        else (workflow_name + "/" + workflow_name + ".json")
-    )
+    if os.path.isdir(upload_workflow_path(workflow_name)):
+        dump_path = f"{upload_workflow_path(workflow_name)}/{workflow_name}.json"
+    else:
+        dump_path = upload_workflow_path(workflow_name + ".json")
     automation_page = oz_page(driver)["automation"]
-    automation_page.upload_workflow(upload_workflow_path(workflow_name))
+    automation_page.upload_workflow(dump_path)
 
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)

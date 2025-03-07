@@ -341,8 +341,10 @@ def assert_acl_subject(selenium, browser_id, modals, num, numerals, sub_type, na
 
     assert (
         perm.subject_type() == sub_type
-    ), f"Subject type is not {sub_type} in {num} ACL record"
-    assert perm.name == name, "Subject name is not {name} in {num} ACL record"
+    ), f"Subject type {perm.subject_type()} is not {sub_type} in {num} ACL record"
+    assert (
+        perm.name == name
+    ), f"Subject name {perm.name} is not {name} in {num} ACL record"
 
 
 @wt(
