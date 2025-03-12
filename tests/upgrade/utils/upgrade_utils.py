@@ -26,20 +26,39 @@ class UpgradeTest:
         self.__verify = verify  # function executed after all upgrades are performed
 
     def run_setup(self, *args, **kwargs):
-        print('\nRunning setup for test "{}"\n'.format(self.__name))
+        print(f'\nRunning setup for test "{self.__name}"\n')
         self.__setup(*args, **kwargs)
-        print('\nSetup for test "{}" finished\n'.format(self.__name))
+        print(f'\nSetup for test "{self.__name}" finished\n')
 
     def run_verify(self, *args, **kwargs):
-        print('\nRunning verify for test "{}"\n'.format(self.__name))
+        print(f'\nRunning verify for test "{self.__name}"\n')
         self.__verify(*args, **kwargs)
-        print('\nVerify for test "{}" finished\n'.format(self.__name))
+        print(f'\nVerify for test "{self.__name}" finished\n')
 
 
 class UpgradeTestsController:
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        test_config,
+        hosts,
+        clients,
+        request,
+        users,
+        env_desc,
+        scenario_abs_path,
+        env_description_abs_path,
+    ):
         self.__tests_list = []
-        self.__dict__.update(kwargs)
+        self.test_config = test_config
+        self.env = {
+            "env_desc": env_desc,
+            "scenario_abs_path": scenario_abs_path,
+            "env_description_abs_path": env_description_abs_path,
+        }
+        self.hosts = hosts
+        self.clients = clients
+        self.request = request
+        self.users = users
 
     def add_test(self, test):
         self.__tests_list.append(test)
@@ -49,7 +68,11 @@ class UpgradeTestsController:
 
     def mount_client(self, username, client_host_alias, client_instance):
         client = self.users[username].mount_client(
-            client_host_alias, client_instance, self.hosts, self.env_desc, opts=[]
+            client_host_alias,
+            client_instance,
+            self.hosts,
+            self.env["env_desc"],
+            opts=[],
         )
         if client:
             return client
@@ -57,7 +80,7 @@ class UpgradeTestsController:
 
     def run_tests(self):
         admin_user = self.users["admin"]
-        [self.__run_setup(test) for test in self.__tests_list]
+        _ = [self.__run_setup(test) for test in self.__tests_list]
         for service_name in ["onezone", "oneprovider", "oneclient"]:
             if service_name in self.test_config["targetVersions"].keys():
                 upgrade_service(
@@ -68,14 +91,16 @@ class UpgradeTestsController:
                 )
 
         setup_hosts_cfg(self.hosts, self.request)
-        configure_os(self.scenario_abs_path, get_deployment_status())
-        [self.__run_verify(test) for test in self.__tests_list]
+        configure_os(self.env["scenario_abs_path"], get_deployment_status())
+        _ = [self.__run_verify(test) for test in self.__tests_list]
         self.__unmount_clients()
 
     def __run_setup(self, test):
         test.run_setup()
         self.__unmount_clients()
-        export_logs(self.request, self.env_description_abs_path, "before_upgrade")
+        export_logs(
+            self.request, self.env["env_description_abs_path"], "before_upgrade"
+        )
 
     def __run_verify(self, test):
         test.run_verify()
@@ -113,19 +138,17 @@ def prepare_image_upgrade_command(service, version):
     if version == "default":
         image = resolve_image(service)
     else:
-        image = "docker.onedata.org/{}-dev:{}".format(service, version)
+        image = f"docker.onedata.org/{service}-dev:{version}"
     pull_image_with_retries(image)
     return ["-i", image]
 
 
 def prepare_sources_upgrade_command(service, version):
-    image = "docker.onedata.org/{}-dev:{}".format(
-        service, version["sources"]["baseImage"]
-    )
+    image = f"docker.onedata.org/{service}-dev:{version["sources"]["baseImage"]}"
     pull_image_with_retries(image)
     components = []
     for component in version["sources"]["components"]:
-        components.append("--{}".format(component))
+        components.append(f"--{component}")
     cmd = ["-i", image, "--sources-path", "."]
     cmd.extend(components)
     return cmd

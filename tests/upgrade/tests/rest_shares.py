@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import filecmp
 import io
 import os
+import shutil
 import tarfile
 import time
 from functools import partial
@@ -43,6 +44,8 @@ def get_tests(tests_controller):
 
 
 def convert_bytes_and_unpack_tar(raw_bytes, path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
     tar_bytes = io.BytesIO(raw_bytes)
     with tarfile.open(fileobj=tar_bytes, mode="r:") as tar:
         tar.extractall(path)
@@ -115,7 +118,7 @@ def setup2(tests_controller):
                 <dc:subject>Test</dc:subject>\n,
             </metadata>""",
     }
-    res = register_handle(zone_host, admin_token, register_handle_config)
+    _ = register_handle(zone_host, admin_token, register_handle_config)
 
     dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
     archive_id = create_archive(provider_host, token, dataset_id, "test")["archiveId"]
@@ -138,10 +141,7 @@ def setup2(tests_controller):
     share_id = create_share(provider_host, token, root_dir_id, prov_version)
 
     register_handle_config.update({"resourceId": share_id})
-    res = register_handle(zone_host, admin_token, register_handle_config)
-    # handle_id = res.headers["location"].split('/')[-1]
-    # res = get_handle(zone_host, admin_token, handle_id)
-    # share_id = res["resourceId"]
+    _ = register_handle(zone_host, admin_token, register_handle_config)
 
     # sleep is necessary as events are processed asynchronously and there is possible race
     # between client unmounting (which is done after the setup) and processing all its events

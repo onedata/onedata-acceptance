@@ -4,9 +4,7 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import tests.upgrade.tests.oneclient_CRUD as oneclient_CRUD
-import tests.upgrade.tests.rest_shares as rest_shares
-import tests.upgrade.tests.rest_views as rest_views
+from tests.upgrade.tests import oneclient_crud, rest_shares, rest_views
 
 
 def test_upgrade(tests_controller):
@@ -17,7 +15,7 @@ def test_upgrade(tests_controller):
     Run all setups -> Upgrade services -> Run all verifies
     """
 
-    tests_controller.add_tests(oneclient_CRUD.get_tests(tests_controller))
+    tests_controller.add_tests(oneclient_crud.get_tests(tests_controller))
     tests_controller.add_tests(rest_shares.get_tests(tests_controller))
     tests_controller.add_tests(rest_views.get_tests(tests_controller))
     tests_controller.run_tests()

@@ -43,38 +43,38 @@ def get_token_dispenser_rest_path(*args):
 
 
 def http_get(ip, port, path, use_ssl=True, headers=None, verify=False,
-             cert=None, auth=None, params=None, default_headers=True):
+             cert=None, auth=None, default_headers=True, params=None):
     return http_request(requests.get, ip, port, path, use_ssl, headers,
-                        verify, cert, auth, params=params, default_headers=default_headers)
+                        verify, cert, auth, default_headers=default_headers, params=params)
 
 
 def http_put(ip, port, path, use_ssl=True, data=None, headers=None,
-             verify=False, cert=None, auth=None, params=None, default_headers=True):
+             verify=False, cert=None, auth=None, default_headers=True, params=None):
     return http_request(requests.put, ip, port, path, use_ssl, headers,
-                        verify, cert, auth, data, params, default_headers=default_headers)
+                        verify, cert, auth, data, default_headers=default_headers, params=params)
 
 
 def http_post(ip, port, path, use_ssl=True, data=None, headers=None,
-              verify=False, cert=None, auth=None, default_headers=True):
+              verify=False, cert=None, auth=None, default_headers=True, params=None, stream=False):
     return http_request(requests.post, ip, port, path, use_ssl, headers,
-                        verify, cert, auth, data, default_headers=default_headers)
+                        verify, cert, auth, data, default_headers=default_headers, params=params, stream=stream)
 
 
 def http_delete(ip, port, path, use_ssl=True, headers=None, verify=False,
-                cert=None, auth=None, default_headers=True):
+                cert=None, auth=None, default_headers=True, params=None):
     return http_request(requests.delete, ip, port, path, use_ssl, headers,
-                        verify, cert, auth, default_headers=default_headers)
+                        verify, cert, auth, default_headers=default_headers, params=params)
 
 
 def http_patch(ip, port, path, use_ssl=True, data=None, headers=None,
-               verify=False, cert=None, auth=None, default_headers=True):
+               verify=False, cert=None, auth=None, default_headers=True, params=None):
     return http_request(requests.patch, ip, port, path, use_ssl, headers,
-                        verify, cert, auth, data, default_headers=default_headers)
+                        verify, cert, auth, data, default_headers=default_headers, params=params)
 
 
 def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
                  verify=False, cert=None, auth=None, data=None,
-                 params=None, default_headers=True, retries=5):
+                 default_headers=True, params=None, stream=False, retries=5):
     protocol = 'https' if use_ssl else 'http'
     request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
     if headers:
@@ -84,7 +84,7 @@ def http_request(http_method, ip, port, path, use_ssl=True, headers=None,
             response = http_method(
                 '{0}://{1}:{2}{3}'.format(protocol, ip, port, path),
                 verify=verify, headers=request_headers, timeout=40, cert=cert,
-                auth=auth, data=data, params=params)
+                auth=auth, data=data, params=params, stream=stream)
             if 200 <= response.status_code < 300:
                 return response
             else:

@@ -25,7 +25,16 @@ def tests_controller(
     scenario_abs_path,
     env_description_abs_path,
 ):
-    return UpgradeTestsController(**locals())
+    return UpgradeTestsController(
+        test_config,
+        hosts,
+        clients,
+        request,
+        users,
+        env_desc,
+        scenario_abs_path,
+        env_description_abs_path,
+    )
 
 
 @pytest.fixture(autouse=True, scope="module")

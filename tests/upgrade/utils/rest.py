@@ -5,14 +5,15 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-
 import json
 
-from tests import OP_REST_PORT, OZ_REST_PORT
+from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.utils.rest_utils import (
+    get_panel_rest_path,
     get_provider_rest_path,
     get_zone_rest_path,
     http_get,
+    http_patch,
     http_post,
     http_put,
 )
@@ -309,3 +310,42 @@ def get_provider_configuration(provider_host):
         path=get_provider_rest_path("configuration"),
     )
     return res.json()
+
+
+def subscribe_to_file_events(provider_host, token, space_id, data, stream=True):
+    query_params = {"last_seq": 0, "timeout": 1000}
+
+    res = http_post(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("changes", "metadata", space_id),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps(data),
+        stream=stream,
+        params=query_params,
+    )
+    return res
+
+
+# Onepanel
+
+
+def configure_file_popularity_mechanism_in_the_space(
+    provider_host, token, space_id, data
+):
+    res = http_patch(
+        ip=provider_host,
+        port=PANEL_REST_PORT,
+        path=get_panel_rest_path(
+            "provider", "spaces", space_id, "file-popularity", "configuration"
+        ),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps(data),
+    )
+    return res
