@@ -19,35 +19,94 @@ from itertools import chain, repeat
 from math import sqrt
 
 
-def start_recording(
-    movie_dir, movie_name, displays, screen_width, screen_height, mosaic_filter=True
-):
+def start_recording(movie_dir, movie_name, displays, screen_width,
+                    screen_height, mosaic_filter=True):
     if not os.path.exists(movie_dir):
         os.makedirs(movie_dir)
 
-    cmd, paths = _create_ffmpeg_cmd(
-        displays, screen_width, screen_height, movie_dir, movie_name, mosaic_filter
-    )
+    cmd, paths = _create_ffmpeg_cmd(displays, screen_width, screen_height,
+                                    movie_dir, movie_name, mosaic_filter)
     # remove old videos if they exist
     for path in paths:
         with _suppress(OSError, errnos=(errno.ENOENT, errno.ENAMETOOLONG)):
             os.remove(path)
 
-    with open(os.devnull, "w") as dev_null:
-        proc = sp.Popen(  # pylint: disable=consider-using-with
-            cmd, stdin=sp.PIPE, stdout=dev_null, stderr=dev_null, close_fds=True
-        )
+    with open(os.devnull, 'w') as dev_null:
+        proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=dev_null,
+                        stderr=dev_null, close_fds=True)
+
     # let ffmpeg start
     time.sleep(0.5)
     if proc.poll() is not None:
-        raise RuntimeError("ffmpeg did not start")
+        raise RuntimeError('ffmpeg did not start')
+
     return proc, paths
 
 
 def stop_recording(proc):
-    with _suppress(IOError, errnos=(errno.EINVAL, errno.EPIPE)):
-        proc.communicate(input=b"q")
+    proc.terminate()
+    try:
+        proc.wait(timeout=10)  # Wait for process to exit
+    except sp.TimeoutExpired:
+        proc.kill()  # Force kill if not stopped
+        proc.wait()
 
+
+class RecorderManager:
+    ffmpeg_details = {}
+
+    def __init__(self, request):
+        self.request = request
+
+    def handle_start_recording(self):
+        recording = self.request.config.getoption("--xvfb-recording")
+        mosaic_filter = not self.request.config.getoption("--no-mosaic-filter")
+
+        if recording != "none":
+            # add timestamp to video name
+            file_name = f"{self.request.node.name}.{int(time.time())}"
+
+            # for len(file_name) > 180 ffmpeg is not starting
+            file_name = file_name[:180] if len(file_name) > 180 else file_name
+
+            # if there is '/' in file name ffmpeg is not starting
+            file_name = file_name.replace("/", "_")
+
+            movie_dir = self.request.getfixturevalue("movie_dir")
+            xvfb = self.request.getfixturevalue("xvfb")
+            screen_width = self.request.getfixturevalue("screen_width")
+            screen_height = self.request.getfixturevalue("screen_height")
+
+            ffmpeg_proc, movies = start_recording(
+                movie_dir,
+                file_name,
+                xvfb,
+                screen_width,
+                screen_height,
+                mosaic_filter,
+            )
+            self.ffmpeg_details["proc"] = ffmpeg_proc
+            self.ffmpeg_details["movies"] = movies
+            self.request.node._movies = movies
+
+
+    def handle_stop_recording(self, status):
+        recording = self.request.config.getoption("--xvfb-recording")
+        if "proc" in self.ffmpeg_details:
+            stop_recording(self.ffmpeg_details["proc"])
+            # if setup and call of this given passed then whole test passed
+            if hasattr(self.request.node, "setup_xvfb_recorder"):
+                setup_passed = self.request.node.setup_xvfb_recorder.passed
+            else:
+                setup_passed = False
+            call_passed = status.passed
+            if recording == "failed" and setup_passed and call_passed:
+                for movie in self.ffmpeg_details["movies"]:
+                    try:
+                        os.remove(movie)
+                    except IOError as ex:
+                        if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
+                            raise
 
 # ============================================================================
 # Internal functions

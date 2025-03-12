@@ -311,6 +311,8 @@ sys.exit(ret)
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
                '--local'] + pass_args
+        if args.env_file:
+            cmd += [f'--env-file={args.env_file}']
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:

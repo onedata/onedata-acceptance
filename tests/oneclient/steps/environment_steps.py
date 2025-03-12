@@ -49,6 +49,48 @@ def restart_network(name, stop_time, hosts):
     time.sleep(int(stop_time))
 
 
+@wt(parsers.re(r"(?P<user>\w+) stops network on oneprovider (?P<name>.*)"))
+def stop_network(name, hosts):
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    # TODO VFS-11325 do not copy escripts for each function invocation
+    run_kubectl_command(
+        "cp",
+        [
+            "tests/utils/escripts/escript_utils.erl",
+            f"{pod_name}:/tmp/escript_utils.erl",
+        ],
+    )
+    run_kubectl_command(
+        "cp",
+        [
+            "tests/utils/escripts/https_stop.escript",
+            f"{pod_name}:/tmp/https_stop.escript",
+        ],
+    )
+    run_kubectl_command("exec", [pod_name, "--", "/tmp/https_stop.escript"])
+
+
+@wt(parsers.re(r"(?P<user>\w+) starts network on oneprovider (?P<name>.*)"))
+def start_network(name, hosts):
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    # TODO VFS-11325 do not copy escripts for each function invocation
+    run_kubectl_command(
+        "cp",
+        [
+            "tests/utils/escripts/escript_utils.erl",
+            f"{pod_name}:/tmp/escript_utils.erl",
+        ],
+    )
+    run_kubectl_command(
+        "cp",
+        [
+            "tests/utils/escripts/https_start.escript",
+            f"{pod_name}:/tmp/https_start.escript",
+        ],
+    )
+    run_kubectl_command("exec", [pod_name, "--", "/tmp/https_start.escript"])
+
+
 # NOTE: because of underlying escript implementation this step currently works
 # only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re("user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))

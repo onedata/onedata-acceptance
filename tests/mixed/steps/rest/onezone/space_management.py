@@ -7,13 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from onezone_client import (
-    ProviderApi,
-    SpaceApi,
-    SpaceCreateRequest,
-    SpaceInviteToken,
-    UserApi,
-)
+from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import (
@@ -22,14 +16,15 @@ from tests.mixed.steps.rest.onezone.common import (
     get_user_space_with_name,
 )
 from tests.mixed.utils.common import login_to_oz
+from tests.utils.entities_setup.spaces import _create_space
 
 
-def create_spaces_in_oz_using_rest(user, users, hosts, zone_name, space_list):
-    user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
-    user_api = UserApi(user_client)
-
-    for space_name in parse_seq(space_list):
-        user_api.create_user_space(SpaceCreateRequest(name=space_name))
+def create_spaces_in_oz_using_rest(user, users, hosts, zone_name, space_list, spaces):
+    for space_name in space_list:
+        space_id = _create_space(
+            hosts[zone_name]["hostname"], user, users[user].password, space_name
+        )
+        spaces[space_name] = space_id
 
 
 def leave_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, spaces):
@@ -51,9 +46,12 @@ def rename_spaces_in_oz_using_rest(
     for space_name, new_space_name in zip(
         parse_seq(space_list), parse_seq(new_names_list)
     ):
-        space = user_api.get_user_space(spaces[space_name])
+        if space_name in spaces:
+            space = user_api.get_user_space(spaces[space_name])
+        else:
+            space = get_user_space_with_name(user_client, space_name)
         space.name = new_space_name
-        space_api.modify_space(spaces[space_name], space)
+        space_api.modify_space(space.space_id, space)
 
 
 def remove_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list, spaces):
