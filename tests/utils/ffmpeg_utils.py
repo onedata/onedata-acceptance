@@ -19,26 +19,29 @@ from itertools import chain, repeat
 from math import sqrt
 
 
-def start_recording(movie_dir, movie_name, displays, screen_width,
-                    screen_height, mosaic_filter=True):
+def start_recording(
+    movie_dir, movie_name, displays, screen_width, screen_height, mosaic_filter=True
+):
     if not os.path.exists(movie_dir):
         os.makedirs(movie_dir)
 
-    cmd, paths = _create_ffmpeg_cmd(displays, screen_width, screen_height,
-                                    movie_dir, movie_name, mosaic_filter)
+    cmd, paths = _create_ffmpeg_cmd(
+        displays, screen_width, screen_height, movie_dir, movie_name, mosaic_filter
+    )
     # remove old videos if they exist
     for path in paths:
         with _suppress(OSError, errnos=(errno.ENOENT, errno.ENAMETOOLONG)):
             os.remove(path)
 
-    with open(os.devnull, 'w') as dev_null:
-        proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=dev_null,
-                        stderr=dev_null, close_fds=True)
+    with open(os.devnull, "w") as dev_null:
+        proc = sp.Popen(  # pylint: disable=consider-using-with
+            cmd, stdin=sp.PIPE, stdout=dev_null, stderr=dev_null, close_fds=True
+        )
 
     # let ffmpeg start
     time.sleep(0.5)
     if proc.poll() is not None:
-        raise RuntimeError('ffmpeg did not start')
+        raise RuntimeError("ffmpeg did not start")
 
     return proc, paths
 
@@ -87,8 +90,7 @@ class RecorderManager:
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc
             self.ffmpeg_details["movies"] = movies
-            self.request.node._movies = movies
-
+            self.request.node._movies = movies  # pylint: disable=protected-access
 
     def handle_stop_recording(self, status):
         recording = self.request.config.getoption("--xvfb-recording")
@@ -107,6 +109,7 @@ class RecorderManager:
                     except IOError as ex:
                         if ex.errno not in (errno.ENOENT, errno.ENAMETOOLONG):
                             raise
+
 
 # ============================================================================
 # Internal functions

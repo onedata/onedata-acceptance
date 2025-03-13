@@ -7,13 +7,16 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import subprocess
-import time
 import json
 import os
-from tests.gui.utils.generic import upload_workflow_path, upload_file_path, upload_lambda_path
+import subprocess
+import time
 
-
+from tests.gui.utils.generic import (
+    upload_file_path,
+    upload_lambda_path,
+    upload_workflow_path,
+)
 from tests.utils.bdd_utils import parsers, wt
 
 TIME_ATTR_MAPPING = {
