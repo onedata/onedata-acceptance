@@ -106,6 +106,17 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
+        'user of {browser_id} clicks on "{link}" link in "Create new token" view'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_link_in_create_token_view(selenium, browser_id, oz_page, link):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)["tokens"].create_token_page, transform(link)).click()
+
+
+@wt(
+    parsers.parse(
         'user of {browser_id} clicks on "Show inactive caveats" '
         'label in "Create new token" view'
     )

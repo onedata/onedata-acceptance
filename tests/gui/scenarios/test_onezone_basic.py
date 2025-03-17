@@ -29,6 +29,7 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
@@ -72,6 +73,7 @@ scenarios("../features/onezone/user_account_manage.feature")
 scenarios("../features/onezone/full_name.feature")
 scenarios("../features/onezone/default_privileges.feature")
 scenarios("../features/onezone/clusters_effective_privileges.feature")
+scenarios("../features/docs_links.feature")
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios("../features/onezone/delete_account.feature")

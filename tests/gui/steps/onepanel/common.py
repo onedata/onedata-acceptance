@@ -137,3 +137,15 @@ def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel, hos
     found = onepanel(selenium[browser_id]).content.overview.cluster_name
     expected = hosts[cluster]["name"]
     assert found == expected, f"Overview of {expected} not visible"
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "{link}"'
+        ' link in "{submenu}" submenu in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_sidebar_submenu_link(selenium, browser_id, submenu, onepanel):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(submenu))
+    nav.documentation_link.click()

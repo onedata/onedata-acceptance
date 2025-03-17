@@ -124,6 +124,8 @@ class CreateNewTokenPage(PageObject):
     object_id_caveat = WebItem(".objectIdCaveat-field", cls=CaveatField)
 
     footer = WebElement(".footer-buttons")
+    show_details = WebElement(".service-caveat-warning .clickable")
+    documentation_link = WebElement(".documentation-link")
 
     def __str__(self):
         return "Create new token page"

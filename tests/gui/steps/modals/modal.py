@@ -407,6 +407,18 @@ def click_panel_button(selenium, browser_id, button, panel_name, modals):
 
 @wt(
     parsers.re(
+        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" '
+        'link in "(?P<popup_name>.*?)" popup'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_popup_link(selenium, browser_id, link, popup_name, popups):
+    tab = getattr(popups(selenium[browser_id]), transform(popup_name))
+    getattr(tab, transform(link)).click()
+
+
+@wt(
+    parsers.re(
         "user of (?P<browser_id>.*?) sees that there is no "
         '"(?P<button>.*?)" button in (?P<panel_name>.*?) panel'
     )
@@ -440,6 +452,18 @@ def click_modal_button(selenium, browser_id, button, modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
     button = button.replace(".", "")
     getattr(modal, transform(button))()
+
+
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" '
+        'link in modal "(?P<modal_name>.*?)"'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_modal_link(selenium, browser_id, link, modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+    getattr(modal, transform(link)).click()
 
 
 @wt(
