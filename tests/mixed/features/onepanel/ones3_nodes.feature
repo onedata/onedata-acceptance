@@ -10,3 +10,5 @@ Feature: OneS3 nodes operations using REST API
     And user user1 sees that oneS3 node in provider cluster in oneprovider-1 is of status "healthy"
     And user user1 stops oneS3 node in provider cluster in oneprovider-1
     Then user user1 sees that oneS3 node in provider cluster in oneprovider-1 is of status "stopped"
+    And user user1 starts oneS3 node in provider cluster in oneprovider-1
+    And user user1 sees that oneS3 node in provider cluster in oneprovider-1 is of status "healthy"

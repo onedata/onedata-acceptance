@@ -34,10 +34,11 @@ from tests.gui.steps.onepanel.provider import (
     wt_type_val_to_in_box_in_provider_details_form,
 )
 from tests.gui.steps.rest.provider import (
-    add_provider_cluster_workers,
-    get_provider_cluster_worker_status,
-    start_stop_provider_cluster_worker,
+    add_provider_service_node,
+    get_provider_service_nodes_statuses,
+    start_stop_provider_service_node,
 )
+from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -221,29 +222,41 @@ def change_provider_name_if_name_is_different_than_given(
 def assert_provider_cluster_ones3_node_status_rest(
     hosts, provider, onepanel_credentials, status
 ):
-    host = "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
-    actual_status = get_provider_cluster_worker_status(
-        hosts, host, provider, onepanel_credentials, ones3=True
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    res = get_provider_service_nodes_statuses(
+        hosts, provider, onepanel_credentials, OnedataService.ONES3
     )
+    err_msg = f"expected 1 service node, but got {res}"
+    assert len(res) == 1, err_msg
+    actual_status = res[host]
     err_msg = f"expected status: {status} but actual status is {actual_status}"
     assert actual_status == status, err_msg
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
 def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
-    data = {
-        "hosts": [
-            "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
-        ]
-    }
-    add_provider_cluster_workers(
-        hosts, provider, onepanel_credentials, data, ones3=True
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    data = {"hosts": [host]}
+    add_provider_service_node(
+        hosts, provider, onepanel_credentials, data, OnedataService.ONES3
     )
 
 
-@wt(parsers.parse("user {user} stops oneS3 node in provider cluster in {provider}"))
-def stop_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
-    host = "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local"
-    start_stop_provider_cluster_worker(
-        hosts, host, provider, onepanel_credentials, ones3=True, start=False
+@wt(
+    parsers.re(
+        "user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
+        " (?P<provider>.*?)"
+    )
+)
+def stop_provider_cluster_ones3_node_rest(
+    option, hosts, provider, onepanel_credentials
+):
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    start_stop_provider_service_node(
+        hosts,
+        host,
+        provider,
+        onepanel_credentials,
+        OnedataService.ONES3,
+        start=option == "starts",
     )

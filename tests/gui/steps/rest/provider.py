@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
+from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
     get_panel_rest_path,
@@ -44,8 +45,8 @@ def assert_provider_ones3_status_ok(provider, hosts):
     assert status["isOk"], err_msg
 
 
-def add_provider_cluster_workers(
-    hosts, provider, onepanel_credentials, data, ones3=False
+def add_provider_service_node(
+    hosts, provider, onepanel_credentials, data, service: OnedataService
 ):
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -54,7 +55,7 @@ def add_provider_cluster_workers(
     res = http_post(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3"),
+        path=get_panel_rest_path("provider", service.value),
         headers={"Content-Type": "application/json"},
         auth=(onepanel_username, onepanel_password),
         data=json.dumps(data),
@@ -62,8 +63,8 @@ def add_provider_cluster_workers(
     return res.json()
 
 
-def get_provider_cluster_worker_status(
-    hosts, host, provider, onepanel_credentials, ones3=False
+def get_provider_service_nodes_statuses(
+    hosts, provider, onepanel_credentials, service: OnedataService
 ):
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -72,14 +73,14 @@ def get_provider_cluster_worker_status(
     res = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3", host),
+        path=get_panel_rest_path("provider", service.value),
         auth=(onepanel_username, onepanel_password),
     )
     return res.json()
 
 
-def start_stop_provider_cluster_worker(
-    hosts, host, provider, onepanel_credentials, ones3=False, start=True
+def start_stop_provider_service_node(
+    hosts, host, provider, onepanel_credentials, service: OnedataService, start=True
 ):
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -88,7 +89,7 @@ def start_stop_provider_cluster_worker(
     res = http_patch(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
-        path=get_panel_rest_path("provider", "workers" if not ones3 else "ones3", host)
+        path=get_panel_rest_path("provider", service.value, host)
         + f"?started={"true" if start else "false"}",
         auth=(onepanel_username, onepanel_password),
     )
