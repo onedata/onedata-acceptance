@@ -43,7 +43,7 @@ class DataRow(BrowserRow):
     clickable_field = WebElement(".file-name")
     tag_label = Label(".file-status-tag")
     size_statistics_icon = WebElement(".dir-size-container .one-icon")
-    xattr = Label(".fb-table-col-xattr")
+    xattr = Label(".table-cell-xattr-info")
 
     def __str__(self):
         return f"{self.name} in {self.parent}"
