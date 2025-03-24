@@ -19,37 +19,28 @@ Feature: Onezone links to documentation
     And user of browser logged as admin to Onezone service
 
 
-  Scenario: User can see that link to REST API docs in space menu works correctly
+  Scenario: User can see that all links to REST API docs in space menu works correctly
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "REST API" button in space "space1" menu
-    And user of browser clicks on "documentation link" link in modal "REST API"
-    And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/api/[\d+\.]*[\d+]/onezone\?anchor=operation/get_space
-    And user of browser should see that the page title contains "Onedata | API"
-    And user of browser sees that active sidebar label is "GET Get Space Details" in REST API documentation
+    Then user of browser sees that all links to REST API documentation works correctly in space menu API section
 
 
-  Scenario: User can see that link to REST API docs in file details works correctly
+  Scenario: User can see that all links to REST API docs in file details API section works correctly
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Information" option in data row menu in file browser
     And user of browser clicks on "API" navigation tab in "Directory Details" modal
-    And user of browser clicks on "documentation link" link in modal "Directory Details"
-    And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/api/[\d+\.]*[\d+]/oneprovider\?anchor=operation/download_file_content
-    And user of browser should see that the page title contains "Onedata | API"
-    And user of browser sees that active sidebar label is "GET Download File Content" in REST API documentation
+    Then user of browser sees that all links to REST API documentation works correctly in file details API section
 
 
   Scenario: User can see that link to Metadata documentation in file details works correctly
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Metadata" option in data row menu in file browser
-    And user of browser clicks on "Question icon" button in metadata panel
-    And user of browser clicks on "documentation link" link in "info" popup
+    And user of browser clicks on clicks on question mark beside the metadata type selector
+    And user of browser clicks on "metadata documentation" link in info popup
     And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/documentation/[\d+\.]*[\d+]/user-guide/metadata.html
-    And user of browser should see that the page title contains "Onedata | Documentation"
+    Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Metadata" in documentation page
 
 
@@ -57,11 +48,10 @@ Feature: Onezone links to documentation
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser clicks on "Question icon" button in edit permissions panel
-    And user of browser clicks on "documentation link" link in "info" popup
+    And user of browser clicks on clicks on question mark beside the edit permissions type selector
+    And user of browser clicks on "file permissions documentation" link in info popup
     And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/documentation/[\d+\.]*[\d+]/user-guide/data\[data-access-control\].html
-    And user of browser should see that the page title contains "Onedata | Documentation"
+    Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Data" in documentation page
 
 
@@ -69,32 +59,94 @@ Feature: Onezone links to documentation
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Quality of Service" option in data row menu in file browser
-    And user of browser clicks on "Question icon" button in qos panel
-    And user of browser clicks on "documentation link" link in "info" popup
+    And user of browser clicks on clicks on question mark beside the Quality of Service requirements label
+    And user of browser clicks on "QoS documentation" link in info popup
     And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/documentation/[\d+\.]*[\d+]/admin-guide/oneprovider/configuration/qos.html
-    And user of browser should see that the page title contains "Onedata | Documentation"
+    Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Quality of Service" in documentation page
 
 
   Scenario: User can see that link to Tokens documentation in tokens page works correctly
     When user of browser clicks on Tokens in the main menu
     And user of browser clicks on "Create new token" button in tokens sidebar
-    And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser clicks on "Show details" link in "Create new token" view
-    And user of browser clicks on "documentation link" link in "Create new token" view
+    And user of browser clicks on "documentation" link in "Create new token" view
     And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/documentation/[\d+\.]*[\d+]/user-guide/tokens.html
-    And user of browser should see that the page title contains "Onedata | Documentation"
+    Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Tokens" in documentation page
 
 
-  Scenario: User can see that link to DNS Config documentation in DNS Config in Clusters page works correctly
+  Scenario: User can see that link to Tokens documentation in create custom token section in tokens page works correctly
+    When user of browser clicks on Tokens in the main menu
+    And user of browser clicks on "Create new token" button in tokens sidebar
+    And user of browser clicks on "Create custom token" option in "Create new token" view
+    And user of browser clicks on "Show details" link in "Create new token" view
+    And user of browser clicks on "tokens documentation" link in "Create new token" view
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "Tokens" in documentation page
+
+
+  Scenario: User can see that link to Tokens documentation in create custom token section when read only caveat is set in tokens page works correctly
+    When user of browser clicks on Tokens in the main menu
+    And user of browser clicks on "Create new token" button in tokens sidebar
+    And user of browser clicks on "Create custom token" option in "Create new token" view
+    And user of browser clicks on "Show inactive caveats" label in "Create new token" view
+    And user of browser sets read only token caveat
+    And user of browser clicks on "Show details" link in "Create new token" view
+    And user of browser clicks on "data access caveats documentation" link in "Create new token" view
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "Tokens" in documentation page
+
+
+  Scenario: User can see that link to DNS Config documentation in oneprovider DNS Config in Clusters page works correctly
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on DNS setup item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser clicks on "documentation" link in "dns setup" submenu in Onepanel
+    And user of browser clicks on "DNS setup documentation" link in "dns setup" submenu in Onepanel
     And user of browser is redirected to newly opened tab
-    Then user of browser sees that URL matches: https://onedata.org/#/home/documentation/[\d+\.]*[\d+]/admin-guide/onezone/configuration/dns-config.html
-    And user of browser should see that the page title contains "Onedata | Documentation"
+    Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Dns Config" in documentation page
+
+
+  Scenario: User can see that link to DNS Config documentation in onezone DNS Config in Clusters page works correctly
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "onezone" in clusters menu
+    And user of browser clicks on DNS setup item in submenu of "onezone" item in CLUSTERS sidebar in Onepanel
+    And user of browser clicks on "DNS setup documentation" link in "dns setup" submenu in Onepanel
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "Dns Config" in documentation page
+
+
+  Scenario: User can see that link to DNS Config documentation in onezone DNS Config at subdomain delegation section in Clusters page works correctly
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "onezone" in clusters menu
+    And user of browser clicks on DNS setup item in submenu of "onezone" item in CLUSTERS sidebar in Onepanel
+    And user of browser clicks on "DNS setup documentation" link at subdomain delegation section in "dns setup" submenu in Onepanel
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "Dns Config" in documentation page
+
+
+  Scenario: User can see that link to file popularity documentation in File popularity tab in Clusters page works correctly
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "oneprovider-1" in clusters menu
+    And user of browser clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser opens "space1" record on spaces list in Spaces page in Onepanel
+    And user of browser clicks on File popularity navigation tab in space "space2"
+    And user of browser enables file-popularity in "space1" space in Onepanel
+    And user of browser opens advanced settings in file-popularity tab in Onepanel
+    And user of browser clicks on "file popularity documentation" link in file-popularity tab in Onepanel
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "File popularity" in documentation page
+
+
+  Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on add new provider cluster button in clusters menu
+    And user of browser clicks on "Onedatify documentation" link in clusters page
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that active sidebar link is "Installation" in documentation page

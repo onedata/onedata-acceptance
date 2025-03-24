@@ -140,6 +140,7 @@ class EditPermissionsTab(Modal):
 
     posix_permission_edition = WebElement(".posix-permissions-editor")
 
+    question_icon = Button(".oneicon-sign-question-rounded")
     close = Button(".close")
 
     def __str__(self):

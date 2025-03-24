@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.common.by import By
-
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
@@ -378,53 +376,3 @@ def assert_item_in_submenu_of_item_in_oz_panel(
     assert (
         subitem_name in subitems
     ), f'no "{subitem_name}" found in subitems of "{item_name}" in {oz_panel}'
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that active sidebar link is "{link}" in'
-        " documentation page"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_active_section_in_docks(selenium, browser_id, link):
-    driver = selenium[browser_id]
-    iframes = driver.find_elements(By.TAG_NAME, "iframe")
-    if len(iframes) > 1:
-        driver.switch_to.frame(iframes[1])
-    sidebar_links = driver.find_elements(By.CSS_SELECTOR, ".sidebar-link")
-    for sidebar_link in sidebar_links:
-        if "active" in sidebar_link.get_attribute("class"):
-            err_msg = (
-                f"Visible sidebar link is {sidebar_link.text}, but expected one is"
-                f" {link}"
-            )
-            assert sidebar_link.text.lower() == link.lower(), err_msg
-            return
-    raise ValueError(f"sidebar link {link} not found")
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees that active sidebar label is "{label}" in REST API'
-        " documentation"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_active_section_in_api_docks(selenium, browser_id, label):
-    driver = selenium[browser_id]
-    iframes = driver.find_elements(By.TAG_NAME, "iframe")
-    if len(iframes) > 1:
-        driver.switch_to.frame(iframes[1])
-    sidebar_labels = driver.find_elements(By.CSS_SELECTOR, 'label[role="menuitem"]')
-    for sidebar_label in sidebar_labels:
-        if "active" in sidebar_label.get_attribute("class"):
-            err_msg = (
-                f"Visible sidebar link is {sidebar_label.text}, but expected one is"
-                f" {label}"
-            )
-            assert (
-                sidebar_label.text.replace("\n", " ").lower() == label.lower()
-            ), err_msg
-            return
-    raise ValueError(f"sidebar label {label} not found")

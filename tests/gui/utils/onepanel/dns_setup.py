@@ -10,3 +10,8 @@ from tests.gui.utils.core.web_elements import WebElement
 
 class DNSSetup(PageObject):
     documentation_link = WebElement(".documentation-link")
+
+    # Subdomain Delegation
+    subdomain_delegation_documentation_link = WebElement(
+        ".subheader-text  .documentation-link"
+    )

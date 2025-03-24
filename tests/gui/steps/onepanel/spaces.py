@@ -705,3 +705,29 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
     ).content.spaces.space.sync_chart.start_scan_is_green(), (
         'Scanning did not finish correctly, "Start scan" button is not green'
     )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} opens advanced settings "
+        "in file-popularity tab in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_advanced_settings_in_file_popularity_onepanel(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.spaces.space.file_popularity.advanced_settings.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "file popularity documentation" link '
+        "in file-popularity tab in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_docs_link_in_file_popularity_onepanel(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    onepanel(
+        driver
+    ).content.spaces.space.file_popularity.file_popularity_documentation.click()

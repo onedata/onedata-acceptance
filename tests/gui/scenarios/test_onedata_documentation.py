@@ -1,9 +1,7 @@
-"""This module contains tests suite for basic operations using
-Onezone GUI and multiple browsers instance.
-"""
+"""This module contains tests suite for links to documentation."""
 
-__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Wojciech Szmelich"
+__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
@@ -16,6 +14,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.clusters import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.documentation_links import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.provider import *
@@ -65,14 +64,7 @@ from tests.utils.entities_setup.users import *
 
 @fixture(scope="module")
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios("../features/onezone/login_page.feature")
-scenarios("../features/onezone/user_account_manage.feature")
-scenarios("../features/onezone/full_name.feature")
-scenarios("../features/onezone/default_privileges.feature")
-scenarios("../features/onezone/clusters_effective_privileges.feature")
-
-# THIS SCENARIO HAS TO BE EXECUTED IN THE END
-scenarios("../features/onezone/delete_account.feature")
+scenarios("../features/docs_links.feature")

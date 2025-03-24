@@ -407,13 +407,32 @@ def click_panel_button(selenium, browser_id, button, panel_name, modals):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" '
-        'link in "(?P<popup_name>.*?)" popup'
+        "user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
+        "(?P<panel_name>.*?) type selector"
+    )
+)
+@wt(
+    parsers.re(
+        "user of (?P<browser_id>.*?) clicks on clicks on question mark beside the "
+        "(?P<panel_name>Quality of Service) requirements label"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_popup_link(selenium, browser_id, link, popup_name, popups):
-    tab = getattr(popups(selenium[browser_id]), transform(popup_name))
+def click_panel_question_icon(selenium, browser_id, modals, panel_name):
+    panel_name = "qos" if panel_name == "Quality of Service" else panel_name
+    tab = getattr(modals(selenium[browser_id]).details_modal, transform(panel_name))
+    getattr(tab, "question_icon").click()
+
+
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*?) clicks on "(?P<link>.*?)" link in info popup'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_popup_link(selenium, browser_id, link, popups):
+    link = "documentation_link" if "documentation" in link else link
+    tab = getattr(popups(selenium[browser_id]), transform("info"))
     getattr(tab, transform(link)).click()
 
 

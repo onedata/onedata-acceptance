@@ -112,6 +112,7 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_link_in_create_token_view(selenium, browser_id, oz_page, link):
     driver = selenium[browser_id]
+    link = f"{link} link" if "documentation" in link else link
     getattr(oz_page(driver)["tokens"].create_token_page, transform(link)).click()
 
 
@@ -125,6 +126,7 @@ def click_link_in_create_token_view(selenium, browser_id, oz_page, link):
 def show_inactive_caveats(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)["tokens"].create_token_page.expand_caveats()
+    assert oz_page(driver)["tokens"].create_token_page.caveats_expanded()
 
 
 @wt(
@@ -445,6 +447,13 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)["tokens"].create_token_page
     return new_token_page.get_caveat(caveat_name)
+
+
+@wt(parsers.parse("user of {browser_id} sets read only token caveat"))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_caveat_by_name(selenium, browser_id, oz_page):
+    caveat = get_caveat_by_name(selenium, browser_id, oz_page, "readonly")
+    caveat.set_readonly_caveat()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
