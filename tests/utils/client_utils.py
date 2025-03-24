@@ -1,28 +1,28 @@
-"""This module contains utility functions for using client instances under tests.
-"""
+"""This module contains utility functions for using client instances under tests."""
+
 __author__ = "Jakub Kudzia, Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2016-2021 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-import os
-import time
-import stat as stat_lib
 import hashlib
-import subprocess
-
+import os
 import random
+import stat as stat_lib
 import string
+import subprocess
+import time
 
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
-from tests.utils.utils import log_exception
 from tests.utils.path_utils import escape_path
+from tests.utils.utils import log_exception
 
 
 class Client:
     def __init__(self, rpyc_connection, timeout=40):
-        self._id = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
+        self._id = "".join(
+            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
+        )
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
         self.timeout = timeout
@@ -30,26 +30,30 @@ class Client:
         self.file_stats = {}
 
     def mount(self, mode, gdb=False, additional_opts=None):
-        if 'proxy' in mode:
-            mode_flag = '--force-proxy-io'
+        if "proxy" in mode:
+            mode_flag = "--force-proxy-io"
         else:
-            mode_flag = '--force-direct-io'
+            mode_flag = "--force-direct-io"
         if additional_opts is None:
-            additional_opts = ['--message-trace-log']
+            additional_opts = ["--message-trace-log"]
 
-        print(f'\nMounting client with {mode_flag} flag in {self._mount_path}\n')
+        print(f"\nMounting client with {mode_flag} flag in {self._mount_path}\n")
 
         logdir = os.path.join(ONECLIENT_LOGS_DIR, self._id)
         self.mkdir(self._mount_path, recursive=True, exist_ok=True)
         self.mkdir(logdir, recursive=True, exist_ok=True)
 
         if gdb:
-            cmd = ('gdb oneclient -batch -return-child-result -ex'
-                   ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
-                   ' \' -ex \'bt\'').format(mount_path=self._mount_path, mode=mode_flag)
+            cmd = (
+                "gdb oneclient -batch -return-child-result -ex 'run --log-dir"
+                f" /tmp/oc_logs {mode_flag} --insecure {self._mount_path} ' -ex 'bt'"
+            )
         else:
-            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2', '--insecure']
-                           + additional_opts + [self._mount_path])
+            cmd = " ".join(
+                ["oneclient", "--log-dir", logdir, mode_flag, "-v2", "--insecure"]
+                + additional_opts
+                + [self._mount_path]
+            )
 
         ret = self.run_cmd(cmd, verbose=True)
 
@@ -57,7 +61,7 @@ class Client:
 
     def unmount(self):
         print(f"\nUnmounting client from {self._mount_path}\n")
-        for opened_file in self.opened_files.keys():
+        for opened_file in self.opened_files:
             self.close_file(opened_file)
         self.opened_files.clear()
         self.fusermount(self._mount_path, unmount=True, lazy=True)
@@ -79,7 +83,7 @@ class Client:
                 condition_satisfied = condition()
                 if condition_satisfied is None:
                     condition_satisfied = True
-            except:
+            except:  # pylint: disable=bare-except
                 condition_satisfied = False
                 if timeout == 0:
                     log_exception()
@@ -93,12 +97,11 @@ class Client:
     def list_spaces(self):
         return self.ls(path=self._mount_path)
 
-    def ls(self, path='.'):
+    def ls(self, path="."):
         res = self.rpyc_connection.modules.os.listdir(path)
-        res.remove('.hardlinks') if '.hardlinks' in res else None
-        res.remove('.symlinks') if '.symlinks' in res else None
+        _ = res.remove(".hardlinks") if ".hardlinks" in res else None
+        _ = res.remove(".symlinks") if ".symlinks" in res else None
         return res
-
 
     def osrename(self, src, dest):
         self.rpyc_connection.modules.os.rename(src, dest)
@@ -114,8 +117,9 @@ class Client:
 
     def rm(self, path, recursive=False, force=False, onerror=None):
         if recursive and force:
-            self.rpyc_connection.modules.shutil.rmtree(path, ignore_errors=True,
-                                                       onerror=onerror)
+            self.rpyc_connection.modules.shutil.rmtree(
+                path, ignore_errors=True, onerror=onerror
+            )
         elif recursive:
             self.rpyc_connection.modules.shutil.rmtree(path, onerror=onerror)
         else:
@@ -158,19 +162,19 @@ class Client:
             self.rpyc_connection.modules.shutil.copy(src, dest)
 
     def truncate(self, file_path, size):
-        with self.rpyc_connection.builtins.open(file_path, 'w') as f:
+        with self.rpyc_connection.builtins.open(file_path, "w") as f:
             f.truncate(size)
 
-    def write(self, text, file_path, mode='w'):
+    def write(self, text, file_path, mode="w"):
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
             f.write(text)
 
-    def read(self, file_path, mode='r'):
+    def read(self, file_path, mode="r"):
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
             read_text = f.read()
         return read_text
 
-    def open_file(self, file, mode='w+'):
+    def open_file(self, file, mode="w+"):
         return self.rpyc_connection.builtins.open(file, mode)
 
     def close_file(self, file):
@@ -215,48 +219,62 @@ class Client:
     def execute(self, command, output=False):
         if output:
             return self.rpyc_connection.modules.subprocess.check_output(command)
-        else:
-            return self.rpyc_connection.modules.subprocess.call(command)
+        return self.rpyc_connection.modules.subprocess.call(command)
 
     def md5sum(self, file_path):
         m = hashlib.md5()
-        with self.rpyc_connection.builtins.open(file_path, 'r') as f:
-            m.update(f.read().encode('utf-8'))
+        with self.rpyc_connection.builtins.open(file_path, "r") as f:
+            m.update(f.read().encode("utf-8"))
         return m.hexdigest()
 
-    def mkstemp(self, dir=None):
-        _handle, abs_path = self.rpyc_connection.modules.tempfile.mkstemp(dir=dir)
+    def mkstemp(self, directory=None):
+        _handle, abs_path = self.rpyc_connection.modules.tempfile.mkstemp(dir=directory)
         return abs_path
 
-    def mkdtemp(self, dir=None):
-        return self.rpyc_connection.modules.tempfile.mkdtemp(dir=dir)
+    def mkdtemp(self, directory=None):
+        return self.rpyc_connection.modules.tempfile.mkdtemp(dir=directory)
 
     def replace_pattern(self, file_path, pattern, new_text, output=False):
-        cmd = 'sed -i \'s/{pattern}/{new_text}/g\' {file_path}'\
-            .format(pattern=pattern,
-                    new_text=new_text,
-                    file_path=escape_path(file_path))
+        cmd = f"sed -i 's/{pattern}/{new_text}/g' {escape_path(file_path)}"
         return self.run_cmd(cmd, output=output)
 
-    def dd(self, block_size, count, output_file, unit='M',
-           input_file='/dev/zero', output=False, error=False):
-        cmd = 'dd {input} {output} {bs} {count}'\
-            .format(input='if={}'.format(escape_path(input_file)),
-                    output='of={}'.format(escape_path(output_file)),
-                    bs='bs={0}{1}'.format(block_size, unit),
-                    count='count={}'.format(count))
+    def dd(
+        self,
+        block_size,
+        count,
+        output_file,
+        unit="M",
+        input_file="/dev/zero",
+        output=False,
+        error=False,
+    ):
+        cmd = "dd {input} {output} {bs} {count}"
+        cmd = cmd.format(
+            input=f"if={escape_path(input_file)}",
+            output=f"of={escape_path(output_file)}",
+            bs=f"bs={block_size}{unit}",
+            count=f"count={count}",
+        )
         return self.run_cmd(cmd, output=output, error=error)
 
     def fusermount(self, path, unmount=False, lazy=False, quiet=False):
-        unmount = '-u' if unmount else ''
-        lazy = '-z' if lazy else ''
-        quiet = '-q' if quiet else ''
+        unmount = "-u" if unmount else ""
+        lazy = "-z" if lazy else ""
+        quiet = "-q" if quiet else ""
         path = escape_path(path)
-        cmd = ['fusermount', unmount, lazy, quiet, path]
+        cmd = ["fusermount", unmount, lazy, quiet, path]
         self.run_cmd(cmd)
 
-    def run_cmd(self, cmd, output=False, error=False,
-                retries=0, retry_sleep=8, on_retry=None, verbose=False):
+    def run_cmd(
+        self,
+        cmd,
+        output=False,
+        error=False,
+        retries=0,
+        retry_sleep=8,
+        on_retry=None,
+        verbose=False,
+    ):
         """Run command on oneself docker using rpyc
         :param self: instance of utils.client_utils.Client class
         :param cmd: command to be run, can be string or list of strings
@@ -276,10 +294,12 @@ class Client:
         else:
             shell = True
         if verbose:
-            print("rpyc running command: {}".format(cmd))
+            print(f"rpyc running command: {cmd}")
         proc = rpyc_connection.modules.subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT if error else subprocess.PIPE,
-            shell=shell
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT if error else subprocess.PIPE,
+            shell=shell,
         )
 
         if proc.wait() == 0:
@@ -287,19 +307,26 @@ class Client:
             if verbose:
                 print(stdout)
             return stdout if output else 0
-        else:
+
+        if verbose:
+            print(proc.stdout.read().decode())
+            if not error:
+                print(proc.stderr.read().decode())
+        if retries > 0:
             if verbose:
-                print(proc.stdout.read().decode())
-                if not error:
-                    print(proc.stderr.read().decode())
-            if retries > 0:
-                if verbose:
-                    print("Command {} failed. Retries left: {}".format(" ".join(cmd), retries))
-                if on_retry:
-                    on_retry()
-                time.sleep(retry_sleep)
-                return self.run_cmd(cmd, output=output, error=error, retries=retries-1,
-                                    retry_sleep=retry_sleep, on_retry=on_retry, verbose=verbose)
+                print(f"Command {" ".join(cmd)} failed. Retries left: {retries}")
+            if on_retry:
+                on_retry()
+            time.sleep(retry_sleep)
+            return self.run_cmd(
+                cmd,
+                output=output,
+                error=error,
+                retries=retries - 1,
+                retry_sleep=retry_sleep,
+                on_retry=on_retry,
+                verbose=verbose,
+            )
 
         return None if output else proc.returncode
 
@@ -307,12 +334,12 @@ class Client:
         return self._mount_path
 
 
-def user_home_dir(user='root'):
-    return os.path.join('/home', user)
+def user_home_dir(user="root"):
+    return os.path.join("/home", user)
 
 
 def get_client_conf(client_id, client_host_alias, env_desc):
-    client_host_conf = env_desc.get('oneclient').get(client_host_alias)
-    client_conf = client_host_conf.get('clients').get(client_id)
+    client_host_conf = env_desc.get("oneclient").get(client_host_alias)
+    client_conf = client_host_conf.get("clients").get(client_id)
     client_conf["id"] = client_id
     return client_conf

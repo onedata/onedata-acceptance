@@ -84,11 +84,11 @@ def load_test_report(junit_report_path):
 
 
 def env_errors_exists(testsuite):
-    if not testsuite:
+    if len(testsuite) == 0:
         # this happens when tests didn't start at all
         return True
 
-    testcases = testsuite.findall('testcase')
+    testcases = testsuite.findall('.//testcase')
 
     for testcase in testcases:
         skipped = testcase.find('skipped')

@@ -1,13 +1,13 @@
-"""This file contains utility functions for performance tests.
-"""
+"""This file contains utility functions for performance tests."""
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import sys
 import itertools
+import sys
 import time
+
 import pytest
 
 from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
@@ -27,71 +27,96 @@ def performance(default_config, configs):
     :param configs: dictionary of configs. For each of this configs test case
                     will be started
     """
+
     def wrap(test_function):
 
-        def wrapped_test_function(self, clients, suite_report, request, hosts, users, env_desc):
+        def wrapped_test_function(  # pylint: disable=unused-argument
+            self,
+            clients,
+            suite_report,
+            request,
+            hosts,
+            users,
+            env_desc,
+        ):
             test_case_report = test_function.__name__
-            test_case_report = TestCaseReport(test_case_report,
-                                              default_config['description'])
+            test_case_report = TestCaseReport(
+                test_case_report, default_config["description"]
+            )
             failed = False
-            error_msg = ''
+            error_msg = ""
 
             for config_name, config in configs.items():
-                flushed_print('Running {}'.format(config['description']))
+                flushed_print(f"Running {config["description"]}")
 
                 merged_config = update_dict(default_config, config)
-                config_report = ConfigReport(config_name,
-                                             merged_config['description'],
-                                             merged_config['repeats'])
+                config_report = ConfigReport(
+                    config_name, merged_config["description"], merged_config["repeats"]
+                )
 
-                config_report.add_to_report('parameters',
-                                            dict_to_list(merged_config.get('parameters', {})))
+                config_report.add_to_report(
+                    "parameters", dict_to_list(merged_config.get("parameters", {}))
+                )
 
                 test_result_report = ResultReport()
-                max_repeats = merged_config['repeats']
-                succes_rate = merged_config['success_rate']
+                max_repeats = merged_config["repeats"]
+                succes_rate = merged_config["success_rate"]
                 repeats = 0
                 failed_repeats = 0
                 successful_repeats = 0
                 failed_details = {}
                 while repeats < max_repeats:
-                    flushed_print('RUN {}/{}'.format(repeats+1, max_repeats))
+                    flushed_print(f"RUN {repeats + 1}/{max_repeats}")
 
                     try:
-                        test_results = test_function(self, hosts, users, env_desc,
-                                                     merged_config.get('parameters', {}))
-                    except Exception as e:
-                        flushed_print('\t\tTestcase failed beceause of: ' + str(e))
+                        test_results = test_function(
+                            self,
+                            hosts,
+                            users,
+                            env_desc,
+                            merged_config.get("parameters", {}),
+                        )
+                    except Exception as e:  # pylint: disable=broad-exception-caught
+                        flushed_print("\t\tTestcase failed beceause of: " + str(e))
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)
                     else:
                         test_results = ensure_list(test_results)
-                        test_result_report.add_single_test_results(test_results,
-                                                                   repeats)
+                        test_result_report.add_single_test_results(
+                            test_results, repeats
+                        )
                         successful_repeats += 1
                     finally:
                         repeats += 1
                         unmount_all_clients_and_purge_spaces(users)
 
-                config_report.add_to_report('completed', int(time.time()))
-                config_report.add_to_report('successful_repeats', successful_repeats)
+                config_report.add_to_report("completed", int(time.time()))
+                config_report.add_to_report("successful_repeats", successful_repeats)
                 test_result_report.prepare_report()
-                config_report.add_to_report('successful_repeats_details', test_result_report.details)
-                config_report.add_to_report('successful_repeats_summary', test_result_report.summary)
-                config_report.add_to_report('successful_repeats_average', test_result_report.average)
-                config_report.add_to_report('failed_repeats_details', failed_details)
+                config_report.add_to_report(
+                    "successful_repeats_details", test_result_report.details
+                )
+                config_report.add_to_report(
+                    "successful_repeats_summary", test_result_report.summary
+                )
+                config_report.add_to_report(
+                    "successful_repeats_average", test_result_report.average
+                )
+                config_report.add_to_report("failed_repeats_details", failed_details)
 
-                test_case_report.add_to_report('configs', config_report)
+                test_case_report.add_to_report("configs", config_report)
 
-                if not is_success_rate_satisfied(successful_repeats, failed_repeats, succes_rate):
-                    error_msg = ('Test suite: {suite} failed because of too '
-                                 'many failures: {failures}'
-                                 ).format(suite=suite_report.name,
-                                          failures=failed_repeats)
+                if not is_success_rate_satisfied(
+                    successful_repeats, failed_repeats, succes_rate
+                ):
+                    error_msg = (
+                        f"Test suite: {suite_report.name} failed because of too "
+                        f"many failures: {failed_repeats}"
+                    )
                     failed = True
                     break
 
-            suite_report.add_to_report('cases', test_case_report)
+            suite_report.add_to_report("cases", test_case_report)
             if failed:
                 pytest.fail(error_msg)
 
@@ -115,59 +140,64 @@ class Report:
         if value.name not in self.report[self.name][key].keys():
             self.report[self.name][key][value.name] = value.report[value.name]
         else:
-            self.report[self.name][key][value.name] = \
-                update_dict(self.report[self.name][key][value.name], value.report[value.name])
+            self.report[self.name][key][value.name] = update_dict(
+                self.report[self.name][key][value.name], value.report[value.name]
+            )
 
 
 class PerformanceReport(Report):
     def __init__(self, name, repository, commit, branch):
         Report.__init__(self, name)
-        self.report[name] = {'envs': {}}
-        self.add_to_report('repository', repository)
-        self.add_to_report('commit', commit)
-        self.add_to_report('branch', branch)
+        self.report[name] = {"envs": {}}
+        self.add_to_report("repository", repository)
+        self.add_to_report("commit", commit)
+        self.add_to_report("branch", branch)
 
 
 class EnvironmentReport(Report):
     def __init__(self, name):
         Report.__init__(self, name)
-        self.add_to_report('name', name)
-        self.add_to_report('suites', {})
+        self.add_to_report("name", name)
+        self.add_to_report("suites", {})
 
 
 class SuiteReport(Report):
-    def __init__(self, name, description, copyright, authors):
+    def __init__(self, name, description, copyright_, authors):
         Report.__init__(self, name)
-        self.add_to_report('name', name)
-        self.add_to_report('description', description)
-        self.add_to_report('copyright', copyright)
-        self.add_to_report('authors', authors)
-        self.add_to_report('cases', {})
+        self.add_to_report("name", name)
+        self.add_to_report("description", description)
+        self.add_to_report("copyright", copyright_)
+        self.add_to_report("authors", authors)
+        self.add_to_report("cases", {})
 
 
 class TestCaseReport(Report):
-    def __init__(self, name, description, ):
+    def __init__(
+        self,
+        name,
+        description,
+    ):
         Report.__init__(self, name)
-        self.add_to_report('name', name)
-        self.add_to_report('description', description)
-        self.add_to_report('configs', {})
+        self.add_to_report("name", name)
+        self.add_to_report("description", description)
+        self.add_to_report("configs", {})
 
 
 class ConfigReport(Report):
     def __init__(self, name, description, repeats):
         Report.__init__(self, name)
-        self.add_to_report('name', name)
-        self.add_to_report('description', description)
-        self.add_to_report('repeats_number', repeats)
-        self.add_to_report('parameters', [])
-        self.add_to_report('successful_repeats_summary', [])
-        self.add_to_report('successful_repeats_details', [])
-        self.add_to_report('successful_repeats_average', [])
-        self.add_to_report('failed_repeats_details', {})
+        self.add_to_report("name", name)
+        self.add_to_report("description", description)
+        self.add_to_report("repeats_number", repeats)
+        self.add_to_report("parameters", [])
+        self.add_to_report("successful_repeats_summary", [])
+        self.add_to_report("successful_repeats_details", [])
+        self.add_to_report("successful_repeats_average", [])
+        self.add_to_report("failed_repeats_details", {})
 
 
 class Result:
-    def __init__(self, name, value, description, unit=''):
+    def __init__(self, name, value, description, unit=""):
         self.name = name
         self.value = value
         self.description = description
@@ -184,15 +214,15 @@ class ResultReport:
 
     def prepare_report(self):
         for key in self.details:
-            avg = float(self.summary[key]['value'])/self.num
-            self.average[key]['value'] = avg
+            avg = float(self.summary[key]["value"]) / self.num
+            self.average[key]["value"] = avg
         self.details = dict_to_list(self.details)
         self.summary = dict_to_list(self.summary)
         self.average = dict_to_list(self.average)
 
     def add_single_test_results(self, test_results, repeat):
         for test_result in test_results:
-            if test_result.name not in self.details.keys():
+            if test_result.name not in self.details:
                 self.add_new(test_result, repeat)
             else:
                 self.add_existing(test_result, repeat)
@@ -202,29 +232,31 @@ class ResultReport:
         name = test_result.name
         val = test_result.value
         new_result = {
-            'name': name,
-            'description': test_result.description,
-            'unit': test_result.unit,
+            "name": name,
+            "description": test_result.description,
+            "unit": test_result.unit,
         }
         self.details[name] = new_result
-        self.details[name]['value'] = {str(repeat): val}
+        self.details[name]["value"] = {str(repeat): val}
         self.summary[name] = dict(new_result)
-        self.summary[name]['value'] = val
+        self.summary[name]["value"] = val
         self.average[name] = dict(new_result)
 
     def add_existing(self, test_result, repeat):
         name = test_result.name
         val = test_result.value
-        self.details[name]['value'].update({str(repeat): val})
-        self.summary[name]['value'] += val
+        self.details[name]["value"].update({str(repeat): val})
+        self.summary[name]["value"] += val
 
 
 def update_dict(base, updating):
     new_dict = dict(base)
     for key in updating.keys():
-        if key in base.keys() and \
-                isinstance(updating[key], dict) and \
-                isinstance(new_dict[key], dict):
+        if (
+            key in base.keys()
+            and isinstance(updating[key], dict)
+            and isinstance(new_dict[key], dict)
+        ):
 
             new_dict[key] = update_dict(new_dict[key], updating[key])
         else:
@@ -232,13 +264,13 @@ def update_dict(base, updating):
     return new_dict
 
 
-def dict_to_list(dict):
-    list = []
-    for key in dict.keys():
-        new_elem = dict[key]
-        new_elem['name'] = key
-        list.append(new_elem)
-    return list
+def dict_to_list(dict_):
+    list_ = []
+    for key in dict_.keys():
+        new_elem = dict_[key]
+        new_elem["name"] = key
+        list_.append(new_elem)
+    return list_
 
 
 def ensure_list(elem):
@@ -262,16 +294,15 @@ def generate_configs(params, description_skeleton):
     combinations = itertools.product(*params.values())
 
     for i, combination in enumerate(combinations):
-        conf_name = 'config{}'.format(i)
-        configs[conf_name] = dict()
+        conf_name = f"config{i}"
+        configs[conf_name] = {}
         new_params = dict(zip(keys, combination))
         description = description_skeleton.format(**new_params)
         for key, value in new_params.items():
-            new_params[key] = {'value': value}
-        configs[conf_name].update({
-            'parameters': new_params,
-            'description': description
-        })
+            new_params[key] = {"value": value}
+        configs[conf_name].update(
+            {"parameters": new_params, "description": description}
+        )
     return configs
 
 
