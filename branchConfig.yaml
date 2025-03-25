@@ -1,12 +1,12 @@
 # Used when specific branch for given repo does not exist.
-default: develop
+default: 22.02.0
 
 images:
   # Specification of branches from which docker images will be pulled.
   onezone: current_branch
   oneprovider: current_branch
   oneclient: current_branch
-  rest-cli: default
+  rest-cli: develop
   openfaas-pod-status-monitor: current_branch
   openfaas-lambda-result-streamer: current_branch
 
