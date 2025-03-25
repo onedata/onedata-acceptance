@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import ElementNotInteractableException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -113,7 +115,11 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 def click_link_in_create_token_view(selenium, browser_id, oz_page, link):
     driver = selenium[browser_id]
     link = f"{link} link" if "documentation" in link else link
-    getattr(oz_page(driver)["tokens"].create_token_page, transform(link)).click()
+    element = getattr(oz_page(driver)["tokens"].create_token_page, transform(link))
+    try:
+        element.click()
+    except ElementNotInteractableException:
+        driver.execute_script("arguments[0].click();", element)
 
 
 @wt(

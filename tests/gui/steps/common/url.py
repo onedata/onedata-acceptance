@@ -100,7 +100,7 @@ def change_application_path(selenium, browser_id, path):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_url_matching(selenium, browser_id, path):
     driver = selenium[browser_id]
-    regexp = rf"{path}$"
+    regexp = r"{}$".format(path.replace("\\", "\\\\"))
     err_msg = rf"expected url: {path} does not match current one: {{}}"
 
     @repeat_failed(timeout=WAIT_BACKEND)
