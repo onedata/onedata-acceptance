@@ -226,11 +226,9 @@ def assert_provider_cluster_ones3_node_status_rest(
     res = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, OnedataService.ONES3
     )
-    err_msg = f"expected 1 service node, but got {res}"
-    assert len(res) == 1, err_msg
-    actual_status = res[host]
-    err_msg = f"expected status: {status} but actual status is {actual_status}"
-    assert actual_status == status, err_msg
+    exp_res = {host: status}
+    err_msg = f"expected {exp_res}, but got {res}"
+    assert exp_res == res, err_msg
 
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
