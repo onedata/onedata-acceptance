@@ -44,7 +44,7 @@ def setup(tests_controller, space_name):
 
 def verify(tests_controller, space_name):
     client = tests_controller.mount_client("user1", "oneclient-1", "client11")
-    space_path = client.absolute_path(tests_controller, space_name)
+    space_path = client.absolute_path(space_name)
     file_path = os.path.join(space_path, "file_name")
     dir_path = os.path.join(space_path, "dir_name")
     read_text = client.read(file_path)

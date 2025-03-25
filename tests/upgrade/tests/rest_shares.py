@@ -58,7 +58,11 @@ def setup1(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    prov_version = int(prov_version.split(".")[0])
+    try:
+        prov_version = int(prov_version.split(".")[0])
+    except ValueError:
+        # version is develop, so it is current enough
+        prov_version = 100
 
     client = tests_controller.mount_client("user1", "oneclient-1", "client11")
     space_path = client.absolute_path("space_posix")
@@ -84,7 +88,11 @@ def setup2(tests_controller):
     token = tests_controller.users["user1"].token
     admin_token = tests_controller.users["admin"].token
     prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    prov_version = int(prov_version.split(".")[0])
+    try:
+        prov_version = int(prov_version.split(".")[0])
+    except ValueError:
+        # version is develop, so it is current enough
+        prov_version = 100
     if prov_version < 21:
         # provider api support managing datasets and archives from 21 version
         return
@@ -111,12 +119,13 @@ def setup2(tests_controller):
         "resourceType": "Share",
         "resourceId": share_id,
         "metadataPrefix": "oai_dc",
-        "metadata": """<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n,
-            <metadata xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n
-                <dc:title>Test dataset</dc:title>\n,
-                <dc:creator>Jane Doe</dc:creator>\n,
-                <dc:subject>Test</dc:subject>\n,
-            </metadata>""",
+        "metadata": """<?xml version="1.0" encoding="utf-8"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Test dataset</dc:title>
+    <dc:creator>Jane Doe</dc:creator>
+    <dc:subject>Test</dc:subject>
+</metadata>""",
     }
     _ = register_handle(zone_host, admin_token, register_handle_config)
 
@@ -170,7 +179,11 @@ def verify2(tests_controller):
     token = tests_controller.users["user1"].token
     admin_token = tests_controller.users["admin"].token
     prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    prov_version = int(prov_version.split(".")[0])
+    try:
+        prov_version = int(prov_version.split(".")[0])
+    except ValueError:
+        # version is develop, so it is current enough
+        prov_version = 100
     if prov_version < 21:
         # provider api support managing datasets and archives from 21 version
         return

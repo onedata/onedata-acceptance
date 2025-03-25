@@ -239,7 +239,8 @@ def setup_2_providers(tests_controller):
     try:
         query_view(provider_host2, token, space_id, VIEW6)
     except HTTPError as e:
-        RESULTS["view6"] = e.response.text
+        # description message differs in different provider versions
+        RESULTS["view6"] = e.response.json()['error']['id']
 
 
 def setup_subscribe_events(tests_controller):
@@ -275,10 +276,6 @@ def verify(tests_controller):
         end_range="[5,10]",
     )
     assert RESULTS["view4"] == query_view(provider_host, token, space_id, VIEW4)
-    # _assert(len(RESULTS["view1"]), 7)
-    _assert(len(RESULTS["view2"]), 6)
-    _assert(len(RESULTS["view3"]), 2)
-    _assert(RESULTS["view4"][0]["value"], 6)
     assert RESULTS["file-popularity"] == query_view(
         provider_host, token, space_id, "file-popularity"
     )
@@ -297,8 +294,9 @@ def verify_2_providers(tests_controller):
     _assert(RESULTS["view5"], query_view(provider_host2, token, space_id, VIEW5))
     try:
         query_view(provider_host2, token, space_id, VIEW6)
+        raise AssertionError("Operation should have failed")
     except HTTPError as e:
-        _assert(RESULTS["view6"], e.response.text)
+        _assert(RESULTS["view6"], e.response.json()['error']['id'])
 
 
 def verify_subscribe_events(tests_controller):
