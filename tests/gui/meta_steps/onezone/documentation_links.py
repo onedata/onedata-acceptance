@@ -25,8 +25,8 @@ from tests.utils.utils import repeat_failed
 def assert_active_section_in_docks(selenium, browser_id, link):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
-    if len(iframes) > 1:
-        driver.switch_to.frame(iframes[1])
+    if len(iframes) > 0:
+        driver.switch_to.frame(iframes[-1])
     sidebar_links = driver.find_elements(By.CSS_SELECTOR, ".sidebar-link")
     for sidebar_link in sidebar_links:
         if "active" in sidebar_link.get_attribute("class"):

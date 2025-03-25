@@ -377,6 +377,7 @@ def capabilities(request, capabilities, tmpdir):
         options.add_argument("--disable-infobars")
         options.add_argument("--enable-logging")
         options.add_argument("--v=1")
+        options.add_argument("--disable-dev-shm-usage")
 
         options.set_capability(
             "goog:loggingPrefs",
