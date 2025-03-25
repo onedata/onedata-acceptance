@@ -125,3 +125,17 @@ class ExampleWorkflowExecutionInitialStoreContent:
 
     def substitute_placeholders_example(self, name="Tom"):
         return [{"input-store": {"name": name}}], []
+
+    def annotate_images(self, input_file=None, space="space1"):
+        input_files = (
+            self.gather_input_files("annotate-images") if not input_file else input_file
+        )
+        for file in input_files:
+            path = upload_workflow_path("annotate-images") + "/" + file
+            self.upload_file(path, file)
+        file_paths = [f"{space}/{file}" for file in input_files]
+
+        return [
+            {"Files to process": [{"fileId": self.resolve_file_id(path)}]}
+            for path in file_paths
+        ], [file_paths]

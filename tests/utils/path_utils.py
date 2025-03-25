@@ -1,9 +1,8 @@
-"""This file contains utility functions for operation on file paths.
-"""
+"""This file contains utility functions for operation on file paths."""
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import inspect
 import os
@@ -20,8 +19,7 @@ def config_file(relative_file_path):
     caller = inspect.stack()[1]
     caller_mod = inspect.getmodule(caller[0])
     caller_mod_file_path = caller_mod.__file__
-    return '{0}_data/{1}'.format(caller_mod_file_path.rstrip('.py'),
-                                 relative_file_path)
+    return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
 
 
 def get_file_name(file_path):
@@ -50,14 +48,14 @@ def make_logdir(root_dir, test_name):
     return name
 
 
-def get_json_files(dir, relative=False):
+def get_json_files(directory, relative=False):
     """Gets all .json files from given directory
     Returns list of files' absolute paths"""
     jsons = []
-    for file in os.listdir(dir):
-        if file.endswith('.json'):
+    for file in os.listdir(directory):
+        if file.endswith(".json"):
             if not relative:
-                jsons.append(os.path.join(dir, file))
+                jsons.append(os.path.join(directory, file))
             else:
                 jsons.append(file)
     return jsons
@@ -65,15 +63,14 @@ def get_json_files(dir, relative=False):
 
 def save_log_to_file(file_path, log):
     """Saves log to file pointed by file_path"""
-    f = open(file_path, 'w')
-    f.write(log)
-    f.close()
+    with open(file_path, "w") as f:
+        f.write(log)
 
 
 def append_log_to_file(path, log):
     """Appends log to file pointed by path"""
-    with open(path, 'a') as f:
-        f.write(f'{log}\n\n')
+    with open(path, "a") as f:
+        f.write(f"{log}\n\n")
         os.utime(path, None)
 
 
@@ -96,20 +93,20 @@ def ensure_json(file):
 
 def ensure_yaml(file):
     """Ensures that file has .yaml extension."""
-    if os.path.splitext(file)[1] != '.yaml':
-        file = '.'.join([file, 'yaml'])
+    if os.path.splitext(file)[1] != ".yaml":
+        file = ".".join([file, "yaml"])
     return file
 
 
-def absolute_path_to_env_file(dir, file):
+def absolute_path_to_env_file(directory, file):
     """Returns absolute path to environment file from dir. Ensures that file
     has .json extension"""
-    return os.path.join(dir, ensure_yaml(file))
+    return os.path.join(directory, ensure_yaml(file))
 
 
 def escape_path(path):
     """Returns path with escaped space and apostrophe"""
-    return path.replace("'", "\\'").replace(' ', '\ ')
+    return path.replace("'", "\\'").replace(" ", r"\ ")
 
 
 def get_first_path_element(path):

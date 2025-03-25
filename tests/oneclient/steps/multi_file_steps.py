@@ -158,6 +158,21 @@ def ls_present(user, files, path, client_node, users):
     assert_(client.perform, condition)
 
 
+def ls_present_spaces(user, spaces, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    path = client.absolute_path("")
+
+    def condition():
+        listed_spaces = client.ls(path)
+        for space in spaces:
+            assert (
+                space in listed_spaces
+            ), f"Space {space} not in listed spaces, listed spaces: {listed_spaces}"
+
+    assert_(client.perform, condition)
+
+
 @wt(parsers.re(r"(?P<directory>.*) is empty for (?P<user>\w+) on (?P<client_node>.*)"))
 def ls_empty(directory, user, client_node, users):
     user = users[user]
@@ -488,7 +503,13 @@ def check_time(user, time1, time2, comparator, file, client_node, users):
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
         t2 = getattr(stat_result, attr2)
-        assert compare(t1, t2, comparator)
+
+        err_msg = (
+            f"Time comparison failed. \nTime1: {time1} = {t1} \n"
+            f"Time2: {time2} = {t2} \nComparator: {comparator}"
+        )
+
+        assert compare(t1, t2, comparator), err_msg
 
     assert_(client.perform, condition)
 

@@ -22,6 +22,7 @@ from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
 )
+from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound
 from tests.utils.rest_utils import (
@@ -164,14 +165,7 @@ def _upload_workflow_rest(
 
 
 def get_store_schema_id_of_workflow(store_name, workflow_name):
-    if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
-        path = upload_workflow_path(f"{workflow_name}.json")
-    elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
-        path = upload_file_path(f"automation/workflow/{workflow_name}.json")
-    else:
-        raise FileNotFoundError(f"Path to {workflow_name} not found")
-    with open(path) as f:
-        data = json.load(f)
+    data = get_workflow_dump(workflow_name)
     stores = data["revision"]["atmWorkflowSchemaRevision"]["_data"]["stores"]
     for store in stores:
         if store["_data"]["name"] == store_name:
@@ -182,15 +176,8 @@ def get_store_schema_id_of_workflow(store_name, workflow_name):
 
 
 def get_revision_num_of_workflow(workflow_name):
-    if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
-        path = upload_workflow_path(f"{workflow_name}.json")
-    elif os.path.isfile(upload_file_path(f"automation/workflow/{workflow_name}.json")):
-        path = upload_file_path(f"automation/workflow/{workflow_name}.json")
-    else:
-        raise FileNotFoundError(f"Path to {workflow_name} not found")
-    with open(path) as f:
-        data = json.load(f)
-        return data["revision"]["originalRevisionNumber"]
+    data = get_workflow_dump(workflow_name)
+    return data["revision"]["originalRevisionNumber"]
 
 
 @wt(

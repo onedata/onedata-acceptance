@@ -105,7 +105,7 @@ def assert_recall_duration_in_archive_recall_information_modal(
     begin = datetime.strptime(started_at, "%d %b %Y %H:%M:%S")
     finish = datetime.strptime(finished_at, "%d %b %Y %H:%M:%S")
 
-    err_msg = "Recall start time is greater than finish time"
+    err_msg = f"Recall start time {begin} is greater than finish time {finish}"
     assert begin <= finish, err_msg
 
 

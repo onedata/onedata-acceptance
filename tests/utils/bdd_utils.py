@@ -2,47 +2,45 @@
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import inspect
-import sys
 from functools import wraps
-from types import CodeType
 
-from pytest_bdd import (scenario,
-                        scenarios,
-                        parsers,
-                        given as pytest_bdd_given,
-                        when as pytest_bdd_when,
-                        then as pytest_bdd_then)
+from pytest_bdd import given as pytest_bdd_given
+from pytest_bdd import parsers, scenario, scenarios
+from pytest_bdd import then as pytest_bdd_then
+from pytest_bdd import when as pytest_bdd_when
+
+__all__ = [
+    "scenario",
+    "scenarios",
+    "parsers",
+    "given",
+    "when",
+    "then",
+    "wt",
+    "scenarios_to_rerun",
+]
 
 
-__all__ = ['scenario', 'scenarios', 'parsers', 'given', 'when', 'then', 'wt', 'scenarios_to_rerun']
-
-
-def given(name, fixture=None, converters=None, scope='function',
-          target_fixture=None):
+def given(
+    name, fixture=None, converters=None, scope="function", target_fixture=None
+):  # pylint: disable=unused-argument
     wrappers = [
         sanitize_arguments,
-        pytest_bdd_given(name, converters, target_fixture, stacklevel=2)
+        pytest_bdd_given(name, converters, target_fixture, stacklevel=2),
     ]
     return _create_decorator(given, wrappers)
 
 
 def when(name, converters=None):
-    wrappers = [
-        sanitize_arguments,
-        pytest_bdd_when(name, converters, stacklevel=2)
-    ]
+    wrappers = [sanitize_arguments, pytest_bdd_when(name, converters, stacklevel=2)]
     return _create_decorator(when, wrappers)
 
 
 def then(name, converters=None):
-    wrappers = [
-        sanitize_arguments,
-        pytest_bdd_then(name, converters, stacklevel=2)
-    ]
+    wrappers = [sanitize_arguments, pytest_bdd_then(name, converters, stacklevel=2)]
     return _create_decorator(then, wrappers)
 
 
@@ -50,7 +48,7 @@ def wt(name, converters=None):
     wrappers = [
         sanitize_arguments,
         pytest_bdd_when(name, converters, stacklevel=2),
-        pytest_bdd_then(name, converters, stacklevel=2)
+        pytest_bdd_then(name, converters, stacklevel=2),
     ]
     return _create_decorator(wt, wrappers)
 
@@ -93,8 +91,9 @@ def _create_decorator(wrapped, wrappers):
     return decorator
 
 
+# pylint: disable=line-too-long
 scenarios_to_rerun = {
     "test_user_resume_workflow_execution_after_pausing_execution_of_created_workflow_while_lane_had_preparing_status",
     "test_user_sees_status_cancelled_in_lane1_and_unscheduled_in_lane2_after_cancelling_execution_of_uploaded_workflowwithsleeptwolanes_workflow",
-    "test_user_sees_status_status_in_lane2_after_stopping_execution_of_uploaded_workflowwithsleeptwolanes_workflow"
+    "test_user_sees_status_status_in_lane2_after_stopping_execution_of_uploaded_workflowwithsleeptwolanes_workflow",
 }

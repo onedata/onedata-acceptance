@@ -50,10 +50,10 @@ class Testdd(AbstractPerformanceTest):
         block_size = params['block_size']['value']
         block_size_unit = params['block_size']['unit']
 
-        test_file_directio = client_directio.mkstemp(dir=client_directio.absolute_path('space1'))
+        test_file_directio = client_directio.mkstemp(directory=client_directio.absolute_path('space1'))
 
-        test_file_proxy = client_proxy.mkstemp(dir=client_proxy.absolute_path('space1'))
-        test_file_host = client_proxy.mkstemp(dir=user_home_dir(user_proxy))
+        test_file_proxy = client_proxy.mkstemp(directory=client_proxy.absolute_path('space1'))
+        test_file_host = client_proxy.mkstemp(directory=user_home_dir(user_proxy))
 
         test_result1 = execute_dd_test(client_directio, test_file_directio, block_size,
                                        block_size_unit, size, size_unit,

@@ -1,14 +1,13 @@
-"""This module contains utility functions for running commands in docker
-"""
+"""This module contains utility functions for running commands in docker"""
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import subprocess
 
-from environment import docker
+from environment import docker  # pylint: disable=import-error
 
 
 def run_cmd(username, client, cmd, detach=False, output=False, error=False):
@@ -29,15 +28,20 @@ def run_cmd(username, client, cmd, detach=False, output=False, error=False):
     elif isinstance(cmd, list):
         cmd = [str(x) for x in cmd]
 
-    if username != 'root' and isinstance(cmd, str):
-        cmd = ['su', '-c', cmd, str(username)]
-    elif username != 'root' and isinstance(cmd, list):
-        cmd = ['su', '-c'] + cmd + [str(username)]
+    if username != "root" and isinstance(cmd, str):
+        cmd = ["su", "-c", cmd, str(username)]
+    elif username != "root" and isinstance(cmd, list):
+        cmd = ["su", "-c"] + cmd + [str(username)]
 
-    return docker.exec_(container=client, command=cmd, output=output,
-                        tty=True, stderr=subprocess.STDOUT if error else None,
-                        detach=detach)
+    return docker.exec_(
+        container=client,
+        command=cmd,
+        output=output,
+        tty=True,
+        stderr=subprocess.STDOUT if error else None,
+        detach=detach,
+    )
 
 
 def docker_ip(container):
-    return docker.inspect(container)['NetworkSettings']['IPAddress']
+    return docker.inspect(container)["NetworkSettings"]["IPAddress"]
