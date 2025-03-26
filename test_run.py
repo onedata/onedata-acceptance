@@ -439,7 +439,7 @@ def resolve_image(service):
             elif service_branch == 'default':
                 branch_tag = fallback_tag
             else:
-                branch_tag = service_branch
+                branch_tag = get_branch_tag(service_branch)
 
             image = '{}:{}'.format(SERVICE_TO_IMAGE[service], branch_tag)
             fallback_image = '{}:{}'.format(SERVICE_TO_IMAGE[service], fallback_tag)
