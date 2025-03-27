@@ -83,6 +83,7 @@ stages:
         - Nested directories create
         - Nested directories remove
         - Onepanel
+        - OneS3 nodes
         - Permission POSIX
         - Permission POSIX multi
         - QoS
@@ -760,6 +761,22 @@ Onepanel:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_onepanel_basic test_mixed_src
+
+OneS3 nodes:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: COSN
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_2nodes SUITE=test_ones3_nodes test_mixed_src
 
 Permission POSIX:
   <<: *acceptance-mixed-tests-in-chrome-job
