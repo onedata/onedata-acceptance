@@ -1,0 +1,13 @@
+scenario: "1oz_1op_deployed.yaml"
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+  clusterConfig:
+    managers: [node-1]
+    workers: [node-2]
+    databases: [node-1]
