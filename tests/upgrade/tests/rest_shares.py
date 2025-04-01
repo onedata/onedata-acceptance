@@ -1,4 +1,5 @@
-"""This module contains tests of shares and handles operations after environment upgrade"""
+"""This module contains tests of shares, handles, datasets and archives operations
+after environment upgrade"""
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
@@ -9,7 +10,6 @@ import io
 import os
 import shutil
 import tarfile
-import time
 from functools import partial
 
 from tests.upgrade.utils.rest import (
@@ -20,86 +20,311 @@ from tests.upgrade.utils.rest import (
     get_archive_information,
     get_handle,
     get_share_info,
-    list_handle_services,
-    list_handles,
     lookup_file_id,
     register_handle,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
+from tests.utils.utils import repeat_failed
 
 
 def get_tests(tests_controller):
     return [
         UpgradeTest(
-            "rest shares test",
-            partial(setup1, tests_controller),
-            partial(verify1, tests_controller),
+            "rest shares and handles test",
+            partial(setup_shares_handles, tests_controller),
+            partial(verify_shares_handles, tests_controller),
         ),
         UpgradeTest(
-            "rest shares handles and archives test",
-            partial(setup2, tests_controller),
-            partial(verify2, tests_controller),
+            "rest datasets and archives test",
+            partial(setup_datasets_and_archives, tests_controller),
+            partial(verify_datasets_and_archives, tests_controller),
+        ),
+        UpgradeTest(
+            "rest all functionalities test",
+            partial(setup_all_functionalities, tests_controller),
+            partial(verify_all_functionalities, tests_controller),
         ),
     ]
 
 
-def convert_bytes_and_unpack_tar(raw_bytes, path):
-    if os.path.exists(path):
-        shutil.rmtree(path)
+def unpack_tarball_from_payload(raw_bytes, target_path):
+    if os.path.exists(target_path):
+        shutil.rmtree(target_path)
     tar_bytes = io.BytesIO(raw_bytes)
     with tarfile.open(fileobj=tar_bytes, mode="r:") as tar:
-        tar.extractall(path)
+        tar.extractall(target_path)
 
 
-SHARES_ID = {}
+SHARE_NAME_TO_ID = {}
+HANDLE_NAME_TO_ID = {}
+ARCHIVE_NAME_TO_ID = {}
+RESULTS = {}
 
 
-def setup1(tests_controller):
-    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
-    token = tests_controller.users["user1"].token
-    prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    try:
-        prov_version = int(prov_version.split(".")[0])
-    except ValueError:
-        # version is develop, so it is current enough
-        prov_version = 100
-
-    client = tests_controller.mount_client("user1", "oneclient-1", "client11")
-    space_path = client.absolute_path("space_posix")
-    client.mkdir(os.path.join(space_path, "dir1_shared"))
-    client.create_file(os.path.join(space_path, "file1_shared"))
-
-    file_id = lookup_file_id("space_posix/file1_shared", provider_host, token)
-    share_id = create_share(provider_host, token, file_id, prov_version)
-    SHARES_ID["file1_shared"] = share_id
-
-    file_id = lookup_file_id("space_posix/dir1_shared", provider_host, token)
-    share_id = create_share(provider_host, token, file_id, prov_version)
-    SHARES_ID["dir1_shared"] = share_id
-    # sleep is necessary as events are processed asynchronously and there is possible race
-    # between client unmounting (which is done after the setup) and processing all its events
-    # by provider.
-    time.sleep(10)
-
-
-def setup2(tests_controller):
+def setup_shares_handles(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
     admin_token = tests_controller.users["admin"].token
-    prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    try:
-        prov_version = int(prov_version.split(".")[0])
-    except ValueError:
-        # version is develop, so it is current enough
-        prov_version = 100
-    if prov_version < 21:
-        # provider api support managing datasets and archives from 21 version
+
+    client = tests_controller.get_client("user1", "oneclient-1", "client11")
+    space_path = client.absolute_path("space_posix")
+    client.mkdir(os.path.join(space_path, "dir1_shared"))
+    dir_path = os.path.join(space_path, "dir1_shared")
+    client.create_file(os.path.join(dir_path, "file1_shared"))
+
+    file_id = lookup_file_id(
+        "space_posix/dir1_shared/file1_shared", provider_host, token
+    )
+    SHARE_NAME_TO_ID["file1_shared"] = create_share(
+        provider_host, token, file_id, "file1_shared"
+    )
+    file_id = lookup_file_id("space_posix/dir1_shared", provider_host, token)
+    SHARE_NAME_TO_ID["dir1_shared"] = create_share(
+        provider_host, token, file_id, "dir1_shared"
+    )
+
+    res = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir1_shared"])
+    HANDLE_NAME_TO_ID["handle"] = res.headers["location"].split("/")[-1]
+    wait_for_handle_registration(provider_host, token, SHARE_NAME_TO_ID["dir1_shared"])
+
+    RESULTS["handle_details"] = get_handle(
+        zone_host, admin_token, HANDLE_NAME_TO_ID["handle"]
+    )
+    RESULTS["share_details"] = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+    )
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_share1_s")
+
+
+def verify_shares_handles(tests_controller):
+    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
+    zone_host = tests_controller.hosts["onezone"]["hostname"]
+    token = tests_controller.users["user1"].token
+    admin_token = tests_controller.users["admin"].token
+
+    handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
+    handle_details.pop("metadataPrefix")
+    handle_details.pop("metadata")
+    RESULTS["handle_details"].pop("metadata")
+    assert RESULTS["handle_details"] == handle_details
+    assert RESULTS["share_details"] == get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+    )
+
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_share1_v")
+    compare_downloaded_dirs_content("downloaded_share1_s", "downloaded_share1_v")
+
+    share_details = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
+    )
+    assert share_details["name"] == "file1_shared"
+    assert share_details["shareId"] == SHARE_NAME_TO_ID["file1_shared"]
+    assert share_details["rootFileType"] == "REG"
+
+    share_details = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+    )
+    assert share_details["name"] == "dir1_shared"
+    assert share_details["shareId"] == SHARE_NAME_TO_ID["dir1_shared"]
+    assert share_details["rootFileType"] == "DIR"
+
+
+def setup_datasets_and_archives(tests_controller):
+    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
+    token = tests_controller.users["user1"].token
+
+    if not check_provider_supports_managing_datasets(provider_host):
         return
 
-    client = tests_controller.mount_client("user1", "oneclient-1", "client11")
-    space_path = client.absolute_path("space_posix")
-    dir_path = os.path.join(space_path, "dir2_shared")
+    client = tests_controller.get_client("user1", "oneclient-1", "client11")
+    create_dir_with_example_content(client, "space_posix", "dir2_datasets")
+
+    file_id = lookup_file_id("space_posix/dir2_datasets", provider_host, token)
+
+    dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
+    ARCHIVE_NAME_TO_ID["archive"] = create_archive(
+        provider_host, token, dataset_id, "test"
+    )["archiveId"]
+    root_dir_id = get_archive_information(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
+    )["rootDirectoryId"]
+    archive_content = download_file_content(provider_host, token, root_dir_id)
+    unpack_tarball_from_payload(archive_content, "downloaded_archive_s")
+
+    create_additional_content_in_dir(client, "space_posix", "dir2_datasets")
+
+    archive_config = {
+        "config": {
+            "incremental": {"enabled": True, "basedOn": ARCHIVE_NAME_TO_ID["archive"]}
+        }
+    }
+    ARCHIVE_NAME_TO_ID["archive_incremental"] = create_archive(
+        provider_host, token, dataset_id, "test", archive_config
+    )["archiveId"]
+    root_dir_id = get_archive_information(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
+    )["rootDirectoryId"]
+    archive_inc_content = download_file_content(provider_host, token, root_dir_id)
+    unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_s")
+
+
+def verify_datasets_and_archives(tests_controller):
+    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
+    token = tests_controller.users["user1"].token
+
+    if not check_provider_supports_managing_datasets(provider_host):
+        return
+
+    root_dir_id = get_archive_information(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
+    )["rootDirectoryId"]
+    archive_content = download_file_content(provider_host, token, root_dir_id)
+    unpack_tarball_from_payload(archive_content, "downloaded_archive_v")
+
+    root_dir_id = get_archive_information(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
+    )["rootDirectoryId"]
+    archive_inc_content = download_file_content(provider_host, token, root_dir_id)
+    unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_v")
+    compare_downloaded_dirs_content(
+        "downloaded_archive_inc_s", "downloaded_archive_inc_v"
+    )
+    compare_downloaded_dirs_content("downloaded_archive_s", "downloaded_archive_v")
+
+
+def setup_all_functionalities(tests_controller):
+    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
+    zone_host = tests_controller.hosts["onezone"]["hostname"]
+    token = tests_controller.users["user1"].token
+    admin_token = tests_controller.users["admin"].token
+
+    if not check_provider_supports_managing_datasets(provider_host):
+        return
+
+    client = tests_controller.get_client("user1", "oneclient-1", "client11")
+    create_dir_with_example_content(client, "space_posix", "dir3_shared")
+
+    file_id = lookup_file_id("space_posix/dir3_shared", provider_host, token)
+    SHARE_NAME_TO_ID["dir3_shared"] = create_share(
+        provider_host, token, file_id, "dir3_shared"
+    )
+    _ = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir3_shared"])
+
+    dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
+    archive_id = create_archive(provider_host, token, dataset_id, "test")["archiveId"]
+
+    create_additional_content_in_dir(client, "space_posix", "dir3_shared")
+
+    archive_config = {
+        "config": {"incremental": {"enabled": True, "basedOn": archive_id}}
+    }
+    archive_inc_id = create_archive(
+        provider_host, token, dataset_id, "test", archive_config
+    )["archiveId"]
+    root_dir_id = get_archive_information(provider_host, token, archive_inc_id)[
+        "rootDirectoryId"
+    ]
+    SHARE_NAME_TO_ID["dir3_archive_incremental"] = create_share(
+        provider_host, token, root_dir_id, "dir3_archive_incremental"
+    )
+    _ = register_handle(
+        zone_host, admin_token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
+    )
+
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir3_shared"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_s")
+
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_s")
+
+
+def verify_all_functionalities(tests_controller):
+    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
+    token = tests_controller.users["user1"].token
+    if not check_provider_supports_managing_datasets(provider_host):
+        return
+
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir3_shared"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_v")
+
+    share_root_dir_id = get_share_info(
+        provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
+    )["rootFileId"]
+    share_content = download_file_content(provider_host, token, share_root_dir_id)
+    unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_v")
+
+    compare_downloaded_dirs_content(
+        "downloaded_dir3_shared_s", "downloaded_dir3_shared_v"
+    )
+    compare_downloaded_dirs_content(
+        "downloaded_dir3_archive_incremental_s", "downloaded_dir3_archive_incremental_v"
+    )
+
+    archive_name = os.listdir("downloaded_dir3_archive_incremental_s")[0]
+    path1 = os.path.join("downloaded_dir3_shared_s", "dir3_shared")
+    path2 = os.path.join(
+        "downloaded_dir3_archive_incremental_s", archive_name, "dir3_shared"
+    )
+
+    compare_downloaded_dirs_content(path1, path2)
+
+
+def compare_downloaded_dirs_content(path1, path2):
+    comp_res = filecmp.dircmp(path1, path2)
+    comp_report = "\n".join(
+        [
+            f"Differences in common files: {comp_res.diff_files}",
+            f"Files only in {path1}: {comp_res.left_only}",
+            f"Files only in {path2}: {comp_res.right_only}",
+        ]
+    )
+    # assert differences in common files
+    assert not comp_res.diff_files, comp_report
+    # assert presence of files existing only in left path
+    assert not comp_res.left_only, comp_report
+    # assert presence of files existing only in right path
+    assert not comp_res.right_only, comp_report
+    # recursively check common directories
+    if any(comp_res.common_dirs):
+        for common_dir in comp_res.common_dirs:
+            compare_downloaded_dirs_content(
+                os.path.join(path1, common_dir), os.path.join(path2, common_dir)
+            )
+
+
+@repeat_failed(timeout=30)
+def wait_for_handle_registration(provider_host, token, share_id):
+    res = get_share_info(provider_host, token, share_id)
+    assert res["handleId"] is not None
+
+
+def check_provider_supports_managing_datasets(provider_host):
+    prov_version = get_prov_version(provider_host)
+    # provider api supports managing datasets and archives from 21 version
+    return prov_version >= 21
+
+
+def create_dir_with_example_content(client, space_name: str, dir_name: str):
+    space_path = client.absolute_path(space_name)
+    dir_path = os.path.join(space_path, dir_name)
     client.mkdir(dir_path)
     client.create_file(os.path.join(dir_path, "file1"))
     client.create_file(os.path.join(dir_path, "file2"))
@@ -108,30 +333,10 @@ def setup2(tests_controller):
     client.write("abc2", os.path.join(dir_path, "file2"))
     client.write("abc3", os.path.join(dir_path, "file3"))
 
-    file_id = lookup_file_id("space_posix/dir2_shared", provider_host, token)
-    share_id = create_share(provider_host, token, file_id, prov_version)
 
-    handle_service_id = list_handle_services(zone_host, admin_token)["handle_services"][
-        0
-    ]
-    register_handle_config = {
-        "handleServiceId": handle_service_id,
-        "resourceType": "Share",
-        "resourceId": share_id,
-        "metadataPrefix": "oai_dc",
-        "metadata": """<?xml version="1.0" encoding="utf-8"?>
-<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-          xmlns:dc="http://purl.org/dc/elements/1.1/">
-    <dc:title>Test dataset</dc:title>
-    <dc:creator>Jane Doe</dc:creator>
-    <dc:subject>Test</dc:subject>
-</metadata>""",
-    }
-    _ = register_handle(zone_host, admin_token, register_handle_config)
-
-    dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
-    archive_id = create_archive(provider_host, token, dataset_id, "test")["archiveId"]
-
+def create_additional_content_in_dir(client, space_name: str, dir_name: str):
+    space_path = client.absolute_path(space_name)
+    dir_path = os.path.join(space_path, dir_name)
     client.create_file(os.path.join(dir_path, "file4"))
     client.create_file(os.path.join(dir_path, "file5"))
     client.create_file(os.path.join(dir_path, "file6"))
@@ -139,82 +344,13 @@ def setup2(tests_controller):
     client.write("abc5", os.path.join(dir_path, "file5"))
     client.write("abc6", os.path.join(dir_path, "file6"))
 
-    config = {"config": {"incremental": {"enabled": True, "basedOn": archive_id}}}
-    time.sleep(1)  # wait for archive creation
-    archive_inc_id = create_archive(provider_host, token, dataset_id, "test", config)[
-        "archiveId"
-    ]
-    root_dir_id = get_archive_information(provider_host, token, archive_inc_id)[
-        "rootDirectoryId"
-    ]
-    share_id = create_share(provider_host, token, root_dir_id, prov_version)
 
-    register_handle_config.update({"resourceId": share_id})
-    _ = register_handle(zone_host, admin_token, register_handle_config)
-
-    # sleep is necessary as events are processed asynchronously and there is possible race
-    # between client unmounting (which is done after the setup) and processing all its events
-    # by provider.
-    time.sleep(10)
-
-
-def verify1(tests_controller):
-    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
-    token = tests_controller.users["user1"].token
-
-    share_details = get_share_info(provider_host, token, SHARES_ID["file1_shared"])
-    assert share_details["name"] == "testShare"
-    assert share_details["shareId"] == SHARES_ID["file1_shared"]
-    assert share_details["rootFileType"] == "REG"
-
-    share_details = get_share_info(provider_host, token, SHARES_ID["dir1_shared"])
-    assert share_details["name"] == "testShare"
-    assert share_details["shareId"] == SHARES_ID["dir1_shared"]
-    assert share_details["rootFileType"] == "DIR"
-
-
-def verify2(tests_controller):
-    provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
-    zone_host = tests_controller.hosts["onezone"]["hostname"]
-    token = tests_controller.users["user1"].token
-    admin_token = tests_controller.users["admin"].token
-    prov_version = tests_controller.test_config["initialVersions"]["oneprovider"]
-    try:
-        prov_version = int(prov_version.split(".")[0])
-    except ValueError:
-        # version is develop, so it is current enough
-        prov_version = 100
-    if prov_version < 21:
-        # provider api support managing datasets and archives from 21 version
-        return
-
-    handles = list_handles(zone_host, admin_token)["handles"]
-    assert len(handles) == 2
-
-    res = get_handle(zone_host, admin_token, handles[0])
-    share_id = res["resourceId"]
-    share_root_dir_id1 = get_share_info(provider_host, token, share_id)["rootFileId"]
-
-    res = get_handle(zone_host, admin_token, handles[1])
-    share_id = res["resourceId"]
-    share_root_dir_id2 = get_share_info(provider_host, token, share_id)["rootFileId"]
-
-    handle1_content = download_file_content(provider_host, token, share_root_dir_id1)
-    handle2_content = download_file_content(provider_host, token, share_root_dir_id2)
-
-    convert_bytes_and_unpack_tar(handle1_content, "downloaded_handle1")
-    convert_bytes_and_unpack_tar(handle2_content, "downloaded_handle2")
-
-    if os.listdir("downloaded_handle1")[0].startswith("archive"):
-        path1 = os.path.join("downloaded_handle1", os.listdir("downloaded_handle1")[0])
-        path2 = "downloaded_handle2"
-    else:
-        path1 = "downloaded_handle1"
-        path2 = os.path.join("downloaded_handle2", os.listdir("downloaded_handle2")[0])
-    path1 = os.path.join(path1, "dir2_shared")
-    path2 = os.path.join(path2, "dir2_shared")
-
-    comp_res = filecmp.dircmp(path1, path2)
-    assert not comp_res.diff_files
-    assert not comp_res.left_only
-    assert not comp_res.right_only
+@repeat_failed(timeout=60)
+def wait_for_synced_file_content(provider_host, path, token, expected_content):
+    file_id = lookup_file_id(path, provider_host, token)
+    actual_content = str(
+        download_file_content(provider_host, token, file_id), encoding="utf-8"
+    )
+    assert (
+        actual_content == expected_content
+    ), f"expected content: {expected_content} but got {actual_content}"

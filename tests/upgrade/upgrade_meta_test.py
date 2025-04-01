@@ -9,9 +9,9 @@ from tests.upgrade.tests import oneclient_crud, rest_shares, rest_views
 
 def test_upgrade(tests_controller):
     """
-    All that tests are interpreted as one test
-    Number of tests depends on config file
-    Procedure of running test:
+    All those tests are interpreted as a one test
+    Number of tests depends on a config file
+    Procedure of running a test:
     Run all setups -> Upgrade services -> Run all verifies
     """
 

@@ -17,6 +17,21 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+from tests.utils.utils import repeat_failed
+
+EXAMPLE_HANDLE_METADATA = {
+    "handleServiceId": "$handle_service_id",
+    "resourceType": "Share",
+    "resourceId": "$share_id",
+    "metadataPrefix": "oai_dc",
+    "metadata": """<?xml version="1.0" encoding="utf-8"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Test dataset</dc:title>
+    <dc:creator>Jane Doe</dc:creator>
+    <dc:subject>Test</dc:subject>
+</metadata>""",
+}
 
 # Spaces
 
@@ -124,6 +139,7 @@ def establish_dataset(provider_host, token, file_id):
     return res.json()
 
 
+@repeat_failed(timeout=10)
 def create_archive(provider_host, token, dataset_id, description, config=None):
     data = {"datasetId": dataset_id, "description": description}
     if config:
@@ -154,7 +170,10 @@ def get_archive_information(provider_host, token, archive_id):
 # Shares and Handles
 
 
-def create_share(provider_host, token, file_id, prov_version):
+def create_share(provider_host, token, file_id, name):
+    prov_version = int(
+        get_provider_configuration(provider_host)["version"].split(".")[0]
+    )
     res = http_post(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -162,7 +181,7 @@ def create_share(provider_host, token, file_id, prov_version):
         headers={"X-Auth-Token": token, "Content-Type": "application/json"},
         data=json.dumps(
             {
-                "name": "testShare",
+                "name": name,
                 "rootFileId" if prov_version >= 21 else "fileId": file_id,
             }
         ),
@@ -200,7 +219,11 @@ def list_handle_services(zone_host, token):
     return res.json()
 
 
-def register_handle(zone_host, token, config):
+def register_handle(zone_host, token, share_id):
+    handle_service_id = list_handle_services(zone_host, token)["handle_services"][0]
+    EXAMPLE_HANDLE_METADATA.update(
+        {"handleServiceId": handle_service_id, "resourceId": share_id}
+    )
     res = http_post(
         ip=zone_host,
         port=OZ_REST_PORT,
@@ -209,7 +232,7 @@ def register_handle(zone_host, token, config):
             "X-Auth-Token": token,
             "Content-Type": "application/json",
         },
-        data=json.dumps(config),
+        data=json.dumps(EXAMPLE_HANDLE_METADATA),
     )
     return res
 
@@ -254,7 +277,7 @@ def query_view(
     token,
     space_id,
     view_name,
-    spatial=None,
+    spatial=False,
     start_range=None,
     end_range=None,
 ):

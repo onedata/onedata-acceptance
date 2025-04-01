@@ -5,10 +5,14 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import time
+import traceback
+
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 
 from tests.conftest import export_logs
+from tests.upgrade.utils.rest import get_provider_configuration
 from tests.utils.environment_utils import (
     configure_os,
     get_deployment_status,
@@ -25,6 +29,9 @@ class UpgradeTest:
         self.__setup = setup  # function executed before any upgrade is performed
         self.__verify = verify  # function executed after all upgrades are performed
 
+    def get_name(self):
+        return self.__name
+
     def run_setup(self, *args, **kwargs):
         print(f'\nRunning setup for test "{self.__name}"\n')
         self.__setup(*args, **kwargs)
@@ -36,6 +43,7 @@ class UpgradeTest:
         print(f'\nVerify for test "{self.__name}" finished\n')
 
 
+# pylint: disable=too-many-instance-attributes,broad-exception-caught
 class UpgradeTestsController:
     def __init__(
         self,
@@ -49,6 +57,7 @@ class UpgradeTestsController:
         env_description_abs_path,
     ):
         self.__tests_list = []
+        self.__test_results = {}
         self.test_config = test_config
         self.env = {
             "env_desc": env_desc,
@@ -59,6 +68,7 @@ class UpgradeTestsController:
         self.clients = clients
         self.request = request
         self.users = users
+        self.user_clients = {}
 
     def add_test(self, test):
         self.__tests_list.append(test)
@@ -78,9 +88,33 @@ class UpgradeTestsController:
             return client
         raise RuntimeError("Error when mounting oneclient")
 
+    def get_client(self, username, client_host_alias, client_instance):
+        client_info = (
+            username,
+            client_host_alias,
+            client_instance,
+        )
+        if client_info in self.user_clients:
+            return self.user_clients[client_info]
+        client = self.mount_client(*client_info)
+        self.user_clients[client_info] = client
+        return client
+
     def run_tests(self):
         admin_user = self.users["admin"]
-        _ = [self.__run_setup(test) for test in self.__tests_list]
+        for test in self.__tests_list:
+            try:
+                self.__run_setup(test)
+            except Exception:
+                self.__test_results[test.get_name()] = format_failed_test_results(
+                    "SETUP", traceback.format_exc(), test
+                )
+                print("FAILED")
+        # sleep is necessary as events are processed asynchronously and there is possible race
+        # between client unmounting (which is done after the setup) and processing all its events
+        # by provider.
+        time.sleep(10)
+        self.__unmount_clients()
         for service_name in ["onezone", "oneprovider", "oneclient"]:
             if service_name in self.test_config["targetVersions"].keys():
                 upgrade_service(
@@ -92,25 +126,53 @@ class UpgradeTestsController:
 
         setup_hosts_cfg(self.hosts, self.request)
         configure_os(self.env["scenario_abs_path"], get_deployment_status())
-        _ = [self.__run_verify(test) for test in self.__tests_list]
+        for test in self.__tests_list:
+            # test failed on setup
+            if test.get_name() in self.__test_results:
+                continue
+            try:
+                self.__run_verify(test)
+            except Exception:
+                self.__test_results[test.get_name()] = format_failed_test_results(
+                    "VERIFY", traceback.format_exc(), test
+                )
+                print("FAILED")
+            else:
+                self.__test_results[test.get_name()] = format_succeed_test_results(test)
         self.__unmount_clients()
+        self.print_tests_results()
+        assert not self.tests_failed(), f"FAILED TESTS {self.get_failed_tests()}"
 
     def __run_setup(self, test):
         test.run_setup()
-        self.__unmount_clients()
         export_logs(
             self.request, self.env["env_description_abs_path"], "before_upgrade"
         )
 
     def __run_verify(self, test):
         test.run_verify()
-        self.__unmount_clients()
 
     def __unmount_clients(self):
         for user in self.users.values():
             for client in user.clients.values():
                 client.unmount()
             user.clients.clear()
+        self.user_clients = {}
+
+    def get_failed_tests(self):
+        return [
+            test_name
+            for test_name, test_result in self.__test_results.items()
+            if "FAILED" in test_result
+        ]
+
+    def tests_failed(self):
+        return any(self.get_failed_tests())
+
+    def print_tests_results(self):
+        print("TESTS RESULTS")
+        for test_result in self.__test_results.values():
+            print(test_result)
 
 
 def upgrade_service(service_name, admin_user, hosts, version):
@@ -152,3 +214,15 @@ def prepare_sources_upgrade_command(service, version):
     cmd = ["-i", image, "--sources-path", "."]
     cmd.extend(components)
     return cmd
+
+
+def get_prov_version(provider_host):
+    return int(get_provider_configuration(provider_host)["version"].split(".")[0])
+
+
+def format_failed_test_results(when, exception, test):
+    return f"TEST {test.get_name()} FAILED ON {when} ERROR:\n {exception}"
+
+
+def format_succeed_test_results(test):
+    return f"TEST OK: {test.get_name()}"
