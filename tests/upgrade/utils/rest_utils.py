@@ -41,7 +41,9 @@ def list_all_user_spaces(provider_host, token):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces"),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -62,7 +64,9 @@ def lookup_file_id(file_path, provider_hostname, token):
         ip=provider_hostname,
         port=OP_REST_PORT,
         path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()["fileId"]
 
@@ -72,7 +76,9 @@ def download_file_content(provider_host, token, file_id):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "content"),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.content
 
@@ -162,7 +168,9 @@ def get_archive_information(provider_host, token, archive_id):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("archives", archive_id),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -178,7 +186,10 @@ def create_share(provider_host, token, file_id, name):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("shares"),
-        headers={"X-Auth-Token": token, "Content-Type": "application/json"},
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
         data=json.dumps(
             {
                 "name": name,
@@ -194,7 +205,9 @@ def get_share_info(provider_host, token, share_id):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("shares", share_id),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -204,7 +217,9 @@ def list_handles(zone_host, token):
         ip=zone_host,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("handles"),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -214,7 +229,9 @@ def list_handle_services(zone_host, token):
         ip=zone_host,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("handle_services"),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -242,7 +259,9 @@ def get_handle(zone_host, token, handle_id):
         ip=zone_host,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("handles", handle_id),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -293,7 +312,9 @@ def query_view(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces", space_id, "views", view_name, "query"),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
         params=query_params,
     )
     return res.json()
@@ -304,7 +325,9 @@ def get_view(provider_host, token, space_id, view_name):
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("spaces", space_id, "views", view_name),
-        headers={"X-Auth-Token": token},
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res.json()
 
@@ -335,7 +358,7 @@ def get_provider_configuration(provider_host):
     return res.json()
 
 
-def subscribe_to_file_events(provider_host, token, space_id, data, stream=True):
+def subscribe_to_file_changes(provider_host, token, space_id, data, stream=True):
     query_params = {"last_seq": 0, "timeout": 1000}
 
     res = http_post(

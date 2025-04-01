@@ -12,7 +12,7 @@ import shutil
 import tarfile
 from functools import partial
 
-from tests.upgrade.utils.rest import (
+from tests.upgrade.utils.rest_utils import (
     create_archive,
     create_share,
     download_file_content,
