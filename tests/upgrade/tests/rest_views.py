@@ -95,6 +95,28 @@ VIEW4 = "view_with_reduce"
 VIEW5 = "view_double_providers"
 VIEW6 = "view_double_providers_error"
 
+ALL_FILES = [
+    "file_json",
+    "file_rdf",
+    "file_xattrs",
+    "file_sp1",
+    "file_sp2",
+    "file_sp3",
+    "file_popularity_example",
+]
+FILES_WITH_METADATA = [
+    "file_json",
+    "file_rdf",
+    "file_xattrs",
+    "file_sp1",
+    "file_sp2",
+    "file_sp3",
+]
+FILES_MEETING_SPATIAL_CONDITION = ["file_sp1", "file_sp3"]
+REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
+EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
+
+SPACE_NAME = "space_views"
 RESULTS = {}
 
 
@@ -104,7 +126,7 @@ def setup_views(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     admin_token = tests_controller.users["admin"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
 
     # enable file popularity mechanism in space
     data = {"enabled": True}
@@ -121,10 +143,10 @@ def setup_views(tests_controller):
     _ = create_view(provider_host, token, space_id, VIEW4, MAP_FUNC_FILES_WITH_META)
 
     # create files
-    create_example_content_in_space(client, "space_views")
+    create_example_content_in_space(client)
 
     # create metadata
-    add_example_metadata_to_files_in_space(provider_host, token, "space_views")
+    add_example_metadata_to_files_in_space(provider_host, token)
 
     # add reduce function to view
     update_view_reduce_function(provider_host, token, space_id, VIEW4, REDUCE_FUNC)
@@ -133,15 +155,15 @@ def setup_views(tests_controller):
         partial(query_view, provider_host, token, space_id, VIEW1),
         provider_host,
         token,
-        "view1",
-        "space_views",
+        ALL_FILES,
+        "key",
     )
     RESULTS["view2"] = wait_for_expected_files_in_query_view(
         partial(query_view, provider_host, token, space_id, VIEW2),
         provider_host,
         token,
-        "view2",
-        "space_views",
+        FILES_WITH_METADATA,
+        "key",
     )
     RESULTS["view3"] = wait_for_expected_files_in_query_view(
         partial(
@@ -156,40 +178,45 @@ def setup_views(tests_controller):
         ),
         provider_host,
         token,
-        "view3",
-        "space_views",
+        FILES_MEETING_SPATIAL_CONDITION,
+        "value",
     )
     RESULTS["view4"] = wait_for_expected_result_in_reduce_query_view(
-        partial(query_view, provider_host, token, space_id, VIEW4)
+        partial(query_view, provider_host, token, space_id, VIEW4),
+        REDUCE_QUERY_EXP_VALUE,
     )
     RESULTS["file-popularity"] = wait_for_expected_files_in_query_view(
         partial(query_view, provider_host, token, space_id, "file-popularity"),
         provider_host,
         token,
-        "file-popularity",
-        "space_views",
+        ["file_popularity_example"],
+        "value",
     )
 
 
 def verify_views(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    assert RESULTS["view1"] == query_view(provider_host, token, space_id, VIEW1)
-    assert RESULTS["view2"] == query_view(provider_host, token, space_id, VIEW2)
-    assert RESULTS["view3"] == query_view(
-        provider_host,
-        token,
-        space_id,
-        VIEW3,
-        spatial=True,
-        start_range="[0,0]",
-        end_range="[5,10]",
+    _assert(RESULTS["view1"], query_view(provider_host, token, space_id, VIEW1))
+    _assert(RESULTS["view2"], query_view(provider_host, token, space_id, VIEW2))
+    _assert(
+        RESULTS["view3"],
+        query_view(
+            provider_host,
+            token,
+            space_id,
+            VIEW3,
+            spatial=True,
+            start_range="[0,0]",
+            end_range="[5,10]",
+        ),
     )
-    assert RESULTS["view4"] == query_view(provider_host, token, space_id, VIEW4)
-    assert RESULTS["file-popularity"] == query_view(
-        provider_host, token, space_id, "file-popularity"
+    _assert(RESULTS["view4"], query_view(provider_host, token, space_id, VIEW4))
+    _assert(
+        RESULTS["file-popularity"],
+        query_view(provider_host, token, space_id, "file-popularity"),
     )
 
 
@@ -204,7 +231,7 @@ def setup_views_multiprovider(tests_controller):
     prov2_id = get_provider_configuration(provider_host2)["providerId"]
 
     token = tests_controller.users["user1"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
 
     _ = create_view(
         provider_host,
@@ -227,8 +254,8 @@ def setup_views_multiprovider(tests_controller):
         partial(query_view, provider_host2, token, space_id, VIEW5),
         provider_host,
         token,
-        "view1",
-        "space_views",
+        ALL_FILES,
+        "key",
     )
 
     try:
@@ -245,7 +272,7 @@ def verify_views_multiprovider(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     provider_host2 = tests_controller.hosts["oneprovider-2"]["hostname"]
     token = tests_controller.users["user1"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
 
     _assert(RESULTS["view5"], query_view(provider_host2, token, space_id, VIEW5))
     try:
@@ -258,118 +285,82 @@ def verify_views_multiprovider(tests_controller):
 def setup_subscribe_changes(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
 
     data = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
 
-    res = wait_for_expected_files_in_file_changes(
-        provider_host, token, space_id, data, "space_views"
+    record = get_record_for_file_in_file_changes(
+        provider_host, token, space_id, data, EXAMPLE_FILE_TO_CHECK_FILE_CHANGES
     )
 
-    RESULTS["file_changes"] = res.text
+    RESULTS["file_changes"] = record
 
 
 def verify_subscribe_changes(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
-    space_id = get_space_id("space_views", provider_host, token)
+    space_id = get_space_id(SPACE_NAME, provider_host, token)
     data = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
 
-    file_id = lookup_file_id("space_views/file_json", provider_host, token)
-    assert_file_id_in_file_changes(provider_host, token, space_id, data, file_id)
+    record = get_record_for_file_in_file_changes(
+        provider_host, token, space_id, data, EXAMPLE_FILE_TO_CHECK_FILE_CHANGES
+    )
+    _assert(RESULTS["file_changes"], record)
 
-    res = subscribe_to_file_changes(provider_host, token, space_id, data)
-    assert RESULTS["file_changes"] == res.text
 
-
-def _assert(actual, expected):
+def _assert(expected, actual):
     err_msg = f"Expected value: {expected}, but got: {actual}"
     assert actual == expected, err_msg
 
 
 @repeat_failed(timeout=60)
 def wait_for_expected_files_in_query_view(
-    query, provider_host, token, view_name, space_name: str
+    query,
+    provider_host,
+    token,
+    expected_files,
+    file_id_attr_name,
 ):
     res = query()
-    if view_name in ["view1", "view2"]:
-        items = [item["key"] for item in res]
-    else:
-        items = [item["value"] for item in res]
-    view_to_expected_files = {
-        "view1": [
-            "file_json",
-            "file_rdf",
-            "file_xattrs",
-            "file_sp1",
-            "file_sp2",
-            "file_sp3",
-            "file_popularity_example",
-        ],
-        "view2": [
-            "file_json",
-            "file_rdf",
-            "file_xattrs",
-            "file_sp1",
-            "file_sp2",
-            "file_sp3",
-        ],
-        "view3": ["file_sp1", "file_sp3"],
-        "file-popularity": ["file_popularity_example"],
-    }
-    for file in view_to_expected_files[view_name]:
-        file_id = lookup_file_id(f"{space_name}/{file}", provider_host, token)
+    items = [item[file_id_attr_name] for item in res]
+    assert len(expected_files) == len(
+        items
+    ), f"expected {expected_files} but got: {items}"
+    for file in expected_files:
+        file_id = lookup_file_id(f"{SPACE_NAME}/{file}", provider_host, token)
         assert file_id in items, f"file {file} not in query view"
     return res
 
 
 @repeat_failed(timeout=60)
-def wait_for_expected_result_in_reduce_query_view(query):
+def wait_for_expected_result_in_reduce_query_view(query, expected_result):
     res = query()
-    assert res[0]["value"] == 6, f"expected reduce value 6 but got {res}"
+    assert (
+        res[0]["value"] == expected_result
+    ), f"expected reduce value {expected_result} but got {res}"
     return res
 
 
 @repeat_failed(timeout=60)
-def assert_file_id_in_file_changes(provider_host, token, space_id, data, file_id):
-    res = subscribe_to_file_changes(provider_host, token, space_id, data)
-    items = res.text.split("\r\n")
-    items = [yaml.load(item, yaml.Loader) for item in items][0:-1]
-    assert any(
-        item for item in items if item["fileId"] == file_id
-    ), f"fileId {file_id} not in file changes"
-
-
-@repeat_failed(timeout=60)
-def wait_for_expected_files_in_file_changes(
-    provider_host, token, space_id, data, space_name
+def get_record_for_file_in_file_changes(
+    provider_host, token, space_id, data, file_name
 ):
     res = subscribe_to_file_changes(provider_host, token, space_id, data)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{file_name}", provider_host, token)
     items = res.text.split("\r\n")
     items = [yaml.load(item, yaml.Loader) for item in items][0:-1]
-    items = [item["fileId"] for item in items]
-    expected_files = [
-        "file_json",
-        "file_rdf",
-        "file_xattrs",
-        "file_sp1",
-        "file_sp2",
-        "file_sp3",
-    ]
-    for file in expected_files:
-        file_id = lookup_file_id(f"{space_name}/{file}", provider_host, token)
-        assert file_id in items, f"file {file} not in file changes"
-    return res
+    record = [item for item in items if item["fileId"] == file_id]
+    return record
 
 
-def create_example_content_in_space(client, space_name: str):
-    space_path = client.absolute_path(space_name)
+def create_example_content_in_space(client):
+    space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, "file_json")
     client.create_file(file_path)
     file_path = os.path.join(space_path, "file_rdf")
@@ -387,11 +378,11 @@ def create_example_content_in_space(client, space_name: str):
     client.write("abc123", file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host, token, space_name: str):
-    file_id = lookup_file_id(f"{space_name}/file_json", provider_host, token)
+def add_example_metadata_to_files_in_space(provider_host, token):
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     json_meta = {"coordinates": [5, 10]}
     set_file_json_metadata(provider_host, token, file_id, json_meta)
-    file_id = lookup_file_id(f"{space_name}/file_rdf", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     rdf_meta = (
         '<?xml version="1.0"?>\n\n'
         '<rdf:RDF\nxmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\n'
@@ -400,15 +391,15 @@ def add_example_metadata_to_files_in_space(provider_host, token, space_name: str
         " <si:author>Jan Egil Refsnes</si:author>\n</rdf:Description>\n\n</rdf:RDF>"
     )
     set_file_rdf_metadata(provider_host, token, file_id, rdf_meta)
-    file_id = lookup_file_id(f"{space_name}/file_xattrs", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
     xattrs_meta = {"licence": "MIT"}
     set_file_extended_attribute(provider_host, token, file_id, xattrs_meta)
-    file_id = lookup_file_id(f"{space_name}/file_sp1", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_sp1", provider_host, token)
     xattrs_meta = {"latitude": 5, "longitude": 10}
     set_file_extended_attribute(provider_host, token, file_id, xattrs_meta)
-    file_id = lookup_file_id(f"{space_name}/file_sp2", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_sp2", provider_host, token)
     xattrs_meta = {"latitude": 10, "longitude": 5}
     set_file_extended_attribute(provider_host, token, file_id, xattrs_meta)
-    file_id = lookup_file_id(f"{space_name}/file_sp3", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_sp3", provider_host, token)
     xattrs_meta = {"latitude": 0, "longitude": 0}
     set_file_extended_attribute(provider_host, token, file_id, xattrs_meta)
