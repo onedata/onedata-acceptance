@@ -41,6 +41,57 @@ def assert_active_section_in_docks(selenium, browser_id, link):
 
 @wt(
     parsers.parse(
+        'user of {browser_id} sees that active sidebar subheader link is "{link}" in'
+        " documentation page"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_active_sub_section_in_docks(selenium, browser_id, link):
+    driver = selenium[browser_id]
+    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+    if len(iframes) > 0:
+        driver.switch_to.frame(iframes[-1])
+    sidebar_links = driver.find_elements(
+        By.CSS_SELECTOR, ".sidebar-sub-header .sidebar-link"
+    )
+    for sidebar_link in sidebar_links:
+        if "active" in sidebar_link.get_attribute("class"):
+            err_msg = (
+                f"Visible sidebar link is {sidebar_link.text}, but expected one is"
+                f" {link}"
+            )
+            assert sidebar_link.text.lower() == link.lower(), err_msg
+            return
+    raise ValueError(f"sidebar link {link} not found")
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that opened sidebar header is "{header}" in'
+        " documentation page"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_opened_header_section_in_docks(selenium, browser_id, header):
+    driver = selenium[browser_id]
+    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+    if len(iframes) > 0:
+        driver.switch_to.frame(iframes[-1])
+    sidebar_links = driver.find_elements(
+        By.CSS_SELECTOR, ".sidebar-group.depth-1 .sidebar-heading.open"
+    )
+    assert (
+        len(sidebar_links) == 1
+    ), f"expected 1 opened header but got: {len(sidebar_links)}"
+    sidebar_link = sidebar_links[0]
+    err_msg = (
+        f"Visible sidebar link is {sidebar_link.text}, but expected one is {header}"
+    )
+    assert sidebar_link.text.lower() == header.lower(), err_msg
+
+
+@wt(
+    parsers.parse(
         'user of {browser_id} sees that active sidebar label is "{label}" in REST API'
         " documentation"
     )

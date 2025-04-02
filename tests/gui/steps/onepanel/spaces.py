@@ -710,7 +710,7 @@ def wait_until_scanning_is_finished_in_storage_import_tab(
 @wt(
     parsers.parse(
         "user of {browser_id} opens advanced settings "
-        "in file-popularity tab in Onepanel"
+        "in file popularity tab in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -722,7 +722,7 @@ def open_advanced_settings_in_file_popularity_onepanel(selenium, browser_id, one
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "file popularity documentation" link '
-        "in file-popularity tab in Onepanel"
+        "in file popularity tab in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

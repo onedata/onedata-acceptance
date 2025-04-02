@@ -141,25 +141,24 @@ def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel, hos
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "{link}" link'
-        ' in "{submenu}" submenu in Onepanel'
+        'user of {browser_id} clicks on "{link}" link in {view_name} view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_sidebar_submenu_link(selenium, browser_id, submenu, onepanel):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(submenu))
+def click_on_sidebar_submenu_link(selenium, browser_id, view_name, onepanel):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     nav.documentation_link.click()
 
 
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on "{link}" link at subdomain delegation section'
-        ' in "{submenu}" submenu in Onepanel'
+        " in {view_name} view in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_sidebar_submenu_subdomain_delegation_link(
-    selenium, browser_id, submenu, onepanel
+    selenium, browser_id, view_name, onepanel
 ):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(submenu))
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     nav.subdomain_delegation_documentation_link.click()
