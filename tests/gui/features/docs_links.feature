@@ -143,14 +143,14 @@ Feature: Onezone links to documentation
     Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "File popularity" in documentation page
     And user of browser sees that active sidebar subheader link is "Advanced topics" in documentation page
-#
-#
-#  Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
-#    When user of browser clicks on Clusters in the main menu
-#    And user of browser clicks on add new provider cluster button in clusters menu
-#    And user of browser clicks on "Onedatify documentation" link in clusters page
-#    And user of browser is redirected to newly opened tab
-#    Then user of browser should see that the page title contains "Onedata | Documentation"
-#    And user of browser sees that opened sidebar header is "Oneprovider" in documentation page
-#    And user of browser sees that active sidebar link is "Installation" in documentation page
-#    And user of browser sees that active sidebar subheader link is "Docker-based" in documentation page
+
+
+  Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
+    When user of browser clicks on Clusters in the main menu
+    And user of browser clicks on add new provider cluster button in clusters menu
+    And user of browser clicks on "Onedatify documentation" link in clusters page
+    And user of browser is redirected to newly opened tab
+    Then user of browser should see that the page title contains "Onedata | Documentation"
+    And user of browser sees that opened sidebar header is "Oneprovider" in documentation page
+    And user of browser sees that active sidebar link is "Installation" in documentation page
+    And user of browser sees that active sidebar subheader link is "Docker-based" in documentation page
