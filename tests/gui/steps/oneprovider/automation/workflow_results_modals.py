@@ -109,7 +109,7 @@ def assert_no_data_message_processing_chart(browser_id, selenium, modals, messag
     parsers.re(
         "user of (?P<browser_id>.*?) sees that (?P<option>.*?) "
         "processing speed (?P<compare_option>is greater or equal|is "
-        "equal) (?P<number>.*?) per second on chart with processing "
+        "equal|is greater than) (?P<number>.*?) per second on chart with processing "
         "stats"
     )
 )
@@ -124,10 +124,12 @@ def assert_number_of_proceeded_files(
         if option in value[1].lower():
             err_msg = (
                 f"Processing speed is {value[0]} {option} per second "
-                f"and is lower than expected {number} per second."
+                f"but expected value {compare_option} {number} per second."
             )
             if compare_option == "is greater or equal":
                 assert value[0] >= float(number), err_msg
+            elif compare_option == "is greater than":
+                assert value[0] > float(number), err_msg
             else:
                 assert value[0] == float(number), err_msg
             break

@@ -84,6 +84,7 @@ stages:
         - Nested directories create
         - Nested directories remove
         - Onepanel
+        - OneS3 nodes
         - Permission POSIX
         - Permission POSIX multi
         - QoS
@@ -92,6 +93,8 @@ stages:
         - Single directory
         - Single directory 2
         - Spaces basic
+        - Spaces with same name
+        - Spaces with same name 2 providers
         - Storage sync
         - Tokens
         - Transfers
@@ -760,6 +763,22 @@ Onepanel:
         scripts:
           - make SUITE=test_onepanel_basic test_mixed_pkg
 
+OneS3 nodes:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: COSN
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_2nodes SUITE=test_ones3_nodes test_mixed_pkg
+
 Permission POSIX:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CPPT
@@ -887,6 +906,38 @@ Spaces basic:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_spaces_basic test_mixed_pkg
+
+Spaces with same name:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CMSS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_spaces_with_the_same_name test_mixed_pkg
+
+Spaces with same name 2 providers:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CMS2P
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_2op_3oc SUITE=test_spaces_with_the_same_name_2_providers test_mixed_pkg
 
 Storage sync:
   <<: *acceptance-mixed-tests-in-chrome-job

@@ -1171,12 +1171,7 @@ def assert_content_of_task_audit_log(
     # wait a moment for modal to open
     time.sleep(1)
     modal = modals(driver).audit_log
-    if severity in ["Error", "Debug"]:
-        modal.logs_entry[severity].click()
-    elif source == "user":
-        modal.user_log.click()
-    else:
-        modal.logs_entry[0].click()
+    click_on_log_in_workflow_audit_log(modals, driver, severity, source)
     modal.copy_json()
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
 
@@ -1214,6 +1209,17 @@ def assert_content_of_task_audit_log(
         )
     except StaleElementReferenceException:
         pass
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_log_in_workflow_audit_log(modals, driver, severity, source):
+    modal = modals(driver).audit_log
+    if severity in ["Error", "Debug"]:
+        modal.logs_entry[severity].click()
+    elif source == "user":
+        modal.user_log.click()
+    else:
+        modal.logs_entry[0].click()
 
 
 @wt(

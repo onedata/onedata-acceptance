@@ -2,26 +2,24 @@
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
+import logging
+import re
+import subprocess as sp
+import traceback
+from time import sleep, time
 
 import pytest
-import re
-import traceback
-import logging
-import subprocess as sp
-from time import time, sleep
-
-from decorator import decorator
+from decorator import decorator  # pylint: disable=import-error
 
 
 def check_call_with_logging(cmd):
     try:
         sp.check_call(cmd)
     except sp.CalledProcessError as e:
-        logging.error('{}\n'
-                      'Captured output: {}'.format(e, e.output))
+        logging.error("%s\nCaptured output: %s", e, e.output)
         raise e
 
 
@@ -34,7 +32,7 @@ def assert_generic(expression, should_fail, *args, **kwargs):
     if should_fail:
         assert_false(expression, *args, **kwargs)
     else:
-        assert_(expression, *args, **kwargs)
+        assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
 
 
 def assert_(expression, *args, **kwargs):
@@ -48,10 +46,11 @@ def assert_false(expression, *args, **kwargs):
 
 
 def get_fun_name(fun):
-    if 'method' in fun:
-        return fun.split('method ')[1].split(' ')[0]
-    elif 'function' in fun:
-        return fun.split('function ')[1].split('.')[0]
+    if "method" in fun:
+        return fun.split("method ")[1].split(" ")[0]
+    if "function" in fun:
+        return fun.split("function ")[1].split(".")[0]
+    return None
 
 
 def assert_expected_failure(fun, *args, **kwargs):
@@ -59,8 +58,7 @@ def assert_expected_failure(fun, *args, **kwargs):
         fun(*args, **kwargs)
 
 
-def repeat_failed(attempts=10, timeout=None, interval=0.1,
-                  exceptions=(Exception,)):
+def repeat_failed(attempts=10, timeout=None, interval=0.1, exceptions=(Exception,)):
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
 
@@ -86,7 +84,7 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1,
                 result = fun(*args, **kwargs)
             except exceptions:
                 sleep(interval)
-                i = time() if timeout else i+1
+                i = time() if timeout else i + 1
                 continue
             else:
                 return result
@@ -96,12 +94,12 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1,
 
 
 def get_copyright(mod):
-    return mod.__copyright__ if hasattr(mod, '__copyright__') else ''
+    return mod.__copyright__ if hasattr(mod, "__copyright__") else ""
 
 
 def get_authors(mod):
-    author = mod.__author__ if hasattr(mod, '__author__') else ''
-    return re.split(r'\s*,\s*', author)
+    author = mod.__author__ if hasattr(mod, "__author__") else ""
+    return re.split(r"\s*,\s*", author)
 
 
 def get_suite_description(mod):

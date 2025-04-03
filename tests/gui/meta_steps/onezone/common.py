@@ -49,7 +49,6 @@ def login_using_gui(
     login_page,
     browser_id_list,
     user_list,
-    xvfb_recorder,
     test_type,
     capabilities,
 ):
@@ -61,7 +60,6 @@ def login_using_gui(
         tmp_memory,
         driver_type,
         xvfb,
-        xvfb_recorder,
         screen_width,
         screen_height,
         displays,

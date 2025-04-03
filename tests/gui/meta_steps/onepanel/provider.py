@@ -11,7 +11,7 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.common import (
@@ -33,6 +33,12 @@ from tests.gui.steps.onepanel.provider import (
     wt_save_changes_in_modify_provider_detail_form,
     wt_type_val_to_in_box_in_provider_details_form,
 )
+from tests.gui.steps.rest.provider import (
+    add_provider_service_node,
+    get_provider_service_nodes_statuses,
+    start_stop_provider_service_node,
+)
+from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -204,3 +210,51 @@ def change_provider_name_if_name_is_different_than_given(
             browser_id,
             modals,
         )
+
+
+@wt(
+    parsers.parse(
+        "user {user} sees that oneS3 node in provider cluster in {provider} is of"
+        ' status "{status}"'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_cluster_ones3_node_status_rest(
+    hosts, provider, onepanel_credentials, status
+):
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    res = get_provider_service_nodes_statuses(
+        hosts, provider, onepanel_credentials, OnedataService.ONES3
+    )
+    exp_res = {host: status}
+    err_msg = f"expected {exp_res}, but got {res}"
+    assert exp_res == res, err_msg
+
+
+@wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
+def add_provider_cluster_ones3_node_rest(hosts, provider, onepanel_credentials):
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    data = {"hosts": [host]}
+    add_provider_service_node(
+        hosts, provider, onepanel_credentials, data, OnedataService.ONES3
+    )
+
+
+@wt(
+    parsers.re(
+        "user (?P<user>.*?) (?P<option>starts|stops) oneS3 node in provider cluster in"
+        " (?P<provider>.*?)"
+    )
+)
+def stop_provider_cluster_ones3_node_rest(
+    option, hosts, provider, onepanel_credentials
+):
+    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    start_stop_provider_service_node(
+        hosts,
+        host,
+        provider,
+        onepanel_credentials,
+        OnedataService.ONES3,
+        start=option == "starts",
+    )

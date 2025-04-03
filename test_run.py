@@ -84,11 +84,11 @@ def load_test_report(junit_report_path):
 
 
 def env_errors_exists(testsuite):
-    if not testsuite:
+    if len(testsuite) == 0:
         # this happens when tests didn't start at all
         return True
 
-    testcases = testsuite.findall('testcase')
+    testcases = testsuite.findall('.//testcase')
 
     for testcase in testcases:
         skipped = testcase.find('skipped')
@@ -311,6 +311,8 @@ sys.exit(ret)
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
                '--local'] + pass_args
+        if args.env_file:
+            cmd += [f'--env-file={args.env_file}']
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
@@ -437,7 +439,7 @@ def resolve_image(service):
             elif service_branch == 'default':
                 branch_tag = fallback_tag
             else:
-                branch_tag = service_branch
+                branch_tag = get_branch_tag(service_branch)
 
             image = '{}:{}'.format(SERVICE_TO_IMAGE[service], branch_tag)
             fallback_image = '{}:{}'.format(SERVICE_TO_IMAGE[service], fallback_tag)
