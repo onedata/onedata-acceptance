@@ -69,7 +69,7 @@ def http_get(
         cert,
         auth,
         default_headers=default_headers,
-        params=params
+        params=params,
     )
 
 
