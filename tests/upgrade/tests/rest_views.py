@@ -88,12 +88,12 @@ function(key, values, rereduce) {
 }
 """
 
-VIEW1 = "view_all_files"
-VIEW2 = "view_files_with_meta"
-VIEW3 = "view_spatial"
-VIEW4 = "view_with_reduce"
-VIEW5 = "view_double_providers"
-VIEW6 = "view_double_providers_error"
+VIEW_WITH_ALL_FILES = "view_all_files"
+VIEW_WITH_FILES_WITH_META = "view_files_with_meta"
+VIEW_SPATIAL = "view_spatial"
+VIEW_WITH_REDUCE = "view_with_reduce"
+VIEW_SHARED_ON_TWO_PROVIDERS = "view_double_providers"
+VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR = "view_double_providers_error"
 
 ALL_FILES = [
     "file_json",
@@ -135,12 +135,22 @@ def setup_views(tests_controller):
     )
 
     # create views
-    _ = create_view(provider_host, token, space_id, VIEW1, MAP_FUNC_ALL_FILES)
-    _ = create_view(provider_host, token, space_id, VIEW2, MAP_FUNC_FILES_WITH_META)
     _ = create_view(
-        provider_host, token, space_id, VIEW3, MAP_FUNC_SPATIAL, spatial=True
+        provider_host, token, space_id, VIEW_WITH_ALL_FILES, MAP_FUNC_ALL_FILES
     )
-    _ = create_view(provider_host, token, space_id, VIEW4, MAP_FUNC_FILES_WITH_META)
+    _ = create_view(
+        provider_host,
+        token,
+        space_id,
+        VIEW_WITH_FILES_WITH_META,
+        MAP_FUNC_FILES_WITH_META,
+    )
+    _ = create_view(
+        provider_host, token, space_id, VIEW_SPATIAL, MAP_FUNC_SPATIAL, spatial=True
+    )
+    _ = create_view(
+        provider_host, token, space_id, VIEW_WITH_REDUCE, MAP_FUNC_FILES_WITH_META
+    )
 
     # create files
     create_example_content_in_space(client)
@@ -149,48 +159,53 @@ def setup_views(tests_controller):
     add_example_metadata_to_files_in_space(provider_host, token)
 
     # add reduce function to view
-    update_view_reduce_function(provider_host, token, space_id, VIEW4, REDUCE_FUNC)
+    update_view_reduce_function(
+        provider_host, token, space_id, VIEW_WITH_REDUCE, REDUCE_FUNC
+    )
 
-    RESULTS["view1"] = wait_for_expected_files_in_query_view(
-        partial(query_view, provider_host, token, space_id, VIEW1),
-        provider_host,
-        token,
-        ALL_FILES,
-        "key",
+    RESULTS[VIEW_WITH_ALL_FILES] = wait_for_expected_files_in_query_view(
+        query=partial(query_view, provider_host, token, space_id, VIEW_WITH_ALL_FILES),
+        provider_host=provider_host,
+        token=token,
+        expected_files=ALL_FILES,
+        attr_holding_file_id="key",
+        extra_files=True,
     )
-    RESULTS["view2"] = wait_for_expected_files_in_query_view(
-        partial(query_view, provider_host, token, space_id, VIEW2),
-        provider_host,
-        token,
-        FILES_WITH_METADATA,
-        "key",
+    RESULTS[VIEW_WITH_FILES_WITH_META] = wait_for_expected_files_in_query_view(
+        query=partial(
+            query_view, provider_host, token, space_id, VIEW_WITH_FILES_WITH_META
+        ),
+        provider_host=provider_host,
+        token=token,
+        expected_files=FILES_WITH_METADATA,
+        attr_holding_file_id="key",
     )
-    RESULTS["view3"] = wait_for_expected_files_in_query_view(
-        partial(
+    RESULTS[VIEW_SPATIAL] = wait_for_expected_files_in_query_view(
+        query=partial(
             query_view,
             provider_host,
             token,
             space_id,
-            VIEW3,
+            VIEW_SPATIAL,
             spatial=True,
             start_range="[0,0]",
             end_range="[5,10]",
         ),
-        provider_host,
-        token,
-        FILES_MEETING_SPATIAL_CONDITION,
-        "value",
+        provider_host=provider_host,
+        token=token,
+        expected_files=FILES_MEETING_SPATIAL_CONDITION,
+        attr_holding_file_id="value",
     )
-    RESULTS["view4"] = wait_for_expected_result_in_reduce_query_view(
-        partial(query_view, provider_host, token, space_id, VIEW4),
-        REDUCE_QUERY_EXP_VALUE,
+    RESULTS[VIEW_WITH_REDUCE] = wait_for_expected_result_in_reduce_query_view(
+        query=partial(query_view, provider_host, token, space_id, VIEW_WITH_REDUCE),
+        expected_result=REDUCE_QUERY_EXP_VALUE,
     )
     RESULTS["file-popularity"] = wait_for_expected_files_in_query_view(
-        partial(query_view, provider_host, token, space_id, "file-popularity"),
-        provider_host,
-        token,
-        ["file_popularity_example"],
-        "value",
+        query=partial(query_view, provider_host, token, space_id, "file-popularity"),
+        provider_host=provider_host,
+        token=token,
+        expected_files=["file_popularity_example"],
+        attr_holding_file_id="value",
     )
 
 
@@ -199,21 +214,30 @@ def verify_views(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(RESULTS["view1"], query_view(provider_host, token, space_id, VIEW1))
-    _assert(RESULTS["view2"], query_view(provider_host, token, space_id, VIEW2))
     _assert(
-        RESULTS["view3"],
+        RESULTS[VIEW_WITH_ALL_FILES],
+        query_view(provider_host, token, space_id, VIEW_WITH_ALL_FILES),
+    )
+    _assert(
+        RESULTS[VIEW_WITH_FILES_WITH_META],
+        query_view(provider_host, token, space_id, VIEW_WITH_FILES_WITH_META),
+    )
+    _assert(
+        RESULTS[VIEW_SPATIAL],
         query_view(
             provider_host,
             token,
             space_id,
-            VIEW3,
+            VIEW_SPATIAL,
             spatial=True,
             start_range="[0,0]",
             end_range="[5,10]",
         ),
     )
-    _assert(RESULTS["view4"], query_view(provider_host, token, space_id, VIEW4))
+    _assert(
+        RESULTS[VIEW_WITH_REDUCE],
+        query_view(provider_host, token, space_id, VIEW_WITH_REDUCE),
+    )
     _assert(
         RESULTS["file-popularity"],
         query_view(provider_host, token, space_id, "file-popularity"),
@@ -237,7 +261,7 @@ def setup_views_multiprovider(tests_controller):
         provider_host,
         token,
         space_id,
-        VIEW5,
+        VIEW_SHARED_ON_TWO_PROVIDERS,
         MAP_FUNC_ALL_FILES,
         providers=[prov1_id, prov2_id],
     )
@@ -245,24 +269,30 @@ def setup_views_multiprovider(tests_controller):
         provider_host,
         token,
         space_id,
-        VIEW6,
+        VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR,
         MAP_FUNC_ALL_FILES,
     )
 
-    # expected files are the same as in view1
-    RESULTS["view5"] = wait_for_expected_files_in_query_view(
-        partial(query_view, provider_host2, token, space_id, VIEW5),
-        provider_host,
-        token,
-        ALL_FILES,
-        "key",
+    RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS] = wait_for_expected_files_in_query_view(
+        query=partial(
+            query_view, provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS
+        ),
+        provider_host=provider_host,
+        token=token,
+        expected_files=ALL_FILES,
+        attr_holding_file_id="key",
+        extra_files=True,
     )
 
     try:
-        query_view(provider_host2, token, space_id, VIEW6)
+        query_view(
+            provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR
+        )
     except HTTPError as e:
         # description message differs in different provider versions
-        RESULTS["view6"] = e.response.json()["error"]["id"]
+        RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR] = e.response.json()["error"][
+            "id"
+        ]
 
 
 def verify_views_multiprovider(tests_controller):
@@ -274,12 +304,20 @@ def verify_views_multiprovider(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(RESULTS["view5"], query_view(provider_host2, token, space_id, VIEW5))
+    _assert(
+        RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS],
+        query_view(provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS),
+    )
     try:
-        query_view(provider_host2, token, space_id, VIEW6)
+        query_view(
+            provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR
+        )
         raise AssertionError("Operation should have failed")
     except HTTPError as e:
-        _assert(RESULTS["view6"], e.response.json()["error"]["id"])
+        _assert(
+            RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR],
+            e.response.json()["error"]["id"],
+        )
 
 
 def setup_subscribe_changes(tests_controller):
@@ -293,7 +331,11 @@ def setup_subscribe_changes(tests_controller):
     }
 
     record = get_record_for_file_in_file_changes(
-        provider_host, token, space_id, data, EXAMPLE_FILE_TO_CHECK_FILE_CHANGES
+        provider_host=provider_host,
+        token=token,
+        space_id=space_id,
+        data=data,
+        file_name=EXAMPLE_FILE_TO_CHECK_FILE_CHANGES,
     )
 
     RESULTS["file_changes"] = record
@@ -309,7 +351,11 @@ def verify_subscribe_changes(tests_controller):
     }
 
     record = get_record_for_file_in_file_changes(
-        provider_host, token, space_id, data, EXAMPLE_FILE_TO_CHECK_FILE_CHANGES
+        provider_host=provider_host,
+        token=token,
+        space_id=space_id,
+        data=data,
+        file_name=EXAMPLE_FILE_TO_CHECK_FILE_CHANGES,
     )
     _assert(RESULTS["file_changes"], record)
 
@@ -321,16 +367,14 @@ def _assert(expected, actual):
 
 @repeat_failed(timeout=60)
 def wait_for_expected_files_in_query_view(
-    query,
-    provider_host,
-    token,
-    expected_files,
-    file_id_attr_name,
+    query, provider_host, token, expected_files, attr_holding_file_id, extra_files=False
 ):
     res = query()
-    items = [item[file_id_attr_name] for item in res]
-    assert len(expected_files) == len(
-        items
+    items = [item[attr_holding_file_id] for item in res]
+    # when counting all files there will be included also space root dir,
+    # trash root dir and user root dir
+    assert (
+        len(expected_files) + 3 if extra_files else len(expected_files) == len(items)
     ), f"expected {expected_files} but got: {items}"
     for file in expected_files:
         file_id = lookup_file_id(f"{SPACE_NAME}/{file}", provider_host, token)
