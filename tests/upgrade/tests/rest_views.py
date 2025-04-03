@@ -88,12 +88,12 @@ function(key, values, rereduce) {
 }
 """
 
-VIEW_WITH_ALL_FILES = "view_all_files"
-VIEW_WITH_FILES_WITH_META = "view_files_with_meta"
+VIEW_WITH_ALL_FILES = "view_with_all_files"
+VIEW_WITH_FILES_WITH_META = "view_with_files_with_meta"
 VIEW_SPATIAL = "view_spatial"
 VIEW_WITH_REDUCE = "view_with_reduce"
-VIEW_SHARED_ON_TWO_PROVIDERS = "view_double_providers"
-VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR = "view_double_providers_error"
+VIEW_MULTIPROVIDER = "view_multiprovider"
+VIEW_SINGLEPROVIDER = "view_singleprovider"
 
 ALL_FILES = [
     "file_json",
@@ -115,6 +115,9 @@ FILES_WITH_METADATA = [
 FILES_MEETING_SPATIAL_CONDITION = ["file_sp1", "file_sp3"]
 REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
 EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
+# when counting all files there will be included also space root dir,
+# trash root dir and user root dir
+SPECIAL_DIRS_COUNT = 3
 
 SPACE_NAME = "space_views"
 RESULTS = {}
@@ -261,7 +264,7 @@ def setup_views_multiprovider(tests_controller):
         provider_host,
         token,
         space_id,
-        VIEW_SHARED_ON_TWO_PROVIDERS,
+        VIEW_MULTIPROVIDER,
         MAP_FUNC_ALL_FILES,
         providers=[prov1_id, prov2_id],
     )
@@ -269,14 +272,12 @@ def setup_views_multiprovider(tests_controller):
         provider_host,
         token,
         space_id,
-        VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR,
+        VIEW_SINGLEPROVIDER,
         MAP_FUNC_ALL_FILES,
     )
 
-    RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS] = wait_for_expected_files_in_query_view(
-        query=partial(
-            query_view, provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS
-        ),
+    RESULTS[VIEW_MULTIPROVIDER] = wait_for_expected_files_in_query_view(
+        query=partial(query_view, provider_host2, token, space_id, VIEW_MULTIPROVIDER),
         provider_host=provider_host,
         token=token,
         expected_files=ALL_FILES,
@@ -285,14 +286,10 @@ def setup_views_multiprovider(tests_controller):
     )
 
     try:
-        query_view(
-            provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR
-        )
+        query_view(provider_host2, token, space_id, VIEW_SINGLEPROVIDER)
     except HTTPError as e:
         # description message differs in different provider versions
-        RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR] = e.response.json()["error"][
-            "id"
-        ]
+        RESULTS[VIEW_SINGLEPROVIDER] = e.response.json()["error"]["id"]
 
 
 def verify_views_multiprovider(tests_controller):
@@ -305,17 +302,15 @@ def verify_views_multiprovider(tests_controller):
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
     _assert(
-        RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS],
-        query_view(provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS),
+        RESULTS[VIEW_MULTIPROVIDER],
+        query_view(provider_host2, token, space_id, VIEW_MULTIPROVIDER),
     )
     try:
-        query_view(
-            provider_host2, token, space_id, VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR
-        )
+        query_view(provider_host2, token, space_id, VIEW_SINGLEPROVIDER)
         raise AssertionError("Operation should have failed")
     except HTTPError as e:
         _assert(
-            RESULTS[VIEW_SHARED_ON_TWO_PROVIDERS_WITH_ERROR],
+            RESULTS[VIEW_SINGLEPROVIDER],
             e.response.json()["error"]["id"],
         )
 
@@ -371,11 +366,10 @@ def wait_for_expected_files_in_query_view(
 ):
     res = query()
     items = [item[attr_holding_file_id] for item in res]
-    # when counting all files there will be included also space root dir,
-    # trash root dir and user root dir
-    assert (
-        len(expected_files) + 3 if extra_files else len(expected_files) == len(items)
-    ), f"expected {expected_files} but got: {items}"
+    exp_files_count = (
+        len(expected_files) + SPECIAL_DIRS_COUNT if extra_files else len(expected_files)
+    )
+    assert exp_files_count == len(items), f"expected {expected_files} but got: {items}"
     for file in expected_files:
         file_id = lookup_file_id(f"{SPACE_NAME}/{file}", provider_host, token)
         assert file_id in items, f"file {file} not in query view"
