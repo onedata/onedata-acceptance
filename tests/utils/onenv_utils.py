@@ -50,10 +50,11 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
     if verbose:
         sys.stdout.write(output.decode("utf-8"))
     sys.stderr.write(err.decode("utf-8"))
+    decoded_output = output.decode("utf-8", errors="replace").strip()
 
     if proc.returncode != 0 and fail_with_error:
         raise OnenvError(
-            f"Environment error.\nCommand: {cmd} failed.\nCaptured output: {output}"
+            f"Environment error.\nCommand: {cmd} failed.\nCaptured output: {decoded_output}"
         )
 
     return output if return_output else proc.returncode
