@@ -115,8 +115,8 @@ FILES_WITH_METADATA = [
 FILES_MEETING_SPATIAL_CONDITION = ["file_sp1", "file_sp3"]
 REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
 EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
-# when counting all files there will be included also space root dir,
-# trash root dir and user root dir
+# when counting all files there will be included also space dir,
+# trash dir and user root dir
 SPECIAL_DIRS_COUNT = 3
 
 SPACE_NAME = "space_views"
