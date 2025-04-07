@@ -26,3 +26,7 @@
 !include 'mixed-acceptance-pkg.yml'
 ---
 !include 'mixed-acceptance-pkg-perm.yml'
+---
+!include 'upgrade-pkg.yml'
+---
+!include 'upgrade-pkg-perm.yml'
