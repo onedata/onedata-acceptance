@@ -56,7 +56,8 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
 
     if proc.returncode != 0 and fail_with_error:
         raise OnenvError(
-            f"Environment error.\nCommand: {cmd} failed.\nCaptured output: {decoded_output}"
+            f"Environment error.\nCommand: {cmd} failed.\nCaptured output:"
+            f" {decoded_output}"
         )
 
     return decoded_output if return_output else proc.returncode
