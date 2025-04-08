@@ -53,7 +53,7 @@ Feature: Onezone links to documentation
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "Data" in documentation page
-    And user of browser sees that active sidebar subheader link is "Data Access Control" in documentation page
+    And user of browser sees that active sidebar link is "Data Access Control" in documentation page
 
 
   Scenario: User can see that link to Quality of Service documentation in file details works correctly
@@ -107,7 +107,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Dns config" in documentation page
+    And user of browser sees that active sidebar link is "DNS config" in documentation page
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config in Clusters page works correctly
@@ -117,7 +117,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Dns config" in documentation page
+    And user of browser sees that active sidebar link is "DNS config" in documentation page
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config at subdomain delegation section in Clusters page works correctly
@@ -127,7 +127,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link at subdomain delegation section in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Dns config" in documentation page
+    And user of browser sees that active sidebar link is "DNS config" in documentation page
 
 
   Scenario: User can see that link to file popularity documentation in File popularity tab in Clusters page works correctly
@@ -142,7 +142,7 @@ Feature: Onezone links to documentation
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that active sidebar link is "File popularity" in documentation page
-    And user of browser sees that active sidebar subheader link is "Advanced topics" in documentation page
+    And user of browser sees that active sidebar link is "Advanced topics" in documentation page
 
 
   Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
@@ -151,6 +151,6 @@ Feature: Onezone links to documentation
     And user of browser clicks on "Onedatify documentation" link in clusters page
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that opened sidebar header is "Oneprovider" in documentation page
+    And user of browser sees that active sidebar link is "Oneprovider" in documentation page
     And user of browser sees that active sidebar link is "Installation" in documentation page
-    And user of browser sees that active sidebar subheader link is "Docker-based" in documentation page
+    And user of browser sees that active sidebar link is "Docker-based" in documentation page
