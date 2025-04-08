@@ -17,7 +17,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that active sidebar link is "{link}" in'
+        'user of {browser_id} sees that "{link}" sidebar link is active in'
         " documentation page"
     )
 )
@@ -36,27 +36,37 @@ def assert_active_section_in_docks(selenium, browser_id, link):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that active sidebar label is "{label}" in REST API'
-        " documentation"
+        'user of {browser_id} sees that "{heading}" sidebar heading is expanded in'
+        " documentation page"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_expanded_heading_in_docks(selenium, browser_id, heading):
+    driver = selenium[browser_id]
+    iframes = driver.find_elements(By.TAG_NAME, "iframe")
+    if len(iframes) > 0:
+        driver.switch_to.frame(iframes[-1])
+    sidebar_links = driver.find_elements(By.CSS_SELECTOR, ".sidebar-heading.open")
+    for sidebar_link in sidebar_links:
+        if sidebar_link.text.lower() == heading.lower():
+            return
+    raise AssertionError(f"sidebar link {heading} not found")
+
+
 @repeat_failed(timeout=WAIT_FRONTEND * 2)
 def assert_active_section_in_api_docks(selenium, browser_id, label):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
     if len(iframes) > 0:
         driver.switch_to.frame(iframes[-1])
-    sidebar_labels = driver.find_elements(By.CSS_SELECTOR, 'label[role="menuitem"]')
+    sidebar_labels = driver.find_elements(
+        By.CSS_SELECTOR, 'label[role="menuitem"].active'
+    )
     for sidebar_label in sidebar_labels:
-        if "active" in sidebar_label.get_attribute("class"):
-            err_msg = (
-                f"Visible sidebar link is {sidebar_label.text}, but expected one is"
-                f" {label}"
-            )
-            assert (
-                sidebar_label.text.replace("\n", " ").lower()
-                == label.replace("\n", " ").lower()
-            ), err_msg
+        if (
+            sidebar_label.text.replace("\n", " ").lower()
+            == label.replace("\n", " ").lower()
+        ):
             return
     raise ValueError(f"sidebar label {label} not found")
 
@@ -64,7 +74,7 @@ def assert_active_section_in_api_docks(selenium, browser_id, label):
 @wt(
     parsers.parse(
         "user of {browser_id} sees that all links to REST API documentation works"
-        " correctly in file details API section"
+        " correctly for each selected operation in file details API section"
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_file_details(
@@ -117,7 +127,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that all links to REST API documentation works"
-        " correctly in space menu API section"
+        " correctly for each selected operation in space menu API section"
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_space_menu(

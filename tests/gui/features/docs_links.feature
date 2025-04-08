@@ -41,7 +41,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "metadata documentation" link in info popup
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Metadata" in documentation page
+    And user of browser sees that "Metadata" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Permissions documentation in file details works correctly
@@ -52,8 +52,8 @@ Feature: Onezone links to documentation
     And user of browser clicks on "file permissions documentation" link in info popup
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Data" in documentation page
-    And user of browser sees that active sidebar link is "Data Access Control" in documentation page
+    And user of browser sees that "Data" sidebar link is active in documentation page
+    And user of browser sees that "Data Access Control" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Quality of Service documentation in file details works correctly
@@ -64,7 +64,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "QoS documentation" link in info popup
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Quality of Service" in documentation page
+    And user of browser sees that "Quality of Service" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Tokens documentation in tokens page works correctly
@@ -73,7 +73,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "documentation" link in "Create new token" view
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Tokens" in documentation page
+    And user of browser sees that "Tokens" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Tokens documentation in create custom token section in tokens page works correctly
@@ -84,7 +84,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "tokens documentation" link in "Create new token" view
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Tokens" in documentation page
+    And user of browser sees that "Tokens" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Tokens documentation in create custom token section with read only caveat works correctly
@@ -97,7 +97,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "data access caveats documentation" link in "Create new token" view
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Tokens" in documentation page
+    And user of browser sees that "Tokens" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to DNS Config documentation in Oneprovider DNS Config in Clusters page works correctly
@@ -107,7 +107,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "DNS config" in documentation page
+    And user of browser sees that "DNS config" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config in Clusters page works correctly
@@ -117,7 +117,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "DNS config" in documentation page
+    And user of browser sees that "DNS config" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config at subdomain delegation section in Clusters page works correctly
@@ -127,7 +127,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "DNS setup documentation" link at subdomain delegation section in DNS SETUP view in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "DNS config" in documentation page
+    And user of browser sees that "DNS config" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to file popularity documentation in File popularity tab in Clusters page works correctly
@@ -141,8 +141,8 @@ Feature: Onezone links to documentation
     And user of browser clicks on "file popularity documentation" link in file popularity tab in Onepanel
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "File popularity" in documentation page
-    And user of browser sees that active sidebar link is "Advanced topics" in documentation page
+    And user of browser sees that "File popularity" sidebar link is active in documentation page
+    And user of browser sees that "Advanced topics" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
@@ -151,6 +151,6 @@ Feature: Onezone links to documentation
     And user of browser clicks on "Onedatify documentation" link in clusters page
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that active sidebar link is "Oneprovider" in documentation page
-    And user of browser sees that active sidebar link is "Installation" in documentation page
-    And user of browser sees that active sidebar link is "Docker-based" in documentation page
+    And user of browser sees that "Oneprovider" sidebar heading is expanded in documentation page
+    And user of browser sees that "Installation" sidebar link is active in documentation page
+    And user of browser sees that "Docker-based" sidebar link is active in documentation page
