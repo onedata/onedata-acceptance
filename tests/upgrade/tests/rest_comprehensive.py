@@ -154,6 +154,9 @@ def setup_datasets_and_archives(tests_controller):
     ARCHIVE_NAME_TO_ID["archive"] = create_archive(
         provider_host, token, dataset_id, "test"
     )["archiveId"]
+    wait_for_preserved_archive_state(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
+    )
     root_dir_id = get_archive_information(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
     )["rootDirectoryId"]
@@ -170,6 +173,9 @@ def setup_datasets_and_archives(tests_controller):
     ARCHIVE_NAME_TO_ID["archive_incremental"] = create_archive(
         provider_host, token, dataset_id, "test", archive_config
     )["archiveId"]
+    wait_for_preserved_archive_state(
+        provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
+    )
     root_dir_id = get_archive_information(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
     )["rootDirectoryId"]
@@ -354,3 +360,10 @@ def wait_for_synced_file_content(provider_host, path, token, expected_content):
     assert (
         actual_content == expected_content
     ), f"expected content: {expected_content} but got {actual_content}"
+
+
+@repeat_failed(timeout=60)
+def wait_for_preserved_archive_state(provider_host, token, archive_id):
+    archive_state = get_archive_information(provider_host, token, archive_id)["state"]
+    err_msg = f"archive {archive_id} is not in preserved state but in {archive_state}"
+    assert archive_state == "preserved", err_msg
