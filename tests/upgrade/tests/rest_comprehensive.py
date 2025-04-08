@@ -227,6 +227,7 @@ def setup_all_functionalities(tests_controller):
 
     dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
     archive_id = create_archive(provider_host, token, dataset_id, "test")["archiveId"]
+    wait_for_preserved_archive_state(provider_host, token, archive_id)
 
     create_additional_content_in_dir(client, "space_posix", "dir3_shared")
 
@@ -236,6 +237,7 @@ def setup_all_functionalities(tests_controller):
     archive_inc_id = create_archive(
         provider_host, token, dataset_id, "test", archive_config
     )["archiveId"]
+    wait_for_preserved_archive_state(provider_host, token, archive_inc_id)
     root_dir_id = get_archive_information(provider_host, token, archive_inc_id)[
         "rootDirectoryId"
     ]
