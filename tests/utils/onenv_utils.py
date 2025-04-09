@@ -47,18 +47,18 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
     with sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd) as proc:
         output, err = proc.communicate()
 
-    decoded_output = output.decode("utf-8", errors="replace").strip()
-    decoded_err = err.decode("utf-8", errors="replace").strip()
+    decoded_output = output.decode("utf-8", errors="replace").strip() + "\n"
+    decoded_err = err.decode("utf-8", errors="replace").strip() + "\n"
+
+    if decoded_err != "\n":
+        sys.stderr.write(decoded_err)
+
+    if proc.returncode != 0 and fail_with_error:
+        sys.stdout.write(decoded_output)
+        raise OnenvError(f"Environment error.\nCommand: {cmd} failed.")
 
     if verbose:
         sys.stdout.write(decoded_output)
-    sys.stderr.write(decoded_err)
-
-    if proc.returncode != 0 and fail_with_error:
-        raise OnenvError(
-            f"Environment error.\nCommand: {cmd} failed.\nCaptured output:"
-            f" {decoded_output}"
-        )
 
     return decoded_output if return_output else proc.returncode
 
