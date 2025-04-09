@@ -30,6 +30,17 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
     oz_page(driver)["clusters"].token_page.copy()
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Onedatify documentation" link in clusters page'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_docs_link_in_clusters_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)["clusters"].token_page.onedatify_documentation.click()
+
+
 @wt(parsers.parse('user of {browser_id} sees "{record}" in clusters menu'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts):

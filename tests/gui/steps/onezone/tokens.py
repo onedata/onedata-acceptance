@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.common.exceptions import ElementNotInteractableException
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -106,6 +108,22 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 
 @wt(
     parsers.parse(
+        'user of {browser_id} clicks on "{link}" link in "Create new token" view'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_link_in_create_token_view(selenium, browser_id, oz_page, link):
+    driver = selenium[browser_id]
+    link = f"{link} link" if "documentation" in link else link
+    element = getattr(oz_page(driver)["tokens"].create_token_page, transform(link))
+    try:
+        element.click()
+    except ElementNotInteractableException:
+        driver.execute_script("arguments[0].click();", element)
+
+
+@wt(
+    parsers.parse(
         'user of {browser_id} clicks on "Show inactive caveats" '
         'label in "Create new token" view'
     )
@@ -114,6 +132,7 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 def show_inactive_caveats(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)["tokens"].create_token_page.expand_caveats()
+    assert oz_page(driver)["tokens"].create_token_page.caveats_expanded()
 
 
 @wt(
@@ -434,6 +453,13 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)["tokens"].create_token_page
     return new_token_page.get_caveat(caveat_name)
+
+
+@wt(parsers.parse("user of {browser_id} sets read only token caveat"))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_caveat_by_name(selenium, browser_id, oz_page):
+    caveat = get_caveat_by_name(selenium, browser_id, oz_page, "readonly")
+    caveat.set_readonly_caveat()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
