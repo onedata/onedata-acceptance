@@ -67,12 +67,6 @@ def create_xattr_columns_in_columns_menu_in_browser(
     new_column_button.click()
 
     new_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
-    new_xattr_column.extended_attribute_key()
-
-    # element is not attached to new xattr column object
-    custom_xattr_key = driver.find_element(By.CSS_SELECTOR, ".xattrKey-field-dropdown")
-    custom_xattr_key.click()
-
     new_xattr_column.enter_an_xattr_key.send_keys(name)
 
     if with_label:
