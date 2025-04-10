@@ -50,7 +50,7 @@ class Client:
             )
         else:
             cmd = " ".join(
-                ["oneclient", "--log-dir", logdir, mode_flag, "-v2", "--insecure"]
+                ["oneclient", "--log-dir", logdir, mode_flag, "-v2", "--disable-log-buffering", "--insecure"]
                 + additional_opts
                 + [self._mount_path]
             )
