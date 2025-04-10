@@ -138,6 +138,8 @@ class SyncChart(PageObject):
 
 class FilePopularity(PageObject):
     enable_file_popularity = Toggle(".one-way-toggle-control")
+    advanced_settings = WebElement(".one-collapsible-list-item-header")
+    file_popularity_documentation = WebElement(".documentation-link")
 
     lastOpenHourWeightGroup = Input(".lastOpenHourWeightGroup input")
     avgOpenCountPerDayWeightGroup = Input(".avgOpenCountPerDayWeightGroup input")

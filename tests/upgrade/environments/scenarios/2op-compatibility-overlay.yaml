@@ -74,3 +74,5 @@ oneprovider-2:
     ]}].
 
 persistence: true
+
+handleProxyMock: true

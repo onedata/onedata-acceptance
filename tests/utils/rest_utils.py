@@ -56,6 +56,7 @@ def http_get(
     cert=None,
     auth=None,
     default_headers=True,
+    params=None,
 ):
     return http_request(
         requests.get,
@@ -68,6 +69,7 @@ def http_get(
         cert,
         auth,
         default_headers=default_headers,
+        params=params,
     )
 
 
@@ -82,6 +84,7 @@ def http_put(
     cert=None,
     auth=None,
     default_headers=True,
+    params=None,
 ):
     return http_request(
         requests.put,
@@ -95,6 +98,7 @@ def http_put(
         auth,
         data,
         default_headers=default_headers,
+        params=params,
     )
 
 
@@ -109,6 +113,8 @@ def http_post(
     cert=None,
     auth=None,
     default_headers=True,
+    params=None,
+    stream=False,
 ):
     return http_request(
         requests.post,
@@ -122,6 +128,8 @@ def http_post(
         auth,
         data,
         default_headers=default_headers,
+        params=params,
+        stream=stream,
     )
 
 
@@ -135,6 +143,7 @@ def http_delete(
     cert=None,
     auth=None,
     default_headers=True,
+    params=None,
 ):
     return http_request(
         requests.delete,
@@ -147,6 +156,7 @@ def http_delete(
         cert,
         auth,
         default_headers=default_headers,
+        params=params,
     )
 
 
@@ -161,6 +171,7 @@ def http_patch(
     cert=None,
     auth=None,
     default_headers=True,
+    params=None,
 ):
     return http_request(
         requests.patch,
@@ -174,6 +185,7 @@ def http_patch(
         auth,
         data,
         default_headers=default_headers,
+        params=params,
     )
 
 
@@ -189,6 +201,8 @@ def http_request(  # pylint: disable=inconsistent-return-statements
     auth=None,
     data=None,
     default_headers=True,
+    params=None,
+    stream=False,
     retries=5,
 ):
     protocol = "https" if use_ssl else "http"
@@ -205,6 +219,8 @@ def http_request(  # pylint: disable=inconsistent-return-statements
                 cert=cert,
                 auth=auth,
                 data=data,
+                params=params,
+                stream=stream,
             )
             if 200 <= response.status_code < 300:
                 return response
