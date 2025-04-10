@@ -40,6 +40,7 @@ class QoSTab(Modal):
     no_storage_matching = Label(".storages-matching-text")
     show_matching_storages = Button(".storages-matching-info-icon")
     privileges_message = Label(".world-map .text-center")
+    question_icon = Button(".oneicon-sign-question-rounded")
 
     def __str__(self):
         return "QoS tab"

@@ -18,6 +18,7 @@ from tests.gui.utils.onezone.generic_page import GenericPage
 
 class TokenPage(PageObject):
     copy = Button(".copy-btn")
+    onedatify_documentation = WebElement(".documentation-link")
 
 
 class GuiSettingsPage(PageObject):

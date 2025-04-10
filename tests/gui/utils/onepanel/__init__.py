@@ -12,6 +12,7 @@ from tests.gui.utils.onezone.members_subpage import MembersPage
 
 from .clusters import ClustersSidebar, WelcomePage
 from .deployment import Deployment
+from .dns_setup import DNSSetup
 from .emergency_passphrase import EmergencyPassphrase
 from .init_page import PanelInitPage
 from .members import MembersContentPage
@@ -36,6 +37,7 @@ class Content(BaseContent):
     welcome = WebItem(_main_content, cls=WelcomePage)
     deployment = WebItem(_main_content, cls=Deployment)
     nodes = WebItem(_main_content, cls=NodesContentPage)
+    dns_setup = WebItem(_main_content, cls=DNSSetup)
     provider = WebItem(_main_content, cls=ProviderContentPage)
     storages = WebItem(_main_content, cls=StorageContentPage)
     spaces = WebItem(_main_content, cls=SpacesContentPage)

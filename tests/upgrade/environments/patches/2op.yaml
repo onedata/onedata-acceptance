@@ -38,6 +38,19 @@ spaces:
         - provider: "oneprovider-2"
           storage_name: "posix"
           size: '10000000000'
+  - name: space_views
+    user: *user1
+    users:
+      - user: *user2
+    groups:
+      - group: *group1
+    supports:
+        - provider: "oneprovider-1"
+          storage_name: "posix"
+          size: '10000000000'
+        - provider: "oneprovider-2"
+          storage_name: "posix"
+          size: '10000000000'
   - name: space_s3
     user: *user1
     users:

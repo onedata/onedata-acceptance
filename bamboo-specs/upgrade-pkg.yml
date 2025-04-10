@@ -1,0 +1,125 @@
+---
+version: 2
+plan:
+  project-key: ODSRV
+  key: UP
+  name: upgrade pkg
+repositories:
+- onedata-acceptance:
+    scope: global
+triggers: []
+branches:
+  create:
+    for-new-branch: release/.*
+  delete:
+    after-deleted-days: 7
+    after-inactive-days: 30
+  link-to-jira: true
+notifications: []
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: '3'
+  force-stop-build: true
+  all-other-apps:
+    custom.com.atlassian.bamboo.plugin.hungbuildkiller:
+      stopped.enabled: 'true'
+      add_comment_when_hung.enabled: 'true'
+
+stages:
+- Upgrade Test:
+    manual: false
+    final: false
+    jobs:
+    - 20.02.1 - current
+    - 20.02.19 - current
+    - 21.02.1 - current
+20.02.1 - current:
+  key: U20026DEV
+  other: &common-opts
+    clean-working-dir: true
+  tasks: &tasks
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - sudo ${HOME}/restart_minikube.sh
+      description: Restart minikube
+  - checkout:
+      path: onedata-acceptance
+      force-clean-build: true
+      description: Checkout Default Repository
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
+  - script:
+      interpreter: SHELL
+      scripts:
+      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+      working-dir: onedata-acceptance
+      description: Download artifacts
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - CONFIG_FILE="${bamboo.shortJobName}" make test_upgrade
+      working-dir: onedata-acceptance
+      description: Run acceptance upgrade tests
+  final-tasks: &final-tasks
+  - test-parser:
+      type: junit
+      ignore-time: false
+      test-results: onedata-acceptance/test-reports/results*.xml
+      description: Parse test results
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
+        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+        mv onedata-acceptance/tests/upgrade/logs/*/*/images.yaml onedata-acceptance/tests/upgrade/logs
+        tar czf test_logs.tar.gz onedata-acceptance/tests/upgrade/logs
+      description: Pack logs
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      working-dir: onedata-acceptance
+      description: Clear env
+  artifacts: &artifacts
+  - name: test_logs.tar.gz
+    pattern: test_logs.tar.gz
+    shared: false
+    required: false
+  requirements: &requirements
+  - minikube
+  artifact-subscriptions: []
+20.02.19 - current:
+  key: RFCD
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+21.02.1 - current:
+  key: U2C
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []

@@ -45,6 +45,8 @@ class ApiTab(PageObject):
     tab = WebElement(".nav-link-apiSamples")
     operations = WebElement(".api-command-type-selector-trigger")
     copy_button = WebElement(".copy-btn")
+    rest_api_documentation = WebElement(".documentation-link")
+    documentation = WebElement(".optional-parameters-text a")
 
 
 class Charts(PageObject):

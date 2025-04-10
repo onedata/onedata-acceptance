@@ -54,3 +54,5 @@ oneprovider-2:
   external-storages: []
 
 persistence: true
+
+handleProxyMock: true

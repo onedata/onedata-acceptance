@@ -1,0 +1,27 @@
+---
+version: 2
+plan:
+  key: ODSRV-UP
+plan-permissions:
+- roles:
+  - logged-in
+  - anonymous
+  permissions:
+  - view
+- users:
+  - wojciech
+  permissions:
+  - view
+  - build
+  - view-configuration
+- users:
+  - plgmstanisz
+  - plgagneska
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view-configuration
+...
