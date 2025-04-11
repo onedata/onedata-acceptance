@@ -121,6 +121,7 @@ def unmount_all_clients_and_purge_spaces(users):
             try:
                 purge_spaces(client)
             finally:
+                # Ensure oneclient is always unmounted
                 client.unmount()
         user.clients.clear()
 

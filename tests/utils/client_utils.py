@@ -124,9 +124,7 @@ class Client:
         self.rpyc_connection.modules.os.chmod(file_path, mode)
 
     def stat(self, path):
-        attr = self.rpyc_connection.modules.os.stat(path)
-
-        return attr
+        return self.rpyc_connection.modules.os.stat(path)
 
     def rm(self, path, recursive=False, force=False, onerror=None):
         if recursive and force:
