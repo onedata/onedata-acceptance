@@ -4,9 +4,6 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
-from selenium.webdriver.common.by import By
-
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
