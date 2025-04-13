@@ -377,6 +377,13 @@ def capabilities(request, capabilities, tmpdir):
         options.add_argument("--disable-infobars")
         options.add_argument("--enable-logging")
         options.add_argument("--v=1")
+        # Chrome may crash in Docker containers on certain pages due to
+        # too small /dev/shm. So you may have to fix the small /dev/shm size.
+        # Another way to make it work would be to add the chrome_options
+        # as --disable-dev-shm-usage. This will force Chrome to use
+        # the /tmp directory instead. This may slow down the execution
+        # since disk will be used instead of memory.
+        options.add_argument("--disable-dev-shm-usage")
 
         options.set_capability(
             "goog:loggingPrefs",

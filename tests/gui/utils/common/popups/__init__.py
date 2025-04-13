@@ -25,6 +25,7 @@ from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .deregister_provider import DeregisterProvider
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .handle_service import HandleService
+from .info import Info
 from .matching_storages import MatchingStoragesPopup
 from .member_menu import MenuPopupWithText
 from .membership_relation_menu import MembershipRelationMenu
@@ -132,6 +133,7 @@ class Popups:
     logging_level = WebItem(".logLevel-field-dropdown", cls=PowerSelect)
     options_selector = WebItem(".webui-popover.in", cls=OptionsSelector)
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
+    info = WebItem(".switchable-popover-body", cls=Info)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

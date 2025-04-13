@@ -74,6 +74,7 @@ stages:
         - Multiprovider multiuser
         - Multiprovider QoS
         - Multiprovider QoS storage
+        - Onedata documentation
         - Onepanel basic
         - Onepanel deployment basic
         - Onepanel deployment OneS3
@@ -566,6 +567,21 @@ Multiprovider QoS storage:
         <<: *run-selenium-tests
         scripts:
           - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage test_gui_src
+
+Onedata documentation:
+  <<: *acceptance-tests-in-chrome-job
+  key: CODL
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onedata_documentation test_gui_src
 
 Onepanel basic:
   <<: *acceptance-tests-in-chrome-job

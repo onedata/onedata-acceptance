@@ -95,6 +95,7 @@ class MetadataTab(Modal):
 
     loading_alert = Label(".resource-load-error")
     editor_disabled = Label(".editor-disabled-lock-text")
+    question_icon = Button(".oneicon-sign-question-rounded")
 
     def __str__(self):
         return "Metadata tab"

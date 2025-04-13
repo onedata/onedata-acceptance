@@ -124,6 +124,12 @@ class CreateNewTokenPage(PageObject):
     object_id_caveat = WebItem(".objectIdCaveat-field", cls=CaveatField)
 
     footer = WebElement(".footer-buttons")
+    show_details = WebElement(".token-alert .clickable")
+    documentation_link = WebElement(".documentation-link")
+    tokens_documentation_link = WebElement(".documentation-link")
+    data_access_caveats_documentation_link = WebElement(
+        ".data-access-caveat-warning-details .documentation-link"
+    )
 
     def __str__(self):
         return "Create new token page"
@@ -137,6 +143,9 @@ class CreateNewTokenPage(PageObject):
     def expand_caveats(self):
         if "show" in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
+
+    def caveats_expanded(self):
+        return "hide" in self.show_inactive_caveats.web_elem.text.lower()
 
     def hide_caveats(self):
         if "hide" in self.show_inactive_caveats.web_elem.text.lower():
