@@ -50,15 +50,16 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
     decoded_output = output.decode("utf-8", errors="replace").strip() + "\n"
     decoded_err = err.decode("utf-8", errors="replace").strip() + "\n"
 
+    should_throw = proc.returncode != 0 and fail_with_error
+
     if decoded_err != "\n":
         sys.stderr.write(decoded_err)
 
-    if proc.returncode != 0 and fail_with_error:
+    if verbose or should_throw:
         sys.stdout.write(decoded_output)
-        raise OnenvError(f"Environment error.\nCommand: {cmd} failed.")
 
-    if verbose:
-        sys.stdout.write(decoded_output)
+    if should_throw:
+        raise OnenvError(f"Environment error.\nCommand: {cmd} failed.")
 
     return decoded_output if return_output else proc.returncode
 
