@@ -47,16 +47,21 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
     with sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd) as proc:
         output, err = proc.communicate()
 
-    if verbose:
-        sys.stdout.write(output.decode("utf-8"))
-    sys.stderr.write(err.decode("utf-8"))
+    decoded_output = output.decode("utf-8", errors="replace").strip() + "\n"
+    decoded_err = err.decode("utf-8", errors="replace").strip() + "\n"
 
-    if proc.returncode != 0 and fail_with_error:
-        raise OnenvError(
-            f"Environment error.\nCommand: {cmd} failed.\nCaptured output: {output}"
-        )
+    should_throw = proc.returncode != 0 and fail_with_error
 
-    return output if return_output else proc.returncode
+    if decoded_err != "\n":
+        sys.stderr.write(decoded_err)
+
+    if verbose or should_throw:
+        sys.stdout.write(decoded_output)
+
+    if should_throw:
+        raise OnenvError(f"Environment error.\nCommand: {cmd} failed.")
+
+    return decoded_output if return_output else proc.returncode
 
 
 # TODO: After resolving VFS-4820 all this function can be imported from

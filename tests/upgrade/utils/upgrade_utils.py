@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 
+# pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 
