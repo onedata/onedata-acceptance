@@ -23,7 +23,7 @@ from tests.upgrade.utils.rest_utils import (
     lookup_file_id,
     register_handle,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
+from tests.upgrade.utils.upgrade_utils import UpgradeTest
 from tests.utils.utils import repeat_failed
 
 
@@ -38,11 +38,13 @@ def get_tests(tests_controller):
             "rest datasets and archives test",
             partial(setup_datasets_and_archives, tests_controller),
             partial(verify_datasets_and_archives, tests_controller),
+            min_prov_version=21,
         ),
         UpgradeTest(
             "rest all functionalities test",
             partial(setup_all_functionalities, tests_controller),
             partial(verify_all_functionalities, tests_controller),
+            min_prov_version=21,
         ),
     ]
 
@@ -71,11 +73,13 @@ def setup_shares_handles(tests_controller):
     space_path = client.absolute_path("space_posix")
     client.mkdir(os.path.join(space_path, "dir1_shared"))
     dir_path = os.path.join(space_path, "dir1_shared")
+    file_path = os.path.join(dir_path, "file1_shared")
     client.create_file(os.path.join(dir_path, "file1_shared"))
-
     file_id = lookup_file_id(
         "space_posix/dir1_shared/file1_shared", provider_host, token
     )
+    client.write("abc123", file_path)
+
     SHARE_NAME_TO_ID["file1_shared"] = create_share(
         provider_host, token, file_id, "file1_shared"
     )
@@ -91,14 +95,15 @@ def setup_shares_handles(tests_controller):
     RESULTS["handle_details"] = get_handle(
         zone_host, admin_token, HANDLE_NAME_TO_ID["handle"]
     )
-    RESULTS["share_details"] = get_share_info(
+    share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
+    share_details.pop("fileType")
+    RESULTS["share_details"] = share_details
     share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
     )["rootFileId"]
-    share_content = download_file_content(provider_host, token, share_root_dir_id)
-    unpack_tarball_from_payload(share_content, "downloaded_share1_s")
+    RESULTS["share_content"] = download_file_content(provider_host, token, share_root_dir_id)
 
 
 def verify_shares_handles(tests_controller):
@@ -112,16 +117,17 @@ def verify_shares_handles(tests_controller):
     handle_details.pop("metadata")
     RESULTS["handle_details"].pop("metadata")
     assert RESULTS["handle_details"] == handle_details
-    assert RESULTS["share_details"] == get_share_info(
+    share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
+    share_details.pop("rootFileType")
+    assert RESULTS["share_details"] == share_details
 
     share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
+        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
     )["rootFileId"]
-    share_content = download_file_content(provider_host, token, share_root_dir_id)
-    unpack_tarball_from_payload(share_content, "downloaded_share1_v")
-    compare_downloaded_dirs_content("downloaded_share1_s", "downloaded_share1_v")
+    assert RESULTS["share_content"] == download_file_content(provider_host, token,
+                                                     share_root_dir_id)
 
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
@@ -141,9 +147,6 @@ def verify_shares_handles(tests_controller):
 def setup_datasets_and_archives(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
-
-    if not check_provider_supports_managing_datasets(provider_host):
-        return
 
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     create_dir_with_example_content(client, "space_posix", "dir2_datasets")
@@ -187,9 +190,6 @@ def verify_datasets_and_archives(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
-    if not check_provider_supports_managing_datasets(provider_host):
-        return
-
     root_dir_id = get_archive_information(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
     )["rootDirectoryId"]
@@ -212,9 +212,6 @@ def setup_all_functionalities(tests_controller):
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
     admin_token = tests_controller.users["admin"].token
-
-    if not check_provider_supports_managing_datasets(provider_host):
-        return
 
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     create_dir_with_example_content(client, "space_posix", "dir3_shared")
@@ -264,8 +261,6 @@ def setup_all_functionalities(tests_controller):
 def verify_all_functionalities(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
-    if not check_provider_supports_managing_datasets(provider_host):
-        return
 
     share_root_dir_id = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir3_shared"]
@@ -322,12 +317,6 @@ def compare_downloaded_dirs_content(path1, path2):
 def wait_for_handle_registration(provider_host, token, share_id):
     res = get_share_info(provider_host, token, share_id)
     assert res["handleId"] is not None
-
-
-def check_provider_supports_managing_datasets(provider_host):
-    prov_version = get_prov_version(provider_host)
-    # provider api supports managing datasets and archives from 21 version
-    return prov_version >= 21
 
 
 def create_dir_with_example_content(client, space_name: str, dir_name: str):
