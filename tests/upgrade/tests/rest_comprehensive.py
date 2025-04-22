@@ -103,7 +103,9 @@ def setup_shares_handles(tests_controller):
     share_root_dir_id = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
     )["rootFileId"]
-    RESULTS["share_content"] = download_file_content(provider_host, token, share_root_dir_id)
+    RESULTS["share_content"] = download_file_content(
+        provider_host, token, share_root_dir_id
+    )
 
 
 def verify_shares_handles(tests_controller):
@@ -126,8 +128,9 @@ def verify_shares_handles(tests_controller):
     share_root_dir_id = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
     )["rootFileId"]
-    assert RESULTS["share_content"] == download_file_content(provider_host, token,
-                                                     share_root_dir_id)
+    assert RESULTS["share_content"] == download_file_content(
+        provider_host, token, share_root_dir_id
+    )
 
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
