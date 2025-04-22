@@ -64,8 +64,6 @@ class Client:
 
         print(f"Mount command: {cmd}")
 
-        time.sleep(1)
-
         ret = self.run_cmd(cmd, verbose=True)
 
         return ret
