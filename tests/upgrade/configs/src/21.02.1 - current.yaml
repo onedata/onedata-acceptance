@@ -21,4 +21,5 @@ targetVersions:
         - panel
         - worker
         - cluster-manager
+  # NOTE: RPYC version in target image must be compatible with RPYC version in test runner image (onedata/acceptance_mixed)
   oneclient: default
