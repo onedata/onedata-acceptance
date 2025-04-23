@@ -30,3 +30,7 @@
 !include 'upgrade-pkg.yml'
 ---
 !include 'upgrade-pkg-perm.yml'
+---
+!include 'upgrade-src.yml'
+---
+!include 'upgrade-src-perm.yml'
