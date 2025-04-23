@@ -1,7 +1,7 @@
 ---
 version: 2
 plan:
-  project-key: ODSRV
+  project-key: VFS
   key: UP
   name: upgrade pkg
 repositories:
@@ -74,9 +74,9 @@ stages:
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
-      - CONFIG_FILE="${bamboo.shortJobName}" make test_upgrade_pkg
+      - CONFIG_FILE="${bamboo.shortJobName}" make test_upgrade_src
       working-dir: onedata-acceptance
-      description: Run acceptance package upgrade tests
+      description: Run acceptance source upgrade tests
   final-tasks: &final-tasks
   - test-parser:
       type: junit
