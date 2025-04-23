@@ -21,3 +21,4 @@ targetVersions:
         - panel
         - worker
         - cluster-manager
+  oneclient: default
