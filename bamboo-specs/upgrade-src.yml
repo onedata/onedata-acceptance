@@ -3,7 +3,7 @@ version: 2
 plan:
   project-key: VFS
   key: UP
-  name: upgrade pkg
+  name: upgrade src
 repositories:
 - onedata-acceptance:
     scope: global
