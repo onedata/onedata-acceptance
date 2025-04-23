@@ -98,7 +98,6 @@ def setup_shares_handles(tests_controller):
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
-    share_details.pop("fileType")
     RESULTS["share_details"] = share_details
     share_root_dir_id = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
@@ -122,8 +121,7 @@ def verify_shares_handles(tests_controller):
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
-    share_details.pop("rootFileType")
-    assert RESULTS["share_details"] == share_details
+    compare_share_details(RESULTS["share_details"], share_details)
 
     share_root_dir_id = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
@@ -361,3 +359,15 @@ def wait_for_preserved_archive_state(provider_host, token, archive_id):
     archive_state = get_archive_information(provider_host, token, archive_id)["state"]
     err_msg = f"archive {archive_id} is not in preserved state but in {archive_state}"
     assert archive_state == "preserved", err_msg
+
+
+def compare_share_details(details_s, details_v):
+    # that parameter differs on various provider versions
+    _ = details_s.pop("fileType") if "fileType" in details_s else None
+    _ = details_v.pop("fileType") if "fileType" in details_v else None
+    _ = details_s.pop("rootFileType") if "rootFileType" in details_s else None
+    _ = details_v.pop("rootFileType") if "rootFileType" in details_v else None
+    err_msg = (
+        f"share details on setup: {details_s} is different than on verify {details_v}"
+    )
+    assert details_s == details_v, err_msg
