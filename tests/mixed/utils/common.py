@@ -252,11 +252,15 @@ def assert_command_output_equals(tmp_memory, expected_output):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that executed curl command returned successful http"
+        "user of {browser_id} sees that executed curl command returned successful HTTP"
         " code"
     )
 )
 def assert_curl_command_successful_http_code(tmp_memory):
-    http_status_code: str = tmp_memory["http status code"]
-    err_msg = f"expected 2xx http status code but got: {http_status_code}"
+    http_status_code = tmp_memory["http status code"]
+    command_output = tmp_memory["output"]
+    err_msg = (
+        f"expected 2xx http status code but got: {http_status_code}, captured stdout:"
+        f" {command_output}"
+    )
     assert http_status_code.startswith("2"), err_msg

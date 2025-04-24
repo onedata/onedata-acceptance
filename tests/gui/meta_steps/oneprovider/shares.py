@@ -237,6 +237,12 @@ def rename_share_from_single_view(
         " details modal"
     )
 )
+@wt(
+    parsers.parse(
+        'user of {browser_id} copies command for "{command}" operation in API section from file'
+        " details modal"
+    )
+)
 def copy_command_from_api_in_file_details_modal(
     modals, selenium, browser_id, command, popups
 ):
