@@ -50,10 +50,19 @@ class Client:
             )
         else:
             cmd = " ".join(
-                ["oneclient", "--log-dir", logdir, mode_flag, "-v2", "--insecure"]
+                [
+                    "oneclient",
+                    "--log-dir",
+                    logdir,
+                    mode_flag,
+                    "-v2",
+                    "--insecure",
+                ]
                 + additional_opts
                 + [self._mount_path]
             )
+
+        print(f"Mount command: {cmd}")
 
         ret = self.run_cmd(cmd, verbose=True)
 

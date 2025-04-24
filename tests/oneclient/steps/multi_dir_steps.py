@@ -121,13 +121,18 @@ def purge_all_spaces(client):
         for space in spaces:
             space_path = client.absolute_path(space)
             try:
+                print(f"Cleaning space {space_path}")
                 client.rm(path=space_path, recursive=True)
             except FileNotFoundError:
                 pass
             except OSError as e:
-                # ignore EACCES errors during cleaning
-                if e.errno == errno.EACCES:
-                    pass
+                # ignore permission errors during cleaning
+                if e.errno not in (errno.EPERM, errno.EACCES, errno.EIO):
+                    print(
+                        f"Unexpected error '{e.errno}' when cleaning space:"
+                        f" {space_path}"
+                    )
+                    raise e
     except FileNotFoundError:
         pass
     except Exception as e:
