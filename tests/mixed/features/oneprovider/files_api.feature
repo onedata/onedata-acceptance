@@ -15,7 +15,44 @@ Feature: File Details API tests
                 provider: oneprovider-1
               directory tree:
                 - file1: 11111
+                - dir1
     And opened browser with user1 signed in to "onezone" service
+
+
+  Scenario Outline: User executes the "<command_label>" operation on directory using the command from API section in directory details modal
+    When user of browser copies token "access token" from tokens page
+    And user of browser opens file browser for "space1" space
+    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser sees that "Directory details" modal has appeared
+    And user of browser clicks on "API" navigation tab in "Directory Details" modal
+    And user of browser sees that "Directory details" modal is opened on "API" tab
+
+    And user of browser copies command for "<command_label>" operation in API section from directory details modal
+    And user of browser executes copied command with environment variables:
+      TOKEN: $(resolve_token "access token")
+    Then user of browser sees that executed curl command returned successful HTTP code
+
+  Examples:
+    | command_label |
+    | Download directory (tar) |
+    | List directory files and subdirectories |
+
+
+  Scenario: User creates file in directory using the command from "Create file in directory" operation from API section in directory details modal
+    When user of browser copies token "access token" from tokens page
+    And user of browser opens file browser for "space1" space
+    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser sees that "Directory details" modal has appeared
+    And user of browser clicks on "API" navigation tab in "Directory Details" modal
+    And user of browser sees that "Directory details" modal is opened on "API" tab
+
+    And user of browser copies command for "Create file in directory" operation in API section from directory details modal
+    And user of browser executes copied command with environment variables:
+      TOKEN: $(resolve_token "access token")
+      NAME: file2
+    Then user of browser sees that executed curl command returned successful HTTP code
 
 
   Scenario Outline: User executes the "<command_label>" operation on file using the command from API section in file details modal

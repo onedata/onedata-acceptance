@@ -130,6 +130,7 @@ def execute_copied_curl_command(
         )
         + " -k"
         + ' -w "http status code:%{http_code}"'
+        + " -v"
     )  # ignore ssl certs and get http status code
     output = sp.run(
         cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
@@ -137,6 +138,7 @@ def execute_copied_curl_command(
     output_message, http_status_code = output.stdout.split("http status code:")
     tmp_memory["http status code"] = http_status_code
     tmp_memory["output"] = output_message
+    tmp_memory["stderr"] = output.stderr
 
 
 @wt(
@@ -259,8 +261,9 @@ def assert_command_output_equals(tmp_memory, expected_output):
 def assert_curl_command_successful_http_code(tmp_memory):
     http_status_code = tmp_memory["http status code"]
     command_output = tmp_memory["output"]
+    command_stderr = tmp_memory["stderr"]
     err_msg = (
         f"expected 2xx http status code but got: {http_status_code}, captured stdout:"
-        f" {command_output}"
+        f" {command_output}. Captured stderr: {command_stderr}"
     )
     assert http_status_code.startswith("2"), err_msg
