@@ -25,7 +25,7 @@ from tests.utils.onenv_utils import run_onenv_command
 
 
 class UpgradeTest:
-    def __init__(self, name, setup, verify, min_prov_version=-1):
+    def __init__(self, name, setup, verify, min_prov_version=None):
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
         self.__verify = verify  # function executed after all upgrades are performed
@@ -77,7 +77,7 @@ class UpgradeTestsController:
 
     def add_test(self, test):
         req_prov_version = test.get_required_min_prov_version()
-        if req_prov_version != -1:
+        if req_prov_version is not None:
             if req_prov_version <= get_prov_version(
                 self.hosts["oneprovider-1"]["hostname"]
             ):
