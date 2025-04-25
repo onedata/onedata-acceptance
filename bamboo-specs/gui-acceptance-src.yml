@@ -61,14 +61,14 @@ stages:
         - _Codetag Tracker
         - _Autoformatter check
         - _Static analysis
-        - Automation examples workflows
-        - Automation examples workflows 2
+        - Atm examples workflows 1
+        - Atm examples workflows 2
         - Atm stores basic
         - Atm workflow execution
         - Atm workflows pausing and cancelling
         - Atm workflows status
         - Atm workflows stores
-        - Atm BagIt
+        - Atm BagIt 1
         - Atm BagIt 2
         - Metadata
         - Multiprovider archives
@@ -270,7 +270,7 @@ _Static analysis:
           - make static-analysis
         description: Static analysis
 
-Automation examples workflows: &acceptance-tests-in-chrome-job
+Atm examples workflows 1: &acceptance-tests-in-chrome-job
   key: COAWEX
   other: *common-opts
   tasks:
@@ -334,7 +334,7 @@ Automation examples workflows: &acceptance-tests-in-chrome-job
     - script: &run-selenium-tests
         <<: *run-script-working-dir
         scripts:
-          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests test_gui_src
+          - make ENV_FILE=1oz_1op_openfaas SUITE=test_automation_examples_workflows_tests1 test_gui_src
         description: Run Selenium tests
   final-tasks:
     - test-parser:
@@ -390,7 +390,7 @@ Automation examples workflows: &acceptance-tests-in-chrome-job
     - minikube
   artifact-subscriptions: []
 
-Automation examples workflows 2:
+Atm examples workflows 2:
   <<: *acceptance-tests-in-chrome-job
   key: COAWEX2
   tasks:
@@ -480,7 +480,7 @@ Atm workflows stores:
         scripts:
           - make SUITE=test_atm_workflows_stores ENV_FILE=1oz_1op_openfaas test_gui_src
 
-Atm BagIt:
+Atm BagIt 1:
   <<: *acceptance-tests-in-chrome-job
   key: COB
   tasks:
@@ -493,7 +493,7 @@ Atm BagIt:
     - script:
         <<: *run-selenium-tests
         scripts:
-          - make SUITE=test_automation_bagit ENV_FILE=1oz_1op_openfaas test_gui_src
+          - make SUITE=test_automation_bagit1 ENV_FILE=1oz_1op_openfaas test_gui_src
 
 Atm BagIt 2:
   <<: *acceptance-tests-in-chrome-job

@@ -1,4 +1,4 @@
-"""This module contains tests suite for bagit workflows using
+"""This module contains tests suite for BagIt workflows using
 Oneprovider GUI.
 """
 
