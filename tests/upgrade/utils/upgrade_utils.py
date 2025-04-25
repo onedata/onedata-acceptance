@@ -25,13 +25,17 @@ from tests.utils.onenv_utils import run_onenv_command
 
 
 class UpgradeTest:
-    def __init__(self, name, setup, verify):
+    def __init__(self, name, setup, verify, min_prov_version=None):
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
         self.__verify = verify  # function executed after all upgrades are performed
+        self.__min_prov_version = min_prov_version
 
     def get_name(self):
         return self.__name
+
+    def get_required_min_prov_version(self):
+        return self.__min_prov_version
 
     def run_setup(self, *args, **kwargs):
         print(f'\nRunning setup for test "{self.__name}"\n')
@@ -72,10 +76,18 @@ class UpgradeTestsController:
         self.user_clients = {}
 
     def add_test(self, test):
-        self.__tests_list.append(test)
+        req_prov_version = test.get_required_min_prov_version()
+        if req_prov_version is not None:
+            if req_prov_version <= get_prov_version(
+                self.hosts["oneprovider-1"]["hostname"]
+            ):
+                self.__tests_list.append(test)
+        else:
+            self.__tests_list.append(test)
 
     def add_tests(self, tests):
-        self.__tests_list.extend(tests)
+        for test in tests:
+            self.add_test(test)
 
     def mount_client(self, username, client_host_alias, client_instance):
         client = self.users[username].mount_client(
