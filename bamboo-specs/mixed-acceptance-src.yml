@@ -23,6 +23,7 @@ notifications:
       - users:
           - plgjliput
 labels: []
+triggers: []
 dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true

@@ -190,10 +190,13 @@ def open_site_url(selenium, browser_id, displays, clipboard):
 
 
 @wt(parsers.parse("user of {browser_id} copies a first resource {item} from URL"))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
     driver = selenium[browser_id]
+    item_value = parse_url(driver.current_url).group(item.lower())
+    assert item_value != "empty", f"did not manage to get {item}"
     clipboard.copy(
-        parse_url(driver.current_url).group(item.lower()),
+        item_value,
         display=displays[browser_id],
     )
 

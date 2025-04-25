@@ -760,7 +760,7 @@ def start_test_env(
     )
     if result != "ok":
         previous_env["started"] = False
-        handle_env_init_error(request, env_description_abs_path, str(result))
+        handle_env_init_error(request, env_description_abs_path, "Environment error")
     else:
         previous_env["started"] = True
 
