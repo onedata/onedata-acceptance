@@ -232,9 +232,9 @@ def rename_share_from_single_view(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} copies command "{command}" in API section from file'
-        " details modal"
+    parsers.re(
+        'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)" operation in'
+        " API section from (file|directory) details modal"
     )
 )
 def copy_command_from_api_in_file_details_modal(

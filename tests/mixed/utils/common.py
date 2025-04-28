@@ -4,7 +4,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
+import json
 import subprocess as sp
 
 import yaml
@@ -129,11 +129,16 @@ def execute_copied_curl_command(
             clipboard.paste(display=displays[browser_id]), config=config
         )
         + " -k"
-    )  # ignore ssl certs
+        + ' -w "http status code:%{http_code}"'
+        + " -v"
+    )  # ignore ssl certs and get http status code
     output = sp.run(
         cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
     )
-    tmp_memory["output"] = output.stdout
+    output_message, http_status_code = output.stdout.split("http status code:")
+    tmp_memory["http status code"] = http_status_code
+    tmp_memory["output"] = output_message
+    tmp_memory["stderr"] = output.stderr
 
 
 @wt(
@@ -185,6 +190,10 @@ def try_to_resolve_items(val: str, request):
         "space_owner_privileges": lambda _: space_owner_privileges,
         "space_manager_privileges": lambda _: space_manager_privileges,
         "space_member_privileges": lambda _: space_member_privileges,
+        "resolve_compose_json": lambda x: json.dumps(
+            {x.split(",")[0]: x.split(",")[1]}
+        ),
+        "resolve_compose_list": lambda x: json.dumps([x]),
     }
 
     def _resolve(text):
@@ -241,3 +250,23 @@ def assert_command_output_equals(tmp_memory, expected_output):
     output = tmp_memory["output"]
     err_msg = f"expected command output to be {expected_output}, but got {output}"
     assert expected_output == output, err_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that executed curl command returned successful HTTP"
+        " code"
+    )
+)
+def assert_curl_command_successful_http_code(tmp_memory):
+    http_status_code = tmp_memory["http status code"]
+    command_output = tmp_memory["output"]
+    command_stderr = tmp_memory["stderr"]
+    err_msg = (
+        f"Expected 2xx http status code but got: {http_status_code}\n"
+        "--- Captured curl stdout ---\n"
+        f"{command_output}\n"
+        "--- Captured curl stderr ---\n"
+        f"{command_stderr}"
+    )
+    assert http_status_code.startswith("2"), err_msg
