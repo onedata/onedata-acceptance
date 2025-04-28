@@ -1,4 +1,4 @@
-"""This module contains tests suite for bagit workflows using
+"""This module contains tests suite for example workflows using
 Oneprovider GUI.
 """
 
@@ -16,6 +16,7 @@ from tests.gui.meta_steps.oneprovider.automation.workflow_results import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.files_tree import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.onezone.automation.lambda_creation import *
 from tests.gui.meta_steps.onezone.automation.store_creation import *
 from tests.gui.meta_steps.onezone.automation.task_management import *
@@ -30,6 +31,7 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
@@ -73,4 +75,5 @@ def screens():
     return [0]
 
 
-scenarios("../features/atm/automation_bagit_tests.feature")
+scenarios("../features/atm/automation_examples_workflows_input_files.feature")
+scenarios("../features/atm/automation_eureka3d_tests.feature")
