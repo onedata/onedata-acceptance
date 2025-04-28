@@ -263,7 +263,10 @@ def assert_curl_command_successful_http_code(tmp_memory):
     command_output = tmp_memory["output"]
     command_stderr = tmp_memory["stderr"]
     err_msg = (
-        f"expected 2xx http status code but got: {http_status_code}, captured stdout:"
-        f" {command_output}. Captured stderr: {command_stderr}"
+        f"Expected 2xx http status code but got: {http_status_code}\n"
+        "--- Captured curl stdout ---\n"
+        f"{command_output}\n"
+        "--- Captured curl stderr ---\n"
+        f"{command_stderr}"
     )
     assert http_status_code.startswith("2"), err_msg
