@@ -122,7 +122,9 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events, option):
     gathered_list = gather_events_list(modal, driver, option)
 
     for event in events_list:
-        assert event in gathered_list, f"{option}: {event} has not been found"
+        assert (
+            event in gathered_list
+        ), f"{option}: {event} has not been found. Events found: {gathered_list}"
 
 
 @wt(

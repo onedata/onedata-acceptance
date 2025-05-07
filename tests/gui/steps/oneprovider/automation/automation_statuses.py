@@ -5,12 +5,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
 
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    StaleElementReferenceException,
-)
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -44,9 +40,10 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container, status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
+    actual_status = page.workflow_visualiser.status
     assert (
-        status in page.workflow_visualiser.status
-    ), f"Workflow status is not equal to {status}"
+        status in actual_status
+    ), f"Workflow status {actual_status} is not equal to {status}"
 
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -66,7 +63,7 @@ def assert_task_status_in_parallel_box(
     assert_status(task, actual_status, expected_status)
 
 
-@repeat_failed(interval=1, timeout=90, exceptions=AssertionError)
+@repeat_failed(interval=1, timeout=90)
 def await_for_task_status_in_parallel_box(
     selenium, browser_id, op_container, lane, task, ordinal, expected_status
 ):
@@ -108,8 +105,8 @@ def get_status(page, option, name):
         ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
     )
 )
-@repeat_failed(interval=1, timeout=120, exceptions=AssertionError)
-def await_for_lane_workflow_status(
+@repeat_failed(interval=1, timeout=120)
+def await_for_lane_or_workflow_status(
     selenium, browser_id, op_container, expected_status, name, option
 ):
     page = switch_to_automation_page(selenium, browser_id, op_container)
@@ -128,23 +125,12 @@ def await_for_lane_workflow_status(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_of_workflow_if_needed_wait_for_stopping_status(
+def assert_status_of_workflow(
     selenium, browser_id, op_container, expected_status, workflow
 ):
+    option = "workflow"
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    time.sleep(0.5)
-    actual_status = page.workflow_visualiser.status
-    if expected_status == "Stopping" and actual_status == "Active":
-        option = "workflow"
-        actual_status = await_for_lane_workflow_status(
-            selenium,
-            browser_id,
-            op_container,
-            expected_status,
-            workflow,
-            option,
-        )
-
+    actual_status = get_status(page, option, workflow)
     assert_status(workflow, actual_status, expected_status)
 
 
@@ -165,7 +151,6 @@ def assert_status(name, actual_status, expected_status):
 @repeat_failed(
     interval=1,
     timeout=360,
-    exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
