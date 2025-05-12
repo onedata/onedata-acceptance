@@ -226,3 +226,12 @@ def fail_to_see_subgroups_using_rest(
     ]
     for child in parse_seq(group_list):
         assert child not in subgroups_names
+
+
+@wt(parsers.parse(r"using REST, user {user} creates {number} groups"))
+def create_n_groups_using_rest(user, users, hosts, number: int, host="onezone"):
+    user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
+    user_api = UserApi(user_client)
+    for i in range(number):
+        group_name = f"group{i}"
+        user_api.create_user_group(GroupCreateRequest(name=group_name))

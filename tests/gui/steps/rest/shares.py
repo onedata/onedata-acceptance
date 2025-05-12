@@ -10,6 +10,7 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import transform
+from tests.mixed.steps.rest.oneprovider.data import create_empty_file_in_dir_rest
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import (
     get_provider_rest_path,
@@ -105,3 +106,19 @@ def add_user_to_handle_service(user, users, host, hosts):
         ),
         headers={"X-Auth-Token": users["admin"].token},
     )
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} creates {number} shares in space "{space_name}" in {host}'
+    )
+)
+def create_n_shares_in_space(
+    users, user, hosts, host, number: int, space_name, spaces, shares
+):
+    space_id = spaces[space_name]
+    for i in range(number):
+        create_empty_file_in_dir_rest(users, user, hosts, host, space_id, f"file{i}")
+        create_share_using_rest(
+            f"{space_name}/file{i}", host, user, f"share{i}", hosts, users, shares
+        )

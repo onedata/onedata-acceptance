@@ -11,6 +11,7 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     NamedButton,
+    WebElementsSequence,
     WebItem,
     WebItemsSequence,
 )
@@ -47,6 +48,9 @@ class GroupsPage(GenericPage):
     elements_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
     )
+    groups_list_web_elems = WebElementsSequence(
+        ".sidebar-groups .one-list>.one-list-item.clickable"
+    )
 
     create_group = Button(".create-group-btn")
 
@@ -65,3 +69,6 @@ class GroupsPage(GenericPage):
     members_page = WebItem(".main-content", cls=MembersPage)
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
+
+    def get_visible_groups_list(self):
+        return [el for el in self.groups_list_web_elems if el.text != ""]

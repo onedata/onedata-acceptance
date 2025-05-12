@@ -11,6 +11,7 @@ import time
 from tests import OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
+from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -577,3 +578,61 @@ def copy_command_from_rest_api_modal(modals, selenium, browser_id, command, popu
     modal.api.operations.click()
     popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} can see there are {number} spaces in the spaces list in"
+        " the sidebar"
+    )
+)
+def assert_n_spaces_in_spaces_list(selenium, browser_id, number: int, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)["data"]
+    assert_n_items_in_items_list(page, selenium, browser_id, number, "spaces")
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} opens "{space_name}" space in the spaces list in the'
+        " sidebar"
+    )
+)
+def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)["data"]
+    seen_spaces = set()
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        new_spaces = page.get_visible_spaces_list()
+        new_spaces_names = [el.text.split("\n")[0] for el in new_spaces]
+
+        if space_name in new_spaces_names:
+            index = new_spaces_names.index(space_name)
+            new_spaces[index].click()
+            return
+
+        # if there are at least 1 new space keep scrolling
+        stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces_names)
+        seen_spaces.update(new_spaces_names)
+        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1])
+    raise AssertionError(f"did not manage to open space {space_name}")
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see that opened space is "{space_name}" in the spaces'
+        " list in the sidebar"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_opened_space(selenium, browser_id, space_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)["data"]
+    vis_spaces = page.get_visible_spaces_list()
+    vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
+    index = vis_spaces_names.index(space_name)
+    el = vis_spaces[index]
+    err_msg = f"Space {space_name} is not opened."
+    assert el.is_displayed(), err_msg
+    assert "active" in el.get_attribute("class"), err_msg
