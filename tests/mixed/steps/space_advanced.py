@@ -7,14 +7,13 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.mixed.steps.rest.oneprovider.data import (
-    _lookup_file_id,
-    create_empty_file_in_dir_rest,
-    create_share_rest,
-)
-from tests.mixed.utils.common import login_to_provider
+from tests.gui.steps.rest.shares import create_share_using_rest
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup.spaces import _create_space, _get_support
+from tests.utils.entities_setup.spaces import (
+    _create_space,
+    _get_support,
+    create_empty_file,
+)
 
 
 @wt(
@@ -39,7 +38,7 @@ def create_n_spaces_without_support(zone_host, users, user, hosts, number: int):
     )
 )
 def create_n_spaces_with_shares(
-    zone_host, users, user, hosts, number: int, onepanel_credentials, storages
+    zone_host, users, user, hosts, number: int, onepanel_credentials, storages, shares
 ):
     name_prefix = "space"
     host = "oneprovider-1"
@@ -64,7 +63,8 @@ def create_n_spaces_with_shares(
             users_to_add,
             users,
         )
-        create_empty_file_in_dir_rest(users, user, hosts, host, space_id, f"file{i}")
-        client = login_to_provider(user, users, hosts[host]["hostname"])
-        file_id = _lookup_file_id(f"{space_name}/file{i}", client)
-        create_share_rest(users, user, hosts, host, file_id, f"share{i}")
+        file_path = f"{space_name}/file{i}"
+        create_empty_file(file_path, users, user, host, hosts)
+        create_share_using_rest(
+            file_path, host, user, f"share{i}", hosts, users, shares
+        )
