@@ -11,7 +11,6 @@ Feature: Management of a great number of spaces
   Scenario: User can see correct number of previously created spaces in spaces list in the sidebar
     When using REST, user1 creates 500 spaces in "onezone" Onezone service
     And user of browser sees that "space1" has appeared on the spaces list in the sidebar
-    And user of browser clicks on Data in the main menu
     Then user of browser can see there are 500 spaces on the spaces list in the sidebar
 
 
