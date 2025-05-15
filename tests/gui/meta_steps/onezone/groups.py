@@ -365,7 +365,8 @@ def fail_to_add_subgroups_using_op_gui(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see there is group "{group_name}" in groups page'
+        'user of {browser_id} can see there is group "{group_name}" on the groups list'
+        " in the sidebar"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -378,7 +379,8 @@ def assert_group_in_groups_page(browser_id, selenium, group_name, oz_page):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} can see there are {number} groups in groups page"
+        "user of {browser_id} can see there are {number} groups on the groups list in"
+        " the sidebar"
     )
 )
 def assert_n_groups_in_groups_page(browser_id, selenium, number: int, oz_page):

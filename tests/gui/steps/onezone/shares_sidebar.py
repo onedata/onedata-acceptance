@@ -49,7 +49,7 @@ def assert_share_name_in_shares_sidebar(selenium, browser_id, oz_page, share_nam
 
 @wt(
     parsers.parse(
-        "user of {browser_id} can see there are {number} shares in the shares list in"
+        "user of {browser_id} can see there are {number} shares on the shares list in"
         " the sidebar"
     )
 )
