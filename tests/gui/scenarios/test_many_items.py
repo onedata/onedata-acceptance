@@ -46,13 +46,7 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.rest.shares import *
-from tests.mixed.steps.members import *
-from tests.mixed.steps.rest.onezone.group_management import *
-from tests.mixed.steps.rest.onezone.special_dirs import *
 from tests.mixed.steps.space_advanced import *
-from tests.mixed.steps.space_basic import *
-from tests.mixed.steps.tokens_basic import *
-from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
