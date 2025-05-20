@@ -17,6 +17,7 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.modals.details_modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider_common import *
@@ -43,3 +44,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/shares_api.feature")
+scenarios("../features/oneprovider/files_api.feature")

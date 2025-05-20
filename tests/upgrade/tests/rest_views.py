@@ -22,7 +22,7 @@ from tests.upgrade.utils.rest_utils import (
     subscribe_to_file_changes,
     update_view_reduce_function,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.utils import repeat_failed
 
@@ -116,8 +116,10 @@ FILES_MEETING_SPATIAL_CONDITION = ["file_sp1", "file_sp3"]
 REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
 EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
 # when counting all files there will be included also space dir,
-# trash dir and user root dir
-SPECIAL_DIRS_COUNT = 3
+# trash dir and space archive root dir
+SPECIAL_DIRS_COUNT_21 = 3
+# in provider 20 there is no archive root dir
+SPECIAL_DIRS_COUNT_20 = 2
 
 SPACE_NAME = "space_views"
 RESULTS = {}
@@ -366,8 +368,12 @@ def wait_for_expected_files_in_query_view(
 ):
     res = query()
     items = [item[attr_holding_file_id] for item in res]
+    prov_version = get_prov_version(provider_host)
+    extra_files_num = (
+        SPECIAL_DIRS_COUNT_20 if prov_version == 20 else SPECIAL_DIRS_COUNT_21
+    )
     exp_files_count = (
-        len(expected_files) + SPECIAL_DIRS_COUNT if extra_files else len(expected_files)
+        len(expected_files) + extra_files_num if extra_files else len(expected_files)
     )
     assert exp_files_count == len(items), f"expected {expected_files} but got: {items}"
     for file in expected_files:

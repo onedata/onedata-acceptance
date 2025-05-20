@@ -26,7 +26,7 @@ Feature: Shares API tests
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Information" option in data row menu in file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
-    And user of browser copies command "Download file content" in API section from file details modal
+    And user of browser copies command for "Download file content" operation in API section from file details modal
     And user of browser executes copied command
     Then user of browser sees that output of executed command is equal to: "11111"
 
@@ -38,7 +38,7 @@ Feature: Shares API tests
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Information" option in data row menu in file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
-    And user of browser copies command "Get attributes" in API section from file details modal
+    And user of browser copies command for "Get attributes" operation in API section from file details modal
     And user of browser executes copied command
     Then user of browser sees that output of executed command contains:
         type: REG
@@ -54,7 +54,7 @@ Feature: Shares API tests
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Information" option in data row menu in file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
-    And user of browser copies command "<command_name>" in API section from file details modal
+    And user of browser copies command for "<command_name>" operation in API section from file details modal
     And user of browser executes copied command
     Then user of browser sees that output of executed command is equal to: "<expected_output>"
 

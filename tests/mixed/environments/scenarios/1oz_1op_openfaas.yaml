@@ -21,3 +21,7 @@ onezone:
 oneprovider-1:
   batchConfig:
     createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {atm_logger_dump_to_op_logs, true}
+    ]}].
