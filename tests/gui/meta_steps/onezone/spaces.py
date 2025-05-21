@@ -11,7 +11,6 @@ import time
 from tests import OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
-from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -578,18 +577,6 @@ def copy_command_from_rest_api_modal(modals, selenium, browser_id, command, popu
     modal.api.operations.click()
     popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} spaces on the spaces list in"
-        " the sidebar"
-    )
-)
-def assert_n_spaces_in_spaces_list(selenium, browser_id, number: int, oz_page):
-    driver = selenium[browser_id]
-    page = oz_page(driver)["data"]
-    assert_n_items_in_items_list(page, selenium, browser_id, number, "spaces")
 
 
 @wt(

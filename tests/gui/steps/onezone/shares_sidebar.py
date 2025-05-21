@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -45,15 +44,3 @@ def assert_share_name_in_shares_sidebar(selenium, browser_id, oz_page, share_nam
     share_names_list = {share.name for share in shares_list}
 
     assert share_name in share_names_list, f"Share {share_name} not in shares sidebar"
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} shares on the shares list in"
-        " the sidebar"
-    )
-)
-def assert_n_shares_in_shares_sidebar(selenium, browser_id, number: int, oz_page):
-    driver = selenium[browser_id]
-    page = oz_page(driver)["shares"]
-    assert_n_items_in_items_list(page, selenium, browser_id, number, "shares")

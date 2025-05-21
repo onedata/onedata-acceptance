@@ -6,7 +6,7 @@ __author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq, transform
@@ -256,3 +256,17 @@ def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
     group_name_on_page = oz_page(driver)["groups"].selected_group_name
     err_msg = f"expected group name {group_name}, found {group_name_on_page}"
     assert group_name_on_page == group_name, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see there is group "{group_name}" on the groups list'
+        " in the sidebar"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
+def assert_group_in_groups_page(browser_id, selenium, group_name, oz_page):
+    driver = selenium[browser_id]
+    assert (
+        group_name in oz_page(driver)["groups"].elements_list
+    ), f"There is no group {group_name} in groups list."

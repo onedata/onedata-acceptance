@@ -8,12 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
     consume_received_token,
 )
-from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
@@ -361,29 +360,3 @@ def fail_to_add_subgroups_using_op_gui(
         )
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} can see there is group "{group_name}" on the groups list'
-        " in the sidebar"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_group_in_groups_page(browser_id, selenium, group_name, oz_page):
-    driver = selenium[browser_id]
-    assert (
-        group_name in oz_page(driver)["groups"].elements_list
-    ), f"There is no group {group_name} in groups list."
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} groups on the groups list in"
-        " the sidebar"
-    )
-)
-def assert_n_groups_in_groups_page(browser_id, selenium, number: int, oz_page):
-    driver = selenium[browser_id]
-    page = oz_page(driver)["groups"]
-    assert_n_items_in_items_list(page, selenium, browser_id, number, "groups")

@@ -5,9 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
     click_modal_button,
@@ -250,17 +248,3 @@ def copy_command_from_api_in_file_details_modal(
     modal.api.operations.click()
     popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} shares in shares view"
-    )
-)
-def assert_n_shares_in_public_shares_page(
-    browser_id, selenium, number: int, op_container
-):
-    driver = selenium[browser_id]
-    switch_to_iframe(selenium, browser_id)
-    page = op_container(driver).shares_page
-    assert_n_items_in_items_list(page, selenium, browser_id, number, "shares")

@@ -17,6 +17,7 @@ from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *
+from tests.gui.steps.common.common import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.login import *
@@ -58,5 +59,6 @@ def screens():
     return [0, 1]
 
 
+scenarios("../features/onezone/many_items/many_shares.feature")
 scenarios("../features/onezone/many_items/many_spaces.feature")
 scenarios("../features/onezone/many_items/many_groups.feature")
