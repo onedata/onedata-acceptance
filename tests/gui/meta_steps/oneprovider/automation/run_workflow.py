@@ -187,7 +187,6 @@ def choose_file_as_initial_workflow_value(
 @repeat_failed(
     interval=1,
     timeout=360,
-    exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflows_in_automation_subpage(
     selenium, browser_id, op_container, option
@@ -216,6 +215,16 @@ def wait_for_workflows_in_automation_subpage_extended_time(
     )
 
 
+def wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container):
+    wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, "start"
+    )
+    wait_for_workflows_in_automation_subpage(
+        selenium, browser_id, op_container, "finish"
+    )
+    assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id, op_container)
+
+
 def _wait_for_workflows_in_automation_subpage(
     selenium, browser_id, op_container, option
 ):
@@ -228,6 +237,13 @@ def _wait_for_workflows_in_automation_subpage(
         err = "Ongoing workflows did not finish their run"
 
     assert len(page.workflow_executions_list) == 0, err
+
+
+def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id, op_container):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    change_tab_in_automation_subpage(selenium, browser_id, op_container, "Suspended")
+    err_msg = "Workflow did not finished successfully and it is in suspended state."
+    assert len(page.workflow_executions_list) == 0, err_msg
 
 
 @wt(
