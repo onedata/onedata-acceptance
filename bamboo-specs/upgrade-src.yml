@@ -68,7 +68,7 @@ stages:
   - script:
       interpreter: SHELL
       scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
   - script:
