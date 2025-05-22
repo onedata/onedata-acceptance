@@ -39,6 +39,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider_common import *
+from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.providers import *

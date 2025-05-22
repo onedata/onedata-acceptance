@@ -25,29 +25,38 @@ def assert_n_items_in_items_list(page, selenium, browser_id, number: int, items_
     ), f"There are {len(seen_items)} items, but should be: {number}."
 
 
-def _get_page(page, op_container, oz_page, driver):
-    if page == "shares view":
-        return op_container(driver).shares_page
-    if page == "shares list":
+def _get_page(where, oz_page, driver):
+    if where == "shares":
         return oz_page(driver)["shares"]
-    if page == "groups list":
-        return oz_page(driver)["shares"]
-    if page == "spaces list":
+    if where == "groups":
+        return oz_page(driver)["groups"]
+    if where == "spaces":
         return oz_page(driver)["data"]
-    raise AssertionError(f"page {page} not found")
+    raise AssertionError(f"page {where} not found")
 
 
-@wt(parsers.parse("user of {browser_id} can see there are {number} {items} in {where}"))
 @wt(
     parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} in"
+        "user of {browser_id} can see there are {number} {items} on the {where} list in"
         " the sidebar"
     )
 )
 def wt_assert_n_items_in_items_list(
-    selenium, browser_id, number: int, oz_page, op_container, items, where
+    selenium, browser_id, number: int, oz_page, items, where
 ):
     driver = selenium[browser_id]
+    page = _get_page(where, oz_page, driver)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} can see there are {number} shares in shares view"
+    )
+)
+def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int, op_container):
+    items = "shares"
+    driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    page = _get_page(where, op_container, oz_page, driver)
+    page = op_container(driver).shares_page
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
