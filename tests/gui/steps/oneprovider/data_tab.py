@@ -10,7 +10,12 @@ import time
 
 import pytest
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_EXTENDED_UPLOAD, WAIT_FRONTEND
+from tests.gui.conftest import (
+    WAIT_BACKEND,
+    WAIT_EXTENDED_UPLOAD,
+    WAIT_FRONTEND,
+    WAIT_NORMAL_UPLOAD,
+)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.utils.generic import parse_seq, transform, upload_file_path
@@ -336,7 +341,7 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_containe
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for file uploads? to finish"))
-@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
+@repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -398,39 +403,6 @@ def upload_automation_file_to_cwd_in_file_browser(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload file "{file_name}" to current dir'
-    )
-)
-@repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_file_to_cwd_in_file_browser(
-    selenium, browser_id, file_name, op_container, popups
-):
-    upload_file_to_cwd_in_file_browser_no_waiting(
-        selenium, browser_id, file_name, op_container
-    )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} uses upload button from file browser "
-        'menu bar to upload files from local directory "{dir_path}" '
-        "to remote current dir"
-    )
-)
-@repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_files_to_cwd_in_data_tab(
-    selenium, browser_id, dir_path, tmpdir, op_container, popups
-):
-    upload_files_to_cwd_in_data_tab_no_waiting(
-        selenium, browser_id, dir_path, tmpdir, op_container
-    )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} uses upload button from file browser "
         'menu bar to upload files from local directory "{dir_path}" '
         "to remote current dir without waiting for upload to finish"
     )
@@ -452,12 +424,26 @@ def upload_files_to_cwd_in_data_tab_no_waiting(
 @wt(
     parsers.parse(
         "user of {browser_id} uses upload button from file browser "
+        'menu bar to upload file "{file_name}" to current dir'
+    )
+)
+def upload_file_to_cwd_in_file_browser(
+    selenium, browser_id, file_name, op_container, popups
+):
+    upload_file_to_cwd_in_file_browser_no_waiting(
+        selenium, browser_id, file_name, op_container
+    )
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses upload button from file browser "
         'menu bar to upload files from local directory "{dir_path}" '
         "to remote current dir and waits extended time for upload to "
         "finish"
     )
 )
-@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_files_to_cwd_in_data_tab_extended_wait(
     selenium, browser_id, dir_path, tmpdir, op_container, popups
 ):
@@ -474,12 +460,27 @@ def upload_files_to_cwd_in_data_tab_extended_wait(
         "to remote current dir"
     )
 )
-@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_file_to_cwd_in_data_tab(
     selenium, browser_id, file_path, tmpdir, op_container, popups
 ):
     upload_file_to_cwd_in_data_tab_no_waiting(
         selenium, browser_id, file_path, tmpdir, op_container
+    )
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses upload button from file browser "
+        'menu bar to upload files from local directory "{dir_path}" '
+        "to remote current dir"
+    )
+)
+def upload_files_to_cwd_in_data_tab(
+    selenium, browser_id, dir_path, tmpdir, op_container, popups
+):
+    upload_files_to_cwd_in_data_tab_no_waiting(
+        selenium, browser_id, dir_path, tmpdir, op_container
     )
     wait_for_file_upload_to_finish(selenium, browser_id, popups)
 

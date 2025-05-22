@@ -120,7 +120,7 @@ Feature: Workflow cancelling and pausing tests
     And user of browser awaits for status of "Lane2" lane to be "Active"
 
     And user of browser clicks "<stop_button>" button on "workflow-with-sleep-two-lanes" workflow status bar
-    And user of browser sees that status of "workflow-with-sleep-two-lanes" workflow is "Stopping"
+    And user of browser awaits for status of "workflow-with-sleep-two-lanes" workflow to be "Stopping"
     And user of browser waits for workflow "workflow-with-sleep-two-lanes" to be stopped
 
     Then user of browser sees that status of "workflow-with-sleep-two-lanes" workflow is "<status>"
@@ -179,7 +179,7 @@ Feature: Workflow cancelling and pausing tests
 
     And user of browser sees that status of "workflow-with-sleep-two-lanes" workflow is "Active"
     And user of browser clicks "Cancel" button on "workflow-with-sleep-two-lanes" workflow status bar
-    And user of browser sees that status of "workflow-with-sleep-two-lanes" workflow is "Stopping"
+    And user of browser awaits for status of "workflow-with-sleep-two-lanes" workflow to be "Stopping"
     And user of browser waits for workflow "workflow-with-sleep-two-lanes" to be cancelled
 
     Then user of browser sees that status of "workflow-with-sleep-two-lanes" workflow is "Cancelled"

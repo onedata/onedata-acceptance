@@ -299,11 +299,12 @@ def fail_to_click_option_in_data_distribution_popup(
         'user of {browser_id} sees "see history" button in data distribution modal'
     )
 )
-@repeat_failed(interval=1, timeout=90, exceptions=RuntimeError)
+@repeat_failed(interval=1, timeout=90)
 def assert_see_history_btn_shown(selenium, browser_id):
     driver = selenium[browser_id]
-    assert hasattr(
-        modals(driver).details_modal.data_distribution, "see_history_btn"
+    button = getattr(modals(driver).details_modal.data_distribution, "see_history_btn")
+    assert (
+        button.is_displayed()
     ), 'Button "see history" not found in data distribution modal'
 
 

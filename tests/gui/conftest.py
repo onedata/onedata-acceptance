@@ -38,7 +38,7 @@ WAIT_NORMAL_UPLOAD = 60
 
 # use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
 # when waiting for extended uploads to finish
-WAIT_EXTENDED_UPLOAD = 1500
+WAIT_EXTENDED_UPLOAD = 600
 
 # number of times tests will try to start Webdriver instance
 DRIVER_CREATION_RETRIES = 5

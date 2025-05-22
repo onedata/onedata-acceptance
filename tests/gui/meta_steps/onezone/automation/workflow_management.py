@@ -19,7 +19,7 @@ from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_group_as_initial_workflow_value_for_store,
     provide_text_to_object_initial_workflow_value_store,
     provide_text_to_string_initial_workflow_value_store,
-    wait_for_workflows_in_automation_subpage,
+    wait_for_workflow_execution_in_atm_subpage,
 )
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear,
@@ -263,9 +263,6 @@ def _execute_workflow_with_input_config(
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
 
-    start = "start"
-    finish = "finish"
-
     try:
         click_element_on_lists_on_left_sidebar_menu(
             selenium, browser_id, spaces, space, oz_page
@@ -339,8 +336,7 @@ def _execute_workflow_with_input_config(
             raise ValueError(f"unknown data type {data_type}")
 
     confirm_workflow_to_execute(selenium, browser_id, op_container)
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, start)
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, finish)
+    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container)
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
@@ -366,8 +362,6 @@ def execute_workflow_and_wait(
     popups,
     data_type,
 ):
-    start = "start"
-    finish = "finish"
 
     execute_workflow(
         browser_id,
@@ -383,8 +377,7 @@ def execute_workflow_and_wait(
         data_type,
     )
 
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, start)
-    wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, finish)
+    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container)
     expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
