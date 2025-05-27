@@ -50,6 +50,7 @@ from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.space_advanced import *
 from tests.oneclient.steps.auth_steps import *
+from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *

@@ -4,7 +4,6 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -46,17 +45,4 @@ def wt_assert_n_items_in_items_list(
 ):
     driver = selenium[browser_id]
     page = _get_page(where, oz_page, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
-
-
-@wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} shares in shares view"
-    )
-)
-def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int, op_container):
-    items = "shares"
-    driver = selenium[browser_id]
-    switch_to_iframe(selenium, browser_id)
-    page = op_container(driver).shares_page
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)

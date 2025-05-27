@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.webdriver.common.by import By
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
@@ -138,7 +140,7 @@ def assert_no_provider_for_space(
         "on the spaces list in the sidebar"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_new_created_space_has_appeared_on_spaces(
     selenium, browser_id, space_name, oz_page
 ):
@@ -168,6 +170,21 @@ def click_on_automation_option_in_the_sidebar(
 )
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page, force=True)
+
+
+@wt(
+    parsers.re(
+        "user of (?P<browser_id>.*?) opens "
+        "(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|"
+        "Clusters) page from the main menu"
+    )
+)
+def open_page_from_main_menu(selenium, browser_id, option, oz_page):
+    driver = selenium[browser_id]
+    _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page, force=True)
+    css_sel = ".sidenav-backdrop"
+    el = driver.find_element(By.CSS_SELECTOR, css_sel)
+    el.click()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

@@ -33,8 +33,8 @@ def create_n_spaces_without_support(zone_host, users, user, hosts, number: int):
 
 @wt(
     parsers.parse(
-        'using REST, {user} creates {number} spaces each with share in "{zone_host}"'
-        " Onezone service"
+        "using REST, {user} creates {number} spaces with one share for each, in"
+        ' "{zone_host}" Onezone service'
     )
 )
 def create_n_spaces_with_shares(
