@@ -174,14 +174,12 @@ def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) opens "
-        "(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|"
-        "Clusters) page from the main menu"
+        "user of (?P<browser_id>.*?) closes the temporary "
+        "sidebar by clicking on the background"
     )
 )
-def open_page_from_main_menu(selenium, browser_id, option, oz_page):
+def close_sidebar_by_click_on_background(selenium, browser_id):
     driver = selenium[browser_id]
-    _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page, force=True)
     css_sel = ".sidenav-backdrop"
     el = driver.find_element(By.CSS_SELECTOR, css_sel)
     el.click()

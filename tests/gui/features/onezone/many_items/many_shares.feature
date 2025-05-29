@@ -29,6 +29,7 @@ Feature: Management of a great number of spaces
     And user of browser is idle for 5 seconds
     And user of browser clicks on Shares in the main menu
     Then user of browser can see there are 150 shares on the shares list in the sidebar
-    And user of browser opens Data page from the main menu
+    And user of browser clicks on Data in the main menu
+    And user of browser closes the temporary sidebar by clicking on the background
     And user of browser clicks "Shares, Public Data" of "space1" space in the sidebar
     And user of browser can see there are 150 shares in shares view
