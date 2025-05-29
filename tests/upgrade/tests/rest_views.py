@@ -400,6 +400,9 @@ def get_record_for_file_in_file_changes(
     items = res.text.split("\r\n")
     items = [yaml.load(item, yaml.Loader) for item in items][0:-1]
     record = [item for item in items if item["fileId"] == file_id]
+    assert (
+        len(record) >= 1
+    ), f"Record for file {file_name} not found. All found items:\n {items}"
     return record
 
 
