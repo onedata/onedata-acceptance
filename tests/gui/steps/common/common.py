@@ -19,9 +19,10 @@ def assert_n_items_in_items_list(page, selenium, browser_id, number: int, items_
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
         seen_items.update(new_items_names)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
-    assert (
-        len(seen_items) == number
-    ), f"There are {len(seen_items)} items, but should be: {number}."
+    assert len(seen_items) == number, (
+        f"There are {len(seen_items)} items, but should be: {number}. All found"
+        f" items:\n {seen_items}"
+    )
 
 
 def _get_page(where, oz_page, driver):
