@@ -11,6 +11,7 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     WebElement,
+    WebElementsSequence,
     WebItemsSequence,
 )
 
@@ -33,6 +34,9 @@ class SharesContentPage(PageObject):
     shares_browser = WebItemsSequence(
         ".one-collapsible-list .list-header-row", cls=SharesOptions
     )
+    shares_list_web_elems = WebElementsSequence(
+        ".one-collapsible-list .share-list-item .list-header-row"
+    )
     path = Breadcrumbs(".share-header-path")
     url = Input(".clipboard-input.form-control")
     copy_icon = Button(".copy-btn-icon")
@@ -47,3 +51,6 @@ class SharesContentPage(PageObject):
     switch_editor_markdown = Button(".btn-switch-editor-mode")
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
+
+    def get_visible_shares_list(self):
+        return [el for el in self.shares_list_web_elems if el.text != ""]
