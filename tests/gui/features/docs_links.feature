@@ -153,3 +153,4 @@ Feature: Onezone links to documentation
     Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that "Oneprovider" sidebar heading is expanded in documentation page
     And user of browser sees that "Installation" sidebar link is active in documentation page
+    And user of browser sees that "Onedatify CLI wizard" sidebar link is active in documentation page
