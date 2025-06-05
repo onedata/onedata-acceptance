@@ -64,7 +64,7 @@ Feature: Onezone links to documentation
     And user of browser clicks on "QoS documentation" link in info popup
     And user of browser is redirected to newly opened tab
     Then user of browser should see that the page title contains "Onedata | Documentation"
-    And user of browser sees that "Quality of Service" sidebar link is active in documentation page
+    And user of browser sees that "Rule-based replication (QoS)" sidebar link is active in documentation page
 
 
   Scenario: User can see that link to Tokens documentation in tokens page works correctly
@@ -153,4 +153,4 @@ Feature: Onezone links to documentation
     Then user of browser should see that the page title contains "Onedata | Documentation"
     And user of browser sees that "Oneprovider" sidebar heading is expanded in documentation page
     And user of browser sees that "Installation" sidebar link is active in documentation page
-    And user of browser sees that "Docker-based" sidebar link is active in documentation page
+    And user of browser sees that "Onedatify CLI wizard" sidebar link is active in documentation page
