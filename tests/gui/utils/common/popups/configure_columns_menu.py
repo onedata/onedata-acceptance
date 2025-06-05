@@ -35,7 +35,7 @@ class NewXattrColumn(PageObject):
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
     create = NamedButton(".edit-column-btn", text="Create")
-    column_label = WebElement(".new-item-name")
+    column_label = WebElement(".columnLabel-field input")
 
 
 class ConfigureColumnsMenu(PageObject):
