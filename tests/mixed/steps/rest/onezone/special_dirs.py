@@ -45,18 +45,12 @@ EX_ERR_MSGS_REST = [
 EX_ERR_MSG_OC = "Operation not supported"
 
 
-@wt(
-    parsers.parse(
-        "using REST, {user} gets ID of the user root directory from "
-        'the space "{space_name}" details in {host}'
-    )
-)
-def get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+def get_space_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["user_root_dir"]:
-        tmp_memory["user_root_dir"][user] = space_details.dir_id
+    if tmp_memory["space_root_dir"]:
+        tmp_memory["space_root_dir"][space_name] = space_details.dir_id
     else:
-        tmp_memory["user_root_dir"] = {user: space_details.dir_id}
+        tmp_memory["space_root_dir"] = {space_name: space_details.dir_id}
 
 
 @wt(
@@ -94,13 +88,13 @@ def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     )
 )
 def get_share_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
-    get_user_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory)
+    get_space_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory)
     share_id = create_share_rest(
         users,
         user,
         hosts,
         host,
-        tmp_memory["user_root_dir"][user],
+        tmp_memory["space_root_dir"][space_name],
         "test_share",
     ).share_id
     share_details = get_share_details_rest(users, user, hosts, host, share_id)
