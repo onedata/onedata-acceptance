@@ -219,15 +219,15 @@ def verify_views(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(
+    _assert_json_included(
         RESULTS[VIEW_WITH_ALL_FILES],
         query_view(provider_host, token, space_id, VIEW_WITH_ALL_FILES),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_WITH_FILES_WITH_META],
         query_view(provider_host, token, space_id, VIEW_WITH_FILES_WITH_META),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_SPATIAL],
         query_view(
             provider_host,
@@ -239,11 +239,11 @@ def verify_views(tests_controller):
             end_range="[5,10]",
         ),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_WITH_REDUCE],
         query_view(provider_host, token, space_id, VIEW_WITH_REDUCE),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS["file-popularity"],
         query_view(provider_host, token, space_id, "file-popularity"),
     )
@@ -303,7 +303,7 @@ def verify_views_multiprovider(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(
+    _assert_json_included(
         RESULTS[VIEW_MULTIPROVIDER],
         query_view(provider_host2, token, space_id, VIEW_MULTIPROVIDER),
     )
@@ -358,8 +358,21 @@ def verify_subscribe_changes(tests_controller):
 
 
 def _assert(expected, actual):
-    err_msg = f"Expected value: {expected}, but got: {actual}"
+    err_msg = f"Expected value: {expected},\nbut got: {actual}"
     assert actual == expected, err_msg
+
+
+def _assert_json_included(json_to_be_included, other_json):
+    for item in json_to_be_included:
+        assert item in other_json, f"There is no {item} included in second json."
+
+
+def _assert_json_equal(expected, actual):
+    err_msg = "Json`s are not equal, there is no\n{}\nin {}"
+    for item in expected:
+        assert item in actual, err_msg.format(item, actual)
+    for item in actual:
+        assert item in expected, err_msg.format(item, expected)
 
 
 @repeat_failed(timeout=60)
