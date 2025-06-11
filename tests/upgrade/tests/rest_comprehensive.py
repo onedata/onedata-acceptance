@@ -114,10 +114,8 @@ def verify_shares_handles(tests_controller):
     admin_token = tests_controller.users["admin"].token
 
     handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
-    handle_details.pop("metadataPrefix")
-    handle_details.pop("metadata")
-    RESULTS["handle_details"].pop("metadata")
-    assert RESULTS["handle_details"] == handle_details
+    compare_handle_details(RESULTS["handle_details"], handle_details)
+
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
@@ -368,6 +366,20 @@ def compare_share_details(details_s, details_v):
     _ = details_s.pop("rootFileType") if "rootFileType" in details_s else None
     _ = details_v.pop("rootFileType") if "rootFileType" in details_v else None
     err_msg = (
-        f"share details on setup: {details_s} is different than on verify {details_v}"
+        f"Share details on setup:\n{details_s}\nis different than on"
+        f" verify:\n{details_v}"
+    )
+    assert details_s == details_v, err_msg
+
+
+def compare_handle_details(details_s, details_v):
+    # that parameter differs on various provider versions
+    _ = details_s.pop("metadata") if "metadata" in details_s else None
+    _ = details_v.pop("metadata") if "metadata" in details_v else None
+    _ = details_s.pop("metadataPrefix") if "metadataPrefix" in details_s else None
+    _ = details_v.pop("metadataPrefix") if "metadataPrefix" in details_v else None
+    err_msg = (
+        f"Handle details on setup:\n{details_s}\nis different than on"
+        f" verify:\n{details_v}"
     )
     assert details_s == details_v, err_msg

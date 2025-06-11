@@ -78,7 +78,7 @@ class UpgradeTestsController:
     def add_test(self, test):
         req_prov_version = test.get_required_min_prov_version()
         if req_prov_version is not None:
-            if req_prov_version <= get_prov_version(
+            if req_prov_version <= get_major_prov_version(
                 self.hosts["oneprovider-1"]["hostname"]
             ):
                 self.__tests_list.append(test)
@@ -229,8 +229,12 @@ def prepare_sources_upgrade_command(service, version):
     return cmd
 
 
+def get_major_prov_version(provider_host):
+    return int(get_prov_version(provider_host).split(".")[0])
+
+
 def get_prov_version(provider_host):
-    return int(get_provider_configuration(provider_host)["version"].split(".")[0])
+    return get_provider_configuration(provider_host)["version"]
 
 
 def format_failed_test_results(when, exception, test):
