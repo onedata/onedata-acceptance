@@ -131,19 +131,19 @@ def pytest_bdd_before_step_call(step):
     print(f"-- Executing step: {format_step_name(step)}")
 
 
-def pytest_bdd_after_scenario(request, scenario):
+def pytest_bdd_after_scenario(request):
     logdir_path = get_log_dir_path(request)
-    file_name = request.node.name
-    file_name = file_name.replace(" ", "_").replace("/", "_")
+    scenario_name = request.node.name
+    lambda_log_dir_name = scenario_name.replace(" ", "_").replace("/", "_")
     onenv_utils.run_onenv_command(
         "export",
-        [logdir_path, "-ll", "-lld", f"lambda_logs/{file_name}"],
-        fail_with_error=False,
+        [logdir_path, "--lambda-logs-only", "--lambda-logs-dir", lambda_log_dir_name],
+        fail_with_error=True,
     )
     onenv_utils.run_onenv_command(
         "clean",
-        ["-lp"],
-        fail_with_error=False,
+        ["--lambda-pods-only"],
+        fail_with_error=True,
     )
 
     print("=================================================================")
