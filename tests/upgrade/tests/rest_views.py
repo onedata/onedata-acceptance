@@ -118,9 +118,8 @@ REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
 EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
 # when counting all files there will be included also space dir,
 # trash dir and space archive root dir
-SPECIAL_DIRS_COUNT_21 = 3
-# in provider 20 there is no archive root dir
-SPECIAL_DIRS_COUNT_20 = 2
+SPECIAL_DIRS_COUNT_21_02_1 = 3
+SPECIAL_DIRS_COUNT_21_02_8 = 5
 
 SPACE_NAME = "space_views"
 RESULTS = {}
@@ -387,7 +386,9 @@ def wait_for_expected_files_in_query_view(
     items = [item[attr_holding_file_id] for item in res]
     prov_version = get_prov_version(provider_host)
     extra_files_num = (
-        SPECIAL_DIRS_COUNT_20 if prov_version == 20 else SPECIAL_DIRS_COUNT_21
+        SPECIAL_DIRS_COUNT_21_02_1
+        if prov_version == "21.02.1"
+        else SPECIAL_DIRS_COUNT_21_02_8
     )
     exp_files_count = (
         len(expected_files) + extra_files_num if extra_files else len(expected_files)
