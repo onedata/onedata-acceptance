@@ -10,6 +10,7 @@ from functools import partial
 import yaml
 
 from tests.upgrade.utils.rest_utils import (
+    DEFAULT_REST_QUERY_TIMEOUT,
     configure_file_popularity_mechanism_in_the_space,
     create_view,
     get_provider_configuration,
@@ -357,25 +358,28 @@ def verify_subscribe_changes(tests_controller):
     _assert(RESULTS["file_changes"], record)
 
 
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def _assert(expected, actual):
     err_msg = f"Expected value: {expected},\nbut got: {actual}"
     assert actual == expected, err_msg
 
 
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def _assert_json_included(json_to_be_included, other_json):
     for item in json_to_be_included:
         assert item in other_json, f"There is no {item} included in second json."
 
 
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def _assert_json_equal(expected, actual):
-    err_msg = "Json`s are not equal, there is no\n{}\nin {}"
+    err_msg = "Json`s are not equal, there is no:\n{}\nin:\n{}"
     for item in expected:
         assert item in actual, err_msg.format(item, actual)
     for item in actual:
         assert item in expected, err_msg.format(item, expected)
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_files_in_query_view(
     query, provider_host, token, expected_files, attr_holding_file_id, extra_files=False
 ):
@@ -395,7 +399,7 @@ def wait_for_expected_files_in_query_view(
     return res
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_result_in_reduce_query_view(query, expected_result):
     res = query()
     assert (
@@ -404,7 +408,7 @@ def wait_for_expected_result_in_reduce_query_view(query, expected_result):
     return res
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def get_record_for_file_in_file_changes(
     provider_host, token, space_id, data, file_name
 ):
