@@ -45,26 +45,26 @@ EX_ERR_MSGS_REST = [
 EX_ERR_MSG_OC = "Operation not supported"
 
 
-def get_space_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+def get_space_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["space_root_dir"]:
-        tmp_memory["space_root_dir"][space_name] = space_details.dir_id
+    if tmp_memory["space_dir"]:
+        tmp_memory["space_dir"][space_name] = space_details.dir_id
     else:
-        tmp_memory["space_root_dir"] = {space_name: space_details.dir_id}
+        tmp_memory["space_dir"] = {space_name: space_details.dir_id}
 
 
 @wt(
     parsers.parse(
-        "using REST, {user} gets ID of the archives root directory "
+        "using REST, {user} gets ID of the space archives directory "
         'from the space "{space_name}" details in {host}'
     )
 )
-def get_archives_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+def get_space_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["archives_root_dir"]:
-        tmp_memory["archives_root_dir"][user] = space_details.archives_dir_id
+    if tmp_memory["space_archives_dir"]:
+        tmp_memory["space_archives_dir"][user] = space_details.archives_dir_id
     else:
-        tmp_memory["archives_root_dir"] = {user: space_details.archives_dir_id}
+        tmp_memory["space_archives_dir"] = {user: space_details.archives_dir_id}
 
 
 @wt(
@@ -83,25 +83,25 @@ def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
 
 @wt(
     parsers.parse(
-        "using REST, {user} gets ID of the share root directory from "
+        "using REST, {user} gets ID of the share container from "
         'the share details in the space "{space_name}" in {host}'
     )
 )
-def get_share_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
-    get_space_root_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory)
+def get_share_container_id(users, user, hosts, host, space_name, spaces, tmp_memory):
+    get_space_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory)
     share_id = create_share_rest(
         users,
         user,
         hosts,
         host,
-        tmp_memory["space_root_dir"][space_name],
+        tmp_memory["space_dir"][space_name],
         "test_share",
     ).share_id
     share_details = get_share_details_rest(users, user, hosts, host, share_id)
-    if tmp_memory["share_root_dir"]:
-        tmp_memory["share_root_dir"][user] = share_details.root_file_id
+    if tmp_memory["share_container"]:
+        tmp_memory["share_container"][user] = share_details.root_file_id
     else:
-        tmp_memory["share_root_dir"] = {user: share_details.root_file_id}
+        tmp_memory["share_container"] = {user: share_details.root_file_id}
 
 
 def _assert_ex_err_msg_rest(err_msg):
@@ -114,11 +114,7 @@ def _assert_ex_err_msg_oc(err_msg):
     assert EX_ERR_MSG_OC in err_msg, f"Unexpected error occurred:\n {err_msg}"
 
 
-@wt(
-    parsers.parse(
-        "using {client}, {user} fails to remove the {name} directory in {host}"
-    )
-)
+@wt(parsers.parse("using {client}, {user} fails to remove the {name} in {host}"))
 def try_to_remove_special_dir(client, users, user, hosts, host, tmp_memory, name):
     try_to_remove_special_dir_by_id(
         client,
@@ -126,7 +122,7 @@ def try_to_remove_special_dir(client, users, user, hosts, host, tmp_memory, name
         user,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         err_msg=f"{name} dir was deleted!",
     )
 
@@ -169,9 +165,7 @@ def try_to_remove_user_root_dir_by_path(client, users, user):
         raise NoSuchClientException(f"unknown client {client}")
 
 
-@wt(
-    parsers.parse("using {client}, {user} fails to move the {name} directory in {host}")
-)
+@wt(parsers.parse("using {client}, {user} fails to move the {name} in {host}"))
 def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, name):
     try_to_move_special_dir_by_id(
         client,
@@ -179,7 +173,7 @@ def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, 
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         cdmi,
         err_msg=f"Moved {name} dir, but moving should have failed",
     )
@@ -203,7 +197,7 @@ def try_to_move_special_dir_by_id(
             move_dir_by_id(user, oneclient_host, users, dir_id, "new_name")
             raise AssertionError(err_msg)
         except OSError as e:
-            # Because the share root dir id is very long other error can occur
+            # Because the share container id is very long other error can occur
             assert "Operation not supported" in str(e) or "File name too long" in str(
                 e
             ), f"Unexpected error occurred:\n {e}"
@@ -232,7 +226,7 @@ def try_to_move_user_root_dir_by_path(client, user, users):
 @wt(
     parsers.parse(
         'using {client}, {user} fails to create file "{file_name}" '
-        "in the {name} directory in {host}"
+        "in the {name} in {host}"
     )
 )
 def try_to_create_file_in_special_dir(
@@ -244,7 +238,7 @@ def try_to_create_file_in_special_dir(
         user,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         file_name,
         err_msg=f"File created in {name} dir, but creation should have failed",
     )
@@ -289,7 +283,7 @@ def try_to_create_file_in_user_root_dir_by_path(client, users, user, file_name):
 @wt(
     parsers.parse(
         "using REST, {user} fails to add QoS requirement "
-        '"{expression}" to the {name} directory in {host}'
+        '"{expression}" to the {name} in {host}'
     )
 )
 def try_to_add_qos_to_special_dir(
@@ -300,7 +294,7 @@ def try_to_add_qos_to_special_dir(
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         expression,
         err_msg=f"Qos requirement added to {name} dir, but adding should have failed",
     )
@@ -321,7 +315,7 @@ def try_to_add_qos_to_special_dir_by_id(
 @wt(
     parsers.parse(
         "using REST, {user} fails to add json metadata "
-        "'{expression}' to the {name} directory in {host}"
+        "'{expression}' to the {name} in {host}"
     )
 )
 def try_to_add_json_metadata_to_special_dir(
@@ -332,7 +326,7 @@ def try_to_add_json_metadata_to_special_dir(
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         expression,
         err_msg=f"Json metadata added to {name} dir, but adding should have failed",
     )
@@ -350,8 +344,7 @@ def try_to_add_json_metadata_to_special_dir_by_id(
 
 @wt(
     parsers.parse(
-        "using REST, {user} fails to establish dataset on the "
-        "{name} directory in {host}"
+        "using REST, {user} fails to establish dataset on the {name} in {host}"
     )
 )
 def try_to_establish_dataset_on_special_dir(user, users, hosts, host, tmp_memory, name):
@@ -360,7 +353,7 @@ def try_to_establish_dataset_on_special_dir(user, users, hosts, host, tmp_memory
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name)}_dir"][user],
+        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
         err_msg=(
             f"Established dataset on {name} dir, but establishing should have failed"
         ),
