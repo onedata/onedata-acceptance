@@ -236,7 +236,12 @@ class SpacesContentPage(PageObject):
         "ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord
     )
     support_space = NamedButton(".btn-support-space", text="Support space")
-    form = WebItem(".support-space-form > form", cls=SpaceSupportForm)
+    form = WebItem(
+        # A hack to use storage import form in existing space support with
+        # SpaceSupportForm class.
+        ".support-space-form > form, .storage-import-form > form",
+        cls=SpaceSupportForm,
+    )
     cancel_supporting_space = NamedButton(
         ".btn-support-space", text="Cancel supporting space"
     )
