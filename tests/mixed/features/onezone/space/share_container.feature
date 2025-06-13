@@ -25,7 +25,7 @@ Feature: Basic operations on the special share container,
 
 
   Scenario Outline: User fails to move the share container
-    When using REST, user1 gets ID of the share container directory from the share details in the space "space1" in oneprovider-1
+    When using REST, user1 gets ID of the share container from the share details in the space "space1" in oneprovider-1
     Then using <client1>, user1 fails to move the share container in oneprovider-1
 
     Examples:
