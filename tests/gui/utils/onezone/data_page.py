@@ -222,6 +222,9 @@ class DataPage(GenericPage):
     spaces_header_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable .item-header", cls=Space
     )
+    spaces_header_list_web_elems = WebElementsSequence(
+        ".sidebar-spaces li.one-list-item.clickable.data-row"
+    )
 
     elements_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
@@ -260,3 +263,6 @@ class DataPage(GenericPage):
                 if space.name == name:
                     return
         raise RuntimeError(f"{name} space not found")
+
+    def get_visible_spaces_list(self):
+        return [el for el in self.spaces_header_list_web_elems if el.text != ""]

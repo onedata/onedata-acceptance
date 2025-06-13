@@ -9,7 +9,7 @@ import json
 import yaml
 
 from tests import OZ_REST_PORT
-from tests.utils.bdd_utils import given, parsers
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPForbidden
 from tests.utils.rest_utils import (
     get_zone_rest_path,
@@ -235,3 +235,13 @@ def get_group_id_list(user, users, zone_hostname):
         auth=(user, users[user].password),
     )
     return groups_list.json()["groups"]
+
+
+@wt(parsers.parse(r"using REST, user {user} creates {number} groups"))
+def create_n_groups_using_rest(user, users, hosts, number: int, host="onezone"):
+    zone_hostname = hosts[host]["hostname"]
+    for i in range(number):
+        group_name = f"group{i}"
+        _ = _create_group(
+            zone_hostname, users[user].username, users[user].password, group_name
+        )

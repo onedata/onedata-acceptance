@@ -71,6 +71,7 @@ stages:
         - Atm workflows stores
         - Atm BagIt 1
         - Atm BagIt 2
+        - Many items
         - Metadata
         - Multiprovider archives
         - Multiprovider basic
@@ -510,6 +511,21 @@ Atm BagIt 2:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_automation_bagit2 ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Many items:
+  <<: *acceptance-tests-in-chrome-job
+  key: CMN
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_many_items test_gui_src
 
 Metadata:
   <<: *acceptance-tests-in-chrome-job

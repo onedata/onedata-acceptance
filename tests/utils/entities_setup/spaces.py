@@ -11,7 +11,6 @@ import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.http_exceptions import (
@@ -608,6 +607,16 @@ def create_empty_file(path, users, user, provider, hosts):
         auth=None,
         data=None,
     )
+
+
+def get_file_id_by_rest(file_path, provider_hostname, user, users):
+    response = http_post(
+        ip=provider_hostname,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("lookup-file-id", file_path),
+        headers={"X-Auth-Token": users[user].token},
+    ).content
+    return json.loads(response)["fileId"]
 
 
 @given(

@@ -11,6 +11,7 @@ import yaml
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup.spaces import create_empty_file, get_file_id_by_rest
 from tests.utils.rest_utils import (
     get_provider_rest_path,
     get_zone_rest_path,
@@ -78,16 +79,6 @@ def _create_many_shares_using_rest(user, config, hosts, users, shares):
         create_share_using_rest(path, provider, user, name, hosts, users, shares)
 
 
-def get_file_id_by_rest(file_path, provider_hostname, user, users):
-    response = http_post(
-        ip=provider_hostname,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": users[user].token},
-    ).content
-    return json.loads(response)["fileId"]
-
-
 @given(parsers.parse("user {user} is added to mock handle service in {host}"))
 def add_user_to_handle_service(user, users, host, hosts):
     zone_hostname = hosts[transform(host)]["hostname"]
@@ -105,3 +96,16 @@ def add_user_to_handle_service(user, users, host, hosts):
         ),
         headers={"X-Auth-Token": users["admin"].token},
     )
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} creates {number} shares in space "{space_name}" in {host}'
+    )
+)
+def create_n_shares_in_space(users, user, hosts, host, number: int, space_name, shares):
+    for i in range(number):
+        create_empty_file(f"{space_name}/file{i}", users, user, host, hosts)
+        create_share_using_rest(
+            f"{space_name}/file{i}", host, user, f"share{i}", hosts, users, shares
+        )

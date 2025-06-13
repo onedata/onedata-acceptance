@@ -364,8 +364,9 @@ Feature: Automation examples tests
     And user of browser waits for all workflows to start
     And user of browser clicks on "Ongoing" tab in automation subpage
     And user of browser clicks on "echo" on workflow executions list
-    And user of browser is idle for 2 seconds
+    And user of browser is idle for 5 seconds
     And user of browser sees that status of "echo" workflow is "Active"
+    # Wait extra 3 seconds to make it more stable
     And user of browser is idle for 8 seconds
     And user of browser sees that status of "echo" workflow is "Finished"
 
