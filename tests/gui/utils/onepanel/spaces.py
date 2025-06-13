@@ -236,7 +236,7 @@ class SpacesContentPage(PageObject):
         "ul.one-collapsible-list .cluster-spaces-table-item", cls=SpaceRecord
     )
     support_space = NamedButton(".btn-support-space", text="Support space")
-    form = WebItem('.form-title~.ember-view>[role="form"]', cls=SpaceSupportForm)
+    form = WebItem(".support-space-form > form", cls=SpaceSupportForm)
     cancel_supporting_space = NamedButton(
         ".btn-support-space", text="Cancel supporting space"
     )
