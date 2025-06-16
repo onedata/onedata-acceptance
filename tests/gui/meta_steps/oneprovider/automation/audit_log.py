@@ -1377,6 +1377,6 @@ def _get_workflow_audit_log(browser_id, selenium, tmp_memory, modals, tmpdir):
     modal = modals(driver).audit_log
     modal.download_as_json()
     wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
-    file_path = os.listdir(path)[-1]
-    file_path = tmpdir.join(browser_id, "download", file_path)
+    file_name = os.listdir(path)[-1]
+    file_path = tmpdir.join(browser_id, "download", file_name)
     return file_path

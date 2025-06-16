@@ -126,4 +126,11 @@ def wait_for_file_with_unknown_name_to_download(n_files_before_download, dir_pat
     # wait for a file to download, we don`t know the name of the file
     # so there is a way we can check that file was downloaded
     n_files_after_download = len(os.listdir(dir_path))
-    assert n_files_after_download > n_files_before_download, "file was not downloaded"
+    assert n_files_after_download > n_files_before_download, "Downloading did not start"
+    file_name = os.listdir(dir_path)[-1]
+    assert_file_download_to_finished(file_name)
+
+
+def assert_file_download_to_finished(file_name):
+    _, ext = os.path.splitext(file_name)
+    assert ext != ".crdownload", f"Downloading file {file_name} did not finish"
