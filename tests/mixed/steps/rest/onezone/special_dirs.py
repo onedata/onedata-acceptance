@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from oneprovider_client.rest import ApiException
 
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     create_empty_file_in_dir_rest,
@@ -47,10 +47,10 @@ EX_ERR_MSG_OC = "Operation not supported"
 
 def get_space_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["space_dir"]:
-        tmp_memory["space_dir"][space_name] = space_details.dir_id
+    if tmp_memory[SpecialDir.SPACE_DIR]:
+        tmp_memory[SpecialDir.SPACE_DIR][space_name] = space_details.dir_id
     else:
-        tmp_memory["space_dir"] = {space_name: space_details.dir_id}
+        tmp_memory[SpecialDir.SPACE_DIR] = {space_name: space_details.dir_id}
 
 
 @wt(
@@ -61,10 +61,12 @@ def get_space_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
 )
 def get_space_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["space_archives_dir"]:
-        tmp_memory["space_archives_dir"][user] = space_details.archives_dir_id
+    if tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR]:
+        tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR][user] = space_details.archives_dir_id
     else:
-        tmp_memory["space_archives_dir"] = {user: space_details.archives_dir_id}
+        tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR] = {
+            user: space_details.archives_dir_id
+        }
 
 
 @wt(
@@ -75,10 +77,10 @@ def get_space_archives_dir_id(users, user, hosts, host, space_name, spaces, tmp_
 )
 def get_trash_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory):
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
-    if tmp_memory["trash_dir"]:
-        tmp_memory["trash_dir"][user] = space_details.trash_dir_id
+    if tmp_memory[SpecialDir.TRASH_DIR]:
+        tmp_memory[SpecialDir.TRASH_DIR][user] = space_details.trash_dir_id
     else:
-        tmp_memory["trash_dir"] = {user: space_details.trash_dir_id}
+        tmp_memory[SpecialDir.TRASH_DIR] = {user: space_details.trash_dir_id}
 
 
 @wt(
@@ -94,14 +96,14 @@ def get_share_container_id(users, user, hosts, host, space_name, spaces, tmp_mem
         user,
         hosts,
         host,
-        tmp_memory["space_dir"][space_name],
+        tmp_memory[SpecialDir.SPACE_DIR][space_name],
         "test_share",
     ).share_id
     share_details = get_share_details_rest(users, user, hosts, host, share_id)
-    if tmp_memory["share_container"]:
-        tmp_memory["share_container"][user] = share_details.root_file_id
+    if tmp_memory[SpecialDir.SHARE_CONTAINER]:
+        tmp_memory[SpecialDir.SHARE_CONTAINER][user] = share_details.root_file_id
     else:
-        tmp_memory["share_container"] = {user: share_details.root_file_id}
+        tmp_memory[SpecialDir.SHARE_CONTAINER] = {user: share_details.root_file_id}
 
 
 def _assert_ex_err_msg_rest(err_msg):
@@ -114,7 +116,12 @@ def _assert_ex_err_msg_oc(err_msg):
     assert EX_ERR_MSG_OC in err_msg, f"Unexpected error occurred:\n {err_msg}"
 
 
-@wt(parsers.parse("using {client}, {user} fails to remove the {name} in {host}"))
+@wt(
+    parsers.parse(
+        "using {client}, {user} fails to remove the {name:SpecialDir} in {host}",
+        extra_types={"SpecialDir": SpecialDir},
+    )
+)
 def try_to_remove_special_dir(client, users, user, hosts, host, tmp_memory, name):
     try_to_remove_special_dir_by_id(
         client,
@@ -122,8 +129,8 @@ def try_to_remove_special_dir(client, users, user, hosts, host, tmp_memory, name
         user,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
-        err_msg=f"{name} dir was deleted!",
+        tmp_memory[name][user],
+        err_msg=f"{name.value} was deleted!",
     )
 
 
@@ -165,7 +172,12 @@ def try_to_remove_user_root_dir_by_path(client, users, user):
         raise NoSuchClientException(f"unknown client {client}")
 
 
-@wt(parsers.parse("using {client}, {user} fails to move the {name} in {host}"))
+@wt(
+    parsers.parse(
+        "using {client}, {user} fails to move the {name:SpecialDir} in {host}",
+        extra_types={"SpecialDir": SpecialDir},
+    )
+)
 def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, name):
     try_to_move_special_dir_by_id(
         client,
@@ -173,9 +185,9 @@ def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, 
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
+        tmp_memory[name][user],
         cdmi,
-        err_msg=f"Moved {name} dir, but moving should have failed",
+        err_msg=f"Moved {name.value}, but moving should have failed",
     )
 
 
@@ -226,7 +238,8 @@ def try_to_move_user_root_dir_by_path(client, user, users):
 @wt(
     parsers.parse(
         'using {client}, {user} fails to create file "{file_name}" '
-        "in the {name} in {host}"
+        "in the {name:SpecialDir} in {host}",
+        extra_types={"SpecialDir": SpecialDir},
     )
 )
 def try_to_create_file_in_special_dir(
@@ -238,9 +251,9 @@ def try_to_create_file_in_special_dir(
         user,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
+        tmp_memory[name][user],
         file_name,
-        err_msg=f"File created in {name} dir, but creation should have failed",
+        err_msg=f"File created in {name.value}, but creation should have failed",
     )
 
 
@@ -283,7 +296,8 @@ def try_to_create_file_in_user_root_dir_by_path(client, users, user, file_name):
 @wt(
     parsers.parse(
         "using REST, {user} fails to add QoS requirement "
-        '"{expression}" to the {name} in {host}'
+        '"{expression}" to the {name:SpecialDir} in {host}',
+        extra_types={"SpecialDir": SpecialDir},
     )
 )
 def try_to_add_qos_to_special_dir(
@@ -294,9 +308,9 @@ def try_to_add_qos_to_special_dir(
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
+        tmp_memory[name][user],
         expression,
-        err_msg=f"Qos requirement added to {name} dir, but adding should have failed",
+        err_msg=f"Qos requirement added to {name.value}, but adding should have failed",
     )
 
 
@@ -315,7 +329,8 @@ def try_to_add_qos_to_special_dir_by_id(
 @wt(
     parsers.parse(
         "using REST, {user} fails to add json metadata "
-        "'{expression}' to the {name} in {host}"
+        "'{expression}' to the {name:SpecialDir} in {host}",
+        extra_types={"SpecialDir": SpecialDir},
     )
 )
 def try_to_add_json_metadata_to_special_dir(
@@ -326,9 +341,9 @@ def try_to_add_json_metadata_to_special_dir(
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
+        tmp_memory[name][user],
         expression,
-        err_msg=f"Json metadata added to {name} dir, but adding should have failed",
+        err_msg=f"Json metadata added to {name.value}, but adding should have failed",
     )
 
 
@@ -344,7 +359,9 @@ def try_to_add_json_metadata_to_special_dir_by_id(
 
 @wt(
     parsers.parse(
-        "using REST, {user} fails to establish dataset on the {name} in {host}"
+        "using REST, {user} fails to establish dataset on the {name:SpecialDir} in"
+        " {host}",
+        extra_types={"SpecialDir": SpecialDir},
     )
 )
 def try_to_establish_dataset_on_special_dir(user, users, hosts, host, tmp_memory, name):
@@ -353,9 +370,9 @@ def try_to_establish_dataset_on_special_dir(user, users, hosts, host, tmp_memory
         users,
         hosts,
         host,
-        tmp_memory[f"{transform(name.replace(" directory", "_dir"))}"][user],
+        tmp_memory[name][user],
         err_msg=(
-            f"Established dataset on {name} dir, but establishing should have failed"
+            f"Established dataset on {name.value}, but establishing should have failed"
         ),
     )
 

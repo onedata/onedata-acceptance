@@ -242,3 +242,15 @@ class WhichBrowser(Enum):
 class OnedataService(Enum):
     WORKERS = "workers"
     ONES3 = "ones3"
+
+
+class SpecialDir(Enum):
+    ARCHIVE_DIR = "archive directory"
+    DATASET_ARCHIVES_DIR = "dataset archives directory"
+    OPENED_DELETED_FILES_DIR = "opened deleted files directory"
+    SHARE_CONTAINER = "share container"
+    SPACE_ARCHIVES_DIR = "space archives directory"
+    SPACE_DIR = "space directory"
+    TMP_DIR = "tmp directory"
+    TRASH_DIR = "trash directory"
+    USER_ROOT_DIR = "user root directory"
