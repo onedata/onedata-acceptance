@@ -11,6 +11,7 @@ import os
 import shutil
 import tarfile
 from functools import partial
+from xml.etree import ElementTree as ET
 
 from tests.upgrade.utils.rest_utils import (
     create_archive,
@@ -23,7 +24,7 @@ from tests.upgrade.utils.rest_utils import (
     lookup_file_id,
     register_handle,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
 from tests.utils.utils import repeat_failed
 
 
@@ -114,7 +115,7 @@ def verify_shares_handles(tests_controller):
     admin_token = tests_controller.users["admin"].token
 
     handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
-    compare_handle_details(RESULTS["handle_details"], handle_details)
+    compare_handle_details(RESULTS["handle_details"], handle_details, provider_host)
 
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
@@ -372,8 +373,21 @@ def compare_share_details(details_s, details_v):
     assert details_s == details_v, err_msg
 
 
-def compare_handle_details(details_s, details_v):
-    # that parameter differs on various provider versions
+def compare_handle_details(details_s, details_v, provider_host):
+    # update xml metadata by publicHandle identifier
+    if int(get_prov_version(provider_host).replace(".", "")) < 21025:
+        public_handle = details_s["publicHandle"]
+        root = ET.fromstring(details_s["metadata"])
+        ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
+        identifier = ET.Element("{http://purl.org/dc/elements/1.1/}identifier")
+        identifier.text = public_handle
+        root.append(identifier)
+        metadata_s = ET.tostring(root, encoding="unicode")
+    else:
+        metadata_s = details_s["metadata"]
+    # compare metadata in xml format
+    assert_xmls_equal(metadata_s, details_v["metadata"])
+    # remove metadata and compare other details
     _ = details_s.pop("metadata") if "metadata" in details_s else None
     _ = details_v.pop("metadata") if "metadata" in details_v else None
     _ = details_s.pop("metadataPrefix") if "metadataPrefix" in details_s else None
@@ -383,3 +397,23 @@ def compare_handle_details(details_s, details_v):
         f" verify:\n{details_v}"
     )
     assert details_s == details_v, err_msg
+
+
+def assert_xmls_equal(e1, e2):
+    """
+    Normalize and compare 2 xmls in string format ignoring order
+    """
+    r1 = ET.fromstring(ET.canonicalize(e1))
+    r2 = ET.fromstring(ET.canonicalize(e2))
+    r1 = [el for el in r1]  # pylint: disable=unnecessary-comprehension
+    r2 = [el for el in r2]  # pylint: disable=unnecessary-comprehension
+    r1_sorted = sorted(r1, key=lambda x: (x.tag, x.text, x.attrib))
+    r2_sorted = sorted(r2, key=lambda x: (x.tag, x.text, x.attrib))
+
+    if len(r1_sorted) != len(r2_sorted):
+        assert f"Xml: {e1} is not equal to\n{e2}"
+    err_msg = f"Xml: {e1} is not equal to\n{e2}\nExpected value: {{}}, but got: {{}}"
+    for el1, el2 in zip(r1_sorted, r2_sorted):
+        assert el1.tag == el2.tag, err_msg.format(el1.tag, el2.tag)
+        assert el1.text == el2.text, err_msg.format(el1.text, el2.text)
+        assert el1.attrib == el2.attrib, err_msg.format(el1.attrib, el2.attrib)
