@@ -24,7 +24,11 @@ from tests.upgrade.utils.rest_utils import (
     lookup_file_id,
     register_handle,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, get_prov_version
+from tests.upgrade.utils.upgrade_utils import (
+    UpgradeTest,
+    get_prov_version,
+    is_prov_version_lower_than,
+)
 from tests.utils.utils import repeat_failed
 
 
@@ -115,7 +119,7 @@ def verify_shares_handles(tests_controller):
     admin_token = tests_controller.users["admin"].token
 
     handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
-    compare_handle_details(RESULTS["handle_details"], handle_details, provider_host)
+    compare_handle_details(RESULTS["handle_details"], handle_details, tests_controller)
 
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
@@ -373,9 +377,9 @@ def compare_share_details(details_s, details_v):
     assert details_s == details_v, err_msg
 
 
-def compare_handle_details(details_s, details_v, provider_host):
+def compare_handle_details(details_s, details_v, tests_controller):
     # update xml metadata by publicHandle identifier
-    if int(get_prov_version(provider_host).replace(".", "")) < 21025:
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         public_handle = details_s["publicHandle"]
         root = ET.fromstring(details_s["metadata"])
         ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
@@ -390,8 +394,13 @@ def compare_handle_details(details_s, details_v, provider_host):
     # remove metadata and compare other details
     _ = details_s.pop("metadata") if "metadata" in details_s else None
     _ = details_v.pop("metadata") if "metadata" in details_v else None
-    _ = details_s.pop("metadataPrefix") if "metadataPrefix" in details_s else None
-    _ = details_v.pop("metadataPrefix") if "metadataPrefix" in details_v else None
+
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+        details_s.update({"metadataPrefix": "oai_dc"})
+    if is_prov_version_lower_than(
+        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.5"
+    ):
+        details_v.update({"metadataPrefix": "oai_dc"})
     err_msg = (
         f"Handle details on setup:\n{details_s}\nis different than on"
         f" verify:\n{details_v}"
