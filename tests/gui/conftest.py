@@ -137,7 +137,12 @@ def pytest_bdd_after_scenario(request):
     lambda_log_dir_name = scenario_name.replace(" ", "_").replace("/", "_")
     onenv_utils.run_onenv_command(
         "export",
-        [logdir_path, "--lambda-logs-only", "--lambda-logs-dir", lambda_log_dir_name],
+        [
+            logdir_path,
+            "--lambda-logs-only",
+            "--lambda-logs-dir",
+            lambda_log_dir_name[:180],
+        ],
         fail_with_error=True,
     )
     onenv_utils.run_onenv_command(
