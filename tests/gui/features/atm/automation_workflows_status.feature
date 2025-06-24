@@ -46,6 +46,7 @@ Feature: Workflow execution statuses tests
     And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Active"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Pending" or "Finished"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Pending" or "Finished"
+    And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Finished"
 
 
   Scenario: User does not see workflow on list after removing uploaded "inout" workflow
