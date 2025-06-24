@@ -74,11 +74,12 @@ class UpgradeTestsController:
         self.request = request
         self.users = users
         self.user_clients = {}
+        self.initial_prov_version = ""
 
     def add_test(self, test):
         req_prov_version = test.get_required_min_prov_version()
         if req_prov_version is not None:
-            if req_prov_version <= get_prov_version(
+            if req_prov_version <= get_major_prov_version(
                 self.hosts["oneprovider-1"]["hostname"]
             ):
                 self.__tests_list.append(test)
@@ -115,6 +116,9 @@ class UpgradeTestsController:
 
     def run_tests(self):
         admin_user = self.users["admin"]
+        self.initial_prov_version = get_prov_version(
+            self.hosts["oneprovider-1"]["hostname"]
+        )
         for test in self.__tests_list:
             try:
                 self.__run_setup(test)
@@ -229,8 +233,27 @@ def prepare_sources_upgrade_command(service, version):
     return cmd
 
 
+def get_major_prov_version(provider_host):
+    return int(get_prov_version(provider_host).split(".")[0])
+
+
 def get_prov_version(provider_host):
-    return int(get_provider_configuration(provider_host)["version"].split(".")[0])
+    return get_provider_configuration(provider_host)["version"]
+
+
+def is_prov_version_lower_than(actual_version, reference_version):
+    actual_version_split = [int(s) for s in actual_version.split("-")[0].split(".")]
+    reference_version_split = [
+        int(s) for s in reference_version.split("-")[0].split(".")
+    ]
+    if actual_version_split[0] < reference_version_split[0]:
+        return True
+    if actual_version_split[0] == reference_version_split[0]:
+        if actual_version_split[1] < reference_version_split[1]:
+            return True
+        if actual_version_split[1] == reference_version_split[1]:
+            return actual_version_split[2] < reference_version_split[2]
+    return False
 
 
 def format_failed_test_results(when, exception, test):

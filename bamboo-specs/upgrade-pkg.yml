@@ -35,9 +35,9 @@ stages:
     manual: false
     final: false
     jobs:
-    - 20.02.19 - current
     - 21.02.1 - current
-20.02.19 - current:
+    - 21.02.8 - current
+21.02.1 - current:
   key: RFCD
   other: &common-opts
     clean-working-dir: true
@@ -106,7 +106,7 @@ stages:
   requirements: &requirements
   - minikube
   artifact-subscriptions: []
-21.02.1 - current:
+21.02.8 - current:
   key: U2C
   other: *common-opts
   tasks: *tasks

@@ -11,6 +11,7 @@ import os
 import shutil
 import tarfile
 from functools import partial
+from xml.etree import ElementTree as ET
 
 from tests.upgrade.utils.rest_utils import (
     create_archive,
@@ -23,7 +24,11 @@ from tests.upgrade.utils.rest_utils import (
     lookup_file_id,
     register_handle,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import (
+    UpgradeTest,
+    get_prov_version,
+    is_prov_version_lower_than,
+)
 from tests.utils.utils import repeat_failed
 
 
@@ -114,10 +119,8 @@ def verify_shares_handles(tests_controller):
     admin_token = tests_controller.users["admin"].token
 
     handle_details = get_handle(zone_host, admin_token, HANDLE_NAME_TO_ID["handle"])
-    handle_details.pop("metadataPrefix")
-    handle_details.pop("metadata")
-    RESULTS["handle_details"].pop("metadata")
-    assert RESULTS["handle_details"] == handle_details
+    compare_handle_details(RESULTS["handle_details"], handle_details, tests_controller)
+
     share_details = get_share_info(
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
@@ -368,6 +371,58 @@ def compare_share_details(details_s, details_v):
     _ = details_s.pop("rootFileType") if "rootFileType" in details_s else None
     _ = details_v.pop("rootFileType") if "rootFileType" in details_v else None
     err_msg = (
-        f"share details on setup: {details_s} is different than on verify {details_v}"
+        f"Share details on setup:\n{details_s}\nis different than on"
+        f" verify:\n{details_v}"
     )
     assert details_s == details_v, err_msg
+
+
+def compare_handle_details(details_s, details_v, tests_controller):
+    # update xml metadata by publicHandle identifier
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+        public_handle = details_s["publicHandle"]
+        root = ET.fromstring(details_s["metadata"])
+        ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
+        identifier = ET.Element("{http://purl.org/dc/elements/1.1/}identifier")
+        identifier.text = public_handle
+        root.append(identifier)
+        metadata_s = ET.tostring(root, encoding="unicode")
+    else:
+        metadata_s = details_s["metadata"]
+    # compare metadata in xml format
+    assert_xmls_equal(metadata_s, details_v["metadata"])
+    # remove metadata and compare other details
+    _ = details_s.pop("metadata") if "metadata" in details_s else None
+    _ = details_v.pop("metadata") if "metadata" in details_v else None
+
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+        details_s.update({"metadataPrefix": "oai_dc"})
+    if is_prov_version_lower_than(
+        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.5"
+    ):
+        details_v.update({"metadataPrefix": "oai_dc"})
+    err_msg = (
+        f"Handle details on setup:\n{details_s}\nis different than on"
+        f" verify:\n{details_v}"
+    )
+    assert details_s == details_v, err_msg
+
+
+def assert_xmls_equal(e1, e2):
+    """
+    Normalize and compare 2 xmls in string format ignoring order
+    """
+    r1 = ET.fromstring(ET.canonicalize(e1))
+    r2 = ET.fromstring(ET.canonicalize(e2))
+    r1 = [el for el in r1]  # pylint: disable=unnecessary-comprehension
+    r2 = [el for el in r2]  # pylint: disable=unnecessary-comprehension
+    r1_sorted = sorted(r1, key=lambda x: (x.tag, x.text, x.attrib))
+    r2_sorted = sorted(r2, key=lambda x: (x.tag, x.text, x.attrib))
+
+    if len(r1_sorted) != len(r2_sorted):
+        assert f"Xml: {e1} is not equal to\n{e2}"
+    err_msg = f"Xml: {e1} is not equal to\n{e2}\nExpected value: {{}}, but got: {{}}"
+    for el1, el2 in zip(r1_sorted, r2_sorted):
+        assert el1.tag == el2.tag, err_msg.format(el1.tag, el2.tag)
+        assert el1.text == el2.text, err_msg.format(el1.text, el2.text)
+        assert el1.attrib == el2.attrib, err_msg.format(el1.attrib, el2.attrib)
