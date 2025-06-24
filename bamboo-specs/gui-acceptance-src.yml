@@ -64,6 +64,7 @@ stages:
         - _Static analysis
         - Atm examples workflows 1
         - Atm examples workflows 2
+        - Atm pods
         - Atm stores basic
         - Atm workflow execution
         - Atm workflows pausing and cancelling
@@ -406,6 +407,21 @@ Atm examples workflows 2:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_automation_examples_workflows_tests2 ENV_FILE=1oz_1op_openfaas test_gui_src
+
+Atm pods:
+  <<: *acceptance-tests-in-chrome-job
+  key: COAWP
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_atm_pods ENV_FILE=1oz_1op_openfaas_normal test_gui_src
 
 Atm stores basic:
   <<: *acceptance-tests-in-chrome-job
