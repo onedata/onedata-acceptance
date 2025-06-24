@@ -20,7 +20,7 @@ from tests.conftest import export_logs, get_log_dir_path
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
-from tests.utils.path_utils import make_logdir
+from tests.utils.path_utils import format_valid_file_name, make_logdir
 
 SELENIUM_IMPLICIT_WAIT = 0
 
@@ -134,14 +134,14 @@ def pytest_bdd_before_step_call(step):
 def pytest_bdd_after_scenario(request):
     logdir_path = get_log_dir_path(request)
     scenario_name = request.node.name
-    lambda_log_dir_name = scenario_name.replace(" ", "_").replace("/", "_")
+    lambda_log_dir_name = format_valid_file_name(scenario_name)
     onenv_utils.run_onenv_command(
         "export",
         [
             logdir_path,
             "--lambda-logs-only",
             "--lambda-logs-dir",
-            lambda_log_dir_name[:180],
+            lambda_log_dir_name,
         ],
         fail_with_error=True,
     )

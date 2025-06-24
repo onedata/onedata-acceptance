@@ -118,3 +118,4 @@ Feature: Lambda`s pods
     And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
     And user of browser clicks on "workflow-with-sleep-one-lane" menu on workflow executions list
     Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
+    And user of browser waits for all workflows to finish
