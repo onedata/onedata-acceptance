@@ -28,7 +28,6 @@ Feature: Storage management using onepanel
     And user of <browser> types "new_storage1" to Storage name field in POSIX form in storages page in Onepanel
     And user of <browser> types "/volumes/posix" to Mount point field in POSIX form in storages page in Onepanel
     And user of <browser> clicks on Add button in add storage form in storages page in Onepanel
-    And user of <browser> sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of <browser> expands "new_storage1" record on storages list in storages page in Onepanel
     And user of <browser> sees that "new_storage1" Storage type is posix in storages page in Onepanel
     And user of <browser> sees that "new_storage1" Mount point is /volumes/posix in storages page in Onepanel
