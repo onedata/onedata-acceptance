@@ -37,6 +37,7 @@ stages:
     jobs:
     - 20.02.19 - current
     - 21.02.1 - current
+    - 21.02.8 - current
 20.02.19 - current:
   key: RFCD
   other: &common-opts
