@@ -114,3 +114,11 @@ stages:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+21.02.8 - current:
+  key: U28C
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
