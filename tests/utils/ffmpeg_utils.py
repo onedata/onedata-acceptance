@@ -35,14 +35,23 @@ def start_recording(
 
     with open(os.devnull, "w") as dev_null:
         proc = sp.Popen(  # pylint: disable=consider-using-with
-            cmd, stdin=sp.PIPE, stdout=dev_null, stderr=dev_null, close_fds=True
+            cmd,
+            stdin=sp.PIPE,
+            stdout=dev_null,
+            stderr=sp.PIPE,
+            close_fds=True,
+            text=True,
         )
 
-    # let ffmpeg start
+    # check if ffmpeg started successfully
     time.sleep(0.5)
+    for _ in range(50):
+        if proc.poll() is None:
+            break
+        time.sleep(0.1)
     if proc.poll() is not None:
-        raise RuntimeError("ffmpeg did not start")
-
+        _, err = proc.communicate()
+        raise RuntimeError(f"ffmpeg did not start successfully, err:\n{err}")
     return proc, paths
 
 
