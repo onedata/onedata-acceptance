@@ -505,7 +505,7 @@ def factory(fun):
 _movies = set()
 
 
-def export_logs(request, env_description_abs_path=None, logdir_prefix=""):
+def get_log_dir_path(request, env_description_abs_path=None, logdir_prefix=""):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
@@ -526,6 +526,15 @@ def export_logs(request, env_description_abs_path=None, logdir_prefix=""):
     if logdir_prefix:
         dirpath, name = os.path.split(logdir_path)
         logdir_path = os.path.join(dirpath, logdir_prefix + "." + name)
+    return logdir_path
+
+
+def export_logs(request, env_description_abs_path=None, logdir_prefix=""):
+    logdir_path = get_log_dir_path(
+        request,
+        env_description_abs_path=env_description_abs_path,
+        logdir_prefix=logdir_prefix,
+    )
     onenv_utils.run_onenv_command(
         "export",
         [logdir_path, "-c", CLIENT_POD_LOGS_DIR],

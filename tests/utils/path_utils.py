@@ -112,3 +112,13 @@ def escape_path(path):
 def get_first_path_element(path):
     """Returns first element in path"""
     return next(elem for elem in path.split(os.path.sep) if elem)
+
+
+def format_valid_file_name(file_name):
+    return (
+        file_name[:180]
+        .replace(" ", "_")
+        .replace("/", "_")
+        .replace('"', "")
+        .replace("-", "_")
+    )
