@@ -147,7 +147,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opens shares view of "space1"
 
     And user of browser clicks on menu for "share_dir1" share in shares browser
-    And user of browser clicks "Remove Share" option in shares actions row menu in shares browser
+    And user of browser clicks "Remove share" option in shares actions row menu in shares browser
     And user of browser sees that "Remove share" modal has appeared
     And user of browser clicks on "Remove" button in modal "Remove share"
 
@@ -309,7 +309,7 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser clicks share link type selector on shares view
     And user of browser chooses "Share REST endpoint" share link type on shares view
-    And user of browser copies Share REST endpoint on shares view
+    And user of browser copies share REST endpoint on shares view
     And user of browser runs curl command copied from shares page
     Then user of browser sees that curl result matches following config:
           name: share_file1
