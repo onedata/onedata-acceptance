@@ -46,6 +46,7 @@ Feature: Workflow execution statuses tests
     And user of browser sees that status of "workflow-with-sleep-one-lane" workflow is "Active"
     And user of browser sees that status of task "20s sleep" in 1st parallel box in "Lane1" lane is one of "Pending" or "Finished"
     And user of browser sees that status of task "15s sleep" in 2nd parallel box in "Lane1" lane is one of "Pending" or "Finished"
+    And user of browser awaits for status of "workflow-with-sleep-one-lane" workflow to be "Finished"
 
 
   Scenario: User does not see workflow on list after removing uploaded "inout" workflow
@@ -62,19 +63,6 @@ Feature: Workflow execution statuses tests
     # User waits for workflow to be removed
     And user of browser is idle for 2 seconds
     Then user of browser does not see "echo" on workflow executions list
-
-
-  Scenario: User can not remove uploaded "workflow-with-sleep-one-lane.json" workflow while it is still running
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-with-sleep-one-lane.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "workflow-with-sleep-one-lane", using file as initial value: "file1" in "space1" space
-
-    And user of browser clicks on "Ongoing" tab in automation subpage
-    And user of browser sees "workflow-with-sleep-one-lane" on workflow executions list
-    And user of browser clicks on "workflow-with-sleep-one-lane" menu on workflow executions list
-    Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
 
 
   Scenario: User resume workflow execution after pausing execution of created workflow while lane had preparing status

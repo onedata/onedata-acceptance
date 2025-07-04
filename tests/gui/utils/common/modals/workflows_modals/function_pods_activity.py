@@ -4,6 +4,7 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import re
 
 from selenium.webdriver.common.by import By
 
@@ -56,7 +57,7 @@ class FunctionPodsActivity(Modal):
 
     def get_css_selector(self):
         css_selector = self.web_elem.get_attribute("class")
-        css_selector = css_selector.replace(" ", ".")
+        css_selector = re.sub(r"\s+", ".", css_selector.strip())
         css_selector = "." + css_selector
         return css_selector
 
@@ -69,5 +70,5 @@ class FunctionPodsActivity(Modal):
         return elem_in_row
 
     def get_number_of_data_rows(self, driver):
-        element = driver.find_elements(By.CSS_SELECTOR, f".audit-log-table-entry")[0]
+        element = driver.find_elements(By.CSS_SELECTOR, ".audit-log-table-entry")[0]
         return element.get_attribute("data-row-id")
