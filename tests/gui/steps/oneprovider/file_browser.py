@@ -445,6 +445,11 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     assert len(detected_files) == count, err_msg
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see that file owner is "{owner}" in file details'
+    )
+)
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
     assert_tab_in_modal(selenium, browser_id, "Info", modals, "File details")
     actual = modals(selenium[browser_id]).details_modal.owner
