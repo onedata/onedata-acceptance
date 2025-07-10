@@ -22,10 +22,16 @@ from tests.mixed.steps.rest.onezone.tokens import (
     revoke_token_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import parsers, wt, given
 from tests.utils.utils import repeat_failed
 
 
+@given(
+    parsers.parse(
+        "using {client}, {user} creates token with following configuration:\n{config}"
+    )
+
+)
 @wt(
     parsers.parse(
         "using {client}, {user} creates token with following configuration:\n{config}"
