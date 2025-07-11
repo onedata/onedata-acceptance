@@ -168,7 +168,7 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} copies Share REST endpoint on share's public interface"
+        "user of {browser_id} copies share REST endpoint on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
