@@ -785,7 +785,12 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
-@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" space'))
+@wt(
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) opens file browser for"
+        r' "(?P<space>.*)" space'
+    )
+)
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space):
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
@@ -903,7 +908,7 @@ def create_symlinks_of_file(
 
 
 @wt(
-    parsers.parse(
+    parsers.re(
         'user of {browser_id} creates symbolic link of "{file_name}" '
         'placed in "{path}" directory on {which_browser} in "{space}"'
     )

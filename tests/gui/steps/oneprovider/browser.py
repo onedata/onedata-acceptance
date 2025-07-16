@@ -432,9 +432,9 @@ def click_option_in_data_row_menu_in_browser(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{option}" option '
-        "in data row menu in {which_browser}"
+    parsers.re(
+        r'(Using web GUI, )?user of (?P<browser_id>.*) clicks "(?P<option>.*)" option '
+        r"in data row menu in (?P<which_browser>.*)"
     )
 )
 def wt_click_option_in_data_row_menu_in_browser(
@@ -489,8 +489,9 @@ def click_on_state_view_mode_tab(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on menu for "(?P<item_name>.*)" '
-        "(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
+        r"(using web GUI, )?user of (?P<browser_id>.*) clicks on menu for"
+        r' "(?P<item_name>.*)" '
+        r"(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
     )
 )
 def wt_click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser):

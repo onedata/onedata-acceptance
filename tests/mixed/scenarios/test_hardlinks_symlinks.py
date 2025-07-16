@@ -1,10 +1,5 @@
-"""Test suite for mixed tests of creating nested directory"""
-
-__author__ = "Katarzyna Such"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in LICENSE.txt"
-
-from pytest_bdd import scenario, scenarios
+from pytest import fixture
+from pytest_bdd import scenarios
 
 from tests.gui.conftest import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -22,6 +17,7 @@ from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.nodes import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *
@@ -36,8 +32,12 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.hardlinks_symlinks import *
+from tests.mixed.steps.qos import *
+from tests.mixed.steps.rest.onezone.automation import *
 from tests.oneclient.steps.auth_steps import *
 from tests.utils.entities_setup.groups import *
+from tests.utils.entities_setup.inventory import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
 
@@ -47,5 +47,4 @@ def screens():
     return [0]
 
 
-# scenarios("../features/oneprovider/create_nested_directories.feature")
 scenarios("../features/oneprovider/symlinks_hardlinks_creation.feature")

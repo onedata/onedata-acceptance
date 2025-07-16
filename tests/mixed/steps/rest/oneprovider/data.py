@@ -434,3 +434,53 @@ def remove_file_by_id_rest(users, user, hosts, host, file_id):
 
 def create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, name):
     upload_file_rest(users, user, hosts, host, "", name, dir_id)
+
+
+def get_file_hardlinks_rest(users, user, hosts, host, file_id):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    list_hardlinks = file_api.get_file_hardlinks(file_id)
+    return list_hardlinks
+
+
+def get_file_symlink_value_rest(users, user, hosts, host, file_id):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    symlink_val = file_api.get_symlink_value(file_id)
+    return symlink_val
+
+
+def check_for_hardlink_between_files_rest(users, user, hosts, host, file_id1, file_id2):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    try:
+        file_api.test_for_hardlink_between_files(file_id1, file_id2)
+        return True
+    except OPException as e:
+        if e.status != 404:
+            raise e
+        return False
+
+
+def create_hardlink_rest(users, user, hosts, host, where_placed_id, target_id, name):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.create_file(
+        id=where_placed_id,
+        name=name,
+        type="LNK",
+        target_file_id=target_id,
+        content="example",
+    )
+
+
+def create_symlink_rest(users, user, hosts, host, where_placed_id, target_path, name):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    _ = file_api.create_file(
+        id=where_placed_id,
+        name=name,
+        type="SYMLNK",
+        target_file_path=target_path,
+        content="example",
+    )

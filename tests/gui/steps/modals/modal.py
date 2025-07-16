@@ -722,9 +722,10 @@ def choose_option_in_dropdown_menu_in_modal(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that path where symbolic link "
-        'points is "{expected_path}" in {modal} modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees that path where symbolic"
+        r" link "
+        r'points is "(?P<expected_path>.*)" in (?P<modal>.*) modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -735,6 +736,7 @@ def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, 
     modal = getattr(modals(driver), modal)
     time.sleep(0.1)
     path = modal.path.replace("\n", "")
+
     assert (
         expected_path == path
     ), f"Expected path: {expected_path} does not match path: {path}"
