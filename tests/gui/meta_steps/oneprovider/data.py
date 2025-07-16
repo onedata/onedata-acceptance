@@ -908,7 +908,7 @@ def create_symlinks_of_file(
 
 
 @wt(
-    parsers.re(
+    parsers.parse(
         'user of {browser_id} creates symbolic link of "{file_name}" '
         'placed in "{path}" directory on {which_browser} in "{space}"'
     )
