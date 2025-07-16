@@ -47,5 +47,4 @@ def screens():
     return [0]
 
 
-# scenarios("../features/oneprovider/create_nested_directories.feature")
-scenarios("../features/oneprovider/symlinks_hardlinks_creation.feature")
+scenarios("../features/oneprovider/create_nested_directories.feature")
