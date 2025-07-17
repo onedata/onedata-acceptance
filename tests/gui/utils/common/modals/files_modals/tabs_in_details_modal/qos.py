@@ -14,7 +14,9 @@ from tests.gui.utils.core.web_elements import (
     NamedButton,
     WebItem,
     WebItemsSequence,
+    WebElement
 )
+from selenium.common.exceptions import JavascriptException
 
 
 class Requirement(PageObject):
@@ -23,6 +25,17 @@ class Requirement(PageObject):
     impossible = Label(".qos-status-impossible")
     expression = Label(".query-builder-input")
     replicas_number = Label(".replicas-number")
+
+class Entry(PageObject):
+    time = WebElement(".timestamp-cell")
+    file = WebElement(".cell-file")
+    event = WebElement(".cell-content-message")
+    link = WebElement(".cell-file .navy")
+
+
+class AuditLogBrowser(PageObject):
+    entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
+
 
 
 class QoSTab(Modal):
@@ -35,6 +48,11 @@ class QoSTab(Modal):
     requirements = WebItemsSequence(".qos-entry", cls=Requirement)
     delete_confirm = NamedButton(".btn-danger", text="Yes, remove")
 
+    audit_log_browser = WebItem(".audit-log-browser", cls=AuditLogBrowser)
+    
+    show_details_audit_log = Button(".qos-details-type-logs")
+    show_details_transfer_statistics = Button(".qos-details-type-charts")
+
     query_builder = WebItem(".query-builder", cls=QueryBuilder)
     storage_matching = Label(".storages-matching-number")
     no_storage_matching = Label(".storages-matching-text")
@@ -44,3 +62,13 @@ class QoSTab(Modal):
 
     def __str__(self):
         return "QoS tab"
+    
+    def scroll_to_top(self):
+        try:
+            self.driver.execute_script(
+                "document.querySelector('.perfect-scrollbar-element"
+                ".ps--active-y').scrollTo(0, 0)"
+            )
+        except JavascriptException:
+            pass
+    

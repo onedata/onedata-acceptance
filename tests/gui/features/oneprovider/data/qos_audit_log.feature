@@ -23,10 +23,14 @@ Feature: Audit log for QoS
                         - file2
     And opened browser with user1 signed in to "onezone" service
 
-  Scenario: sssds
+  Scenario: User in QoS audit log can see replicated files and accurate audit logs after adding QoS requirement
     When user of browser clicks on Providers in the main menu
     And user of browser clicks on provider "oneprovider-2" in providers sidebar
     And user of browser opens file browser for "space1" space
+
+    And user of browser clicks on "Choose other Oneprovider" on file browser page
+    And user of browser clicks on "oneprovider-2" provider on file browser page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "File details" modal on "QoS" tab for "dir1" file using context menu
     And user of browser clicks on "Add Requirement" button in QoS panel
@@ -41,3 +45,28 @@ Feature: Audit log for QoS
 
     #And user of browser clicks on QoS status tag for "dir1" in file browser
     And user of browser sees that all QoS requirements are fulfilled
+    And user of browser selects "Show details audit log" option in QoS info selector
+
+    And user of browser sees the following logs in audit log browser in given order for "file1" file:
+        - Required: Local replica reconciled.
+        - Optional: Remote replica differs, reconciliation already in progress.
+        - Required: Remote replica differs, reconciliation started.
+
+    And user of browser sees the following logs in audit log browser in given order for "file2" file:
+        - Required: Local replica reconciled.
+        - Optional: Remote replica differs, reconciliation already in progress.
+        - Required: Remote replica differs, reconciliation started.
+
+    And user of browser sees that all logs in audit log browser are from newest to oldest
+
+    #clicking on file1 displays modal with warning similar to this: this link points to non existent location
+    #Also while clicking "open in new tab" it works fine
+    # TODO: VFS-12968
+
+    # And user of browser clicks on "file1" link in audit log browser
+    # And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1/dir1"
+    # Then user of browser sees that ["file1"] items are selected in file browser
+
+
+
+    
