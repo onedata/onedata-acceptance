@@ -4,6 +4,8 @@ __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import JavascriptException
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
@@ -12,11 +14,10 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     NamedButton,
+    WebElement,
     WebItem,
     WebItemsSequence,
-    WebElement
 )
-from selenium.common.exceptions import JavascriptException
 
 
 class Requirement(PageObject):
@@ -26,6 +27,7 @@ class Requirement(PageObject):
     expression = Label(".query-builder-input")
     replicas_number = Label(".replicas-number")
 
+
 class Entry(PageObject):
     time = WebElement(".timestamp-cell")
     file = WebElement(".cell-file")
@@ -34,8 +36,13 @@ class Entry(PageObject):
 
 
 class AuditLogBrowser(PageObject):
+
     entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
 
+    def isEmpty(self):
+        return not len(self.entries)
+
+    empty_info = WebElement(".table-is-empty-cell")
 
 
 class QoSTab(Modal):
@@ -49,7 +56,7 @@ class QoSTab(Modal):
     delete_confirm = NamedButton(".btn-danger", text="Yes, remove")
 
     audit_log_browser = WebItem(".audit-log-browser", cls=AuditLogBrowser)
-    
+
     show_details_audit_log = Button(".qos-details-type-logs")
     show_details_transfer_statistics = Button(".qos-details-type-charts")
 
@@ -62,7 +69,7 @@ class QoSTab(Modal):
 
     def __str__(self):
         return "QoS tab"
-    
+
     def scroll_to_top(self):
         try:
             self.driver.execute_script(
@@ -71,4 +78,3 @@ class QoSTab(Modal):
             )
         except JavascriptException:
             pass
-    

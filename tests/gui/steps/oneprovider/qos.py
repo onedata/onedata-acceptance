@@ -4,19 +4,21 @@ __author__ = "Michal Dronka, Natalia Organek"
 __copyright__ = "Copyright (C) 2020-2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from datetime import datetime
+
+import yaml
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import check_logs_order_with_optionals
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
-from datetime import datetime
-import yaml
 
 # Character used to separate provider name from storage name in QoS expressions editor.
 # Eg. "storage is my_posix @provider-krakow"
@@ -44,75 +46,78 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
         assert hasattr(requirement, state), f"No all QoS requirements are {state}"
 
 
-
 @wt(
-    parsers.parse('user of {browser_id} selects "{option_name}" option in QoS info selector')
+    parsers.parse(
+        'user of {browser_id} selects "{option_name}" option in QoS info selector'
+    )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_option_qos(selenium, browser_id, modals, option_name):
     driver = selenium[browser_id]
-    
+
     modal_qos = modals(driver).details_modal.qos
     option_btn = getattr(modal_qos, transform(option_name))
     modal_qos.scroll_to_top()
     option_btn.click()
-    import pdb
-    pdb.set_trace()
-    entry = modal_qos.audit_log_browser.entries[0].time
 
 
 @wt(
-        parsers.parse('user of {browser_id} sees the following logs in audit log browser'
-                      ' in given order for "{file_name}" file:\n{config}'
-        )
+    parsers.parse(
+        "user of {browser_id} sees the following logs in audit log browser"
+        ' in given order for "{files_list}" files:\n{config}'
+    )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_audit_log_files_list(selenium, browser_id, modals, file_name, config):
+def check_audit_log_files_list(selenium, browser_id, modals, files_list, config):
 
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     entries = modal_qos.audit_log_browser.entries
-    actual_logs = [entry.event.text for entry in entries if entry.file.text == file_name]
     config = yaml.load(config, yaml.Loader)
 
-    expected_logs = {}
-    expected_logs_list = []
-
-    for log in config:
-        expected_logs[list(log.values())[0]] = list(log.keys())[0]
-        expected_logs_list.append(list(log.values())[0])
-    
-    index, n = 0, len(expected_logs_list)
-
-    for act_log in actual_logs:
-        if expected_logs[act_log] == "Required":
-
-            while index < n and expected_logs[expected_logs_list[index]] == "Optional":
-                index += 1
-
-            assert index < n and act_log == expected_logs_list[index]
-            index += 1
+    files = parse_seq(files_list)
+    for file_name in files:
+        if len(files) > 1:
+            actual_logs = [
+                entry.event.text for entry in entries if entry.file.text == file_name
+            ]
         else:
-            if expected_logs[expected_logs_list[index]] == "Required":
-                assert False
-            else:
-                assert expected_logs_list[index] == act_log
-                index += 1
-    
-    
+            actual_logs = [entry.event.text for entry in entries]
+
+        check_logs_order_with_optionals(config, actual_logs)
+
+
 @wt(
-    parsers.parse('user of {browser_id} sees that all logs in audit log browser'
-                    ' are from newest to oldest'
+    parsers.parse(
+        "user of {browser_id} sees that there are no logs in audit log browser"
+        ' with information as follows "{info}"'
+    )
+)
+def check_no_logs_info_audit_log(selenium, browser_id, modals, info):
+    driver = selenium[browser_id]
+    modal_qos = modals(driver).details_modal.qos
+    audit_log = modal_qos.audit_log_browser
+    if audit_log.isEmpty():
+        assert audit_log.empty_info.text == info
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that all logs in audit log browser"
+        " are from newest to oldest"
     )
 )
 def check_audit_log_times(selenium, browser_id, modals):
-    
+
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     entries = modal_qos.audit_log_browser.entries
     actual_log_dates_string = [entry.time.text for entry in entries]
 
-    actual_log_datetimes = [datetime.strptime(date, '%d %b %Y %H:%M:%S.%f') for date in actual_log_dates_string]
+    actual_log_datetimes = [
+        datetime.strptime(date, "%d %b %Y %H:%M:%S.%f")
+        for date in actual_log_dates_string
+    ]
 
     prev_date = None
     for date in actual_log_datetimes:
@@ -122,8 +127,9 @@ def check_audit_log_times(selenium, browser_id, modals):
 
 
 @wt(
-        parsers.parse('user of {browser_id} clicks on "{file_name}" link in audit log browser'
-        )
+    parsers.parse(
+        'user of {browser_id} clicks on "{file_name}" link in audit log browser'
+    )
 )
 def click_on_file_audit_log(selenium, browser_id, modals, file_name):
 
@@ -132,10 +138,9 @@ def click_on_file_audit_log(selenium, browser_id, modals, file_name):
     entries = modal_qos.audit_log_browser.entries
     for entry in entries:
         if entry.file.text == file_name:
-            import pdb
-            pdb.set_trace()
             entry.link.click()
-    
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} sees that replicas number is equal {number} in QoS panel"
