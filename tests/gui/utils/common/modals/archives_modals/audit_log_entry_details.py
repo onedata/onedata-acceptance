@@ -8,7 +8,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Button, Input, Label
+from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.core.web_elements import (
+    Button,
+    Input,
+    Label,
+    WebElement,
+    WebElementsSequence,
+    WebItem,
+)
 
 
 class AuditLogEntryDetails(Modal):
@@ -21,10 +29,16 @@ class AuditLogEntryDetails(Modal):
         ".entry-info-row-archived-item-absolute-location .clipboard-input"
     )
     file_id = Input(".entry-info-row-archived-item-file-id .clipboard-input")
+
     source_item_absolute_location = Input(
         ".entry-info-row-source-item-absolute-location .clipboard-input"
     )
-    file = Button(".file-path.file-path-base")
+
+    file_button = Button(".file-path.file-path-base")
+
+    file_path = WebElementsSequence(".path-item.path-label")
+
+    archive_name = WebElement(".path-item.path-label")
     close = Button(".close-details")
 
     def __str__(self):
