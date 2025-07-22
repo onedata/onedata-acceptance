@@ -96,7 +96,7 @@ def request_space_support_using_rest(
     space_api = SpaceApi(user_client)
     space = get_user_space_with_name(user_client, space_name)
     token = space_api.create_space_support_token(space.space_id).token
-    tmp_memory[receiver]["mailbox"]["token"] = token
+    tmp_memory[receiver]["mailbox"] = {"token": token}
 
 
 def join_space_in_oz_using_rest(
