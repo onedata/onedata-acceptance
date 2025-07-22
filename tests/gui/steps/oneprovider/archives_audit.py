@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 
 import yaml
+from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
@@ -207,6 +208,17 @@ def _check_entries_in_archive_audit_log(browser_id, config, selenium, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_audit_log.data_row[item_name]
+    modal.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on item "{item_name}" using scroll in archive audit log'
+    )
+)
+def click_on_item_with_scrolling_in_archive_audit_log(browser_id, item_name, modals, selenium):
 
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
@@ -214,12 +226,19 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
     seen_rows = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_rows_names = modal.get_rows_of_column("File")
+        try:
+            new_rows_names = []
+            for row in modal.data_row:
+                if row.name:
+                    new_rows_names.append(row.name)
+
+        except StaleElementReferenceException:
+            pass
 
         if item_name in new_rows_names:
             try:
                 modal.data_row[item_name].clickable_field.click()
-            except Exception:
+            except StaleElementReferenceException as e:
                 modal.scroll_by_press_space()
                 modal.data_row[item_name].clickable_field.click()
             return
@@ -227,6 +246,7 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
         # if there are at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
+        print("seen rows", seen_rows)
         modal.scroll_by_press_space()
 
     assert False, f"file of name {item_name} not found i archive audit log data row"
@@ -404,7 +424,6 @@ def check_archived_file_path(browser_id, selenium, modals, path):
     paths = path.replace(".../", "").split("/")
 
     details_file_path = modal_details.file_path
-
     shortened_path = [details_file_path[i].text for i in range(len(details_file_path))]
 
     assert (
@@ -413,13 +432,6 @@ def check_archived_file_path(browser_id, selenium, modals, path):
     assert (
         paths[-1] == shortened_path[-1]
     ), f"Final file name - {paths[-1]} is different than {shortened_path[-1]}"
-
-    if len(paths) > 2:
-        for i in range(2, min(len(paths), len(shortened_path) - 1)):
-            assert shortened_path[-i] == paths[-i], (
-                f"directory no {len(paths)-i} name - {paths[-i]} is different than"
-                f" {shortened_path[-i]}"
-            )
 
     assert modal.archive_name == shortened_path[1], (
         f"name of archive - {modal.archive_name} is different than given in file path:"

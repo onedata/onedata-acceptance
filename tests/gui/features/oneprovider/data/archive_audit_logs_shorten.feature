@@ -32,7 +32,7 @@ Feature: Archive audit logs
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
 
-    And user of browser clicks on item "file_20" in archive audit log
+    And user of browser clicks on item "file_20" using scroll in archive audit log
     And user of browser checks that path in "Audit Log Entry Details" is like: "long_0/.../long_19/file_20"
 
 
