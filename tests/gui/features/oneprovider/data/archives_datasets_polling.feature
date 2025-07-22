@@ -25,7 +25,7 @@ Feature: Nested archives operations
     And user of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
   
 
-  Scenario: User, without refreshing, can see newly created archive by other user, with preserved status
+  Scenario: User can see a newly created archive by another user without refreshing, with its status preserved
     When user of browser1 creates dataset for item "dir1" in "space1"
     And user of browser1 clicks "Members" of "space1" space in the sidebar
     And user of browser1 clicks "user2" user in "space1" space members users list
@@ -48,9 +48,10 @@ Feature: Nested archives operations
 
 
   Scenario: User, without refreshing, can see newly created dataset by other user
-    When user of browser1 creates dataset for item "dir1" in "space1"
-
-    And user of browser2 clicks "Datasets, Archives" of "space1" space in the sidebar
+    When user of browser2 clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser2 sees dataset browser in datasets tab in Oneprovider page
+
+    And user of browser1 creates dataset for item "dir1" in "space1"
+
     Then user of browser2 sees item(s) named "dir1" in dataset browser
     
