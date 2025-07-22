@@ -35,8 +35,6 @@ class AuditLogEntryDetails(Modal):
     )
 
     file = Button(".file-path.file-path-base")
-
-    # file_path = WebElementsSequence(".path-container .path-item.path-label")
     file_path = WebElement(".path-container")
 
     archive_name = WebElement(".path-item.path-label")
