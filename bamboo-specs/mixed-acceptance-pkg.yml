@@ -94,6 +94,7 @@ stages:
         - Single directory
         - Single directory 2
         - Spaces basic
+        - Spaces operations
         - Spaces with same name
         - Spaces with same name 2 providers
         - Storage sync
@@ -907,6 +908,22 @@ Spaces basic:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_spaces_basic test_mixed_pkg
+
+Spaces operations:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CSBT
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make ENV_FILE=1oz_1op_1oc_ones3 SUITE=test_spaces_operations test_mixed_pkg
 
 Spaces with same name:
   <<: *acceptance-mixed-tests-in-chrome-job
