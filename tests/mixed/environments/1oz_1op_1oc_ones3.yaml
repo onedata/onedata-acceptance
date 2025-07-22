@@ -1,0 +1,21 @@
+# Name of the scenario to run
+scenario: "1oz_1op_1oc_ones3.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client1:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10
+
+oneprovider-1:
+  batchConfig:
+    createUsers: false
+  oneS3:
+    enabled: true
+
+onezone:
+  batchConfig:
+    createUsers: false
