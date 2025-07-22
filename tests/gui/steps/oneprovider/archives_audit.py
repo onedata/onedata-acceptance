@@ -215,10 +215,13 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{item_name}" using scroll in archive audit log'
+        'user of {browser_id} clicks on item "{item_name}" using scroll in archive'
+        " audit log"
     )
 )
-def click_on_item_with_scrolling_in_archive_audit_log(browser_id, item_name, modals, selenium):
+def click_on_item_with_scrolling_in_archive_audit_log(
+    browser_id, item_name, modals, selenium
+):
 
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
@@ -238,7 +241,7 @@ def click_on_item_with_scrolling_in_archive_audit_log(browser_id, item_name, mod
         if item_name in new_rows_names:
             try:
                 modal.data_row[item_name].clickable_field.click()
-            except StaleElementReferenceException as e:
+            except StaleElementReferenceException:
                 modal.scroll_by_press_space()
                 modal.data_row[item_name].clickable_field.click()
             return
@@ -246,7 +249,6 @@ def click_on_item_with_scrolling_in_archive_audit_log(browser_id, item_name, mod
         # if there are at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
-        print("seen rows", seen_rows)
         modal.scroll_by_press_space()
 
     assert False, f"file of name {item_name} not found i archive audit log data row"
@@ -421,19 +423,16 @@ def check_archived_file_path(browser_id, selenium, modals, path):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     modal_details = modals(driver).audit_log_entry_details
-    paths = path.replace(".../", "").split("/")
 
-    details_file_path = modal_details.file_path
-    shortened_path = [details_file_path[i].text for i in range(len(details_file_path))]
+    details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
+    archive_file = details_file_path[0].split("›")[1]
+    details_file_path = "/".join(details_file_path[1:])
 
     assert (
-        paths[0] == shortened_path[0]
-    ), f"first directory name - {paths[0]} is different than {shortened_path[0]}"
-    assert (
-        paths[-1] == shortened_path[-1]
-    ), f"Final file name - {paths[-1]} is different than {shortened_path[-1]}"
+        path == details_file_path
+    ), f"given path: {path} is different than actual file path: {details_file_path}"
 
-    assert modal.archive_name == shortened_path[1], (
-        f"name of archive - {modal.archive_name} is different than given in file path:"
-        f" {shortened_path[1]}"
+    assert modal.archive_name == archive_file, (
+        f"name of archive in archive audit log modal: {modal.archive_name} is different"
+        f" than given in audit log entry details:  {archive_file}"
     )

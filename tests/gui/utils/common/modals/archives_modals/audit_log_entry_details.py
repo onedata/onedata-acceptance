@@ -34,9 +34,10 @@ class AuditLogEntryDetails(Modal):
         ".entry-info-row-source-item-absolute-location .clipboard-input"
     )
 
-    file_button = Button(".file-path.file-path-base")
+    file = Button(".file-path.file-path-base")
 
-    file_path = WebElementsSequence(".path-item.path-label")
+    # file_path = WebElementsSequence(".path-container .path-item.path-label")
+    file_path = WebElement(".path-container")
 
     archive_name = WebElement(".path-item.path-label")
     close = Button(".close-details")
