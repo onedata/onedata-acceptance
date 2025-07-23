@@ -911,7 +911,7 @@ Spaces basic:
 
 Spaces operations:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CSBT
+  key: CSO
   tasks:
     - script: *clear-env
     - script: *restart-minikube
