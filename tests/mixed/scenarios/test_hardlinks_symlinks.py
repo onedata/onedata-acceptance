@@ -1,3 +1,12 @@
+"""This module contains tests suite for hardlinks and symlinks using
+Oneprovider GUI(in single browser instance) and REST API.
+"""
+
+__author__ = "Jakub Karczewski"
+__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+
 from pytest import fixture
 from pytest_bdd import scenarios
 

@@ -462,25 +462,39 @@ def check_for_hardlink_between_files_rest(users, user, hosts, host, file_id1, fi
         return False
 
 
-def create_hardlink_rest(users, user, hosts, host, where_placed_id, target_id, name):
+def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id, name):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_api.create_file(
-        id=where_placed_id,
+        id=destination_dir_id,
         name=name,
         type="LNK",
         target_file_id=target_id,
         content="example",
     )
 
+    """
+    In this case it is essential to give the non-empty content
+    paramater in order to swaggers to work.
+    It is probalby related to the fact that creating file with swaggers
+    sets: header_params['Content-Type'] = ['application/octet-stream'],
+    which only accepts non empty body.
+    Also the given content is ignored further by backend and in GUI we
+    can see hardlink/symlink with empty content
+    """
 
-def create_symlink_rest(users, user, hosts, host, where_placed_id, target_path, name):
+
+def create_symlink_rest(
+    users, user, hosts, host, destination_dir_id, target_path, name
+):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
-    _ = file_api.create_file(
-        id=where_placed_id,
+    file_api.create_file(
+        id=destination_dir_id,
         name=name,
         type="SYMLNK",
         target_file_path=target_path,
         content="example",
     )
+
+    # Giving content parameter for the same reason as in function above
