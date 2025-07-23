@@ -753,6 +753,7 @@ def start_test_env(
     scenario_abs_path,
 ):
     patch_path = ""
+    # scenario path according to which environment is started
     scenario_path = ""
     if test_type in ["gui"]:
         scenario_path = env_description_abs_path
@@ -776,6 +777,17 @@ def start_test_env(
 
 @pytest.fixture(scope="session")
 def env_description_abs_path(request, env_description_file):
+    """
+    An env_description_file is a file which describes environment used to run
+    all tests in one test suite. That file name is passed as an argument
+    when running tests.
+    In some tests test`s types (e.g. mixed, oneclient) it only describes environment, such
+    information can be used later in tests. In those cases actual running scenario is
+    hold in that file in following section:
+     scenario: "<scenario name>".
+    That file is hold in another directory (directory within environments directory).
+    Fixture env_description_abs_path returns absolute path to env_description_file.
+    """
     env_dir = ENV_DIRS.get(get_test_type(request))
     absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
     return absolute_path
