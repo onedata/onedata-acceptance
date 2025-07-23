@@ -77,4 +77,6 @@ class QoSTab(Modal):
                 ".ps--active-y').scrollTo(0, 0)"
             )
         except JavascriptException as e:
-            raise Exception("Error executing script, failed to scroll to top of QoSTab Modal") from e
+            raise Exception(
+                "Error executing script, failed to scroll to top of QoSTab Modal"
+            ) from e

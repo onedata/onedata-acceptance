@@ -72,8 +72,9 @@ def select_option_qos(selenium, browser_id, modals, option_name):
         ' in given order for "{files_list}" files:\n{config}'
     )
 )
-
-def assert_audit_log_logs_for_each_file_in_list(selenium, browser_id, modals, files_list, config):
+def assert_audit_log_logs_for_each_file_in_list(
+    selenium, browser_id, modals, files_list, config
+):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
@@ -93,7 +94,7 @@ def assert_audit_log_logs_for_each_file_in_list(selenium, browser_id, modals, fi
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that there are no logs in audit log files list'
+        "user of {browser_id} sees that there are no logs in audit log files list"
         ' with following information: "{info}"'
     )
 )
@@ -103,7 +104,9 @@ def check_no_logs_info_audit_log(selenium, browser_id, modals, info):
     audit_log = modal_qos.audit_log_list
     if audit_log.is_empty():
         assert audit_log.empty_info.text == info, (
-        "The actual no logs info: {audit_log.empty_info.text} is not equal to expected: {info}")
+            "The actual no logs info: {audit_log.empty_info.text} is not equal to"
+            " expected: {info}"
+        )
 
 
 @wt(
@@ -119,15 +122,14 @@ def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
     actual_log_dates = [entry.time.text for entry in entries]
 
     actual_log_datetimes = [
-        datetime.strptime(date, "%d %b %Y %H:%M:%S.%f")
-        for date in actual_log_dates
+        datetime.strptime(date, "%d %b %Y %H:%M:%S.%f") for date in actual_log_dates
     ]
 
     prev_date = actual_log_datetimes[0]
     for i, date in enumerate(actual_log_datetimes[1:]):
         if prev_date is not None:
             assert date <= prev_date, f"{i+1}-th log should not be newer than {i}-th"
-            #logs are enumerated from 0 in loop, when it fact the first index is 1
+            # logs are enumerated from 0 in loop, when it fact the first index is 1
         prev_date = date
 
 
@@ -136,7 +138,9 @@ def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
         'user of {browser_id} clicks on "{file_name}" link in audit log files list'
     )
 )
-def click_on_first_link_with_file_name_in_qos_audit_log(selenium, browser_id, modals, file_name):
+def click_on_first_link_with_file_name_in_qos_audit_log(
+    selenium, browser_id, modals, file_name
+):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
