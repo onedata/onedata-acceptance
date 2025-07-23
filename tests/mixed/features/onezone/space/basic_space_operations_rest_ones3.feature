@@ -11,7 +11,6 @@ Feature: Basic management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And oneclient mounted using token by user1
     And using REST, user1 creates token with following configuration:
         type: access
         interface: oneclient
