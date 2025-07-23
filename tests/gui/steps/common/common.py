@@ -60,7 +60,7 @@ def wt_assert_n_items_in_items_list(
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
 
 
-def check_logs_order_with_optionals(
+def assert_logs_order_with_optional_logs(
     logs_expected: List[Dict[str, str]], logs_actual: List[str]
 ):
     """
@@ -78,13 +78,12 @@ def check_logs_order_with_optionals(
         }
     ]
 
-    As a second argument it takes typical list of strings.
+    As a second argument it takes list of strings.
 
-    The goal of this function is to check wheather logs_actual is correct in terms of order,
-    established by logs_expected, given the constraint that some of the logs are optional,
-    but they still have a position in list that cannot be changed,
-    relatively to other optionals and obviously required elements.
-
+    Function checks that expected entries exist with maintaned order.
+    Function can skip checking optional entries, if they are also skipped in Logs Actual,
+    but if they are not, it checks whether thay are placed in allowed place.
+    
     """
 
     logs_to_severity = {}

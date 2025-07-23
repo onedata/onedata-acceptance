@@ -12,7 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.common import check_logs_order_with_optionals
+from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
@@ -48,7 +48,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} selects "{option_name}" option in QoS info selector'
+        'user of {browser_id} selects "{option_name}" option in QoS info type button'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -58,21 +58,25 @@ def select_option_qos(selenium, browser_id, modals, option_name):
     modal_qos = modals(driver).details_modal.qos
     option_btn = getattr(modal_qos, transform(option_name))
     modal_qos.scroll_to_top()
+
+    # the need to scroll back to the top is due to the fact,
+    # that the header covers the part of the button,
+    # that is set to be clicked on in GUI
+
     option_btn.click()
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees the following logs in audit log browser"
+        "user of {browser_id} sees the following logs in audit log files list"
         ' in given order for "{files_list}" files:\n{config}'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
-def check_audit_log_files_list(selenium, browser_id, modals, files_list, config):
 
+def assert_audit_log_logs_for_each_file_in_list(selenium, browser_id, modals, files_list, config):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
-    entries = modal_qos.audit_log_browser.entries
+    entries = modal_qos.audit_log_list.entries
     config = yaml.load(config, yaml.Loader)
 
     files = parse_seq(files_list)
@@ -84,58 +88,58 @@ def check_audit_log_files_list(selenium, browser_id, modals, files_list, config)
         else:
             actual_logs = [entry.event.text for entry in entries]
 
-        check_logs_order_with_optionals(config, actual_logs)
+        assert_logs_order_with_optional_logs(config, actual_logs)
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that there are no logs in audit log browser"
-        ' with information as follows "{info}"'
+        'user of {browser_id} sees that there are no logs in audit log files list'
+        ' with following information: "{info}"'
     )
 )
 def check_no_logs_info_audit_log(selenium, browser_id, modals, info):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
-    audit_log = modal_qos.audit_log_browser
-    if audit_log.isEmpty():
-        assert audit_log.empty_info.text == info
+    audit_log = modal_qos.audit_log_list
+    if audit_log.is_empty():
+        assert audit_log.empty_info.text == info, (
+        "The actual no logs info: {audit_log.empty_info.text} is not equal to expected: {info}")
 
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that all logs in audit log browser"
-        " are from newest to oldest"
+        "user of {browser_id} sees that all logs in audit log files list"
+        " are ordered from newest to oldest"
     )
 )
-def check_audit_log_times(selenium, browser_id, modals):
-
+def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
-    entries = modal_qos.audit_log_browser.entries
-    actual_log_dates_string = [entry.time.text for entry in entries]
+    entries = modal_qos.audit_log_list.entries
+    actual_log_dates = [entry.time.text for entry in entries]
 
     actual_log_datetimes = [
         datetime.strptime(date, "%d %b %Y %H:%M:%S.%f")
-        for date in actual_log_dates_string
+        for date in actual_log_dates
     ]
 
-    prev_date = None
-    for date in actual_log_datetimes:
+    prev_date = actual_log_datetimes[0]
+    for i, date in enumerate(actual_log_datetimes[1:]):
         if prev_date is not None:
-            assert date <= prev_date
+            assert date <= prev_date, f"{i+1}-th log should not be newer than {i}-th"
+            #logs are enumerated from 0 in loop, when it fact the first index is 1
         prev_date = date
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "{file_name}" link in audit log browser'
+        'user of {browser_id} clicks on "{file_name}" link in audit log files list'
     )
 )
-def click_on_file_audit_log(selenium, browser_id, modals, file_name):
-
+def click_on_first_link_with_file_name_in_qos_audit_log(selenium, browser_id, modals, file_name):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
-    entries = modal_qos.audit_log_browser.entries
+    entries = modal_qos.audit_log_list.entries
     for entry in entries:
         if entry.file.text == file_name:
             entry.link.click()

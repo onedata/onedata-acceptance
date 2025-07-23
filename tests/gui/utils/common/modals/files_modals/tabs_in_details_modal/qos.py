@@ -39,8 +39,8 @@ class AuditLogBrowser(PageObject):
 
     entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
 
-    def isEmpty(self):
-        return not len(self.entries)
+    def is_empty(self):
+        return len(self.entries) == 0
 
     empty_info = WebElement(".table-is-empty-cell")
 
@@ -55,7 +55,7 @@ class QoSTab(Modal):
     requirements = WebItemsSequence(".qos-entry", cls=Requirement)
     delete_confirm = NamedButton(".btn-danger", text="Yes, remove")
 
-    audit_log_browser = WebItem(".audit-log-browser", cls=AuditLogBrowser)
+    audit_log_list = WebItem(".audit-log-browser", cls=AuditLogBrowser)
 
     show_details_audit_log = Button(".qos-details-type-logs")
     show_details_transfer_statistics = Button(".qos-details-type-charts")
@@ -76,5 +76,5 @@ class QoSTab(Modal):
                 "document.querySelector('.perfect-scrollbar-element"
                 ".ps--active-y').scrollTo(0, 0)"
             )
-        except JavascriptException:
-            pass
+        except JavascriptException as e:
+            raise Exception("Error executing script, failed to scroll to top of QoSTab Modal") from e
