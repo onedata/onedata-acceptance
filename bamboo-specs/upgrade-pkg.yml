@@ -37,6 +37,7 @@ stages:
     jobs:
     - 20.02.19 - current
     - 21.02.1 - current
+    - 21.02.8 - current
 20.02.19 - current:
   key: RFCD
   other: &common-opts
@@ -108,6 +109,14 @@ stages:
   artifact-subscriptions: []
 21.02.1 - current:
   key: U2C
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+21.02.8 - current:
+  key: U28C
   other: *common-opts
   tasks: *tasks
   final-tasks: *final-tasks

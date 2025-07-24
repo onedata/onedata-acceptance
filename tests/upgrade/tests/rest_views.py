@@ -10,6 +10,7 @@ from functools import partial
 import yaml
 
 from tests.upgrade.utils.rest_utils import (
+    DEFAULT_REST_QUERY_TIMEOUT,
     configure_file_popularity_mechanism_in_the_space,
     create_view,
     get_provider_configuration,
@@ -115,11 +116,10 @@ FILES_WITH_METADATA = [
 FILES_MEETING_SPATIAL_CONDITION = ["file_sp1", "file_sp3"]
 REDUCE_QUERY_EXP_VALUE = len(FILES_WITH_METADATA)
 EXAMPLE_FILE_TO_CHECK_FILE_CHANGES = "file_json"
-# when counting all files there will be included also space dir,
-# trash dir and space archive root dir
-SPECIAL_DIRS_COUNT_21 = 3
-# in provider 20 there is no archive root dir
-SPECIAL_DIRS_COUNT_20 = 2
+# when counting all files there will be included also special dirs
+SPECIAL_DIRS_COUNT_20_02_19 = 2 # space dir and trash dir
+SPECIAL_DIRS_COUNT_21_02_1 = 3 # also space archive root dir
+SPECIAL_DIRS_COUNT_21_02_8 = 5 #
 
 SPACE_NAME = "space_views"
 RESULTS = {}
@@ -219,15 +219,15 @@ def verify_views(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(
+    _assert_json_included(
         RESULTS[VIEW_WITH_ALL_FILES],
         query_view(provider_host, token, space_id, VIEW_WITH_ALL_FILES),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_WITH_FILES_WITH_META],
         query_view(provider_host, token, space_id, VIEW_WITH_FILES_WITH_META),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_SPATIAL],
         query_view(
             provider_host,
@@ -239,11 +239,11 @@ def verify_views(tests_controller):
             end_range="[5,10]",
         ),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS[VIEW_WITH_REDUCE],
         query_view(provider_host, token, space_id, VIEW_WITH_REDUCE),
     )
-    _assert(
+    _assert_json_equal(
         RESULTS["file-popularity"],
         query_view(provider_host, token, space_id, "file-popularity"),
     )
@@ -303,7 +303,7 @@ def verify_views_multiprovider(tests_controller):
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    _assert(
+    _assert_json_included(
         RESULTS[VIEW_MULTIPROVIDER],
         query_view(provider_host2, token, space_id, VIEW_MULTIPROVIDER),
     )
@@ -357,21 +357,42 @@ def verify_subscribe_changes(tests_controller):
     _assert(RESULTS["file_changes"], record)
 
 
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def _assert(expected, actual):
-    err_msg = f"Expected value: {expected}, but got: {actual}"
+    err_msg = f"Expected value: {expected},\nbut got: {actual}"
     assert actual == expected, err_msg
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
+def _assert_json_included(json_to_be_included, other_json):
+    for item in json_to_be_included:
+        assert item in other_json, f"There is no {item} included in second json."
+
+
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
+def _assert_json_equal(expected, actual):
+    err_msg = "Json`s are not equal, there is no:\n{}\nin:\n{}"
+    for item in expected:
+        assert item in actual, err_msg.format(item, actual)
+    for item in actual:
+        assert item in expected, err_msg.format(item, expected)
+
+
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_files_in_query_view(
     query, provider_host, token, expected_files, attr_holding_file_id, extra_files=False
 ):
     res = query()
     items = [item[attr_holding_file_id] for item in res]
     prov_version = get_prov_version(provider_host)
-    extra_files_num = (
-        SPECIAL_DIRS_COUNT_20 if prov_version == 20 else SPECIAL_DIRS_COUNT_21
-    )
+    extra_files_num = -1
+    match prov_version:
+        case "20.02.19":
+            extra_files_num = SPECIAL_DIRS_COUNT_20_02_19
+        case "21.02.1":
+            extra_files_num = SPECIAL_DIRS_COUNT_21_02_1
+        case "21.02.8":
+            extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
     exp_files_count = (
         len(expected_files) + extra_files_num if extra_files else len(expected_files)
     )
@@ -382,7 +403,7 @@ def wait_for_expected_files_in_query_view(
     return res
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_result_in_reduce_query_view(query, expected_result):
     res = query()
     assert (
@@ -391,7 +412,7 @@ def wait_for_expected_result_in_reduce_query_view(query, expected_result):
     return res
 
 
-@repeat_failed(timeout=60)
+@repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def get_record_for_file_in_file_changes(
     provider_host, token, space_id, data, file_name
 ):
