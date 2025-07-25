@@ -852,6 +852,12 @@ def create_hardlinks_of_file(
     op_container,
     popups,
 ):
+    
+    # This function only operates on files that are in main space directory.
+    # If user is already in different place, before creating hardlink
+    # it will reset the file browser to be there.
+    # Also, every hardlink created will also be placed in main space directory
+
     option = "Create hard link"
     button = "Place hard link"
 
@@ -885,6 +891,9 @@ def create_symlinks_of_file(
     op_container,
     popups,
 ):
+    
+    # Note: the description for this function is in similar function for hardlink above
+
     option = "Create symbolic link"
     button = "place symbolic link"
 
@@ -919,6 +928,8 @@ def create_symlinks_of_file_with_path(
     popups,
     path,
 ):
+    # Note: the description for this function is in similar function for hardlink below
+
     option = "Create symbolic link"
     button = "Place symbolic link"
 
@@ -955,6 +966,11 @@ def create_hardlinks_of_file_with_path(
     popups,
     path,
 ):
+    # This function allows to create harldlink at place,
+    # where user is now in file browser, because it does not reset it
+    # like similar function, but with path argument not given. 
+    # Also, the path argument must be relative path to user's actual place
+
     option = "Create hard link"
     button = "Place hard link"
 
