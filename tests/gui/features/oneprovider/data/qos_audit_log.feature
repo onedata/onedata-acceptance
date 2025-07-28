@@ -48,7 +48,7 @@ Feature: QoS Audit Logs
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser selects "Audit log" Show details type in QoS panel
 
-    And user of browser sees the following logs in audit log files list in given order for "[file1, file2]" files:
+    Then user of browser sees the following logs in audit log files list in given order for "[file1, file2]" files:
         - Required: Local replica reconciled.
         - Optional: Remote replica differs, reconciliation already in progress.
         - Required: Remote replica differs, reconciliation started.
@@ -112,7 +112,7 @@ Feature: QoS Audit Logs
     And user of browser opens "File details" modal on "QoS" tab for "file1" file using context menu
     And user of browser selects "Audit log" Show details type in QoS panel
 
-    And user of browser sees the following logs in audit log files list in given order for "[file1]" files:
+    Then user of browser sees the following logs in audit log files list in given order for "[file1]" files:
         - Required: Local replica reconciled.
         - Optional: Remote replica differs, reconciliation already in progress.
         - Required: Remote replica differs, reconciliation started.
