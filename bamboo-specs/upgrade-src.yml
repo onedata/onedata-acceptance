@@ -69,7 +69,7 @@ _Codetag Tracker:
         conditions:
           - variable:
               matches:
-                bamboo.buildNumber: '[4-9]|.{2,}'
+                bamboo.buildNumber: '[2-9]|.{2,}'
     - script: &run-script-working-dir
         <<: *run-script
         scripts:
