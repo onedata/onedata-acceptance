@@ -80,7 +80,7 @@ def assert_logs_order_with_optional_logs(
 
     As a second argument it takes list of strings.
 
-    Function checks that expected entries exist with maintaned order.
+    Function checks that expected entries exist with maintained order.
     Function can skip checking optional entries, if they are also skipped in Logs Actual,
     but if they are not, it checks whether thay are placed in allowed place.
 

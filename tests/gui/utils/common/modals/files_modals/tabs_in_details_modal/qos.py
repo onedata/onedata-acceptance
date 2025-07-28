@@ -36,13 +36,11 @@ class Entry(PageObject):
 
 
 class AuditLogBrowser(PageObject):
-
     entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
+    empty_info = WebElement(".table-is-empty-cell")
 
     def is_empty(self):
         return len(self.entries) == 0
-
-    empty_info = WebElement(".table-is-empty-cell")
 
 
 class QoSTab(Modal):

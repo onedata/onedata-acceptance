@@ -48,7 +48,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} selects "{option_name}" option in QoS info type button'
+        'user of {browser_id} selects "{option_name}" Show details type in QoS panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -56,7 +56,7 @@ def select_option_qos(selenium, browser_id, modals, option_name):
     driver = selenium[browser_id]
 
     modal_qos = modals(driver).details_modal.qos
-    option_btn = getattr(modal_qos, transform(option_name))
+    option_btn = getattr(modal_qos, "show_details_" + transform(option_name))
     modal_qos.scroll_to_top()
 
     # the need to scroll back to the top is due to the fact,

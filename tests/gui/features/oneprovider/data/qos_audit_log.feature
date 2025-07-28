@@ -46,7 +46,7 @@ Feature: QoS Audit Logs
     And user of browser clicks on "Save" button in QoS panel
 
     And user of browser sees that all QoS requirements are fulfilled
-    And user of browser selects "Show details audit log" option in QoS info type button
+    And user of browser selects "Audit log" Show details type in QoS panel
 
     And user of browser sees the following logs in audit log files list in given order for "[file1, file2]" files:
         - Required: Local replica reconciled.
@@ -102,7 +102,7 @@ Feature: QoS Audit Logs
     And user of browser clicks on "Save" button in QoS panel
 
     And user of browser sees that all QoS requirements are fulfilled
-    And user of browser selects "Show details audit log" option in QoS info type button
+    And user of browser selects "Audit log" Show details type in QoS panel
     And user of browser sees that there are no logs in audit log files list with following information: "No log entries — consider switching to another Oneprovider."
 
     And user of browser opens file browser for "space1" space
@@ -110,16 +110,9 @@ Feature: QoS Audit Logs
 
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser opens "File details" modal on "QoS" tab for "file1" file using context menu
-    And user of browser selects "Show details audit log" option in QoS info type button
+    And user of browser selects "Audit log" Show details type in QoS panel
 
     And user of browser sees the following logs in audit log files list in given order for "[file1]" files:
         - Required: Local replica reconciled.
         - Optional: Remote replica differs, reconciliation already in progress.
         - Required: Remote replica differs, reconciliation started.
-
-
-    
-
-
-
-    
