@@ -146,7 +146,6 @@ Feature: Management of invite tokens in Onezone GUI
     # consume invite token
     And user of browser2 succeeds to consume token
     And user of browser2 sees group "group2" on groups list
-    And trace
 
     Then user of browser1 sees that group group1 has following privilege configuration for user user2:
           privileges:

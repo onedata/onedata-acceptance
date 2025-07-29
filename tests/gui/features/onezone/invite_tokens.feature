@@ -214,17 +214,17 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
 
 
   Scenario: User can see removed space ID in invitation token
-    When user of browser2 creates token with following configuration:
+    When user of browser1 creates token with following configuration:
           name: space_token_1
           type: invite
           invite type: Invite group to space
-          invite target: space2
-    And user of browser2 removes "space2" space in Onezone page
-    And user of browser2 clicks on Tokens in the main menu
-    And user of browser2 sees that there is token named "space_token_1" on tokens list
-    And user of browser2 clicks on "space_token_1" on token list
-    And user of browser2 refreshes site
-    Then user of browser2 sees that created token configuration is as following:
+          invite target: space1
+    And user of browser1 removes "space1" space in Onezone page
+    And user of browser1 clicks on Tokens in the main menu
+    And user of browser1 sees that there is token named "space_token_1" on tokens list
+    And user of browser1 clicks on "space_token_1" on token list
+    And user of browser1 refreshes site
+    Then user of browser1 sees that created token configuration is as following:
           name: space_token_1
           invite type: Invite group to space
-          invite target: $(resolve_id space2)
+          invite target: $(resolve_id space1)
