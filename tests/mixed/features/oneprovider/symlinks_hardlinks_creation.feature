@@ -39,7 +39,7 @@ Feature: Tests for creating symlinks and hardlinks using web GUI/REST
     And using REST, user user1 sees that "dir1/file1" symlink points to "file1" in "space1" in oneprovider-1
 
     And using web GUI, user of browser opens file browser for "space1" space
-    And user of browser goes to "/dir1" in file browser
+    And using web GUI, user of browser goes to "/dir1" in file browser
     And using web GUI, user of browser clicks on menu for "file1" file in file browser
     And using web GUI, user of browser clicks "Information" option in data row menu in file browser
     And using web GUI, user of browser sees that "Symbolic link details" modal has appeared
