@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from pathlib import Path
 
 import yaml
 from selenium.common.exceptions import (
@@ -852,11 +853,11 @@ def create_hardlinks_of_file(
     op_container,
     popups,
 ):
-    
-    # This function only operates on files that are in main space directory.
-    # If user is already in different place, before creating hardlink
-    # it will reset the file browser to be there.
-    # Also, every hardlink created will also be placed in main space directory
+
+    # This function works only with the files in main space.
+    # If a user is already in a different place, before creating hardlink
+    # it will always go there (flag go_to_file_browser will be set to True).
+    # Additionally, every hardlink created will also be placed in the main space.
 
     option = "Create hard link"
     button = "Place hard link"
@@ -891,8 +892,8 @@ def create_symlinks_of_file(
     op_container,
     popups,
 ):
-    
-    # Note: the description for this function is in similar function for hardlink above
+
+    # Note: this function works similarly to the function above
 
     option = "Create symbolic link"
     button = "place symbolic link"
@@ -928,7 +929,7 @@ def create_symlinks_of_file_with_path(
     popups,
     path,
 ):
-    # Note: the description for this function is in similar function for hardlink below
+    # Note: this function works similarly to the function below
 
     option = "Create symbolic link"
     button = "Place symbolic link"
@@ -966,10 +967,8 @@ def create_hardlinks_of_file_with_path(
     popups,
     path,
 ):
-    # This function allows to create harldlink at place,
-    # where user is now in file browser, because it does not reset it
-    # like similar function, but with path argument not given. 
-    # Also, the path argument must be relative path to user's actual place
+    # This function creates a hardlink from a file in a currently opened directory
+    # and pastes it in a given relative path
 
     option = "Create hard link"
     button = "Place hard link"
@@ -1023,6 +1022,64 @@ def _create_link_in_file_browser(
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     click_file_browser_button(browser_id, button, tmp_memory)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} goes to file browser, creates hardlink of file located in"
+        ' "{source_path}" path and places it in "{path_to_place}" path in "{space}"'
+    )
+)
+def create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
+    selenium,
+    browser_id,
+    space,
+    tmp_memory,
+    oz_page,
+    op_container,
+    popups,
+    source_path,
+    path_to_place,
+):
+
+    # Both source_path and path_to_place should be absolute,
+    # without the space name, and start with slash
+    # At the end of the function, user always goes back to main space
+    # directory (go_to_file_browser is executed)
+
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+
+    source_parent_path = "/".join(source_path.split("/")[:-1])
+
+    if len(source_parent_path) > 0:
+        go_to_path(selenium, browser_id, tmp_memory, source_path, op_container)
+    else:
+        source_parent_path = "/"
+
+    relative_path = str(
+        Path(path_to_place).relative_to(source_parent_path, walk_up=True)
+    )
+    option = "Create hard link"
+    button = "Place hard link"
+
+    file_name = source_path.split("/")[-1] if "/" in source_path else source_path
+
+    _create_link_in_file_browser(
+        selenium,
+        browser_id,
+        file_name,
+        space,
+        tmp_memory,
+        oz_page,
+        op_container,
+        popups,
+        option,
+        button,
+        relative_path,
+        False,
+    )
+
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
 
 
 @wt(
