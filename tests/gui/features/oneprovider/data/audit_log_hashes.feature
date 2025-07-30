@@ -26,7 +26,7 @@ Feature: Nested archive with duplicated file names
   And user of browser logged as user1 to Onezone service
 
 
-Scenario: User creates nested archive with duplicated file names and sees that their hashes are unique
+Scenario: User creates nested archive with duplicated file names and sees that their entries in archive audit log have different hashes
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
@@ -36,4 +36,4 @@ Scenario: User creates nested archive with duplicated file names and sees that t
     And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Show audit log" option in data row menu in archive browser
-    And user of browser sees that hashes of all logs with filename: "file1" are unique and sees exactly "3" of them
+    And user of browser sees that all entries with filename: "file1" have different hashes and sees exactly "3" of them

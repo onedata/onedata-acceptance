@@ -371,13 +371,13 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that hashes of all logs with filename: "{file_name}"'
-        ' are unique and sees exactly "{number}" of them'
+        'user of {browser_id} sees that all entries with filename: "{file_name}"'
+        ' have different hashes and sees exactly "{number}" of them'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_unique_hashes_and_number_of_logs(
-    browser_id, selenium, modals, file_name, number
+    browser_id, selenium, modals, file_name, number:int
 ):
     driver = selenium[browser_id]
     logs = modals(driver).archive_audit_log.data_row
@@ -387,9 +387,7 @@ def assert_unique_hashes_and_number_of_logs(
             log_hash = log.duplicated_name_hash
             assert (
                 log_hash not in hashes
-            ), f"There are at least two identical hashes like: {log_hash}"
+            ), f"There are at least two identical hashes: {log_hash}"
             hashes.append(log_hash)
 
-    assert len(hashes) == int(
-        number
-    ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    assert len(hashes) == number, f"Expected number of logs: {number} is different than actual: {len(hashes)}"
