@@ -188,7 +188,7 @@ def create_file_hardlink(
         r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def check_for_hardlink_gui(browser_id, path1, path2, selenium, modals):
+def assert_for_hardlink_gui(browser_id, path1, path2, selenium, modals):
     assert_hardlink_path_in_file_dets_modal(selenium, browser_id, path1, path2, modals)
 
 
@@ -199,7 +199,7 @@ def check_for_hardlink_gui(browser_id, path1, path2, selenium, modals):
         r' in space "(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def check_for_hardlink_rest(users, user, hosts, host, path1, path2, space):
+def assert_for_hardlink_rest(users, user, hosts, host, path1, path2, space):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_id1 = _lookup_file_id(f"{space}/{path1}", user_client_op)
     file_id2 = _lookup_file_id(f"{space}/{path2}", user_client_op)
