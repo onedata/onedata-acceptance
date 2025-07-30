@@ -1,5 +1,5 @@
 """This module contains tests suite for hardlinks and symlinks using
-Oneprovider GUI(in single browser instance) and REST API.
+Oneprovider GUI (in single browser instance) and REST API.
 """
 
 __author__ = "Jakub Karczewski"

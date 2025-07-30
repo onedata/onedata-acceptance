@@ -515,9 +515,9 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modal
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that {link_property} is "{value}" '
-        'in "Symbolic link details" modal'
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that (?P<link_property>.*) is "(?P<value>.*)" '
+        r'in "Symbolic link details" modal'
     )
 )
 def assert_property_in_symlink_dets_modal(

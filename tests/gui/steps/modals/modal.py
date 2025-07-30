@@ -155,7 +155,7 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
         pass
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has appeared'))
+@wt(parsers.re(r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)" modal has appeared'))
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -734,7 +734,6 @@ def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, 
     modals = selenium["request"].getfixturevalue("modals")
     modal = transform(modal)
     modal = getattr(modals(driver), modal)
-    time.sleep(0.1)
     path = modal.path.replace("\n", "")
 
     assert (

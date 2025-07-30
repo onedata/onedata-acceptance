@@ -433,7 +433,7 @@ def click_option_in_data_row_menu_in_browser(
 
 @wt(
     parsers.re(
-        r'(Using web GUI, )?user of (?P<browser_id>.*) clicks "(?P<option>.*)" option '
+        r'(using web GUI, )?user of (?P<browser_id>.*) clicks "(?P<option>.*)" option '
         r"in data row menu in (?P<which_browser>.*)"
     )
 )
