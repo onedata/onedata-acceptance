@@ -26,7 +26,7 @@ Feature: Operations on non-protected file whose hardlink is in data write-protec
 
 Scenario: User deletes non-protected file whose hardlink is in data write-protected dataset
     When user of browser goes to file browser, creates hardlink of file located in "/file1" path and places it in "/dir1" path in "space1"
-    And using web GUI, user of browser creates dataset with data and metadata write protection flags for item "dir1" in space "space1" in oneprovider-1
+    And user of browser creates dataset with data and metadata write protection flags for item "dir1" in "space1"
     
     And user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
@@ -37,8 +37,8 @@ Scenario: User deletes non-protected file whose hardlink is in data write-protec
 
 Scenario: User renames non-protected file whose hardlink is in data write-protected dataset
     When user of browser goes to file browser, creates hardlink of file located in "/file1" path and places it in "/dir1" path in "space1"
-    And using web GUI, user of browser creates dataset with data and metadata write protection flags for item "dir1" in space "space1" in oneprovider-1
-
+    And user of browser creates dataset with data and metadata write protection flags for item "dir1" in "space1"
+    
     And user of browser succeeds to rename "file1" to "file2" in "space1"
     Then user of browser does not see any item(s) named "file1" in file browser
     And user of browser sees item(s) named "file2" in file browser
@@ -46,8 +46,8 @@ Scenario: User renames non-protected file whose hardlink is in data write-protec
 
 Scenario: User moves non-protected file whose hardlink is in data write-protected dataset
     When user of browser goes to file browser, creates hardlink of file located in "/file1" path and places it in "/dir1" path in "space1"
-    And using web GUI, user of browser creates dataset with data and metadata write protection flags for item "dir1" in space "space1" in oneprovider-1
-
+    And user of browser creates dataset with data and metadata write protection flags for item "dir1" in "space1"
+    
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Cut" option in data row menu in file browser
     And user of browser goes to "/dir2" in file browser
