@@ -514,6 +514,13 @@ def click_menu_for_elem_in_browser(
         'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
     )
 )
+@wt(
+    parsers.re(
+        r"using web GUI, user of (?P<browser_id>.*) clicks on"
+        r" (?P<tag>.*tag.*|.*icon.*) "
+        r'for "(?P<item_name>.*)" in (?P<which_browser>.*) in (?P<host>.*)'
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tag_for_elem_in_browser(
     browser_id, item_name, tmp_memory, tag, which_browser

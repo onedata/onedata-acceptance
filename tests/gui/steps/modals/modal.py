@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-import time
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -155,7 +154,12 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
         pass
 
 
-@wt(parsers.re(r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)" modal has appeared'))
+@wt(
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)"'
+        r" modal has appeared"
+    )
+)
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)

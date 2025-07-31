@@ -450,11 +450,13 @@ def get_file_symlink_value_rest(users, user, hosts, host, file_id):
     return symlink_val
 
 
-def check_for_hardlink_between_files_rest(users, user, hosts, host, file_id1, file_id2):
+def check_for_hardlink_between_files_rest(
+    users, user, hosts, host, hardlink_id, file_id
+):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     try:
-        file_api.test_for_hardlink_between_files(file_id1, file_id2)
+        file_api.test_for_hardlink_between_files(hardlink_id, file_id)
         return True
     except OPException as e:
         if e.status != 404:
@@ -472,10 +474,9 @@ def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id
         target_file_id=target_id,
         content="example",
     )
-
     """
     Providing non-empty content is necessary due to Swagger issues.
-    It is probalby related to the fact that creating file with swaggers
+    It is probably related to the fact that creating file with swaggers
     sets: header_params['Content-Type'] = ['application/octet-stream'],
     which only accepts non empty body.
     Also the given content is ignored further by backend and in GUI we
@@ -495,5 +496,4 @@ def create_symlink_rest(
         target_file_path=target_path,
         content="example",
     )
-
     # Providing content parameter for the same reason as in the function above

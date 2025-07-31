@@ -31,7 +31,7 @@ Feature: Tests for creating symlinks and hardlinks using web GUI/REST
     When using web GUI, user of browser opens file browser for "space1" space
     And using web GUI, user of browser creates hardlink of "file1" placed in "/dir1" directory in "space1" in oneprovider-1
     And using REST, user user1 sees that "file1" hardlinks point to "[dir1/file1, file1]" in space "space1" in oneprovider-1
-    Then using REST, user user1 can see that there is hardlink between "file1" and "dir1/file1" in space "space1" in oneprovider-1
+    Then using REST, user user1 sees that the path of "dir1/file1" hardlink is "file1" in space "space1" in oneprovider-1
 
 
   Scenario: User creates symlink using REST and can see correct info about it using web GUI and REST

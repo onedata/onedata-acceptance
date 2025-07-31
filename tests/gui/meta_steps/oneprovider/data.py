@@ -712,7 +712,12 @@ def _select_item(selenium, browser_id, tmp_memory, path, op_container):
     return item_name
 
 
-@wt(parsers.re(r'(using web GUI, )?user of (?P<browser_id>.*) goes to "(?P<path>.*)" in (?P<which_browser>.*)'))
+@wt(
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) goes to "(?P<path>.*)" in'
+        r" (?P<which_browser>.*)"
+    )
+)
 def go_to_path_(selenium, browser_id, tmp_memory, path, op_container, which_browser):
     go_to_path(
         selenium,

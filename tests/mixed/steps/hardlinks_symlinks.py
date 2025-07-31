@@ -10,7 +10,6 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_hardlinks_of_file_with_path,
     create_symlinks_of_file_with_path,
 )
-from tests.gui.steps.oneprovider.browser import click_tag_for_elem_in_browser
 from tests.gui.steps.oneprovider.file_browser import (
     assert_hardlink_path_in_file_dets_modal,
 )
@@ -70,9 +69,10 @@ def assert_file_hardlinks(
             _lookup_file_id(f"{space}/{path}", user_client_op)
             for path in list_parser(paths_list)
         ]
-        assert set(actual_hardlinks) == set(
-            expected_ids
-        ), "The paths for hardlink from endpoint are not the same as given"
+        assert set(actual_hardlinks) == set(expected_ids), (
+            "The IDs of hardlinks from endpoint are not the same as IDs of provided"
+            " files"
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -194,26 +194,15 @@ def assert_for_hardlink_gui(browser_id, path1, path2, selenium, modals):
 
 @wt(
     parsers.re(
-        r"using REST, user (?P<user>.*) can see that there is"
-        r' hardlink between "(?P<path1>.*)" and "(?P<path2>.*)"'
-        r' in space "(?P<space>.*)" in (?P<host>.*)'
+        r"using REST, user (?P<user>.*) sees that"
+        r' the path of "(?P<hardlink_path>.*)" hardlink is "(?P<file_path>.*)" in space'
+        r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def assert_for_hardlink_rest(users, user, hosts, host, path1, path2, space):
+def assert_for_hardlink_rest(users, user, hosts, host, file_path, hardlink_path, space):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
-    file_id1 = _lookup_file_id(f"{space}/{path1}", user_client_op)
-    file_id2 = _lookup_file_id(f"{space}/{path2}", user_client_op)
+    file_id1 = _lookup_file_id(f"{space}/{file_path}", user_client_op)
+    file_id2 = _lookup_file_id(f"{space}/{hardlink_path}", user_client_op)
     assert check_for_hardlink_between_files_rest(
         users, user, hosts, host, file_id1, file_id2
-    )
-
-
-@wt(
-    parsers.re(
-        r"using web GUI, user of (?P<browser_id>.*) clicks on"
-        r" (?P<tag>.*tag.*|.*icon.*) "
-        r'for "(?P<item_name>.*)" in (?P<which_browser>.*) in (?P<host>.*)'
-    )
-)
-def click_on_tag(browser_id, item_name, tmp_memory, tag, which_browser):
-    click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag, which_browser)
+    ), f"file: {hardlink_path} is not a hardlink to file: {file_path}"
