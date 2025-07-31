@@ -238,20 +238,30 @@ def click_on_item_with_scrolling_in_archive_audit_log(
         except StaleElementReferenceException:
             pass
 
+            # This try/except block handles cases where some rows exist in the `data_row` structure,
+            # but not all of their fields are fully loaded.
+            # This can result in the following exception:
+            # "StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame"
+
         if item_name in new_rows_names:
             try:
                 modal.data_row[item_name].clickable_field.click()
             except StaleElementReferenceException:
                 modal.scroll_by_press_space()
                 modal.data_row[item_name].clickable_field.click()
-            return
 
+                # This try/except block handles cases where the page doesn't load properly.
+                # Sometimes, when the user tries to click on one of the last elements in the audit log,
+                # the clickable area is hidden, causing an exception.
+                # To work around this, the page is scrolled down one more time.
+            return
+        
         # if there are at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
         modal.scroll_by_press_space()
 
-    assert False, f"file of name {item_name} not found i archive audit log data row"
+    raise AssertionError("entry {item_name} not found in archive audit log")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
@@ -413,12 +423,12 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} checks that path in "Audit Log Entry Details" is like:'
+        'user of {browser_id} checks that path in "Audit Log Entry Details" is:'
         ' "{path}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_archived_file_path(browser_id, selenium, modals, path):
+def assert_archived_file_path(browser_id, selenium, modals, path):
 
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
@@ -434,5 +444,5 @@ def check_archived_file_path(browser_id, selenium, modals, path):
 
     assert modal.archive_name == archive_file, (
         f"name of archive in archive audit log modal: {modal.archive_name} is different"
-        f" than given in audit log entry details:  {archive_file}"
+        f" than shown in audit log entry details:  {archive_file}"
     )

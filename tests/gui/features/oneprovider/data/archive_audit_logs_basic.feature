@@ -21,15 +21,14 @@ Feature: Archive audit logs
                     - file1
                     - file2
 
-    And using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] named "file_001", "file_002", ..., "file_N" supported by "oneprovider-1" provider
-    And using REST, user1 creates a path with 20 nested directories named "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
-    And using REST, user1 creates "file_20" file in the last of 20 nested directories "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
 
   Scenario: User sees logs about first 200 successfully archived files and 3 directories after creating archive
+    Given using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] named "file_001", "file_002", ..., "file_N" supported by "oneprovider-1" provider
+
     When user of browser opens file browser for "space1" space
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
@@ -92,6 +91,9 @@ Feature: Archive audit logs
 
 
   Scenario: User sees logs about nested dirs in correct order after creating archive
+    Given using REST, user1 creates a path with 20 nested directories named "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
+    And using REST, user1 creates "file_20" file in the last of 20 nested directories "dir_0/.../dir_19" in "space1" supported by "oneprovider-1" provider
+
     When user of browser opens file browser for "space1" space
     And user of browser creates dataset for item "dir_0" in "space1"
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
@@ -113,3 +115,25 @@ Feature: Archive audit logs
 
     And user of browser scrolls to top in archive audit log
     And user of browser sees entries ordered from shortest to longest times in column "Time taken" in archive audit log
+
+
+  Scenario: User sees correct shortened paths for archived nested directories with long names
+    Given using REST, user1 creates a path with 20 nested directories named "long-directory_0/.../long-directory_19" in "space1" supported by "oneprovider-1" provider
+    And using REST, user1 creates "very-long-file_20" file in the last of 20 nested directories "long-directory_0/.../long-directory_19" in "space1" supported by "oneprovider-1" provider
+
+    When user of browser opens file browser for "space1" space
+    And user of browser creates dataset for item "long-directory_0" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    And user of browser succeeds to create archive for item "long-directory_0" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+    
+    And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+
+    And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
+    Then user of browser checks that path in "Audit Log Entry Details" is: ".../very-long-file_20"
