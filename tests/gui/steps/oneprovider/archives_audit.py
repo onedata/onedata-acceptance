@@ -215,12 +215,12 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on item "{item_name}" using scroll in archive'
+        'user of {browser_id} clicks on item "{file_name}" using scroll in archive'
         " audit log"
     )
 )
-def click_on_item_with_scrolling_in_archive_audit_log(
-    browser_id, item_name, modals, selenium
+def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
+    browser_id, file_name, modals, selenium
 ):
 
     driver = selenium[browser_id]
@@ -243,25 +243,25 @@ def click_on_item_with_scrolling_in_archive_audit_log(
             # This can result in the following exception:
             # "StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame"
 
-        if item_name in new_rows_names:
+        if file_name in new_rows_names:
             try:
-                modal.data_row[item_name].clickable_field.click()
+                modal.data_row[file_name].clickable_field.click()
             except StaleElementReferenceException:
                 modal.scroll_by_press_space()
-                modal.data_row[item_name].clickable_field.click()
+                modal.data_row[file_name].clickable_field.click()
 
                 # This try/except block handles cases where the page doesn't load properly.
                 # Sometimes, when the user tries to click on one of the last elements in the audit log,
                 # the clickable area is hidden, causing an exception.
                 # To work around this, the page is scrolled down one more time.
             return
-        
+
         # if there are at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
         modal.scroll_by_press_space()
 
-    raise AssertionError("entry {item_name} not found in archive audit log")
+    raise AssertionError("entry {file_name} not found in archive audit log")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
