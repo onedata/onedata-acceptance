@@ -38,8 +38,9 @@ from tests.gui.steps.onezone.members import (
     copy_token_from_modal,
     remove_member_from_parent,
 )
+from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.utils.generic import parse_seq
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
@@ -75,6 +76,21 @@ def leave_group(selenium, browser_id, group, oz_page, popups):
 
     click_on_group_menu_button(selenium, browser_id, option, group, oz_page, popups)
     click_modal_button(selenium, browser_id, option, modal, modals)
+
+
+@given(parsers.parse("{user} user does not have access to any group"))
+def g_leave_user_groups_in_onezone_using_rest(hosts, users, user):
+    leave_user_groups_in_onezone_using_rest(hosts, users, user)
+
+
+def leave_user_groups_in_onezone_using_rest(hosts, users, user):
+    zone_hostname = hosts["onezone"]["hostname"]
+    user_groups = get_user_groups(zone_hostname, user, users)
+    for group_id in user_groups:
+        # don`t remove admin user from admins group
+        if group_id == "admins":
+            continue
+        leave_user_group(zone_hostname, user, users, group_id)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
