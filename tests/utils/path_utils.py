@@ -117,4 +117,4 @@ def get_first_path_element(path):
 
 def format_valid_file_name(file_name):
     file_name = file_name[:180]
-    return re.sub(r"[^\w.-]", "_", file_name)
+    return re.sub(r"[^\w.\-\[\]<>!@#$%&*(){}]", "_", file_name)
