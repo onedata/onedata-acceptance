@@ -1026,7 +1026,7 @@ def _create_link_in_file_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} goes to file browser, creates hardlink of file located in"
+        "user of {browser_id} creates hardlink of file located in"
         ' "{source_path}" path and places it in "{path_to_place}" path in "{space}"'
     )
 )
@@ -1062,7 +1062,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     option = "Create hard link"
     button = "Place hard link"
 
-    file_name = source_path.split("/")[-1] if "/" in source_path else source_path
+    file_name = source_path.split("/")[-1]
 
     _create_link_in_file_browser(
         selenium,
@@ -1078,8 +1078,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
         relative_path,
         False,
     )
-
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
 
 
 @wt(
