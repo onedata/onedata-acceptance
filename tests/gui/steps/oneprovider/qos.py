@@ -48,7 +48,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} selects "{option_name}" Show details type in QoS panel'
+        'user of {browser_id} selects "{option_name}" view in Show Details toggle in QoS panel'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -61,7 +61,6 @@ def select_option_qos(selenium, browser_id, modals, option_name):
 
     # the need to scroll back to the top is due to the fact,
     # that the header covers the part of the button,
-    # that is set to be clicked on in GUI
 
     option_btn.click()
 
@@ -95,18 +94,20 @@ def assert_audit_log_logs_for_each_file_in_list(
 @wt(
     parsers.parse(
         "user of {browser_id} sees that there are no logs in audit log files list"
-        ' with following information: "{info}"'
+        ' and can see following information: "{info}"'
     )
 )
-def check_no_logs_info_audit_log(selenium, browser_id, modals, info):
+def assert_no_logs_in_qos_audit_log(selenium, browser_id, modals, info):
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     audit_log = modal_qos.audit_log_list
     if audit_log.is_empty():
         assert audit_log.empty_info.text == info, (
-            "The actual no logs info: {audit_log.empty_info.text} is not equal to"
-            " expected: {info}"
+            f"The actual no logs info: {audit_log.empty_info.text} is not equal to"
+            f" expected: {info}"
         )
+        return
+    raise AssertionError("Audit Log logs list is not empty")
 
 
 @wt(
@@ -127,15 +128,15 @@ def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
 
     prev_date = actual_log_datetimes[0]
     for i, date in enumerate(actual_log_datetimes[1:]):
-        if prev_date is not None:
-            assert date <= prev_date, f"{i+1}-th log should not be newer than {i}-th"
-            # logs are enumerated from 0 in loop, when it fact the first index is 1
+        assert date <= prev_date, f"{i+1}-th log should not be newer than {i}-th"
+        # logs are enumerated from 0 in loop, when it fact the first index is 1
         prev_date = date
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks on "{file_name}" link in audit log files list'
+        'user of {browser_id} clicks on first link with filename: "{file_name}",'
+        ' in audit log files list'
     )
 )
 def click_on_first_link_with_file_name_in_qos_audit_log(
@@ -144,9 +145,8 @@ def click_on_first_link_with_file_name_in_qos_audit_log(
     driver = selenium[browser_id]
     modal_qos = modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
-    for entry in entries:
-        if entry.file.text == file_name:
-            entry.link.click()
+    file_entries = [entry for entry in entries if entry.file.text == file_name]
+    file_entries[0].click()
 
 
 @wt(

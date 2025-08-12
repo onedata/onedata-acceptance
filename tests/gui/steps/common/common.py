@@ -86,39 +86,19 @@ def assert_logs_order_with_optional_logs(
 
     """
 
-    logs_to_severity = {}
+    severity = {}
     logs_expected_list = []
 
     for logs_expected_dict in logs_expected:
         for k, v in logs_expected_dict.items():
-            logs_to_severity[v] = k
+            severity[v] = k
             logs_expected_list.append(v)
 
-    index, n = 0, len(logs_expected_list)
-
-    for act_log in logs_actual:
-        if logs_to_severity[act_log] == "Required":
-
-            while (
-                index < n and logs_to_severity[logs_expected_list[index]] == "Optional"
-            ):
-                index += 1
-
-            assert index < n and act_log == logs_expected_list[index]
-            index += 1
-        else:
-            if logs_to_severity[logs_expected_list[index]] == "Required":
-                assert False
-            else:
-                found = False
-                while (
-                    index < n
-                    and logs_to_severity[logs_expected_list[index]] == "Optional"
-                ):
-                    if logs_expected_list[index] == act_log:
-                        found = True
-                        break
-                    index += 1
-
-                assert found
-                index += 1
+    idx, n = 0, len(logs_expected_list)
+    for expected_log in logs_expected_list:
+        if severity[expected_log] == "Required":
+            assert idx < n and expected_log == logs_actual[idx]
+            idx += 1
+        if severity[expected_log] == "Optional":
+            if idx < n and expected_log == logs_actual[idx]:
+                idx += 1

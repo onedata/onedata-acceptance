@@ -46,7 +46,7 @@ Feature: QoS Audit Logs
     And user of browser clicks on "Save" button in QoS panel
 
     And user of browser sees that all QoS requirements are fulfilled
-    And user of browser selects "Audit log" Show details type in QoS panel
+    And user of browser selects "Audit log" view in Show Details toggle in QoS panel
 
     Then user of browser sees the following logs in audit log files list in given order for "[file1, file2]" files:
         - Required: Local replica reconciled.
@@ -59,7 +59,7 @@ Feature: QoS Audit Logs
     # Also while clicking "open in new tab" it works fine
     # TODO: VFS-12968
     
-    # And user of browser clicks on "file1" link in audit log browser
+    # And user of browser clicks on first link with filename: "file1", in audit log files list
     # And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1/dir1"
     # Then user of browser sees that ["file1"] items are selected in file browser
 
@@ -102,15 +102,15 @@ Feature: QoS Audit Logs
     And user of browser clicks on "Save" button in QoS panel
 
     And user of browser sees that all QoS requirements are fulfilled
-    And user of browser selects "Audit log" Show details type in QoS panel
-    And user of browser sees that there are no logs in audit log files list with following information: "No log entries — consider switching to another Oneprovider."
+    And user of browser selects "Audit log" view in Show Details toggle in QoS panel
+    And user of browser sees that there are no logs in audit log files list and can see following information: "No log entries — consider switching to another Oneprovider."
 
     And user of browser opens file browser for "space1" space
     And user of browser clicks on "oneprovider-1" provider on file browser page
 
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser opens "File details" modal on "QoS" tab for "file1" file using context menu
-    And user of browser selects "Audit log" Show details type in QoS panel
+    And user of browser selects "Audit log" view in Show Details toggle in QoS panel
 
     Then user of browser sees the following logs in audit log files list in given order for "[file1]" files:
         - Required: Local replica reconciled.
