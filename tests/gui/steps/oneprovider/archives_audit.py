@@ -431,21 +431,21 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archived_file_path(browser_id, selenium, modals, path):
-
     driver = selenium[browser_id]
     modal_details = modals(driver).audit_log_entry_details
 
     details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
-    details_file_path = "/".join(details_file_path)  # Previously details_file_path[1:]
+    details_archive_name = details_file_path[0].split("›")[1]
+    # Depending on window size, name of archive may not be present and it raises exception
+    details_file_path = "/".join(details_file_path[1:])  
+    # Depending on window size, could be without [1:], if archive name is not present
 
     assert (
         path == details_file_path
     ), f"given path: {path} is different than actual file path: {details_file_path}"
 
-    # modal = modals(driver).archive_audit_log
-    # details_archive_name = details_file_path[0].split("›")[1]
-    # assert modal.archive_name == details_archive_name, (
-    #     f"name of archive in archive audit log modal: {modal.archive_name} is different"
-    #     f" than shown in audit log entry details:  {details_archive_name}"
-    # )
-    # That field was removed in one of the updates, and I'm not sure, whether it is temporary
+    modal = modals(driver).archive_audit_log
+    assert modal.archive_name == details_archive_name, (
+        f"name of archive in archive audit log modal: {modal.archive_name} is different"
+        f" than shown in audit log entry details:  {details_archive_name}"
+    )
