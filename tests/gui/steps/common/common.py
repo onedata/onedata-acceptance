@@ -97,7 +97,10 @@ def assert_logs_order_with_optional_logs(
     idx, n = 0, len(logs_expected_list)
     for expected_log in logs_expected_list:
         if severity[expected_log] == "Required":
-            assert idx < n and expected_log == logs_actual[idx]
+            assert idx < n and expected_log == logs_actual[idx], (
+                f"expected logs: {logs_expected_list}\n"
+                f"do not match actual logs: {logs_actual}"                                            
+            )
             idx += 1
         if severity[expected_log] == "Optional":
             if idx < n and expected_log == logs_actual[idx]:
