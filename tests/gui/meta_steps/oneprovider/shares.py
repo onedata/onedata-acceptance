@@ -33,6 +33,9 @@ from tests.gui.steps.oneprovider.shares import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.meta_steps.oneprovider.data import go_to_path
+from tests.gui.steps.oneprovider.browser import click_option_in_data_row_menu_in_browser
+from tests.gui.steps.common.url import open_received_url_with_base_url
 
 
 @wt(
@@ -78,7 +81,9 @@ def open_single_share_view_by_modal(
     tmp_memory,
     item_name,
 ):
-    items_browser = "file browser"
+    
+    items_browser = "shares file browser"
+    #items_browser = "file browser"
     status_type = "shared"
 
     click_on_status_tag_for_file_in_file_browser(
@@ -188,6 +193,22 @@ def hand_share_url_to_another_user(
         browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
     )
     click_modal_button(selenium, browser_id, button, modal_name, modals)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} copies download link of a "{file_name}" file and sends it to user of {browser2_id}'
+    )
+)
+def copy_file_download_link_in_share(selenium, browser_id, tmp_memory, file_name, browser2_id, clipboard, displays, popups):
+    click_option_in_data_row_menu_in_browser(
+        selenium, browser_id, option = "Copy download URL", popups = popups, which_browser="shares_file_browser"
+    )
+    item_type = "URL"
+    send_copied_item_to_other_users(
+        browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
+    )
+    # actual = modals(selenium[browser_id]).details_modal.owner
 
 
 @wt(

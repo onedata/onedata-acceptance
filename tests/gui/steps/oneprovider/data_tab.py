@@ -35,7 +35,10 @@ def check_browser_to_load(selenium, browser_id, tmp_memory, op_container, browse
     if transform(browser) == "shares_browser":
         items_browser = op_container(driver).shares_page.shares_browser
     else:
-        items_browser = getattr(op_container(driver), transform(browser))
+        if transform(browser) == "shares_file_browser":
+            items_browser = getattr(op_container(driver), "shares_page").shares_file_browser
+        else:
+            items_browser = getattr(op_container(driver), transform(browser))
     tmp_memory[browser_id][transform(browser)] = items_browser
 
 

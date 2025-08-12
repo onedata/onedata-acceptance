@@ -42,7 +42,7 @@ class SharesContentPage(PageObject):
     copy_icon = Button(".copy-btn-icon")
     breadcrumbs = Breadcrumbs(".file-browser-head-container")
     menu_button = Button(".menu-toggle-frame")
-    file_browser = FileBrowser(".file-browser")
+    shares_file_browser = FileBrowser(".file-browser")
 
     description_tab = Button(".nav-link-description")
     create_description = Button(".btn-content-info")

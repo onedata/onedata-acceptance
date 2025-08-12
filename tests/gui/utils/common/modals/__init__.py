@@ -23,6 +23,7 @@ from .basic_modals.login import LoginFormModal
 from .basic_modals.remove import RemoveModal
 from .basic_modals.rename_modal import RenameModal
 from .basic_modals.there_are_unsaved_changes import ThereAreUnsavedChanges
+from .basic_modals.download import FileDownloadModal
 from .configure_web_cert import ConfigureWebCertModal
 from .datasets_modals.datasets_modal import DatasetsModal
 from .datasets_modals.detach_dataset import DetachDataset
@@ -69,6 +70,7 @@ class Modals:
     # basic modals
     remove_modal = WebItem(".modal-dialog", cls=RemoveModal)
     leave_modal = WebItem(".modal-dialog", cls=LeaveElementModal)
+    file_download = WebItem(".modal-dialog", cls=FileDownloadModal)
     add_one_of_elements = WebItem(".modal-dialog", cls=AddOneOfElementsModal)
     delete_modal = WebItem(".modal-dialog", cls=DeleteModal)
     rename_modal = WebItem(".modal-dialog", cls=RenameModal)

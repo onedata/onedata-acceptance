@@ -105,11 +105,13 @@ def _find_modal(driver, modal_name):
             "modify",
             "create",
             "unlink",
+            "download"
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(
                 By.CSS_SELECTOR, ".modal, .modal .modal-header h1"
             )
+            modals = driver.find_elements(By.CSS_SELECTOR, ".modal, .modal .modal-header h1")
         elif "leave this space" in modal_name:
             modals = driver.find_elements(By.CSS_SELECTOR, ".modal.in, .modal.in h1")
         else:

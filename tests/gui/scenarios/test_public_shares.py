@@ -59,3 +59,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/shares/public_shares.feature")
+scenarios("../features/oneprovider/shares/show_and_download_links.feature")

@@ -237,6 +237,7 @@ class WhichBrowser(Enum):
     ARCHIVE_FILE_BROWSER = "archive file browser"
     DATASET_BROWSER = "dataset browser"
     FILE_BROWSER = "file browser"
+    SHARES_FILE_BROWSER = "shares file browser"
 
 
 class OnedataService(Enum):

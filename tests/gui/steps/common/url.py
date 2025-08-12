@@ -16,6 +16,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 
 
 def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
@@ -115,7 +116,6 @@ def _open_url(selenium, browser_id, url):
     driver = selenium[browser_id]
     old_page = driver.find_element(By.CSS_SELECTOR, "html")
     driver.get(url)
-
     Wait(driver, WAIT_BACKEND).until(
         staleness_of(old_page),
         message=f"waiting for page {url:s} to load",
@@ -126,16 +126,13 @@ def _open_url(selenium, browser_id, url):
 def open_received_url_with_base_url(selenium, browser_id, tmp_memory, base_url):
     url = tmp_memory[browser_id]["mailbox"]["url"]
     url = url.replace(parse_url(url).group("base_url"), base_url, 1)
-
     _open_url(selenium, browser_id, url)
 
 
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.+?) opens (?:url|URL) received from "
-        "user of (?P<browser_id2>.+?)"
-    )
-)
+@wt(parsers.re(
+        r"user of (?P<browser_id>\S+) opens (?:url|URL) received from "
+        r"user of (?P<browser_id2>\S+)"
+))
 def open_exactly_received_url(selenium, browser_id, tmp_memory):
     url = tmp_memory[browser_id]["mailbox"]["url"]
 
@@ -187,6 +184,17 @@ def open_site_url(selenium, browser_id, displays, clipboard):
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
     driver.execute_script(f"window.location = '{url}'")
+
+
+@wt(parsers.parse('user of {browser_id} opens "{option}" URL received from user of {browser2_id} in browser\'s location bar'))
+def open_received_url_for_download(selenium, browser_id, option, op_container, browser2_id, tmp_memory):
+    driver = selenium[browser_id]
+    url = tmp_memory[browser_id]["mailbox"]['url']
+    driver.get(url)
+    if option.lower() != "shares download":
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory, item_browser="file browser")
+    # Running this function is necessary for opening browser show/download links in new tab
+    # In order to switch to iframe and setup 'file browser' key in tmp_memory, which is not present by default
 
 
 @wt(parsers.parse("user of {browser_id} copies a first resource {item} from URL"))
