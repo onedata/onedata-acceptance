@@ -241,7 +241,8 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
             # This try/except block handles cases where some rows exist in the `data_row` structure,
             # but not all of their fields are fully loaded.
             # This can result in the following exception:
-            # "StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame"
+            # "StaleElementReferenceException:
+            #  Message: stale element reference: stale element not found in the current frame"
 
         if file_name in new_rows_names:
             try:
@@ -251,7 +252,8 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
                 modal.data_row[file_name].clickable_field.click()
 
                 # This try/except block handles cases where the page doesn't load properly.
-                # Sometimes, when the user tries to click on one of the last elements in the audit log,
+                # Sometimes, when the user tries to click on one of the
+                # last elements in the audit log,
                 # the clickable area is hidden, causing an exception.
                 # To work around this, the page is scrolled down one more time.
             return
@@ -261,7 +263,7 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
         seen_rows.update(new_rows_names)
         modal.scroll_by_press_space()
 
-    raise AssertionError("entry {file_name} not found in archive audit log")
+    raise AssertionError(f"entry {file_name} not found in archive audit log")
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
@@ -423,7 +425,7 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} checks that path in "Audit Log Entry Details" is:'
+        "user of {browser_id} sees that path in Entry Details in archive audit log is:"
         ' "{path}"'
     )
 )
@@ -431,18 +433,19 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 def assert_archived_file_path(browser_id, selenium, modals, path):
 
     driver = selenium[browser_id]
-    modal = modals(driver).archive_audit_log
     modal_details = modals(driver).audit_log_entry_details
 
     details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
-    archive_file = details_file_path[0].split("›")[1]
-    details_file_path = "/".join(details_file_path[1:])
+    details_file_path = "/".join(details_file_path)  # Previously details_file_path[1:]
 
     assert (
         path == details_file_path
     ), f"given path: {path} is different than actual file path: {details_file_path}"
 
-    assert modal.archive_name == archive_file, (
-        f"name of archive in archive audit log modal: {modal.archive_name} is different"
-        f" than shown in audit log entry details:  {archive_file}"
-    )
+    # modal = modals(driver).archive_audit_log
+    # details_archive_name = details_file_path[0].split("›")[1]
+    # assert modal.archive_name == details_archive_name, (
+    #     f"name of archive in archive audit log modal: {modal.archive_name} is different"
+    #     f" than shown in audit log entry details:  {details_archive_name}"
+    # )
+    # That field was removed in one of the updates, and I'm not sure, whether it is temporary
