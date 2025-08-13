@@ -18,12 +18,12 @@ from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.create_group import CreateGroup
 from .basic_modals.delete_modal import DeleteModal
+from .basic_modals.download import FileDownloadModal
 from .basic_modals.leave_element import LeaveElementModal
 from .basic_modals.login import LoginFormModal
 from .basic_modals.remove import RemoveModal
 from .basic_modals.rename_modal import RenameModal
 from .basic_modals.there_are_unsaved_changes import ThereAreUnsavedChanges
-from .basic_modals.download import FileDownloadModal
 from .configure_web_cert import ConfigureWebCertModal
 from .datasets_modals.datasets_modal import DatasetsModal
 from .datasets_modals.detach_dataset import DetachDataset

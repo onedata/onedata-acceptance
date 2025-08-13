@@ -95,9 +95,13 @@ class DetailsModal(Modal):
     hardlinks = WebItem(".modal-content", cls=Hardlinks)
     navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
-    
-    show_link = Button("button[data-clipboard-target*=\".show-file-link-clipboard-line-input\"]")
-    download_link = Button("button[data-clipboard-target*=\".download-file-link-clipboard-line-input\"]")
+
+    show_link = Button(
+        'button[data-clipboard-target*=".show-file-link-clipboard-line-input"]'
+    )
+    download_link = Button(
+        'button[data-clipboard-target*=".download-file-link-clipboard-line-input"]'
+    )
 
     qos = WebItem(".modal-content", cls=QoSTab)
     metadata = WebItem(".modal-content", cls=MetadataTab)

@@ -105,7 +105,7 @@ def _find_modal(driver, modal_name):
             "modify",
             "create",
             "unlink",
-            "download"
+            "download",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(

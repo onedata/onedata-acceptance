@@ -738,8 +738,6 @@ def go_to_path(
         path_list.append(item_name)
     else:
         path_list = [path]
-    if which_browser == "shares browser":
-        shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
     for directory in path_list:
         # go back
         if directory == "..":
@@ -1182,10 +1180,24 @@ def delete_first_n_files_with_fixed_step(
     assert deleted_files == num_files_to_delete, err_msg
 
 
-@wt(parsers.parse(
-        'user of {browser_id} copies "{type_}" browser link of "{path}" item to clipboard in "{space}" space'
-        ))
-def click_on_browser_link_icon(browser_id, type_:str, path, space, selenium, tmp_memory, oz_page, op_container, popups, modals, clipboard, displays):
+@wt(
+    parsers.parse(
+        'user of {browser_id} copies "{type_}" browser link of "{path}" item to'
+        ' clipboard in "{space}" space'
+    )
+)
+def click_on_link_in_file_details_modal(
+    browser_id,
+    type_: str,
+    path,
+    space,
+    selenium,
+    tmp_memory,
+    oz_page,
+    op_container,
+    popups,
+    modals,
+):
     option = "Information"
     button = f"{type_.lower()} link"
     modal = "File details"

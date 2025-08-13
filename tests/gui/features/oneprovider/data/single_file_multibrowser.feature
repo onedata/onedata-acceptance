@@ -17,8 +17,10 @@ Feature: Basic files tab operations on single file in multibrowser
                 defaults:
                   provider: oneprovider-1
                 directory tree:
-                  - dir1
                   - file1: 11111
+                  - dir1:
+                      - dir2:
+                        - file2: 1111
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
@@ -37,4 +39,30 @@ Feature: Basic files tab operations on single file in multibrowser
     And user of browser2 clicks on "Information" in context menu for "file1"
     And user of browser2 sees that "File details" modal is opened on "Info" tab
     Then user of browser2 can see that file owner is "John Smith (user1)" in file details modal
+
+  Scenario: Logged in user, can open download link copied from space owner's file details modal
+    When user of browser1 opens file browser for "space1" space
+
+    And user of browser1 copies "Download" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
+    And user of browser1 sends copied URL to user of browser2
+
+    And user of browser2 opens URL received from user of browser1 without waiting
+    And user of browser2 sees file browser in files tab in Oneprovider page
+
+    And user of browser2 sees that "file download" modal has appeared
+    And user of browser2 clicks on "download" button in modal "file download"
+    Then user of browser2 sees that content of downloaded file "file2" is equal to: "1111"
+  
+
+  Scenario: Logged in user, can see a file using show file link from file details modal, received from other user
+    When user of browser1 opens file browser for "space1" space
+
+    And user of browser1 copies "Show" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
+    And user of browser1 sends copied URL to user of browser2
+
+    And user of browser2 opens URL received from user of browser1 without waiting
+    And user of browser2 sees file browser in files tab in Oneprovider page
+
+    Then user of browser2 sees that ["file2"] items are selected in file browser
+    And user of browser2 sees that current working directory displayed in breadcrumbs on file browser is "space1/dir1/dir2"
 
