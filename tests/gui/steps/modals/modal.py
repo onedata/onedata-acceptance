@@ -728,8 +728,7 @@ def choose_option_in_dropdown_menu_in_modal(
 @wt(
     parsers.re(
         r"(using web GUI, )?user of (?P<browser_id>.*) sees that path where symbolic"
-        r" link "
-        r'points is "(?P<expected_path>.*)" in (?P<modal>.*) modal'
+        r' link points is "(?P<expected_path>.*)" in (?P<modal>.*) modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

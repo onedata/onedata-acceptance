@@ -486,9 +486,9 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, mod
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that path of "{file}" hardlink '
-        'is "{path}" in "File details" modal'
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that path of "(?P<file>.*)" hardlink '
+        r'is "(?P<path>.*)" in "File details" modal'
     )
 )
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
