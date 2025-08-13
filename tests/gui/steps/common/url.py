@@ -193,7 +193,7 @@ def open_site_url(selenium, browser_id, displays, clipboard):
         " waiting"
     )
 )
-def open_received_url_for_download(selenium, browser_id, tmp_memory):
+def open_received_url_without_waiting(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
     url = tmp_memory[browser_id]["mailbox"]["url"]
     driver.get(url)

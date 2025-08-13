@@ -1,4 +1,4 @@
-Feature: Operations on file links: download/show
+Feature: Operations on share file download link with not logged and non space member user
 
 
   Background:
