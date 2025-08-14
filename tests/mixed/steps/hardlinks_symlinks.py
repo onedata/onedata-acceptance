@@ -10,9 +10,6 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_hardlinks_of_file_with_path,
     create_symlinks_of_file_with_path,
 )
-from tests.gui.steps.oneprovider.file_browser import (
-    assert_hardlink_path_in_file_dets_modal,
-)
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
     check_for_hardlink_between_files_rest,
@@ -188,7 +185,9 @@ def create_file_hardlink(
         r' "(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def assert_hardlink_between_files_rest(users, user, hosts, host, file_path, hardlink_path, space):
+def assert_hardlink_between_files_rest(
+    users, user, hosts, host, file_path, hardlink_path, space
+):
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_id1 = _lookup_file_id(f"{space}/{file_path}", user_client_op)
     file_id2 = _lookup_file_id(f"{space}/{hardlink_path}", user_client_op)

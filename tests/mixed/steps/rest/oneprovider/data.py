@@ -474,14 +474,12 @@ def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id
         target_file_id=target_id,
         content="example",
     )
-    """
-    Providing non-empty content is necessary due to Swagger issues.
-    It is probably related to the fact that creating file with swaggers
-    sets: header_params['Content-Type'] = ['application/octet-stream'],
-    which only accepts non empty body.
-    Also the given content is ignored further by backend and in GUI we
-    can see the hardlink/symlink with empty content.
-    """
+    # Providing non-empty content is necessary due to Swagger issues.
+    # It is probably related to the fact that creating file with swaggers
+    # sets: header_params['Content-Type'] = ['application/octet-stream'],
+    # which only accepts non empty body.
+    # Also the given content is ignored further by backend and in GUI we
+    # can see the hardlink/symlink with empty content.
 
 
 def create_symlink_rest(
