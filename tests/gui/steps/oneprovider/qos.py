@@ -48,7 +48,8 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} selects "{option_name}" view in Show Details toggle in QoS panel'
+        'user of {browser_id} selects "{option_name}" view in Show Details toggle in'
+        " QoS panel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -136,7 +137,7 @@ def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
 @wt(
     parsers.parse(
         'user of {browser_id} clicks on first link with filename: "{file_name}",'
-        ' in audit log files list'
+        " in audit log files list"
     )
 )
 def click_on_first_link_with_file_name_in_qos_audit_log(
