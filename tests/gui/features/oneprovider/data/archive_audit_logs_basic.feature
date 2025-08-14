@@ -136,4 +136,4 @@ Feature: Archive audit logs
     And user of browser clicks "Show audit log" option in data row menu in archive browser
 
     And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
-    Then user of browser sees that path in Entry Details in archive audit log is: ".../very-long-file_20"
+    Then user of browser sees that path in Entry Details in archive audit log is: ".../very-long-file_20" and displayed archive name is correct

@@ -426,11 +426,11 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
 @wt(
     parsers.parse(
         "user of {browser_id} sees that path in Entry Details in archive audit log is:"
-        ' "{path}"'
+        ' "{path}" and displayed archive name is correct'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archived_file_path(browser_id, selenium, modals, path):
+def assert_archived_file_path_and_archive_name(browser_id, selenium, modals, path):
     driver = selenium[browser_id]
     modal_details = modals(driver).audit_log_entry_details
 
