@@ -32,6 +32,14 @@ from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
 
+from tests.gui.meta_steps.onezone.clusters import *
+from tests.gui.steps.onezone.members import *
+from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.oneprovider.data_tab import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.modals.details_modal import *
+from tests.gui.steps.oneprovider.permissions import *
 
 @fixture(scope="module")
 def screens():
@@ -39,3 +47,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/data/dir_acl_privileges.feature")
+scenarios("../features/oneprovider/data/basic_acl_groups.feature")
