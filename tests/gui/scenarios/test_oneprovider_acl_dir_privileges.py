@@ -10,9 +10,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
+from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.permissions import *
+from tests.gui.meta_steps.onezone.clusters import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
@@ -21,25 +23,23 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.data_tab import *
+from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.providers import *
+from tests.gui.steps.onezone.spaces import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
 
-from tests.gui.meta_steps.onezone.clusters import *
-from tests.gui.steps.onezone.members import *
-from tests.gui.steps.onezone.spaces import *
-from tests.gui.steps.oneprovider.data_tab import *
-from tests.gui.meta_steps.oneprovider.common import *
-from tests.gui.steps.oneprovider.browser import *
-from tests.gui.steps.modals.details_modal import *
-from tests.gui.steps.oneprovider.permissions import *
 
 @fixture(scope="module")
 def screens():

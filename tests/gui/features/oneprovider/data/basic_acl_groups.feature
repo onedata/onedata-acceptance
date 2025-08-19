@@ -1,4 +1,4 @@
-Feature: basic ACL operations
+Feature: Inferring users in ACL panel when user lacks privileges
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -28,10 +28,7 @@ Feature: basic ACL operations
     And opened [browser1, browser2] with [user1, user2] signed in to [Onezone, Onezone] service
 
     
-  Scenario: dssks
-    # When user of browser1 sets "dir1" ACL [acl:read acl, acl:change acl] privileges for user user2 in "space1"
-    # And user of browser1 sets "dir1" ACL [] privileges for group group1 in "space1"
-
+  Scenario: User with limited privileges opens ACL permissions in details modal and sees correct warning
     When user of browser1 clicks "Members" of "space1" space in the sidebar
     And user of browser1 clicks "user2" user in "space1" space members users list
     And user of browser1 sets following privileges for "user2" user in space members subpage:
