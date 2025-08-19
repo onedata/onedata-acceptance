@@ -713,7 +713,12 @@ def _select_item(selenium, browser_id, tmp_memory, path, op_container):
     return item_name
 
 
-@wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
+@wt(
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) goes to "(?P<path>.*)" in'
+        r" (?P<which_browser>.*)"
+    )
+)
 def go_to_path_(selenium, browser_id, tmp_memory, path, op_container, which_browser):
     go_to_path(
         selenium,
@@ -786,7 +791,12 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
-@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" space'))
+@wt(
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) opens file browser for"
+        r' "(?P<space>.*)" space'
+    )
+)
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space):
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
