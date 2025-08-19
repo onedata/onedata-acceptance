@@ -533,3 +533,19 @@ def change_acl_privileges(
             popups,
         )
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modals)
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>\w+) sees the following warning: "(?P<text>.*)" below the "Add user or group..." dropdown'
+    )
+)
+def assert_not_visible_due_to_privileges(selenium, modals, browser_id, text):
+    driver = selenium[browser_id]
+    modal_permissions = modals(driver).details_modal.edit_permissions
+    acl = modal_permissions.acl
+    warn_priv = acl.limited_privileges_warning
+    assert text == warn_priv.text, (
+        f"Warning from modal: {warn_priv.text} is not equal to given: {text}"
+    )
+

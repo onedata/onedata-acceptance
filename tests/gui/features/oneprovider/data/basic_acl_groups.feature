@@ -49,10 +49,11 @@ Feature: basic ACL operations
         Transfer management:
             granted: False
     
-    And user of browser1 clicks "Files" of "space1" space in the sidebar
-    And user of browser1 sees file browser in files tab in Oneprovider page
-    And user of browser1 creates directory "dir1"
-    And user of browser1 clicks on menu for "dir1" file in file browser
-    And user of browser1 clicks "Information" option in data row menu in file browser
-    And user of browser1 clicks on "Permissions" navigation tab in "Directory Details" modal
-    And user of browser1 selects "ACL" permission type in edit permissions panel
+    And user of browser2 clicks "Files" of "space1" space in the sidebar
+    And user of browser2 sees file browser in files tab in Oneprovider page
+    And user of browser2 creates directory "dir1"
+    And user of browser2 clicks on menu for "dir1" file in file browser
+    And user of browser2 clicks "Information" option in data row menu in file browser
+    And user of browser2 clicks on "Permissions" navigation tab in "Directory Details" modal
+    And user of browser2 selects "ACL" permission type in edit permissions panel
+    And user of browser2 sees the following warning: "Some space members may not be visible due to limited privileges." below the "Add user or group..." dropdown
