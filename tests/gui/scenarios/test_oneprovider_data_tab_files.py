@@ -42,6 +42,7 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider_common import *
@@ -71,3 +72,4 @@ scenarios("../features/oneprovider/data/several_files.feature")
 scenarios("../features/oneprovider/data/file_management.feature")
 scenarios("../features/oneprovider/data/file_list_polling.feature")
 scenarios("../features/oneprovider/data/single_file_multibrowser.feature")
+scenarios("../features/oneprovider/data/same_user_multibrowser.feature")

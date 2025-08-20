@@ -93,6 +93,8 @@ def assert_empty_file_browser_in_public_share(
     selenium, browser_id, tmp_memory, public_share, expected_msg
 ):
     file_browser = public_share(selenium[browser_id]).file_browser
+    # This function is used also outside shares and probably could be rewritten
+    # in files concerning file browser, to not confuse user
     tmp_memory[browser_id]["file_browser"] = file_browser
 
     assert expected_msg == file_browser.error_dir_msg, (
