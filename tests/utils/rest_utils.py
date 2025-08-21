@@ -144,6 +144,7 @@ def http_delete(
     auth=None,
     default_headers=True,
     params=None,
+    data=None,
 ):
     return http_request(
         requests.delete,
@@ -157,6 +158,7 @@ def http_delete(
         auth,
         default_headers=default_headers,
         params=params,
+        data=data,
     )
 
 

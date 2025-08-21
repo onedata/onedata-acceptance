@@ -12,6 +12,7 @@ from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
     get_zone_rest_path,
+    http_delete,
     http_get,
     http_patch,
     http_post,
@@ -102,6 +103,30 @@ def set_file_json_metadata(provider_host, token, file_id, data):
     return res
 
 
+def get_file_json_metadata(provider_host, token, file_id):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "json"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_json_metadata(provider_host, token, file_id):
+    res = http_delete(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "json"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
 def set_file_rdf_metadata(provider_host, token, file_id, data):
     res = http_put(
         ip=provider_host,
@@ -116,8 +141,60 @@ def set_file_rdf_metadata(provider_host, token, file_id, data):
     return res
 
 
+def get_file_rdf_metadata(provider_host, token, file_id):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_rdf_metadata(provider_host, token, file_id):
+    res = http_delete(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
 def set_file_extended_attribute(provider_host, token, file_id, data):
     res = http_put(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps(data),
+    )
+    return res
+
+
+def get_file_extended_attributes(provider_host, token, file_id, attribute=None):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
+        params={"attribute": attribute} if attribute else None,
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_extended_attributes(provider_host, token, file_id, keys=None):
+    data = {"keys": [key for key in keys]}
+    res = http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
@@ -377,6 +454,14 @@ def subscribe_to_file_changes(provider_host, token, space_id, data, stream=True)
     )
     return res
 
+
+def get_provider_configuration(provider_host):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("configuration"),
+    )
+    return res.json()
 
 # Onepanel
 
