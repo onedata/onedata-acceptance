@@ -44,7 +44,7 @@ Feature: Directories times tests
     Then using <client1>, user1 sees that modification time of item named "dir1" in space "space1" is greater than modification time that was copied in oneprovider-1
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" in space "space1" is greater than status-change time that was copied in oneprovider-1
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" in "space1" space is greater than modification time in oneprovider-1
-    And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is equal to status-change time of item named "dir1" in "space1" space in oneprovider-1
+    And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is greater than status-change time of item named "dir1" in "space1" space in oneprovider-1
 
   Examples:
   | client1    | client2    |
