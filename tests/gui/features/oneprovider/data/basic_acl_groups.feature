@@ -1,4 +1,4 @@
-Feature: Inferring users in ACL panel when user lacks privileges
+Feature: Limited visibility of users and groups in ACL panel when user lacks privileges
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -31,21 +31,17 @@ Feature: Inferring users in ACL panel when user lacks privileges
   Scenario: User with limited privileges opens ACL permissions in details modal and sees correct warning
     When user of browser1 clicks "Members" of "space1" space in the sidebar
     
-    And user of browser1 clicks "user2" user in "space1" space members users list
-    And user of browser1 sets following privileges for "user2" user in space members subpage:
-        Space management:
-            granted: False
-        Transfer management:
-            granted: False
-    
     And user of browser1 clicks "group1" group in "space1" space members groups list
-    And user of browser1 sets following privileges for "group1" group in space members subpage:
-        Space management:
-            granted: False
+    And user of browser1 sets all privileges false for "group1" group in space members subpage
+
+    And user of browser1 clicks "user2" user in "space1" space members users list
+    And user of browser1 sets following privileges for "user2" user in space members subpage when all other are not granted:
         Data management:
-            granted: False
-        Transfer management:
-            granted: False
+            granted: Partially
+            privilege subtypes:
+                Read files: True
+                Write files: True
+
     
     And user of browser2 opens file browser for "space1" space
     And user of browser2 creates directory "dir1"
@@ -53,4 +49,6 @@ Feature: Inferring users in ACL panel when user lacks privileges
     And user of browser2 clicks "Information" option in data row menu in file browser
     And user of browser2 clicks on "Permissions" navigation tab in "Directory Details" modal
     And user of browser2 selects "ACL" permission type in edit permissions panel
-    And user of browser2 sees the following warning: "Some space members may not be visible due to limited privileges." below the "Add user or group..." dropdown
+
+    Then user of browser2 sees the following warning: "Some space members may not be visible due to limited privileges." in ACL Edit Permissions tab
+    And user of browser2 sees that [user1, user2, group1] are in subject list in ACL record

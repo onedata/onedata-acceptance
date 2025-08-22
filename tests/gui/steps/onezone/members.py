@@ -709,14 +709,14 @@ def try_setting_privileges_in_members_subpage(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sets all privileges true for "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|harvester|cluster|automation) "
-        "members subpage"
+        r"user of (?P<browser_id>.*) sets all privileges (?P<value>true|false) for "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|harvester|cluster|automation) "
+        r"members subpage"
     )
 )
 def set_all_privileges_true_in_members_subpage(
-    selenium, browser_id, member_name, member_type, where, onepanel, oz_page
+    selenium, browser_id, member_name, value, member_type, where, onepanel, oz_page
 ):
     option = "Save"
     member_type_new = member_type + "s"
@@ -730,7 +730,11 @@ def set_all_privileges_true_in_members_subpage(
         member_type_new,
         member_name,
     )
-    tree.set_all_true()
+    if value == "true":
+        tree.set_all_true()
+    elif value == "false":
+        tree.set_all_false()
+
     click_button_on_element_header_in_members(
         selenium, browser_id, option, oz_page, where, onepanel
     )
@@ -738,10 +742,10 @@ def set_all_privileges_true_in_members_subpage(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sets following privileges for "
-        '"(?P<member_name>.*)" (?P<member_type>user|group) '
-        "in (?P<where>space|group|harvester|cluster) members subpage "
-        "when all other are granted:"
+        r"user of (?P<browser_id>.*) sets following privileges for "
+        r'"(?P<member_name>.*)" (?P<member_type>user|group) '
+        r"in (?P<where>space|group|harvester|cluster) members subpage "
+        r"when all other (?P<are_granted>are|are not) granted:"
         r"\n(?P<config>(.|\s)*)"
     )
 )
@@ -751,6 +755,7 @@ def set_some_privileges_in_members_subpage_other_granted(
     member_name,
     member_type,
     where,
+    are_granted,
     config,
     onepanel,
     oz_page,
@@ -765,7 +770,12 @@ def set_some_privileges_in_members_subpage_other_granted(
         member_type + "s",
         member_name,
     )
-    tree.set_all_true()
+
+    if are_granted == "are":
+        tree.set_all_true()
+    elif are_granted == "are not":
+        tree.set_all_false()
+
     try_setting_privileges_in_members_subpage(
         selenium,
         browser_id,
