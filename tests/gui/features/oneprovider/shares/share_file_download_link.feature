@@ -1,4 +1,4 @@
-Feature: Operations on share file download link with not logged and non space member user
+Feature: Operations on share file download link by user is not logged in and/or not member of the space
 
 
   Background:
