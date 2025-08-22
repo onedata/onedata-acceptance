@@ -437,7 +437,7 @@ def assert_archived_file_path_and_archive_name(browser_id, selenium, modals, pat
     details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
     details_archive_name = details_file_path[0].split("›")[1]
     # Depending on window size, name of archive may not be present and it raises exception
-    details_file_path = "/".join(details_file_path[1:])  
+    details_file_path = "/".join(details_file_path[1:])
     # Depending on window size, could be without [1:], if archive name is not present
 
     assert (
@@ -459,7 +459,7 @@ def assert_archived_file_path_and_archive_name(browser_id, selenium, modals, pat
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_unique_hashes_and_number_of_logs(
-    browser_id, selenium, modals, file_name, number:int
+    browser_id, selenium, modals, file_name, number: int
 ):
     driver = selenium[browser_id]
     logs = modals(driver).archive_audit_log.data_row
@@ -472,4 +472,6 @@ def assert_unique_hashes_and_number_of_logs(
             ), f"There are at least two identical hashes: {log_hash}"
             hashes.append(log_hash)
 
-    assert len(hashes) == number, f"Expected number of logs: {number} is different than actual: {len(hashes)}"
+    assert (
+        len(hashes) == number
+    ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"

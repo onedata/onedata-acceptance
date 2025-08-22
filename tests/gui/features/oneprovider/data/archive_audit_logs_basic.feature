@@ -20,11 +20,17 @@ Feature: Archive audit logs
                   - dir4:
                     - file1
                     - file2
+                  - dir5:
+                    - file3
+                    - dir6:
+                      - file3
+                      - dir7:
+                        - file3
+                      
 
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-
 
   Scenario: User sees logs about first 200 successfully archived files and 3 directories after creating archive
     Given using REST, user1 creates 100 empty files in directories ["space1/dir1/dir2", "space1/dir1/dir3"] named "file_001", "file_002", ..., "file_N" supported by "oneprovider-1" provider
@@ -137,3 +143,19 @@ Feature: Archive audit logs
 
     And user of browser clicks on item "very-long-file_20" using scroll in archive audit log
     Then user of browser sees that path in Entry Details in archive audit log is: ".../very-long-file_20" and displayed archive name is correct
+
+
+  Scenario: User creates nested archive with duplicated file names and sees that their entries in archive audit log have different hashes
+    When user of browser creates dataset for item "dir5" in "space1"
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
+    
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser succeeds to create archive for item "dir5" in "space1" with following configuration:
+        description: first archive
+        layout: plain
+
+    And user of browser waits for "Preserved" state for archive with description "first archive" in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Show audit log" option in data row menu in archive browser
+    
+    Then user of browser sees that all entries with filename: "file3" have different hashes and sees exactly "3" of them
