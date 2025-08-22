@@ -4,6 +4,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Dict, List
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -56,3 +58,50 @@ def wt_assert_n_items_in_items_list(
     driver = selenium[browser_id]
     page = _get_page(where, oz_page, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+
+
+def assert_logs_order_with_optional_logs(
+    logs_expected: List[Dict[str, str]], logs_actual: List[str]
+):
+    """
+
+    This function takes as a first argument list of dictionaries as in example below:
+    [
+        {
+            "Required": "Example log 1"
+        },
+        {
+            "Optional": "Example log 2"
+        },
+        {
+            "Required": "Example log 3"
+        }
+    ]
+
+    As a second argument it takes list of strings.
+
+    Function checks that expected entries exist with maintained order.
+    Function can skip checking optional entries, if they are also skipped in Logs Actual,
+    but if they are not, it checks whether thay are placed in allowed place.
+
+    """
+
+    severity = {}
+    logs_expected_list = []
+
+    for logs_expected_dict in logs_expected:
+        for k, v in logs_expected_dict.items():
+            severity[v] = k
+            logs_expected_list.append(v)
+
+    idx, n = 0, len(logs_expected_list)
+    for expected_log in logs_expected_list:
+        if severity[expected_log] == "Required":
+            assert idx < n and expected_log == logs_actual[idx], (
+                f"expected logs: {logs_expected_list}\n"
+                f"do not match actual logs: {logs_actual}"
+            )
+            idx += 1
+        if severity[expected_log] == "Optional":
+            if idx < n and expected_log == logs_actual[idx]:
+                idx += 1
