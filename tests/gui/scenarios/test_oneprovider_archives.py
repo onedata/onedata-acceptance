@@ -71,3 +71,4 @@ def screens():
 scenarios("../features/oneprovider/data/archive_basic.feature")
 scenarios("../features/oneprovider/data/archive_bagit_and_dip.feature")
 scenarios("../features/oneprovider/data/archive_manage_privileges.feature")
+scenarios("../features/oneprovider/data/archives_datasets_polling.feature")

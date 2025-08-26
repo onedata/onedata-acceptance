@@ -111,7 +111,7 @@ def remove_current_share(
     selenium, browser_id, op_container, modals, tmp_memory, popups
 ):
     option = "Remove"
-    modal_name = "Remove Share"
+    modal_name = "Remove share"
     button = "Remove"
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)

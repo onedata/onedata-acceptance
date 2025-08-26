@@ -68,4 +68,6 @@ def screens():
 
 
 scenarios("../features/onezone/invite_tokens.feature")
+scenarios("../features/onezone/invite_tokens_default_privs.feature")
+scenarios("../features/onezone/invite_tokens_default_privs2.feature")
 scenarios("../features/onezone/invite_to_atm_tokens.feature")

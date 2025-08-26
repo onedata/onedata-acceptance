@@ -51,4 +51,4 @@ class PublicShareView:
         self.web_elem = self.driver = driver
 
     def __str__(self):
-        return "Public Share View"
+        return "Public share View"

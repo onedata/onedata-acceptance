@@ -3,25 +3,25 @@ Feature: Management of invite to atm tokens in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
           - user1
+          - user2
 
-    And admin user does not have access to any space other than defined in next steps
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-            owner: admin
-          space2:
             owner: user1
+          space2:
+            owner: user2
 
     And initial groups configuration in "onezone" Onezone service:
           group1:
-            owner: user1
+            owner: user2
 
     And initial inventories configuration in "onezone" Onezone service:
           inventory1:
-            owner: admin
+            owner: user1
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
-    And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
+    And user of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
   Scenario: User has default inventory member privileges after consuming user to automation inventory invite token with default settings
@@ -53,7 +53,8 @@ Feature: Management of invite to atm tokens in Onezone GUI
     And user of browser2 joins inventory using copied token
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
-    And user of browser2 sees that inventory inventory1 has following privilege configuration for user user1:
+
+    And user of browser1 sees that inventory inventory1 has following privilege configuration for user user2:
           privileges:
             Inventory management:
               granted: Partially
@@ -103,6 +104,7 @@ Feature: Management of invite to atm tokens in Onezone GUI
     And user of browser2 succeeds to consume token for "group1" group
 
     Then user of browser2 sees that "inventory1" has appeared on the automation list in the sidebar
+
     And user of browser1 sees that inventory inventory1 has following privilege configuration for group group1:
           privileges:
             Inventory management:

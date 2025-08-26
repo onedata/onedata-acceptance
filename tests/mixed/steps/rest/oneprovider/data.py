@@ -434,3 +434,64 @@ def remove_file_by_id_rest(users, user, hosts, host, file_id):
 
 def create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, name):
     upload_file_rest(users, user, hosts, host, "", name, dir_id)
+
+
+def get_file_hardlinks_rest(users, user, hosts, host, file_id):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    list_hardlinks = file_api.get_file_hardlinks(file_id)
+    return list_hardlinks
+
+
+def get_file_symlink_value_rest(users, user, hosts, host, file_id):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    symlink_val = file_api.get_symlink_value(file_id)
+    return symlink_val
+
+
+def check_for_hardlink_between_files_rest(
+    users, user, hosts, host, hardlink_id, file_id
+):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    try:
+        file_api.test_for_hardlink_between_files(hardlink_id, file_id)
+        return True
+    except OPException as e:
+        if e.status != 404:
+            raise e
+        return False
+
+
+def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id, name):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.create_file(
+        id=destination_dir_id,
+        name=name,
+        type="LNK",
+        target_file_id=target_id,
+        content="example",
+    )
+    # Providing non-empty content is necessary due to Swagger issues.
+    # It is probably related to the fact that creating file with swaggers
+    # sets: header_params['Content-Type'] = ['application/octet-stream'],
+    # which only accepts non empty body.
+    # Also the given content is ignored further by backend and in GUI we
+    # can see the hardlink/symlink with empty content.
+
+
+def create_symlink_rest(
+    users, user, hosts, host, destination_dir_id, target_path, name
+):
+    user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+    file_api = BasicFileOperationsApi(user_client_op)
+    file_api.create_file(
+        id=destination_dir_id,
+        name=name,
+        type="SYMLNK",
+        target_file_path=target_path,
+        content="example",
+    )
+    # Providing content parameter for the same reason as in the function above
