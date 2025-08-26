@@ -130,9 +130,9 @@ Feature: Multi_regular_file_stat
     When user1 creates regular files [space1/file1] on client11
     And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
-    # sleep is necessary, because event about file creation is
-    # recorded by provider with some delay
-    And user2 is idle for 5 seconds
+    # sleep is necessary, because event with atime change
+    # after file creation can appear with a delay
+    And user2 is idle for 8 seconds
     And user2 records [space1/file1] stats on client21
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of above and below operations is different

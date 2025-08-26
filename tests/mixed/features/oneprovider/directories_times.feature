@@ -22,14 +22,14 @@ Feature: Directories times tests
     And user1 is idle for 2 seconds
     And using <client2>, user1 renames item named "dir1" to "dir2" in "space1" in oneprovider-1
     Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is greater than modification time in oneprovider-1
-    Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is <comparator_times> access time in oneprovider-1
+    Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is greater than access time in oneprovider-1
 
   Examples:
-  | client1    | client2    | comparator_times  |
-  | oneclient1 | REST       | equal to          |
-  | oneclient1 | web GUI    | greater than      |
-  | REST       | web GUI    | greater than      |
-  | REST       | oneclient1 | greater than      |
+  | client1    | client2    |
+  | oneclient1 | REST       |
+  | oneclient1 | web GUI    |
+  | REST       | web GUI    |
+  | REST       | oneclient1 |
 
 
   Scenario Outline: User changes directory using <client2> and using <client1> sees that modification time has changed
@@ -44,7 +44,7 @@ Feature: Directories times tests
     Then using <client1>, user1 sees that modification time of item named "dir1" in space "space1" is greater than modification time that was copied in oneprovider-1
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" in space "space1" is greater than status-change time that was copied in oneprovider-1
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" in "space1" space is greater than modification time in oneprovider-1
-    And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is greater than status-change time of item named "dir1" in "space1" space in oneprovider-1
+    And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is equal to status-change time of item named "dir1" in "space1" space in oneprovider-1
 
   Examples:
   | client1    | client2    |
