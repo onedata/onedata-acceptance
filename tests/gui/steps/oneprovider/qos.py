@@ -4,11 +4,15 @@ __author__ = "Michal Dronka, Natalia Organek"
 __copyright__ = "Copyright (C) 2020-2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from datetime import datetime
+
+import yaml
 from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
@@ -40,6 +44,110 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
     modal = modals(driver).details_modal.qos
     for requirement in modal.requirements:
         assert hasattr(requirement, state), f"No all QoS requirements are {state}"
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} selects "{option_name}" view in Show Details toggle in'
+        " QoS panel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_option_qos(selenium, browser_id, modals, option_name):
+    driver = selenium[browser_id]
+
+    modal_qos = modals(driver).details_modal.qos
+    option_btn = getattr(modal_qos, "show_details_" + transform(option_name))
+    modal_qos.scroll_to_top()
+
+    # the need to scroll back to the top is due to the fact,
+    # that the header covers the part of the button,
+
+    option_btn.click()
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees the following logs in audit log files list"
+        ' in given order for "{files_list}" files:\n{config}'
+    )
+)
+def assert_audit_log_logs_for_each_file_in_list(
+    selenium, browser_id, modals, files_list, config
+):
+    driver = selenium[browser_id]
+    modal_qos = modals(driver).details_modal.qos
+    entries = modal_qos.audit_log_list.entries
+    config = yaml.load(config, yaml.Loader)
+
+    files = parse_seq(files_list)
+    for file_name in files:
+        if len(files) > 1:
+            actual_logs = [
+                entry.event.text for entry in entries if entry.file.text == file_name
+            ]
+        else:
+            actual_logs = [entry.event.text for entry in entries]
+
+        assert_logs_order_with_optional_logs(config, actual_logs)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that there are no logs in audit log files list"
+        ' and can see following information: "{info}"'
+    )
+)
+def assert_no_logs_in_qos_audit_log(selenium, browser_id, modals, info):
+    driver = selenium[browser_id]
+    modal_qos = modals(driver).details_modal.qos
+    audit_log = modal_qos.audit_log_list
+    if audit_log.is_empty():
+        assert audit_log.empty_info.text == info, (
+            f"The actual no logs info: {audit_log.empty_info.text} is not equal to"
+            f" expected: {info}"
+        )
+        return
+    raise AssertionError("Audit Log logs list is not empty")
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that all logs in audit log files list"
+        " are ordered from newest to oldest"
+    )
+)
+def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modal_qos = modals(driver).details_modal.qos
+    entries = modal_qos.audit_log_list.entries
+    actual_log_dates = [entry.time.text for entry in entries]
+
+    actual_log_datetimes = [
+        datetime.strptime(date, "%d %b %Y %H:%M:%S.%f") for date in actual_log_dates
+    ]
+
+    prev_date = actual_log_datetimes[0]
+    for i, date in enumerate(actual_log_datetimes[1:]):
+        assert date <= prev_date, f"{i+1}-th log should not be newer than {i}-th"
+        # logs are enumerated from 0 in loop, when it fact the first index is 1
+        prev_date = date
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on first link with filename: "{file_name}",'
+        " in audit log files list"
+    )
+)
+def click_on_first_link_with_file_name_in_qos_audit_log(
+    selenium, browser_id, modals, file_name
+):
+    driver = selenium[browser_id]
+    modal_qos = modals(driver).details_modal.qos
+    entries = modal_qos.audit_log_list.entries
+    file_entries = [entry for entry in entries if entry.file.text == file_name]
+    file_entries[0].click()
 
 
 @wt(

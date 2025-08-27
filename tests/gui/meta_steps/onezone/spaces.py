@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from tests import OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -57,9 +56,9 @@ from tests.gui.steps.onezone.spaces import (
     type_space_name_on_input_on_create_new_space_page,
     wt_wait_for_modal_to_appear,
 )
+from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 from tests.utils.utils import repeat_failed
 
 
@@ -412,38 +411,21 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups, mo
         pass
 
 
-def _leave_users_space_in_onezone_using_rest(hosts, users, user):
-    zone_hostname = hosts["onezone"]["hostname"]
-
-    list_users_spaces = http_get(
-        ip=zone_hostname,
-        port=OZ_REST_PORT,
-        path=get_zone_rest_path("user", "spaces"),
-        auth=(user, users[user].password),
-    ).json()
-
-    for space in list_users_spaces["spaces"]:
-        http_delete(
-            ip=zone_hostname,
-            port=OZ_REST_PORT,
-            path=get_zone_rest_path("user", "spaces", space),
-            auth=(user, users[user].password),
-        )
-
-
 @given(parsers.parse("{user} user does not have access to any space"))
 @given(
     parsers.parse(
         "{user} user does not have access to any space other than defined in next steps"
     )
 )
-def g_leave_users_space_in_onezone_using_rest(hosts, users, user):
-    _leave_users_space_in_onezone_using_rest(hosts, users, user)
+def g_leave_user_spaces_in_onezone_using_rest(hosts, users, user):
+    leave_user_spaces_in_onezone_using_rest(hosts, users, user)
 
 
-@wt(parsers.parse("{user} user leaves all spaces using REST"))
-def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
-    _leave_users_space_in_onezone_using_rest(hosts, users, user)
+def leave_user_spaces_in_onezone_using_rest(hosts, users, user):
+    zone_hostname = hosts["onezone"]["hostname"]
+    user_spaces = get_user_spaces(zone_hostname, user, users)
+    for space_id in user_spaces:
+        leave_user_space(zone_hostname, user, users, space_id)
 
 
 @wt(

@@ -66,3 +66,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/data/dataset.feature")
+scenarios("../features/oneprovider/data/operations_data_protected_files.feature")

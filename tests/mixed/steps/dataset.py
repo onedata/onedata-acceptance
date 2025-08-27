@@ -44,7 +44,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "using (?P<client>.*), (?P<user>.+?) creates dataset "
+        "using (?P<client>.*), (user of )?(?P<user>.+?) creates dataset "
         '(?P<option>.*)for item "(?P<item_name>.*)" in space '
         '"(?P<space_name>.*)" in (?P<host>.*)'
     )
