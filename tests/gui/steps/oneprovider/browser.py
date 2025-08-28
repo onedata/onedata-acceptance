@@ -681,11 +681,7 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_b
         pass
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} seeing ENOENT message, navigates to root directory"
-    )
-)
+@wt(parsers.parse('user of {browser_id} clicks on "navigate to root directory" button'))
 def navigate_to_root_from_error_page(
     browser_id,
     tmp_memory,

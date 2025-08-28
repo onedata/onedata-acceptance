@@ -21,7 +21,7 @@ Feature: Basic files operations in multibrowser with single user
     And users of [browser1, browser2] opened [Onezone, Onezone] page
     And user of [browser1, browser2] logged as [user1, user1] to [Onezone, Onezone] service
 
-  Scenario: After file is deleted in first tab, in other tab user, without using refresh, can see reactive statement and after refreshing, a button directing to root
+  Scenario: User deletes a file in one tab and then in another tab after refreshing can see appropriate error message
     When user of browser1 opens file browser for "space1" space
 
     And user of browser2 opens file browser for "space1" space
@@ -32,11 +32,10 @@ Feature: Basic files operations in multibrowser with single user
     And user of browser2 clicks "Delete" option in data row menu in file browser
     And user of browser2 clicks on "Yes" button in modal "Delete modal"
 
-    And user of browser1 is idle for 8 seconds
     Then user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the file browser
 
     And user of browser1 refreshes site
     And user of browser1 sees file browser in files tab in Oneprovider page
 
-    And user of browser1 seeing ENOENT message, navigates to root directory
+    And user of browser1 clicks on "navigate to root directory" button
     And user of browser1 does not see any item(s) named "dir1" in file browser
