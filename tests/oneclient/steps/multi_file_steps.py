@@ -77,6 +77,36 @@ def create_base(user, files, client_node, users, request, should_fail=False):
             print(e)
 
 
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) creates hardlink of file"
+        r' "(?P<file_path>.*)" and places it in "(?P<hardlink_path>.*)" path'
+        r" on (?P<client_node>.*)"
+    )
+)
+def create_hardlink(user, file_path, hardlink_path, client_node, users):
+    user_ = users[user]
+    client = user_.clients[client_node]
+    client.create_hardlink(
+        client.absolute_path(file_path), client.absolute_path(hardlink_path)
+    )
+
+
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) creates symlink of file"
+        r' "(?P<file_path>.*)" and places it in "(?P<symlink_path>.*)" path'
+        r" on (?P<client_node>.*)"
+    )
+)
+def create_symlink(user, file_path, symlink_path, client_node, users):
+    user_ = users[user]
+    client = user_.clients[client_node]
+    client.create_symlink(
+        client.absolute_path(file_path), client.absolute_path(symlink_path)
+    )
+
+
 def create_target_file(user, client, client_node, users, file_name, dir_name):
     space = file_name.split("/")[0]
     create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
@@ -397,12 +427,15 @@ def check_type(user, file, file_type, client_node, users):
         stat_method = "S_ISREG"
     elif file_type == "directory":
         stat_method = "S_ISDIR"
+    elif file_type == "symlink":
+        stat_method = "S_ISLNK"
     else:
         raise ValueError(f"unknown file type {file_type}")
 
     def condition():
         stat_result = client.stat(file_path)
         assert getattr(stat_lib, stat_method)(stat_result.st_mode)
+        # Method S_ISLNK does not work properly, because symlinks are classified as regular files
 
     assert_(client.perform, condition)
 

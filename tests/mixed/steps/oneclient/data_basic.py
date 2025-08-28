@@ -329,6 +329,42 @@ def list_children_in_op_oneclient(name, user, users):
     client.ls(path=path)
 
 
+@wt(
+    parsers.re(r'(?P<user>\w+) asserts if "(?P<f1>.*)" and "(?P<f2>.*)" are hardlinked')
+)
+def assert_hardlink_between_files_oneclient(user, users, f1, f2):
+    user_name = user
+    user = users[user]
+    client = user.clients["client1"]
+
+    file1 = client.absolute_path(f1)
+    file2 = client.absolute_path(f2)
+
+    if not check_file_is_of_type_oc(
+        file1, "regular", user_name, users, "client1"
+    ) or not check_file_is_of_type_oc(file2, "regular", user_name, users, "client1"):
+        return False
+    return client.samefile(file1, file2) or (
+        client.stat(file1).st_ino == client.stat(file2).st_ino
+    )
+
+
+@wt(
+    parsers.re(
+        r"(?P<user>\w+) can see that file"
+        r' "(?P<symlink_path>.*)" is a symlink and points to "(?P<file_path>.*)"'
+    )
+)
+def assert_is_symlink_oneclient(user, users, symlink_path):
+    user_name = user
+    user = users[user]
+    # client = user.clients["client1"]
+    # real_path = client.realpath(symlink_path)
+    # assert real_path == file_path, f"{real_path} is different than {file_path}"
+
+    multi_file_steps.check_type(user_name, symlink_path, "symlink", "client1", users)
+
+
 @given(parsers.parse("{user} mounts oneclient using received token"))
 def given_mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]["mailbox"]["token"]

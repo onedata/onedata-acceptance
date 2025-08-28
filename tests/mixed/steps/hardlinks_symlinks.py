@@ -7,9 +7,10 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.meta_steps.oneprovider.data import (
-    create_hardlinks_of_file_with_path,
+    create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
 )
+from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
     check_for_hardlink_between_files_rest,
@@ -19,6 +20,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     get_file_symlink_value_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_provider
+from tests.oneclient.steps.multi_file_steps import create_hardlink, create_symlink
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 
@@ -130,8 +132,32 @@ def create_file_symlink(
 
 @wt(
     parsers.re(
+        r"using (?P<client>.*), user (?P<user>.+) creates"
+        r' symlink located in "(?P<symlink_path>.*)" pointing to "(?P<file_path>.*)" in'
+        r' "(?P<space>.*)"'
+    )
+)
+def create_symlink_oneclient(client, user, users, symlink_path, file_path, space):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        file_name = file_path.split("/")[-1]
+        create_symlink(
+            user,
+            f"{space}/{file_path}",
+            f"{space}/{symlink_path}/{file_name}",
+            oneclient_host,
+            users,
+        )
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
         r"using (?P<client>.*), user( of)? (?P<user>.*) creates hardlink of "
-        r'"(?P<file_name>.*)" placed in "(?P<path>.*)" directory in "(?P<space>.*)"'
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
+        r' "(?P<space>.*)"'
         r" in (?P<host>.*)"
     )
 )
@@ -142,37 +168,74 @@ def create_file_hardlink(
     hosts,
     host,
     selenium,
-    file_name,
+    file_path,
+    hardlink_path,
     space,
     tmp_memory,
     oz_page,
     op_container,
     popups,
-    path,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        create_hardlinks_of_file_with_path(
+        # create_hardlinks_of_file_with_path(
+        #     selenium,
+        #     user,
+        #     file_name,
+        #     space,
+        #     tmp_memory,
+        #     oz_page,
+        #     op_container,
+        #     popups,
+        #     path,
+        # )
+
+        create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
             selenium,
             user,
-            file_name,
             space,
             tmp_memory,
             oz_page,
             op_container,
             popups,
-            path,
+            file_path,
+            hardlink_path,
         )
+
     elif client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
+        file_name = file_path.split("/")[-1]
         create_hardlink_rest(
             users,
             user,
             hosts,
             host,
-            _lookup_file_id(f"{space}/{path}", user_client_op),
-            _lookup_file_id(f"{space}/{file_name}", user_client_op),
+            _lookup_file_id(f"{space}/{hardlink_path}", user_client_op),
+            _lookup_file_id(f"{space}/{file_path}", user_client_op),
             file_name,
+        )
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
+        r"using (?P<client>.*), user (?P<user>.*) creates hardlink of "
+        r'"(?P<file_path>.*)" placed in "(?P<hardlink_path>.*)" directory in'
+        r' "(?P<space>.*)"'
+    )
+)
+def create_hardlink_oneclient(client, user, users, file_path, hardlink_path, space):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        file_name = file_path.split("/")[-1]
+        create_hardlink(
+            user,
+            f"{space}/{file_path}",
+            f"{space}/{hardlink_path}/{file_name}",
+            oneclient_host,
+            users,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
