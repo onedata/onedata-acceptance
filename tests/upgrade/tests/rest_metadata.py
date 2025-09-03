@@ -20,10 +20,7 @@ from tests.upgrade.utils.rest_utils import (
     set_file_json_metadata,
     set_file_rdf_metadata,
 )
-from tests.upgrade.utils.upgrade_utils import (
-    UpgradeTest,
-)
-
+from tests.upgrade.utils.upgrade_utils import UpgradeTest
 
 SPACE_NAME = "space_posix"
 
@@ -96,7 +93,7 @@ def verify_metadata(tests_controller):
     assert res.json() == new_json_meta
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
-    delete_file_rdf_metadata(provider_host, file_id, token)
+    delete_file_rdf_metadata(provider_host, token, file_id)
 
     new_rdf_meta = (
         '<?xml version="1.0"?>\n\n'
