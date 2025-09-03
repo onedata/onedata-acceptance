@@ -265,7 +265,72 @@ Feature: Basic datasets operations
     Then user of browser sees "File's data is write protected" label in Datasets modal
 
 
-  # TODO VFS-10555 check hardlink inherited protection flags behavior
+  # VFS-10555 check hardlink inherited protection flags behavior
+
+  Scenario: User can see that hardlink inherited data and metadata protection flags from its target file
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "file3" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser clicks "Place hard link" button from file browser menu bar
+
+    And user of browser clicks on menu for "file3" file in file browser
+
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Write Protection modal
+    And user of browser clicks on "X" button in modal "Datasets"
+
+    And user of browser clicks on menu for "file3(1)" file in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees "Editor disabled" label in metadata panel
+    And user of browser clicks on "X" button in modal "File details"
+
+    And user of browser clicks on menu for "file3(1)" file in file browser
+    Then user of browser sees that "Delete" option is disabled in opened item menu in file browser
+
+
+  Scenario: User can see that hardlink inherited data and metadata protection flags from its target file
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser goes to "dir1" in file browser
+
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser goes to "../dir2" in file browser
+    And user of browser clicks "Place hard link" button from file browser menu bar
+    And user of browser goes to ".." in file browser
+
+    # And user of browser creates dataset with data and metadata write protection flags for item "dir1" in "space1"
+
+    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
+    And user of browser checks data write protection toggle in Datasets modal
+    And user of browser checks metadata write protection toggle in Write Protection modal
+    And user of browser clicks on "X" button in modal "Datasets"
+
+    And user of browser creates dataset for item "dir2" in "space1"
+
+    And user of browser goes to "dir2" in file browser
+
+    And user of browser clicks on menu for "file1" file in file browser
+
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser sees "File's data is write protected" label in Datasets modal
+    And user of browser sees "File's metadata is write protected" label in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
+
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees "Editor disabled" label in metadata panel
+    And user of browser clicks on "X" button in modal "File details"
+
+    And user of browser clicks on menu for "file1" file in file browser
+    Then user of browser sees that "Delete" option is disabled in opened item menu in file browser
 
 
   # checks bugfix from VFS-8739
