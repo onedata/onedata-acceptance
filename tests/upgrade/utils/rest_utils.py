@@ -86,6 +86,36 @@ def download_file_content(provider_host, token, file_id):
     return res.content
 
 
+def get_file_attributes(provider_host, token, file_id, attributes):
+    # if provider version is lower than 21.02.5, provided attributes are ignored
+    # and all available attributes are returned
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({"attributes": attributes}),
+    )
+    return res.json()
+
+
+def get_directory_size_statistics(provider_host, token, file_id, mode):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "dir_size_stats"),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({"mode": mode}),
+    )
+    return res.json()
+
+
 # Metadata
 
 
@@ -193,7 +223,7 @@ def get_file_extended_attributes(provider_host, token, file_id, attribute=None):
 
 
 def delete_file_extended_attributes(provider_host, token, file_id, keys=None):
-    data = {"keys": [key for key in keys]}
+    data = {"keys": list(keys)}
     res = http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -454,14 +484,6 @@ def subscribe_to_file_changes(provider_host, token, space_id, data, stream=True)
     )
     return res
 
-
-def get_provider_configuration(provider_host):
-    res = http_get(
-        ip=provider_host,
-        port=OP_REST_PORT,
-        path=get_provider_rest_path("configuration"),
-    )
-    return res.json()
 
 # Onepanel
 

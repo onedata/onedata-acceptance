@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.upgrade.tests import (
     oneclient_crud,
     rest_comprehensive,
+    rest_file_attrs,
     rest_metadata,
     rest_views,
 )
@@ -20,8 +21,9 @@ def test_upgrade(tests_controller):
     Run all setups -> Upgrade services -> Run all verifies
     """
 
-    # tests_controller.add_tests(oneclient_crud.get_tests(tests_controller))
-    # tests_controller.add_tests(rest_comprehensive.get_tests(tests_controller))
-    # tests_controller.add_tests(rest_views.get_tests(tests_controller))
+    tests_controller.add_tests(oneclient_crud.get_tests(tests_controller))
+    tests_controller.add_tests(rest_comprehensive.get_tests(tests_controller))
+    tests_controller.add_tests(rest_views.get_tests(tests_controller))
     tests_controller.add_tests(rest_metadata.get_tests(tests_controller))
+    tests_controller.add_tests(rest_file_attrs.get_tests(tests_controller))
     tests_controller.run_tests()
