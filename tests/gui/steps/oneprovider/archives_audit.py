@@ -437,7 +437,7 @@ def assert_archived_file_path_and_archive_name(browser_id, selenium, modals, pat
     details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
     details_archive_name = details_file_path[0].split("›")[1]
     # Depending on window size, name of archive may not be present and it raises exception
-    details_file_path = "/".join(details_file_path[1:])  
+    details_file_path = "/".join(details_file_path[1:])
     # Depending on window size, could be without [1:], if archive name is not present
 
     assert (
