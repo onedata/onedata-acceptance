@@ -23,7 +23,8 @@ Feature: Basic management
 
 
   Scenario: User can see correct spaces in mount mount after removing one space
-    When using REST, user1 removes space named "space1" in "onezone" Onezone service
+    When using OneS3, user user1 can see spaces "[space1]"
+    And using REST, user1 removes space named "space1" in "onezone" Onezone service
     Then using OneS3, user user1 can see spaces "[]"
 
 
@@ -36,6 +37,31 @@ Feature: Basic management
     Then using OneS3, user user1 can see spaces "[helloworld, space1]"
 
 
+  Scenario: User can see correct spaces content after removing and creating space again
+    Given initial spaces configuration in "onezone" Onezone service:
+        space3:
+            owner: user1
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+    When using OneS3, user user1 can see spaces "[space1, space3]"
+    And using REST, user1 removes space named "space3" in "onezone" Onezone service
+
+    And using REST, user1 creates space "space3" in "onezone" Onezone service
+    And using REST, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
+    And using REST, onepanel supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
+        storage: posix
+        size: 1000000
+    And user is idle for 8 seconds
+    And using REST, user1 succeeds to create file named "file1.txt" in "space3" in oneprovider-1
+    And using REST, user1 writes "TEST TEXT" to file named "file1.txt" in "space3" in oneprovider-1
+
+    Then using OneS3, user user1 can see spaces "[space1, space3]"
+    And using OneS3, user user1 can see that "file1.txt" content is "TEST TEXT" in "space3"
+
+
   Scenario: User can see correct spaces in mount mount after removing support
-    When using REST, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
+    When using OneS3, user user1 can see spaces "[space1]"
+    And using REST, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
     Then using OneS3, user user1 can see spaces "[]"

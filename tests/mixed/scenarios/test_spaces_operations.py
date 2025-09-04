@@ -45,6 +45,7 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.rest.s3_service_boto3 import *
 from tests.gui.steps.rest.shares import *
+from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.members import *
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.rest.onezone.special_dirs import *
@@ -52,6 +53,7 @@ from tests.mixed.steps.space_basic import *
 from tests.mixed.steps.tokens_basic import *
 from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
+from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
