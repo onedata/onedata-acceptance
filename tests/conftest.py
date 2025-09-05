@@ -782,8 +782,8 @@ def env_description_abs_path(request, env_description_file):
     all tests in one test suite. That file name is passed as an argument
     when running tests.
     In some tests test`s types (e.g. mixed, oneclient) it only describes environment, such
-    information can be used later in tests. In those cases actual running scenario is
-    hold in that file in following section:
+    information can be used later in tests. In those cases actual running scenario can
+    be found in that file in following section:
      scenario: "<scenario name>".
     That file is hold in another directory (directory within environments directory).
     Fixture env_description_abs_path returns absolute path to env_description_file.
