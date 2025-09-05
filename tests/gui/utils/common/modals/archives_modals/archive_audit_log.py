@@ -27,6 +27,8 @@ class FilesLog(BrowserRow):
     name = id = Label(".file-name")
     event = Label(".message-text")
     clickable_field = WebElement(".file-name")
+    date = Label(".timestamp-cell")
+    duplicated_name_hash = Label(".log-filename-duplicate-hash")
 
     def click(self):
         time.sleep(0.1)
