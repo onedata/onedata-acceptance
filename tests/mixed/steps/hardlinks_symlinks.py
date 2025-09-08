@@ -10,7 +10,10 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
 )
-from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
+from tests.mixed.steps.oneclient.data_basic import (
+    change_client_name_to_hostname,
+    check_file_is_of_type_oc,
+)
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
     check_for_hardlink_between_files_rest,
@@ -20,6 +23,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     get_file_symlink_value_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_provider
+from tests.oneclient.steps import multi_file_steps
 from tests.oneclient.steps.multi_file_steps import create_hardlink, create_symlink
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
@@ -178,18 +182,6 @@ def create_file_hardlink(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        # create_hardlinks_of_file_with_path(
-        #     selenium,
-        #     user,
-        #     file_name,
-        #     space,
-        #     tmp_memory,
-        #     oz_page,
-        #     op_container,
-        #     popups,
-        #     path,
-        # )
-
         create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
             selenium,
             user,
@@ -201,7 +193,6 @@ def create_file_hardlink(
             file_path,
             hardlink_path,
         )
-
     elif client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
         file_name = file_path.split("/")[-1]
@@ -237,8 +228,7 @@ def create_hardlink_oneclient(client, user, users, file_path, hardlink_path, spa
             oneclient_host,
             users,
         )
-    else:
-        raise NoSuchClientException(f"Client: {client} not found.")
+    raise NoSuchClientException(f"Client: {client} not found.")
 
 
 @wt(
@@ -257,3 +247,70 @@ def assert_hardlink_between_files_rest(
     assert check_for_hardlink_between_files_rest(
         users, user, hosts, host, file_id1, file_id2
     ), f"file: {hardlink_path} is not a hardlink to file: {file_path}"
+
+
+@wt(
+    parsers.re(
+        r'using (?P<client>\w+), user (?P<user>\w+) can see that "(?P<file_path1>.*)"'
+        r' and "(?P<file_path2>.*)" are'
+        r" hardlinked"
+    )
+)
+def assert_hardlink_between_files_oneclient(
+    client, user, users, file_path1, file_path2
+):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        user_name = user
+        user = users[user]
+        client = user.clients[oneclient_host]
+
+        file1 = client.absolute_path(file_path1)
+        file2 = client.absolute_path(file_path2)
+
+        # hardlink and original file must be regular files
+        if not check_file_is_of_type_oc(
+            file1, "regular", user_name, users, "client1"
+        ) or not check_file_is_of_type_oc(
+            file2, "regular", user_name, users, "client1"
+        ):
+            return False
+
+        # Two files are hardlinked if they point to the same node in the same
+        # file system (st_ino can give false positives)
+
+        return client.samefile(file1, file2)
+    raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.re(
+        r"using (?P<client>\w+), user (?P<user>\w+) can see that file"
+        r' "(?P<symlink_path>.*)" is a symlink and points to "(?P<file_path>.*)"'
+    )
+)
+def assert_file_is_symlink_and_where_it_points_oneclient(
+    client, user, users, file_path, symlink_path
+):
+    client_lower = client.lower()
+    if "oneclient" in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+
+        user_name = user
+        user = users[user]
+
+        multi_file_steps.check_type(
+            user_name, symlink_path, "symlink", oneclient_host, users
+        )
+
+        client = user.clients[oneclient_host]
+        real_path = client.realpath(symlink_path)
+
+        # realpath eliminates every symbolic link encountered in path,
+        # however if there are multiple symlinks this function can
+        # give an error
+
+        assert real_path == file_path, f"{real_path} is different than {file_path}"
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")

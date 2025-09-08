@@ -429,13 +429,13 @@ def check_type(user, file, file_type, client_node, users):
         stat_method = "S_ISDIR"
     elif file_type == "symlink":
         stat_method = "S_ISLNK"
+        # VFS-13001 Check symlink type in stat in oneclient
     else:
         raise ValueError(f"unknown file type {file_type}")
 
     def condition():
         stat_result = client.stat(file_path)
         assert getattr(stat_lib, stat_method)(stat_result.st_mode)
-        # Method S_ISLNK does not work properly, because symlinks are classified as regular files
 
     assert_(client.perform, condition)
 
