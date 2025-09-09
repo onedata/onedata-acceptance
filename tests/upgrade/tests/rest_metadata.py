@@ -64,23 +64,24 @@ def verify_metadata(tests_controller):
     token = tests_controller.users["user1"].token
 
     # assert the same metadata in files after upgrade
+    err_msg = "Expected metadata:\n {},\n but got:\n {}"
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     res = get_file_json_metadata(provider_host, token, file_id)
-    assert res.json() == JSON_META
+    assert res.json() == JSON_META, err_msg.format(JSON_META, res.json())
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     res = get_file_rdf_metadata(provider_host, token, file_id)
-    assert res.text == RDF_META
+    assert res.text == RDF_META, err_msg.format(RDF_META, res.text)
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
-    assert formatted_res == XATTRS_META
+    assert formatted_res == XATTRS_META, err_msg.format(XATTRS_META, formatted_res)
 
     for xattr_meta in XATTRS_META:
         (key,) = (xattr_meta.keys(),)
         res = get_file_extended_attributes(provider_host, token, file_id, attribute=key)
-        assert res.json() == xattr_meta
+        assert res.json() == xattr_meta, err_msg.format(xattr_meta, res.json())
 
     # successfully modify existing metadata
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
@@ -90,7 +91,7 @@ def verify_metadata(tests_controller):
 
     set_file_json_metadata(provider_host, token, file_id, new_json_meta)
     res = get_file_json_metadata(provider_host, token, file_id)
-    assert res.json() == new_json_meta
+    assert res.json() == new_json_meta, err_msg.format(new_json_meta, res.json())
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     delete_file_rdf_metadata(provider_host, token, file_id)
@@ -105,20 +106,23 @@ def verify_metadata(tests_controller):
 
     set_file_rdf_metadata(provider_host, token, file_id, new_rdf_meta)
     res = get_file_rdf_metadata(provider_host, token, file_id)
-    assert res.text == new_rdf_meta
+    assert res.text == new_rdf_meta, err_msg.format(new_rdf_meta, res.text)
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
-    delete_file_extended_attributes(provider_host, token, file_id, keys=["license1"])
+    delete_file_extended_attributes(provider_host, token, file_id, keys=["licence1"])
 
-    new_xattr = {"license4": "MIT4"}
+    new_xattr = {"licence4": "MIT4"}
 
     set_file_extended_attribute(provider_host, token, file_id, new_xattr)
     res = get_file_extended_attributes(provider_host, token, file_id)
+
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
-    XATTRS_META.remove({"licence1": "MIT1"})
-    new_expected_result = XATTRS_META
+    new_expected_result = XATTRS_META.copy()
+    new_expected_result.remove({"licence1": "MIT1"})
     new_expected_result.append(new_xattr)
-    assert formatted_res == new_expected_result
+    assert formatted_res == new_expected_result, err_msg.format(
+        new_expected_result, formatted_res
+    )
 
 
 def create_example_content_in_space(client):

@@ -14,6 +14,9 @@ from tests.upgrade.utils.rest_utils import (
     lookup_file_id,
 )
 from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.utils.utils import repeat_failed
+
+TIMEOUT_FOR_UPDATING_FILE_ATTRS = 15
 
 SPACE_NAME = "space_posix"
 
@@ -90,9 +93,14 @@ def setup_metadata(tests_controller):
     create_example_content_in_space(client)
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs", provider_host, token)
+    _wait_for_file_attrs(
+        partial(get_file_attributes, provider_host, token, file_id, ALL_ATTRS),
+        len(TEXT),
+    )
     RESULTS["file attrs setup"] = get_file_attributes(
         provider_host, token, file_id, ALL_ATTRS
     )
+    # breakpoint()
 
     file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs_hardlink", provider_host, token)
     RESULTS["file attrs hardlink setup"] = get_file_attributes(
@@ -162,3 +170,9 @@ def compare_attrs(old_attrs, new_attrs):
             assert old_attrs[attr] == new_attrs[ATTRS_MAP[attr]], err_msg
         else:
             assert old_attrs[attr] == new_attrs[attr], err_msg
+
+
+@repeat_failed(timeout=TIMEOUT_FOR_UPDATING_FILE_ATTRS)
+def _wait_for_file_attrs(query, ex_size):
+    res = query()
+    assert res["size"] == ex_size
