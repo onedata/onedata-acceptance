@@ -1,8 +1,8 @@
-"""This module contains tests of shares, handles, datasets and archives operations
+"""This module contains tests of operations on file with metadata
 after environment upgrade"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2025 onedata.org"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
@@ -65,15 +65,13 @@ def verify_metadata(tests_controller):
 
     # assert the same metadata in files after upgrade
     err_msg = "Expected metadata:\n {},\n but got:\n {}"
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/file_metadata", provider_host, token)
     res = get_file_json_metadata(provider_host, token, file_id)
     assert res.json() == JSON_META, err_msg.format(JSON_META, res.json())
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     res = get_file_rdf_metadata(provider_host, token, file_id)
     assert res.text == RDF_META, err_msg.format(RDF_META, res.text)
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
     assert formatted_res == XATTRS_META, err_msg.format(XATTRS_META, formatted_res)
@@ -84,7 +82,6 @@ def verify_metadata(tests_controller):
         assert res.json() == xattr_meta, err_msg.format(xattr_meta, res.json())
 
     # successfully modify existing metadata
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     delete_file_json_metadata(provider_host, token, file_id)
 
     new_json_meta = {"new": "meta"}
@@ -93,7 +90,6 @@ def verify_metadata(tests_controller):
     res = get_file_json_metadata(provider_host, token, file_id)
     assert res.json() == new_json_meta, err_msg.format(new_json_meta, res.json())
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     delete_file_rdf_metadata(provider_host, token, file_id)
 
     new_rdf_meta = (
@@ -108,7 +104,6 @@ def verify_metadata(tests_controller):
     res = get_file_rdf_metadata(provider_host, token, file_id)
     assert res.text == new_rdf_meta, err_msg.format(new_rdf_meta, res.text)
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
     delete_file_extended_attributes(provider_host, token, file_id, keys=["licence1"])
 
     new_xattr = {"licence4": "MIT4"}
@@ -127,21 +122,13 @@ def verify_metadata(tests_controller):
 
 def create_example_content_in_space(client):
     space_path = client.absolute_path(SPACE_NAME)
-    file_path = os.path.join(space_path, "file_json")
-    client.create_file(file_path)
-    file_path = os.path.join(space_path, "file_rdf")
-    client.create_file(file_path)
-    file_path = os.path.join(space_path, "file_xattrs")
+    file_path = os.path.join(space_path, "file_metadata")
     client.create_file(file_path)
 
 
 def add_example_metadata_to_files_in_space(provider_host, token):
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     set_file_json_metadata(provider_host, token, file_id, JSON_META)
-
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     set_file_rdf_metadata(provider_host, token, file_id, RDF_META)
-
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_xattrs", provider_host, token)
     for xattr_meta in XATTRS_META:
         set_file_extended_attribute(provider_host, token, file_id, xattr_meta)

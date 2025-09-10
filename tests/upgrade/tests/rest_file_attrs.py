@@ -1,8 +1,8 @@
-"""This module contains tests of shares, handles, datasets and archives operations
+"""This module contains tests of file attributes operations
 after environment upgrade"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2025 onedata.org"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
@@ -73,6 +73,11 @@ ATTRS_MAP = {
 
 RESULTS = {}
 
+REG_NAME = "file_attrs"
+HARDLINK_NAME = "file_attrs_hardlink"
+SYMLINK_NAME = "file_attrs_symlink"
+DIR_NAME = "dir_stats"
+
 
 def get_tests(tests_controller):
     return [
@@ -92,28 +97,27 @@ def setup_metadata(tests_controller):
     # create file, hardlink and symlink
     create_example_content_in_space(client)
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{REG_NAME}", provider_host, token)
     _wait_for_file_attrs(
         partial(get_file_attributes, provider_host, token, file_id, ALL_ATTRS),
         len(TEXT),
     )
-    RESULTS["file attrs setup"] = get_file_attributes(
-        provider_host, token, file_id, ALL_ATTRS
-    )
-    # breakpoint()
-
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs_hardlink", provider_host, token)
-    RESULTS["file attrs hardlink setup"] = get_file_attributes(
+    RESULTS["regular_file_attrs_setup"] = get_file_attributes(
         provider_host, token, file_id, ALL_ATTRS
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs_symlink", provider_host, token)
-    RESULTS["file attrs symlink setup"] = get_file_attributes(
+    file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
+    RESULTS["file_attrs_hardlink_setup"] = get_file_attributes(
         provider_host, token, file_id, ALL_ATTRS
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/dir_stats", provider_host, token)
-    RESULTS["dir stats"] = get_directory_size_statistics(
+    file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
+    RESULTS["file_attrs_symlink_setup"] = get_file_attributes(
+        provider_host, token, file_id, ALL_ATTRS
+    )
+
+    file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
+    RESULTS["dir_stats_setup"] = get_directory_size_statistics(
         provider_host, token, file_id, "layout"
     )
 
@@ -122,41 +126,41 @@ def verify_metadata(tests_controller):
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{REG_NAME}", provider_host, token)
     compare_attrs(
-        RESULTS["file attrs setup"],
+        RESULTS["regular_file_attrs_setup"],
         get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs_hardlink", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
     compare_attrs(
-        RESULTS["file attrs hardlink setup"],
+        RESULTS["file_attrs_hardlink_setup"],
         get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_attrs_symlink", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
     compare_attrs(
-        RESULTS["file attrs symlink setup"],
+        RESULTS["file_attrs_symlink_setup"],
         get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/dir_stats", provider_host, token)
-    assert RESULTS["dir stats"] == get_directory_size_statistics(
+    file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
+    assert RESULTS["dir_stats_setup"] == get_directory_size_statistics(
         provider_host, token, file_id, "layout"
     )
 
 
 def create_example_content_in_space(client):
     space_path = client.absolute_path(SPACE_NAME)
-    file_path = os.path.join(space_path, "file_attrs")
+    file_path = os.path.join(space_path, REG_NAME)
     client.create_file(file_path)
     client.write(TEXT, file_path)
-    link_path = os.path.join(space_path, "file_attrs_hardlink")
+    link_path = os.path.join(space_path, HARDLINK_NAME)
     client.create_hardlink(file_path, link_path)
-    link_path = os.path.join(space_path, "file_attrs_symlink")
+    link_path = os.path.join(space_path, SYMLINK_NAME)
     client.create_symlink(file_path, link_path)
 
-    dir_path = os.path.join(space_path, "dir_stats")
+    dir_path = os.path.join(space_path, DIR_NAME)
     client.mkdir(dir_path)
 
 
