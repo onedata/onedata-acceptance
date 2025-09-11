@@ -13,7 +13,7 @@ from tests.upgrade.utils.rest_utils import (
     get_file_attributes,
     lookup_file_id,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_prov_version_lower_than
 from tests.utils.utils import repeat_failed
 
 TIMEOUT_FOR_UPDATING_FILE_ATTRS = 15
@@ -116,10 +116,11 @@ def setup_metadata(tests_controller):
         provider_host, token, file_id, ALL_ATTRS
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
-    RESULTS["dir_stats_setup"] = get_directory_size_statistics(
-        provider_host, token, file_id, "layout"
-    )
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+        file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
+        RESULTS["dir_stats_setup"] = get_directory_size_statistics(
+            provider_host, token, file_id, "layout"
+        )
 
 
 def verify_metadata(tests_controller):
@@ -144,10 +145,11 @@ def verify_metadata(tests_controller):
         get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
-    assert RESULTS["dir_stats_setup"] == get_directory_size_statistics(
-        provider_host, token, file_id, "layout"
-    )
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+        file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
+        assert RESULTS["dir_stats_setup"] == get_directory_size_statistics(
+            provider_host, token, file_id, "layout"
+        )
 
 
 def create_example_content_in_space(client):

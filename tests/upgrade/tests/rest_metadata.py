@@ -23,6 +23,7 @@ from tests.upgrade.utils.rest_utils import (
 from tests.upgrade.utils.upgrade_utils import UpgradeTest
 
 SPACE_NAME = "space_posix"
+FILE_NAME = "file_meta"
 
 JSON_META = {"hello": {"world": ["hello", "world"]}}
 
@@ -65,7 +66,7 @@ def verify_metadata(tests_controller):
 
     # assert the same metadata in files after upgrade
     err_msg = "Expected metadata:\n {},\n but got:\n {}"
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_metadata", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{FILE_NAME}", provider_host, token)
     res = get_file_json_metadata(provider_host, token, file_id)
     assert res.json() == JSON_META, err_msg.format(JSON_META, res.json())
 
@@ -122,12 +123,12 @@ def verify_metadata(tests_controller):
 
 def create_example_content_in_space(client):
     space_path = client.absolute_path(SPACE_NAME)
-    file_path = os.path.join(space_path, "file_metadata")
+    file_path = os.path.join(space_path, FILE_NAME)
     client.create_file(file_path)
 
 
 def add_example_metadata_to_files_in_space(provider_host, token):
-    file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
+    file_id = lookup_file_id(f"{SPACE_NAME}/{FILE_NAME}", provider_host, token)
     set_file_json_metadata(provider_host, token, file_id, JSON_META)
     set_file_rdf_metadata(provider_host, token, file_id, RDF_META)
     for xattr_meta in XATTRS_META:
