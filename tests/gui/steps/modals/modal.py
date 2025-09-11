@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-import time
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -156,7 +155,12 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
         pass
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has appeared'))
+@wt(
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)"'
+        r" modal has appeared"
+    )
+)
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -723,9 +727,9 @@ def choose_option_in_dropdown_menu_in_modal(
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that path where symbolic link "
-        'points is "{expected_path}" in {modal} modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees that path where symbolic"
+        r' link points is "(?P<expected_path>.*)" in (?P<modal>.*) modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -734,8 +738,8 @@ def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, 
     modals = selenium["request"].getfixturevalue("modals")
     modal = transform(modal)
     modal = getattr(modals(driver), modal)
-    time.sleep(0.1)
     path = modal.path.replace("\n", "")
+
     assert (
         expected_path == path
     ), f"Expected path: {expected_path} does not match path: {path}"

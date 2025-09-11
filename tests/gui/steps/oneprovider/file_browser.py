@@ -492,9 +492,10 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, mod
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that path of "{file}" hardlink '
-        'is "{path}" in "File details" modal'
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that path of "(?P<file>.*)"'
+        r" hardlink "
+        r'is "(?P<path>.*)" in "File details" modal'
     )
 )
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
@@ -506,10 +507,12 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, mo
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees paths {paths} of hardlinks in "File details" modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees paths (?P<paths>.*) of"
+        r' hardlinks in "File details" modal'
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modals):
     entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
@@ -519,9 +522,10 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modal
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that {link_property} is "{value}" '
-        'in "Symbolic link details" modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees that (?P<link_property>.*)"
+        r' is "(?P<value>.*)" '
+        r'in "Symbolic link details" modal'
     )
 )
 def assert_property_in_symlink_dets_modal(
