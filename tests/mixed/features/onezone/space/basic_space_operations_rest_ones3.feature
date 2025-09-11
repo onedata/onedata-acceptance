@@ -37,7 +37,7 @@ Feature: Basic management
     Then using OneS3, user user1 can see spaces "[helloworld, space1]"
 
 
-  Scenario: User can see correct spaces content after removing and creating space again
+  Scenario: User can see correct spaces content after removing a space and creating a new one with the same name
     Given initial spaces configuration in "onezone" Onezone service:
         space3:
             owner: user1
@@ -53,7 +53,7 @@ Feature: Basic management
     And using REST, onepanel supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
         storage: posix
         size: 1000000
-    And user is idle for 8 seconds
+    And using REST, user1 waits for space "space3" support in oneprovider-1
     And using REST, user1 succeeds to create file named "file1.txt" in "space3" in oneprovider-1
     And using REST, user1 writes "TEST TEXT" to file named "file1.txt" in "space3" in oneprovider-1
 
