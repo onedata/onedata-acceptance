@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import inspect
 import os
+import re
 import sys
 import time
 
@@ -115,10 +116,5 @@ def get_first_path_element(path):
 
 
 def format_valid_file_name(file_name):
-    return (
-        file_name[:180]
-        .replace(" ", "_")
-        .replace("/", "_")
-        .replace('"', "")
-        .replace("-", "_")
-    )
+    file_name = file_name[:180]
+    return re.sub(r"[^\w.\-\[\]]", "_", file_name)

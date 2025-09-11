@@ -306,6 +306,10 @@ class PrivilegeTree(PageObject):
         for priv_group in self.privilege_groups:
             priv_group.activate()
 
+    def set_all_false(self):
+        for priv_group in self.privilege_groups:
+            priv_group.deactivate()
+
     def wait_for_load_privileges(self):
         for _ in range(50):
             try:

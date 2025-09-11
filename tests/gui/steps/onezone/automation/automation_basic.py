@@ -105,7 +105,7 @@ def confirm_rename_the_inventory(selenium, browser_id, oz_page):
         'inventory "(?P<inventory>.*)" on inventory list'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
     for browser_id in parse_seq(browser_ids):
         elem_list = oz_page(selenium[browser_id])["automation"].elements_list

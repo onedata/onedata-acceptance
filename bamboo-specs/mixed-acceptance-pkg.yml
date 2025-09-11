@@ -81,6 +81,7 @@ stages:
         - Files set metadata
         - Files times
         - Groups basic
+        - Hardlinks and Symlinks
         - LUMA
         - Nested directories create
         - Nested directories remove
@@ -700,6 +701,22 @@ Groups basic:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_groups_basic test_mixed_pkg
+
+Hardlinks and Symlinks:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CHS
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_hardlinks_symlinks test_mixed_pkg
 
 LUMA:
   <<: *acceptance-mixed-tests-in-chrome-job

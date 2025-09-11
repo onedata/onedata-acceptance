@@ -19,6 +19,8 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
+DEFAULT_REST_QUERY_TIMEOUT = 60
+
 EXAMPLE_HANDLE_METADATA = {
     "handleServiceId": "$handle_service_id",
     "resourceType": "Share",
