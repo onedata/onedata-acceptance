@@ -150,6 +150,40 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel
                 break
 
 
+@wt(
+    parsers.parse(
+        "user of {browser_id} tries to register provider using Register button in"
+        " {step} of deployment process in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def wt_try_to_register_prov_using_register_btn(
+    selenium, browser_id, step, onepanel, modals
+):
+    driver = selenium[browser_id]
+    btn = "Register"
+    step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
+    getattr(step, transform(btn)).click()
+
+    _wait_after_prov_registration(onepanel, driver, modals)
+
+    # if error modal occurred close it and repeat function execution
+    try:
+        error_modal = modals(driver).error
+        error_modal.close.click()
+        raise AssertionError("Did not menage to register provider")
+    except RuntimeError:
+        pass
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _wait_after_prov_registration(onepanel, driver, modals):
+    assert (
+        onepanel(driver).content.deployment.num == "6"
+        or modals(driver).error.is_displayed()
+    )
+
+
 @wt(parsers.parse("user of {browser_id} sees that cluster deployment has started"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
