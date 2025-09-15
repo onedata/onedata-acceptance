@@ -12,7 +12,15 @@ onezone:
 oneprovider-1:
   batchConfig:
     createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {file_upload_verbose_logs_enabled, true}
+    ]}].
 
 oneprovider-2:
   batchConfig:
     createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {file_upload_verbose_logs_enabled, true}
+    ]}].
