@@ -119,6 +119,6 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     And user of browser_user1 clicks on "X" button in modal "Directory details"
     And user of browser_user1 opens shares view of "space1"
     And user of browser_user1 clicks "dir1" share in shares browser on shares view
-    And user of browser_user1 sees file browser on single share view
-    Then user of browser_user1 sees that item named "dir1" has appeared in file browser on single share view
+    And user of browser_user1 sees shares file browser on single share view
+    Then user of browser_user1 sees that item named "dir1" has appeared in shares file browser on single share view
 

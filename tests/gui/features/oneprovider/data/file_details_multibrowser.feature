@@ -1,4 +1,4 @@
-Feature: Operations on file show/download links and general information in file details modal with multibrowser
+Feature: Operations on file show/download links with multibrowser
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

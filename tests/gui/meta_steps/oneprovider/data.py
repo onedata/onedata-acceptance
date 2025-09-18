@@ -1126,19 +1126,14 @@ def copy_object_id_to_tmp_memory(
 #  interface" working properly
 @wt(
     parsers.parse(
-        'user of {browser_id} downloads item "{item_name}" by '
+        'user of {browser_id} downloads item "{item_name}" in {which_browser} by '
         "clicking and pressing enter and then sees that "
         'content of downloaded file is equal to: "{content}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_with_content_check(
-    browser_id,
-    item_name,
-    content,
-    tmpdir,
-    tmp_memory,
-    which_browser="file browser",
+    browser_id, item_name, content, tmpdir, tmp_memory, which_browser
 ):
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]

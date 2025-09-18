@@ -1,4 +1,4 @@
-Feature: Operations on share file download link by user is not logged in and/or not member of the space
+Feature: Operations on share file download links by user is not logged in and/or not member of the space
 
 
   Background:
@@ -25,7 +25,7 @@ Feature: Operations on share file download link by user is not logged in and/or 
     And user of space_owner_browser logged as space-owner-user to Onezone service
 
 
-  Scenario: Without logging in, non-space user can open file download link from file in shared directory
+  Scenario: Without logging in, non space owner user can open file download link from file in shared directory
     When using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     And user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
