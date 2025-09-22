@@ -77,28 +77,13 @@ def create_base(user, files, client_node, users, request, should_fail=False):
             print(e)
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) creates hardlink of file"
-        r' "(?P<file_path>.*)" and places it in "(?P<hardlink_path>.*)" path'
-        r" on (?P<client_node>.*)"
-    )
-)
 def create_hardlink(user, file_path, hardlink_path, client_node, users):
-    user_ = users[user]
-    client = user_.clients[client_node]
+    client = users[user].clients[client_node]
     client.create_hardlink(
         client.absolute_path(file_path), client.absolute_path(hardlink_path)
     )
 
 
-@wt(
-    parsers.re(
-        r"(?P<user>\w+) creates symlink of file"
-        r' "(?P<file_path>.*)" and places it in "(?P<symlink_path>.*)" path'
-        r" on (?P<client_node>.*)"
-    )
-)
 def create_symlink(user, file_path, symlink_path, client_node, users):
     user_ = users[user]
     client = user_.clients[client_node]
@@ -418,8 +403,8 @@ def check_size(user, file, size, client_node, users):
         "(?P<file_type>.*) on (?P<client_node>.*)"
     )
 )
-def check_type(user, file, file_type, client_node, users):
-    user = users[user]
+def check_type(user_name, file, file_type, client_node, users):
+    user = users[user_name]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
 
@@ -886,4 +871,44 @@ def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
     client = user.clients[client_node]
     client.create_file(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}/{file_name}"
+    )
+
+
+def assert_file_is_symlink_and_its_real_path(
+    user_name, client_node, users, symlink_path, file_path
+):
+
+    client = users[user_name].clients[client_node]
+    symlink_path = client.absolute_path(symlink_path)
+    file_path = client.absolute_path(file_path)
+
+    check_type(user_name, symlink_path, "symlink", client_node, users)
+
+    real_path = client.realpath(symlink_path)
+    # realpath eliminates every symbolic link encountered in path,
+    # however if there are multiple symlinks this function can
+    # give an error
+
+    assert (
+        real_path == file_path
+    ), f"resolved path: {real_path} is different than {file_path}"
+
+
+def assert_hardlink_between_files(
+    user_name, client_node, users, file_path1, file_path2
+):
+
+    client = users[user_name].clients[client_node]
+    file1 = client.absolute_path(file_path1)
+    file2 = client.absolute_path(file_path2)
+
+    # hardlink and original file must be regular files
+    check_type(user_name, file1, "regular", client_node, users)
+    check_type(user_name, file2, "regular", client_node, users)
+
+    # Two files are hardlinked if they point to the same node in the same
+    # file system (st_ino can give false positives)
+    assert client.samefile(file1, file2), (
+        f"files {file1} and {file2} do not point to the same node in the same file"
+        " system"
     )

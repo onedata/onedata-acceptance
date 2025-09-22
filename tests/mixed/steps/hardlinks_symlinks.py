@@ -10,10 +10,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
 )
-from tests.mixed.steps.oneclient.data_basic import (
-    change_client_name_to_hostname,
-    check_file_is_of_type_oc,
-)
+from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
     check_for_hardlink_between_files_rest,
@@ -228,7 +225,8 @@ def create_hardlink_oneclient(client, user, users, file_path, hardlink_path, spa
             oneclient_host,
             users,
         )
-    raise NoSuchClientException(f"Client: {client} not found.")
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
 
 
 @wt(
@@ -262,26 +260,11 @@ def assert_hardlink_between_files_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        user_name = user
-        user = users[user]
-        client = user.clients[oneclient_host]
-
-        file1 = client.absolute_path(file_path1)
-        file2 = client.absolute_path(file_path2)
-
-        # hardlink and original file must be regular files
-        if not check_file_is_of_type_oc(
-            file1, "regular", user_name, users, "client1"
-        ) or not check_file_is_of_type_oc(
-            file2, "regular", user_name, users, "client1"
-        ):
-            return False
-
-        # Two files are hardlinked if they point to the same node in the same
-        # file system (st_ino can give false positives)
-
-        return client.samefile(file1, file2)
-    raise NoSuchClientException(f"Client: {client} not found.")
+        multi_file_steps.assert_hardlink_between_files(
+            user, oneclient_host, users, file_path1, file_path2
+        )
+    else:
+        raise NoSuchClientException(f"Client: {client} not found.")
 
 
 @wt(
@@ -296,21 +279,9 @@ def assert_file_is_symlink_and_where_it_points_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-
-        user_name = user
-        user = users[user]
-
-        multi_file_steps.check_type(
-            user_name, symlink_path, "symlink", oneclient_host, users
+        multi_file_steps.assert_file_is_symlink_and_its_real_path(
+            user, oneclient_host, users, symlink_path, file_path
         )
 
-        client = user.clients[oneclient_host]
-        real_path = client.realpath(symlink_path)
-
-        # realpath eliminates every symbolic link encountered in path,
-        # however if there are multiple symlinks this function can
-        # give an error
-
-        assert real_path == file_path, f"{real_path} is different than {file_path}"
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
