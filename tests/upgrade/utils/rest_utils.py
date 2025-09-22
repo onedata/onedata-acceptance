@@ -102,7 +102,7 @@ def get_file_attributes(provider_host, token, file_id, attributes):
     return res.json()
 
 
-@repeat_failed(timeout=10)
+@repeat_failed(timeout=30)
 def get_directory_size_statistics(provider_host, token, file_id, mode):
     res = http_get(
         ip=provider_host,

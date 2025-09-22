@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 from functools import partial
 
+from tests.gui.utils.generic import FileAttr
 from tests.upgrade.utils.rest_utils import (
     get_directory_size_statistics,
     get_file_attributes,
@@ -23,39 +24,10 @@ SPACE_NAME = "space_posix"
 TEXT = "example"
 
 ALL_ATTRS = [
-    "fileId",
-    "index",
-    "type",
-    "activePermissionsType",
-    "posixPermissions",
-    "acl",
-    "name",
-    "conflictingName",
-    "path",
-    "parentFileId",
-    "displayGid",
-    "displayUid",
-    "atime",
-    "mtime",
-    "ctime",
-    "size",
-    "isFullyReplicatedLocally",
-    "localReplicationRate",
-    "originProviderId",
-    "directShareIds",
-    "ownerUserId",
-    "hardlinkCount",
-    "symlinkValue",
-    "effProtectionFlags",
-    "effDatasetProtectionFlags",
-    "effDatasetInheritancePath",
-    "effQosInheritancePath",
-    "aggregateQosStatus",
-    "archiveRecallRootFileId",
-    "hasCustomMetadata",
-    "xattr.key",
-]  # excluded hasJsonMetadata, jsonMetadata, creationTime
-
+    attr.value
+    for attr in FileAttr
+    if attr.value not in ("hasJsonMetadata", "jsonMetadata")
+]  # excluded hasJsonMetadata, jsonMetadata as they are available since 21.02.9
 
 ATTRS_MAP = {
     "file_id": "fileId",
@@ -95,26 +67,30 @@ def setup_metadata(tests_controller):
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
 
     # create file, hardlink and symlink
-    create_example_content_in_space(client)
+    create_example_content_in_space(client, tests_controller)
 
     file_id = lookup_file_id(f"{SPACE_NAME}/{REG_NAME}", provider_host, token)
-    _wait_for_file_attrs(
-        partial(get_file_attributes, provider_host, token, file_id, ALL_ATTRS),
+    _wait_for_file_size_attr(
+        provider_host,
+        token,
+        file_id,
         len(TEXT),
     )
     RESULTS["regular_file_attrs_setup"] = get_file_attributes(
         provider_host, token, file_id, ALL_ATTRS
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
-    RESULTS["file_attrs_hardlink_setup"] = get_file_attributes(
-        provider_host, token, file_id, ALL_ATTRS
-    )
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
-    RESULTS["file_attrs_symlink_setup"] = get_file_attributes(
-        provider_host, token, file_id, ALL_ATTRS
-    )
+        file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
+        RESULTS["file_attrs_hardlink_setup"] = get_file_attributes(
+            provider_host, token, file_id, ALL_ATTRS
+        )
+
+        file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
+        RESULTS["file_attrs_symlink_setup"] = get_file_attributes(
+            provider_host, token, file_id, ALL_ATTRS
+        )
 
     if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
@@ -131,19 +107,24 @@ def verify_metadata(tests_controller):
     compare_attrs(
         RESULTS["regular_file_attrs_setup"],
         get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
+        tests_controller,
     )
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
-    compare_attrs(
-        RESULTS["file_attrs_hardlink_setup"],
-        get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
-    )
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
 
-    file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
-    compare_attrs(
-        RESULTS["file_attrs_symlink_setup"],
-        get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
-    )
+        file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
+        compare_attrs(
+            RESULTS["file_attrs_hardlink_setup"],
+            get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
+            tests_controller,
+        )
+
+        file_id = lookup_file_id(f"{SPACE_NAME}/{SYMLINK_NAME}", provider_host, token)
+        compare_attrs(
+            RESULTS["file_attrs_symlink_setup"],
+            get_file_attributes(provider_host, token, file_id, ALL_ATTRS),
+            tests_controller,
+        )
 
     if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
@@ -152,33 +133,49 @@ def verify_metadata(tests_controller):
         )
 
 
-def create_example_content_in_space(client):
+def create_example_content_in_space(client, tests_controller):
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, REG_NAME)
     client.create_file(file_path)
     client.write(TEXT, file_path)
-    link_path = os.path.join(space_path, HARDLINK_NAME)
-    client.create_hardlink(file_path, link_path)
-    link_path = os.path.join(space_path, SYMLINK_NAME)
-    client.create_symlink(file_path, link_path)
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
+        link_path = os.path.join(space_path, HARDLINK_NAME)
+        client.create_hardlink(file_path, link_path)
+        link_path = os.path.join(space_path, SYMLINK_NAME)
+        client.create_symlink(file_path, link_path)
 
     dir_path = os.path.join(space_path, DIR_NAME)
     client.mkdir(dir_path)
 
 
-def compare_attrs(old_attrs, new_attrs):
+def compare_attrs(old_attrs, new_attrs, tests_controller):
     for attr in old_attrs:
         err_msg = (
             f"Attr: {attr} is different after upgrade. Attrs before"
             f" upgrade:\n{old_attrs}.\nAttrs after upgrade:\n{new_attrs}."
         )
-        if attr in ATTRS_MAP:
-            assert old_attrs[attr] == new_attrs[ATTRS_MAP[attr]], err_msg
+        if is_prov_version_lower_than(
+            tests_controller.initial_prov_version, "21.02.01"
+        ):
+            val = format_attr_val(attr, old_attrs)
         else:
-            assert old_attrs[attr] == new_attrs[attr], err_msg
+            val = old_attrs[attr]
+
+        if attr in ATTRS_MAP:
+            assert val == new_attrs[ATTRS_MAP[attr]], err_msg
+        else:
+            assert val == new_attrs[attr], err_msg
 
 
 @repeat_failed(timeout=TIMEOUT_FOR_UPDATING_FILE_ATTRS)
-def _wait_for_file_attrs(query, ex_size):
-    res = query()
+def _wait_for_file_size_attr(provider_host, token, file_id, ex_size):
+    res = get_file_attributes(provider_host, token, file_id, ["size"])
     assert res["size"] == ex_size
+
+
+def format_attr_val(attr, old_attrs):
+    if attr == "type":
+        return old_attrs[attr].upper()
+    if attr == "mode":
+        return old_attrs[attr][1:]
+    return old_attrs[attr]

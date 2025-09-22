@@ -20,7 +20,7 @@ from tests.upgrade.utils.rest_utils import (
     set_file_json_metadata,
     set_file_rdf_metadata,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_prov_version_lower_than
 
 SPACE_NAME = "space_posix"
 FILE_NAME = "file_meta"
@@ -35,7 +35,7 @@ RDF_META = (
     " <si:author>Jan Egil Refsnes</si:author>\n</rdf:Description>\n\n</rdf:RDF>"
 )
 
-XATTRS_META = [{"licence1": "MIT1"}, {"licence2": "MIT2"}, {"licence3": "MIT3"}]
+XATTRS_META = [{"licence1": "MIT1"}, {"licence2": 2}, {"licence3": "MIT3"}]
 
 
 def get_tests(tests_controller):
@@ -75,9 +75,16 @@ def verify_metadata(tests_controller):
 
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
-    assert formatted_res == XATTRS_META, err_msg.format(XATTRS_META, formatted_res)
 
-    for xattr_meta in XATTRS_META:
+    expected_xattrs_meta = XATTRS_META.copy()
+    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "22.0.0"):
+        expected_xattrs_meta[1] = {"license2": "2"}
+
+    assert formatted_res == expected_xattrs_meta, err_msg.format(
+        expected_xattrs_meta, formatted_res
+    )
+
+    for xattr_meta in expected_xattrs_meta:
         (key,) = (xattr_meta.keys(),)
         res = get_file_extended_attributes(provider_host, token, file_id, attribute=key)
         assert res.json() == xattr_meta, err_msg.format(xattr_meta, res.json())
@@ -113,7 +120,7 @@ def verify_metadata(tests_controller):
     res = get_file_extended_attributes(provider_host, token, file_id)
 
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
-    new_expected_result = XATTRS_META.copy()
+    new_expected_result = expected_xattrs_meta.copy()
     new_expected_result.remove({"licence1": "MIT1"})
     new_expected_result.append(new_xattr)
     assert formatted_res == new_expected_result, err_msg.format(
