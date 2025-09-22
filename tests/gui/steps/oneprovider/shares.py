@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -26,7 +26,7 @@ def assert_item_in_file_browser_in_shares_page(
     browser_id,
     item_name,
     op_container,
-    which_browser=WhichBrowser.SHARES_FILE_BROWSER.value,
+    which_browser,
 ):
     file_browser = getattr(
         op_container(selenium[browser_id]).shares_page, transform(which_browser)

@@ -19,7 +19,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -186,7 +186,7 @@ def assert_item_in_file_browser_is_of_type(
     item_name,
     item_attr,
     tmp_memory,
-    which_browser=WhichBrowser.SHARES_FILE_BROWSER.value,
+    which_browser,
 ):
     browser = tmp_memory[browser_id][transform(which_browser)]
     action = getattr(browser.data[item_name], f"is_{transform(item_attr)}")
