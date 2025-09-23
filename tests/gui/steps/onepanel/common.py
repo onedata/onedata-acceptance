@@ -162,3 +162,30 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     nav.subdomain_delegation_documentation_link.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_sidebar_submenu_toggle(selenium, browser_id, view_name, onepanel, toggle):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    getattr(nav, transform(toggle.replace("-", "_"))).check()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "{label}" is "{label_content}" in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_content_on_sidebar_submenu(
+    selenium, browser_id, view_name, onepanel, label, label_content
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    err_msg = f"{label} should be {label_content} but is {actual_label}"
+    assert actual_label == label_content, err_msg

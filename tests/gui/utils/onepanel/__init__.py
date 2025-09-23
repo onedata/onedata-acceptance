@@ -21,6 +21,7 @@ from .overview import ClusterOverviewPage
 from .provider import ProviderContentPage
 from .spaces import SpacesContentPage
 from .storages import StorageContentPage
+from .web_certificate import WebCertificate
 
 
 class Sidebar(PageObject):
@@ -38,6 +39,7 @@ class Content(BaseContent):
     deployment = WebItem(_main_content, cls=Deployment)
     nodes = WebItem(_main_content, cls=NodesContentPage)
     dns_setup = WebItem(_main_content, cls=DNSSetup)
+    web_certificate = WebItem(_main_content, cls=WebCertificate)
     provider = WebItem(_main_content, cls=ProviderContentPage)
     storages = WebItem(_main_content, cls=StorageContentPage)
     spaces = WebItem(_main_content, cls=SpacesContentPage)
