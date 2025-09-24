@@ -138,7 +138,6 @@ def purge_all_spaces(client):
                         # retry in case events between providers haven't synchronized yet
                         retries = retries - 1
                         time.sleep(retry_delay)
-                        continue
                     elif e.errno in (errno.EPERM, errno.EACCES, errno.EIO):
                         # ignore permission errors during cleaning
                         space_purged = True
