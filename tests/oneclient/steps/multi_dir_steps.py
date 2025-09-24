@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import errno
 import os.path
 import subprocess as sp
+import time
 
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
@@ -117,22 +118,36 @@ def fail_to_delete_empty(user, dirs, client_node, users):
 
 def purge_all_spaces(client):
     try:
+        retry_delay = 5
+
         spaces = client.list_spaces()
+
         for space in spaces:
             space_path = client.absolute_path(space)
-            try:
-                print(f"Cleaning space {space_path}")
-                client.rm(path=space_path, recursive=True)
-            except FileNotFoundError:
-                pass
-            except OSError as e:
-                # ignore permission errors during cleaning
-                if e.errno not in (errno.EPERM, errno.EACCES, errno.EIO):
-                    print(
-                        f"Unexpected error '{e.errno}' when cleaning space:"
-                        f" {space_path}"
-                    )
-                    raise e
+            retries = 10
+            space_purged = False
+            while retries > 0 and not space_purged:
+                try:
+                    print(f"Cleaning space {space_path} (retries left {retries})")
+                    client.rm(path=space_path, recursive=True)
+                    space_purged = True
+                except FileNotFoundError:
+                    space_purged = True
+                except OSError as e:
+                    if e.errno in (errno.ENOTEMPTY, errno.EAGAIN) and (retries > 0):
+                        # retry in case events between providers haven't synchronized yet
+                        retries = retries - 1
+                        time.sleep(retry_delay)
+                        continue
+                    elif e.errno in (errno.EPERM, errno.EACCES, errno.EIO):
+                        # ignore permission errors during cleaning
+                        space_purged = True
+                    else:
+                        print(
+                            f"Unexpected error '{e.errno}' when cleaning space:"
+                            f" {space_path}"
+                        )
+                        raise e
     except FileNotFoundError:
         pass
     except Exception as e:
