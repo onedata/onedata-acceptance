@@ -78,7 +78,7 @@ Feature: Basic operations on public shares in file browser
 
     And user of browser1 sees file browser on share's public interface
     And user of browser1 clicks and presses enter on item named "dir1" in file browser
-    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the file browser
+    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the shares file browser
     And user of browser1 refreshes site
 
     Then user of browser1 sees "Share not found" error

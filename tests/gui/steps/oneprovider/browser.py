@@ -149,7 +149,6 @@ def _get_items_list_from_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = {f.name for f in browser.data if f.name}
     driver = selenium[browser_id]
-
     if len(data) != len(browser.data):
 
         def condition(data_):
@@ -680,3 +679,12 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_b
         raise AssertionError(f"button {button} is visible in {which_browser} browser")
     except RuntimeError:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "navigate to root directory" button'))
+def navigate_to_root_from_error_page(
+    browser_id,
+    tmp_memory,
+):
+    browser = tmp_memory[browser_id]["file_browser"]
+    browser.navigate_root_btn.click()
