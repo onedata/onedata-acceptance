@@ -88,6 +88,7 @@ from tests.mixed.steps.rest.oneprovider.metadata import (
 )
 from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.path_utils import get_first_path_element
 from tests.utils.utils import repeat_failed
 
@@ -812,18 +813,23 @@ def read_from_file_in_op(
 
 @wt(
     parsers.re(
-        r'using (?P<client>.*), (?P<user>\w+) appends "(?P<text>.*)" '
-        'to file named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r"using (?P<client>.*), (?P<user>\w+) (?P<result>(succeeds|fails)) to append"
+        r' "(?P<text>.*)" '
+        r'to file named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def append_to_file_in_op(
-    client, user, text, file_name, space, host, users, hosts, cdmi
+    client, user, result, text, file_name, space, host, users, hosts, cdmi
 ):
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
+        try:
+            append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
+        except HTTPBadRequest:
+            assert result == "fails", "The append operation was supposed to succeed"
+
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.append(user, text, full_path, oneclient_host, users)
@@ -874,9 +880,9 @@ def move_file_in_op(client, user, result, src_path, dst_path, host, users, cdmi,
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) copies "
-        "(?P<item_type>(directory|file)) named "
-        '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-        "in (?P<host>.*)"
+        r"(?P<item_type>(directory|file)) named "
+        r'"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
+        r"in (?P<host>.*)"
     )
 )
 def copy_item_in_op(
