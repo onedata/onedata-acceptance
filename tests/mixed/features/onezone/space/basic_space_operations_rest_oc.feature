@@ -44,6 +44,7 @@ Feature: Basic management
                     size: 1000000
     When using oneclient1, user1 sees spaces "[space1, space3]" in mount point
     And using REST, user1 removes space named "space3" in "onezone" Onezone service
+    And using oneclient1, user1 sees spaces "[space1]" in mount point
 
     And using REST, user1 creates space "space3" in "onezone" Onezone service
     And using REST, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
