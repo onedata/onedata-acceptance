@@ -165,7 +165,7 @@ def wt_try_to_register_prov_using_register_btn(
     step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
 
-    _wait_after_prov_registration(onepanel, driver, modals)
+    wait_for_next_step_in_deployment(onepanel, driver, modals, 6)
 
     # if error modal occurred close it and repeat function execution
     try:
@@ -177,9 +177,9 @@ def wt_try_to_register_prov_using_register_btn(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _wait_after_prov_registration(onepanel, driver, modals):
+def wait_for_next_step_in_deployment(onepanel, driver, modals, next_step_num):
     assert (
-        onepanel(driver).content.deployment.num == "6"
+        int(onepanel(driver).content.deployment.num) == next_step_num
         or modals(driver).error.is_displayed()
     )
 
