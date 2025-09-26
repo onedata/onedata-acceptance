@@ -414,7 +414,7 @@ def check_type(user_name, file, file_type, client_node, users):
         stat_method = "S_ISDIR"
     elif file_type == "symlink":
         stat_method = "S_ISLNK"
-        # VFS-13001 Check symlink type in stat in oneclient
+        # TODO: VFS-13001 Check symlink type in stat in oneclient
     else:
         raise ValueError(f"unknown file type {file_type}")
 
@@ -874,11 +874,10 @@ def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
     )
 
 
-def assert_file_is_symlink_and_its_real_path(
-    user_name, client_node, users, symlink_path, file_path
-):
+def assert_symlink_of_file(user_name, client_node, users, symlink_path, file_path):
 
-    client = users[user_name].clients[client_node]
+    user = users[user_name]
+    client = user.clients[client_node]
     symlink_path = client.absolute_path(symlink_path)
     file_path = client.absolute_path(file_path)
 
@@ -889,16 +888,17 @@ def assert_file_is_symlink_and_its_real_path(
     # however if there are multiple symlinks this function can
     # give an error
 
-    assert (
-        real_path == file_path
-    ), f"resolved path: {real_path} is different than {file_path}"
+    assert real_path == file_path, (
+        f"resolved symlink real path: {real_path} is different than file real path:"
+        f" {file_path}"
+    )
 
 
 def assert_hardlink_between_files(
     user_name, client_node, users, file_path1, file_path2
 ):
-
-    client = users[user_name].clients[client_node]
+    user = users[user_name]
+    client = user.clients[client_node]
     file1 = client.absolute_path(file_path1)
     file2 = client.absolute_path(file_path2)
 
@@ -907,7 +907,7 @@ def assert_hardlink_between_files(
     check_type(user_name, file2, "regular", client_node, users)
 
     # Two files are hardlinked if they point to the same node in the same
-    # file system (st_ino can give false positives)
+    # file system
     assert client.samefile(file1, file2), (
         f"files {file1} and {file2} do not point to the same node in the same file"
         " system"

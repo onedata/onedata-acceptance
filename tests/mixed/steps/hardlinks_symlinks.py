@@ -20,8 +20,12 @@ from tests.mixed.steps.rest.oneprovider.data import (
     get_file_symlink_value_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_provider
-from tests.oneclient.steps import multi_file_steps
-from tests.oneclient.steps.multi_file_steps import create_hardlink, create_symlink
+from tests.oneclient.steps.multi_file_steps import (
+    assert_hardlink_between_files,
+    assert_symlink_of_file,
+    create_hardlink,
+    create_symlink,
+)
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 
@@ -260,7 +264,7 @@ def assert_hardlink_between_files_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_file_steps.assert_hardlink_between_files(
+        assert_hardlink_between_files(
             user, oneclient_host, users, file_path1, file_path2
         )
     else:
@@ -279,9 +283,6 @@ def assert_file_is_symlink_and_where_it_points_oneclient(
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_file_steps.assert_file_is_symlink_and_its_real_path(
-            user, oneclient_host, users, symlink_path, file_path
-        )
-
+        assert_symlink_of_file(user, oneclient_host, users, symlink_path, file_path)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
