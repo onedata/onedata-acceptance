@@ -66,6 +66,13 @@ class Client:
 
         ret = self.run_cmd(cmd, verbose=True)
 
+        if ret == 0:
+            self._wait_until(
+                10,
+                lambda: self.run_cmd(f"stat {self._mount_path}/.__onedata_mountpoint__")
+                == 0,
+            )
+
         return ret
 
     def unmount(self):
@@ -83,6 +90,14 @@ class Client:
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
+
+    @staticmethod
+    def _wait_until(duration, condition, delay=1):
+        wait_end = time.time() + duration
+        while not condition():
+            if time.time() > wait_end:
+                raise TimeoutError
+            time.sleep(delay)
 
     @staticmethod
     def _repeat_until(condition, timeout):
