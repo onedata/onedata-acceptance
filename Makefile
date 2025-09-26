@@ -10,7 +10,7 @@ ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL
 export ONEDATA_GIT_URL
 
 # TODO: VFS-12424 Try latest Chrome (newer than 128.0.6613.86) with fix from this issue
-ACCEPTANCE_TEST_IMAGE := docker.onedata.org/acceptance_tests:v2.130
+ACCEPTANCE_TEST_IMAGE := onedata/acceptance_tests:v2.130
 
 unpack = tar xzf $(1).tar.gz
 
