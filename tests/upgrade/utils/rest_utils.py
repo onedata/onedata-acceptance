@@ -12,6 +12,7 @@ from tests.utils.rest_utils import (
     get_panel_rest_path,
     get_provider_rest_path,
     get_zone_rest_path,
+    http_delete,
     http_get,
     http_patch,
     http_post,
@@ -85,6 +86,37 @@ def download_file_content(provider_host, token, file_id):
     return res.content
 
 
+def get_file_attributes(provider_host, token, file_id, attributes):
+    # if provider version is lower than 21.02.5, provided attributes are ignored
+    # and all available attributes are returned
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({"attributes": attributes}),
+    )
+    return res.json()
+
+
+@repeat_failed(timeout=30)
+def get_directory_size_statistics(provider_host, token, file_id, mode):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "dir_size_stats"),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps({"mode": mode}),
+    )
+    return res.json()
+
+
 # Metadata
 
 
@@ -98,6 +130,30 @@ def set_file_json_metadata(provider_host, token, file_id, data):
             "Content-Type": "application/json",
         },
         data=json.dumps(data),
+    )
+    return res
+
+
+def get_file_json_metadata(provider_host, token, file_id):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "json"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_json_metadata(provider_host, token, file_id):
+    res = http_delete(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "json"),
+        headers={
+            "X-Auth-Token": token,
+        },
     )
     return res
 
@@ -116,8 +172,60 @@ def set_file_rdf_metadata(provider_host, token, file_id, data):
     return res
 
 
+def get_file_rdf_metadata(provider_host, token, file_id):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_rdf_metadata(provider_host, token, file_id):
+    res = http_delete(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "rdf"),
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
 def set_file_extended_attribute(provider_host, token, file_id, data):
     res = http_put(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
+        headers={
+            "X-Auth-Token": token,
+            "Content-Type": "application/json",
+        },
+        data=json.dumps(data),
+    )
+    return res
+
+
+def get_file_extended_attributes(provider_host, token, file_id, attribute=None):
+    res = http_get(
+        ip=provider_host,
+        port=OP_REST_PORT,
+        path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
+        params={"attribute": attribute} if attribute else None,
+        headers={
+            "X-Auth-Token": token,
+        },
+    )
+    return res
+
+
+def delete_file_extended_attributes(provider_host, token, file_id, keys=None):
+    data = {"keys": list(keys)}
+    res = http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
         path=get_provider_rest_path("data", file_id, "metadata", "xattrs"),
