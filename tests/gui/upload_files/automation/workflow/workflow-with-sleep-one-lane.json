@@ -24,7 +24,7 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "onedata/lambda-echo:v3",
+                "dockerImage": "docker.onedata.org/lambda-echo:v4-dev",
                 "dockerExecutionOptions": {
                   "readonly": true,
                   "oneclientOptions": "",
