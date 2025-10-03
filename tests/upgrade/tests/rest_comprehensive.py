@@ -419,8 +419,7 @@ def assert_xmls_equal(e1, e2):
     r1_sorted = sorted(r1, key=lambda x: (x.tag, x.text, x.attrib))
     r2_sorted = sorted(r2, key=lambda x: (x.tag, x.text, x.attrib))
 
-    if len(r1_sorted) != len(r2_sorted):
-        assert f"Xml: {e1} is not equal to\n{e2}"
+    assert len(r1_sorted) == len(r2_sorted), f"Xml: {e1} is not equal to\n{e2}"
     err_msg = f"Xml: {e1} is not equal to\n{e2}\nExpected value: {{}}, but got: {{}}"
     for el1, el2 in zip(r1_sorted, r2_sorted):
         assert el1.tag == el2.tag, err_msg.format(el1.tag, el2.tag)

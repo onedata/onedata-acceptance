@@ -19,6 +19,7 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
+    NamedButton,
     WebElement,
     WebElementsSequence,
     WebItem,
@@ -51,7 +52,9 @@ class _FileBrowser(PageObject):
     empty_dir_msg = Label(".empty-dir-text")
     _empty_dir_icon = WebElement(".empty-dir-image")
     _bottom_of_visible_fragment = WebElement(".table-bottom-spacing")
+
     error_dir_msg = Label(".error-dir-text")
+    navigate_root_btn = NamedButton(".btn-default", text="Navigate to root directory")
 
     _upload_input = WebElement(".fb-upload-trigger input")
     header = WebElement(".file-browser-head-container")

@@ -13,7 +13,8 @@ oneprovider-1:
   workerOverlayConfig: |-
     [
       {op_worker, [
-          {rtransfer_block_size, 1}
+          {rtransfer_block_size, 1},
+          {file_upload_verbose_logs_enabled, true}
       ]}
     ].
 
@@ -23,6 +24,7 @@ oneprovider-2:
   workerOverlayConfig: |-
     [
       {op_worker, [
-          {rtransfer_block_size, 1}
+          {rtransfer_block_size, 1},
+          {file_upload_verbose_logs_enabled, true}
       ]}
     ].
