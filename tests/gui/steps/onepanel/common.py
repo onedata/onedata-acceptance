@@ -177,6 +177,21 @@ def click_on_sidebar_submenu_toggle(selenium, browser_id, view_name, onepanel, t
 
 @wt(
     parsers.parse(
+        'user of {browser_id} sees that "{toggle}" toggle is checked in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_toggle_checked_in_sidebar_submenu(
+    selenium, browser_id, view_name, onepanel, toggle
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
+    assert toggle_elem.is_checked(), f"toggle {toggle} is not checked in {view_name}"
+
+
+@wt(
+    parsers.parse(
         'user of {browser_id} sees that "{label}" is "{label_content}" in {view_name}'
         " view in Onepanel"
     )
