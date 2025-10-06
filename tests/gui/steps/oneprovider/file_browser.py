@@ -701,3 +701,31 @@ def assert_physical_location_path_and_copy_in_file_details(
     path = clipboard.paste(display=displays[browser_id])
     err_msg = "there is no physical location path visible in file details"
     assert path is not None, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{expected_msg}" sign in the {which_browser}'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_empty_file_browser(
+    selenium,
+    browser_id,
+    tmp_memory,
+    public_share,
+    op_container,
+    expected_msg,
+    which_browser,
+):
+    if which_browser.lower() == "shares file browser":
+        file_browser = public_share(selenium[browser_id]).file_browser
+    else:
+        file_browser = op_container(selenium[browser_id]).file_browser
+
+    tmp_memory[browser_id]["file_browser"] = file_browser
+
+    assert expected_msg == file_browser.error_dir_msg, (
+        f'Displayed empty dir msg "{file_browser.error_dir_msg}" does not '
+        f'match expected one "{expected_msg}"'
+    )

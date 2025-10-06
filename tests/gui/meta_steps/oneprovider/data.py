@@ -1257,14 +1257,15 @@ def delete_first_n_files_with_fixed_step(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} copies "{type_}" browser link of "{path}" item to'
-        ' clipboard in "{space}" space'
+    parsers.re(
+        r'user of (?P<browser_id>.*) copies "(?P<link_type>show|download)" browser link'
+        r' of "(?P<path>.*)" item to'
+        r' clipboard in "(?P<space>.*)" space'
     )
 )
-def click_on_link_in_file_details_modal(
+def copy_show_or_download_link_from_file_details_modal(
     browser_id,
-    type_: str,
+    link_type: str,
     path,
     space,
     selenium,
@@ -1275,7 +1276,7 @@ def click_on_link_in_file_details_modal(
     modals,
 ):
     option = "Information"
-    button = f"{type_.lower()} link"
+    button = f"{link_type} link"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory, oz_page, op_container

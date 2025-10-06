@@ -907,41 +907,6 @@ def create_token_with_object_id(
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
 
-@given(
-    parsers.parse(
-        "using web GUI, {user} creates token with following configuration:\n{config}"
-    )
-)
-def given_create_token(
-    user,
-    config,
-    selenium,
-    oz_page,
-    popups,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    clipboard,
-    displays,
-):
-
-    create_token_with_config(
-        selenium,
-        user,
-        config,
-        oz_page,
-        popups,
-        users,
-        groups,
-        hosts,
-        tmp_memory,
-    )
-
-    click_copy_button_in_token_view(selenium, user, oz_page)
-    tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
-
-
 @wt(parsers.parse('user of {browser_id} copies token "{token_name}" from tokens page'))
 def copy_token_and_store_value(
     selenium, browser_id, token_name, oz_page, clipboard, displays, tmp_memory

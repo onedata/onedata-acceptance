@@ -101,7 +101,7 @@ def ensure_yaml(file):
 
 def absolute_path_to_env_file(directory, file):
     """Returns absolute path to environment file from dir. Ensures that file
-    has .json extension"""
+    has .yaml extension"""
     return os.path.join(directory, ensure_yaml(file))
 
 

@@ -9,7 +9,8 @@ oneprovider-1:
   workerOverlayConfig: |- 
     [
       {op_worker, [
-          {rename_file_chunk_size, 512}
+          {rename_file_chunk_size, 512},
+          {file_upload_verbose_logs_enabled, true}
       ]}
     ].
 
@@ -17,7 +18,8 @@ oneprovider-2:
   workerOverlayConfig: |-
     [
       {op_worker, [
-          {rename_file_chunk_size, 512}
+          {rename_file_chunk_size, 512},
+          {file_upload_verbose_logs_enabled, true}
       ]}
     ].
     

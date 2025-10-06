@@ -41,9 +41,10 @@ Feature: Operations on file show/download links with multibrowser
     And user of browser2 sees that "File details" modal is opened on "Info" tab
     Then user of browser2 can see that file owner is "John Smith (user1)" in file details modal
 
-  Scenario: Logged in user can open download link copied from space owner's file details modal
+
+  Scenario: Logged in user can download a file via received link from space owner
     When user of browser1 opens file browser for "space1" space
-    And user of browser1 copies "Download" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
+    And user of browser1 copies "download" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser2 opens URL received from user of browser1 without waiting
@@ -55,9 +56,9 @@ Feature: Operations on file show/download links with multibrowser
     Then user of browser2 sees that content of downloaded file "file2" is equal to: "1111"
   
 
-  Scenario: Logged in user can see a file using show file link from file details modal, received from other user
+  Scenario: Logged in user can see a file via received show link from space owner
     When user of browser1 opens file browser for "space1" space
-    And user of browser1 copies "Show" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
+    And user of browser1 copies "show" browser link of "dir1/dir2/file2" item to clipboard in "space1" space
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser2 opens URL received from user of browser1 without waiting
