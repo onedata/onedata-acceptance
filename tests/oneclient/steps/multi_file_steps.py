@@ -400,11 +400,11 @@ def check_size(user, file, size, client_node, users):
 @then(
     parsers.re(
         r"file type of (?P<user>\w+)'s (?P<file>.*) is "
-        "(?P<file_type>.*) on (?P<client_node>.*)"
+        r"(?P<file_type>.*) on (?P<client_node>.*)"
     )
 )
-def check_type(user_name, file, file_type, client_node, users):
-    user = users[user_name]
+def check_type(user, file, file_type, client_node, users):
+    user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
 
@@ -874,8 +874,9 @@ def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
     )
 
 
-def assert_symlink_of_file(user_name, client_node, users, symlink_path, file_path):
+def assert_symlink_of_file(user, client_node, users, symlink_path, file_path):
 
+    user_name = user
     user = users[user_name]
     client = user.clients[client_node]
     symlink_path = client.absolute_path(symlink_path)
@@ -894,9 +895,8 @@ def assert_symlink_of_file(user_name, client_node, users, symlink_path, file_pat
     )
 
 
-def assert_hardlink_between_files(
-    user_name, client_node, users, file_path1, file_path2
-):
+def assert_hardlink_between_files(user, client_node, users, file_path1, file_path2):
+    user_name = user
     user = users[user_name]
     client = user.clients[client_node]
     file1 = client.absolute_path(file_path1)
