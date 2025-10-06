@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import Label
 
 
 class WebCertificate(PageObject):
-    use_lets_encrypt = Toggle(".letsEncrypt-field .one-way-toggle-control")
+    use_lets_encrypt = Toggle(".letsEncrypt-field .one-way-toggle")
     dns_names = Label(".dnsNames-field .static-list-field-item")
     issuer = Label(".issuer-field .static-text-field")
     certificate_path = Label(".certPath-field .static-text-field")
@@ -19,4 +19,4 @@ class WebCertificate(PageObject):
     certificate_chain_path = Label(".chainPath-field .static-text-field")
 
     def __str__(self):
-        return f"{self.name} record in {self.parent}"
+        return "Web certificate"
