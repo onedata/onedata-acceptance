@@ -72,7 +72,8 @@ class _Toggle(PageObject):
         return f"toggle switch in {self.parent}"
 
     def is_checked(self):
-        return "checked" in self.web_elem.get_attribute("class")
+        class_attrs = self.web_elem.get_attribute("class")
+        return "checked" in class_attrs and "in-progress" not in class_attrs
 
     def is_partial_checked(self):
         return "maybe" in self.web_elem.get_attribute("class")
