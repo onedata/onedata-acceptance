@@ -20,6 +20,7 @@ from tests.gui.steps.onezone.automation.automation_basic import (
     click_option_in_revision_menu_button,
     go_to_inventory_subpage,
     has_downloaded_workflow_file_content,
+    try_to_close_workflow_creation_popup,
     upload_lambda_from_repository,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -217,10 +218,8 @@ def change_parameter_type_in_lambda_form(
     bracket_name = "bracket_" + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
     css_sel = "#" + object_bracket.name.web_elem.get_attribute("id")
-    try:
-        popups(driver).workflow_creation_alert.close()
-    except RuntimeError:
-        pass
+
+    try_to_close_workflow_creation_popup(popups, driver)
 
     scroll_to_css_selector(driver, css_sel)
 
