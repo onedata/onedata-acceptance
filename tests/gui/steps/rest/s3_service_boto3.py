@@ -80,11 +80,7 @@ def does_bucket_exist(s3, bucket_name):
     )
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} can see there is "{space_name}" in OneS3 service'
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} can see there is a space "{space_name}"'))
 def wt_assert_bucket_exists(space_name, tmp_memory, tokens, hosts):
     s3 = get_s3client(tmp_memory, tokens, hosts)
     assert does_bucket_exist(s3, space_name)
@@ -99,8 +95,7 @@ def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, browser_id):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} downloads "{file_name}" from "{space_name}" using OneS3'
-        " service"
+        'using OneS3, user of {browser_id} downloads "{file_name}" from "{space_name}"'
     )
 )
 def wt_download_file_from_bucket(
@@ -118,8 +113,8 @@ def create_file_in_bucket(s3, bucket_name, file_name, file_content):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} creates "{file_name}" with content "{file_content}" in'
-        ' "{space_name}" using OneS3 service'
+        'using OneS3, user {user} creates "{file_name}" with content '
+        '"{file_content}" in "{space_name}"'
     )
 )
 def wt_create_file_in_bucket(
@@ -159,12 +154,7 @@ def list_bucket_content(s3, bucket_name):
     return []
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} can see items {items} in "{space_name}" using OneS3'
-        " service"
-    )
-)
+@wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
 def wt_assert_bucket_content(space_name, items, tmp_memory, tokens, hosts):
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = list_bucket_content(s3, space_name)

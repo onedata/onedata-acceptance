@@ -1,5 +1,4 @@
-Feature: Basic management
-  Basic management of space in Onezone using REST and OneS3
+Feature: Basic management of space in Onezone using REST and OneS3
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

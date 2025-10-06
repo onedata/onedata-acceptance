@@ -64,5 +64,6 @@ def screens():
     return [0]
 
 
-scenarios("../features/onezone/space/basic_space_operations_rest_oc.feature")
-scenarios("../features/onezone/space/basic_space_operations_rest_ones3.feature")
+# scenarios("../features/onezone/space/basic_space_operations_rest_oc.feature")
+# scenarios("../features/onezone/space/basic_space_operations_rest_ones3.feature")
+scenarios("../features/onezone/space/s3_service_basic.feature")
