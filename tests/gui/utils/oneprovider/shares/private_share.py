@@ -55,4 +55,4 @@ class PrivateShareView(PublicShareView):
     link_name = Label(".ember-power-select-selected-item")
 
     def __str__(self):
-        return "Private Share View"
+        return "Private share View"

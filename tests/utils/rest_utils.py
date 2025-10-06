@@ -51,6 +51,7 @@ def http_get(
     port,
     path,
     use_ssl=True,
+    data=None,
     headers=None,
     verify=False,
     cert=None,
@@ -68,6 +69,7 @@ def http_get(
         verify,
         cert,
         auth,
+        data,
         default_headers=default_headers,
         params=params,
     )
@@ -144,6 +146,7 @@ def http_delete(
     auth=None,
     default_headers=True,
     params=None,
+    data=None,
 ):
     return http_request(
         requests.delete,
@@ -157,6 +160,7 @@ def http_delete(
         auth,
         default_headers=default_headers,
         params=params,
+        data=data,
     )
 
 

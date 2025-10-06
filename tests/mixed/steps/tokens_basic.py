@@ -49,6 +49,8 @@ def create_token(
     tmp_memory,
     tokens,
     spaces,
+    clipboard,
+    displays,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -63,6 +65,8 @@ def create_token(
             hosts,
             tmp_memory,
         )
+        click_copy_button_in_token_view(selenium, user, oz_page)
+        tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
     elif client_lower == "rest":
         create_token_with_config_rest(
             user, config, users, tokens, hosts, tmp_memory, groups, spaces

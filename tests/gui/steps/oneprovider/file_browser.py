@@ -445,6 +445,12 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     assert len(detected_files) == count, err_msg
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see that file owner is "{owner}" in file details'
+        " modal"
+    )
+)
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
     assert_tab_in_modal(selenium, browser_id, "Info", modals, "File details")
     actual = modals(selenium[browser_id]).details_modal.owner
@@ -486,9 +492,10 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, mod
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that path of "{file}" hardlink '
-        'is "{path}" in "File details" modal'
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) sees that path of "(?P<file>.*)"'
+        r" hardlink "
+        r'is "(?P<path>.*)" in "File details" modal'
     )
 )
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
@@ -500,10 +507,12 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, mo
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees paths {paths} of hardlinks in "File details" modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees paths (?P<paths>.*) of"
+        r' hardlinks in "File details" modal'
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modals):
     entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
@@ -513,9 +522,10 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modal
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that {link_property} is "{value}" '
-        'in "Symbolic link details" modal'
+    parsers.re(
+        r"(using web GUI, )?user of (?P<browser_id>.*) sees that (?P<link_property>.*)"
+        r' is "(?P<value>.*)" '
+        r'in "Symbolic link details" modal'
     )
 )
 def assert_property_in_symlink_dets_modal(
@@ -685,3 +695,31 @@ def assert_physical_location_path_and_copy_in_file_details(
     path = clipboard.paste(display=displays[browser_id])
     err_msg = "there is no physical location path visible in file details"
     assert path is not None, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{expected_msg}" sign in the {which_browser}'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_empty_file_browser(
+    selenium,
+    browser_id,
+    tmp_memory,
+    public_share,
+    op_container,
+    expected_msg,
+    which_browser,
+):
+    if which_browser.lower() == "shares file browser":
+        file_browser = public_share(selenium[browser_id]).file_browser
+    else:
+        file_browser = op_container(selenium[browser_id]).file_browser
+
+    tmp_memory[browser_id]["file_browser"] = file_browser
+
+    assert expected_msg == file_browser.error_dir_msg, (
+        f'Displayed empty dir msg "{file_browser.error_dir_msg}" does not '
+        f'match expected one "{expected_msg}"'
+    )

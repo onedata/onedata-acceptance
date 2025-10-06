@@ -74,6 +74,7 @@ from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     force_start_storage_scan,
+    wait_for_space_support,
     wait_for_storage_scan_to_finish,
 )
 from tests.utils.utils import repeat_failed
@@ -968,3 +969,14 @@ def force_start_and_wait_to_finish_storage_import_scan(
         run_scan_and_wait_till_finished(selenium, user, onepanel)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} waits for space "{space}" support in {provider_name}'
+    )
+)
+def wt_wait_for_space_support_rest(space, spaces, user, users, provider_name, hosts):
+    wait_for_space_support(
+        spaces[space], hosts[provider_name]["hostname"], [user], users
+    )

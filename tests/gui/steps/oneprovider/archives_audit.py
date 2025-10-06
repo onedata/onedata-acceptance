@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 
 import yaml
+from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
@@ -212,6 +213,59 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, modals, selenium):
     modal.click()
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on item "{file_name}" using scroll in archive'
+        " audit log"
+    )
+)
+def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
+    browser_id, file_name, modals, selenium
+):
+
+    driver = selenium[browser_id]
+    modal = modals(driver).archive_audit_log
+
+    seen_rows = set()
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        try:
+            new_rows_names = []
+            for row in modal.data_row:
+                if row.name:
+                    new_rows_names.append(row.name)
+
+        except StaleElementReferenceException:
+            pass
+
+            # This try/except block handles cases where some rows exist in the `data_row` structure,
+            # but not all of their fields are fully loaded.
+            # This can result in the following exception:
+            # "StaleElementReferenceException:
+            #  Message: stale element reference: stale element not found in the current frame"
+
+        if file_name in new_rows_names:
+            try:
+                modal.data_row[file_name].clickable_field.click()
+            except StaleElementReferenceException:
+                modal.scroll_by_press_space()
+                modal.data_row[file_name].clickable_field.click()
+
+                # This try/except block handles cases where the page doesn't load properly.
+                # Sometimes, when the user tries to click on one of the
+                # last elements in the audit log,
+                # the clickable area is hidden, causing an exception.
+                # To work around this, the page is scrolled down one more time.
+            return
+
+        # if there are at least 1 new row keep scrolling
+        stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
+        seen_rows.update(new_rows_names)
+        modal.scroll_by_press_space()
+
+    raise AssertionError(f"entry {file_name} not found in archive audit log")
+
+
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
 def click_on_top_item_in_archive_audit_log(browser_id, modals, selenium):
     click_on_item_in_archive_audit_log(browser_id, 0, modals, selenium)
@@ -367,3 +421,57 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium, modals):
     driver = selenium[browser_id]
     modal = modals(driver).archive_audit_log
     modal.scroll_to_top()
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that path in Entry Details in archive audit log is:"
+        ' "{path}" and displayed archive name is correct'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archived_file_path_and_archive_name(browser_id, selenium, modals, path):
+    driver = selenium[browser_id]
+    modal_details = modals(driver).audit_log_entry_details
+
+    details_file_path = modal_details.file_path.text.replace("\n", "").split("/")
+    details_archive_name = details_file_path[0].split("›")[1]
+    # Depending on window size, name of archive may not be present and it raises exception
+    details_file_path = "/".join(details_file_path[1:])
+    # Depending on window size, could be without [1:], if archive name is not present
+
+    assert (
+        path == details_file_path
+    ), f"given path: {path} is different than actual file path: {details_file_path}"
+
+    modal = modals(driver).archive_audit_log
+    assert modal.archive_name == details_archive_name, (
+        f"name of archive in archive audit log modal: {modal.archive_name} is different"
+        f" than shown in audit log entry details:  {details_archive_name}"
+    )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that all entries with filename: "{file_name}"'
+        ' have different hashes and sees exactly "{number}" of them'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_unique_hashes_and_number_of_logs(
+    browser_id, selenium, modals, file_name, number: int
+):
+    driver = selenium[browser_id]
+    logs = modals(driver).archive_audit_log.data_row
+    hashes = []
+    for log in logs:
+        if log.name == file_name:
+            log_hash = log.duplicated_name_hash
+            assert (
+                log_hash not in hashes
+            ), f"There are at least two identical hashes: {log_hash}"
+            hashes.append(log_hash)
+
+    assert (
+        len(hashes) == number
+    ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"

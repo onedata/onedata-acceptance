@@ -149,7 +149,6 @@ def _get_items_list_from_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = {f.name for f in browser.data if f.name}
     driver = selenium[browser_id]
-
     if len(data) != len(browser.data):
 
         def condition(data_):
@@ -432,9 +431,9 @@ def click_option_in_data_row_menu_in_browser(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks "{option}" option '
-        "in data row menu in {which_browser}"
+    parsers.re(
+        r'(using web GUI, )?user of (?P<browser_id>.*) clicks "(?P<option>.*)" option '
+        r"in data row menu in (?P<which_browser>.*)"
     )
 )
 def wt_click_option_in_data_row_menu_in_browser(
@@ -489,8 +488,9 @@ def click_on_state_view_mode_tab(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) clicks on menu for "(?P<item_name>.*)" '
-        "(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
+        r"(using web GUI, )?user of (?P<browser_id>.*) clicks on menu for"
+        r' "(?P<item_name>.*)" '
+        r"(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
     )
 )
 def wt_click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser):
@@ -511,6 +511,13 @@ def click_menu_for_elem_in_browser(
     parsers.re(
         "user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) "
         'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
+    )
+)
+@wt(
+    parsers.re(
+        r"using web GUI, user of (?P<browser_id>.*) clicks on"
+        r" (?P<tag>.*tag.*|.*icon.*) "
+        r'for "(?P<item_name>.*)" in (?P<which_browser>.*) in (?P<host>.*)'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -672,3 +679,12 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_b
         raise AssertionError(f"button {button} is visible in {which_browser} browser")
     except RuntimeError:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "navigate to root directory" button'))
+def navigate_to_root_from_error_page(
+    browser_id,
+    tmp_memory,
+):
+    browser = tmp_memory[browser_id]["file_browser"]
+    browser.navigate_root_btn.click()

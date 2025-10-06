@@ -78,7 +78,7 @@ Feature: Basic operations on public shares in file browser
 
     And user of browser1 sees file browser on share's public interface
     And user of browser1 clicks and presses enter on item named "dir1" in file browser
-    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the file browser
+    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the shares file browser
     And user of browser1 refreshes site
 
     Then user of browser1 sees "Share not found" error
@@ -136,7 +136,7 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 sees that public share is named "share_dir1"
     And user of browser1 clicks share link type selector on share's public interface
     And user of browser1 chooses "Share REST endpoint" share link type on share's public interface
-    And user of browser1 copies Share REST endpoint on share's public interface
+    And user of browser1 copies share REST endpoint on share's public interface
     And user of browser1 runs curl command copied from public shares page
     Then user of browser1 sees that curl result matches following config:
            name: share_dir1

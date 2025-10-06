@@ -27,6 +27,8 @@ class FilesLog(BrowserRow):
     name = id = Label(".file-name")
     event = Label(".message-text")
     clickable_field = WebElement(".file-name")
+    date = Label(".timestamp-cell")
+    duplicated_name_hash = Label(".log-filename-duplicate-hash")
 
     def click(self):
         time.sleep(0.1)
@@ -34,6 +36,7 @@ class FilesLog(BrowserRow):
 
 
 class ArchiveAuditLog(Modal):
+    archive_name = Label(".file-base-name")
     _data_row = WebElementsSequence(".table-entry.data-row")
     data_row = WebItemsSequence(".table-entry.data-row", cls=FilesLog)
     info_dict = {"Time": 0, "File": 1, "Event": 2, "Time taken": 3}

@@ -267,7 +267,7 @@ Feature: Basic datasets operations
 
   # TODO VFS-10555 check hardlink inherited protection flags behavior
 
-
+  
   # checks bugfix from VFS-8739
   Scenario: User sees proper list of datasets when their names have common prefix and end with digit
     When user of browser clicks "space1" on the spaces list in the sidebar

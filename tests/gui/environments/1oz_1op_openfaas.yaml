@@ -23,5 +23,8 @@ oneprovider-1:
     createUsers: false
   workerOverlayConfig: |-
     [{op_worker, [
-      {atm_logger_dump_to_op_logs, true}
+      {atm_logger_dump_to_op_logs, true},
+      {atm_openfaas_function_removal_strategy, never},
+      {openfaas_oneclient_options, "-v 3 --message-trace-log"},
+      {file_upload_verbose_logs_enabled, true}
     ]}].

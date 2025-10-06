@@ -71,3 +71,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/data/qos_storage_oneprovider.feature")
+scenarios("../features/oneprovider/data/qos_audit_log.feature")

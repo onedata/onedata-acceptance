@@ -85,22 +85,6 @@ def assert_file_browser_in_public_share(selenium, browser_id, public_share, tmp_
     tmp_memory[browser_id]["file_browser"] = file_browser
 
 
-@wt(
-    parsers.parse('user of {browser_id} sees "{expected_msg}" sign in the file browser')
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_empty_file_browser_in_public_share(
-    selenium, browser_id, tmp_memory, public_share, expected_msg
-):
-    file_browser = public_share(selenium[browser_id]).file_browser
-    tmp_memory[browser_id]["file_browser"] = file_browser
-
-    assert expected_msg == file_browser.error_dir_msg, (
-        f'Displayed empty dir msg "{file_browser.error_dir_msg}" does not '
-        f'match expected one "{expected_msg}"'
-    )
-
-
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_public_share_view(selenium, browser_id, error_msg, public_share):
@@ -168,7 +152,7 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} copies Share REST endpoint on share's public interface"
+        "user of {browser_id} copies share REST endpoint on share's public interface"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

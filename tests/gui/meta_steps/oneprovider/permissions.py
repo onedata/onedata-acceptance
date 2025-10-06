@@ -533,3 +533,20 @@ def change_acl_privileges(
             popups,
         )
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modals)
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>\w+) sees the following warning: "(?P<text>.*)"'
+        r" in ACL Edit Permissions tab"
+    )
+)
+def assert_warning_in_details_modal_in_edit_permimssions_tab(
+    selenium, modals, browser_id, text
+):
+    driver = selenium[browser_id]
+    acl = modals(driver).details_modal.edit_permissions.acl
+    warn_priv = acl.limited_privileges_warning
+    assert (
+        text == warn_priv.text
+    ), f"Warning from modal: {warn_priv.text} is not equal to given: {text}"

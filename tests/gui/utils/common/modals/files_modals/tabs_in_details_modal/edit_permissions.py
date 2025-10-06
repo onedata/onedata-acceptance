@@ -119,6 +119,7 @@ class ACL(PageObject):
         ".acl-editor .ace.one-collapsible-list-item", cls=MemberAclPermission
     )
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
+    limited_privileges_warning = WebElement(".subjects-inferred-warning")
 
     def expand_dropdown(self):
         toggle_class = self._toggle.get_attribute("class")

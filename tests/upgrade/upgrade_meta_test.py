@@ -4,7 +4,13 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.upgrade.tests import oneclient_crud, rest_comprehensive, rest_views
+from tests.upgrade.tests import (
+    oneclient_crud,
+    rest_comprehensive,
+    rest_file_attrs,
+    rest_metadata,
+    rest_views,
+)
 
 
 def test_upgrade(tests_controller):
@@ -18,4 +24,6 @@ def test_upgrade(tests_controller):
     tests_controller.add_tests(oneclient_crud.get_tests(tests_controller))
     tests_controller.add_tests(rest_comprehensive.get_tests(tests_controller))
     tests_controller.add_tests(rest_views.get_tests(tests_controller))
+    tests_controller.add_tests(rest_metadata.get_tests(tests_controller))
+    tests_controller.add_tests(rest_file_attrs.get_tests(tests_controller))
     tests_controller.run_tests()
