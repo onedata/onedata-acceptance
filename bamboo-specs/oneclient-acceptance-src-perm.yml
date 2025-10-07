@@ -1,11 +1,13 @@
 version: 2
 plan:
-  key: VFS-OAS
+  key: VFS-GAOT
 plan-permissions:
   - users:
       - plglopiola
       - plgmstanisz
       - plgagneska
+    groups:
+      - plggveildev
     permissions:
       - view
       - edit
