@@ -82,9 +82,8 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency deactivates Request a subdomain toggle
     And user of browser_emergency types hostname of "oneprovider-1" provider to domain field in step 2 of deployment process in Onepanel
     And user of browser_emergency types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
-    And user of browser_emergency clicks on Register button in step 2 of deployment process in Onepanel
+    And user of browser_emergency tries to register provider using Register button in step 2 of deployment process in Onepanel
 
-    And user of space_owner_browser is idle for 5 seconds
     And user of browser_emergency selects POSIX from storage selector in step 5 of deployment process in Onepanel
     And user of browser_emergency types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
 

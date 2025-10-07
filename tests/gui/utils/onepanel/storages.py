@@ -32,35 +32,35 @@ class StoragePathType(PageObject):
 
 
 class StorageForm(PageObject):
-    storage_name = Input("input.field-generic-name")
-    imported_storage = Toggle(".toggle-field-generic-importedStorage")
-    storage_path_type = WebItem(".field-generic-storagePathType", cls=StoragePathType)
+    storage_name = Input(".name-field input")
+    imported_storage = Toggle(".importedStorage-field .one-way-toggle")
+    storage_path_type = WebItem(".storagePathType-field", cls=StoragePathType)
 
 
 class POSIX(StorageForm):
-    mount_point = Input("input.field-posix-mountPoint")
-    timeout = Input("input.field-posix-timeout")
-    read_only = Toggle(".toggle-field-posix-readonly")
+    mount_point = Input(".mountPoint-field input")
+    timeout = Input(".timeout-field input")
+    read_only = Toggle(".readonly-field .one-way-toggle")
 
 
 class S3(StorageForm):
-    bucket_name = Input("input.field-s3-bucketName")
-    admin_access_key = Input("input.field-s3-accessKey")
-    admin_secret_key = Input("input.field-s3-secretKey")
-    endpoint_url = Input("input.field-s3-hostname")
+    bucket_name = Input(".bucketName-field input")
+    admin_access_key = Input(".accessKey-field input")
+    admin_secret_key = Input(".secretKey-field input")
+    endpoint_url = Input(".hostname-field input")
 
 
 class Ceph(StorageForm):
-    pool_name = Input("input.field-cephrados-poolName")
-    username = Input("input.field-cephrados-username")
-    key = Input("input.field-cephrados-key")
-    monitor_hostname = Input("input.field-cephrados-monitorHostname")
-    cluster_name = Input("input.field-cephrados-clusterName")
-    block_size = Input("input.field-cephrados-blockSize")
+    pool_name = Input(".poolName-field input")
+    username = Input(".username-field input")
+    key = Input(".key-field input")
+    monitor_hostname = Input(".monitorHostname-field input")
+    cluster_name = Input(".clusterName-field input")
+    block_size = Input(".blockSize-field input")
 
 
 class StorageAddForm(PageObject):
-    storage_selector = DropdownSelector(".storage-type-select-group")
+    storage_selector = DropdownSelector(".type-field .dropdown-field")
     add = Button(".submit-group button")
     posix = WebItem("form", cls=POSIX)
     s3 = WebItem("form", cls=S3)
@@ -100,7 +100,7 @@ class QOSParams(PageObject):
 
 
 class Editor(PageObject):
-    storage_name = Input("input.field-generic_editor-name")
+    storage_name = Input(".name-field input")
     params = WebItem(".qos-params-editor", cls=QOSParams)
 
     save_button = Button("button.btn-primary")
@@ -108,18 +108,18 @@ class Editor(PageObject):
 
 
 class POSIXEditor(Editor):
-    mount_point = Input("input.field-posix_editor-mountPoint")
-    timeout = Input("input.field-posix_editor-timeout")
-    read_only = Toggle(".toggle-field-posix_editor-readonly")
+    mount_point = Input(".mountPoint-field input")
+    timeout = Input(".timeout-field input")
+    read_only = Toggle(".readonly-field .one-way-toggle")
 
 
 class S3Editor(Editor):
-    bucket_name = Input("input.field-s3_editor-bucketName")
-    admin_secret_key = Input("input.field-s3_editor-secretKey")
+    bucket_name = Input(".bucketName-field input")
+    admin_secret_key = Input(".secretKey-field input")
 
 
 class CephEditor(Editor):
-    pool_name = Input("input.field-cephrados_editor-poolName")
+    pool_name = Input(".poolName-field input")
 
 
 class StorageEditForm(PageObject):
@@ -132,13 +132,13 @@ class StorageRecord(PageObject, ExpandableMixin):
     modify = Button(".btn-default")
     name = id = Label(".item-icon-container + .one-label")
     edit_form = WebItem(
-        ".storage-info .cluster-storage-add-form:not(.form-static)",
+        ".storage-info .cluster-storage-add-form",
         cls=StorageEditForm,
     )
-    storage_type = Label(".item-table .field-type_static-type")
-    mount_point = Label(".item-table .field-posix_static-mountPoint")
-    bucket_name = Label(".item-table .field-s3_static-bucketName")
-    pool_name = Label(".item-table .field-cephrados_static-poolName")
+    storage_type = Label(".item-table .type-field .text")
+    mount_point = Label(".item-table .mountPoint-field .text-like-field")
+    bucket_name = Label(".item-table .bucketName-field .text-like-field")
+    pool_name = Label(".item-table .poolName-field .text-like-field")
     _toggle = WebElement(".one-collapsible-list-item-header")
 
     copy_id_button = Button(".copy-btn-icon")

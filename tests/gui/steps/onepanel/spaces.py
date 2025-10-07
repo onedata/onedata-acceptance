@@ -14,6 +14,7 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -539,16 +540,17 @@ def cannot_click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, sele
 
 @wt(
     parsers.parse(
-        'user of {browser_id} enables {option} in "{space}" space in Onepanel'
+        'user of {browser_id} enables {toggle_name} in "{space}" space in Onepanel'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
-def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
+@repeat_failed(timeout=WAIT_BACKEND)
+def enable_space_option_in_onepanel(selenium, browser_id, onepanel, toggle_name):
     driver = selenium[browser_id]
-    option = option.replace("-", "_")
+    option = toggle_name.replace("-", "_")
     tab = getattr(onepanel(driver).content.spaces.space, option)
-    toggle = f"enable_{option}"
-    getattr(tab, toggle).check()
+    toggle = getattr(tab, f"enable_{option}")
+    toggle.check()
+    wait_for_checking_toggle(toggle, toggle_name=toggle_name)
 
 
 @wt(
