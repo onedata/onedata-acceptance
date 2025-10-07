@@ -6,6 +6,8 @@ plan-permissions:
       - plglopiola
       - plgmstanisz
       - plgagneska
+    groups:
+      - plggveildev
     permissions:
       - view
       - edit
