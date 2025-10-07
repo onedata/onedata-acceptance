@@ -94,7 +94,7 @@ class Modals:
         ".new-cluster-dns-proceed-modal.modal", cls=DNSConfigurationWarningModal
     )
     error = WebItem(".alert-global.modal.in .modal-dialog", cls=ErrorModal)
-    warning = WebItem(".question-modal", cls=WarningModal)
+    warning = WebItem(".modal-content", cls=WarningModal)
 
     # tokens modals
     invite_using_token = WebItem(

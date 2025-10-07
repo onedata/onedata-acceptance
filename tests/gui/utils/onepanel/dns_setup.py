@@ -19,9 +19,7 @@ class DNSSetup(PageObject):
 
     use_built_in_dns_server = Toggle(
         ".row-onezone-built-in-server .toggle-field-dns-built-in-server"
-        " .one-way-toggle-control"
     )
     enable_subdomain_delegation = Toggle(
         ".row-zone-subdomain-delegation .toggle-field-dns-built-in-server"
-        " .one-way-toggle-control"
     )

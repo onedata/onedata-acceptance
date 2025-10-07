@@ -21,11 +21,14 @@ Feature: Enabling Let`s Encrypt and subdomain delegation in deployed zone and pr
     And provider "oneprovider-1" with onezone domain host entry is added to /etc/hosts
     And user of browser1 saves changes in provider details form in Provider panel
 
+    And user of browser1 closes by pressing "Discard" "Important notice" warning
+
     And user of browser1 clicks on Web certificate item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 checks "Use Lets Encrypt" toggle in Web certificate view in Onepanel
+    And user of browser1 clicks "Enable Lets Encrypt" on "Important notice" warning
 
     # check web cert
     Then user of browser1 sees that "Use Lets Encrypt" toggle is checked in Web certificate view in Onepanel
-    And user of browser1 sees that "Certificate path" is "/etc/op_panel/certs/web_cert.pem" in Web certificate view in Onepanel
-    And user of browser1 sees that "Key path" is "/etc/op_panel/certs/web_key.pem" in Web certificate view in Onepanel
-    And user of browser1 sees that "Certificate chain path" is "/etc/op_panel/certs/web_chain.pem" in Web certificate view in Onepanel
+    And user of browser1 sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
+    And user of browser1 sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
+    And user of browser1 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel

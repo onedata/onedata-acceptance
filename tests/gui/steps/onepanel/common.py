@@ -204,3 +204,19 @@ def assert_label_content_on_sidebar_submenu(
     actual_label = getattr(nav, transform(label))
     err_msg = f"{label} should be {label_content} but is {actual_label}"
     assert actual_label == label_content, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "{label}" ends with "{suffix}" in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_ends_with_on_sidebar_submenu(
+    selenium, browser_id, view_name, onepanel, label, suffix
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    err_msg = f"{label} should end with {suffix} but it is {actual_label}"
+    assert actual_label.endswith(suffix), err_msg

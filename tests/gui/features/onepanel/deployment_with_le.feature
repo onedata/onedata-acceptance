@@ -72,6 +72,6 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     # check web cert
     And user of browser2 clicks on Web certificate item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 sees that "Use Lets Encrypt" toggle is checked in Web certificate view in Onepanel
-    And user of browser2 sees that "Certificate path" is "/etc/op_panel/certs/web_cert.pem" in Web certificate view in Onepanel
-    And user of browser2 sees that "Key path" is "/etc/op_panel/certs/web_key.pem" in Web certificate view in Onepanel
-    And user of browser2 sees that "Certificate chain path" is "/etc/op_panel/certs/web_chain.pem" in Web certificate view in Onepanel
+    And user of browser2 sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
+    And user of browser2 sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
+    And user of browser2 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel

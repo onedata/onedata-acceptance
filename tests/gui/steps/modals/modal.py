@@ -17,6 +17,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -772,3 +773,17 @@ def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} closes by pressing "{button}" "{warning_label}" warning'
+    )
+)
+@wt(
+    parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning')
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_on_warning(selenium, browser_id, button):
+    driver = selenium[browser_id]
+    getattr(Modals(driver).warning, transform(button))()
