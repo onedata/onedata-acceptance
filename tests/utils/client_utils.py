@@ -121,6 +121,9 @@ class Client:
     def stat(self, path):
         return self.rpyc_connection.modules.os.stat(path)
 
+    def lstat(self, path):
+        return self.rpyc_connection.modules.os.lstat(path)
+
     def rm(self, path, recursive=False, force=False, onerror=None):
         if recursive and force:
             self.rpyc_connection.modules.shutil.rmtree(
