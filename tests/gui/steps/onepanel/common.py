@@ -234,6 +234,6 @@ def assert_label_contains_prov_domain_on_sidebar_submenu(
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    expected_domain = f"{hosts[provider]["name"]}.{hosts[provider]["hostname"]}"
+    expected_domain = hosts[provider]["hostname"]
     err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
     assert expected_domain in actual_label, err_msg

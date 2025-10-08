@@ -448,11 +448,12 @@ def wt_go_to_emergency_onepanel_interface(selenium, browser_id, onepanel):
     )
 )
 def add_prov_with_oz_subdomain_to_etc_host(hosts, provider):
+    new_hostname = f"{hosts[provider]["name"]}.{hosts["onezone"]["hostname"]}"
     add_etc_hosts_entries(
         hosts[provider]["ip"],
-        f"{hosts[provider]["name"]}.{hosts["onezone"]["hostname"]}",
+        new_hostname,
     )
-    hosts[provider]["hostname"] = hosts["onezone"]["hostname"]
+    hosts[provider]["hostname"] = new_hostname
 
 
 @wt(
