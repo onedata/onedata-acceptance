@@ -452,6 +452,7 @@ def add_prov_with_oz_subdomain_to_etc_host(hosts, provider):
         hosts[provider]["ip"],
         f"{hosts[provider]["name"]}.{hosts["onezone"]["hostname"]}",
     )
+    hosts[provider]["hostname"] = hosts["onezone"]["hostname"]
 
 
 @wt(

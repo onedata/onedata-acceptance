@@ -220,3 +220,20 @@ def assert_label_ends_with_on_sidebar_submenu(
     actual_label = getattr(nav, transform(label))
     err_msg = f"{label} should end with {suffix} but it is {actual_label}"
     assert actual_label.endswith(suffix), err_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that {provider} provider domain is included in"
+        ' "{label}" in {view_name} view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_contains_prov_domain_on_sidebar_submenu(
+    selenium, browser_id, provider, label, view_name, onepanel, hosts
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    expected_domain = f"{hosts[provider]["name"]}.{hosts[provider]["hostname"]}"
+    err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
+    assert expected_domain in actual_label, err_msg

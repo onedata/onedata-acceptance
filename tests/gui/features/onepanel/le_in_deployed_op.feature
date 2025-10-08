@@ -29,6 +29,7 @@ Feature: Enabling Let`s Encrypt and subdomain delegation in deployed zone and pr
 
     # check web cert
     Then user of browser1 sees that "Use Lets Encrypt" toggle is checked in Web certificate view in Onepanel
+    And user of browser1 sees that oneprovider-1 provider domain is included in "DNS names" in Web certificate view in Onepanel
     And user of browser1 sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
     And user of browser1 sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
     And user of browser1 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel
