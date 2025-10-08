@@ -815,7 +815,7 @@ def read_from_file_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) (?P<result>(succeeds|fails)) to append"
         r' "(?P<text>.*)" '
-        r'to file named "(?P<file_name>.*)" in '
+        r'to file under a path "(?P<file_name>.*)" in '
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
@@ -825,10 +825,16 @@ def append_to_file_in_op(
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        try:
+        if result == "fails":
+            try:
+                append_to_file_in_op_rest(
+                    user, users, host, hosts, cdmi, full_path, text
+                )
+                assert False, "The append operation was supposed to fail"
+            except HTTPBadRequest:
+                assert True
+        else:
             append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
-        except HTTPBadRequest:
-            assert result == "fails", "The append operation was supposed to succeed"
 
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)

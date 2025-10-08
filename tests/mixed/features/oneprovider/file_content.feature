@@ -32,7 +32,7 @@ Feature: File content tests
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to append " APPENDED DATA" to file named "file1" in "space1" in oneprovider-1
+    And using <client2>, user1 succeeds to append " APPENDED DATA" to file under a path "file1" in "space1" in oneprovider-1
     Then using <client3>, user1 reads "TEST TEXT ONEDATA APPENDED DATA" from file named "file1" in "space1" in oneprovider-1
 
   Examples:
