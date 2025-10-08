@@ -786,4 +786,4 @@ def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_warning(selenium, browser_id, button):
     driver = selenium[browser_id]
-    getattr(Modals(driver).warning, transform(button))()
+    getattr(Modals(driver).warning_info, transform(button))()
