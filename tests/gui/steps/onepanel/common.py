@@ -170,7 +170,7 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_sidebar_submenu_toggle(selenium, browser_id, view_name, onepanel, toggle):
+def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, onepanel, toggle):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     getattr(nav, transform(toggle.replace("-", "_"))).check()
 
@@ -182,7 +182,7 @@ def click_on_sidebar_submenu_toggle(selenium, browser_id, view_name, onepanel, t
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_checked_in_sidebar_submenu(
+def assert_toggle_checked_in_onepanel_view(
     selenium, browser_id, view_name, onepanel, toggle
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
@@ -197,7 +197,7 @@ def assert_toggle_checked_in_sidebar_submenu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_label_content_on_sidebar_submenu(
+def assert_label_content_in_onepanel_view(
     selenium, browser_id, view_name, onepanel, label, label_content
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
@@ -213,7 +213,7 @@ def assert_label_content_on_sidebar_submenu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_label_ends_with_on_sidebar_submenu(
+def assert_label_ends_with_in_onepanel_view(
     selenium, browser_id, view_name, onepanel, label, suffix
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
@@ -229,7 +229,7 @@ def assert_label_ends_with_on_sidebar_submenu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_label_contains_prov_domain_on_sidebar_submenu(
+def assert_label_contains_prov_domain_in_onepanel_view(
     selenium, browser_id, provider, label, view_name, onepanel, hosts
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
