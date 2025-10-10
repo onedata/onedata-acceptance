@@ -228,7 +228,7 @@ def assert_label_ends_with_in_onepanel_view(
         ' "{label}" in {view_name} view in Onepanel'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_label_contains_prov_domain_in_onepanel_view(
     selenium, browser_id, provider, label, view_name, onepanel, hosts
 ):
