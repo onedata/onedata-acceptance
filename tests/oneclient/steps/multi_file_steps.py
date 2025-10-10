@@ -77,6 +77,21 @@ def create_base(user, files, client_node, users, request, should_fail=False):
             print(e)
 
 
+def create_hardlink(user, file_path, hardlink_path, client_node, users):
+    client = users[user].clients[client_node]
+    client.create_hardlink(
+        client.absolute_path(file_path), client.absolute_path(hardlink_path)
+    )
+
+
+def create_symlink(user, file_path, symlink_path, client_node, users):
+    user_ = users[user]
+    client = user_.clients[client_node]
+    client.create_symlink(
+        client.absolute_path(file_path), client.absolute_path(symlink_path)
+    )
+
+
 def create_target_file(user, client, client_node, users, file_name, dir_name):
     space = file_name.split("/")[0]
     create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
@@ -385,7 +400,7 @@ def check_size(user, file, size, client_node, users):
 @then(
     parsers.re(
         r"file type of (?P<user>\w+)'s (?P<file>.*) is "
-        "(?P<file_type>.*) on (?P<client_node>.*)"
+        r"(?P<file_type>.*) on (?P<client_node>.*)"
     )
 )
 def check_type(user, file, file_type, client_node, users):
@@ -397,6 +412,9 @@ def check_type(user, file, file_type, client_node, users):
         stat_method = "S_ISREG"
     elif file_type == "directory":
         stat_method = "S_ISDIR"
+    elif file_type == "symlink":
+        stat_method = "S_ISLNK"
+        # TODO: VFS-13001 Check symlink type in stat in oneclient
     else:
         raise ValueError(f"unknown file type {file_type}")
 
@@ -853,4 +871,44 @@ def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
     client = user.clients[client_node]
     client.create_file(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}/{file_name}"
+    )
+
+
+def assert_symlink_of_file(user, client_node, users, symlink_path, file_path):
+
+    user_name = user
+    user = users[user_name]
+    client = user.clients[client_node]
+    symlink_path = client.absolute_path(symlink_path)
+    file_path = client.absolute_path(file_path)
+
+    check_type(user_name, symlink_path, "symlink", client_node, users)
+
+    real_path = client.realpath(symlink_path)
+    # realpath eliminates every symbolic link encountered in path,
+    # however if there are multiple symlinks this function can
+    # give an error
+
+    assert real_path == file_path, (
+        f"resolved symlink real path: {real_path} is different than file real path:"
+        f" {file_path}"
+    )
+
+
+def assert_hardlink_between_files(user, client_node, users, file_path1, file_path2):
+    user_name = user
+    user = users[user_name]
+    client = user.clients[client_node]
+    file1 = client.absolute_path(file_path1)
+    file2 = client.absolute_path(file_path2)
+
+    # hardlink and original file must be regular files
+    check_type(user_name, file1, "regular", client_node, users)
+    check_type(user_name, file2, "regular", client_node, users)
+
+    # Two files are hardlinked if they point to the same node in the same
+    # file system
+    assert client.samefile(file1, file2), (
+        f"files {file1} and {file2} do not point to the same node in the same file"
+        " system"
     )
