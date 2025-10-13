@@ -11,9 +11,6 @@ from tests.gui.utils.onezone.generic_page import GenericPage
 
 class ManageAccountPage(GenericPage):
     profile = Button(".user-account-button-main")
-    profile_ = Button(".row-account-button .user-profile-icon.item-icon")
-    # variable profile_ is never used, but same or similar selector
-    # should be used in order for some tests to pass locally
 
     full_name = Label(".full-name-editor")
     rename_full_name = Button(".full-name-editor .edit-icon")

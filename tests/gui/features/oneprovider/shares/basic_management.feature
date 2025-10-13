@@ -49,7 +49,7 @@ Feature: Basic share management in Oneprovider GUI
     When user of browser opens file browser for "space1" space
     And user of browser creates "share_dir1" share of "dir1" directory
     And user of browser clicks on "Show details" link for "share_dir1" share in shares panel
-    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser sees shares file browser in files tab in Oneprovider page
     Then user of browser sees that item named "dir1" has appeared in shares file browser on single share view
     And user of browser sees that selected share is named "share_dir1"
 

@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -17,7 +16,7 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.parse(
         'user of {browser_id} sees that item named "{item_name}" '
-        "has appeared in {which_browser} on single share view"
+        "has appeared in shares file browser on single share view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -26,13 +25,12 @@ def assert_item_in_file_browser_in_shares_page(
     browser_id,
     item_name,
     op_container,
-    which_browser,
 ):
-    file_browser = getattr(
-        op_container(selenium[browser_id]).shares_page, transform(which_browser)
-    )
-    data = {f.name for f in file_browser.data}
-    assert item_name in data, f"Item  {item_name} not in file browser"
+    shares_file_browser = op_container(
+        selenium[browser_id]
+    ).shares_page.shares_file_browser
+    data = {f.name for f in shares_file_browser.data}
+    assert item_name in data, f"Item  {item_name} not in shares file browser"
 
 
 @wt(
