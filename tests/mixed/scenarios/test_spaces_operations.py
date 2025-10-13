@@ -1,20 +1,20 @@
-"""
-This module contains tests suite for hardlinks and symlinks using
-Oneprovider GUI (in single browser instance), REST API, Oneclient.
-"""
+"""Test suite for tests using REST, OneS3 and Oneclient"""
 
-__author__ = "Jakub Karczewski"
+__author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from pytest import fixture
 from pytest_bdd import scenarios
 
 from tests.gui.conftest import *
+from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -22,6 +22,7 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
@@ -39,21 +40,21 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.providers import *
+from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
+from tests.gui.steps.rest.s3_service_boto3 import *
+from tests.gui.steps.rest.shares import *
 from tests.mixed.steps.data_basic import *
-from tests.mixed.steps.hardlinks_symlinks import *
-from tests.mixed.steps.oneclient.data_basic import *
-from tests.mixed.steps.qos import *
-from tests.mixed.steps.rest.onezone.automation import *
+from tests.mixed.steps.members import *
+from tests.mixed.steps.onepanel_basic import *
+from tests.mixed.steps.rest.onezone.special_dirs import *
+from tests.mixed.steps.space_basic import *
+from tests.mixed.steps.tokens_basic import *
+from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
-from tests.oneclient.steps.dir_steps import *
-from tests.oneclient.steps.file_steps import *
-from tests.oneclient.steps.multi_dir_steps import *
-from tests.oneclient.steps.multi_file_steps import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
-from tests.utils.entities_setup.inventory import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
 
@@ -63,5 +64,5 @@ def screens():
     return [0]
 
 
-scenarios("../features/oneprovider/symlinks_hardlinks_creation.feature")
-scenarios("../features/hardlinks_symlinks.feature")
+scenarios("../features/onezone/space/basic_space_operations_rest_oc.feature")
+scenarios("../features/onezone/space/basic_space_operations_rest_ones3.feature")

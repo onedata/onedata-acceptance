@@ -22,10 +22,15 @@ from tests.mixed.steps.rest.onezone.tokens import (
     revoke_token_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@given(
+    parsers.parse(
+        "using {client}, {user} creates token with following configuration:\n{config}"
+    )
+)
 @wt(
     parsers.parse(
         "using {client}, {user} creates token with following configuration:\n{config}"
@@ -44,6 +49,8 @@ def create_token(
     tmp_memory,
     tokens,
     spaces,
+    clipboard,
+    displays,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -58,6 +65,8 @@ def create_token(
             hosts,
             tmp_memory,
         )
+        click_copy_button_in_token_view(selenium, user, oz_page)
+        tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
     elif client_lower == "rest":
         create_token_with_config_rest(
             user, config, users, tokens, hosts, tmp_memory, groups, spaces

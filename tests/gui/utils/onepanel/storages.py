@@ -129,7 +129,9 @@ class StorageEditForm(PageObject):
 
 
 class StorageRecord(PageObject, ExpandableMixin):
-    modify = Button(".btn-default")
+    modify = Button(".one-icon.oneicon.oneicon-browser-rename")
+    support_space = Button(".one-icon.oneicon.oneicon-space")
+
     name = id = Label(".item-icon-container + .one-label")
     edit_form = WebItem(
         ".storage-info .cluster-storage-add-form",
