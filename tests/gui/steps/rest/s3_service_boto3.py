@@ -61,6 +61,12 @@ def list_buckets(s3):
     return [bucket["Name"] for bucket in s3.list_buckets()["Buckets"]]
 
 
+@wt(
+    parsers.parse(
+        "using OneS3 and list buckets boto3 function, user {user} can see spaces"
+        ' "{spaces_list}"'
+    )
+)
 @wt(parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'))
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_assert_listed_buckets(spaces_list, tmp_memory, tokens, hosts):
@@ -80,14 +86,19 @@ def does_bucket_exist(s3, bucket_name):
     )
 
 
-@wt(parsers.parse('using OneS3, user {user} can see there is a space "{space_name}"'))
+@wt(
+    parsers.parse(
+        "using OneS3 and head bucket boto3 function, user {user} can see there is a"
+        ' space "{space_name}"'
+    )
+)
 def wt_assert_bucket_exists(space_name, tmp_memory, tokens, hosts):
     s3 = get_s3client(tmp_memory, tokens, hosts)
     assert does_bucket_exist(s3, space_name)
 
 
-def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, browser_id):
-    home_dir = tmpdir.join(browser_id, "download")
+def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, user):
+    home_dir = tmpdir.join(user, "download")
     os.makedirs(home_dir, exist_ok=True)
     local_path = os.path.join(home_dir, file_path)
     s3.download_file(Bucket=bucket_name, Key=file_path, Filename=local_path)
@@ -95,14 +106,14 @@ def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, browser_id):
 
 @wt(
     parsers.parse(
-        'using OneS3, user of {browser_id} downloads "{file_name}" from "{space_name}"'
+        'using OneS3, user {user} downloads "{file_name}" from "{space_name}"'
     )
 )
 def wt_download_file_from_bucket(
-    space_name, file_name, tmpdir, browser_id, tmp_memory, tokens, hosts
+    space_name, file_name, tmpdir, user, tmp_memory, tokens, hosts
 ):
     s3 = get_s3client(tmp_memory, tokens, hosts)
-    download_file_from_bucket(s3, space_name, file_name, tmpdir, browser_id)
+    download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
 
 
 def create_file_in_bucket(s3, bucket_name, file_name, file_content):

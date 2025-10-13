@@ -31,19 +31,18 @@ Feature: Basic management of space using OneS3 and boto3
         name: oc_token
 
 
-  Scenario: User can see correct spaces listed in OneS3 service
-    Then using OneS3, user user1 can see spaces "[space1, space2]"
+  Scenario: User can see correct spaces listed in OneS3 service, using list buckets function
+    Then using OneS3 and list buckets boto3 function, user user1 can see spaces "[space1, space2]"
 
 
-  Scenario: User can see presence of a space in OneS3 service
-    Then using OneS3, user user1 can see there is a space "space1"
-    And using OneS3, user user1 can see there is a space "space1"
+  Scenario: User can see presence of a space in OneS3 service, using head bucket function
+    Then using OneS3 and head bucket boto3 function, user user1 can see there is a space "space1"
+    And using OneS3 and head bucket boto3 function, user user1 can see there is a space "space2"
 
 
   Scenario: User can download a file using OneS3 service
-    # browser here is needed to construct download dir path
-    When using OneS3, user of browser downloads "file1" from "space1"
-    Then user of browser sees that content of downloaded file "file1" is equal to: "11111"
+    When using OneS3, user user1 downloads "file1" from "space1"
+    Then user user1 sees that content of downloaded file "file1" is equal to: "11111"
 
 
   Scenario: User using GUI can see correct content of a file created using OneS3 service
