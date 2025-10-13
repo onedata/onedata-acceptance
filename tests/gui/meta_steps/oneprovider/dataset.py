@@ -86,7 +86,7 @@ def create_dataset(
     op_container,
     modals,
     popups,
-    option,  # previously it was equal to "no flags", but it always overrided parser's variable
+    option,
 ):
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"

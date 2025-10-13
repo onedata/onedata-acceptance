@@ -825,16 +825,13 @@ def append_to_file_in_op(
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        if result == "fails":
-            try:
-                append_to_file_in_op_rest(
-                    user, users, host, hosts, cdmi, full_path, text
-                )
-                assert False, "The append operation was supposed to fail"
-            except HTTPBadRequest:
-                assert True
-        else:
+        try:
             append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
+            assert result == "succeeds", "The append operation was supposed to succeed"
+        except (
+            HTTPBadRequest
+        ):  # If file is data write protected this exception will be thrown
+            assert result == "fails", "The append operation was supposed to fail"
 
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -846,9 +843,9 @@ def append_to_file_in_op(
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) replaces "
-        '"(?P<old_text>.*)" with "(?P<new_text>.*)" '
-        'in file named "(?P<file_name>.*)" in '
-        '"(?P<space>.*)" in (?P<host>.*)'
+        r'"(?P<old_text>.*)" with "(?P<new_text>.*)" '
+        r'in file named "(?P<file_name>.*)" in '
+        r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
 def replace_in_file_in_op(client, user, old_text, new_text, file_name, space, users):

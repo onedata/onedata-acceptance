@@ -48,7 +48,7 @@ Feature: Inheriting protection from hardlink
     Then using REST, user1 fails to append "1234" to file under a path "dir2/file2" in "space1" in oneprovider-1
 
 
-  Scenario: User can see that hardlink inherited data and metadata protection flags from its target file, both are in main space
+  Scenario: User can see that hardlink inherited data and metadata protection flags from its target file, both files are not in any dataset
     When user of browser opens file browser for "space1" space
     And user of browser creates hardlink of "file1" file in space "space1" in file browser
 
