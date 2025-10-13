@@ -124,3 +124,18 @@ def assert_private_share_named(selenium, browser_id, share_name, private_share):
         f'is "{displayed_name}" instead of '
         f'expected "{share_name}"'
     )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} writes "{text}" to {which_input}'
+        ' input text field in "EDM" form on '
+        "share's private interface"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_input_in_edm_form_in_shares_interface(
+    browser_id, text, which_input, selenium, private_share
+):
+    driver = selenium[browser_id]
+    form = private_share(driver).edm_metadata_form

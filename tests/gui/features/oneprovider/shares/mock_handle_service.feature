@@ -81,3 +81,17 @@ Feature: Public share published with mock handle service
 
     Then user of space_owner_browser sees "Expose as Public Data" tab on share's private interface
     And user of space_owner_browser sees that share in private view is named "share_dir1"
+
+
+  Scenario: User sets metadata on EDM mock handle service
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser creates "share_dir1" share of "dir1" directory
+    And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
+
+    And user of space_owner_browser opens "Description" tab on share's private interface
+    And user of space_owner_browser clicks "Create description" button in "Description" form on share's private interface
+    And user of space_owner_browser types "Description for another user to check if can see" into description field in "Description" form on share's private interface
+    And user of space_owner_browser clicks "Save" button in "Description" form on share's private interface
+
+    And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
+    And user of space_owner_browser writes "abc" to efg input text field in "EDM" form on share's private interface
