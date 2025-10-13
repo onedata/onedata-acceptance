@@ -825,17 +825,25 @@ def append_to_file_in_op(
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        try:
+        if result == "succeeds":
             append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
-            assert result == "succeeds", "The append operation was supposed to succeed"
-        except (
-            HTTPBadRequest
-        ):  # If file is data write protected this exception will be thrown
-            assert result == "fails", "The append operation was supposed to fail"
+        else:
+            try:
+                append_to_file_in_op_rest(
+                    user, users, host, hosts, cdmi, full_path, text
+                )
+                raise AssertionError("The append operation was supposed to fail")
+            except (
+                HTTPBadRequest
+            ):  # If file is data write protected this exception will be thrown
+                pass
 
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        multi_reg_file_steps.append(user, text, full_path, oneclient_host, users)
+        if result == "succeeds":
+            multi_reg_file_steps.append(user, text, full_path, oneclient_host, users)
+        else:
+            raise NotImplementedError
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
