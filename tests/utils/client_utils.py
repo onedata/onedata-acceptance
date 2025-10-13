@@ -112,8 +112,17 @@ class Client:
     def chmod(self, mode, file_path):
         self.rpyc_connection.modules.os.chmod(file_path, mode)
 
+    def samefile(self, file_path1, file_path2):
+        return self.rpyc_connection.modules.os.path.samefile(file_path1, file_path2)
+
+    def realpath(self, path):
+        return self.rpyc_connection.modules.os.path.realpath(path)
+
     def stat(self, path):
         return self.rpyc_connection.modules.os.stat(path)
+
+    def lstat(self, path):
+        return self.rpyc_connection.modules.os.lstat(path)
 
     def rm(self, path, recursive=False, force=False, onerror=None):
         if recursive and force:

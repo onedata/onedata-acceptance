@@ -137,7 +137,7 @@ class SyncChart(PageObject):
 
 
 class FilePopularity(PageObject):
-    enable_file_popularity = Toggle(".one-way-toggle-control")
+    enable_file_popularity = Toggle(".file-popularity-enabled-toggle")
     advanced_settings = WebElement(".one-collapsible-list-item-header")
     file_popularity_documentation = WebElement(".documentation-link")
 
@@ -173,7 +173,7 @@ class SelectiveCleaningRecord(PageObject):
 
 
 class AutoCleaning(PageObject):
-    enable_auto_cleaning = Toggle(".cleaning-enabled-toggle .one-way-toggle-control")
+    enable_auto_cleaning = Toggle(".cleaning-enabled-toggle")
     selective_cleaning = Toggle(".selective-cleaning-toggle .one-way-toggle-control")
     selective_cleaning_form = WebItemsSequence(
         ".selective-cleaning-rules-form > div", cls=SelectiveCleaningRecord

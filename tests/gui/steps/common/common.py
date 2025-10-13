@@ -36,6 +36,11 @@ def _get_visible_items_list(page, items_names):
     return getattr(page, f"get_visible_{items_names}_list")()
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_for_checking_toggle(toggle, toggle_name=""):
+    assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
+
+
 def _get_page(where, oz_page, driver):
     if where == "shares":
         return oz_page(driver)["shares"]

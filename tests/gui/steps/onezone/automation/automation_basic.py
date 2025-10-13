@@ -395,3 +395,10 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
         oz_page(driver)["automation"].elements_list[inventory_name],
         transform(option),
     ).click()
+
+
+def try_to_close_workflow_creation_popup(popups, driver):
+    try:
+        popups(driver).workflow_creation_alert.close()
+    except Exception:  # pylint: disable=broad-exception-caught
+        pass

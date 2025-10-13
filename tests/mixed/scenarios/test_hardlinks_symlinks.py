@@ -1,5 +1,6 @@
-"""This module contains tests suite for hardlinks and symlinks using
-Oneprovider GUI (in single browser instance) and REST API.
+"""
+This module contains tests suite for hardlinks and symlinks using
+Oneprovider GUI (in single browser instance), REST API, Oneclient.
 """
 
 __author__ = "Jakub Karczewski"
@@ -42,9 +43,15 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.hardlinks_symlinks import *
+from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.qos import *
 from tests.mixed.steps.rest.onezone.automation import *
 from tests.oneclient.steps.auth_steps import *
+from tests.oneclient.steps.dir_steps import *
+from tests.oneclient.steps.file_steps import *
+from tests.oneclient.steps.multi_dir_steps import *
+from tests.oneclient.steps.multi_file_steps import *
+from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.inventory import *
 from tests.utils.entities_setup.spaces import *
@@ -57,3 +64,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/symlinks_hardlinks_creation.feature")
+scenarios("../features/hardlinks_symlinks.feature")
