@@ -658,6 +658,12 @@ def assert_provider_chunks_in_data_distribution(
 
 
 @wt(
+    parsers.re(
+        r"user (?P<browser_id>\w+) sees that content of downloaded "
+        'file "(?P<file_name>.*)" is equal to: "(?P<content>.*)"'
+    )
+)
+@wt(
     parsers.parse(
         "user of {browser_id} sees that content of downloaded "
         'file "{file_name}" is equal to: "{content}"'
