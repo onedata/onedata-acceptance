@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
@@ -155,6 +156,9 @@ class StorageRecord(PageObject, ExpandableMixin):
         ActionChains(driver).move_to_element(self._toolbar).perform()
         self.menu_button.click()
 
+    def click_toggle(self):
+        self._click_on_toggle()
+
 
 class StorageContentPage(PageObject):
     form = WebItem(".cluster-storage-add-form", cls=StorageAddForm)
@@ -175,3 +179,7 @@ class StorageContentPage(PageObject):
                 f"Cannot click on {storage_name} Modify button "
                 "because storage is not visible on page."
             )
+
+    def scroll_by_press_space(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.SPACE).perform()

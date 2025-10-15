@@ -6,6 +6,8 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from functools import partial
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
@@ -242,30 +244,6 @@ def is_storage_on_storage_list(selenium, browser_id, name, onepanel):
     return name in storages_list
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees {number} storages named "{name}" '
-        "with different IDs on the storages list"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_storages_with_same_name(
-    selenium, browser_id, name, onepanel, number: int
-):
-    driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    filtered = [
-        storage
-        for storage in storages_list
-        if storage.name.split(CONFLICT_NAME_SEPARATOR)[0] == name
-    ]
-    ids = [s.name.split(CONFLICT_NAME_SEPARATOR)[1] for s in filtered]
-    assert (
-        len(filtered) == number
-    ), f"{name} not visible {number} times on storages list"
-    assert check_ids_different(ids), f"IDs are not different, {ids}"
-
-
 # if there are repeated ids, set will be shorter than list
 def check_ids_different(id_list):
     ids_set = set(id_list)
@@ -316,3 +294,93 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
 def copy_storage_id_to_clipboard(selenium, browser_id, storage_name, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.storages.storages[storage_name].copy_id_button()
+
+
+def scroll_and_call_and_assert(selenium, browser_id, onepanel, inner_func, assert_func):
+    driver = selenium[browser_id]
+    seen_rows_names = set()
+    stop_scrolling_flag = False
+
+    while not stop_scrolling_flag:
+
+        new_storages_list = onepanel(driver).content.storages.storages
+        new_storages_names = [storage.name for storage in new_storages_list]
+
+        not_yet_seen_rows = [
+            storage
+            for storage in new_storages_list
+            if storage.name not in seen_rows_names
+        ]
+        stop_scrolling_flag = len(not_yet_seen_rows) == 0
+
+        output_inner_function = inner_func(new_rows=not_yet_seen_rows)
+        if output_inner_function:
+            return
+
+        seen_rows_names.update(new_storages_names)
+        onepanel(driver).content.storages.scroll_by_press_space()
+
+    assert_func(rows_names_set=seen_rows_names)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} collapses first expanded storage backend with name"
+        ' "{name}" in Storages page in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_storage(selenium, browser_id, name, onepanel):
+
+    def get_rows_with_name_and_collapse_first(name, new_rows):
+        rows_with_name = [
+            row
+            for row in new_rows
+            if row.name.split(CONFLICT_NAME_SEPARATOR)[0] == name
+        ]
+        for row in rows_with_name:
+            if row.is_expanded():
+                row.click_toggle()
+                return True
+        return False
+
+    def assert_no_rows_with_name(name: str, rows_names_set: set):
+        raise AssertionError(f"No row with name '{name}' found")
+
+    call_func = partial(get_rows_with_name_and_collapse_first, name=name)
+    assert_func = partial(assert_no_rows_with_name, name=name)
+    scroll_and_call_and_assert(selenium, browser_id, onepanel, call_func, assert_func)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees {number} storages named "{name}" '
+        "with different IDs on the storages list"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_number_storages_with_same_name(
+    selenium, browser_id, name, onepanel, number: int
+):
+    def help_func(new_rows):
+        return (
+            len(new_rows) < 0
+        )  # For the static analyzer to pass, always returns False
+
+    def assert_number_entries_with_name(name: str, number: int, rows_names_set: set):
+        rows_with_name = [
+            row_name
+            for row_name in list(rows_names_set)
+            if row_name.split(CONFLICT_NAME_SEPARATOR)[0] == name
+        ]
+        ids = [
+            row_name.split(CONFLICT_NAME_SEPARATOR)[1] for row_name in rows_with_name
+        ]
+
+        assert (
+            len(rows_with_name) == number
+        ), f"{name} not visible {number} times on storages list"
+        assert check_ids_different(ids), f"IDs are not unique, {ids}"
+
+    assert_func = partial(assert_number_entries_with_name, name=name, number=number)
+    scroll_and_call_and_assert(selenium, browser_id, onepanel, help_func, assert_func)
