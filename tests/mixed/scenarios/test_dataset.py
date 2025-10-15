@@ -7,9 +7,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.conftest import *
+from tests.gui.meta_steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
@@ -22,8 +25,10 @@ from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.nodes import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
+from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.metadata import *
@@ -38,6 +43,7 @@ from tests.gui.steps.onezone.user_full_name import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.dataset import *
 from tests.mixed.steps.qos import *
+from tests.mixed.steps.rest.oneprovider.data import *
 from tests.mixed.steps.tokens_basic import *
 from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
@@ -52,3 +58,4 @@ def screens():
 
 
 scenarios("../features/oneprovider/dataset.feature")
+scenarios("../features/oneprovider/dataset_hardlink_protection.feature")
