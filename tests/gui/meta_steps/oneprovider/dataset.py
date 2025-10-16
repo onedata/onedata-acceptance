@@ -86,7 +86,7 @@ def create_dataset(
     op_container,
     modals,
     popups,
-    option="no flags",
+    option,
 ):
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"

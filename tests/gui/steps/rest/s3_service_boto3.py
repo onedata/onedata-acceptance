@@ -6,6 +6,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import os
 
 import boto3  # pylint: disable=import-error
 from botocore.config import Config  # pylint: disable=import-error
@@ -60,6 +61,12 @@ def list_buckets(s3):
     return [bucket["Name"] for bucket in s3.list_buckets()["Buckets"]]
 
 
+@wt(
+    parsers.parse(
+        "using OneS3 and list buckets boto3 function, user {user} can see spaces"
+        ' "{spaces_list}"'
+    )
+)
 @wt(parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'))
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_assert_listed_buckets(spaces_list, tmp_memory, tokens, hosts):
@@ -71,6 +78,61 @@ def wt_assert_listed_buckets(spaces_list, tmp_memory, tokens, hosts):
         f" {actual_spaces}"
     )
     assert set(actual_spaces) == set(spaces_list), err_msg
+
+
+def does_bucket_exist(s3, bucket_name):
+    return (
+        s3.head_bucket(Bucket=bucket_name)["ResponseMetadata"]["HTTPStatusCode"] == 200
+    )
+
+
+@wt(
+    parsers.parse(
+        "using OneS3 and head bucket boto3 function, user {user} can see there is a"
+        ' space "{space_name}"'
+    )
+)
+def wt_assert_bucket_exists(space_name, tmp_memory, tokens, hosts):
+    s3 = get_s3client(tmp_memory, tokens, hosts)
+    assert does_bucket_exist(s3, space_name)
+
+
+def download_file_from_bucket(s3, bucket_name, file_path, tmpdir, user):
+    home_dir = tmpdir.join(user, "download")
+    os.makedirs(home_dir, exist_ok=True)
+    local_path = os.path.join(home_dir, file_path)
+    s3.download_file(Bucket=bucket_name, Key=file_path, Filename=local_path)
+
+
+@wt(
+    parsers.parse(
+        'using OneS3, user {user} downloads "{file_name}" from "{space_name}"'
+    )
+)
+def wt_download_file_from_bucket(
+    space_name, file_name, tmpdir, user, tmp_memory, tokens, hosts
+):
+    s3 = get_s3client(tmp_memory, tokens, hosts)
+    download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
+
+
+def create_file_in_bucket(s3, bucket_name, file_name, file_content):
+    s3.put_object(
+        Bucket=bucket_name, Key=file_name, Body=bytes(file_content, encoding="utf-8")
+    )
+
+
+@wt(
+    parsers.parse(
+        'using OneS3, user {user} creates "{file_name}" with content '
+        '"{file_content}" in "{space_name}"'
+    )
+)
+def wt_create_file_in_bucket(
+    space_name, file_name, file_content, tmp_memory, tokens, hosts
+):
+    s3 = get_s3client(tmp_memory, tokens, hosts)
+    create_file_in_bucket(s3, space_name, file_name, file_content)
 
 
 def read_file_content_from_bucket(s3, bucket_name, file_path):
@@ -94,3 +156,17 @@ def wt_assert_file_content_read_from_bucket(
         f" {file_content}\n for file {file_name}"
     )
     assert actual_content == file_content, err_msg
+
+
+def list_bucket_content(s3, bucket_name):
+    response = s3.list_objects_v2(Bucket=bucket_name)
+    if "Contents" in response:
+        return [obj["Key"] for obj in response["Contents"]]
+    return []
+
+
+@wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
+def wt_assert_bucket_content(space_name, items, tmp_memory, tokens, hosts):
+    s3 = get_s3client(tmp_memory, tokens, hosts)
+    actual_content = list_bucket_content(s3, space_name)
+    assert set(actual_content) == set(parse_seq(items))

@@ -1,5 +1,4 @@
-Feature: Basic management
-  Basic management of space in Onezone using REST and Oneclient
+Feature: Basic management of space in Onezone using REST and Oneclient
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
