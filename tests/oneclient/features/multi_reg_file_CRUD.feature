@@ -15,8 +15,8 @@ Feature: Multi_regular_file_CRUD
 
 
   Scenario: Create many children
-    When user1 creates child files of space1 with names in range [1, 127) on client11
-    Then user2 lists children of space1 and gets names in range [1, 127) on client21
+    When user1 creates child files of space1 with names in range [1, 511) on client11
+    Then user2 lists children of space1 and gets names in range [1, 511) on client21
 
 
   Scenario: Create a file, read it on the second client, delete it, and repeat the whole process
