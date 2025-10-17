@@ -165,8 +165,6 @@ def wt_try_to_register_prov_using_register_btn(
     step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
 
-    wait_for_next_step_in_deployment(onepanel, driver, modals, 6)
-
     # if error modal occurred close it and repeat function execution
     try:
         error_modal = modals(driver).error
