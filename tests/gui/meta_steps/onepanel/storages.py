@@ -85,7 +85,7 @@ def add_storage_in_op_panel_using_gui(
         selenium, browser_id, provider_name, oz_page, hosts, onepanel
     )
     _add_storage_in_op_panel_using_gui(
-        selenium, browser_id, config, onepanel, name, popups, flag=False
+        selenium, browser_id, config, onepanel, name, popups
     )
 
 
@@ -109,7 +109,7 @@ def _go_to_storage_view_in_clusters(
 
 
 def _add_storage_in_op_panel_using_gui(
-    selenium, browser_id, config, onepanel, storage_name, popups, flag=True
+    selenium, browser_id, config, onepanel, storage_name, popups
 ):
     content = "storages"
     btn = "Add storage backend"
@@ -118,11 +118,12 @@ def _add_storage_in_op_panel_using_gui(
     mount_point_option = "mount point"
     notify_type = "info"
     text_regexp = ".*[Ss]torage.*added.*"
-
     options = yaml.load(config, yaml.Loader)
 
-    if flag:
+    try:
         wt_click_on_btn_in_content(selenium, browser_id, btn, content, onepanel)
+    except RuntimeError:
+        pass
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
@@ -137,7 +138,6 @@ def _add_storage_in_op_panel_using_gui(
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id, onepanel)
-
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(
         selenium, browser_id, onepanel
     )

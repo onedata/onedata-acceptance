@@ -265,6 +265,7 @@ def type_name_to_form_in_storages_page(
         onepanel(driver).content.storages.storages[storage].edit_form,
         f"{storage_type.lower()}_editor",
     )
+    # breakpoint()
     setattr(form, transform(input_box), name)
 
 
