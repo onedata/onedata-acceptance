@@ -259,13 +259,13 @@ def assert_hardlink_between_files_rest(
     )
 )
 def assert_hardlink_between_files_oneclient(
-    client, user, users, file_path1, file_path2
+    client, user, users, file_path1, file_path2, request
 ):
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_hardlink_between_files(
-            user, oneclient_host, users, file_path1, file_path2
+            user, oneclient_host, users, file_path1, file_path2, request
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -278,11 +278,13 @@ def assert_hardlink_between_files_oneclient(
     )
 )
 def assert_file_is_symlink_and_where_it_points_oneclient(
-    client, user, users, file_path, symlink_path
+    client, user, users, file_path, symlink_path, request
 ):
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_symlink_of_file(user, oneclient_host, users, symlink_path, file_path)
+        assert_symlink_of_file(
+            user, oneclient_host, users, symlink_path, file_path, request
+        )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

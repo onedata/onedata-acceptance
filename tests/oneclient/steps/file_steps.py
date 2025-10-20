@@ -95,8 +95,8 @@ def check_size(user, file, size, users):
 
 
 @then(parsers.re(r"file type of (?P<user>\w+)'s (?P<file>.*) is (?P<file_type>.*)"))
-def check_type(user, file, file_type, users):
-    multi_file_steps.check_type(user, file, file_type, "client1", users)
+def check_type(user, file, file_type, users, request):
+    multi_file_steps.check_type(user, file, file_type, "client1", users, request)
 
 
 @then(
@@ -105,8 +105,8 @@ def check_type(user, file, file_type, users):
         "(?P<file>.*) is (?P<file_type>.*)"
     )
 )
-def shell_check_type(user, file, file_type, users):
-    multi_file_steps.shell_check_type(user, file, file_type, "client1", users)
+def shell_check_type(user, file, file_type, users, request):
+    multi_file_steps.shell_check_type(user, file, file_type, "client1", users, request)
 
 
 @then(parsers.re(r"mode of (?P<user>\w+)'s (?P<file>.*) is (?P<mode>.*)"))
