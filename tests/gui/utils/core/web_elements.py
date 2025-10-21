@@ -83,12 +83,19 @@ class Label(WebElement):
 
 
 class Input(WebElement):
+    # def __get__(self, instance, owner):
+    #     item = super().__get__(instance, owner)
+    #     return item.get_attribute("value") if instance else item
+
     def __get__(self, instance, owner):
-        item = super().__get__(instance, owner)
-        return item.get_attribute("value") if instance else item
+        return super().__get__(instance, owner)
+
+    def value(self, instance):
+        return super().__get__(instance, type(instance)).get_attribute("value")
 
     def __set__(self, instance, val):
         input_box = super().__get__(instance, type(instance))
+        #breakpoint()
         input_box.clear()
         if val != "":
             input_box.send_keys(val)

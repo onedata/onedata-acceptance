@@ -25,6 +25,7 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
+from selenium.common.exceptions import ElementNotInteractableException
 
 
 class StoragePathType(PageObject):
@@ -112,6 +113,28 @@ class POSIXEditor(Editor):
     mount_point = Input(".mountPoint-field input")
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
+
+    def change_mount_point(self, val):
+        try:
+            input_box = type(self).mount_point.__get__(self, type(self))
+        except ElementNotInteractableException as e:
+            self.scroll_by_press_space()
+            input_box = type(self).mount_point.__get__(self, type(self))
+
+        try:
+            input_box.clear()
+        except ElementNotInteractableException as e:
+            self.scroll_by_press_space()
+            input_box.clear()
+
+        if val != "":
+            input_box.send_keys(val)
+            assert ( input_box.get_attribute("value") == val ), f'entering "{val}" failed'
+
+
+    def scroll_by_press_space(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.SPACE).perform()
 
 
 class S3Editor(Editor):
