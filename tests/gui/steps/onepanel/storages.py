@@ -49,7 +49,9 @@ def wt_select_storage_type_in_storage_page_op_panel(
 def wt_type_text_to_in_box_in_storages_page_op_panel(
     selenium, browser_id, text, form, onepanel, input_box
 ):
-    form = getattr(onepanel(selenium[browser_id]).content.storages.form, transform(form))
+    form = getattr(
+        onepanel(selenium[browser_id]).content.storages.form, transform(form)
+    )
     setattr(form, transform(input_box), text)
 
 
@@ -259,9 +261,16 @@ def type_name_to_form_in_storages_page(
     selenium, browser_id, name, input_box, onepanel, storage_type, storage
 ):
     driver = selenium[browser_id]
-    form = getattr(onepanel(driver).content.storages.storages[storage].edit_form,f"{storage_type.lower()}_editor",)
-    onepanel(driver).content.storages.scroll_by_press_space()
-    form.change_mount_point(name)
+    form = getattr(
+        onepanel(driver).content.storages.storages[storage].edit_form,
+        f"{storage_type.lower()}_editor",
+    )
+
+    if transform(input_box) == "mount_point":
+        onepanel(driver).content.storages.scroll_by_press_space()
+        form.change_mount_point(name)
+    else:
+        setattr(form, transform(input_box), name)
 
 
 @wt(
@@ -372,7 +381,6 @@ def assert_number_storages_with_same_name(
         ids = [
             row_name.split(CONFLICT_NAME_SEPARATOR)[1] for row_name in rows_with_name
         ]
-
         assert (
             len(rows_with_name) == number
         ), f"{name} not visible {number} times on storages list"

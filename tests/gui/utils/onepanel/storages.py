@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 
+from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -25,7 +26,6 @@ from tests.gui.utils.core.web_elements import (
 )
 from tests.gui.utils.onezone.common import InputBox
 from tests.utils.utils import repeat_failed
-from selenium.common.exceptions import ElementNotInteractableException
 
 
 class StoragePathType(PageObject):
@@ -116,21 +116,20 @@ class POSIXEditor(Editor):
 
     def change_mount_point(self, val):
         try:
-            input_box = type(self).mount_point.__get__(self, type(self))
-        except ElementNotInteractableException as e:
+            input_box = self.mount_point
+        except ElementNotInteractableException:
             self.scroll_by_press_space()
-            input_box = type(self).mount_point.__get__(self, type(self))
+            input_box = self.mount_point
 
         try:
             input_box.clear()
-        except ElementNotInteractableException as e:
+        except ElementNotInteractableException:
             self.scroll_by_press_space()
             input_box.clear()
 
         if val != "":
             input_box.send_keys(val)
-            assert ( input_box.get_attribute("value") == val ), f'entering "{val}" failed'
-
+            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
 
     def scroll_by_press_space(self):
         action = ActionChains(self.driver)
