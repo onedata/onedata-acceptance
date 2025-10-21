@@ -397,13 +397,7 @@ def check_size(user, file, size, client_node, users):
     assert_(client.perform, condition)
 
 
-@then(
-    parsers.re(
-        r"file type of (?P<user>\w+)'s (?P<file>.*) is "
-        r"(?P<file_type>.*) on (?P<client_node>.*)"
-    )
-)
-def check_type(user, file, file_type, client_node, users):
+def check_type_impl(user, file, file_type, client_node, users, follow_symlinks=True):
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
@@ -418,10 +412,30 @@ def check_type(user, file, file_type, client_node, users):
         raise ValueError(f"unknown file type {file_type}")
 
     def condition():
-        stat_result = client.lstat(file_path)
+        if follow_symlinks:
+            stat_result = client.stat(file_path)
+        else:
+            stat_result = client.lstat(file_path)
         assert getattr(stat_lib, stat_method)(stat_result.st_mode)
 
     assert_(client.perform, condition)
+
+
+@then(
+    parsers.re(
+        r"file type of (?P<user>\w+)'s (?P<file>.*) is "
+        r"(?P<file_type>.*) on (?P<client_node>.*)"
+    )
+)
+def check_type(user, file, file_type, client_node, users, request):
+    check_type_impl(
+        user,
+        file,
+        file_type,
+        client_node,
+        users,
+        request.config.getoption("file_mode") == "symlink",
+    )
 
 
 @then(
@@ -430,13 +444,15 @@ def check_type(user, file, file_type, client_node, users):
         "of (?P<file>.*) is (?P<file_type>.*) on (?P<client_node>.*)"
     )
 )
-def shell_check_type(user, file, file_type, client_node, users):
+def shell_check_type(user, file, file_type, client_node, users, request):
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
+    mode = request.config.getoption("file_mode")
 
     def condition():
-        cmd = f"stat --format=%F {file_path}"
+        follow_links = "-L " if mode == "symlink" else ""
+        cmd = f"stat --format=%F {follow_links}{file_path}"
         stat_file_type = client.run_cmd(cmd, output=True)
         assert stat_file_type.strip() == file_type
 
@@ -873,7 +889,7 @@ def create_file_in_dir_by_id(user, client_node, users, file_id, file_name):
     )
 
 
-def assert_symlink_of_file(user, client_node, users, symlink_path, file_path):
+def assert_symlink_of_file(user, client_node, users, symlink_path, file_path, request):
 
     user_name = user
     user = users[user_name]
@@ -881,7 +897,7 @@ def assert_symlink_of_file(user, client_node, users, symlink_path, file_path):
     symlink_path = client.absolute_path(symlink_path)
     file_path = client.absolute_path(file_path)
 
-    check_type(user_name, symlink_path, "symlink", client_node, users)
+    check_type(user_name, symlink_path, "symlink", client_node, users, request)
 
     real_path = client.realpath(symlink_path)
     # realpath eliminates every symbolic link encountered in path,
@@ -894,7 +910,9 @@ def assert_symlink_of_file(user, client_node, users, symlink_path, file_path):
     )
 
 
-def assert_hardlink_between_files(user, client_node, users, file_path1, file_path2):
+def assert_hardlink_between_files(
+    user, client_node, users, file_path1, file_path2, request
+):
     user_name = user
     user = users[user_name]
     client = user.clients[client_node]
@@ -902,8 +920,8 @@ def assert_hardlink_between_files(user, client_node, users, file_path1, file_pat
     file2 = client.absolute_path(file_path2)
 
     # hardlink and original file must be regular files
-    check_type(user_name, file1, "regular", client_node, users)
-    check_type(user_name, file2, "regular", client_node, users)
+    check_type(user_name, file1, "regular", client_node, users, request)
+    check_type(user_name, file2, "regular", client_node, users, request)
 
     # Two files are hardlinked if they point to the same node in the same
     # file system

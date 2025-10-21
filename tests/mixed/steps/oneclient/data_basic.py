@@ -337,7 +337,7 @@ def given_mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memor
 
 def check_file_is_of_type_oc(file, file_type, user, users, host):
     try:
-        multi_file_steps.check_type(user, file, file_type, host, users)
+        multi_file_steps.check_type_impl(user, file, file_type, host, users)
     except AssertionError:
         return False
     return True
