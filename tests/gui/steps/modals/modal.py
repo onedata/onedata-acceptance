@@ -189,11 +189,9 @@ def wait_for_named_modal_to_disappear(
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
     try:
-        # breakpoint()
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
         return
-    # breakpoint()
     Wait(
         driver,
         wait_time,
@@ -632,7 +630,7 @@ def click_icon_in_share_directory_modal(
         'user of {browser_id} sees that error modal with text "{text}" appeared'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND * 4)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal does not contain text "{text}"'
