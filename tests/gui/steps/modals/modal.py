@@ -189,9 +189,11 @@ def wait_for_named_modal_to_disappear(
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
     try:
+        # breakpoint()
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
         return
+    # breakpoint()
     Wait(
         driver,
         wait_time,

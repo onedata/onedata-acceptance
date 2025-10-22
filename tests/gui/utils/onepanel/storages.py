@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 
-from selenium.common.exceptions import ElementNotInteractableException
+# from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -110,30 +110,36 @@ class Editor(PageObject):
 
 
 class POSIXEditor(Editor):
-    mount_point = Input(".mountPoint-field input")
+    mount_point = WebElement(".mountPoint-field input")
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
 
     def change_mount_point(self, val):
-        try:
-            input_box = self.mount_point
-        except ElementNotInteractableException:
-            self.scroll_by_press_space()
-            input_box = self.mount_point
+        # try:
+        #     input_box = self.mount_point
+        # except ElementNotInteractableException:
+        # self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        # iframes = self.driver.find_elements(By.CSS_SELECTOR, ".poolName-field input")
+        # self.scroll_by_press_space()
+        # input_box = self.mount_point
 
-        try:
-            input_box.clear()
-        except ElementNotInteractableException:
-            self.scroll_by_press_space()
-            input_box.clear()
+        # try:
+        #     input_box.clear()
+        # except ElementNotInteractableException:
+        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        #     input_box.clear()
+
+        input_box = self.mount_point
+        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        input_box.clear()
 
         if val != "":
             input_box.send_keys(val)
             assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
 
-    def scroll_by_press_space(self):
-        action = ActionChains(self.driver)
-        action.key_down(Keys.SPACE).perform()
+    # def scroll_by_press_space(self):
+    #     action = ActionChains(self.driver)
+    #     action.key_down(Keys.SPACE).perform()
 
 
 class S3Editor(Editor):
@@ -142,7 +148,33 @@ class S3Editor(Editor):
 
 
 class CephEditor(Editor):
-    pool_name = Input(".poolName-field input")
+    pool_name = WebElement(".poolName-field input")
+
+    def change_pool_name(self, val):
+        # try:
+        #     input_box = self.pool_name
+        # except ElementNotInteractableException:
+        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        #     #self.scroll_by_press_space()
+        #     input_box = self.pool_name
+
+        input_box = self.pool_name
+        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        input_box.clear()
+
+        # try:
+        #     input_box.clear()
+        # except ElementNotInteractableException:
+        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        #     input_box.clear()
+
+        if val != "":
+            input_box.send_keys(val)
+            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
+
+    # def scroll_by_press_space(self):
+    #     action = ActionChains(self.driver)
+    #     action.key_down(Keys.SPACE).perform()
 
 
 class StorageEditForm(PageObject):

@@ -109,6 +109,7 @@ Feature: Storage management using onepanel
   Scenario: User sees that synchronization auto-update still works after changing mount point for storage
     When user of browser_unified creates "space1" space in Onezone
     And user of browser_unified copies dir1 to /volumes/posix/dir directory on docker
+
     And user of browser_unified adds "new_storage1" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/posix/dir
@@ -164,9 +165,11 @@ Feature: Storage management using onepanel
   Scenario: User fails to update import in storage that is not import-enabled
     When user of browser_unified creates "space1" space in Onezone
     And user of browser_unified copies dir1 to /volumes/posix/dir directory on docker
+
     And user of browser_unified adds "new_storage1" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/posix/dir
+
     And user of browser_unified sends support token for "space1" to user of browser_unified
 
     And user of browser_unified clicks on Clusters in the main menu
@@ -204,4 +207,3 @@ Feature: Storage management using onepanel
 
     And user of browser_unified collapses first expanded storage backend with name "storage" in Storages page in Onepanel
     Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list
-

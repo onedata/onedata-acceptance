@@ -266,10 +266,14 @@ def type_name_to_form_in_storages_page(
         f"{storage_type.lower()}_editor",
     )
 
-    if transform(input_box) == "mount_point":
+    if transform(input_box) in ["mount_point", "pool_name"]:
         onepanel(driver).content.storages.scroll_by_press_space()
+    if transform(input_box) == "mount_point":
         form.change_mount_point(name)
+    elif transform(input_box) == "pool_name":
+        form.change_pool_name(name)
     else:
+        # breakpoint()
         setattr(form, transform(input_box), name)
 
 
