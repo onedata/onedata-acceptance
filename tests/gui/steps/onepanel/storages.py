@@ -6,7 +6,6 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-# from functools import partial
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
