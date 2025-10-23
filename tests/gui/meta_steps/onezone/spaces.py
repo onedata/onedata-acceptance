@@ -573,7 +573,7 @@ def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_spaces = page.get_visible_spaces_list()
+        new_spaces = _get_visible_spaces_list(page)
         new_spaces_names = [el.text.split("\n")[0] for el in new_spaces]
 
         if space_name in new_spaces_names:
@@ -588,6 +588,11 @@ def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_visible_spaces_list(page):
+    return page.get_visible_spaces_list()
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} can see that opened space is "{space_name}" on the spaces'
@@ -598,7 +603,7 @@ def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
 def assert_opened_space(selenium, browser_id, space_name, oz_page):
     driver = selenium[browser_id]
     page = oz_page(driver)["data"]
-    vis_spaces = page.get_visible_spaces_list()
+    vis_spaces = _get_visible_spaces_list(page)
     vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
     index = vis_spaces_names.index(space_name)
     el = vis_spaces[index]
