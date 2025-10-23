@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -131,30 +132,12 @@ class CephEditor(Editor):
     pool_name = WebElement(".poolName-field input")
 
     def change_pool_name(self, val):
-        # try:
-        #     input_box = self.pool_name
-        # except ElementNotInteractableException:
-        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        #     #self.scroll_by_press_space()
-        #     input_box = self.pool_name
-
         input_box = self.pool_name
         self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
         input_box.clear()
-
-        # try:
-        #     input_box.clear()
-        # except ElementNotInteractableException:
-        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        #     input_box.clear()
-
         if val != "":
             input_box.send_keys(val)
             assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
-
-    # def scroll_by_press_space(self):
-    #     action = ActionChains(self.driver)
-    #     action.key_down(Keys.SPACE).perform()
 
 
 class StorageEditForm(PageObject):
