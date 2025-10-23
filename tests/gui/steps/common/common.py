@@ -6,6 +6,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Dict, List
 
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -63,6 +67,32 @@ def wt_assert_n_items_in_items_list(
     driver = selenium[browser_id]
     page = _get_page(where, oz_page, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+
+
+def get_last_item_number_in_table(driver):
+    entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
+    if len(entries) == 0:
+        return 0
+    return int(entries[-1].get_attribute("data-row-id")) + 1
+
+
+def scroll_to_bottom_of_the_table(driver):
+    while True:
+        entries = driver.find_elements(
+            By.CSS_SELECTOR, "tbody.table-body tr.table-entry"
+        )
+        if len(entries) == 0:
+            return 0
+        count = int(entries[-1].get_attribute("data-row-id")) + 1
+        # Scroll to last
+        driver.execute_script("arguments[0].scrollIntoView();", entries[-1])
+        try:
+            WebDriverWait(driver, 2).until(
+                lambda d: get_last_item_number_in_table(d) > count
+            )
+        except TimeoutException:
+            break
+    return count
 
 
 def assert_logs_order_with_optional_logs(
