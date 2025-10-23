@@ -6,9 +6,10 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -320,9 +321,14 @@ def save_description_changes(selenium, browser_id, op_container):
         "user of {browser_id} can see there are {number} shares in shares view"
     )
 )
-def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int, op_container):
+def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int):
     items = "shares"
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    page = op_container(driver).shares_page
+    page = get_shares_page(driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def get_shares_page(driver):
+    return OPLoggedIn(driver).shares_page
