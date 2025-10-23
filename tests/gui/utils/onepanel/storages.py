@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-
-# from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -115,20 +113,6 @@ class POSIXEditor(Editor):
     read_only = Toggle(".readonly-field .one-way-toggle")
 
     def change_mount_point(self, val):
-        # try:
-        #     input_box = self.mount_point
-        # except ElementNotInteractableException:
-        # self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        # iframes = self.driver.find_elements(By.CSS_SELECTOR, ".poolName-field input")
-        # self.scroll_by_press_space()
-        # input_box = self.mount_point
-
-        # try:
-        #     input_box.clear()
-        # except ElementNotInteractableException:
-        #     self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        #     input_box.clear()
-
         input_box = self.mount_point
         self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
         input_box.clear()
@@ -136,10 +120,6 @@ class POSIXEditor(Editor):
         if val != "":
             input_box.send_keys(val)
             assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
-
-    # def scroll_by_press_space(self):
-    #     action = ActionChains(self.driver)
-    #     action.key_down(Keys.SPACE).perform()
 
 
 class S3Editor(Editor):
