@@ -123,7 +123,7 @@ def assert_number_of_proceeded_files(
 ):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).task_time_series
-    values = modal.get_last_column_value()
+    values = modal.get_max_value()
     for value in values:
         if option in value[1].lower():
             err_msg = (

@@ -23,16 +23,24 @@ class TaskTimeSeries(Modal):
         else:
             raise RuntimeError("Failed to get data from task time series canvas")
 
-    def get_last_column_value(self):
+    def get_columns_values(self):
         chart = self.driver.execute_script(_canvas_fill, self._canvas)
         if chart is not False:
-            value1 = [chunk[1] for chunk in chart["series"][0]["data"]]
+            values1 = [chunk[1] for chunk in chart["series"][0]["data"]]
             value_type1 = chart["series"][0]["name"]
-            value2 = [chunk[1] for chunk in chart["series"][1]["data"]]
+            values2 = [chunk[1] for chunk in chart["series"][1]["data"]]
             value_type2 = chart["series"][1]["name"]
-            return [(value1[-1], value_type1), (value2[-1], value_type2)]
+            return [(values1, value_type1), (values2, value_type2)]
         else:
             raise RuntimeError("Failed to get data from task time series canvas")
+
+    def get_last_column_value(self):
+        values = self.get_columns_values()
+        return [(values[0][0][-1], values[0][1]), (values[1][0][-1], values[1][1])]
+
+    def get_max_value(self):
+        values = self.get_columns_values()
+        return [(max(values[0][0]), values[0][1]), (max(values[1][0]), values[1][1])]
 
     def __str__(self):
         return "Task time series modal"
