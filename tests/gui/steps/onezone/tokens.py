@@ -14,6 +14,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import Popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -263,15 +264,15 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
 def choose_invite_token_filter(
     selenium, browser_id, token_filter, filter_type, oz_page, hosts
 ):
-    invite_filter = oz_page(selenium[browser_id])["tokens"].sidebar.invite_filter
+    driver = selenium[browser_id]
+    invite_filter = oz_page(driver)["tokens"].sidebar.invite_filter
     if filter_type == "name Invite":
         if "oneprovider" in token_filter:
             token_filter = hosts[token_filter]["name"]
         invite_filter.dropdown_menus[1].click()
-        invite_filter.name_options[token_filter].click()
     else:
         invite_filter.dropdown_menus[0].click()
-        invite_filter.options[token_filter].click()
+    Popups(driver).dropdown.options[token_filter].click()
 
 
 @wt(

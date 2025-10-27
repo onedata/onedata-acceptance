@@ -56,12 +56,6 @@ class TokenInviteTargetNameOptions(PageObject):
 
 class TokenInviteFilter(PageObject):
     dropdown_menus = WebElementsSequence(".ember-basic-dropdown-trigger")
-    options = WebItemsSequence(
-        ".ember-power-select-option", cls=TokenInviteTargetOptions
-    )
-    name_options = WebItemsSequence(
-        ".ember-power-select-option", cls=TokenInviteTargetNameOptions
-    )
 
 
 class TokensSidebar(PageObject):
