@@ -8,7 +8,14 @@ from selenium.webdriver.common.by import By
 
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Button, Input, Label, WebItem, WebItemsSequence, WebElementsSequence, WebElement
+from tests.gui.utils.core.web_elements import (
+    Button,
+    Input,
+    Label,
+    WebElement,
+    WebItem,
+    WebItemsSequence,
+)
 from tests.gui.utils.oneprovider.shares.public_share import PublicShareView
 
 
@@ -37,13 +44,16 @@ class DublinCoreMetadata(PageObject):
 
 
 class EDMBox(PageObject):
-    name = id = Label(".edm-property-type-name")
-    language = WebElement(".edm-lang-dropdown-trigger")
-    value = WebElement(".edm-property-value")
+    name = id = Label(".edm-property-type-name", scroll=False)
+    language = WebElement(".edm-lang-dropdown-trigger", scroll=False)
+    input = WebElement(
+        ".edm-property-value input, .edm-property-value textarea", scroll=False
+    )
+    dropdown = WebElement(".edm-property-value", scroll=False)
 
 
 class EDMMetadata(PageObject):
-    items = WebItemsSequence(".edm-property-group-box", cls=EDMBox)
+    items = WebItemsSequence(".edm-property-group-box", cls=EDMBox, scroll=False)
 
 
 class Description(PageObject):
@@ -56,7 +66,9 @@ class PrivateShareView(PublicShareView):
     dublin_core_metadata_form = WebItem(
         ".publicdata-one-carousel", cls=DublinCoreMetadata
     )
-    edm_metadata_form = WebItem(".publicdata-one-carousel", cls=EDMMetadata)
+    edm_metadata_form = WebItem(
+        ".publicdata-one-carousel", cls=EDMMetadata, scroll=False
+    )
     description_form = WebItem(".content-space-shares", cls=Description)
 
     choose_a_handle_service = Button(".select-handle-service")

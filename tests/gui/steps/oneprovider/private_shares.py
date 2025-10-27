@@ -6,7 +6,10 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import ElementClickInterceptedException
+
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -128,8 +131,8 @@ def assert_private_share_named(selenium, browser_id, share_name, private_share):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} writes "{text}" to {which_input}'
-        ' input text field in "EDM" form on '
+        'user of {browser_id} writes "{text}" to "{which_input}"'
+        ' section text field in "EDM" form on '
         "share's private interface"
     )
 )
@@ -139,3 +142,55 @@ def write_input_in_edm_form_in_shares_interface(
 ):
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
+
+    for item in form.items:
+        if item.name == "":
+            driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
+        if item.name == which_input:
+            item_input = item.input
+            if not item_input.is_displayed():
+                driver.execute_script("arguments[0].scrollIntoView();", item_input)
+            item_input.clear()
+            item_input.send_keys(text)
+            return
+    raise AssertionError(f"item {which_input} not found")
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} chooses "{option}" in "{section_name}"'
+        ' section in "EDM" form on '
+        "share's private interface"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_in_edm_form_in_shares_interface(
+    browser_id, option, section_name, selenium, private_share
+):
+    driver = selenium[browser_id]
+    form = private_share(driver).edm_metadata_form
+
+    for item in form.items:
+        if item.name == "":
+            driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
+        if item.name == section_name:
+            item_dropdown = item.dropdown
+            try:
+                item_dropdown.click()
+            except ElementClickInterceptedException:
+                driver.execute_script(
+                    "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
+                )
+                item_dropdown.click()
+            Popups(driver).power_select.choose_item_including_name(option)
+            return
+    raise AssertionError(f"item {section_name} not found")
+
+
+# def get_val_edm_form_in_shares_interface(
+#     browser_id, text, which_input, selenium, private_share
+# ):
+#     driver = selenium[browser_id]
+#     form = private_share(driver).edm_metadata_form
+#     item = form.items[which_input]
+#     val = item.get_attribute("value")
