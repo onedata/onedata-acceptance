@@ -131,14 +131,6 @@ class S3Editor(Editor):
 class CephEditor(Editor):
     pool_name = WebElement(".poolName-field input")
 
-    def change_pool_name(self, val):
-        input_box = self.pool_name
-        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        input_box.clear()
-        if val != "":
-            input_box.send_keys(val)
-            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
-
 
 class StorageEditForm(PageObject):
     posix_editor = WebItem("form", cls=POSIXEditor)

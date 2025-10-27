@@ -269,8 +269,6 @@ def type_name_to_form_in_storages_page(
 
     if input_box == "mount_point":
         form.change_mount_point(name)
-    elif transform(input_box) == "pool_name":
-        form.change_pool_name(name)
     else:
         setattr(form, input_box, name)
 
