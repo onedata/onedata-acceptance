@@ -28,6 +28,7 @@ class WebElement(AbstractWebElement):
             instance.web_elem,
             self.css_sel,
             lambda: self._format_msg("no {item} item found in {parent}", instance),
+            scroll=self.scroll,
         )
 
     def _format_msg(self, err_msg, parent, **kwargs):
@@ -53,6 +54,7 @@ class WebElementWithText(WebElement):
             self.css_sel,
             self.text,
             lambda: self._format_msg(err_msg, instance, text=self.text),
+            scroll=self.scroll,
         )
 
 
