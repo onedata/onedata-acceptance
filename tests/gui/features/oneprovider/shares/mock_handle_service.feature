@@ -23,67 +23,7 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser logged as space-owner-user to Onezone service
 
 
-#  Scenario: User views files from public interface of share shared from another user on mock handle service
-#    When user of space_owner_browser opens file browser for "space1" space
-#    And user of space_owner_browser creates "share_dir1" share of "dir1" directory
-#    And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
-#
-#    And user of space_owner_browser opens "Description" tab on share's private interface
-#    And user of space_owner_browser clicks "Create description" button in "Description" form on share's private interface
-#    And user of space_owner_browser types "Description for another user to check if can see" into description field in "Description" form on share's private interface
-#    And user of space_owner_browser clicks "Save" button in "Description" form on share's private interface
-#
-#    And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
-#    And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
-#    And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
-#    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
-#    And user of space_owner_browser chooses "Dublin Core" in dropdown menu for metadata type on share's private interface
-#    And user of space_owner_browser clicks "Proceed" button on share's private interface
-#
-#    And user of space_owner_browser writes "My test data" into last title input text field in "Dublin Core Metadata" form on share's private interface
-#    And user of space_owner_browser clicks "Add another title" button in "Dublin Core Metadata" form on share's private interface
-#    And user of space_owner_browser writes "Another title" into last title input text field in "Dublin Core Metadata" form on share's private interface
-#    And user of space_owner_browser writes "Kasia" into last creator input text field in "Dublin Core Metadata" form on share's private interface
-#    And user of space_owner_browser writes "This is test" into last description input text field in "Dublin Core Metadata" form on share's private interface
-#    And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
-#
-#    And user of space_owner_browser sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's private interface
-#    And user of space_owner_browser sees that creator is "Kasia" in "Dublin Core Metadata" on share's private interface
-#    And user of space_owner_browser sees that description is "This is test" in "Dublin Core Metadata" on share's private interface
-#    And user of space_owner_browser sees that link on share's private interface is "Public handle link"
-#    And user of space_owner_browser copies "Public handle link" from share's private interface
-#    And user of space_owner_browser sends copied URL to user of browser1
-#
-#    Then user of browser1 opens received URL
-#    And user of browser1 sees that public share is named "share_dir1"
-#    And user of browser1 sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's public interface
-#    And user of browser1 sees that creator is "Kasia" in "Dublin Core Metadata" on share's public interface
-#    And user of browser1 sees that description is "This is test" in "Dublin Core Metadata" on share's public interface
-#
-#    And user of browser1 clicks "XML" button on share's public interface
-#    And user of browser1 sees that XML data contains ["My test data", "Another title", "Kasia", "This is test"] on share's public interface
-#
-#    And user of browser1 opens "Files" tab on share's public interface
-#    And user of browser1 sees file browser on share's public interface
-#    And user of browser1 clicks and presses enter on item named "dir1" in file browser
-#    And user of browser1 sees item(s) named "file1" in file browser
-#
-#    And user of browser1 opens "Description" tab on share's public interface
-#    And user of browser1 sees "Description for another user to check if can see" description on share's public interface
-#
-#
-#  Scenario: User opens Public Data expose view using toggle in modal "Share / Publish directory"
-#    When user of space_owner_browser opens file browser for "space1" space
-#    And user of space_owner_browser clicks on "Share / Publish" in context menu for "dir1"
-#    And user of space_owner_browser writes "share_dir1" into text field in modal "Share / Publish directory"
-#    And user of space_owner_browser checks "Expose as a Public Data record" toggle in modal "Share / Publish directory"
-#    And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
-#
-#    Then user of space_owner_browser sees "Expose as Public Data" tab on share's private interface
-#    And user of space_owner_browser sees that share in private view is named "share_dir1"
-
-
-  Scenario: User sets metadata on EDM mock handle service
+  Scenario: User views files from public interface of share shared from another user on mock handle service
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
@@ -97,22 +37,112 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
     And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
     And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
+    And user of space_owner_browser chooses "Dublin Core" in dropdown menu for metadata type on share's private interface
+    And user of space_owner_browser clicks "Proceed" button on share's private interface
+
+    And user of space_owner_browser writes "My test data" into last title input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser clicks "Add another title" button in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "Another title" into last title input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "Kasia" into last creator input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser writes "This is test" into last description input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
+
+    And user of space_owner_browser sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that creator is "Kasia" in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that description is "This is test" in "Dublin Core Metadata" on share's private interface
+    And user of space_owner_browser sees that link on share's private interface is "Public handle link"
+    And user of space_owner_browser copies "Public handle link" from share's private interface
+    And user of space_owner_browser sends copied URL to user of browser1
+
+    Then user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of browser1 sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's public interface
+    And user of browser1 sees that creator is "Kasia" in "Dublin Core Metadata" on share's public interface
+    And user of browser1 sees that description is "This is test" in "Dublin Core Metadata" on share's public interface
+
+    And user of browser1 clicks "XML" button on share's public interface
+    And user of browser1 sees that XML data contains ["My test data", "Another title", "Kasia", "This is test"] on share's public interface
+
+    And user of browser1 opens "Files" tab on share's public interface
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
+    And user of browser1 sees item(s) named "file1" in file browser
+
+    And user of browser1 opens "Description" tab on share's public interface
+    And user of browser1 sees "Description for another user to check if can see" description on share's public interface
+
+
+  Scenario: User opens Public Data expose view using toggle in modal "Share / Publish directory"
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser clicks on "Share / Publish" in context menu for "dir1"
+    And user of space_owner_browser writes "share_dir1" into text field in modal "Share / Publish directory"
+    And user of space_owner_browser checks "Expose as a Public Data record" toggle in modal "Share / Publish directory"
+    And user of space_owner_browser clicks on "Create" button in modal "Share / Publish directory"
+
+    Then user of space_owner_browser sees "Expose as Public Data" tab on share's private interface
+    And user of space_owner_browser sees that share in private view is named "share_dir1"
+
+
+  Scenario: User sets metadata on EDM mock handle service and after saving can see it
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser creates "share_dir1" share of "dir1" directory
+    And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
+
+    And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
+    And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
+    And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
+    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
     And user of space_owner_browser chooses "Europeana Data Model" in dropdown menu for metadata type on share's private interface
     And user of space_owner_browser clicks "Proceed" button on share's private interface
 
-    And user of space_owner_browser writes "abc" to "Title" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "abc" to "Description/Caption" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser adds property "Title" in section in "EDM" form on share's private interface
+    And user of space_owner_browser adds property "Creator of the original object" in section in "EDM" form on share's private interface
+
+    And user of space_owner_browser writes "Some Title" to "Title" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Second Title" to second "Title" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Desc" to "Description/Caption" section text field in "EDM" form on share's private interface
     And user of space_owner_browser chooses "TEXT" in "Category" section in "EDM" form on share's private interface
-    And user of space_owner_browser writes "abc" to "Subject" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "abc" to "Type of object" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Subj" to "Subject" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Type of obj" to "Type of object" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Creator" to "Creator of the original object" section text field in "EDM" form on share's private interface
     And user of space_owner_browser writes "EUreka3D" to "Parent entity (collection, object, site…)" section text field in "EDM" form on share's private interface
     And user of space_owner_browser chooses "Bone" in "Material" section in "EDM" form on share's private interface
 
-    And user of space_owner_browser writes "abc" to "Description of digital object" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "abc" to "Type of digital object" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Desc of digital obj" to "Description of digital object" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Type of digital obj" to "Type of digital object" section text field in "EDM" form on share's private interface
 
-    And user of space_owner_browser writes "abc" to "Content provider institution" section text field in "EDM" form on share's private interface
+    And user of space_owner_browser writes "Some Content prov inst" to "Content provider institution" section text field in "EDM" form on share's private interface
     And user of space_owner_browser chooses "Photoconsortium" in "Name of organisation uploading the data" section in "EDM" form on share's private interface
     And user of space_owner_browser chooses "CC BY 4.0" in "Copyright licence URL of the digital object" section in "EDM" form on share's private interface
 
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
+
+    Then user of space_owner_browser sees that "Title" section has value "Some Title" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that second "Title" section has value "Some Second Title" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Description/Caption" section has value "Some Desc" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Category" section has value "TEXT" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Subject" section has value "Some Subj" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Type of object" section has value "Some Type of obj" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Creator of the original object" section has value "Some Creator" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Parent entity (collection, object, site…)" section has value "EUreka3D" in "EDM" form on share's private interface
+    # After fix TODO: VFS-13113 add checking material name
+    And user of space_owner_browser sees that "Material" section has value "http://vocab.getty.edu/aat/300011798" in "EDM" form on share's private interface
+
+    And user of space_owner_browser sees that "Description of digital object" section has value "Some Desc of digital obj" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Type of digital object" section has value "Some Type of digital obj" in "EDM" form on share's private interface
+
+    And user of space_owner_browser sees that "Content provider institution" section has value "Some Content prov inst" in "EDM" form on share's private interface
+    And user of space_owner_browser sees that "Name of organisation uploading the data" section has value "Photoconsortium" in "EDM" form on share's private interface
+    # After fix TODO: VFS-13113 add checking license name
+    And user of space_owner_browser sees that "Copyright licence URL of the digital object" section has value "http://creativecommons.org/licenses/by/4.0/" in "EDM" form on share's private interface
+
+    And user of space_owner_browser sees warning alert message "The share name (share_dir1) does not match any title specified in the EDM metadata." in share's private interface
+
+    And user of space_owner_browser clicks on menu on share view
+    And user of space_owner_browser clicks "Rename" option in shares actions row menu
+    And user of space_owner_browser sees that "Rename share" modal has appeared
+    And user of space_owner_browser writes "Some Title" into text field in modal "Rename share"
+    And user of space_owner_browser clicks on "Rename" button in modal "Rename share"
+
+    And user of space_owner_browser sees there is no warning alert in share's private interface
+

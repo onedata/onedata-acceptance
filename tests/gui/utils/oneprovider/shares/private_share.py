@@ -43,7 +43,7 @@ class DublinCoreMetadata(PageObject):
             )
 
 
-class EDMBox(PageObject):
+class EDMBoxForm(PageObject):
     name = id = Label(".edm-property-type-name", scroll=False)
     language = WebElement(".edm-lang-dropdown-trigger", scroll=False)
     input = WebElement(
@@ -52,8 +52,23 @@ class EDMBox(PageObject):
     dropdown = WebElement(".edm-property-value", scroll=False)
 
 
-class EDMMetadata(PageObject):
-    items = WebItemsSequence(".edm-property-group-box", cls=EDMBox, scroll=False)
+class EDMMetadataForm(PageObject):
+    items = WebItemsSequence(
+        ".edm-property-group-box .visual-edm-property", cls=EDMBoxForm, scroll=False
+    )
+    add_property = Button(".btn.add-edm-property-btn", scroll=False)
+
+
+class EDMBoxView(PageObject):
+    name = id = Label(".edm-property-type-name", scroll=False)
+    language = WebElement(".edm-attr-value", scroll=False)
+    value = WebElement(".edm-property-value", scroll=False)
+
+
+class EDMMetadataView(PageObject):
+    items = WebItemsSequence(
+        ".edm-property-group-box .visual-edm-property", cls=EDMBoxView, scroll=False
+    )
 
 
 class Description(PageObject):
@@ -67,8 +82,9 @@ class PrivateShareView(PublicShareView):
         ".publicdata-one-carousel", cls=DublinCoreMetadata
     )
     edm_metadata_form = WebItem(
-        ".publicdata-one-carousel", cls=EDMMetadata, scroll=False
+        ".publicdata-one-carousel", cls=EDMMetadataForm, scroll=False
     )
+    edm_public_view = WebItem(".visual-edm", cls=EDMMetadataView, scroll=False)
     description_form = WebItem(".content-space-shares", cls=Description)
 
     choose_a_handle_service = Button(".select-handle-service")
@@ -76,6 +92,8 @@ class PrivateShareView(PublicShareView):
     proceed = Button(".btn-content-info")
     expose_as_public_data = Button(".btn-submit")
     link_name = Label(".ember-power-select-selected-item")
+
+    alert_warning = WebElement(".alert-warning")
 
     def __str__(self):
         return "Private share View"
