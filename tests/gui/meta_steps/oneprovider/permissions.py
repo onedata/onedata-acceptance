@@ -297,7 +297,9 @@ def grant_acl_privileges_to_selected_in_filebrowser(
     modals,
     item_name,
 ):
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file browser"
+    )
     _set_acl_privilages_for_selected(
         browser_id, selenium, popups, tmp_memory, priv, name, modals, item_name
     )
@@ -335,7 +337,9 @@ def grant_acl_privileges_in_op_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, option_in_submenu, oz_page
     )
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file browser"
+    )
     select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
     _set_acl_privilages_for_selected(
         browser_id, selenium, popups, tmp_memory, priv, name, modals, path

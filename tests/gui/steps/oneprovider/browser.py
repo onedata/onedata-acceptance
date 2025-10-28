@@ -22,7 +22,7 @@ def click_and_press_enter_on_item_in_browser(
     item_name,
     tmp_memory,
     op_container,
-    which_browser="file browser",
+    which_browser,
 ):
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
@@ -78,16 +78,14 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser, ite
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def check_if_breadcrumbs_on_share_page(
-    driver, op_container, which_browser="file browser"
-):
+def check_if_breadcrumbs_on_share_page(driver, op_container, which_browser):
     try:
         breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
     except RuntimeError:
-        breadcrumbs = getattr(
-            op_container(driver), transform(which_browser)
-        ).breadcrumbs.pwd()
-
+        which_browser = transform(which_browser)
+        if which_browser == "shares_file_browser":
+            which_browser = "file_browser"
+        breadcrumbs = getattr(op_container(driver), which_browser).breadcrumbs.pwd()
     return breadcrumbs
 
 

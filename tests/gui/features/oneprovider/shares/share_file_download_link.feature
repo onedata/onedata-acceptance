@@ -1,4 +1,4 @@
-Feature: Operations on share file download links by user is not logged in
+Feature: Usage of shared file download links
 
 
   Background:
@@ -25,13 +25,13 @@ Feature: Operations on share file download links by user is not logged in
     And user of space_owner_browser logged as space-owner-user to Onezone service
 
 
-  Scenario: Without logging in, non space owner user can open file download link from file in shared directory
+  Scenario: Without logging in, non space owner user can open file download link for file in shared directory
     When using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     And user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
-    And user of space_owner_browser goes to "/dir1/dir2" in shares file browser
-    And user of space_owner_browser clicks on menu for "file1" file in shares file browser
-    And user of space_owner_browser clicks "Copy download URL" option in data row menu in shares file browser
+    And user of space_owner_browser goes to "/dir1/dir2" in share's file browser
+    And user of space_owner_browser clicks on menu for "file1" file in share's file browser
+    And user of space_owner_browser clicks "Copy download URL" option in data row menu in share's file browser
     And user of space_owner_browser sends copied URL to user of browser1
 
     And user of browser1 opens URL received from user of space_owner_browser without waiting

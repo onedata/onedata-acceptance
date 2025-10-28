@@ -246,7 +246,9 @@ def see_items_in_op_gui(
         _click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option, oz_page, force=False
         )
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, browser_id, op_container, tmp_memory, "file browser"
+        )
     except NoSuchElementException:
         go_to_filebrowser(
             selenium, browser_id, oz_page, op_container, tmp_memory, space
@@ -255,7 +257,7 @@ def see_items_in_op_gui(
     if path:
         for item in path.split("/"):
             click_and_press_enter_on_item_in_browser(
-                selenium, browser_id, item, tmp_memory, op_container
+                selenium, browser_id, item, tmp_memory, op_container, "file browser"
             )
 
     if res == "fails":
@@ -458,14 +460,18 @@ def see_num_of_items_in_path_in_op_gui(
     tab_name = "data"
 
     try:
-        assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, user, op_container, tmp_memory, "file browser"
+        )
     except KeyError:
         navigate_to_tab_in_op_using_gui(
             selenium, user, oz_page, provider, tab_name, hosts, popups
         )
         _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
-        assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, user, op_container, tmp_memory, "file browser"
+        )
     assert_num_of_files_are_displayed_in_browser(user, num, tmp_memory)
 
 
@@ -482,14 +488,16 @@ def assert_file_content_in_op_gui(
 ):
     cwd = "space root"
     try:
-        assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, user, op_container, tmp_memory, "file browser"
+        )
         go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
         go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     click_and_press_enter_on_item_in_browser(
-        selenium, user, item_name, tmp_memory, op_container
+        selenium, user, item_name, tmp_memory, op_container, "file browser"
     )
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user, cwd, op_container)
@@ -672,7 +680,9 @@ def upload_file_to_op_gui(
     popups,
 ):
     try:
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, browser_id, op_container, tmp_memory, "file browser"
+        )
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(
@@ -812,7 +822,9 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, s
         oz_page,
         force=False,
     )
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file browser"
+    )
 
 
 def open_modal_for_file_browser_item(
@@ -1031,7 +1043,7 @@ def _create_link_in_file_browser(
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
-    click_file_browser_button(browser_id, button, tmp_memory)
+    click_file_browser_button(browser_id, button, "file browser", tmp_memory)
 
 
 @wt(
@@ -1161,7 +1173,9 @@ def get_file_id_from_details_modal(
     _click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option_in_space, oz_page, force=False
     )
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file browser"
+    )
     if "/" in file_name:
         go_to_path_without_last_elem(
             selenium, browser_id, tmp_memory, file_name, op_container

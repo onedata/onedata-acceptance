@@ -149,7 +149,9 @@ def wait_for_size_to_be_displayed_in_data_row(
     # refresh site after enabling size statistics to see displayed size
     # in data row
     refresh_site(selenium, browser_id)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file_browser"
+    )
     browser = tmp_memory[browser_id]["file_browser"]
     displayed_size = browser.data[item_name].size
     assert (
