@@ -70,22 +70,26 @@ def wt_assert_n_items_in_items_list(
 
 
 def get_last_item_number_in_table(driver):
-    entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
-    if len(entries) == 0:
+    last_item = get_last_item_in_table(driver)
+    if last_item is None:
         return 0
-    return int(entries[-1].get_attribute("data-row-id")) + 1
+    return int(last_item.get_attribute("data-row-id")) + 1
+
+
+def get_last_item_in_table(driver):
+    entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
+    return entries[-1] if len(entries) > 0 else None
 
 
 def scroll_to_bottom_of_the_table(driver):
     while True:
-        entries = driver.find_elements(
-            By.CSS_SELECTOR, "tbody.table-body tr.table-entry"
-        )
-        if len(entries) == 0:
-            return 0
-        count = int(entries[-1].get_attribute("data-row-id")) + 1
+        count = get_last_item_number_in_table(driver)
+        if count == 0:
+            return count
         # Scroll to last
-        driver.execute_script("arguments[0].scrollIntoView();", entries[-1])
+        driver.execute_script(
+            "arguments[0].scrollIntoView();", get_last_item_in_table(driver)
+        )
         try:
             WebDriverWait(driver, 2).until(
                 lambda d: get_last_item_number_in_table(d) > count
