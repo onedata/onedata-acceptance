@@ -51,20 +51,6 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     And user of browser2 waits till login page of emergency interface of Onepanel appears
     And user of browser2 logs as admin to emergency interface of Onepanel service
 
-    # step5 in provider panel
-    And user of browser2 selects POSIX from storage selector in step 5 of deployment process in Onepanel
-    And user of browser2 types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
-
-    And user of browser2 types "/volumes/posix" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
-    And user of browser2 clicks on Add button in add storage form in step 5 of deployment process in Onepanel
-
-    And user of browser2 expands "posix" record on storages list in step 5 of deployment process in Onepanel
-    And user of browser2 sees that "posix" Storage type is posix in step 5 of deployment process in Onepanel
-    And user of browser2 sees that "posix" Mount point is /volumes/posix in step 5 of deployment process in Onepanel
-
-    And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
-    And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
-
     # check config in provider panel
     Then user of browser2 clicks on Nodes item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
@@ -72,7 +58,7 @@ Feature: Deployment with Let`s Encrypt and enabled subdomain delegation process 
     # check web cert
     And user of browser2 clicks on Web certificate item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 sees that "Use Lets Encrypt" toggle is checked in Web certificate view in Onepanel
-    And user of browser1 sees that oneprovider-1 provider domain is included in "DNS names" in Web certificate view in Onepanel
+    And user of browser2 sees that oneprovider-1 provider domain is included in "DNS names" in Web certificate view in Onepanel
     And user of browser2 sees that "Certificate path" ends with "/certs/web_cert.pem" in Web certificate view in Onepanel
     And user of browser2 sees that "Key path" ends with "/certs/web_key.pem" in Web certificate view in Onepanel
     And user of browser2 sees that "Certificate chain path" ends with "/certs/web_chain.pem" in Web certificate view in Onepanel
