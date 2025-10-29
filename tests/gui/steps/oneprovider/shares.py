@@ -16,7 +16,7 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.parse(
         'user of {browser_id} sees that item named "{item_name}" '
-        "has appeared in shares file browser on single share view"
+        "has appeared in share's file browser on single share view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -207,7 +207,9 @@ def click_share_in_shares_browser(selenium, browser_id, share_name, op_container
     browser[share_name].click()
 
 
-@wt(parsers.parse("user of {browser_id} sees shares file browser on single share view"))
+@wt(
+    parsers.parse("user of {browser_id} sees share's file browser on single share view")
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_shares_browser_to_file_browser(
     selenium, browser_id, op_container, tmp_memory

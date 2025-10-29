@@ -1272,7 +1272,7 @@ def delete_first_n_files_with_fixed_step(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) copies "(?P<link_type>show|download)" browser link'
+        r'user of (?P<browser_id>.*) copies "(?P<link_type>Show|Download)" browser link'
         r' of "(?P<path>.*)" item to'
         r' clipboard in "(?P<space>.*)" space'
     )

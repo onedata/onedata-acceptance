@@ -65,8 +65,8 @@ Feature: Public share published with mock handle service
 
     And user of browser1 opens "Files" tab on share's public interface
     And user of browser1 sees share's file browser on share's public interface
-    And user of browser1 clicks and presses enter on item named "dir1" in file browser
-    And user of browser1 sees item(s) named "file1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in share's file browser
+    And user of browser1 sees item(s) named "file1" in share's file browser
 
     And user of browser1 opens "Description" tab on share's public interface
     And user of browser1 sees "Description for another user to check if can see" description on share's public interface
