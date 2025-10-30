@@ -395,10 +395,10 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
 def assert_number_of_elements_in_store_details(
     selenium, browser_id, modals, store_name, op_container, number
 ):
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
+    _ = open_store_details_modal(selenium, browser_id, op_container, modals, store_name)
+    check_number_of_elements_in_store_details_modal(
+        selenium, browser_id, number, store_name
     )
-    check_number_of_elements_in_store_details_modal(modal, number, store_name)
 
 
 @wt(

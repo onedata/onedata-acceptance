@@ -13,6 +13,10 @@ from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import (
+    get_last_item_number_in_table,
+    scroll_to_bottom_of_the_table,
+)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
@@ -119,7 +123,7 @@ def assert_number_of_proceeded_files(
 ):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).task_time_series
-    values = modal.get_last_column_value()
+    values = modal.get_max_value()
     for value in values:
         if option in value[1].lower():
             err_msg = (
@@ -295,11 +299,14 @@ def open_url_from_store_content(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_number_of_elements_in_store_details_modal(modal, number, store_name):
-    actual_number = len(modal.store_content_object)
+def check_number_of_elements_in_store_details_modal(
+    selenium, browser_id, number, store_name
+):
+    driver = selenium[browser_id]
+    scroll_to_bottom_of_the_table(driver)
+    actual_number = get_last_item_number_in_table(driver)
     err_msg = (
         f"Expected number of elements {number} is not equal to actual "
         f'number {actual_number} in "{store_name}" store details modal'
     )
-
     assert actual_number == int(number), err_msg
