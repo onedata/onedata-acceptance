@@ -162,3 +162,78 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     nav.subdomain_delegation_documentation_link.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} checks "{toggle}" toggle in {view_name} view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, onepanel, toggle):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    getattr(nav, transform(toggle.replace("-", "_"))).check()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "{toggle}" toggle is checked in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_toggle_checked_in_onepanel_view(
+    selenium, browser_id, view_name, onepanel, toggle
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
+    assert toggle_elem.is_checked(), f"toggle {toggle} is not checked in {view_name}"
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "{label}" is "{label_content}" in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_content_in_onepanel_view(
+    selenium, browser_id, view_name, onepanel, label, label_content
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    err_msg = f"{label} should be {label_content} but is {actual_label}"
+    assert actual_label == label_content, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that "{label}" ends with "{suffix}" in {view_name}'
+        " view in Onepanel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_label_ends_with_in_onepanel_view(
+    selenium, browser_id, view_name, onepanel, label, suffix
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    err_msg = f"{label} should end with {suffix} but it is {actual_label}"
+    assert actual_label.endswith(suffix), err_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that {provider} provider domain is included in"
+        ' "{label}" in {view_name} view in Onepanel'
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
+def assert_label_contains_prov_domain_in_onepanel_view(
+    selenium, browser_id, provider, label, view_name, onepanel, hosts
+):
+    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    actual_label = getattr(nav, transform(label))
+    expected_domain = hosts[provider]["hostname"]
+    err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
+    assert expected_domain in actual_label, err_msg

@@ -17,7 +17,7 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {button} button in clusters {where}"))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_cluster_page(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
     getattr(oz_page(driver).get_page_and_click("clusters"), transform(button)).click()
