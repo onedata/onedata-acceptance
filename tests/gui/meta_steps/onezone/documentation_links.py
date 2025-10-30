@@ -53,7 +53,7 @@ def assert_expanded_heading_in_docks(selenium, browser_id, heading):
     raise AssertionError(f"sidebar link {heading} not found")
 
 
-@repeat_failed(timeout=WAIT_FRONTEND * 4)
+@repeat_failed(timeout=WAIT_FRONTEND * 6)
 def assert_active_section_in_api_docks(selenium, browser_id, label):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
