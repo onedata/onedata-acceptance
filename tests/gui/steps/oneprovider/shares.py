@@ -17,16 +17,21 @@ from tests.utils.utils import repeat_failed
 @wt(
     parsers.parse(
         'user of {browser_id} sees that item named "{item_name}" '
-        "has appeared in file browser on single share view"
+        "has appeared in share's file browser on single share view"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_file_browser_in_shares_page(
-    selenium, browser_id, item_name, op_container
+    selenium,
+    browser_id,
+    item_name,
+    op_container,
 ):
-    file_browser = op_container(selenium[browser_id]).shares_page.file_browser
-    data = {f.name for f in file_browser.data}
-    assert item_name in data, f"Item  {item_name} not in file browser"
+    shares_file_browser = op_container(
+        selenium[browser_id]
+    ).shares_page.shares_file_browser
+    data = {f.name for f in shares_file_browser.data}
+    assert item_name in data, f"Item  {item_name} not in shares file browser"
 
 
 @wt(
@@ -203,13 +208,15 @@ def click_share_in_shares_browser(selenium, browser_id, share_name, op_container
     browser[share_name].click()
 
 
-@wt(parsers.parse("user of {browser_id} sees file browser on single share view"))
+@wt(
+    parsers.parse("user of {browser_id} sees share's file browser on single share view")
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_shares_browser_to_file_browser(
     selenium, browser_id, op_container, tmp_memory
 ):
     browser = op_container(selenium[browser_id]).file_browser
-    tmp_memory[browser_id]["file_browser"] = browser
+    tmp_memory[browser_id]["shares_file_browser"] = browser
 
 
 @wt(

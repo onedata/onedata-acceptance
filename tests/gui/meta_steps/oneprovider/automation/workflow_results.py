@@ -158,7 +158,7 @@ def count_checksums_for_file(
 ):
 
     click_and_press_enter_on_item_in_browser(
-        selenium, browser_id, file_name, tmp_memory, op_container
+        selenium, browser_id, file_name, tmp_memory, op_container, "file browser"
     )
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
     checksums = parse_seq(checksum_list)

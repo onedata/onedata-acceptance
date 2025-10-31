@@ -24,10 +24,10 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} sees "{msg}" instead of file browser'))
+@wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
-    browser = tmp_memory[browser_id]["file_browser"]
+def assert_msg_instead_of_browser(browser_id, msg, tmp_memory, which_browser):
+    browser = tmp_memory[browser_id][transform(which_browser)]
     displayed_msg = browser.browser_msg_header
     start = time.time()
     while displayed_msg != msg:
@@ -55,12 +55,14 @@ def click_on_status_tag_for_file_in_file_browser(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees only items named {item_list} in file browser"
+        "user of {browser_id} sees only items named {item_list} in {which_browser}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_only_given_items_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]["file_browser"]
+def assert_only_given_items_in_file_browser(
+    browser_id, item_list, tmp_memory, which_browser
+):
+    file_browser = tmp_memory[browser_id][transform(which_browser)]
     files = {f.name for f in file_browser.data}
     items = parse_seq(item_list)
     assert len(files) == len(items), "numbers of items are not equal"
@@ -147,7 +149,9 @@ def wait_for_size_to_be_displayed_in_data_row(
     # refresh site after enabling size statistics to see displayed size
     # in data row
     refresh_site(selenium, browser_id)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, browser_id, op_container, tmp_memory, "file_browser"
+    )
     browser = tmp_memory[browser_id]["file_browser"]
     displayed_size = browser.data[item_name].size
     assert (
@@ -175,14 +179,18 @@ def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
         r'"(?P<item_name>.*?)" is ('
         r"?P<item_attr>file|directory|symbolic link|"
         r"directory symbolic link|malformed symbolic link) "
-        r"in file browser"
+        r"in (?P<which_browser>.*?)"
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_type(
-    browser_id, item_name, item_attr, tmp_memory
+    browser_id,
+    item_name,
+    item_attr,
+    tmp_memory,
+    which_browser,
 ):
-    browser = tmp_memory[browser_id]["file_browser"]
+    browser = tmp_memory[browser_id][transform(which_browser)]
     action = getattr(browser.data[item_name], f"is_{transform(item_attr)}")
     assert action(), f'"{item_name}" is not {item_attr}, while it should'
 

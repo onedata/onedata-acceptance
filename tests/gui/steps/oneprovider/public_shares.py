@@ -78,11 +78,15 @@ def is_public_share_cwd_correct(selenium, browser_id, cwd, public_share):
     )
 
 
-@wt(parsers.parse("user of {browser_id} sees file browser on share's public interface"))
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees share's file browser on share's public interface"
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_file_browser_in_public_share(selenium, browser_id, public_share, tmp_memory):
-    file_browser = public_share(selenium[browser_id]).file_browser
-    tmp_memory[browser_id]["file_browser"] = file_browser
+    file_browser = public_share(selenium[browser_id]).shares_file_browser
+    tmp_memory[browser_id]["shares_file_browser"] = file_browser
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))

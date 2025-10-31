@@ -11,6 +11,7 @@ from tests.gui.utils.onezone.generic_page import GenericPage
 
 class ManageAccountPage(GenericPage):
     profile = Button(".user-account-button-main")
+
     full_name = Label(".full-name-editor")
     rename_full_name = Button(".full-name-editor .edit-icon")
     rename_username = Button(".username-editor .edit-icon")

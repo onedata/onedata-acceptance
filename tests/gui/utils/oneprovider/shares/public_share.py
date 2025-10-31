@@ -29,7 +29,7 @@ class PublicShareView:
     url = Input(".clipboard-input.form-control")
     copy_icon = Button(".oneicon-browser-copy")
     breadcrumbs = Breadcrumbs(".file-browser-head-container")
-    file_browser = FileBrowser(".content-file-browser")
+    shares_file_browser = FileBrowser(".content-file-browser")
     error_msg = Label(".error-details.active")
 
     description = Label(".markdown-view")

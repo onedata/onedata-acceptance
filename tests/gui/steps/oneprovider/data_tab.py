@@ -34,6 +34,8 @@ def check_browser_to_load(selenium, browser_id, tmp_memory, op_container, browse
     driver = selenium[browser_id]
     if transform(browser) == "shares_browser":
         items_browser = op_container(driver).shares_page.shares_browser
+    elif transform(browser) == "shares_file_browser":
+        items_browser = op_container(driver).shares_page.shares_file_browser
     else:
         items_browser = getattr(op_container(driver), transform(browser))
     tmp_memory[browser_id][transform(browser)] = items_browser
@@ -245,7 +247,7 @@ def assert_empty_browser_in_files_tab_in_op(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_browser_in_tab_in_op(
-    selenium, browser_id, op_container, tmp_memory, item_browser="file browser"
+    selenium, browser_id, op_container, tmp_memory, item_browser
 ):
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, op_container, item_browser)
@@ -807,12 +809,12 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{button}" button from file browser menu bar'
+        'user of {browser_id} clicks "{button}" button from {which_browser} menu bar'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_file_browser_button(browser_id, button, tmp_memory):
-    file_browser = tmp_memory[browser_id]["file_browser"]
+def click_file_browser_button(browser_id, button, which_browser, tmp_memory):
+    file_browser = tmp_memory[browser_id][transform(which_browser)]
     getattr(file_browser, f"{transform(button)}_button").click()
 
 
@@ -840,7 +842,7 @@ def download_file_with_network_throttling(
     network_throttling_download(driver)
 
     click_and_press_enter_on_item_in_browser(
-        selenium, browser_id, item_name, tmp_memory, op_container
+        selenium, browser_id, item_name, tmp_memory, op_container, "file browser"
     )
 
 

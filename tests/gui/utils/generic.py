@@ -229,7 +229,7 @@ def redirect_display(new_display):
 
 
 def transform(val, strip_char=None):
-    return val.strip(strip_char).lower().replace(" ", "_")
+    return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
 class WhichBrowser(Enum):
@@ -237,6 +237,7 @@ class WhichBrowser(Enum):
     ARCHIVE_FILE_BROWSER = "archive file browser"
     DATASET_BROWSER = "dataset browser"
     FILE_BROWSER = "file browser"
+    SHARES_FILE_BROWSER = "share's file browser"
 
 
 class OnedataService(Enum):

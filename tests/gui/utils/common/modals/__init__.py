@@ -18,6 +18,7 @@ from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.create_group import CreateGroup
 from .basic_modals.delete_modal import DeleteModal
+from .basic_modals.download import FileDownloadModal
 from .basic_modals.leave_element import LeaveElementModal
 from .basic_modals.login import LoginFormModal
 from .basic_modals.remove import RemoveModal
@@ -70,6 +71,7 @@ class Modals:
     # basic modals
     remove_modal = WebItem(".modal-dialog", cls=RemoveModal)
     leave_modal = WebItem(".modal-dialog", cls=LeaveElementModal)
+    file_download = WebItem(".modal-dialog", cls=FileDownloadModal)
     add_one_of_elements = WebItem(".modal-dialog", cls=AddOneOfElementsModal)
     delete_modal = WebItem(".modal-dialog", cls=DeleteModal)
     rename_modal = WebItem(".modal-dialog", cls=RenameModal)

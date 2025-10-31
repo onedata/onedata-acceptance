@@ -573,7 +573,7 @@ def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_spaces = page.get_visible_spaces_list()
+        new_spaces = _get_visible_spaces_list(page)
         new_spaces_names = [el.text.split("\n")[0] for el in new_spaces]
 
         if space_name in new_spaces_names:
@@ -586,6 +586,11 @@ def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
         seen_spaces.update(new_spaces_names)
         driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1])
     raise AssertionError(f"did not manage to open space {space_name}")
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_visible_spaces_list(page):
+    return page.get_visible_spaces_list()
 
 
 @wt(

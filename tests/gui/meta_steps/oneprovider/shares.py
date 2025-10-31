@@ -31,6 +31,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -78,7 +79,8 @@ def open_single_share_view_by_modal(
     tmp_memory,
     item_name,
 ):
-    items_browser = "file browser"
+
+    items_browser = transform(WhichBrowser.SHARES_FILE_BROWSER.value)
     status_type = "shared"
 
     click_on_status_tag_for_file_in_file_browser(
