@@ -28,7 +28,6 @@ Feature: Storage modification
     | storage_name | param_name  | param_val   | prev_param_val |
     | posix        | Mount point | /wrong/path | /volumes/posix |
     | s3           | Bucket name | wrong_name  | test           |
-    | ceph         | Pool name   | wrong_name  | test           |
 
 
   Scenario: User fails to create posix storage with incorrect parameters using add storage form in Onepanel

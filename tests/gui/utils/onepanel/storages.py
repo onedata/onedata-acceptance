@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
@@ -108,9 +109,18 @@ class Editor(PageObject):
 
 
 class POSIXEditor(Editor):
-    mount_point = Input(".mountPoint-field input")
+    mount_point = WebElement(".mountPoint-field input")
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
+
+    def change_mount_point(self, val):
+        input_box = self.mount_point
+        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        input_box.clear()
+
+        if val != "":
+            input_box.send_keys(val)
+            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
 
 
 class S3Editor(Editor):
@@ -119,7 +129,7 @@ class S3Editor(Editor):
 
 
 class CephEditor(Editor):
-    pool_name = Input(".poolName-field input")
+    pool_name = WebElement(".poolName-field input")
 
 
 class StorageEditForm(PageObject):
@@ -157,6 +167,9 @@ class StorageRecord(PageObject, ExpandableMixin):
         ActionChains(driver).move_to_element(self._toolbar).perform()
         self.menu_button.click()
 
+    def click_toggle(self):
+        self._click_on_toggle()
+
 
 class StorageContentPage(PageObject):
     form = WebItem(".cluster-storage-add-form", cls=StorageAddForm)
@@ -177,3 +190,7 @@ class StorageContentPage(PageObject):
                 f"Cannot click on {storage_name} Modify button "
                 "because storage is not visible on page."
             )
+
+    def scroll_by_press_space(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.SPACE).perform()

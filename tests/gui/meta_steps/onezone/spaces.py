@@ -603,7 +603,7 @@ def _get_visible_spaces_list(page):
 def assert_opened_space(selenium, browser_id, space_name, oz_page):
     driver = selenium[browser_id]
     page = oz_page(driver)["data"]
-    vis_spaces = page.get_visible_spaces_list()
+    vis_spaces = _get_visible_spaces_list(page)
     vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
     index = vis_spaces_names.index(space_name)
     el = vis_spaces[index]

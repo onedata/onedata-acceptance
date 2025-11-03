@@ -83,14 +83,10 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency types hostname of "oneprovider-1" provider to domain field in step 2 of deployment process in Onepanel
     And user of browser_emergency types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
     And user of browser_emergency tries to register provider using Register button in step 2 of deployment process in Onepanel
-
-    And user of browser_emergency selects POSIX from storage selector in step 5 of deployment process in Onepanel
-    And user of browser_emergency types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
-
-    And user of browser_emergency types "/volumes/posix" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
-    And user of browser_emergency clicks on Add button in add storage form in step 5 of deployment process in Onepanel
-    And user of browser_emergency clicks on Finish button in step 5 of deployment process in Onepanel
-    And user of browser_emergency clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
+    
+    And user of browser_emergency adds "posix" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage type: POSIX
+          mount point: /volumes/posix
 
     # NOTE: meta-steps have been changed to "normal" steps (located in tests/gui/steps/onezone/space.py).
     Then user of space_owner_browser opens Onezone page
@@ -109,4 +105,3 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser clicks "Files" of "helloworld" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
-
