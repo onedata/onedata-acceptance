@@ -304,21 +304,12 @@ def copy_storage_id_to_clipboard(selenium, browser_id, storage_name, onepanel):
 def close_all_expanded_storages(browser_id, selenium, onepanel):
     driver = selenium[browser_id]
     storages_list = onepanel(driver).content.storages.storages
-    storages_names = [storage.name for storage in storages_list]
-    ind = 0
 
-    # If one of the storage rows is expanded, all rows,
-    # that come after him in list, will have empty paramaters.
-    # This means that to avoid exceptions, it is necessary to close them
-    # on an ongoing basis during iteration.
-    while "" in storages_names:
-        storage = storages_list[ind]
+    for storage in storages_list:
         if storage.is_expanded():
             storage.click_toggle()
-            storages_list = onepanel(driver).content.storages.storages
-            storages_names = [storage.name for storage in storages_list]
-        ind += 1
-    return storages_names
+
+    return [storage.name for storage in storages_list]
 
 
 @wt(
