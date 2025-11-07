@@ -666,18 +666,22 @@ def assert_provider_chunks_in_data_distribution(
     )
 )
 @wt(
-    parsers.parse(
-        "user of {browser_id} sees that content of downloaded "
-        'file "{file_name}" is equal to: "{content}"'
+    parsers.re(
+        r"user( of)? (?P<browser_id>.*) sees that content of downloaded "
+        r'file (?P<file_name>.*) is equal to: "{content}"'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
+    # breakpoint()
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
+    # breakpoint()
     if downloaded_file.isfile():
+        # breakpoint()
         with downloaded_file.open() as f:
             file_content = "".join(f.readlines())
             file_content = file_content.strip()
+            # breakpoint()
             assert (
                 content == file_content
             ), f"expected {content} as {file_name} content, instead got {file_content}"

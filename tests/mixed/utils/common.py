@@ -122,15 +122,23 @@ def send_copied_token_to_other_user(sender, receiver, tmp_memory):
 
 @wt(parsers.parse("user of {browser_id} executes copied command"))
 def execute_copied_curl_command(
-    browser_id, displays, clipboard, tmp_memory, config=None
+    browser_id,
+    displays,
+    clipboard,
+    tmp_memory,
+    config=None,  # config will always be None there
 ):
+    _execute_curl_command(
+        clipboard.paste(display=displays[browser_id]), tmp_memory, config
+    )
+
+
+def _execute_curl_command(command, tmp_memory, config, verbose=True):
     cmd = (
-        replace_vars_in_cmd_if_exist(
-            clipboard.paste(display=displays[browser_id]), config=config
-        )
+        replace_vars_in_cmd_if_exist(command, config=config)
         + " -k"
         + ' -w "http status code:%{http_code}"'
-        + " -v"
+        + (" -v" if verbose else " -L")
     )  # ignore ssl certs and get http status code
     output = sp.run(
         cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
@@ -270,3 +278,16 @@ def assert_curl_command_successful_http_code(tmp_memory):
         f"{command_stderr}"
     )
     assert http_status_code.startswith("2"), err_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses curl to open copied share file download link and"
+        ' forwards output to "{file_out}"'
+    )
+)
+def download_with_curl(selenium, browser_id, tmp_memory, clipboard, displays, file_out):
+    download_link = clipboard.paste(display=displays[browser_id])
+    _execute_curl_command(
+        f"curl -X GET {download_link}", tmp_memory, None, False
+    )  # f" > {file_out}"
