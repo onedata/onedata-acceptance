@@ -102,6 +102,7 @@ stages:
         - Transfers
         - Workflows with input files
         - Workflows with input files 2
+        - Workflows with input files 3
   - Qnthack - rerun:
       manual: false
       final: true
@@ -1053,6 +1054,22 @@ Workflows with input files 2:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_workflows_with_input_files2 ENV_FILE=1oz_1op_openfaas test_mixed_src
+
+Workflows with input files 3:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_with_input_files3 ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 
 Qnthack - rerun:
