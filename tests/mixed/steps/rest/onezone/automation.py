@@ -33,12 +33,26 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-PART1 = ['bagit-uploader']
-PART2 = [
-    'bagit-uploader', 'detect-file-formats', 'detect-file-mime-formats',
-    'download-files', 'calculate-checksum-mounted', 'calculate-checksum-rest',
-    'demo', 'echo', 'initialize-eureka3D-project',
-    'substitute-placeholders-example']
+PART1 = ["bagit-uploader"]
+PART2 = ["bagit-uploader"]
+PART3 = [
+    "detect-file-formats",
+    "detect-file-mime-formats",
+    "download-files",
+    "calculate-checksum-mounted",
+    "calculate-checksum-rest",
+    "demo",
+    "echo",
+    "initialize-eureka3D-project",
+    "substitute-placeholders-example",
+]
+PART1_FILES = ["bagit_archive_5gb.zip"]
+PART2_FILES = [
+    "bagit_archive_fetch.tar.gz",
+    "bagit_archive_fetch_xrootd.zip",
+    "bagit_archive_unpack.tar",
+    "bagit_archive_unpack_and_fetch.zip",
+]
 
 
 @given(
@@ -89,17 +103,21 @@ def upload_workflow_from_upload_files_rest(
     )
 
 
-@wt(parsers.parse('using REST, {user} uploads part{number} of the workflows from '
-                  'automation-examples to inventory "{inventory}" in '
-                  '"{zone_name}" Onezone service'))
+@wt(
+    parsers.parse(
+        "using REST, {user} uploads part{number} of the workflows from "
+        'automation-examples to inventory "{inventory}" in '
+        '"{zone_name}" Onezone service'
+    )
+)
 def upload_all_workflows_from_automation_examples_rest(
-        hosts, zone_name, users, user, inventory, inventories, workflows,
-        tmp_memory, number):
+    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory, number
+):
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
-        workflow_name = f.split('.')[0]
-        if workflow_name not in globals()[f'PART{number}']:
+        workflow_name = f.split(".")[0]
+        if workflow_name not in globals()[f"PART{number}"]:
             continue
         if os.path.isdir(upload_workflow_path(f)):
             tmp_memory["workflows_with_input_files"].append(workflow_name)
@@ -416,12 +434,8 @@ def execute_all_workflows(
                 example_execution, workflow.replace("-", "_")
             )()
             for file, content in zip(input_files, example_initial_store_content):
-                if number == 1:
-                    if file != 'bagit_archive_5GBfile.zip':
-                        continue
-                if number == 2:
-                    if file == 'bagit_archive_5GBfile.zip':
-                        continue
+                if not check_to_run_workflow(workflow, file, number):
+                    continue
                 # map store name into store_id
                 content = {
                     get_store_schema_id_of_workflow(key, path): content[key]
@@ -446,6 +460,16 @@ def execute_all_workflows(
             raise NotImplementedError(
                 f"Example execution of workflow {workflow} is not implemented"
             )
+
+
+def check_to_run_workflow(workflow_name, file_name, part):
+    if part == 1:
+        return workflow_name in PART1 and file_name in PART1_FILES
+    if part == 2:
+        return workflow_name in PART2 and file_name in PART2_FILES
+    if part == 3:
+        return workflow_name in PART3
+    raise AssertionError(f"part {part} is incorrect")
 
 
 def execute_workflow_rest(
@@ -495,13 +519,19 @@ def wait_for_workflow_executions(
     )
 
 
-@wt(parsers.parse('using REST, {user} waits extended time for all workflow executions '
-                  'to finish on space "{space}" in {host}'))
+@wt(
+    parsers.parse(
+        "using REST, {user} waits extended time for all workflow executions "
+        'to finish on space "{space}" in {host}'
+    )
+)
 @repeat_failed(interval=8, timeout=4000)
-def wait_for_workflow_executions_extended_time(user, users, host, hosts, space,
-                                               spaces, workflow_executions):
-    assert_all_workflow_execution_finished(user, users, host, hosts, space,
-                                           spaces, workflow_executions)
+def wait_for_workflow_executions_extended_time(
+    user, users, host, hosts, space, spaces, workflow_executions
+):
+    assert_all_workflow_execution_finished(
+        user, users, host, hosts, space, spaces, workflow_executions
+    )
 
 
 def assert_all_workflow_execution_finished(

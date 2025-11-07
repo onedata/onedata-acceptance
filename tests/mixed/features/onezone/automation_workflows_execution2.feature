@@ -14,7 +14,7 @@ Feature: Workflows execution tests
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 10000000000
+                    size: 100000000000
             storage:
               defaults:
                 provider: oneprovider-1

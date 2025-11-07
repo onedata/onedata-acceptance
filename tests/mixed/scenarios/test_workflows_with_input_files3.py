@@ -50,4 +50,4 @@ def screens():
     return [0]
 
 
-scenarios("../features/onezone/automation_workflows_execution.feature")
+scenarios("../features/onezone/automation_workflows_execution3.feature")
