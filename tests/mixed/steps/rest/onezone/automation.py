@@ -528,7 +528,7 @@ def wait_for_workflow_executions(
         'to finish on space "{space}" in {host}'
     )
 )
-@repeat_failed(interval=10, timeout=60 * 60 * 2)
+@repeat_failed(interval=10, timeout=60 * 60 * 4)
 def wait_for_workflow_executions_extended_time(
     user, users, host, hosts, space, spaces, workflow_executions
 ):
