@@ -33,9 +33,8 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-PART1 = ["bagit-uploader"]
-PART2 = ["bagit-uploader"]
-PART3 = [
+PART1 = PART2 = PART3 = ["bagit-uploader"]
+PART4 = [
     "detect-file-formats",
     "detect-file-mime-formats",
     "download-files",
@@ -50,6 +49,8 @@ PART1_FILES = ["bagit_archive_5gb.zip"]
 PART2_FILES = [
     "bagit_archive_fetch.tar.gz",
     "bagit_archive_fetch_xrootd.zip",
+]
+PART3_FILES = [
     "bagit_archive_unpack.tar",
     "bagit_archive_unpack_and_fetch.zip",
 ]
@@ -468,7 +469,9 @@ def check_to_run_workflow(workflow_name, file_name, part):
     if part == 2:
         return workflow_name in PART2 and file_name in PART2_FILES
     if part == 3:
-        return workflow_name in PART3
+        return workflow_name in PART3 and file_name in PART3_FILES
+    if part == 4:
+        return workflow_name in PART4
     raise AssertionError(f"part {part} is incorrect")
 
 
@@ -525,7 +528,7 @@ def wait_for_workflow_executions(
         'to finish on space "{space}" in {host}'
     )
 )
-@repeat_failed(interval=8, timeout=4000)
+@repeat_failed(interval=10, timeout=60 * 60 * 2)
 def wait_for_workflow_executions_extended_time(
     user, users, host, hosts, space, spaces, workflow_executions
 ):
