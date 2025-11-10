@@ -11,10 +11,10 @@ import time
 from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import Popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

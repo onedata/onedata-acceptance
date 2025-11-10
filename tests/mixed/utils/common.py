@@ -129,20 +129,27 @@ def execute_copied_curl_command(
     config=None,  # config will always be None there
 ):
     _execute_curl_command(
-        clipboard.paste(display=displays[browser_id]), tmp_memory, config
+        clipboard.paste(display=displays[browser_id]),
+        tmp_memory,
+        config,
     )
 
 
-def _execute_curl_command(command, tmp_memory, config, verbose=True):
+def _execute_curl_command(
+    command, tmp_memory, config, flags: list[str] = None, file_out=None
+):
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
-        + " -k"
+        + " -k"  # ignore ssl certs and get http status code
         + ' -w "http status code:%{http_code}"'
-        + (" -v" if verbose else " -L")
-    )  # ignore ssl certs and get http status code
+        + (f" -{' -'.join(flags)}" if flags else "")
+        + (f" > {file_out}" if file_out else "")
+    )
+
     output = sp.run(
         cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
     )
+
     output_message, http_status_code = output.stdout.split("http status code:")
     tmp_memory["http status code"] = http_status_code
     tmp_memory["output"] = output_message
@@ -286,8 +293,20 @@ def assert_curl_command_successful_http_code(tmp_memory):
         ' forwards output to "{file_out}"'
     )
 )
-def download_with_curl(selenium, browser_id, tmp_memory, clipboard, displays, file_out):
+def download_with_curl(browser_id, tmp_memory, clipboard, displays, file_out):
     download_link = clipboard.paste(display=displays[browser_id])
     _execute_curl_command(
-        f"curl -X GET {download_link}", tmp_memory, None, False
-    )  # f" > {file_out}"
+        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=file_out
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses curl to open copied share file download link"
+    )
+)
+def open_copied_link(browser_id, tmp_memory, clipboard, displays):
+    download_link = clipboard.paste(display=displays[browser_id])
+    _execute_curl_command(
+        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=None
+    )

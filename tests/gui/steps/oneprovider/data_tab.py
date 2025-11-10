@@ -673,15 +673,11 @@ def assert_provider_chunks_in_data_distribution(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
-    # breakpoint()
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
-    # breakpoint()
     if downloaded_file.isfile():
-        # breakpoint()
         with downloaded_file.open() as f:
             file_content = "".join(f.readlines())
             file_content = file_content.strip()
-            # breakpoint()
             assert (
                 content == file_content
             ), f"expected {content} as {file_name} content, instead got {file_content}"
