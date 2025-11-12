@@ -50,4 +50,9 @@ def screens():
     return [0]
 
 
+@pytest.fixture(scope="module")
+def should_record():
+    return False
+
+
 scenarios("../features/onezone/automation_workflows_execution.feature")
