@@ -45,7 +45,7 @@ PART4 = [
     "initialize-eureka3D-project",
     "substitute-placeholders-example",
 ]
-PART1_FILES = ["bagit_archive_5gb.zip"]
+PART1_FILES = ["bagit_archive_4gb.zip"]
 PART2_FILES = [
     "bagit_archive_fetch.tar.gz",
     "bagit_archive_fetch_xrootd.zip",
