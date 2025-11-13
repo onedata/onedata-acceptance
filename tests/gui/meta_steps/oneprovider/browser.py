@@ -4,9 +4,16 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.steps.oneprovider.file_browser import (
+    click_on_status_tag_for_file_in_file_browser,
+)
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
+
+# from tests.gui.steps.oneprovider.metadata import assert_there_is_such_xattr_meta_record
 
 
 @wt(
@@ -34,6 +41,8 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
     selenium, browser_id, which_browser, tmp_memory, popups, name, label_name
 ):
+    # breakpoint()
+
     create_xattr_columns_in_columns_menu_in_browser(
         selenium,
         browser_id,
@@ -44,6 +53,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
         with_label=True,
         label_name=label_name,
     )
+    # breakpoint()
 
 
 def create_xattr_columns_in_columns_menu_in_browser(
@@ -74,3 +84,23 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) opens "Metadata" tab in "(?P<modal_name>.*)" modal'
+        r' via clicking on metadata status tag for "(?P<item_name>.*)"'
+    )
+)
+def open_metadata_tab_using_tag(
+    selenium, browser_id, tmp_memory, item_name, modal_name, modals
+):
+    status_type = "metadata"
+    click_on_status_tag_for_file_in_file_browser(
+        browser_id, status_type, item_name, tmp_memory
+    )
+
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+
+    tab = "Metadata"
+    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
