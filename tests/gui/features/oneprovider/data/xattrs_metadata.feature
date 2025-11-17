@@ -181,3 +181,15 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser clicks on "Save" button in metadata panel
     And user of browser clicks on "X" button in modal "Directory details"
     And user of browser sees that item named "dir1" has "val" value in xattr column in file browser
+
+
+  Scenario: User modifies label for xattr column and can see it with proper label
+    When user of browser opens file browser for "space1" space
+    And user of browser clicks on "Metadata" in context menu for "file1"
+    And user of browser sees that "File details" modal is opened on "Metadata" tab
+    And user of browser adds xattr entry with key "attr" and value "val"
+    And user of browser sees xattr metadata entry with attribute named "attr" and value "val"
+
+    Then user of browser modifies key field by typing "aaaa" for exisiting xattr metadata entry with "attr" attribute
+    And user of browser modifies value field by typing "bbbb" for exisiting xattr metadata entry with "aaaa" attribute
+    And user of browser sees xattr metadata entry with attribute named "aaaa" and value "bbbb"
