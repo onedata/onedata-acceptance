@@ -183,7 +183,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees that item named "dir1" has "val" value in xattr column in file browser
 
 
-  Scenario: User modifies label for xattr column and can see it with proper label
+  Scenario: User modifies key and value for xattr column and can see it then with proper parameters
     When user of browser opens file browser for "space1" space
     And user of browser clicks on "Metadata" in context menu for "file1"
     And user of browser sees that "File details" modal is opened on "Metadata" tab
