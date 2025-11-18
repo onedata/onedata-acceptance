@@ -106,12 +106,53 @@ def upload_workflow_from_upload_files_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} uploads part{number} of the workflows from "
+        "using REST, {user} uploads bagit-uploader workflows from "
         'automation-examples to inventory "{inventory}" in '
         '"{zone_name}" Onezone service'
     )
 )
-def upload_all_workflows_from_automation_examples_rest(
+def wt_upload_part_of_the_workflows_from_automation_examples_rest(
+    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
+):
+    number = 1
+    upload_part_of_the_workflows_from_automation_examples_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflows,
+        tmp_memory,
+        number,
+    )
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} uploads all workflows except for bagit-uploader from "
+        'automation-examples to inventory "{inventory}" in '
+        '"{zone_name}" Onezone service'
+    )
+)
+def wt_upload_part4_of_the_workflows_from_automation_examples_rest(
+    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
+):
+    number = 4
+    upload_part_of_the_workflows_from_automation_examples_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflows,
+        tmp_memory,
+        number,
+    )
+
+
+def upload_part_of_the_workflows_from_automation_examples_rest(
     hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory, number
 ):
     tmp_memory["workflows_with_input_files"] = []
@@ -401,11 +442,80 @@ def retry_workflow_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} executes part{number} of the workflows with example "
-        'input files on space "{space}" in {host}'
+        "using REST, {user} executes all workflows except for bagit-uploader with"
+        ' example input files on space "{space}" in {host}'
     )
 )
-def execute_all_workflows(
+def wt_execute_part4_of_the_workflows(
+    user,
+    users,
+    hosts,
+    host,
+    spaces,
+    space,
+    workflows,
+    groups,
+    workflow_executions,
+    tmp_memory,
+):
+    number = 4
+    execute_part_of_the_workflows(
+        user,
+        users,
+        hosts,
+        host,
+        spaces,
+        space,
+        workflows,
+        groups,
+        workflow_executions,
+        tmp_memory,
+        number,
+    )
+
+
+@wt(
+    parsers.re(
+        "using REST, (?P<user>.*) executes bagit-uploader workflow with"
+        " (?P<archive_types>.*) bagit archives? on space (?P<space>.*) in (?P<host>.*)"
+    )
+)
+def wt_execute_part_of_the_workflows(
+    user,
+    users,
+    hosts,
+    host,
+    spaces,
+    space,
+    workflows,
+    groups,
+    workflow_executions,
+    tmp_memory,
+    archive_types,
+):
+    number = -1
+    if "3GB bagit archive" in archive_types:
+        number = 1
+    if "fetch" in archive_types:
+        number = 2
+    if "unpack" in archive_types:
+        number = 3
+    execute_part_of_the_workflows(
+        user,
+        users,
+        hosts,
+        host,
+        spaces,
+        space,
+        workflows,
+        groups,
+        workflow_executions,
+        tmp_memory,
+        number,
+    )
+
+
+def execute_part_of_the_workflows(
     user,
     users,
     hosts,
