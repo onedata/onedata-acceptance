@@ -143,7 +143,7 @@ def _execute_curl_command(
         + " -k"  # ignore ssl certs and get http status code
         + ' -w "http status code:%{http_code}"'
         + (f" -{' -'.join(flags)}" if flags else "")
-        + (f" > {file_out}" if file_out else "")
+        + (f" -o {file_out}" if file_out else "")
     )
 
     output = sp.run(
@@ -293,10 +293,10 @@ def assert_curl_command_successful_http_code(tmp_memory):
         ' forwards output to "{file_out}"'
     )
 )
-def download_with_curl(browser_id, tmp_memory, clipboard, displays, file_out):
+def download_with_curl(browser_id, tmp_memory, clipboard, displays, file_out, tmpdir, browsers_to_users):
     download_link = clipboard.paste(display=displays[browser_id])
     _execute_curl_command(
-        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=file_out
+        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=tmpdir.join(browsers_to_users[browser_id], "download", file_out)
     )
 
 
