@@ -229,7 +229,6 @@ def modify_existing_xattr_entry(
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.metadata
 
-    # breakpoint()
     entry = modal.xattrs.entries[attr_name]
 
     if entry_elem == "key":
@@ -240,4 +239,3 @@ def modify_existing_xattr_entry(
         entry.value = new_text
 
     modal.xattrs.click_on_background_in_xattrs_panel()
-    # breakpoint()

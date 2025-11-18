@@ -56,9 +56,6 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser opens "Metadata" tab in "<modal>" modal via clicking on metadata status tag for "<item>"
     And user of browser sees xattr metadata entry with attribute named "attr" and value "val"
 
-    And user of browser refreshes site and waits for page to load
-    And user of browser opens file browser for "space1" space
-
     And user of browser opens "Metadata" tab in "<modal>" modal via clicking on metadata status tag for "<item>"
     And user of browser sees xattr metadata entry with attribute named "attr" and value "val"
 
