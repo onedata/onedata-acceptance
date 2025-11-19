@@ -495,7 +495,7 @@ def wt_execute_part_of_the_workflows(
     archive_types,
 ):
     number = -1
-    if "3gb_archive" in archive_types:
+    if "3 gb" in archive_types:
         number = 1
     if "fetch" in archive_types:
         number = 2
