@@ -100,10 +100,10 @@ stages:
         - Storage sync
         - Tokens
         - Transfers
-        - Workflows with input files
-        - Workflows with input files 2
-        - Workflows with input files 3
-        - Workflows with input files 4
+        - Workflows bagit with 3gb archive
+        - Workflows bagit with fetch archives
+        - Workflows bagit with unpack archives
+        - Workflows without bagit
   - Qnthack - rerun:
       manual: false
       final: true
