@@ -476,8 +476,9 @@ def wt_execute_part4_of_the_workflows(
 
 @wt(
     parsers.re(
-        "using REST, (?P<user>.*) executes bagit-uploader workflow with"
-        " (?P<archive_types>.*) bagit archives? on space (?P<space>.*) in (?P<host>.*)"
+        "using REST, (?P<user>.*) executes bagit-uploader workflow with "
+        '(?P<archive_types>.*) bagit archives? on space "(?P<space>.*)" '
+        "in (?P<host>.*)"
     )
 )
 def wt_execute_part_of_the_workflows(
@@ -494,7 +495,7 @@ def wt_execute_part_of_the_workflows(
     archive_types,
 ):
     number = -1
-    if "3GB bagit archive" in archive_types:
+    if "3gb_archive" in archive_types:
         number = 1
     if "fetch" in archive_types:
         number = 2
