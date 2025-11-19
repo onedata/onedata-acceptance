@@ -18,5 +18,8 @@ class WebCertificate(PageObject):
     key_path = Label(".keyPath-field .static-text-field")
     certificate_chain_path = Label(".chainPath-field .static-text-field")
 
+    warning_info = Label(".alert-warning.alert-simple-info")
+    dns_names_warning = Label(".dnsNames-field .warning-item-container")
+
     def __str__(self):
         return "Web certificate"
