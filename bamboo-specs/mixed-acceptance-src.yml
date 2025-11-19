@@ -1024,7 +1024,7 @@ Transfers:
         scripts:
           - make SUITE=test_transfers ENV_FILE=1oz_2op_deployed test_mixed_src
 
-Workflows with input files:
+Workflows bagit with 3gb archive:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF
   tasks:
@@ -1038,9 +1038,9 @@ Workflows with input files:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files ENV_FILE=1oz_1op_openfaas test_mixed_src
+          - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_src
 
-Workflows with input files 2:
+Workflows bagit with fetch archives:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF2
   tasks:
@@ -1054,9 +1054,9 @@ Workflows with input files 2:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files2 ENV_FILE=1oz_1op_openfaas test_mixed_src
+          - make SUITE=test_workflows_bagit_with_fetch_archives ENV_FILE=1oz_1op_openfaas test_mixed_src
 
-Workflows with input files 3:
+Workflows bagit with unpack archives:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF3
   tasks:
@@ -1070,9 +1070,9 @@ Workflows with input files 3:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files3 ENV_FILE=1oz_1op_openfaas test_mixed_src
+          - make SUITE=test_workflows_bagit_with_unpack_archives ENV_FILE=1oz_1op_openfaas test_mixed_src
 
-Workflows with input files 4:
+Workflows without bagit:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF4
   tasks:
@@ -1086,7 +1086,7 @@ Workflows with input files 4:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files4 ENV_FILE=1oz_1op_openfaas test_mixed_src
+          - make SUITE=test_workflows_without_bagit ENV_FILE=1oz_1op_openfaas test_mixed_src
 
 
 Qnthack - rerun:
