@@ -33,9 +33,9 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
-        ' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
-        " browser|archive browser|dataset browser) table"
+        r'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
+        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
@@ -84,6 +84,38 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) modifies label for xattr column named "(?P<name>.*)" by changing it'
+        r' to "(?P<new_label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def modify_label_for_xattr_column_in_columns_menu_in_browser(
+    selenium,
+    browser_id,
+    which_browser,
+    tmp_memory,
+    popups,
+    name,
+    new_label_name
+    ):
+
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+
+    browser.configure_columns.click()
+    #breakpoint()
+    current_xattr_column = popups(driver).configure_columns_menu.columns[name]
+
+    current_xattr_column.hover_to_button_and_click("modify", driver)
+
+    modify_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
+    modify_xattr_column.column_label.clear()
+    modify_xattr_column.column_label.send_keys(new_label_name)
+    modify_xattr_column.apply_changes.click()
 
 
 @wt(
