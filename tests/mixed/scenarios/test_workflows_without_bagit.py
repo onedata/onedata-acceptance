@@ -55,4 +55,4 @@ def should_record():
     return False
 
 
-scenarios("../features/onezone/automation_workflows_execution3.feature")
+scenarios("../features/onezone/atm_workflows_execution_not_bagit.feature")

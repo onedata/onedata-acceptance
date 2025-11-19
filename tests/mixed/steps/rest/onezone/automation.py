@@ -106,7 +106,7 @@ def upload_workflow_from_upload_files_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} uploads bagit-uploader workflows from "
+        "using REST, {user} uploads bagit-uploader workflow from "
         'automation-examples to inventory "{inventory}" in '
         '"{zone_name}" Onezone service'
     )
