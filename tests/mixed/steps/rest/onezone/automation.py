@@ -33,27 +33,11 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-PART1 = PART2 = PART3 = ["bagit-uploader"]
-PART4 = [
-    "detect-file-formats",
-    "detect-file-mime-formats",
-    "download-files",
-    "calculate-checksum-mounted",
-    "calculate-checksum-rest",
-    "demo",
-    "echo",
-    "initialize-eureka3D-project",
-    "substitute-placeholders-example",
-]
-PART1_FILES = ["bagit_archive_3gb.zip"]
-PART2_FILES = [
-    "bagit_archive_fetch.tar.gz",
-    "bagit_archive_fetch_xrootd.zip",
-]
-PART3_FILES = [
-    "bagit_archive_unpack.tar",
-    "bagit_archive_unpack_and_fetch.zip",
-]
+BAGIT_ARCHIVES = {
+    "3 gb": ["bagit_archive_3gb.zip"],
+    "fetch": ["bagit_archive_fetch.tar.gz", "bagit_archive_fetch_xrootd.zip"],
+    "unpack": ["bagit_archive_unpack.tar", "bagit_archive_unpack_and_fetch.zip"],
+}
 
 
 @given(
@@ -111,10 +95,10 @@ def upload_workflow_from_upload_files_rest(
         '"{zone_name}" Onezone service'
     )
 )
-def wt_upload_part_of_the_workflows_from_automation_examples_rest(
+def wt_upload_bagit_uploader_from_automation_examples_rest(
     hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
 ):
-    number = 1
+    workflow_type = "bagit-uploader"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
         zone_name,
@@ -124,7 +108,7 @@ def wt_upload_part_of_the_workflows_from_automation_examples_rest(
         inventories,
         workflows,
         tmp_memory,
-        number,
+        workflow_type,
     )
 
 
@@ -135,10 +119,10 @@ def wt_upload_part_of_the_workflows_from_automation_examples_rest(
         '"{zone_name}" Onezone service'
     )
 )
-def wt_upload_part4_of_the_workflows_from_automation_examples_rest(
+def wt_upload_non_bagit_workflows_from_automation_examples_rest(
     hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
 ):
-    number = 4
+    workflow_type = "non bagit"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
         zone_name,
@@ -148,18 +132,28 @@ def wt_upload_part4_of_the_workflows_from_automation_examples_rest(
         inventories,
         workflows,
         tmp_memory,
-        number,
+        workflow_type,
     )
 
 
 def upload_part_of_the_workflows_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory, number
+    hosts,
+    zone_name,
+    users,
+    user,
+    inventory,
+    inventories,
+    workflows,
+    tmp_memory,
+    workflow_type,
 ):
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
         workflow_name = f.split(".")[0]
-        if workflow_name not in globals()[f"PART{number}"]:
+        if workflow_type == "bagit-uploader" and workflow_name != "bagit-uploader":
+            continue
+        if workflow_type == "non bagit" and workflow_name == "bagit-uploader":
             continue
         if os.path.isdir(upload_workflow_path(f)):
             tmp_memory["workflows_with_input_files"].append(workflow_name)
@@ -446,7 +440,7 @@ def retry_workflow_rest(
         ' example input files on space "{space}" in {host}'
     )
 )
-def wt_execute_part4_of_the_workflows(
+def wt_execute_non_bagit_part_of_the_workflows(
     user,
     users,
     hosts,
@@ -458,7 +452,7 @@ def wt_execute_part4_of_the_workflows(
     workflow_executions,
     tmp_memory,
 ):
-    number = 4
+    archive_types = None
     execute_part_of_the_workflows(
         user,
         users,
@@ -470,7 +464,7 @@ def wt_execute_part4_of_the_workflows(
         groups,
         workflow_executions,
         tmp_memory,
-        number,
+        archive_types,
     )
 
 
@@ -494,13 +488,6 @@ def wt_execute_part_of_the_workflows(
     tmp_memory,
     archive_types,
 ):
-    number = -1
-    if "3 gb" in archive_types:
-        number = 1
-    if "fetch" in archive_types:
-        number = 2
-    if "unpack" in archive_types:
-        number = 3
     execute_part_of_the_workflows(
         user,
         users,
@@ -512,7 +499,7 @@ def wt_execute_part_of_the_workflows(
         groups,
         workflow_executions,
         tmp_memory,
-        number,
+        archive_types,
     )
 
 
@@ -527,7 +514,7 @@ def execute_part_of_the_workflows(
     groups,
     workflow_executions,
     tmp_memory,
-    number: int,
+    archive_types,
 ):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
@@ -546,7 +533,7 @@ def execute_part_of_the_workflows(
                 example_execution, workflow.replace("-", "_")
             )()
             for file, content in zip(input_files, example_initial_store_content):
-                if not check_to_run_workflow(workflow, file, number):
+                if not check_to_run_workflow(workflow, file, archive_types):
                     continue
                 # map store name into store_id
                 content = {
@@ -574,16 +561,12 @@ def execute_part_of_the_workflows(
             )
 
 
-def check_to_run_workflow(workflow_name, file_name, part):
-    if part == 1:
-        return workflow_name in PART1 and file_name in PART1_FILES
-    if part == 2:
-        return workflow_name in PART2 and file_name in PART2_FILES
-    if part == 3:
-        return workflow_name in PART3 and file_name in PART3_FILES
-    if part == 4:
-        return workflow_name in PART4
-    raise AssertionError(f"part {part} is incorrect")
+def check_to_run_workflow(workflow_name, file_name, archive_types):
+    if archive_types is None:
+        return workflow_name != "bagit-uploader"
+    return (
+        workflow_name == "bagit-uploader" and file_name in BAGIT_ARCHIVES[archive_types]
+    )
 
 
 def execute_workflow_rest(
