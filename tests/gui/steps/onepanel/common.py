@@ -241,20 +241,6 @@ def assert_label_contains_prov_domain_in_onepanel_view(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) sees "(?P<warning>.*)" warning in'
-        r" (?P<view_name>\w+( \w+)?) view in Onepanel"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_warning_in_onepanel_view(selenium, browser_id, warning, view_name, onepanel):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
-    actual_warning = nav.warning_info
-    err_msg = f"Actual warning {actual_warning} does not match expected {warning}"
-    assert warning in actual_warning, err_msg
-
-
-@wt(
-    parsers.re(
         r'user of (?P<browser_id>.*) sees "(?P<warning>.*)" warning in '
         r"DNS names section in (?P<view_name>\w+( \w+)?) view in Onepanel"
     )
@@ -265,5 +251,6 @@ def assert_warning_in_dns_names_in_onepanel_view(
 ):
     nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
     actual_warning = nav.dns_names_warning
+    warning = warning.replace("\\", "")
     err_msg = f"Actual warning {actual_warning} does not match expected {warning}"
     assert warning in actual_warning, err_msg
