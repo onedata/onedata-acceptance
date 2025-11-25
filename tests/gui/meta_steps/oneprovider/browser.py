@@ -41,7 +41,6 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
     selenium, browser_id, which_browser, tmp_memory, popups, name, label_name
 ):
-    # breakpoint()
 
     create_xattr_columns_in_columns_menu_in_browser(
         selenium,
@@ -53,7 +52,6 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
         with_label=True,
         label_name=label_name,
     )
-    # breakpoint()
 
 
 def create_xattr_columns_in_columns_menu_in_browser(
@@ -107,7 +105,7 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     browser.configure_columns.click()
-    #breakpoint()
+
     current_xattr_column = popups(driver).configure_columns_menu.columns[name]
 
     current_xattr_column.hover_to_button_and_click("modify", driver)
@@ -116,6 +114,33 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
     modify_xattr_column.column_label.clear()
     modify_xattr_column.column_label.send_keys(new_label_name)
     modify_xattr_column.apply_changes.click()
+
+    # hide columns menu popup
+    browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named "(?P<name>.*)"'
+        r' in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def assert_xattr_column_presence(selenium, browser_id, res, name, which_browser, tmp_memory, popups):
+
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+
+    browser.configure_columns.click()
+    xattr_columns = popups(driver).configure_columns_menu.columns
+    for col in xattr_columns:
+        if col.name == name:
+            if res == "sees":
+                return
+            raise AssertionError(f"An xattr column named '{name}' exists, but it was expected not to.")
+        
+    if res == "sees":
+        raise AssertionError(f"An xattr column with name: {name} does not exist")
 
 
 @wt(

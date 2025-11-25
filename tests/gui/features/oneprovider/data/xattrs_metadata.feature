@@ -192,15 +192,30 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees xattr metadata entry with attribute named "aaaa" and value "bbbb"
 
 
-  Scenario: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry
+  Scenario Outline: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry, and everything works fine after refreshing
     When user of browser opens file browser for "space1" space
-    And user of browser clicks on "Metadata" in context menu for "file1"
-    And user of browser sees that "File details" modal is opened on "Metadata" tab
+    And user of browser clicks on "Metadata" in context menu for "<item>"
+    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Save" button in metadata panel
-    And user of browser clicks on "X" button in modal "File details"
+    And user of browser clicks on "X" button in modal "<modal>"
 
     And user of browser creates new xattr column named "attr" with custom label named "test" in file browser table
-    And user of browser enables only "test" column in columns configuration popover in file browser table
 
-    Then user of browser modifies label for xattr column named "test" by changing it to "hehe" in file browser table
+    Then user of browser modifies label for xattr column named "test" by changing it to "apple" in file browser table
+    And user of browser sees xattr column named "apple" in file browser table
+    And user of browser does not see xattr column named "test" in file browser table
+
+    And user of browser refreshes site and waits for page to load
+    And user of browser opens file browser for "space1" space
+
+    And user of browser sees xattr column named "apple" in file browser table
+    And user of browser does not see xattr column named "test" in file browser table
+
+    And user of browser enables only "apple" column in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" has "val" value in xattr column in file browser
+
+    Examples:
+    | modal              | item  |
+    | File details       | file1 |
+    | Directory details  | dir1  |
