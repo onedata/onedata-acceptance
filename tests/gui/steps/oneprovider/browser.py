@@ -481,7 +481,7 @@ def click_on_state_view_mode_tab(
         driver.switch_to.default_content()
         header = f"{transform(which)}_header"
         getattr(getattr(oz_page(driver)["data"], header), transform(state))()
-    # if we make call to fast after changing view mode
+    # if we make call too fast after changing view mode
     # we do not see items in this mode, to avoid this wait some time
     time.sleep(0.5)
 
@@ -531,13 +531,6 @@ def click_tag_for_elem_in_browser(
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*) sees that item named "
-        '"(?P<item_name>.*)" has "(?P<value>.*)" value in (?P<option>xattr) column '
-        "in (?P<which_browser>archive file browser|file browser)"
-    )
-)
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*) sees that item named "
         '"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
         "(?P<which_browser>archive file browser|file browser)"
     )
@@ -553,6 +546,7 @@ def click_tag_for_elem_in_browser(
 def assert_value_in_column_for_item(
     browser_id, item_name, value, option, which_browser, selenium, op_container
 ):
+    breakpoint()
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
@@ -561,6 +555,32 @@ def assert_value_in_column_for_item(
         f"match expected {value}"
     )
     assert value == item_elem, err_msg
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" (?P<res>has|does not have) "(?P<value>.*)" value in xattr column '
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+def assert_value_in_xattr_column_for_item(browser_id, item_name, res, value, which_browser, selenium, op_container):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    item_elem = browser.data[item_name].xattr
+
+    if res == "has":
+        err_msg = (
+            f"displayed xattr value {item_elem} for {item_name} does not "
+            f"match expected {value}"
+        )
+        assert value == item_elem, err_msg
+    
+    err_msg = (
+        f"displayed xattr value {item_elem} for {item_name} is not supposed to be"
+        f"equal to {value}"
+    )
+    assert value != item_elem, err_msg
 
 
 @wt(
@@ -641,6 +661,34 @@ def select_columns_to_be_visible_in_browser(
             getattr(columns_menu[column.name], option_unselect)()
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) (?P<res>disables|enables) (?P<columns>.*) "
+        r"columns? in columns configuration popover in "
+        r"(?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
+    )
+)
+def change_visibility_for_columns(selenium, browser_id, res, columns, which_browser, tmp_memory, popups):
+    option_select = "select"
+    option_unselect = "unselect"
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    columns = list(map(lambda s: s.lower(), parse_seq(columns)))
+    for column in columns_menu:
+        if column.name.lower() in columns:
+            if res == "enables":
+                getattr(columns_menu[column.name], option_select)()
+            else:
+                getattr(columns_menu[column.name], option_unselect)()
 
 
 @wt(

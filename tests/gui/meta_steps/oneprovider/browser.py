@@ -122,18 +122,21 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named "(?P<name>.*)"'
-        r' in (?P<which_browser>file'
+        r' in columns configuration popover in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
 def assert_xattr_column_presence(selenium, browser_id, res, name, which_browser, tmp_memory, popups):
 
-    driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
-
     browser.configure_columns.click()
-    xattr_columns = popups(driver).configure_columns_menu.columns
-    for col in xattr_columns:
+
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    for col in columns_menu:
         if col.name == name:
             if res == "sees":
                 return
