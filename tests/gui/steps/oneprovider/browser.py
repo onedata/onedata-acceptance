@@ -546,7 +546,6 @@ def click_tag_for_elem_in_browser(
 def assert_value_in_column_for_item(
     browser_id, item_name, value, option, which_browser, selenium, op_container
 ):
-    breakpoint()
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
@@ -560,22 +559,24 @@ def assert_value_in_column_for_item(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" (?P<res>has|does not have) "(?P<value>.*)" value in xattr column '
+        r'"(?P<item_name>.*)" (?P<res>has|does not have) "(?P<value>.*)" value in xattr'
+        r" column "
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
-def assert_value_in_xattr_column_for_item(browser_id, item_name, res, value, which_browser, selenium, op_container):
+def assert_value_in_xattr_column_for_item(
+    browser_id, item_name, res, value, which_browser, selenium, op_container
+):
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
 
-    try: # this try except block covers cases when xattr value doesn't exist
+    try:  # this try except block covers cases when xattr value doesn't exist
         item_elem = browser.data[item_name].xattr
     except RuntimeError as e:
         if res == "has" or "item found in" not in str(e):
-            raise e # if the error does not match excepted error
+            raise e  # if the error does not match excepted error
             # The expected error:
             # RuntimeError: no {} item found in {} in file browser in Oneprovider page
-        breakpoint()
         return
 
     if res == "has":
@@ -584,10 +585,11 @@ def assert_value_in_xattr_column_for_item(browser_id, item_name, res, value, whi
             f"match expected {value}"
         )
         assert value == item_elem, err_msg_has
-    
+        return
+
     err_msg_doesnt_have = (
         f"displayed xattr value {item_elem} for {item_name} is not supposed to be"
-        f"equal to {value}"
+        f" equal to {value}"
     )
     assert value != item_elem, err_msg_doesnt_have
 
@@ -680,7 +682,9 @@ def select_columns_to_be_visible_in_browser(
         r"dataset browser) table"
     )
 )
-def change_visibility_for_columns(selenium, browser_id, res, columns, which_browser, tmp_memory, popups):
+def change_visibility_for_columns(
+    selenium, browser_id, res, columns, which_browser, tmp_memory, popups
+):
     option_select = "select"
     option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -698,9 +702,8 @@ def change_visibility_for_columns(selenium, browser_id, res, columns, which_brow
                 getattr(columns_menu[column.name], option_select)()
             else:
                 getattr(columns_menu[column.name], option_unselect)()
-    
+
     # hide columns menu popup
-    breakpoint()
     browser.configure_columns.click()
 
 

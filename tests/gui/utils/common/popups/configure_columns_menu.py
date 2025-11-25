@@ -2,6 +2,8 @@
 columns menu popup.
 """
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -11,7 +13,6 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
-from selenium.webdriver import ActionChains
 
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
@@ -32,7 +33,7 @@ class ColumnOption(PageObject):
         if "checked" in self.checkbox.get_attribute("class"):
             self.checkbox.click()
 
-    def hover_to_button_and_click(self, button_type:str, driver):
+    def hover_to_button_and_click(self, button_type: str, driver):
         btn = getattr(self, f"{button_type}_column_icon")
         ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()
 
@@ -43,7 +44,7 @@ class AddOrModifyXattrColumn(PageObject):
     )
     create = NamedButton(".edit-column-btn", text="Create")
     apply_changes = NamedButton(".edit-column-btn", text="Apply")
-    
+
     column_label = WebElement(".columnLabel-field input")
 
 

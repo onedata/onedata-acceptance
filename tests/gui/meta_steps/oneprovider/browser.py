@@ -86,20 +86,15 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) modifies label for xattr column named "(?P<name>.*)" by changing it'
+        r"user of (?P<browser_id>.*) modifies label for xattr column named"
+        r' "(?P<name>.*)" by changing it'
         r' to "(?P<new_label_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
 def modify_label_for_xattr_column_in_columns_menu_in_browser(
-    selenium,
-    browser_id,
-    which_browser,
-    tmp_memory,
-    popups,
-    name,
-    new_label_name
-    ):
+    selenium, browser_id, which_browser, tmp_memory, popups, name, new_label_name
+):
 
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -125,7 +120,7 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) removes xattr column named "(?P<name>.*)"'
-        r' in columns configuration popover in (?P<which_browser>file'
+        r" in columns configuration popover in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
     )
 )
@@ -147,12 +142,15 @@ def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, p
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named "(?P<name>.*)"'
-        r' in columns configuration popover in (?P<which_browser>file'
+        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named"
+        r' "(?P<name>.*)"'
+        r" in columns configuration popover in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
     )
 )
-def assert_xattr_column_presence(selenium, browser_id, res, name, which_browser, tmp_memory, popups):
+def assert_xattr_column_presence(
+    selenium, browser_id, res, name, which_browser, tmp_memory, popups
+):
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
@@ -166,8 +164,10 @@ def assert_xattr_column_presence(selenium, browser_id, res, name, which_browser,
         if col.name == name:
             if res == "sees":
                 return
-            raise AssertionError(f"An xattr column named '{name}' exists, but it was expected not to.")
-        
+            raise AssertionError(
+                f"An xattr column named '{name}' exists, but it was expected not to."
+            )
+
     if res == "sees":
         raise AssertionError(f"An xattr column with name: {name} does not exist")
 

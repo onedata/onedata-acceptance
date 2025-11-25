@@ -192,7 +192,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees xattr metadata entry with attribute named "aaaa" and value "bbbb"
 
 
-  Scenario Outline: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry, and everything works fine after refreshing
+  Scenario Outline: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry, and everything works fine, also after refreshing
     When user of browser opens file browser for "space1" space
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
@@ -251,6 +251,4 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     Examples:
     | modal              | item  |
     | File details       | file1 |
-
-
-    #| Directory details  | dir1  |
+    | Directory details  | dir1  |
