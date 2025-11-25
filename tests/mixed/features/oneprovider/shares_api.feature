@@ -74,8 +74,8 @@ Feature: Shares API tests
 
     And user of browser opens file browser for "space1" space
 
-    Then user of browser uses curl to open copied share file download link
+    Then user of browser uses curl to download file using copied link
     And user of browser sees that output of executed command is equal to: "11111"
 
-    And user of browser uses curl to open copied share file download link and forwards output to "file2"
+    And user of browser uses curl to download file using copied link and forwards output to "file2"
     And user user1 sees that content of downloaded file "file2" is equal to: "11111"

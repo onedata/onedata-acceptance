@@ -115,6 +115,10 @@ def login_to_provider(username, users, host, access_token=None):
     )
 
 
+def construct_curl_get_cmd(link: str):
+    return f"curl -X GET {link}"
+
+
 @wt(parsers.parse("{sender} sends token to {receiver}"))
 def send_copied_token_to_other_user(sender, receiver, tmp_memory):
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
@@ -136,7 +140,11 @@ def execute_copied_curl_command(
 
 
 def _execute_curl_command(
-    command, tmp_memory, config, flags: list[str] = None, file_out=None
+    command: str,
+    tmp_memory,
+    config,
+    flags: list[str] | None = None,
+    file_out: str | None = None,
 ):
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
@@ -289,24 +297,45 @@ def assert_curl_command_successful_http_code(tmp_memory):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} uses curl to open copied share file download link and"
+        "user of {browser_id} uses curl to download file using copied link and"
         ' forwards output to "{file_out}"'
     )
 )
-def download_with_curl(browser_id, tmp_memory, clipboard, displays, file_out, tmpdir, browsers_to_users):
+def download_using_curl_with_forward(
+    browser_id,
+    tmp_memory,
+    clipboard,
+    displays,
+    tmpdir,
+    browsers_to_users,
+    file_out,
+):
     download_link = clipboard.paste(display=displays[browser_id])
+    file_out = (
+        tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+        if file_out
+        else None
+    )
+
     _execute_curl_command(
-        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+        construct_curl_get_cmd(download_link),
+        tmp_memory,
+        None,
+        flags=["L"],
+        file_out=file_out,
     )
 
 
-@wt(
-    parsers.parse(
-        "user of {browser_id} uses curl to open copied share file download link"
-    )
-)
-def open_copied_link(browser_id, tmp_memory, clipboard, displays):
-    download_link = clipboard.paste(display=displays[browser_id])
-    _execute_curl_command(
-        f"curl -X GET {download_link}", tmp_memory, None, flags=["L"], file_out=None
+@wt(parsers.parse("user of {browser_id} uses curl to download file using copied link"))
+def download_using_curl(
+    browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users
+):
+    download_using_curl_with_forward(
+        browser_id,
+        tmp_memory,
+        clipboard,
+        displays,
+        tmpdir,
+        browsers_to_users,
+        file_out=None,
     )
