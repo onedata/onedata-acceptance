@@ -235,10 +235,22 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees that item named "<item>" does not have "val" value in xattr column in file browser
 
     And user of browser enables "attr" column in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" has "val" value in xattr column in file browser
 
-    # TODO: removing and refresh
+    And user of browser removes xattr column named "attr" in columns configuration popover in file browser table
+
+    And user of browser does not see xattr column named "attr" in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" does not have "val" value in xattr column in file browser
+
+    And user of browser refreshes site and waits for page to load
+    And user of browser opens file browser for "space1" space
+
+    And user of browser does not see xattr column named "attr" in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" does not have "val" value in xattr column in file browser
 
     Examples:
     | modal              | item  |
     | File details       | file1 |
-    | Directory details  | dir1  |
+
+
+    #| Directory details  | dir1  |

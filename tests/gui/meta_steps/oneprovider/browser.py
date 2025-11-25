@@ -105,6 +105,9 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
 
     browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
 
     current_xattr_column = popups(driver).configure_columns_menu.columns[name]
 
@@ -121,6 +124,29 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
+        r'user of (?P<browser_id>.*) removes xattr column named "(?P<name>.*)"'
+        r' in columns configuration popover in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, popups):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    current_xattr_column = popups(driver).configure_columns_menu.columns[name]
+    current_xattr_column.hover_to_button_and_click("remove", driver)
+
+    # hide columns menu popup
+    browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
         r'user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named "(?P<name>.*)"'
         r' in columns configuration popover in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
@@ -130,11 +156,11 @@ def assert_xattr_column_presence(selenium, browser_id, res, name, which_browser,
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
-
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
     wait_for_item_to_appear(
         popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
+
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
 
     for col in columns_menu:
         if col.name == name:
