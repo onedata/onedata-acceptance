@@ -574,7 +574,7 @@ def assert_value_in_xattr_column_for_item(
         item_elem = browser.data[item_name].xattr
     except RuntimeError as e:
         if res == "has" or "item found in" not in str(e):
-            raise e  # if the error does not match excepted error
+            raise e  # if the error does not match expected error
             # The expected error:
             # RuntimeError: no {} item found in {} in file browser in Oneprovider page
         return
