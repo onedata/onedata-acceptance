@@ -72,8 +72,6 @@ Feature: Shares API tests
     And user of browser clicks on menu for "file1" file in share's file browser
     And user of browser clicks "Copy download URL" option in data row menu in share's file browser
 
-    And user of browser opens file browser for "space1" space
-
     Then user of browser uses curl to download file using copied link
     And user of browser sees that output of executed command is equal to: "11111"
 
