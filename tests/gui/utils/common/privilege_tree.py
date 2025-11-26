@@ -284,7 +284,15 @@ class PrivilegeTree(PageObject):
         self, selenium, browser_id, group, name, with_scroll=False
     ):
         driver = selenium[browser_id]
-        privilege_row = self.privilege_groups[name]
+        privilege_row = None
+        # Tolerate loading of privileges table
+        privilege_row_try = 0
+        while privilege_row is None and privilege_row_try < 10:
+            try:
+                privilege_row = self.privilege_groups[name]
+            except RuntimeError:
+                privilege_row_try += 1
+                time.sleep(1)
         granted = group["granted"]
         result = True
         if granted == "Partially":
