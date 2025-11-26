@@ -569,29 +569,40 @@ def assert_value_in_xattr_column_for_item(
 ):
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
+    item_elem = browser.data[item_name].xattr
+    err_msg_prefix = f"displayed xattr value {item_elem} for {item_name}"
+
+    if res == "has":
+        err_msg = err_msg_prefix + f" does not match expected {value}"
+        assert value == item_elem, err_msg
+        return
+
+    err_msg = err_msg_prefix + f" is not supposed to be equal to {value}"
+    assert value != item_elem, err_msg
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has no xattr'
+        r" column "
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+def assert_no_xattr_column(
+    browser_id, item_name, which_browser, selenium, op_container
+):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
 
     try:  # this try except block covers cases when xattr value doesn't exist
-        item_elem = browser.data[item_name].xattr
+        _ = browser.data[item_name].xattr
+
     except RuntimeError as e:
-        if res == "has" or "item found in" not in str(e):
+        if "item found in" not in str(e):
             raise e  # if the error does not match expected error
             # The expected error:
             # RuntimeError: no {} item found in {} in file browser in Oneprovider page
-        return
-
-    if res == "has":
-        err_msg_has = (
-            f"displayed xattr value {item_elem} for {item_name} does not "
-            f"match expected {value}"
-        )
-        assert value == item_elem, err_msg_has
-        return
-
-    err_msg_doesnt_have = (
-        f"displayed xattr value {item_elem} for {item_name} is not supposed to be"
-        f" equal to {value}"
-    )
-    assert value != item_elem, err_msg_doesnt_have
 
 
 @wt(
