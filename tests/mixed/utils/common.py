@@ -298,7 +298,7 @@ def assert_curl_command_successful_http_code(tmp_memory):
 @wt(
     parsers.parse(
         "user of {browser_id} uses curl to get content from copied link and"
-        ' forwards output to "{file_out}"'
+        ' saves output to "{file_out}"'
     )
 )
 def download_using_curl_with_forward(

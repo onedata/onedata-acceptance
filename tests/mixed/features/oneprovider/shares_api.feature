@@ -66,21 +66,11 @@ Feature: Shares API tests
     | RDF    | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | Get RDF metadata | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
 
-  Scenario: Using curl, user downloads file content from copied share file download link
+  Scenario: Using curl, user downloads file content from copied share download file link and saves output to another file
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_file1" single share view of "file1" using "Shared" tag
     And user of browser clicks on menu for "file1" file in share's file browser
     And user of browser clicks "Copy download URL" option in data row menu in share's file browser
 
-    Then user of browser uses curl to get content from copied link
-    And user of browser sees that output of executed command is equal to: "11111"
-
-
-  Scenario: Using curl, user downloads file content from copied share download file link and forwards output to another file
-    When user of browser opens file browser for "space1" space
-    And user of browser opens "share_file1" single share view of "file1" using "Shared" tag
-    And user of browser clicks on menu for "file1" file in share's file browser
-    And user of browser clicks "Copy download URL" option in data row menu in share's file browser
-
-    Then user of browser uses curl to get content from copied link and forwards output to "file2"
+    Then user of browser uses curl to get content from copied link and saves output to "file2"
     And user user1 sees that content of downloaded file "file2" is equal to: "11111"
