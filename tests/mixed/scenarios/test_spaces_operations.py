@@ -37,6 +37,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider_common import *
+from tests.gui.steps.onezone.clusters import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.providers import *
@@ -53,10 +54,12 @@ from tests.mixed.steps.space_basic import *
 from tests.mixed.steps.tokens_basic import *
 from tests.mixed.utils.common import *
 from tests.oneclient.steps.auth_steps import *
+from tests.oneclient.steps.environment_steps import *
 from tests.utils.acceptance_utils import *
 from tests.utils.entities_setup.groups import *
 from tests.utils.entities_setup.spaces import *
 from tests.utils.entities_setup.users import *
+from tests.utils.web_cert_utils import *
 
 
 @pytest.fixture(scope="module")
@@ -67,3 +70,4 @@ def screens():
 scenarios("../features/onezone/space/basic_space_operations_rest_oc.feature")
 scenarios("../features/onezone/space/basic_space_operations_rest_ones3.feature")
 scenarios("../features/onezone/space/s3_service_basic.feature")
+scenarios("../features/onepanel/s3_subdomains.feature")
