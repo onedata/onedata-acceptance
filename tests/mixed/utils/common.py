@@ -322,7 +322,7 @@ def download_using_curl_with_forward(
         tmp_memory,
         None,
         flags=["L"],  # share file download links are generated with the onezone domain
-        # Downloading it using curl using -L flag, because this flag
+        # Downloading it using curl requires -L flag, because this flag
         # handles redirects (HTTP 307), and we want to get redirected
         # to provider domain
         file_out=file_out,
