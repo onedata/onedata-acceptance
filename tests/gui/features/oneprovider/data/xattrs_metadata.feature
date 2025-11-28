@@ -54,13 +54,13 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     Then user of browser sees metadata status tag for "<item>" in file browser
 
     And user of browser opens "Metadata" tab in "<modal>" modal via clicking on metadata status tag for "<item>"
-    And user of browser sees xattr metadata entry with key named "attr" and value "val"
+    And user of browser sees xattr metadata entry with key "attr" and value "val"
 
     And user of browser refreshes site and waits for page to load
     And user of browser opens file browser for "space1" space
 
     And user of browser opens "Metadata" tab in "<modal>" modal via clicking on metadata status tag for "<item>"
-    And user of browser sees xattr metadata entry with key named "attr" and value "val"
+    And user of browser sees xattr metadata entry with key "attr" and value "val"
 
     Examples:
     | modal              | item  |
@@ -76,13 +76,13 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser adds xattr entry with key "attr2" and value "val2"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser clicks on delete icon for xattr metadata entry with key named "attr1"
-    Then user of browser does not see xattr metadata entry with key named "attr1"
-    And user of browser sees xattr metadata entry with key named "attr2" and value "val2"
+    And user of browser clicks on delete icon for xattr metadata entry with key "attr1"
+    Then user of browser does not see xattr metadata entry with key "attr1"
+    And user of browser sees xattr metadata entry with key "attr2" and value "val2"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser does not see xattr metadata entry with key named "attr1"
-    And user of browser sees xattr metadata entry with key named "attr2" and value "val2"
+    And user of browser does not see xattr metadata entry with key "attr1"
+    And user of browser sees xattr metadata entry with key "attr2" and value "val2"
 
     Examples:
     | modal              | item  |
@@ -97,7 +97,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Save" button in metadata panel
 
-    And user of browser clicks on delete icon for xattr metadata entry with key named "attr"
+    And user of browser clicks on delete icon for xattr metadata entry with key "attr"
     Then user of browser sees that there is no xattrs metadata
     And user of browser clicks on "Save" button in metadata panel
     And user of browser does not see metadata status tag for "<item>" in file browser
@@ -115,8 +115,8 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
-    And user of browser sees xattr metadata entry with key named "attr" and value "val"
-    And user of browser clicks on delete icon for xattr metadata entry with key named "attr"
+    And user of browser sees xattr metadata entry with key "attr" and value "val"
+    And user of browser clicks on delete icon for xattr metadata entry with key "attr"
     Then user of browser sees that there is no xattrs metadata
 
     And user of browser clicks on "X" button in modal "<modal>"
@@ -138,7 +138,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser clicks on "Discard changes" button in metadata panel
-    Then user of browser does not see xattr metadata entry with key named "attr"
+    Then user of browser does not see xattr metadata entry with key "attr"
 
     Examples:
     | modal              | item  |
@@ -188,11 +188,11 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser clicks on "Metadata" in context menu for "file1"
     And user of browser sees that "File details" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
-    And user of browser sees xattr metadata entry with key named "attr" and value "val"
+    And user of browser sees xattr metadata entry with key "attr" and value "val"
 
     Then user of browser modifies key field by typing "aaaa" for exisiting xattr metadata entry with "attr" key
-    And user of browser modifies value field by typing "bbbb" for exisiting xattr metadata entry with "aaaa" attribute
-    And user of browser sees xattr metadata entry with key named "aaaa" and value "bbbb"
+    And user of browser modifies value field by typing "bbbb" for exisiting xattr metadata entry with "aaaa" key
+    And user of browser sees xattr metadata entry with key "aaaa" and value "bbbb"
 
 
   Scenario Outline: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry
@@ -205,7 +205,7 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
 
     And user of browser creates new xattr column with "attr" key and "test" column label in file browser table
 
-    Then user of browser modifies label for xattr column named "test" by changing it to "apple" in file browser table
+    Then user of browser modifies xattr column with "test" key by changing label to "apple" in file browser table
     And user of browser sees xattr column named "apple" in columns configuration popover in file browser table
     And user of browser does not see xattr column named "test" in columns configuration popover in file browser table
 
@@ -252,8 +252,10 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: User hides visibility for xattr column
+  Scenario Outline: User hides visibility for xattr column and then restores it
     When user of browser opens file browser for "space1" space
+    And user of browser disables ["Size", "Modified", "Owner"] columns in columns configuration popover in file browser table
+
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
@@ -269,8 +271,6 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser opens file browser for "space1" space
 
     And user of browser sees that item named "<item>" has no xattr column in file browser
-
-    And user of browser sees that item named "<item>" has "val" value in xattr column in file browser
 
     And user of browser enables "attr" column in columns configuration popover in file browser table
     And user of browser sees that item named "<item>" has "val" value in xattr column in file browser

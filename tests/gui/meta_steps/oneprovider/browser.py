@@ -10,7 +10,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -83,8 +83,8 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) modifies label for xattr column named"
-        r' "(?P<name>.*)" by changing it'
+        r"user of (?P<browser_id>.*) modifies xattr column with"
+        r' "(?P<name>.*)" key by changing label'
         r' to "(?P<new_label_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
