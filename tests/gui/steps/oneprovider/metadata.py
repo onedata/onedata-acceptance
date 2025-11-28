@@ -106,8 +106,7 @@ def assert_there_is_such_xattr_meta_record(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} does not see xattr metadata entry "
-        'with key "{key_name}"'
+        'user of {browser_id} does not see xattr metadata entry with key "{key_name}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -224,7 +223,7 @@ def see_editor_disabled_label(browser_id, selenium, modals, text):
     )
 )
 def modify_existing_xattr_entry(
-    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name:str
+    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name: str
 ):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.metadata
