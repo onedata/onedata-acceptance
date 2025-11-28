@@ -91,17 +91,17 @@ def type_text_to_val_of_attr_in_new_xattr_entry(
 @wt(
     parsers.parse(
         "user of {browser_id} sees xattr metadata entry "
-        'with attribute named "{attr_name}" and value "{attr_val}"'
+        'with key named "{attr_key}" and value "{attr_val}"'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_xattr_meta_record(
-    selenium, browser_id, attr_name, attr_val, modals
+    selenium, browser_id, attr_key, attr_val, modals
 ):
     attr_val = attr_val.lower()
     modal = modals(selenium[browser_id]).details_modal.metadata
-    err_msg = f'no metadata entry "{attr_name}" with value "{attr_val}" found'
-    assert modal.xattrs.entries[attr_name].value.lower() == attr_val, err_msg
+    err_msg = f'no metadata entry "{attr_key}" with value "{attr_val}" found'
+    assert modal.xattrs.entries[attr_key].value.lower() == attr_val, err_msg
 
 
 @wt(
@@ -120,7 +120,7 @@ def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name, mo
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on delete "
-        "icon for xattr metadata entry with attribute named "
+        "icon for xattr metadata entry with key named "
         '"{attr_name}"'
     )
 )
@@ -224,7 +224,7 @@ def see_editor_disabled_label(browser_id, selenium, modals, text):
     )
 )
 def modify_existing_xattr_entry(
-    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name
+    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name:str
 ):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.metadata

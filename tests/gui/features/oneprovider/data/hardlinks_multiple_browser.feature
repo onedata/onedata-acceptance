@@ -95,7 +95,7 @@ Feature: Hardlinks functionalities using multiple providers and multiple browser
 
     And user of space_owner_browser clicks on "Metadata" in context menu for "file1"
     And user of space_owner_browser sees that "File details" modal is opened on "Metadata" tab
-    Then user of space_owner_browser sees xattr metadata entry with attribute named "attr1" and value "val1"
+    Then user of space_owner_browser sees xattr metadata entry with key named "attr1" and value "val1"
 
 
   Scenario: User creates QoS for non-owned hardlink and owner user sees them on original file

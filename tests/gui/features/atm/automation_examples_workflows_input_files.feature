@@ -50,9 +50,9 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
-    And user of browser sees xattr metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
-    And user of browser sees xattr metadata entry with attribute named "format.is-extension-matching-format" and value "True"
-    And user of browser sees xattr metadata entry with attribute named "format.format-name" and value "<meta_entry_val2>"
+    And user of browser sees xattr metadata entry with key named "format.mime-type" and value "<meta_entry_val1>"
+    And user of browser sees xattr metadata entry with key named "format.is-extension-matching-format" and value "True"
+    And user of browser sees xattr metadata entry with key named "format.format-name" and value "<meta_entry_val2>"
 
 
     Examples:
@@ -84,7 +84,7 @@ Feature: Automation examples input files test
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on "Metadata" in context menu for <example_file_name> in file browser
-    And user of browser sees xattr metadata entry with attribute named "format.mime-type" and value "<meta_entry_val1>"
+    And user of browser sees xattr metadata entry with key named "format.mime-type" and value "<meta_entry_val1>"
 
 
     Examples:
@@ -115,11 +115,11 @@ Feature: Automation examples input files test
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on "Metadata" in context menu for "example_image.jpg" in file browser
-    And user of browser sees xattr metadata entry with attribute named "width" and value "115"
-    And user of browser sees xattr metadata entry with attribute named "height" and value "126"
-    And user of browser sees xattr metadata entry with attribute named "orientation" and value "vertical"
-    And user of browser sees xattr metadata entry with attribute named "dominant_colour" and value "black"
-    And user of browser sees xattr metadata entry with attribute named "average_colour" and value "dark gray"
+    And user of browser sees xattr metadata entry with key named "width" and value "115"
+    And user of browser sees xattr metadata entry with key named "height" and value "126"
+    And user of browser sees xattr metadata entry with key named "orientation" and value "vertical"
+    And user of browser sees xattr metadata entry with key named "dominant_colour" and value "black"
+    And user of browser sees xattr metadata entry with key named "average_colour" and value "dark gray"
     And user of browser clicks on "X" button in modal "File details"
     # check no metadata for no image file
     And user of browser clicks on menu for "file1" directory in file browser
