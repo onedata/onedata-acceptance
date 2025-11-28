@@ -116,6 +116,7 @@ def wt_download_file_from_bucket(
     download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
 
 
+@repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def create_file_in_bucket(s3, bucket_name, file_name, file_content):
     s3.put_object(
         Bucket=bucket_name, Key=file_name, Body=bytes(file_content, encoding="utf-8")

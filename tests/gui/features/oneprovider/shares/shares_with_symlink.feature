@@ -40,9 +40,9 @@ Feature: Shares with linked directories
 
     And user of browser opens shares view of "space1"
     And user of browser clicks "dir2" share in shares browser on shares view
-    And user of browser sees file browser on single share view
-    And user of browser clicks and presses enter on item named "dir2" in file browser
-    Then user of browser sees that item named "dir1" is malformed symbolic link in file browser
+    And user of browser sees share's file browser on single share view
+    And user of browser clicks and presses enter on item named "dir2" in share's file browser
+    Then user of browser sees that item named "dir1" is malformed symbolic link in share's file browser
 
 
 

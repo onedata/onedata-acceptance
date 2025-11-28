@@ -296,13 +296,19 @@ def verify_all_functionalities(tests_controller):
 
 def compare_downloaded_dirs_content(path1, path2):
     comp_res = filecmp.dircmp(path1, path2)
-    comp_report = "\n".join(
-        [
-            f"Differences in common files: {comp_res.diff_files}",
-            f"Files only in {path1}: {comp_res.left_only}",
-            f"Files only in {path2}: {comp_res.right_only}",
-        ]
-    )
+    comp_report = [
+        f"Differences in common files: {comp_res.diff_files}",
+        f"Files only in {path1}: {comp_res.left_only}",
+        f"Files only in {path2}: {comp_res.right_only}",
+    ]
+
+    if comp_res.diff_files:
+        for file in comp_res.diff_files:
+            msg = get_files_content(
+                os.path.join(path1, file), os.path.join(path2, file)
+            )
+            comp_report.append(msg)
+    comp_report = "\n".join(comp_report)
     # assert differences in common files
     assert not comp_res.diff_files, comp_report
     # assert presence of files existing only in left path
@@ -315,6 +321,23 @@ def compare_downloaded_dirs_content(path1, path2):
             compare_downloaded_dirs_content(
                 os.path.join(path1, common_dir), os.path.join(path2, common_dir)
             )
+
+
+def get_files_content(path1, path2):
+    # Return without exception
+    if not os.path.isfile(path1):
+        return f"{path1} is not a file!"
+    if not os.path.isfile(path2):
+        return f"{path2} is not a file!"
+    with open(path1, "r") as file:
+        data1 = file.read()
+    with open(path2, "r") as file:
+        data2 = file.read()
+    msg = (
+        f"Content of {path1}:\n{data1}\nLength: {len(data1)}.\n"
+        f"Content of {path2}:\n{data2}\nLength: {len(data2)}."
+    )
+    return msg
 
 
 @repeat_failed(timeout=30)

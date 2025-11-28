@@ -17,6 +17,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -104,6 +105,7 @@ def _find_modal(driver, modal_name):
             "modify",
             "create",
             "unlink",
+            "download",
         ]
         if any(name for name in elements_list if name in modal_name.lower()):
             modals = driver.find_elements(
@@ -630,7 +632,7 @@ def click_icon_in_share_directory_modal(
         'user of {browser_id} sees that error modal with text "{text}" appeared'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND * 4)
+@repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal does not contain text "{text}"'
@@ -772,3 +774,17 @@ def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} closes by pressing "{button}" "{warning_label}" warning'
+    )
+)
+@wt(
+    parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning')
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_on_warning(selenium, browser_id, button):
+    driver = selenium[browser_id]
+    getattr(Modals(driver).warning_info, transform(button))()

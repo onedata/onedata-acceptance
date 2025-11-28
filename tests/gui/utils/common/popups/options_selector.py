@@ -13,7 +13,7 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
 
 class MenuItem(PageObject):
-    name = id = Label(".tag-label")
+    name = id = Label(".tag-label, .property-label")
 
     def __call__(self):
         self.click()

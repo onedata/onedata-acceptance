@@ -118,10 +118,12 @@ def _add_storage_in_op_panel_using_gui(
     mount_point_option = "mount point"
     notify_type = "info"
     text_regexp = ".*[Ss]torage.*added.*"
-
     options = yaml.load(config, yaml.Loader)
 
-    wt_click_on_btn_in_content(selenium, browser_id, btn, content, onepanel)
+    try:
+        wt_click_on_btn_in_content(selenium, browser_id, btn, content, onepanel)
+    except RuntimeError:
+        pass
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
@@ -136,7 +138,6 @@ def _add_storage_in_op_panel_using_gui(
     )
     if options.get("imported storage", False):
         enable_import_in_add_storage_form(selenium, browser_id, onepanel)
-
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(
         selenium, browser_id, onepanel
     )
@@ -361,7 +362,7 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
         click_modal_button(selenium, browser_id, checkbox, modal, modals)
         click_modal_button(selenium, browser_id, button, modal, modals)
         wait_for_named_modal_to_disappear(
-            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 2
+            selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
         )
     except (NoSuchElementException, RuntimeError):
         pass

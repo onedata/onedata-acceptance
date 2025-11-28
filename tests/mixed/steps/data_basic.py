@@ -338,7 +338,7 @@ def create_dir_in_op(
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
     click_and_press_enter_on_item_in_browser(
-        selenium, user, item_name, tmp_memory, op_container
+        selenium, user, item_name, tmp_memory, op_container, "file browser"
     )
 
 

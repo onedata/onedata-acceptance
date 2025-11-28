@@ -143,9 +143,10 @@ def iter_ahead(iterable):
         yield item, next_item
 
 
-def find_web_elem(web_elem_root, css_sel, err_msg):
+def find_web_elem(web_elem_root, css_sel, err_msg, scroll=True):
     try:
-        _scroll_to_css_sel(web_elem_root, css_sel)
+        if scroll:
+            _scroll_to_css_sel(web_elem_root, css_sel)
         item = web_elem_root.find_element(By.CSS_SELECTOR, css_sel)
     except NoSuchElementException as exc:
         with suppress(TypeError):
@@ -154,9 +155,10 @@ def find_web_elem(web_elem_root, css_sel, err_msg):
     return item
 
 
-def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
+def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg, scroll=True):
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
-    _scroll_to_css_sel(web_elem_root, css_sel)
+    if scroll:
+        _scroll_to_css_sel(web_elem_root, css_sel)
     for item in items:
         if item.text.lower() == text.lower():
             return item
@@ -229,7 +231,7 @@ def redirect_display(new_display):
 
 
 def transform(val, strip_char=None):
-    return val.strip(strip_char).lower().replace(" ", "_")
+    return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
 class WhichBrowser(Enum):
@@ -237,6 +239,7 @@ class WhichBrowser(Enum):
     ARCHIVE_FILE_BROWSER = "archive file browser"
     DATASET_BROWSER = "dataset browser"
     FILE_BROWSER = "file browser"
+    SHARES_FILE_BROWSER = "share's file browser"
 
 
 class OnedataService(Enum):

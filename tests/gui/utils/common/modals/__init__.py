@@ -18,6 +18,7 @@ from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.create_group import CreateGroup
 from .basic_modals.delete_modal import DeleteModal
+from .basic_modals.download import FileDownloadModal
 from .basic_modals.leave_element import LeaveElementModal
 from .basic_modals.login import LoginFormModal
 from .basic_modals.remove import RemoveModal
@@ -51,6 +52,7 @@ from .tokens_modals.invite_using_token import InviteUsingTokenModal
 from .troubles_modals.dns_configuration_warning import DNSConfigurationWarningModal
 from .troubles_modals.emergency_interface import EmergencyInterface
 from .troubles_modals.error_modal import ErrorModal
+from .troubles_modals.warning_info_modal import WarningInfoModal
 from .troubles_modals.warning_modal import WarningModal
 from .workflows_modals.audit_log import AuditLog
 from .workflows_modals.create_new_lane import CreateNewLane
@@ -69,6 +71,7 @@ class Modals:
     # basic modals
     remove_modal = WebItem(".modal-dialog", cls=RemoveModal)
     leave_modal = WebItem(".modal-dialog", cls=LeaveElementModal)
+    file_download = WebItem(".modal-dialog", cls=FileDownloadModal)
     add_one_of_elements = WebItem(".modal-dialog", cls=AddOneOfElementsModal)
     delete_modal = WebItem(".modal-dialog", cls=DeleteModal)
     rename_modal = WebItem(".modal-dialog", cls=RenameModal)
@@ -95,6 +98,7 @@ class Modals:
     )
     error = WebItem(".alert-global.modal.in .modal-dialog", cls=ErrorModal)
     warning = WebItem(".question-modal", cls=WarningModal)
+    warning_info = WebItem(".modal-content", cls=WarningInfoModal)
 
     # tokens modals
     invite_using_token = WebItem(

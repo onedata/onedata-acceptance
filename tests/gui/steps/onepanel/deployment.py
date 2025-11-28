@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.environment_utils import add_etc_hosts_entries
 from tests.utils.utils import repeat_failed
 
 
@@ -164,8 +165,6 @@ def wt_try_to_register_prov_using_register_btn(
     btn = "Register"
     step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
-
-    wait_for_next_step_in_deployment(onepanel, driver, modals, 6)
 
     # if error modal occurred close it and repeat function execution
     try:
@@ -473,3 +472,28 @@ def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_go_to_emergency_onepanel_interface(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.deployment.laststep.link()
+
+
+@wt(
+    parsers.parse(
+        'provider "{provider}" with onezone domain host entry is added to /etc/hosts'
+    )
+)
+def add_prov_with_oz_subdomain_to_etc_host(hosts, provider):
+    new_hostname = f"{hosts[provider]["name"]}.{hosts["onezone"]["hostname"]}"
+    add_etc_hosts_entries(
+        hosts[provider]["ip"],
+        new_hostname,
+    )
+    hosts[provider]["hostname"] = new_hostname
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} waits till login page of emergency interface of Onepanel"
+        " appears"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
+def wait_for_emergency_interface_onepanel(browser_id, selenium, login_page):
+    assert login_page(selenium[browser_id]).open_in_onezone.is_displayed()

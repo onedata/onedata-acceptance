@@ -6,6 +6,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
@@ -242,30 +243,6 @@ def is_storage_on_storage_list(selenium, browser_id, name, onepanel):
     return name in storages_list
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} sees {number} storages named "{name}" '
-        "with different IDs on the storages list"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_storages_with_same_name(
-    selenium, browser_id, name, onepanel, number: int
-):
-    driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    filtered = [
-        storage
-        for storage in storages_list
-        if storage.name.split(CONFLICT_NAME_SEPARATOR)[0] == name
-    ]
-    ids = [s.name.split(CONFLICT_NAME_SEPARATOR)[1] for s in filtered]
-    assert (
-        len(filtered) == number
-    ), f"{name} not visible {number} times on storages list"
-    assert check_ids_different(ids), f"IDs are not different, {ids}"
-
-
 # if there are repeated ids, set will be shorter than list
 def check_ids_different(id_list):
     ids_set = set(id_list)
@@ -287,7 +264,13 @@ def type_name_to_form_in_storages_page(
         onepanel(driver).content.storages.storages[storage].edit_form,
         f"{storage_type.lower()}_editor",
     )
-    setattr(form, transform(input_box), name)
+
+    input_box = transform(input_box)
+
+    if input_box == "mount_point":
+        form.change_mount_point(name)
+    else:
+        setattr(form, input_box, name)
 
 
 @wt(
@@ -316,3 +299,39 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
 def copy_storage_id_to_clipboard(selenium, browser_id, storage_name, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.storages.storages[storage_name].copy_id_button()
+
+
+def close_all_expanded_storages(browser_id, selenium, onepanel):
+    driver = selenium[browser_id]
+    storages_list = onepanel(driver).content.storages.storages
+
+    for storage in storages_list:
+        if storage.is_expanded():
+            storage.click_toggle()
+
+    return [storage.name for storage in storages_list]
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees {number} storages named "{name}" '
+        "with different IDs on the storages list"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_number_storages_with_same_name(
+    selenium, browser_id, name, onepanel, number: int
+):
+    storages_names = close_all_expanded_storages(browser_id, selenium, onepanel)
+
+    rows_with_name = [
+        row_name
+        for row_name in storages_names
+        if row_name.split(CONFLICT_NAME_SEPARATOR)[0] == name
+    ]
+    ids = [row_name.split(CONFLICT_NAME_SEPARATOR)[1] for row_name in rows_with_name]
+
+    assert (
+        len(rows_with_name) == number
+    ), f"{name} not visible {number} times on storages list"
+    assert check_ids_different(ids), f"IDs are not unique, {ids}"

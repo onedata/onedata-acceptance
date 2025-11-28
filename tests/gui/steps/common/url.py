@@ -115,7 +115,6 @@ def _open_url(selenium, browser_id, url):
     driver = selenium[browser_id]
     old_page = driver.find_element(By.CSS_SELECTOR, "html")
     driver.get(url)
-
     Wait(driver, WAIT_BACKEND).until(
         staleness_of(old_page),
         message=f"waiting for page {url:s} to load",
@@ -126,14 +125,13 @@ def _open_url(selenium, browser_id, url):
 def open_received_url_with_base_url(selenium, browser_id, tmp_memory, base_url):
     url = tmp_memory[browser_id]["mailbox"]["url"]
     url = url.replace(parse_url(url).group("base_url"), base_url, 1)
-
     _open_url(selenium, browser_id, url)
 
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.+?) opens (?:url|URL) received from "
-        "user of (?P<browser_id2>.+?)"
+        r"user of (?P<browser_id>\S+) opens (?:url|URL) received from "
+        r"user of (?P<browser_id2>\S+)"
     )
 )
 def open_exactly_received_url(selenium, browser_id, tmp_memory):
@@ -187,6 +185,18 @@ def open_site_url(selenium, browser_id, displays, clipboard):
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
     driver.execute_script(f"window.location = '{url}'")
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} opens URL received from user of {browser2_id} without"
+        " waiting"
+    )
+)
+def open_received_url_without_waiting(selenium, browser_id, tmp_memory):
+    driver = selenium[browser_id]
+    url = tmp_memory[browser_id]["mailbox"]["url"]
+    driver.get(url)
 
 
 @wt(parsers.parse("user of {browser_id} copies a first resource {item} from URL"))

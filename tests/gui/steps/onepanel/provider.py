@@ -69,9 +69,23 @@ def wt_type_val_to_in_box_in_provider_details_form(
 
 @wt(
     parsers.re(
+        'user of (?P<browser_id>.*?) checks "Request a subdomain" '
+        "toggle in modify provider details form in Provider panel"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_check_request_subdomain_toggle_in_provider_details_form(
+    selenium, browser_id, onepanel
+):
+    form = onepanel(selenium[browser_id]).content.provider.form
+    form.subdomain_delegation.check()
+
+
+@wt(
+    parsers.re(
         "user of (?P<browser_id>.*?) types (?P<host_property>name|"
         'hostname) of "(?P<host>.*?)" provider to '
-        "(?P<attr>Provider name|Domain) input box in modify provider"
+        "(?P<attr>Provider name|Subdomain|Domain) input box in modify provider"
         " details form in Provider panel"
     )
 )

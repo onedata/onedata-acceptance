@@ -221,7 +221,9 @@ def assert_qos_file_status_in_op_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, option_of_space, oz_page
     )
-    assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, user, op_container, tmp_memory, "file browser"
+    )
     if option == "has some":
         assert_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
     else:
@@ -248,7 +250,9 @@ def delete_qos_requirement_in_op_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, option1, oz_page
     )
-    assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+    assert_browser_in_tab_in_op(
+        selenium, user, op_container, tmp_memory, "file browser"
+    )
     click_on_status_tag_for_file_in_file_browser(
         user, status_type, file_name, tmp_memory
     )

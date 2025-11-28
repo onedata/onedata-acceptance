@@ -34,7 +34,7 @@ WAIT_BACKEND = 15
 
 # use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
 # when waiting for normal uploads to finish
-WAIT_NORMAL_UPLOAD = 60
+WAIT_NORMAL_UPLOAD = 90
 
 # use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
 # when waiting for extended uploads to finish

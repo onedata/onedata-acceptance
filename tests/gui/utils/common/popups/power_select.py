@@ -19,6 +19,13 @@ class PowerSelect(PageObject):
                 return
         raise RuntimeError(f"{property_name} not found in popup menu")
 
+    def choose_item_including_name(self, property_name):
+        for item in self.items:
+            if property_name.lower() in item.text.lower():
+                item.click()
+                return
+        raise RuntimeError(f"{property_name} not found in popup menu")
+
     def choose_item_with_id(self, property_name):
         separator = CONFLICT_NAME_SEPARATOR
         for item in self.items:

@@ -155,7 +155,9 @@ def visit_file_browser(
         )
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory)
+        assert_browser_in_tab_in_op(
+            selenium, browser_id, op_container, tmp_memory, "file browser"
+        )
 
 
 @given(

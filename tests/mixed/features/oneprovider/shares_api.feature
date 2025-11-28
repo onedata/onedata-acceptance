@@ -22,9 +22,9 @@ Feature: Shares API tests
   Scenario: User reads file content using the command from "Download file content" from API section in share file details modal
     When user of browser opens shares view of "space1"
     And user of browser clicks "share_file1" share in shares browser on shares view
-    And user of browser sees file browser on single share view
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser sees share's file browser on single share view
+    And user of browser clicks on menu for "file1" file in share's file browser
+    And user of browser clicks "Information" option in data row menu in share's file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command for "Download file content" operation in API section from file details modal
     And user of browser executes copied command
@@ -34,9 +34,9 @@ Feature: Shares API tests
   Scenario: User reads file attributes using the command from "Get attributes" from API section in share file details modal
     When user of browser opens shares view of "space1"
     And user of browser clicks "share_file1" share in shares browser on shares view
-    And user of browser sees file browser on single share view
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser sees share's file browser on single share view
+    And user of browser clicks on menu for "file1" file in share's file browser
+    And user of browser clicks "Information" option in data row menu in share's file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command for "Get attributes" operation in API section from file details modal
     And user of browser executes copied command
@@ -50,9 +50,9 @@ Feature: Shares API tests
     When using REST, user1 sets new <fmt> metadata: <metadata> for "file1" file in space "space1" in oneprovider-1
     And user of browser opens shares view of "space1"
     And user of browser clicks "share_file1" share in shares browser on shares view
-    And user of browser sees file browser on single share view
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser sees share's file browser on single share view
+    And user of browser clicks on menu for "file1" file in share's file browser
+    And user of browser clicks "Information" option in data row menu in share's file browser
     And user of browser sees that "File details" modal is opened on "Info" tab
     And user of browser copies command for "<command_name>" operation in API section from file details modal
     And user of browser executes copied command

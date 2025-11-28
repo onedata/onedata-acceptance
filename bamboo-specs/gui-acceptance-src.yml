@@ -82,8 +82,10 @@ stages:
         - Onedata documentation
         - Onepanel basic
         - Onepanel deployment basic
+        - Onepanel deployment LE
         - Onepanel deployment OneS3
         - Onepanel login
+        - Onepanel LE and Subdomain Delegation
         - Onepanel members
         - Onepanel two hosts deployment
         - Onepanel different storages
@@ -678,6 +680,21 @@ Onepanel deployment basic:
         scripts:
           - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed test_gui_src
 
+Onepanel deployment LE:
+  <<: *acceptance-tests-in-chrome-job
+  key: CODLE
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onepanel_deployment_with_le ENV_FILE=1oz_1op_le_not_deployed test_gui_src
+
 Onepanel deployment OneS3:
   <<: *acceptance-tests-in-chrome-job
   key: CODO
@@ -707,6 +724,21 @@ Onepanel login:
         <<: *run-selenium-tests
         scripts:
           - make SUITE=test_onepanel_login test_gui_src
+
+Onepanel LE and Subdomain Delegation:
+  <<: *acceptance-tests-in-chrome-job
+  key: COLES
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script:
+        <<: *run-selenium-tests
+        scripts:
+          - make SUITE=test_onepanel_le_and_subdomain_delegation ENV_FILE=1oz_1op_le test_gui_src
 
 Onepanel members:
   <<: *acceptance-tests-in-chrome-job

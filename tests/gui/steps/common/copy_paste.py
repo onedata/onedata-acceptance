@@ -20,7 +20,7 @@ from tests.utils.bdd_utils import parsers, wt
 @wt(
     parsers.re(
         "user of (?P<browser_id>.*?) sends copied (?P<item_type>.*?) "
-        "to user named (?P<browser_list>.*)"
+        "to user of (?P<browser_list>.*)"
     )
 )
 def send_copied_item_to_other_users(
