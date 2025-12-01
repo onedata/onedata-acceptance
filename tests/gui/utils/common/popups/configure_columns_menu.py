@@ -3,6 +3,7 @@ columns menu popup.
 """
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -42,6 +43,11 @@ class AddOrModifyXattrColumn(PageObject):
     enter_an_xattr_key = WebElement(
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
+
+    def clear_actual_key(self):
+        self.enter_an_xattr_key.send_keys(Keys.CONTROL, "a")
+        self.enter_an_xattr_key.send_keys(Keys.BACKSPACE)
+
     create = NamedButton(".edit-column-btn", text="Create")
     apply_changes = NamedButton(".edit-column-btn", text="Apply")
 

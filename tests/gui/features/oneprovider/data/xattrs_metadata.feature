@@ -284,3 +284,33 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     | modal              | item  |
     | File details       | file1 |
     | Directory details  | dir1  |
+
+
+  Scenario Outline: User modifies key for xattr column
+    When user of browser opens file browser for "space1" space
+    And user of browser disables ["Size", "Modified", "Owner"] columns in columns configuration popover in file browser table
+
+    And user of browser clicks on "Metadata" in context menu for "<item>"
+    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
+    And user of browser adds xattr entry with key "attr1" and value "val1"
+    And user of browser adds xattr entry with key "attr2" and value "val2"
+    And user of browser clicks on "Save" button in metadata panel
+    And user of browser clicks on "X" button in modal "<modal>"
+
+    And user of browser creates new xattr column with "attr1" key in file browser table
+    Then user of browser modifies xattr column with "attr1" key by changing key to "attr2" in file browser table
+
+    # Label was not modified, only key for xattr column
+    And user of browser sees xattr column named "attr1" in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" has "val2" value in xattr column in file browser
+
+    And user of browser refreshes site and waits for page to load
+    And user of browser opens file browser for "space1" space
+
+    And user of browser sees xattr column named "attr1" in columns configuration popover in file browser table
+    And user of browser sees that item named "<item>" has "val2" value in xattr column in file browser
+
+    Examples:
+    | modal              | item  |
+    | File details       | file1 |
+    | Directory details  | dir1  |

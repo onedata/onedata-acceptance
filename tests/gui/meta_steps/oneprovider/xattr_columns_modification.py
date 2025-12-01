@@ -69,13 +69,13 @@ def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, p
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) modifies xattr column with"
-        r' "(?P<name>.*)" key by changing label'
-        r' to "(?P<new_label_name>.*)" in (?P<which_browser>file'
+        r' "(?P<name>.*)" key by changing (?P<elem>label|key)'
+        r' to "(?P<new_elem_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
 def modify_label_for_xattr_column_in_columns_menu_in_browser(
-    selenium, browser_id, which_browser, tmp_memory, popups, name, new_label_name
+    selenium, browser_id, which_browser, tmp_memory, popups, name, elem, new_elem_name
 ):
 
     driver = selenium[browser_id]
@@ -89,10 +89,16 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
     current_xattr_column = popups(driver).configure_columns_menu.columns[name]
 
     current_xattr_column.hover_to_button_and_click("modify", driver)
-
     modify_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
-    modify_xattr_column.column_label.clear()
-    modify_xattr_column.column_label.send_keys(new_label_name)
+
+    if elem == "label":
+        modify_xattr_column.column_label.clear()
+        modify_xattr_column.column_label.send_keys(new_elem_name)
+    else:
+        enter_key = modify_xattr_column.enter_an_xattr_key
+        modify_xattr_column.clear_actual_key()
+        enter_key.send_keys(new_elem_name)
+
     modify_xattr_column.apply_changes.click()
 
     # hide columns menu popup
