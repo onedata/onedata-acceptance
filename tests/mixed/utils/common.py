@@ -130,7 +130,7 @@ def execute_copied_curl_command(
     displays,
     clipboard,
     tmp_memory,
-    config=None,  # config will always be None there
+    config=None,
 ):
     _execute_curl_command(
         clipboard.paste(display=displays[browser_id]),
@@ -301,7 +301,7 @@ def assert_curl_command_successful_http_code(tmp_memory):
         ' saves output to "{file_out}"'
     )
 )
-def download_using_curl_with_forward(
+def wt_download_using_curl_with_forward(
     browser_id,
     tmp_memory,
     clipboard,
@@ -310,21 +310,8 @@ def download_using_curl_with_forward(
     browsers_to_users,
     file_out,
 ):
-    download_link = clipboard.paste(display=displays[browser_id])
-    file_out = (
-        tmpdir.join(browsers_to_users[browser_id], "download", file_out)
-        if file_out
-        else None
-    )
-
-    _execute_curl_command(
-        construct_curl_get_cmd(download_link),
-        tmp_memory,
-        None,
-        flags=["L"],  # Download links are generated under the "onezone" domain.
-        # When using curl, the -L flag is required to follow redirects
-        # (e.g., HTTP 307) to the actual provider domain.
-        file_out=file_out,
+    download_using_curl_with_forward(
+        browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users, file_out
     )
 
 
@@ -340,4 +327,26 @@ def download_using_curl(
         tmpdir,
         browsers_to_users,
         file_out=None,
+    )
+
+
+def download_using_curl_with_forward(
+    browser_id,
+    tmp_memory,
+    clipboard,
+    displays,
+    tmpdir,
+    browsers_to_users,
+    file_out,
+):
+    download_link = clipboard.paste(display=displays[browser_id])
+    if file_out is not None:
+        file_out = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+
+    _execute_curl_command(
+        construct_curl_get_cmd(download_link),
+        tmp_memory,
+        None,
+        flags=["L"],  # -L flag is required to follow redirects (e.g., HTTP 307)
+        file_out=file_out,
     )
