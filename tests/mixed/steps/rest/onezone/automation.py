@@ -33,6 +33,12 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
+BAGIT_ARCHIVES = {
+    "3 gb": ["bagit_archive_3gb.zip"],
+    "fetch": ["bagit_archive_fetch.tar.gz", "bagit_archive_fetch_xrootd.zip"],
+    "unpack": ["bagit_archive_unpack.tar", "bagit_archive_unpack_and_fetch.zip"],
+}
+
 
 @given(
     parsers.parse(
@@ -84,18 +90,71 @@ def upload_workflow_from_upload_files_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} uploads all workflows from "
+        "using REST, {user} uploads bagit-uploader workflow from "
         'automation-examples to inventory "{inventory}" in '
         '"{zone_name}" Onezone service'
     )
 )
-def upload_all_workflows_from_automation_examples_rest(
+def wt_upload_bagit_uploader_from_automation_examples_rest(
     hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
+):
+    workflow_type = "bagit-uploader"
+    upload_part_of_the_workflows_from_automation_examples_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflows,
+        tmp_memory,
+        workflow_type,
+    )
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} uploads all workflows except for bagit-uploader from "
+        'automation-examples to inventory "{inventory}" in '
+        '"{zone_name}" Onezone service'
+    )
+)
+def wt_upload_non_bagit_workflows_from_automation_examples_rest(
+    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
+):
+    workflow_type = "non bagit"
+    upload_part_of_the_workflows_from_automation_examples_rest(
+        hosts,
+        zone_name,
+        users,
+        user,
+        inventory,
+        inventories,
+        workflows,
+        tmp_memory,
+        workflow_type,
+    )
+
+
+def upload_part_of_the_workflows_from_automation_examples_rest(
+    hosts,
+    zone_name,
+    users,
+    user,
+    inventory,
+    inventories,
+    workflows,
+    tmp_memory,
+    workflow_type,
 ):
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
         workflow_name = f.split(".")[0]
+        if workflow_type == "bagit-uploader" and workflow_name != "bagit-uploader":
+            continue
+        if workflow_type == "non bagit" and workflow_name == "bagit-uploader":
+            continue
         if os.path.isdir(upload_workflow_path(f)):
             tmp_memory["workflows_with_input_files"].append(workflow_name)
             dump_path = f"{upload_workflow_path(workflow_name)}/{workflow_name}.json"
@@ -377,11 +436,11 @@ def retry_workflow_rest(
 
 @wt(
     parsers.parse(
-        "using REST, {user} executes all workflows with example "
-        'input files on space "{space}" in {host}'
+        "using REST, {user} executes all workflows except for bagit-uploader with"
+        ' example input files on space "{space}" in {host}'
     )
 )
-def execute_all_workflows(
+def wt_execute_non_bagit_part_of_the_workflows(
     user,
     users,
     hosts,
@@ -392,6 +451,70 @@ def execute_all_workflows(
     groups,
     workflow_executions,
     tmp_memory,
+):
+    archive_types = None
+    execute_part_of_the_workflows(
+        user,
+        users,
+        hosts,
+        host,
+        spaces,
+        space,
+        workflows,
+        groups,
+        workflow_executions,
+        tmp_memory,
+        archive_types,
+    )
+
+
+@wt(
+    parsers.re(
+        "using REST, (?P<user>.*) executes bagit-uploader workflow with "
+        '(?P<archive_types>.*) bagit archives? on space "(?P<space>.*)" '
+        "in (?P<host>.*)"
+    )
+)
+def wt_execute_part_of_the_workflows(
+    user,
+    users,
+    hosts,
+    host,
+    spaces,
+    space,
+    workflows,
+    groups,
+    workflow_executions,
+    tmp_memory,
+    archive_types,
+):
+    execute_part_of_the_workflows(
+        user,
+        users,
+        hosts,
+        host,
+        spaces,
+        space,
+        workflows,
+        groups,
+        workflow_executions,
+        tmp_memory,
+        archive_types,
+    )
+
+
+def execute_part_of_the_workflows(
+    user,
+    users,
+    hosts,
+    host,
+    spaces,
+    space,
+    workflows,
+    groups,
+    workflow_executions,
+    tmp_memory,
+    archive_types,
 ):
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
@@ -410,6 +533,8 @@ def execute_all_workflows(
                 example_execution, workflow.replace("-", "_")
             )()
             for file, content in zip(input_files, example_initial_store_content):
+                if not check_to_run_workflow(workflow, file, archive_types):
+                    continue
                 # map store name into store_id
                 content = {
                     get_store_schema_id_of_workflow(key, path): content[key]
@@ -434,6 +559,14 @@ def execute_all_workflows(
             raise NotImplementedError(
                 f"Example execution of workflow {workflow} is not implemented"
             )
+
+
+def check_to_run_workflow(workflow_name, file_name, archive_types):
+    if archive_types is None:
+        return workflow_name != "bagit-uploader"
+    return (
+        workflow_name == "bagit-uploader" and file_name in BAGIT_ARCHIVES[archive_types]
+    )
 
 
 def execute_workflow_rest(
@@ -476,6 +609,21 @@ def get_group_id(groups, group):
 )
 @repeat_failed(interval=4, timeout=620)
 def wait_for_workflow_executions(
+    user, users, host, hosts, space, spaces, workflow_executions
+):
+    assert_all_workflow_execution_finished(
+        user, users, host, hosts, space, spaces, workflow_executions
+    )
+
+
+@wt(
+    parsers.parse(
+        "using REST, {user} waits extended time for all workflow executions "
+        'to finish on space "{space}" in {host}'
+    )
+)
+@repeat_failed(interval=10, timeout=60 * 60 * 4)
+def wait_for_workflow_executions_extended_time(
     user, users, host, hosts, space, spaces, workflow_executions
 ):
     assert_all_workflow_execution_finished(

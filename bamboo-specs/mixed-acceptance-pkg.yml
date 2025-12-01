@@ -101,7 +101,10 @@ stages:
         - Storage sync
         - Tokens
         - Transfers
-        - Workflows with input files
+        - Workflows bagit with 3gb archive
+        - Workflows bagit with fetch archives
+        - Workflows bagit with unpack archives
+        - Workflows without bagit
   - Qnthack - rerun:
       manual: false
       final: true
@@ -1022,7 +1025,7 @@ Transfers:
         scripts:
           - make SUITE=test_transfers ENV_FILE=1oz_2op_deployed test_mixed_pkg
 
-Workflows with input files:
+Workflows bagit with 3gb archive:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CWIF
   tasks:
@@ -1036,7 +1039,55 @@ Workflows with input files:
     - script:
         <<: *run-acceptance-tests
         scripts:
-          - make SUITE=test_workflows_with_input_files ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+          - make SUITE=test_workflows_bagit_with_3gb_archive ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+
+Workflows bagit with fetch archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF2
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_bagit_with_fetch_archives ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+
+Workflows bagit with unpack archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF3
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_bagit_with_unpack_archives ENV_FILE=1oz_1op_openfaas test_mixed_pkg
+
+Workflows without bagit:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CWIF4
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_workflows_without_bagit ENV_FILE=1oz_1op_openfaas test_mixed_pkg
 
 
 Qnthack - rerun:

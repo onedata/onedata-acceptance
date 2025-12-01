@@ -71,10 +71,12 @@ class RecorderManager:
         self.request = request
 
     def handle_start_recording(self):
+        should_record = self.request.getfixturevalue("should_record")
+
         recording = self.request.config.getoption("--xvfb-recording")
         mosaic_filter = not self.request.config.getoption("--no-mosaic-filter")
 
-        if recording != "none":
+        if recording != "none" and should_record:
             # add timestamp to video name
             file_name = f"{self.request.node.name}.{int(time.time())}"
 
