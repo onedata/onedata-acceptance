@@ -25,9 +25,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
 
   Scenario Outline: Add valid metadata in JSON format
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens file browser for "space1" space
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
     And user of browser sees that "<details_modal>" modal is opened on "Metadata" tab
@@ -46,9 +44,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
 
   Scenario Outline: User doesn't see JSON metadata and metadata status tag after deleting JSON metadata
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens file browser for "space1" space
 
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
     And user of browser opens metadata panel on JSON tab for "<item>"
@@ -70,9 +66,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
 
   Scenario Outline: Discard changes while entering metadata in JSON format
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens file browser for "space1" space
 
     And user of browser opens metadata panel on JSON tab for "<item>"
     And user of browser types '{"id": 1}' to JSON textarea in metadata panel
@@ -86,3 +80,17 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | details_modal      | item  |
     | File details       | file1 |
     | Directory details  | dir1  |
+
+
+  Scenario Outline: User enters nested json metadata and checks how it is displayed in column and how to copy its content
+    When user of browser opens file browser for "space1" space
+    #And user of browser disables ["Size", "Modified", "Owner"] columns in columns configuration popover in file browser table
+
+    And user of browser adds and saves '{"a": {"b":"c", "c":{"d":"e"}}, "b":"f"}' JSON metadata for "<item>"
+
+    Then user of browser opens metadata panel on JSON tab for "<item>"
+    And user of browser sees that JSON textarea in metadata panel contains '{"a": {"b":"c", "c":{"d":"e"}}, "b":"f"}' 
+
+    Examples:
+    | details_modal      | item  |
+    | File details       | file1 |

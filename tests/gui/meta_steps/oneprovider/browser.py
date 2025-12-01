@@ -74,3 +74,17 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) creates new json column with mode "(?P<mode>Whole document|Extract key|Query)" and'
+        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def wt_create_json_column_with_label_in_columns_menu(selenium, browser_id, which_browser, tmp_memory, popups):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+    new_column_button = popups(driver).configure_columns_menu.new_xattr_column_button
