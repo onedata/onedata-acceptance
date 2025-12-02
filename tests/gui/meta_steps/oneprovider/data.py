@@ -1150,7 +1150,6 @@ def click_and_press_enter_with_content_check(
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     browser.data[item_name].click_and_enter()
-
     has_downloaded_file_content(browser_id, item_name, content, tmpdir)
 
 

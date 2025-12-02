@@ -15,6 +15,7 @@ Feature: Shares API tests
                 provider: oneprovider-1
               directory tree:
                 - file1: 11111
+                - file2
     And opened browser with user1 signed in to "onezone" service
     And using REST, user user1 creates "share_file1" share of "space1/file1" supported by "oneprovider-1" provider
 
@@ -63,3 +64,13 @@ Feature: Shares API tests
     | xattrs | attr=val        | Get extended attributes (xattrs) | {"attr":"val"}  |
     | JSON   | {"attr": "val"} | Get JSON metadata                | {"attr":"val"}  |
     | RDF    | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> | Get RDF metadata | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
+
+
+  Scenario: Using curl, user downloads file content from copied share download file link and saves output to another file
+    When user of browser opens file browser for "space1" space
+    And user of browser opens "share_file1" single share view of "file1" using "Shared" tag
+    And user of browser clicks on menu for "file1" file in share's file browser
+    And user of browser clicks "Copy download URL" option in data row menu in share's file browser
+
+    Then user of browser uses curl to get content from copied link and saves output to "file2"
+    And user user1 sees that content of downloaded file "file2" is equal to: "11111"
