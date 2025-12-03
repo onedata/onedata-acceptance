@@ -84,12 +84,15 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
   Scenario Outline: User enters nested json metadata and checks how it is displayed in column and how to copy its content
     When user of browser opens file browser for "space1" space
-    #And user of browser disables ["Size", "Modified", "Owner"] columns in columns configuration popover in file browser table
+    And user of browser enables only [] column in columns configuration popover in file browser table
 
     And user of browser adds and saves '{"a": {"b":"c", "c":{"d":"e"}}, "b":"f"}' JSON metadata for "<item>"
 
     Then user of browser opens metadata panel on JSON tab for "<item>"
     And user of browser sees that JSON textarea in metadata panel contains '{"a": {"b":"c", "c":{"d":"e"}}, "b":"f"}' 
+    And user of browser clicks on "X" button in modal "<details_modal>"
+    And user of browser creates new json column with mode "Whole document" and custom label named "dupa" in file browser table
+    And user of browser sees that item named "<item>" has '{"a": {"b":"c", "c":{"d":"e"}}, "b":"f"}' value in json column in file browser
 
     Examples:
     | details_modal      | item  |

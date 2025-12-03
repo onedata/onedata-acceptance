@@ -528,9 +528,10 @@ def click_tag_for_elem_in_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that item named "
-        '"(?P<item_name>.*)" has "(?P<value>.*)" value in (?P<option>xattr) column '
-        "in (?P<which_browser>archive file browser|file browser)"
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has \'(?P<value>.*)\' value in (?P<option>xattr|json)'
+        r" column "
+        r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
 @wt(
@@ -558,6 +559,10 @@ def assert_value_in_column_for_item(
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
+    if option == "json":
+        item_elem = item_elem.replace("\n", "")
+        value = value.replace(" ", "")
+
     assert value == item_elem, err_msg
 
 

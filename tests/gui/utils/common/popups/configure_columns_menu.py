@@ -29,11 +29,13 @@ class ColumnOption(PageObject):
         if "checked" in self.checkbox.get_attribute("class"):
             self.checkbox.click()
 
+
 class JsonMode(PageObject):
-    whole_document = Button(".clickable.option-all.one-way-radio-control")
-    extract_key = Button(".clickable.option-key.one-way-radio-control")
-    query = Button(".clickable.option-query.one-way-radio-control")
+    whole_document = Button(".clickable.option-all .one-way-radio-control")
+    extract_key = Button(".clickable.option-key .one-way-radio-control")
+    query = Button(".clickable.option-query .one-way-radio-control")
     # Can be replaced with named button
+
 
 class NewXattrColumn(PageObject):
     enter_an_xattr_key = WebElement(
@@ -42,11 +44,19 @@ class NewXattrColumn(PageObject):
     create = NamedButton(".edit-column-btn", text="Create")
     column_label = WebElement(".columnLabel-field input")
 
+
 class NewJsonColumn(PageObject):
-    choose_mode = WebItem(".jsonType-field .field-edit-mode")
+    choose_mode = WebItem(".jsonType-field.field-edit-mode", cls=JsonMode)
+    create = NamedButton(".edit-column-btn", text="Create")
+    column_label = WebElement(".columnLabel-field input")
+
 
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
-    new_xattr_column_button = Button(".new-column-item")
+    new_column_button = Button(".new-column-item")
+
+    choose_xattr = Button(".clickable.option-xattr")
+    choose_json = Button(".clickable.option-json")
+
     new_xattr_column = WebItem(".column-editor", cls=NewXattrColumn)
-    new_json_column = WebItem(".column-editor", cls = NewJsonColumn)
+    new_json_column = WebItem(".column-editor", cls=NewJsonColumn)
