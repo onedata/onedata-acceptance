@@ -303,6 +303,12 @@ def users():
     return {}
 
 
+@pytest.fixture(scope="session")
+def browsers_to_users():
+    """Dictionary with browser_id to user_id mapping"""
+    return {}
+
+
 @pytest.fixture()
 def clients():
     """Dictionary with users clients, e.g. {client1: Client()}"""

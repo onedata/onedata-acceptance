@@ -19,6 +19,7 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.steps.rest.shares import *
