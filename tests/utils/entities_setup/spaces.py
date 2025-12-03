@@ -453,9 +453,9 @@ def _init_storage_from_config(
 def init_storage(
     owner_credentials, space_name, hosts, provider_hostname, users, directory_tree
 ):
-    # if we make call to fast after deleting users from previous test
-    # provider cache was not refreshed and call will create dir for
-    # now nonexistent user, to avoid this wait some time
+    # if we make call too fast after deleting users from previous test
+    # provider cache may not be refreshed and call will create dir for
+    # currently nonexistent user, to avoid this wait some time
 
     time.sleep(2)
 
@@ -609,6 +609,7 @@ def create_empty_file(path, users, user, provider, hosts):
     )
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def get_file_id_by_rest(file_path, provider_hostname, user, users):
     response = http_post(
         ip=provider_hostname,
