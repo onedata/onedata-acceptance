@@ -4,9 +4,9 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import json
 import re
 import time
-import json
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -527,14 +527,15 @@ def click_tag_for_elem_in_browser(
     getattr(browser.data[item_name], transform(tag)).click()
 
 
-def reverse_keys(obj):
+def sort_json_keys(obj):
     if isinstance(obj, dict):
         reversed_items = list(obj.items())[::-1]
-        return {k: reverse_keys(v) for k, v in reversed_items}
+        reversed_items.sort(reverse=True)
+        return {k: sort_json_keys(v) for k, v in reversed_items}
 
     if isinstance(obj, list):
-        return [reverse_keys(x) for x in obj]
-    return obj # number or string
+        return [sort_json_keys(x) for x in obj]
+    return obj  # number or string
 
 
 @wt(
@@ -576,8 +577,8 @@ def assert_value_in_column_for_item(
 
         value = value.replace(" ", "")
         json_value = json.loads(value)
-        value_reversed = reverse_keys(json_value)
-        value = json.dumps(value_reversed)
+        value_sorted_reversed = sort_json_keys(json_value)
+        value = json.dumps(value_sorted_reversed)
         value = value.replace(" ", "")
 
     assert value == item_elem, err_msg

@@ -4,6 +4,9 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import json
+
+from tests.gui.steps.oneprovider.browser import sort_json_keys
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -107,3 +110,41 @@ def wt_create_json_column_with_label_in_columns_menu(
 
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) copies content of json column"
+        r" for item \"(?P<item_name>.*)\" and sees that it is equal to '(?P<value>.*)'"
+        r" in (?P<which_browser>file"
+        r" browser|archive browser|dataset browser)"
+    )
+)
+def assert_copied_josn_column_content(
+    selenium,
+    browser_id,
+    tmp_memory,
+    which_browser,
+    item_name,
+    value,
+    clipboard,
+    displays,
+):
+
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    item = browser.data[item_name]
+
+    item.hover_to_btn_and_click("copy_json_icon", driver)
+    copied = clipboard.paste(display=displays[browser_id])
+
+    copied = copied.replace("\n", "").replace(" ", "")
+
+    json_value = json.loads(value)
+    value_sorted_reversed = sort_json_keys(json_value)
+    value = json.dumps(value_sorted_reversed)
+    value = value.replace(" ", "")
+
+    assert (
+        copied == value
+    ), f"Copied value: {copied} not equal to expected value: {value}"
