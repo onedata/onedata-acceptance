@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+import json
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -526,6 +527,16 @@ def click_tag_for_elem_in_browser(
     getattr(browser.data[item_name], transform(tag)).click()
 
 
+def reverse_keys(obj):
+    if isinstance(obj, dict):
+        reversed_items = list(obj.items())[::-1]
+        return {k: reverse_keys(v) for k, v in reversed_items}
+
+    if isinstance(obj, list):
+        return [reverse_keys(x) for x in obj]
+    return obj # number or string
+
+
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
@@ -559,8 +570,14 @@ def assert_value_in_column_for_item(
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
+
     if option == "json":
         item_elem = item_elem.replace("\n", "")
+
+        value = value.replace(" ", "")
+        json_value = json.loads(value)
+        value_reversed = reverse_keys(json_value)
+        value = json.dumps(value_reversed)
         value = value.replace(" ", "")
 
     assert value == item_elem, err_msg
