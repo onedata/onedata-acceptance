@@ -64,6 +64,7 @@ class JsonMode(PageObject):
 class NewJsonColumn(PageObject):
     enter_json_key = WebElement(".autocomplete-dropdown-field-trigger")
     column_label = WebElement(".columnLabel-field input")
+    query = WebElement(".jsonQuery-field input")
 
     choose_mode = WebItem(".jsonType-field.field-edit-mode", cls=JsonMode)
     create = NamedButton(".edit-column-btn", text="Create")

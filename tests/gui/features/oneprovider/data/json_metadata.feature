@@ -82,7 +82,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: User enters nested json metadata and checks how it is displayed in column and how to copy its content
+  Scenario Outline: User enters nested json metadata for item and checks how it is displayed in column and how to copy its content
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
@@ -96,9 +96,10 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     Examples:
     | details_modal      | item  |
     | File details       | file1 |
+    | Directory details  | dir1  |
 
 
-  Scenario Outline: sdsdsd
+  Scenario Outline: User enters nested metadata for item and creates column for outer key, then changes it to other one
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
@@ -112,3 +113,36 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     Examples:
     | details_modal      | item  |
     | File details       | file1 |
+    | Directory details  | dir1  |
+  
+
+  Scenario Outline: User enters nested metadata for item and then creates query type json column
+    When user of browser opens file browser for "space1" space
+    And user of browser enables only [] column in columns configuration popover in file browser table
+
+    And user of browser adds and saves '[{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}, {"a":{"b":"d"}} ]' JSON metadata for "<item>"
+    And user of browser creates new json column with mode "Query" for query: "a.b" and with custom label named "aaaa" in file browser table
+    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '["c", "d"]' in file browser
+
+    Examples:
+    | details_modal      | item  |
+    | File details       | file1 |
+    | Directory details  | dir1  |
+
+
+  Scenario Outline: User creates json column with custom label and changes its label
+    When user of browser opens file browser for "space1" space
+    And user of browser enables only [] column in columns configuration popover in file browser table
+
+    And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
+    And user of browser creates new json column with mode "Whole document" and custom label named "aaaa" in file browser table
+
+    And user of browser modifies json column with name "aaaa" by changing label to "bbbb" in file browser table
+
+    Then user of browser sees json column named "bbbb" in columns configuration popover in file browser table
+    And user of browser does not see json column named "aaaa" in columns configuration popover in file browser table
+
+    Examples:
+    | details_modal      | item  |
+    | File details       | file1 |
+    | Directory details  | dir1  |

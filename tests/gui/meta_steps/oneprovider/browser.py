@@ -86,6 +86,40 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
+        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) (?P<option>xattr|json)"
+        r" column named"
+        r' "(?P<name>.*)"'
+        r" in columns configuration popover in (?P<which_browser>file"
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def assert_xattr_column_presence(
+    selenium, browser_id, res, name, which_browser, tmp_memory, popups
+):
+
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    for col in columns_menu:
+        if col.name == name:
+            if res == "sees":
+                browser.configure_columns.click()
+                return
+            raise AssertionError(
+                f"An xattr column named '{name}' exists, but it was expected not to."
+            )
+
+    if res == "sees":
+        raise AssertionError(f"An xattr column with name: {name} does not exist")
+    browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
         r'user of (?P<browser_id>.*) creates new json column with mode "Whole'
         r' document" and'
         r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
@@ -165,6 +199,52 @@ def wt_create_json_column_for_extracted_key(
 
     new_json_col.enter_json_key.click()
     popups(driver).dropdown.options[key_name].click()
+
+    new_json_col.column_label.clear()
+    new_json_col.column_label.send_keys(label_name)
+
+    new_json_col.create()
+
+    # hide columns menu popup
+    browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) creates new json column with mode "Query"'
+        r' for query: "(?P<query>.*)" and with'
+        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def create_json_column_for_query(
+    selenium,
+    browser_id,
+    tmp_memory,
+    which_browser,
+    popups,
+    query: str,
+    label_name: str,
+    mode: str = "Query",
+):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+
+    browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    columns_menu = popups(driver).configure_columns_menu
+    new_column_button = columns_menu.new_column_button
+    new_column_button.click()
+
+    columns_menu.choose_json.click()
+    new_json_col = columns_menu.new_json_column
+    getattr(new_json_col.choose_mode, transform(mode.lower())).click()
+
+    new_json_col.query.clear()
+    new_json_col.query.send_keys(query)
 
     new_json_col.column_label.clear()
     new_json_col.column_label.send_keys(label_name)
