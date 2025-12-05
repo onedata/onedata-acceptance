@@ -29,9 +29,9 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
-        ' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
-        " browser|archive browser|dataset browser) table"
+        r'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
+        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
@@ -61,7 +61,12 @@ def create_xattr_columns_in_columns_menu_in_browser(
 ):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
+
     browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
     new_column_button = popups(driver).configure_columns_menu.new_column_button
     wait_for_item_to_appear(new_column_button.web_elem)
     new_column_button.click()
@@ -98,7 +103,12 @@ def wt_create_json_column_with_label_in_columns_menu(
 ):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
+
     browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
     columns_menu = popups(driver).configure_columns_menu
 
     new_column_button = columns_menu.new_column_button
@@ -116,7 +126,6 @@ def wt_create_json_column_with_label_in_columns_menu(
 
     # hide columns menu popup
     browser.configure_columns.click()
-    breakpoint()
 
 
 @wt(
@@ -139,7 +148,12 @@ def wt_create_json_column_for_extracted_key(
 ):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
+
     browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
     columns_menu = popups(driver).configure_columns_menu
 
     new_column_button = columns_menu.new_column_button
@@ -149,13 +163,16 @@ def wt_create_json_column_for_extracted_key(
     new_json_col = columns_menu.new_json_column
     getattr(new_json_col.choose_mode, transform(mode.lower())).click()
 
-    breakpoint()
-    new_json_col.enter_json_key.clear()
-    new_json_col.enter_json_key.send_keys(key_name)
-    breakpoint()
+    new_json_col.enter_json_key.click()
+    popups(driver).dropdown.options[key_name].click()
+
     new_json_col.column_label.clear()
     new_json_col.column_label.send_keys(label_name)
-    breakpoint()
+
+    new_json_col.create()
+
+    # hide columns menu popup
+    browser.configure_columns.click()
 
 
 @wt(
@@ -166,7 +183,7 @@ def wt_create_json_column_for_extracted_key(
         r" browser|archive browser|dataset browser)"
     )
 )
-def assert_copied_josn_column_content(
+def assert_copied_json_column_content(
     selenium,
     browser_id,
     tmp_memory,
@@ -191,6 +208,57 @@ def assert_copied_josn_column_content(
     value = json.dumps(value_sorted_reversed)
     value = value.replace(" ", "")
 
+    breakpoint()
     assert (
         copied == value
     ), f"Copied value: {copied} not equal to expected value: {value}"
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) modifies json column with"
+        r' name "(?P<col_name>.*)" by changing (?P<option>label|key|mode)'
+        r' to "(?P<new_option_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def modify_json_column(
+    selenium,
+    browser_id,
+    col_name,
+    option,
+    new_option_name,
+    which_browser,
+    tmp_memory,
+    popups,
+):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+
+    browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    current_column = popups(driver).configure_columns_menu.columns[col_name]
+
+    current_column.hover_to_button_and_click("modify", driver)
+    modify_json_column = popups(driver).configure_columns_menu.new_json_column
+
+    if option == "label":
+        modify_json_column.column_label.clear()
+        modify_json_column.column_label.send_keys(new_option_name)
+    elif option == "key":
+        enter_key = modify_json_column.enter_json_key
+        # modify_json_column.clear_actual_key(driver)
+        # popups(driver).dropdown.selected.clear()
+        popups(driver).dropdown.options[new_option_name].click()
+    else:
+        getattr(
+            modify_json_column.choose_mode, transform(new_option_name.lower())
+        ).click()
+
+    modify_json_column.apply_changes.click()
+    breakpoint()
+    # hide columns menu popup
+    browser.configure_columns.click()

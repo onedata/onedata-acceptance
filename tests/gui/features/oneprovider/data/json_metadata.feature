@@ -104,8 +104,11 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
 
-    And user of browser creates new json column with mode "Extract key" for key: "b" and with custom label named "aaaa" in file browser table
-
+    And user of browser creates new json column with mode "Extract key" for key: "a" and with custom label named "aaaa" in file browser table
+    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"c", "c":{"d":"e"}}' in file browser
+    And user of browser modifies json column with name "aaaa" by changing key to "b" in file browser table
+    And user of browser copies content of json column for item "<item>" and sees that it is equal to '"f"' in file browser
+    
     Examples:
     | details_modal      | item  |
     | File details       | file1 |
