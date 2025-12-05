@@ -70,8 +70,9 @@ class NewJsonColumn(PageObject):
     apply_changes = NamedButton(".edit-column-btn", text="Apply")
 
     def clear_actual_key(self, driver):
-        self.enter_json_key.send_keys(Keys.CONTROL, "a")
-        self.enter_json_key.send_keys(Keys.BACKSPACE)
+        ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(
+            Keys.CONTROL
+        ).key_down(Keys.BACKSPACE).perform()
 
 
 class ConfigureColumnsMenu(PageObject):

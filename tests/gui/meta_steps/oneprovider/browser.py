@@ -208,7 +208,6 @@ def assert_copied_json_column_content(
     value = json.dumps(value_sorted_reversed)
     value = value.replace(" ", "")
 
-    breakpoint()
     assert (
         copied == value
     ), f"Copied value: {copied} not equal to expected value: {value}"
@@ -222,7 +221,7 @@ def assert_copied_json_column_content(
         r" browser|archive browser|dataset browser) table"
     )
 )
-def modify_json_column(
+def wt_modify_json_column(
     selenium,
     browser_id,
     col_name,
@@ -250,8 +249,8 @@ def modify_json_column(
         modify_json_column.column_label.send_keys(new_option_name)
     elif option == "key":
         enter_key = modify_json_column.enter_json_key
-        # modify_json_column.clear_actual_key(driver)
-        # popups(driver).dropdown.selected.clear()
+        enter_key.click()
+        modify_json_column.clear_actual_key(driver)
         popups(driver).dropdown.options[new_option_name].click()
     else:
         getattr(
@@ -259,6 +258,5 @@ def modify_json_column(
         ).click()
 
     modify_json_column.apply_changes.click()
-    breakpoint()
     # hide columns menu popup
     browser.configure_columns.click()
