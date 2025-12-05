@@ -8,6 +8,7 @@ from tests.gui.utils.core.web_elements import (
     Label,
     NamedButton,
     WebElement,
+    WebElementsSequence,
     WebItem,
     WebItemsSequence,
 )
@@ -46,6 +47,9 @@ class NewXattrColumn(PageObject):
 
 
 class NewJsonColumn(PageObject):
+    enter_json_key = WebElement(".autocomplete-dropdown-field-trigger")
+    available_keys = WebElementsSequence(".ember-power-select-option")
+
     choose_mode = WebItem(".jsonType-field.field-edit-mode", cls=JsonMode)
     create = NamedButton(".edit-column-btn", text="Create")
     column_label = WebElement(".columnLabel-field input")

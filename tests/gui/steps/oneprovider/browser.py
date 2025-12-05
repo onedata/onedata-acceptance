@@ -541,7 +541,8 @@ def sort_json_keys(obj):
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" has \'(?P<value>.*)\' value in (?P<option>xattr|json)'
+        r'"(?P<item_name>.*)" has (?P<quote2>[\'"])(?P<value>.*)(?P=quote2) value in'
+        r" (?P<option>xattr|json)"
         r" column "
         r"in (?P<which_browser>archive file browser|file browser)"
     )

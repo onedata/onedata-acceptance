@@ -81,14 +81,20 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with mode "(?P<mode>Whole'
-        r' document|Extract key|Query)" and'
+        r'user of (?P<browser_id>.*) creates new json column with mode "Whole'
+        r' document" and'
         r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
 def wt_create_json_column_with_label_in_columns_menu(
-    selenium, browser_id, which_browser, tmp_memory, popups, mode: str, label_name: str
+    selenium,
+    browser_id,
+    which_browser,
+    tmp_memory,
+    popups,
+    label_name: str,
+    mode: str = "Whole document",
 ):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -110,6 +116,46 @@ def wt_create_json_column_with_label_in_columns_menu(
 
     # hide columns menu popup
     browser.configure_columns.click()
+    breakpoint()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) creates new json column with mode "Extract'
+        r' key" for key: "(?P<key_name>.*)" and with'
+        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def wt_create_json_column_for_extracted_key(
+    selenium,
+    browser_id,
+    which_browser,
+    tmp_memory,
+    popups,
+    key_name: str,
+    label_name: str,
+    mode: str = "Extract key",
+):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+    columns_menu = popups(driver).configure_columns_menu
+
+    new_column_button = columns_menu.new_column_button
+    new_column_button.click()
+
+    columns_menu.choose_json.click()
+    new_json_col = columns_menu.new_json_column
+    getattr(new_json_col.choose_mode, transform(mode.lower())).click()
+
+    breakpoint()
+    new_json_col.enter_json_key.clear()
+    new_json_col.enter_json_key.send_keys(key_name)
+    breakpoint()
+    new_json_col.column_label.clear()
+    new_json_col.column_label.send_keys(label_name)
+    breakpoint()
 
 
 @wt(

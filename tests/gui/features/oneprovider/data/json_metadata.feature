@@ -88,10 +88,23 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
 
-    And user of browser creates new json column with mode "Whole document" and custom label named "dupa" in file browser table
+    And user of browser creates new json column with mode "Whole document" and custom label named "aaaa" in file browser table
 
     Then user of browser sees that item named "<item>" has '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' value in json column in file browser
     And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' in file browser
+
+    Examples:
+    | details_modal      | item  |
+    | File details       | file1 |
+
+
+  Scenario Outline: sdsdsd
+    When user of browser opens file browser for "space1" space
+    And user of browser enables only [] column in columns configuration popover in file browser table
+
+    And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
+
+    And user of browser creates new json column with mode "Extract key" for key: "b" and with custom label named "aaaa" in file browser table
 
     Examples:
     | details_modal      | item  |
