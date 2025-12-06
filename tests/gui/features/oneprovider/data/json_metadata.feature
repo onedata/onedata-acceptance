@@ -88,7 +88,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
 
-    And user of browser creates new json column with mode "Whole document" and custom label named "aaaa" in file browser table
+    And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
     Then user of browser sees that item named "<item>" has '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' value in json column in file browser
     And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' in file browser
@@ -105,7 +105,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
 
-    And user of browser creates new json column with mode "Extract key" for key: "a" and with custom label named "aaaa" in file browser table
+    And user of browser creates new json column with "Extract key" mode for "a" key and with "aaaa" custom label in file browser table
     Then user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"c", "c":{"d":"e"}}' in file browser
     And user of browser modifies json column with name "aaaa" by changing key to "b" in file browser table
     And user of browser copies content of json column for item "<item>" and sees that it is equal to '"f"' in file browser
@@ -121,7 +121,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser enables only [] column in columns configuration popover in file browser table
 
     And user of browser adds and saves '[{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}, {"a":{"b":"d"}} ]' JSON metadata for "<item>"
-    And user of browser creates new json column with mode "Query" for query: "a.b" and with custom label named "aaaa" in file browser table
+    And user of browser creates new json column with "Query" mode for "a.b" query and with "aaaa" custom label in file browser table
     Then user of browser copies content of json column for item "<item>" and sees that it is equal to '["c", "d"]' in file browser
 
     Examples:
@@ -135,7 +135,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser enables only [] column in columns configuration popover in file browser table
 
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
-    And user of browser creates new json column with mode "Whole document" and custom label named "aaaa" in file browser table
+    And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
     And user of browser modifies json column with name "aaaa" by changing label to "bbbb" in file browser table
 

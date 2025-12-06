@@ -120,13 +120,13 @@ def assert_xattr_column_presence(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with mode "Whole'
-        r' document" and'
-        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r'user of (?P<browser_id>.*) creates new json column with "Whole'
+        r' document" mode and'
+        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
-def wt_create_json_column_for_whole_document(
+def wt_create_json_column_for_whole_document_with_label(
     selenium,
     browser_id,
     which_browser,
@@ -140,20 +140,20 @@ def wt_create_json_column_for_whole_document(
         tmp_memory,
         which_browser,
         popups,
-        label_name,
+        None if label_name.lower() == "no" else label_name,
         "whole document",
     )
 
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with mode "Extract'
-        r' key" for key: "(?P<key_name>.*)" and with'
-        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r'user of (?P<browser_id>.*) creates new json column with "Extract'
+        r' key" mode for "(?P<key_name>.*)" key and with'
+        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
-def wt_create_json_column_for_extract_key(
+def wt_create_json_column_for_extract_key_with_label(
     selenium,
     browser_id,
     which_browser,
@@ -168,7 +168,7 @@ def wt_create_json_column_for_extract_key(
         tmp_memory,
         which_browser,
         popups,
-        label_name,
+        None if label_name.lower() == "no" else label_name,
         "extract key",
         key_name=key_name,
     )
@@ -176,13 +176,13 @@ def wt_create_json_column_for_extract_key(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with mode "Query"'
-        r' for query: "(?P<query>.*)" and with'
-        r' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
+        r'user of (?P<browser_id>.*) creates new json column with "Query"'
+        r' mode for "(?P<query>.*)" query and with'
+        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
-def wt_create_json_column_for_query(
+def wt_create_json_column_for_query_with_label(
     selenium,
     browser_id,
     tmp_memory,
@@ -197,7 +197,7 @@ def wt_create_json_column_for_query(
         tmp_memory,
         which_browser,
         popups,
-        label_name,
+        None if label_name.lower() == "no" else label_name,
         "query",
         query=query,
     )
@@ -249,7 +249,7 @@ def create_json_column_in_columns_menu(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) copies content of (?P<option>xattr|json) column"
+        r"user of (?P<browser_id>.*) copies content of json column"
         r" for item \"(?P<item_name>.*)\" and sees that it is equal to '(?P<value>.*)'"
         r" in (?P<which_browser>file"
         r" browser|archive browser|dataset browser)"
