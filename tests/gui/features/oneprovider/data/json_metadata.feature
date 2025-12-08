@@ -107,7 +107,9 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser creates new json column with "Extract key" mode for "a" key and with "aaaa" custom label in file browser table
     Then user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"c", "c":{"d":"e"}}' in file browser
-    And user of browser modifies json column with name "aaaa" by changing key to "b" in file browser table
+
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it according to following configuration:
+      key: b
     And user of browser copies content of json column for item "<item>" and sees that it is equal to '"f"' in file browser
     
     Examples:
@@ -137,7 +139,8 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
     And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
-    And user of browser modifies json column with name "aaaa" by changing label to "bbbb" in file browser table
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it according to following configuration:
+      label: bbbb
 
     Then user of browser sees json column named "bbbb" in columns configuration popover in file browser table
     And user of browser does not see json column named "aaaa" in columns configuration popover in file browser table

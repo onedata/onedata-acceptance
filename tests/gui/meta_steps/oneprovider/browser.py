@@ -6,6 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 
+import yaml
+
 from tests.gui.steps.oneprovider.browser import sort_json_keys
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import transform
@@ -93,7 +95,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
         r" browser|archive browser|dataset browser) table"
     )
 )
-def assert_xattr_column_presence(
+def assert_column_presence(
     selenium, browser_id, res, name, which_browser, tmp_memory, popups
 ):
 
@@ -288,17 +290,17 @@ def assert_copied_column_content(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) modifies json column with"
-        r' name "(?P<col_name>.*)" by changing (?P<option>label|key|mode)'
-        r' to "(?P<new_option_name>.*)" in (?P<which_browser>file'
+        r' name "(?P<col_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
+        r" by changing it according to following configuration:\n"
+        r"(?P<config>.*)"
     )
 )
 def modify_json_column_in_columns_menu(
     selenium,
     browser_id,
     col_name,
-    option,
-    new_option_name,
+    config,
     which_browser,
     tmp_memory,
     popups,
@@ -316,18 +318,21 @@ def modify_json_column_in_columns_menu(
     current_column.hover_to_button_and_click("modify", driver)
     modify_json_column = popups(driver).configure_columns_menu.new_json_column
 
-    if option == "label":
-        modify_json_column.column_label.clear()
-        modify_json_column.column_label.send_keys(new_option_name)
-    elif option == "key":
-        enter_key = modify_json_column.enter_json_key
-        enter_key.click()
-        modify_json_column.clear_actual_key(driver)
-        popups(driver).dropdown.options[new_option_name].click()
-    else:
-        getattr(
-            modify_json_column.choose_mode, transform(new_option_name.lower())
-        ).click()
+    config = yaml.load(config, yaml.Loader)
+
+    for option, new_option_name in config.items():
+        if option == "label":
+            modify_json_column.column_label.clear()
+            modify_json_column.column_label.send_keys(new_option_name)
+        elif option == "key":
+            enter_key = modify_json_column.enter_json_key
+            enter_key.click()
+            modify_json_column.clear_actual_key(driver)
+            popups(driver).dropdown.options[new_option_name].click()
+        elif option == "mode":
+            getattr(
+                modify_json_column.choose_mode, transform(new_option_name.lower())
+            ).click()
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
