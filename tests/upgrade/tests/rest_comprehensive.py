@@ -418,12 +418,24 @@ def compare_handle_details(details_s, details_v, tests_controller):
     _ = details_s.pop("metadata") if "metadata" in details_s else None
     _ = details_v.pop("metadata") if "metadata" in details_v else None
 
+    # the metadataPrefix field has been added in 21.02.5 and defaults to oai_dc for
+    # preexisting records
     if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         details_s.update({"metadataPrefix": "oai_dc"})
     if is_prov_version_lower_than(
         get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.5"
     ):
         details_v.update({"metadataPrefix": "oai_dc"})
+
+    # the metadataPrefix has been renamed to metadataSchema in 21.02.8, but the
+    # metadataPrefix is also retained in the payload for backward compatibility
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.8"):
+        details_s.update({"metadataSchema": "oai_dc"})
+    if is_prov_version_lower_than(
+        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.8"
+    ):
+        details_v.update({"metadataSchema": "oai_dc"})
+
     err_msg = (
         f"Handle details on setup:\n{details_s}\nis different than on"
         f" verify:\n{details_v}"
