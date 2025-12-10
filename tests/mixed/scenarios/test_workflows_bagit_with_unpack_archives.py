@@ -1,7 +1,7 @@
 """Test suite for mixed tests workflows execution with example input files"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from pytest_bdd import scenario, scenarios
@@ -50,4 +50,9 @@ def screens():
     return [0]
 
 
-scenarios("../features/onezone/automation_workflows_execution.feature")
+@pytest.fixture(scope="module")
+def should_record():
+    return False
+
+
+scenarios("../features/onezone/atm_workflows_execution_bagit_unpack_archives.feature")

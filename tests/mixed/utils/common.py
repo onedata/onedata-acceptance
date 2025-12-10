@@ -115,6 +115,10 @@ def login_to_provider(username, users, host, access_token=None):
     )
 
 
+def construct_curl_get_cmd(link: str):
+    return f"curl -X GET {link}"
+
+
 @wt(parsers.parse("{sender} sends token to {receiver}"))
 def send_copied_token_to_other_user(sender, receiver, tmp_memory):
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
@@ -122,19 +126,38 @@ def send_copied_token_to_other_user(sender, receiver, tmp_memory):
 
 @wt(parsers.parse("user of {browser_id} executes copied command"))
 def execute_copied_curl_command(
-    browser_id, displays, clipboard, tmp_memory, config=None
+    browser_id,
+    displays,
+    clipboard,
+    tmp_memory,
+    config=None,
+):
+    _execute_curl_command(
+        clipboard.paste(display=displays[browser_id]),
+        tmp_memory,
+        config,
+    )
+
+
+def _execute_curl_command(
+    command: str,
+    tmp_memory,
+    config,
+    flags: list[str] | None = None,
+    file_out: str | None = None,
 ):
     cmd = (
-        replace_vars_in_cmd_if_exist(
-            clipboard.paste(display=displays[browser_id]), config=config
-        )
-        + " -k"
+        replace_vars_in_cmd_if_exist(command, config=config)
+        + " -k"  # ignore ssl certs and get http status code
         + ' -w "http status code:%{http_code}"'
-        + " -v"
-    )  # ignore ssl certs and get http status code
+        + (f" -{' -'.join(flags)}" if flags else "")
+        + (f" -o {file_out}" if file_out else "")
+    )
+
     output = sp.run(
         cmd, capture_output=True, text=True, shell=True, check=True, timeout=60
     )
+
     output_message, http_status_code = output.stdout.split("http status code:")
     tmp_memory["http status code"] = http_status_code
     tmp_memory["output"] = output_message
@@ -270,3 +293,60 @@ def assert_curl_command_successful_http_code(tmp_memory):
         f"{command_stderr}"
     )
     assert http_status_code.startswith("2"), err_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} uses curl to get content from copied link and"
+        ' saves output to "{file_out}"'
+    )
+)
+def wt_download_using_curl_with_forward(
+    browser_id,
+    tmp_memory,
+    clipboard,
+    displays,
+    tmpdir,
+    browsers_to_users,
+    file_out,
+):
+    download_using_curl_with_forward(
+        browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users, file_out
+    )
+
+
+@wt(parsers.parse("user of {browser_id} uses curl to get content from copied link"))
+def download_using_curl(
+    browser_id, tmp_memory, clipboard, displays, tmpdir, browsers_to_users
+):
+    download_using_curl_with_forward(
+        browser_id,
+        tmp_memory,
+        clipboard,
+        displays,
+        tmpdir,
+        browsers_to_users,
+        file_out=None,
+    )
+
+
+def download_using_curl_with_forward(
+    browser_id,
+    tmp_memory,
+    clipboard,
+    displays,
+    tmpdir,
+    browsers_to_users,
+    file_out,
+):
+    download_link = clipboard.paste(display=displays[browser_id])
+    if file_out is not None:
+        file_out = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+
+    _execute_curl_command(
+        construct_curl_get_cmd(download_link),
+        tmp_memory,
+        None,
+        flags=["L"],  # -L flag is required to follow redirects (e.g., HTTP 307)
+        file_out=file_out,
+    )

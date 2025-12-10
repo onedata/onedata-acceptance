@@ -14,7 +14,7 @@ Feature: Workflows execution tests
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 10000000000
+                    size: 100000000000
             storage:
               defaults:
                 provider: oneprovider-1
@@ -27,8 +27,8 @@ Feature: Workflows execution tests
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario: User sees successful execution of all workflows from automation-examples with their example input files
-    When using REST, user1 uploads all workflows from automation-examples to inventory "inventory1" in "onezone" Onezone service
-    And using REST, user1 executes all workflows with example input files on space "space1" in oneprovider-1
+  Scenario: User sees successful execution of bagit-uploader workflow with unpack bagit archives
+    When using REST, user1 uploads bagit-uploader workflow from automation-examples to inventory "inventory1" in "onezone" Onezone service
+    And using REST, user1 executes bagit-uploader workflow with unpack bagit archives on space "space1" in oneprovider-1
     And using REST, user1 waits for all workflow executions to finish on space "space1" in oneprovider-1
     Then using REST, user1 sees successful execution of all workflows in oneprovider-1
