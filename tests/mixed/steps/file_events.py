@@ -262,14 +262,3 @@ def start_last_file_monitor(monitors, async_loop_in_thread):
         monitors[-1][0],
         future,
     )
-
-
-# def get_file_id_cached(file_path, provider_hostname, user, users,):
-#     if not hasattr(get_file_id_cached, "cache"):
-#         get_file_id_cached.cache = {}
-#     cache = get_file_id_cached.cache
-#     if file_path in cache:
-#         return cache[file_path]
-#     file_id = get_file_id_by_rest(file_path, provider_hostname, user, users)
-#     cache[file_path] = file_id
-#     return file_id

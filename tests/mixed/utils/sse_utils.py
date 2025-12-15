@@ -88,7 +88,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
 
     async def _consume_stream(self, reconnect: bool = False) -> NoReturn:
         url: str = (
-            f"https://{self.oneprovider_authority}/api/v3/oneprovider/spaces/" 
+            f"https://{self.oneprovider_authority}/api/v3/oneprovider/spaces/"
             f"{self.space_id}/events/files"
         )
 
