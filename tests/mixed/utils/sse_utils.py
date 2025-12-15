@@ -1,84 +1,98 @@
-""" This module contains utils for handling sse (Server-Sent Events) """
+"""This module contains utils for handling sse (Server-Sent Events)"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 Onedata.org"
+__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 import asyncio
 import json
+import time
 from abc import ABC, abstractmethod
 from enum import Enum
+from typing import NoReturn
 
-from aiohttp_sse_client import client as sse_client # pylint: disable=import-error
-from aiohttp_sse_client.client import MessageEvent # pylint: disable=import-error
+from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
+from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
+
+INITIAL_BACKOFF_TIMEOUT = 1
 
 
 class SSEEvent(Enum):
-    CHANGEDORCREATED = "changedOrCreated"
+    CHANGED_OR_CREATED = "changedOrCreated"
     HEARTBEAT = "heartbeat"
     DELETED = "deleted"
 
 
-class SpaceFilesMonitorClient(ABC): # pylint: disable=too-many-instance-attributes
+class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        oneprovider_url: str,
+        oneprovider_authority: str,
         space_id: str,
         access_token: str,
         observed_dirs: list[str],
         observed_attrs: list[str],
-        ssl: bool = True,
+        verify_ssl: bool = True,
     ):
-        self.oneprovider_url = oneprovider_url.rstrip("/")
+        self.oneprovider_authority = oneprovider_authority.rstrip("/")
         self.space_id = space_id
         self.access_token = access_token
         self.observed_dirs = observed_dirs
         self.observed_attrs = observed_attrs
-        self.ssl = ssl
+        self.verify_ssl = verify_ssl
 
         # fileId -> attrs
-        self.files: dict[str, dict] = {}
-        # fileId -> attrs
-        self.deleted_files: dict[str, dict] = {}
+        self.files: dict[str, dict[str, str | int]] = {}
+        self.deleted_files: set[str] = set()
         self.last_event_id: str | None = None
+        self.first_event_id: str | None = None
 
-        self.created_events = asyncio.Queue()
-        self.updated_events = asyncio.Queue()
-        self.deleted_events = asyncio.Queue()
+        self.changed_or_created_events: asyncio.Queue[
+            dict[str, dict[str, str | int]]
+        ] = asyncio.Queue()
+        self.heartbeat_events: asyncio.Queue[tuple[str, float]] = asyncio.Queue()
+
+        self.backoff: int = INITIAL_BACKOFF_TIMEOUT
 
     # ======= PUBLIC ENTRYPOINT =======
 
-    async def run(self):
+    async def run(self) -> None:
         """
         Main loop
         """
-        backoff = 1
-        loop = asyncio.get_running_loop()
+        max_backoff: int = 60
+        backoff_increase_factor: int = 2
+        loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         while True:
             try:
-                print("🔌 Connecting to SSE stream...")
+                print("Connecting to SSE stream...")
+                if self.last_event_id:
+                    print(f"Last event id {self.last_event_id}")
                 await self._consume_stream(reconnect=bool(self.last_event_id))
-                backoff = 1
             except asyncio.CancelledError:
                 break
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 if loop.is_closed() or not loop.is_running():
-                    print(f"Loop is closed/running={loop.is_running()}, breaking run()")
+                    print("Loop is closed, breaking run()")
                     break
                 try:
-                    print(f"Stream error: {e}\n Reconnect in {backoff} s")
-                    await asyncio.sleep(backoff)
+                    print(f"Stream error: {e}\n Reconnect in {self.backoff} s")
+                    await asyncio.sleep(self.backoff)
                 except asyncio.CancelledError:
                     print("Cancelled during backoff sleep, shutting down")
                     break
+                self.backoff = min(self.backoff * backoff_increase_factor, max_backoff)
 
-                backoff = min(backoff * 2, 60)
+        # clean up data structures to allow reusing this object after reconnection
+        self.clean()
 
-    async def _consume_stream(self, reconnect: bool = False):
-        url = f"{self.oneprovider_url}/api/v3/oneprovider/spaces/{self.space_id}/events/files"
+    async def _consume_stream(self, reconnect: bool = False) -> NoReturn:
+        url: str = (
+            f"https://{self.oneprovider_authority}/api/v3/oneprovider/spaces/" 
+            f"{self.space_id}/events/files"
+        )
 
-        headers = {
+        headers: dict[str, str] = {
             "X-Auth-Token": self.access_token,
             "Accept": "text/event-stream",
             "Content-Type": "application/json",
@@ -87,28 +101,29 @@ class SpaceFilesMonitorClient(ABC): # pylint: disable=too-many-instance-attribut
         if reconnect and self.last_event_id is not None:
             headers["Last-Event-Id"] = self.last_event_id
 
-        body = {
+        body: dict[str, list[str]] = {
             "observedDirectories": self.observed_dirs,
             "observedAttributes": self.observed_attrs,
         }
 
         async with sse_client.EventSource(
-            url, option={"method": "POST"}, headers=headers, json=body, ssl=self.ssl
+            url,
+            option={"method": "POST"},
+            headers=headers,
+            json=body,
+            ssl=self.verify_ssl,
+            on_open=self.reset_backoff,
         ) as event_source:
-            try:
-                async for event in event_source:
-                    await self._handle_event(event)
-            except asyncio.CancelledError as e:
-                print(f"Closing connection due to: {e}")
-                raise
-            except ConnectionError:
-                pass
+            async for event in event_source:
+                print(event)
+                await self._handle_event(event)
 
-    async def _handle_event(self, event: MessageEvent):
-        event_type = event.type
-        data_raw = event.data
-
+    async def _handle_event(self, event: MessageEvent) -> None:
+        event_type: str = event.type
+        data_raw: str = event.data
         self.last_event_id = event.last_event_id
+        if self.first_event_id is None:
+            self.first_event_id = event.last_event_id
 
         try:
             data: dict = json.loads(data_raw)
@@ -116,31 +131,37 @@ class SpaceFilesMonitorClient(ABC): # pylint: disable=too-many-instance-attribut
             print(f"Cannot decode data: {data_raw!r}")
             return
 
+        # heartbeat event is ignored because we previously saved last event id
         if event_type == SSEEvent.HEARTBEAT.value:
+            await self.heartbeat_events.put(
+                (
+                    event.last_event_id,
+                    time.time(),
+                )
+            )
             return
-        if event_type == SSEEvent.CHANGEDORCREATED.value:
+        if event_type == SSEEvent.CHANGED_OR_CREATED.value:
             await self._handle_changed_or_created(data)
         elif event_type == SSEEvent.DELETED.value:
             await self._handle_deleted(data)
         else:
             print(f"Unknown event type={event_type}, data={data}")
 
-    async def _handle_changed_or_created(self, data: dict):
+    async def _handle_changed_or_created(self, data: dict) -> None:
         file_id: str = data.get("fileId")
         parent_file_id: str = data.get("parentFileId")
-        new_attrs: dict[str : str | int] = data.get("attributes", {})
-
-        if not file_id:
-            return
+        new_attrs: dict[str, str | int] = data.get("attributes", {})
 
         # If file is deleted ignore
         if file_id in self.deleted_files:
             return
 
-        old_attrs = self.files.get(file_id)
+        old_attrs: dict[str, str | int] = self.files.get(file_id, {}).copy()
+
+        await self.changed_or_created_events.put({file_id: new_attrs})
 
         # first event about a file
-        if old_attrs is None:
+        if not old_attrs:
             self.files[file_id] = new_attrs
             await self.on_file_created(file_id=file_id, parent_file_id=parent_file_id)
             return
@@ -151,10 +172,7 @@ class SpaceFilesMonitorClient(ABC): # pylint: disable=too-many-instance-attribut
             self.files[file_id].update(new_attrs)
             return
 
-        # important, because we update referenced object
-        old_attrs = old_attrs.copy()
-        updated_attrs = get_updated_attrs(new_attrs, old_attrs)
-
+        updated_attrs: dict[str, str | int] = get_updated_attrs(new_attrs, old_attrs)
         # Check if anything changed
         if not updated_attrs:
             return
@@ -169,52 +187,100 @@ class SpaceFilesMonitorClient(ABC): # pylint: disable=too-many-instance-attribut
             old_attrs=old_attrs,
         )
 
-    async def _handle_deleted(self, data: dict):
+    async def _handle_deleted(self, data: dict) -> None:
         file_id: str = data.get("fileId")
         parent_file_id: str = data.get("parentFileId")
-        if not file_id:
-            return
 
         if file_id in self.deleted_files:
             return
 
-        old_attrs = self.files.pop(file_id, None)
-        self.deleted_files[file_id] = old_attrs
+        _ = self.files.pop(file_id, None)
+        self.deleted_files.add(file_id)
 
         await self.on_file_deleted(file_id=file_id, parent_file_id=parent_file_id)
+
+    def reset_backoff(self) -> None:
+        self.backoff = INITIAL_BACKOFF_TIMEOUT
 
     # ======= Interface =======
 
     @abstractmethod
-    async def on_file_created(self, file_id: str, parent_file_id: str):
+    async def on_file_created(self, file_id: str, parent_file_id: str) -> None:
         pass
 
     @abstractmethod
     async def on_file_updated(
-        self, file_id: str, parent_file_id: str, new_attrs: dict, old_attrs: dict
-    ):
+        self,
+        file_id: str,
+        parent_file_id: str,
+        new_attrs: dict[str, str | int],
+        old_attrs: dict[str, str | int],
+    ) -> None:
         pass
 
     @abstractmethod
-    async def on_file_deleted(self, file_id: str, parent_file_id: str):
+    async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
         pass
+
+    @abstractmethod
+    def clean(self) -> None:
+        self.files = {}
+        self.deleted_files = set()
 
 
 # ======= EXAMPLE IMPLEMENTATION FOR TESTS =======
 
 
 class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
-    async def on_file_created(self, file_id, parent_file_id):
-        await self.created_events.put(file_id)
 
-    async def on_file_updated(self, file_id, parent_file_id, new_attrs, old_attrs):
-        await self.updated_events.put(
+    def __init__(
+        self,
+        oneprovider_authority: str,
+        space_id: str,
+        access_token: str,
+        observed_dirs: list[str],
+        observed_attrs: list[str],
+        verify_ssl: bool = True,
+    ):
+        super().__init__(
+            oneprovider_authority,
+            space_id,
+            access_token,
+            observed_dirs,
+            observed_attrs,
+            verify_ssl=verify_ssl,
+        )
+        self.created_file_ids: asyncio.Queue[str] = asyncio.Queue()
+        self.updated_file_attrs: asyncio.Queue[dict[str, dict[str, str | int]]] = (
+            asyncio.Queue()
+        )
+        self.deleted_file_ids: asyncio.Queue[str] = asyncio.Queue()
+
+    async def on_file_created(self, file_id: str, parent_file_id: str) -> None:
+        await self.created_file_ids.put(file_id)
+
+    async def on_file_updated(
+        self,
+        file_id: str,
+        parent_file_id: str,
+        new_attrs: dict[str, str | int],
+        old_attrs: dict[str, str | int],
+    ) -> None:
+        await self.updated_file_attrs.put(
             {file_id: get_updated_attrs(new_attrs, old_attrs)}
         )
 
-    async def on_file_deleted(self, file_id, parent_file_id):
-        await self.deleted_events.put(file_id)
+    async def on_file_deleted(self, file_id: str, parent_file_id: str) -> None:
+        await self.deleted_file_ids.put(file_id)
+
+    def clean(self) -> None:
+        super().clean()
+        self.created_file_ids = asyncio.Queue()
+        self.updated_file_attrs = asyncio.Queue()
+        self.deleted_file_ids = asyncio.Queue()
 
 
-def get_updated_attrs(new_attrs, old_attrs):
+def get_updated_attrs(
+    new_attrs: dict[str, str | int], old_attrs: dict[str, str | int]
+) -> dict[str, str | int]:
     return {k: new_attrs[k] for k in new_attrs if new_attrs[k] != old_attrs[k]}

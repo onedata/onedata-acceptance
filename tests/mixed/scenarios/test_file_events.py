@@ -1,7 +1,7 @@
 """Test suite regarding file events using REST and browser instance"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 

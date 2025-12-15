@@ -1,7 +1,7 @@
 """This module contains fixtures associated with sse events"""
 
 __author__ = "Wojciech Szmelich"
-__copyright__ = "Copyright (C) 2025 Onedata.org"
+__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import pytest
@@ -40,47 +40,52 @@ def async_loop_in_thread():
 
 
 @pytest.fixture(scope="session")
-def space_files_monitor(async_loop_in_thread) -> SpaceFilesMonitorClientImpl:
+def monitors() -> list[tuple[SpaceFilesMonitorClientImpl, asyncio.Future]]:
+    return []
+
+
+@pytest.fixture(scope="session")
+def space_files_monitor(async_loop_in_thread, monitors) -> SpaceFilesMonitorClientImpl:
     """
     Fixture, which returns function responsible for creating and running monitor SSE
     """
-    monitors: list[tuple[SpaceFilesMonitorClientImpl, asyncio.Future]] = []
 
     def start_monitor(
         *,
-        oneprovider_url: str,
+        oneprovider_authority: str,
         space_id: str,
         token: str,
         observed_dirs: list[str],
         observed_attrs: list[str],
-        ssl: bool = False,
+        verify_ssl: bool = False,
     ) -> SpaceFilesMonitorClientImpl:
         monitor = SpaceFilesMonitorClientImpl(
-            oneprovider_url=oneprovider_url,
+            oneprovider_authority=oneprovider_authority,
             space_id=space_id,
             access_token=token,
             observed_dirs=observed_dirs,
             observed_attrs=observed_attrs,
-            ssl=ssl,
+            verify_ssl=verify_ssl,
         )
         # start monitor.run() in background
-        fut = asyncio.run_coroutine_threadsafe(
+        future = asyncio.run_coroutine_threadsafe(
             monitor.run(),
             async_loop_in_thread,
         )
-        monitors.append((monitor, fut))
+        monitors.append((monitor, future))
         return monitor
 
     # return to the test start_monitor
     yield start_monitor
 
     # teardown – clean monitors
-    for monitor, fut in monitors:
-        fut.cancel()
-        # let event-loop handle CancelledError
-        asyncio.run_coroutine_threadsafe(asyncio.sleep(0),
-                                         async_loop_in_thread).result()
+    for monitor, future in monitors:
+        future.cancel()
+        # Give the event loop one tick so the cancelled task can process its
+        # CancelledError and finish cleanly before we call future.result()
+        asyncio.run_coroutine_threadsafe(
+            asyncio.sleep(0), async_loop_in_thread).result()
         try:
-            fut.result(timeout=1)
+            future.result(timeout=1)
         except CancelledError:
             pass

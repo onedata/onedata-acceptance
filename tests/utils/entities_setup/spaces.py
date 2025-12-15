@@ -6,13 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from functools import cache
 
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
-from tests.utils.bdd_utils import given, parsers
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
     HTTPBadRequest,
     HTTPError,
@@ -620,6 +621,15 @@ def get_file_id_by_rest(file_path, provider_hostname, user, users):
     return json.loads(response)["fileId"]
 
 
+@cache
+def get_file_id_cached(file_path, provider_hostname, user, users):
+    """
+    Caches file ID lookup to avoid repeated REST calls.
+    Useful also for retrieving IDs of files that may have been deleted.
+    """
+    return get_file_id_by_rest(file_path, provider_hostname, user, dict(users))
+
+
 @given(
     parsers.parse(
         "using REST, {user} creates a path with {number} "
@@ -657,6 +667,13 @@ def create_file_in_nested_directory(
     create_empty_file(nested_path, users, user, provider, hosts)
 
 
+@wt(
+    parsers.parse(
+        "using REST, {user} creates {number} empty files in "
+        '"{path}" named "file_001", "file_002", ..., '
+        '"file_N" supported by "{provider}" provider'
+    )
+)
 @given(
     parsers.parse(
         "using REST, {user} creates {number} empty files in "
