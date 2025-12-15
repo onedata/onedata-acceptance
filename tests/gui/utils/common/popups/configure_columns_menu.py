@@ -39,7 +39,7 @@ class ColumnOption(PageObject):
         ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()
 
 
-class AddOrModifyXattrColumn(PageObject):
+class ColumnEditor(PageObject):
     enter_an_xattr_key = WebElement(
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
@@ -57,4 +57,4 @@ class AddOrModifyXattrColumn(PageObject):
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
     new_xattr_column_button = Button(".new-column-item")
-    new_xattr_column = WebItem(".column-editor", cls=AddOrModifyXattrColumn)
+    column_editor = WebItem(".column-editor", cls = ColumnEditor)

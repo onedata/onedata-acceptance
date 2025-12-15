@@ -234,10 +234,9 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
 
     And user of browser creates new xattr column with "attr" key in file browser table
 
-
     And user of browser removes xattr column named "attr" in columns configuration popover in file browser table
 
-    And user of browser does not see xattr column named "attr" in columns configuration popover in file browser table
+    Then user of browser does not see xattr column named "attr" in columns configuration popover in file browser table
     And user of browser sees that item named "<item>" has no xattr column in file browser
 
     And user of browser refreshes site and waits for page to load

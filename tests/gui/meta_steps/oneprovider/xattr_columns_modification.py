@@ -89,7 +89,7 @@ def modify_label_for_xattr_column_in_columns_menu_in_browser(
     current_xattr_column = popups(driver).configure_columns_menu.columns[name]
 
     current_xattr_column.hover_to_button_and_click("modify", driver)
-    modify_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
+    modify_xattr_column = popups(driver).configure_columns_menu.column_editor
 
     if elem == "label":
         modify_xattr_column.column_label.clear()

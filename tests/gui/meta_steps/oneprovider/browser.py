@@ -70,7 +70,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     wait_for_item_to_appear(new_column_button.web_elem)
     new_column_button.click()
 
-    new_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
+    new_xattr_column = popups(driver).configure_columns_menu.column_editor
     new_xattr_column.enter_an_xattr_key.send_keys(name)
 
     if with_label:
