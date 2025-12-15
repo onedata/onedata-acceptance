@@ -115,7 +115,6 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             on_open=self.reset_backoff,
         ) as event_source:
             async for event in event_source:
-                print(event)
                 await self._handle_event(event)
 
     async def _handle_event(self, event: MessageEvent) -> None:
