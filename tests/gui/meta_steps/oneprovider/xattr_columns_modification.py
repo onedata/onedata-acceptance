@@ -54,6 +54,10 @@ def select_columns_to_be_visible_in_browser(
 def change_visibility_for_xattr_columns(
     selenium, browser_id, res, columns, which_browser, tmp_memory, popups
 ):
+    # This function updates only the specified columns (enable/disable).
+    # All other columns remain unchanged.
+    # The previous function enables the selected columns and disables the rest.
+
     option_select = "select"
     option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -164,7 +168,7 @@ def modify_existing_xattr_entry(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def edit_xattr_entry_key(entry, new_key):
     entry.edit_existing_key.click()
-    time.sleep(0.5) 
+    time.sleep(0.5)
     # this sleep is necessary, because there is small delay between
     # clicking edit icon and user being able to write new key
     entry.press_backspace_to_delete_selected()
