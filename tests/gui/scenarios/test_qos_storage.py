@@ -17,6 +17,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.qos import *
 from tests.gui.meta_steps.oneprovider.transfers import *
+from tests.gui.meta_steps.oneprovider.xattr_columns_modification import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *

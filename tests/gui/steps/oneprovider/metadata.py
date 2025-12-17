@@ -213,28 +213,3 @@ def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
     item_status = modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f"{item_status} does not match expected {text}"
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) modifies (?P<entry_elem>key|value)"
-        r' field by typing "(?P<new_text>.*)" for exisiting'
-        r' xattr metadata entry with "(?P<attr_name>.*)" key'
-    )
-)
-def modify_existing_xattr_entry(
-    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name: str
-):
-    driver = selenium[browser_id]
-    modal = modals(driver).details_modal.metadata
-
-    entry = modal.xattrs.entries[attr_name]
-
-    if entry_elem == "key":
-        entry.edit_existing_key.click()
-        entry.press_backspace_to_delete_selected()
-        entry.key_input = new_text
-    else:
-        entry.value = new_text
-
-    modal.xattrs.click_on_background_in_xattrs_panel()

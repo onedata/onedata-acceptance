@@ -10,6 +10,7 @@ from tests.gui.conftest import *
 from tests.gui.meta_steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.xattr_columns_modification import *
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *

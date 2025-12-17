@@ -57,4 +57,4 @@ class ColumnEditor(PageObject):
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
     new_xattr_column_button = Button(".new-column-item")
-    column_editor = WebItem(".column-editor", cls = ColumnEditor)
+    column_editor = WebItem(".column-editor", cls=ColumnEditor)
