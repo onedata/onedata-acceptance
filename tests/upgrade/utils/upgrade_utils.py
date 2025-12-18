@@ -242,18 +242,23 @@ def get_prov_version(provider_host):
 
 
 def is_prov_version_lower_than(actual_version, reference_version):
-    actual_version_split = [int(s) for s in actual_version.split("-")[0].split(".")]
-    reference_version_split = [
-        int(s) for s in reference_version.split("-")[0].split(".")
-    ]
-    if actual_version_split[0] < reference_version_split[0]:
-        return True
-    if actual_version_split[0] == reference_version_split[0]:
-        if actual_version_split[1] < reference_version_split[1]:
-            return True
-        if actual_version_split[1] == reference_version_split[1]:
-            return actual_version_split[2] < reference_version_split[2]
-    return False
+    """
+    Returns true if actual provider version is lower than reference one, e.g.
+    21.02.8 < 25.0
+    25.0 < 25.0.1
+    25.1.1 < 25.1.2
+    In order to compare versions converts them to float
+    21.02.8 -> 0.21028 < 0.250
+    """
+
+    return convert_provider_version_to_float(
+        actual_version
+    ) < convert_provider_version_to_float(reference_version)
+
+
+def convert_provider_version_to_float(provider_version):
+    provider_version = provider_version.split("-")[0].replace(".", "")
+    return float(f"0.{provider_version}")
 
 
 def format_failed_test_results(when, exception, test):
