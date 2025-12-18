@@ -158,6 +158,7 @@ def modify_existing_xattr_entry(
     entry = modal.xattrs.entries[attr_name]
 
     if entry_elem == "key":
+        entry.edit_existing_key.click()
         edit_xattr_entry_key(entry, new_text)
     elif entry_elem == "value":
         entry.value = new_text
@@ -165,11 +166,10 @@ def modify_existing_xattr_entry(
     modal.xattrs.click_on_background_in_xattrs_panel()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def edit_xattr_entry_key(entry, new_key):
     entry.edit_existing_key.click()
     time.sleep(0.5)
     # this sleep is necessary, because there is small delay between
     # clicking edit icon and user being able to write new key
     entry.press_backspace_to_delete_selected()
-    entry.key_input = new_key
+    entry.edit_key = new_key
