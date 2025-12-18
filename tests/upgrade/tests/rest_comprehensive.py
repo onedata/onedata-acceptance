@@ -427,12 +427,12 @@ def compare_handle_details(details_s, details_v, tests_controller):
     ):
         details_v.update({"metadataPrefix": "oai_dc"})
 
-    # the metadataPrefix has been renamed to metadataSchema in 21.02.9, but the
+    # the metadataPrefix has been renamed to metadataSchema in 25.0, but the
     # metadataPrefix is also retained in the payload for backward compatibility
-    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.9"):
+    if is_prov_version_lower_than(tests_controller.initial_prov_version, "25.0"):
         details_s.update({"metadataSchema": "oai_dc"})
     if is_prov_version_lower_than(
-        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.9"
+        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "25.0"
     ):
         details_v.update({"metadataSchema": "oai_dc"})
 

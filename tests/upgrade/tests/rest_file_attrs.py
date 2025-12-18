@@ -27,7 +27,7 @@ ALL_ATTRS = [
     attr.value
     for attr in FileAttr
     if attr.value not in ("hasJsonMetadata", "jsonMetadata")
-]  # excluded hasJsonMetadata, jsonMetadata as they are available since 21.02.9
+]  # excluded hasJsonMetadata, jsonMetadata as they are available since 25.0
 
 ATTRS_MAP = {
     "file_id": "fileId",
