@@ -548,7 +548,7 @@ def set_file_metadata(
     metadata_type = metadata.pop("type", "json")
     metadata_type = "xattrs" if metadata_type == "basic" else metadata_type
     user = owner_credentials.username
-    file_id = get_file_id_by_rest(file_path, provider_hostname, user, users)
+    file_id = get_file_id_by_rest(file_path, provider_hostname, users[user].token)
     http_put(
         ip=provider_hostname,
         port=OP_REST_PORT,
@@ -611,23 +611,23 @@ def create_empty_file(path, users, user, provider, hosts):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_file_id_by_rest(file_path, provider_hostname, user, users):
+def get_file_id_by_rest(file_path, provider_hostname, token):
     response = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
         path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": users[user].token},
+        headers={"X-Auth-Token": token},
     ).content
     return json.loads(response)["fileId"]
 
 
 @cache
-def get_file_id_cached(file_path, provider_hostname, user, users):
+def get_file_id_cached(file_path, provider_hostname, token):
     """
     Caches file ID lookup to avoid repeated REST calls.
     Useful also for retrieving IDs of files that may have been deleted.
     """
-    return get_file_id_by_rest(file_path, provider_hostname, user, dict(users))
+    return get_file_id_by_rest(file_path, provider_hostname, token)
 
 
 @given(

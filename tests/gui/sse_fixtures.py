@@ -8,19 +8,26 @@ import pytest
 import asyncio
 import threading
 
+from typing import NamedTuple, Callable
+
 from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
 
 from concurrent.futures._base import CancelledError
 
 
-@pytest.fixture(scope="session")
-def async_loop_in_thread():
+class MonitorEntry(NamedTuple):
+    monitor: SpaceFilesMonitorClientImpl
+    future: asyncio.Future
+
+
+@pytest.fixture(scope="function")
+def async_loop_in_thread() -> asyncio.AbstractEventLoop:
     """
     Runs asyncio event loop in another thread,
     in order to run coroutines from sync code
     via asyncio.run_coroutine_threadsafe.
     """
-    loop = asyncio.new_event_loop()
+    loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
 
     def runner():
         asyncio.set_event_loop(loop)
@@ -39,13 +46,13 @@ def async_loop_in_thread():
         t.join()
 
 
-@pytest.fixture(scope="session")
-def monitors() -> list[tuple[SpaceFilesMonitorClientImpl, asyncio.Future]]:
+@pytest.fixture(scope="function")
+def monitors() -> list[MonitorEntry]:
     return []
 
 
-@pytest.fixture(scope="session")
-def space_files_monitor(async_loop_in_thread, monitors) -> SpaceFilesMonitorClientImpl:
+@pytest.fixture(scope="function")
+def space_files_monitor_factory(async_loop_in_thread, monitors) -> Callable[..., SpaceFilesMonitorClientImpl]:
     """
     Fixture, which returns function responsible for creating and running monitor SSE
     """
@@ -72,7 +79,7 @@ def space_files_monitor(async_loop_in_thread, monitors) -> SpaceFilesMonitorClie
             monitor.run(),
             async_loop_in_thread,
         )
-        monitors.append((monitor, future))
+        monitors.append(MonitorEntry(monitor=monitor, future=future))
         return monitor
 
     # return to the test start_monitor

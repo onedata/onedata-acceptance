@@ -7,23 +7,27 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import asyncio
 import time
+from enum import Enum
 
 import yaml
 
 from tests import OP_REST_PORT
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.sse_fixtures import MonitorEntry
+from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import get_file_id_by_rest, get_file_id_cached
 
+
+class ObservedFileAction(Enum):
+    CREATION = "creation"
+    DELETION = "deletion"
+    CHANGED_OR_CREATED = "changed_or_created"
+    HEARTBEAT = "heartbeat"
+
+
 DEFAULT_FILE_EVENT_TIMEOUT: int = 30
 NUMBER_OF_EVENTS_TO_LOOK_BACK: int = 10
-EVENT_TYPES_MAP: dict[str, str] = {
-    "creation": "created_file_ids",
-    "deletion": "deleted_file_ids",
-    "changed_or_created": "changed_or_created_events",
-    "heartbeat": "heartbeat_events",
-}
 
 
 @wt(
@@ -37,7 +41,7 @@ def wt_start_observing_file_events(
     attrs,
     dir_path,
     space,
-    space_files_monitor,
+    space_files_monitor_factory,
     tmp_memory,
     hosts,
     host,
@@ -50,15 +54,21 @@ def wt_start_observing_file_events(
     provider_hostname = hosts[host]["hostname"]
     op_authority = f"{provider_hostname}:{OP_REST_PORT}"
     dir_path = f"{space}/{dir_path}"
-    file_id = get_file_id_by_rest(dir_path, provider_hostname, user, users)
+    file_id = get_file_id_by_rest(dir_path, provider_hostname, users[user].token)
 
     start_observing_file_events(
-        space_files_monitor, tmp_memory, op_authority, space_id, token, [file_id], attrs
+        space_files_monitor_factory,
+        tmp_memory,
+        op_authority,
+        space_id,
+        token,
+        [file_id],
+        attrs,
     )
 
 
 def start_observing_file_events(
-    space_files_monitor,
+    space_files_monitor_factory,
     tmp_memory,
     op_authority,
     space_id,
@@ -66,7 +76,7 @@ def start_observing_file_events(
     observed_dirs,
     observed_attrs,
 ):
-    monitor = space_files_monitor(
+    monitor = space_files_monitor_factory(
         oneprovider_authority=op_authority,
         space_id=space_id,
         token=token,
@@ -86,11 +96,11 @@ def wt_assert_new_file_event_in_observed_directory(
 ):
     provider_hostname = hosts[host]["hostname"]
     file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, user, frozenset(users.items())
+        f"{space}/{path}", provider_hostname, users[user].token
     )
     expected_result = file_id
-    assert_file_event_in_observed_directory(
-        tmp_memory, async_loop_in_thread, "creation", expected_result
+    assert_file_action_in_observed_directory(
+        tmp_memory, async_loop_in_thread, ObservedFileAction.CREATION, expected_result
     )
 
 
@@ -105,11 +115,11 @@ def wt_assert_deleted_file_event_in_observed_directory(
 ):
     provider_hostname = hosts[host]["hostname"]
     file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, user, frozenset(users.items())
+        f"{space}/{path}", provider_hostname, users[user].token
     )
     expected_result = file_id
-    assert_file_event_in_observed_directory(
-        tmp_memory, async_loop_in_thread, "deletion", expected_result
+    assert_file_action_in_observed_directory(
+        tmp_memory, async_loop_in_thread, ObservedFileAction.DELETION, expected_result
     )
 
 
@@ -119,14 +129,13 @@ def wt_assert_deleted_file_event_in_observed_directory(
     )
 )
 def assert_new_heartbeat_event(tmp_memory, async_loop_in_thread):
-    event_type = "heartbeat"
     for _ in range(NUMBER_OF_EVENTS_TO_LOOK_BACK):
         try:
-            res = get_file_event_in_observed_directory(
-                tmp_memory, async_loop_in_thread, event_type
+            result = get_file_action_in_observed_directory(
+                tmp_memory, async_loop_in_thread, ObservedFileAction.HEARTBEAT
             )
             # event came in last 10s
-            if time.time() - res[1] < 10:
+            if time.time() - result[1] < 10:
                 return
         except TimeoutError as e:
             raise AssertionError("heartbeat event not found") from e
@@ -134,8 +143,8 @@ def assert_new_heartbeat_event(tmp_memory, async_loop_in_thread):
 
 @wt(
     parsers.parse(
-        'user {user} can see following {event_type} file events of "{path}" in space'
-        ' "{space}" in {host}:\n{config}'
+        'user {user} can see following changed_or_created file events of "{path}" in'
+        ' space "{space}" in {host}:\n{config}'
     )
 )
 def wt_assert_updated_file_events_in_observed_directory(
@@ -148,7 +157,6 @@ def wt_assert_updated_file_events_in_observed_directory(
     hosts,
     tmp_memory,
     async_loop_in_thread,
-    event_type,
 ):
     """
     Expected config format:
@@ -166,15 +174,19 @@ def wt_assert_updated_file_events_in_observed_directory(
             expected_attrs[item] = None
     provider_hostname = hosts[host]["hostname"]
     file_id = get_file_id_cached(
-        f"{space}/{path}", provider_hostname, user, frozenset(users.items())
+        f"{space}/{path}", provider_hostname, users[user].token
     )
-    assert_file_events_in_observed_directory(
-        tmp_memory, async_loop_in_thread, file_id, expected_attrs, transform(event_type)
+    assert_file_actions_in_observed_directory(
+        tmp_memory,
+        async_loop_in_thread,
+        file_id,
+        expected_attrs,
+        ObservedFileAction.CHANGED_OR_CREATED,
     )
 
 
-def assert_file_events_in_observed_directory(
-    tmp_memory, async_loop_in_thread, file_id, expected_attrs, event_type
+def assert_file_actions_in_observed_directory(
+    tmp_memory, async_loop_in_thread, file_id, expected_attrs, file_action
 ):
     found = set()
     expected_attrs_keys = set(expected_attrs.keys())
@@ -182,8 +194,8 @@ def assert_file_events_in_observed_directory(
     # look for an event in previous events
     for _ in range(NUMBER_OF_EVENTS_TO_LOOK_BACK):
         try:
-            result = get_file_event_in_observed_directory(
-                tmp_memory, async_loop_in_thread, event_type
+            result = get_file_action_in_observed_directory(
+                tmp_memory, async_loop_in_thread, file_action
             )
             if file_id not in result:
                 continue
@@ -199,31 +211,45 @@ def assert_file_events_in_observed_directory(
                 return
         except TimeoutError as e:
             raise AssertionError(
-                f"{event_type} events about {expected_attrs_keys - found} not found"
+                f"{file_action} file actions about {expected_attrs_keys - found} not"
+                " found"
             ) from e
 
 
-def assert_file_event_in_observed_directory(
-    tmp_memory, async_loop_in_thread, event_type, expected_result
+def assert_file_action_in_observed_directory(
+    tmp_memory, async_loop_in_thread, file_action, expected_result
 ):
     # look for an event in previous events
     for _ in range(NUMBER_OF_EVENTS_TO_LOOK_BACK):
         try:
-            result = get_file_event_in_observed_directory(
-                tmp_memory, async_loop_in_thread, event_type
+            result = get_file_action_in_observed_directory(
+                tmp_memory, async_loop_in_thread, file_action
             )
             if result == expected_result:
                 return
         except TimeoutError as e:
             raise AssertionError(
-                f"{event_type} event {expected_result} not found"
+                f"{file_action} file action {expected_result} not found"
             ) from e
 
 
-def get_file_event_in_observed_directory(tmp_memory, async_loop_in_thread, event_type):
+def get_file_action_in_observed_directory(
+    tmp_memory, async_loop_in_thread, file_action
+):
     monitor: SpaceFilesMonitorClientImpl = tmp_memory["monitor"]
+    if file_action == ObservedFileAction.CREATION:
+        monitor_object = monitor.created_file_ids
+    elif file_action == ObservedFileAction.DELETION:
+        monitor_object = monitor.deleted_file_ids
+    elif file_action == ObservedFileAction.CHANGED_OR_CREATED:
+        monitor_object = monitor.changed_or_created_events
+    elif file_action == ObservedFileAction.HEARTBEAT:
+        monitor_object = monitor.heartbeat_events
+    else:
+        raise AssertionError(f"file action: {file_action} not found")
+
     future = asyncio.run_coroutine_threadsafe(
-        getattr(monitor, EVENT_TYPES_MAP[event_type]).get(),
+        monitor_object.get(),
         async_loop_in_thread,
     )
     try:
@@ -234,7 +260,9 @@ def get_file_event_in_observed_directory(tmp_memory, async_loop_in_thread, event
 
 
 @wt(parsers.parse("user {user} disconnects from SSE Stream"))
-def disconnect_from_sse_stream(monitors, async_loop_in_thread):
+def disconnect_from_sse_stream(
+    monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
+):
     stop_last_file_monitor(monitors, async_loop_in_thread)
 
 
@@ -243,22 +271,28 @@ def disconnect_from_sse_stream(monitors, async_loop_in_thread):
         "user {user} reconnects to SSE Stream starting from first captured event id"
     )
 )
-def reconnect_to_sse_stream(monitors, async_loop_in_thread):
+def reconnect_to_sse_stream(
+    monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
+):
     start_last_file_monitor(monitors, async_loop_in_thread)
 
 
-def stop_last_file_monitor(monitors, async_loop_in_thread):
-    monitors[-1][1].cancel()
+def stop_last_file_monitor(
+    monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
+):
+    monitors[-1].future.cancel()
     asyncio.run_coroutine_threadsafe(asyncio.sleep(0), async_loop_in_thread).result()
 
 
-def start_last_file_monitor(monitors, async_loop_in_thread):
-    monitors[-1][0].last_event_id = monitors[-1][0].first_event_id
+def start_last_file_monitor(
+    monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
+):
+    monitors[-1].monitor.last_event_id = monitors[-1].monitor.first_event_id
     future = asyncio.run_coroutine_threadsafe(
-        monitors[-1][0].run(),
+        monitors[-1].monitor.run(),
         async_loop_in_thread,
     )
-    monitors[-1] = (
-        monitors[-1][0],
-        future,
+    monitors[-1] = MonitorEntry(
+        monitor=monitors[-1].monitor,
+        future=future,
     )
