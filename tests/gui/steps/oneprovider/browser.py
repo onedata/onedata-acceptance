@@ -11,7 +11,13 @@ from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import (
+    WhichBrowser,
+    parse_seq,
+    sort_json_from_string,
+    sort_json_keys,
+    transform,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -527,22 +533,20 @@ def click_tag_for_elem_in_browser(
     getattr(browser.data[item_name], transform(tag)).click()
 
 
-def sort_json_keys(obj):
-    if isinstance(obj, dict):
-        reversed_items = list(obj.items())[::-1]
-        reversed_items.sort(reverse=True)
-        return {k: sort_json_keys(v) for k, v in reversed_items}
-
-    if isinstance(obj, list):
-        return [sort_json_keys(x) for x in obj]
-    return obj  # number or string
-
-
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" has (?P<quote2>[\'"])(?P<value>.*)(?P=quote2) value in'
-        r" (?P<option>xattr|json)"
+        r'"(?P<item_name>.*)" has \'(?P<value>.*)\' value in'
+        r" (?P<option>json)"
+        r" column "
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has "(?P<value>.*)" value in'
+        r" (?P<option>xattr)"
         r" column "
         r"in (?P<which_browser>archive file browser|file browser)"
     )
@@ -574,13 +578,20 @@ def assert_value_in_column_for_item(
     )
 
     if option == "json":
-        item_elem = item_elem.replace("\n", "")
+        value = sort_json_from_string(value)
+        if item_elem.endswith("…"):  # JSON text may be truncated in the UI
+            displayed = item_elem.removesuffix("…").replace("\n", "").strip()
+            expected = json.dumps(value).replace(" ", "")
 
-        value = value.replace(" ", "")
-        json_value = json.loads(value)
-        value_sorted_reversed = sort_json_keys(json_value)
-        value = json.dumps(value_sorted_reversed)
-        value = value.replace(" ", "")
+            # assert that the visible prefix matches the full JSON value
+            assert expected.startswith(displayed), (
+                "Displayed JSON prefix does not match.\n"
+                f"Displayed: {displayed}\n"
+                f"Expected:  {expected}"
+            )
+            return
+
+        item_elem = json.loads(item_elem.replace("\n", ""))
 
     assert value == item_elem, err_msg
 

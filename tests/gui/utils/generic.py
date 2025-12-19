@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import json
 import os
 import re
 from contextlib import contextmanager
@@ -232,6 +233,23 @@ def redirect_display(new_display):
 
 def transform(val, strip_char=None):
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
+
+
+def sort_json_keys(obj):
+    if isinstance(obj, dict):
+        items = list(obj.items())
+        items.sort(reverse=True)
+        return {k: sort_json_keys(v) for k, v in items}
+
+    if isinstance(obj, list):
+        return [sort_json_keys(x) for x in obj]
+    return obj  # number or string
+
+
+def sort_json_from_string(value: str):
+    value = json.loads(value)
+    value = sort_json_keys(value)
+    return value
 
 
 class WhichBrowser(Enum):

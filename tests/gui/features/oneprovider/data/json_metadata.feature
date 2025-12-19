@@ -82,54 +82,54 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: User enters nested json metadata for item and checks how it is displayed in column and how to copy its content
+  Scenario Outline: User sets nested json metadata for item and can see that it is properly displayed in json column
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
-    And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
+    And user of browser adds and saves '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' JSON metadata for "<item>"
 
     And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
-    Then user of browser sees that item named "<item>" has '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' value in json column in file browser
-    And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' in file browser
+    Then user of browser sees that item named "<item>" has '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' value in json column in file browser
+    And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' in file browser
 
     Examples:
-    | details_modal      | item  |
-    | File details       | file1 |
-    | Directory details  | dir1  |
+    | item  |
+    | file1 |
+    | dir1  |
 
 
   Scenario Outline: User enters nested metadata for item and creates column for outer key, then changes it to other one
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
-    And user of browser adds and saves '{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}' JSON metadata for "<item>"
+    And user of browser adds and saves '{"key1":"val", "key2": {"nested_key1":"nested_val1", "nested_key2":{"nested_key3":"nested_val2"}}}' JSON metadata for "<item>"
 
-    And user of browser creates new json column with "Extract key" mode for "a" key and with "aaaa" custom label in file browser table
-    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '{"b":"c", "c":{"d":"e"}}' in file browser
+    And user of browser creates new json column with "Extract key" mode for "key2" key and with "aaaa" custom label in file browser table
+    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '{"nested_key1":"nested_val1", "nested_key2":{"nested_key3":"nested_val2"}}' in file browser
 
-    And user of browser modifies json column with name "aaaa" in file browser table by changing it according to following configuration:
-      key: b
-    And user of browser copies content of json column for item "<item>" and sees that it is equal to '"f"' in file browser
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it as follows:
+      key: key1
+    And user of browser copies content of json column for item "<item>" and sees that it is equal to '"val"' in file browser
     
     Examples:
-    | details_modal      | item  |
-    | File details       | file1 |
-    | Directory details  | dir1  |
+    | item  |
+    | file1 |
+    | dir1  |
   
 
-  Scenario Outline: User enters nested metadata for item and then creates query type json column
+  Scenario Outline: User sets nested metadata for item and then creates json column of type query
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
-    And user of browser adds and saves '[{"b":"f", "a": {"b":"c", "c":{"d":"e"}}}, {"a":{"b":"d"}} ]' JSON metadata for "<item>"
-    And user of browser creates new json column with "Query" mode for "a.b" query and with "aaaa" custom label in file browser table
-    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '["c", "d"]' in file browser
+    And user of browser adds and saves '[{"key1": {"nested_key1":"nested_val1"}, "key2":"val"}, {"key1":{"nested_key1":"nested_val2"}}]' JSON metadata for "<item>"
+    And user of browser creates new json column with "Query" mode for "key1.nested_key1" query and with "aaaa" custom label in file browser table
+    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '["nested_val1", "nested_val2"]' in file browser
 
     Examples:
-    | details_modal      | item  |
-    | File details       | file1 |
-    | Directory details  | dir1  |
+    | item  |
+    | file1 |
+    | dir1  |
 
 
   Scenario Outline: User creates json column with custom label and changes its label
@@ -139,13 +139,13 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
     And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
-    And user of browser modifies json column with name "aaaa" in file browser table by changing it according to following configuration:
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it as follows:
       label: bbbb
 
     Then user of browser sees json column named "bbbb" in columns configuration popover in file browser table
     And user of browser does not see json column named "aaaa" in columns configuration popover in file browser table
 
     Examples:
-    | details_modal      | item  |
-    | File details       | file1 |
-    | Directory details  | dir1  |
+    | item  |
+    | file1 |
+    | dir1  |

@@ -257,7 +257,7 @@ def create_json_column_in_columns_menu(
         r" browser|archive browser|dataset browser)"
     )
 )
-def assert_copied_column_content(
+def assert_json_column_content(
     selenium,
     browser_id,
     tmp_memory,
@@ -284,7 +284,7 @@ def assert_copied_column_content(
 
     assert (
         copied == value
-    ), f"Copied value: {copied} not equal to expected value: {value}"
+    ), f"Copied value: {copied} is not equal to expected value: {value}"
 
 
 @wt(
@@ -292,7 +292,7 @@ def assert_copied_column_content(
         r"user of (?P<browser_id>.*) modifies json column with"
         r' name "(?P<col_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
-        r" by changing it according to following configuration:\n"
+        r" by changing it as follows:\n"
         r"(?P<config>.*)"
     )
 )
@@ -319,6 +319,23 @@ def modify_json_column_in_columns_menu(
     modify_json_column = popups(driver).configure_columns_menu.new_json_column
 
     config = yaml.load(config, yaml.Loader)
+    """
+    config is a list of changes to be applied sequentially.
+
+    For example, suppose we have a column with:
+        label: col1
+        mode: "Whole document"
+
+    If we apply the following configuration:
+        mode: "extract key"
+        label: col2
+        key: key1
+
+    Then the column will:
+    - switch to "extract key" mode
+    - be renamed to col2
+    - contain the value extracted from the key "key1"
+    """
 
     for option, new_option_name in config.items():
         if option == "label":

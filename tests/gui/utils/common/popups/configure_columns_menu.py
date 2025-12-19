@@ -58,7 +58,6 @@ class JsonMode(PageObject):
     whole_document = Button(".clickable.option-all .one-way-radio-control")
     extract_key = Button(".clickable.option-key .one-way-radio-control")
     query = Button(".clickable.option-query .one-way-radio-control")
-    # Can be replaced with named button
 
 
 class NewJsonColumn(PageObject):
