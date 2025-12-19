@@ -8,9 +8,8 @@ import json
 
 import yaml
 
-from tests.gui.steps.oneprovider.browser import sort_json_keys
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -275,12 +274,8 @@ def assert_json_column_content(
     item.hover_to_btn_and_click("copy_json_icon", driver)
     copied = clipboard.paste(display=displays[browser_id])
 
-    copied = copied.replace("\n", "").replace(" ", "")
-
-    json_value = json.loads(value)
-    value_sorted_reversed = sort_json_keys(json_value)
-    value = json.dumps(value_sorted_reversed)
-    value = value.replace(" ", "")
+    value = sort_json_from_string(value)
+    copied = json.loads(copied.replace("\n", ""))
 
     assert (
         copied == value
@@ -305,20 +300,6 @@ def modify_json_column_in_columns_menu(
     tmp_memory,
     popups,
 ):
-    driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
-
-    browser.configure_columns.click()
-    wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-
-    current_column = popups(driver).configure_columns_menu.columns[col_name]
-
-    current_column.hover_to_button_and_click("modify", driver)
-    modify_json_column = popups(driver).configure_columns_menu.new_json_column
-
-    config = yaml.load(config, yaml.Loader)
     """
     config is a list of changes to be applied sequentially.
 
@@ -336,6 +317,20 @@ def modify_json_column_in_columns_menu(
     - be renamed to col2
     - contain the value extracted from the key "key1"
     """
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id][transform(which_browser)]
+
+    browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    current_column = popups(driver).configure_columns_menu.columns[col_name]
+
+    current_column.hover_to_button_and_click("modify", driver)
+    modify_json_column = popups(driver).configure_columns_menu.new_json_column
+
+    config = yaml.load(config, yaml.Loader)
 
     for option, new_option_name in config.items():
         if option == "label":

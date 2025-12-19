@@ -15,7 +15,6 @@ from tests.gui.utils.generic import (
     WhichBrowser,
     parse_seq,
     sort_json_from_string,
-    sort_json_keys,
     transform,
 )
 from tests.utils.bdd_utils import parsers, wt
