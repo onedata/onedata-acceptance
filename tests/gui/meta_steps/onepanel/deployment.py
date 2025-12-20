@@ -75,9 +75,7 @@ def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
             hosts,
         )
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
-        wt_assert_begin_of_cluster_deployment(
-            selenium, browser_id, Modals(selenium[browser_id])
-        )
+        wt_assert_begin_of_cluster_deployment(selenium, browser_id, Modals)
     else:
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
 
@@ -255,7 +253,7 @@ def _add_storage_in_step5(selenium, browser_id, configuration):
     text_regexp = ".*[Ss]torage.*added.*"
 
     wt_select_storage_type_in_deployment_step5(
-        selenium, browser_id, storage_type, Popups(selenium[browser_id])
+        selenium, browser_id, storage_type, Popups
     )
     wt_type_text_to_in_box_in_deployment_step5(
         selenium, browser_id, name, storage_type, name_box

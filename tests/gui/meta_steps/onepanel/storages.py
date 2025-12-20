@@ -99,7 +99,7 @@ def _go_to_storage_view_in_clusters(
     if re.match(onezone_url_pattern, driver.current_url):
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
         click_on_record_in_clusters_menu(
-            selenium, browser_id, OZLoggedIn(selenium[browser_id]), provider_name, hosts
+            selenium, browser_id, OZLoggedIn, provider_name, hosts
         )
 
     wt_click_on_subitem_for_item(
@@ -126,7 +126,7 @@ def _add_storage_in_op_panel_using_gui(
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
-        selenium, browser_id, storage_type, onepanel, Popups(selenium[browser_id])
+        selenium, browser_id, storage_type, onepanel, Popups
     )
     wt_type_text_to_in_box_in_storages_page_op_panel(
         selenium, browser_id, storage_name, form, onepanel, input_box

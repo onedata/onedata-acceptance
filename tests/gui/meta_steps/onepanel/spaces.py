@@ -307,9 +307,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, hosts):
     button = "Cease support"
 
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, OZLoggedIn(selenium[browser_id]), record, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, OZLoggedIn, record, hosts)
     # wait for load cluster
     time.sleep(5)
     wt_click_on_subitem_for_item(
@@ -324,9 +322,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, hosts):
         wt_expands_toolbar_icon_for_space_in_onepanel(
             selenium, browser_id, space.name, onepanel
         )
-        wt_clicks_on_btn_in_space_toolbar_in_panel(
-            selenium, browser_id, option, Popups(selenium[browser_id])
-        )
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, Popups)
         wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
         wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list
