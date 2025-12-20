@@ -58,7 +58,7 @@ def get_item_name_from_path(
     item_browser,
 ):
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option_in_space, oz_page
+        selenium, browser_id, space_name, option_in_space
     )
     assert_browser_in_tab_in_op(
         selenium, browser_id, op_container, tmp_memory, item_browser

@@ -19,6 +19,7 @@ from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -368,8 +369,8 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, pop
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals):
-    modal = modals(selenium[browser_id]).cease_support_for_space
+def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button):
+    modal = Modals(selenium[browser_id]).cease_support_for_space
     if button == "Cease support":
         modal.cease_support()
     else:
@@ -421,8 +422,8 @@ def login_and_remove_space_instead_of_revoke(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals):
-    (modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
+def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id):
+    (Modals(selenium[browser_id]).cease_support_for_space.understand_risk_checkbox())
 
 
 @wt(

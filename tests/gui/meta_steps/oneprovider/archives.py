@@ -188,7 +188,7 @@ def _create_archive(
         op_container(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:
         click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space_name, OPTION_IN_SPACE, oz_page
+            selenium, browser_id, space_name, OPTION_IN_SPACE
         )
         assert_browser_in_tab_in_op(
             selenium, browser_id, op_container, tmp_memory, DATASET_BROWSER

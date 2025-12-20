@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -20,20 +21,20 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_group_button_in_panel(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id]).get_page_and_click("groups").create_group()
+def click_create_group_button_in_panel(selenium, browser_id):
+    OZLoggedIn(selenium[browser_id]).get_page_and_click("groups").create_group()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into group name text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_name_into_input_box_on_main_groups_page(selenium, browser_id, text, oz_page):
-    oz_page(selenium[browser_id])["groups"].input_box.value = text
+def input_name_into_input_box_on_main_groups_page(selenium, browser_id, text):
+    OZLoggedIn(selenium[browser_id])["groups"].input_box.value = text
 
 
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_name_input_on_main_groups_page(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])["groups"].input_box.confirm()
+def confirm_name_input_on_main_groups_page(selenium, browser_id):
+    OZLoggedIn(selenium[browser_id])["groups"].input_box.confirm()
 
 
 def _find_groups(page, group_name):
@@ -47,11 +48,11 @@ def _find_groups(page, group_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_group_exists(selenium, browser_ids, option, group, oz_page):
+def assert_group_exists(selenium, browser_ids, option, group):
     for browser_id in parse_seq(browser_ids):
         groups_count = len(
             _find_groups(
-                oz_page(selenium[browser_id]).get_page_and_click("groups"),
+                OZLoggedIn(selenium[browser_id]).get_page_and_click("groups"),
                 group,
             )
         )
@@ -69,44 +70,42 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_menu_button(selenium, browser_id, option, group, oz_page, popups):
+def click_on_group_menu_button(selenium, browser_id, option, group):
     driver = selenium[browser_id]
-    page = oz_page(driver).get_page_and_click("groups")
+    page = OZLoggedIn(driver).get_page_and_click("groups")
     page.elements_list[group]()
     page.elements_list[group].menu()
-    popups(driver).menu_popup_with_text.menu[option]()
+    Popups(driver).menu_popup_with_text.menu[option]()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_group_menu_on_left_sidebar_menu(
-    selenium, browser_id, group_name, option, oz_page
+    selenium, browser_id, group_name, option
 ):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    page = oz_page(driver)["groups"]
+    page = OZLoggedIn(driver)["groups"]
     page.elements_list[group_name]()
     getattr(page.elements_list[group_name], transform(option))()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into rename group text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_group_name_into_rename_group_inpux_box(
-    selenium, browser_id, text, oz_page
-):
-    page = oz_page(selenium[browser_id])["groups"]
+def input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text):
+    page = OZLoggedIn(selenium[browser_id])["groups"]
     page.elements_list[""].edit_box.value = text
 
 
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button to rename group"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])["groups"].elements_list[""].edit_box.confirm()
+def click_on_confirmation_button_to_rename_group(selenium, browser_id):
+    OZLoggedIn(selenium[browser_id])["groups"].elements_list[""].edit_box.confirm()
 
 
 @wt(parsers.parse("user of {browser_id} sees that create group button is inactive"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_create_button_inactive(selenium, browser_id, oz_page):
-    page = oz_page(selenium[browser_id])["groups"]
+def assert_create_button_inactive(selenium, browser_id):
+    page = OZLoggedIn(selenium[browser_id])["groups"]
     assert not page.input_box.confirm.is_enabled(), '"Create group" button is enabled'
 
 
@@ -117,8 +116,8 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
-    page = oz_page(selenium[browser_id]).get_page_and_click("groups")
+def go_to_group_subpage(selenium, browser_id, group, subpage):
+    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
     page.elements_list[group]()
     if subpage != "main":
         getattr(page.elements_list[group], subpage)()
@@ -126,27 +125,27 @@ def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_page_appeared(selenium, browser_id, text, oz_page):
-    page = oz_page(selenium[browser_id])["groups"]
+def assert_error_page_appeared(selenium, browser_id, text):
+    page = OZLoggedIn(selenium[browser_id])["groups"]
     assert page.main_page.error_label == text, f'page with text "{text}" not found'
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) confirms group rename using (?P<option>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_the_group(selenium, browser_id, option, oz_page):
+def confirm_rename_the_group(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
-        click_on_confirmation_button_to_rename_group(selenium, browser_id, oz_page)
+        click_on_confirmation_button_to_rename_group(selenium, browser_id)
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) confirms using (?P<option>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_add_group(selenium, browser_id, option, oz_page):
+def confirm_add_group(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
-        confirm_name_input_on_main_groups_page(selenium, browser_id, oz_page)
+        confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
 @wt(
@@ -156,10 +155,10 @@ def confirm_add_group(selenium, browser_id, option, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_trigger(selenium, browser_id, oz_page, group_name):
+def click_on_group_trigger(selenium, browser_id, group_name):
     driver = selenium[browser_id]
     (
-        oz_page(driver)["groups"]
+        OZLoggedIn(driver)["groups"]
         .main_page.hierarchy.groups[group_name]
         .click_group_menu_button(driver)
     )
@@ -173,12 +172,10 @@ def click_on_group_trigger(selenium, browser_id, oz_page, group_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_relation_trigger(
-    selenium, browser_id, oz_page, group_name, relation
-):
+def click_on_group_relation_trigger(selenium, browser_id, group_name, relation):
     driver = selenium[browser_id]
     (
-        oz_page(driver)["groups"]
+        OZLoggedIn(driver)["groups"]
         .main_page.hierarchy.groups[group_name]
         .click_relation_menu_button(driver, relation)
     )
@@ -186,16 +183,16 @@ def click_on_group_relation_trigger(
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" in group hierarchy menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option, popups):
+def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
     driver = selenium[browser_id]
-    popups(driver).group_hierarchy_menu.options[option].click()
+    Popups(driver).group_hierarchy_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" in relation menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_relation_menu(selenium, browser_id, option, popups):
+def click_on_option_in_relation_menu(selenium, browser_id, option):
     driver = selenium[browser_id]
-    popups(driver).relation_menu.options[option].click()
+    Popups(driver).relation_menu.options[option].click()
 
 
 @wt(
@@ -219,12 +216,12 @@ def write_name_group_in_create_new_child_group_modal(selenium, browser_id, group
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_list_of_children_contains_group(
-    selenium, browser_id, oz_page, group_name, relation, option
+    selenium, browser_id, group_name, relation, option
 ):
     relation = "children" if relation == "child" else "parents"
 
     groups = getattr(
-        oz_page(selenium[browser_id])["groups"].main_page.hierarchy, relation
+        OZLoggedIn(selenium[browser_id])["groups"].main_page.hierarchy, relation
     )
     if option == "sees":
         assert group_name in groups
@@ -238,22 +235,26 @@ def assert_list_of_children_contains_group(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_show_parent_groups_in_hierarchy_page(selenium, browser_id, oz_page):
-    (oz_page(selenium[browser_id])["groups"].main_page.hierarchy.show_parent_groups())
+def click_show_parent_groups_in_hierarchy_page(selenium, browser_id):
+    (
+        OZLoggedIn(selenium[browser_id])[
+            "groups"
+        ].main_page.hierarchy.show_parent_groups()
+    )
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_detail_text(selenium, browser_id, oz_page, text):
-    page = oz_page(selenium[browser_id])["groups"]
+def assert_error_detail_text(selenium, browser_id, text):
+    page = OZLoggedIn(selenium[browser_id])["groups"]
     assert text in page.main_page.error_header, f'page with text "{text}" not found'
 
 
 @wt(parsers.parse('user of {browser_id} sees "{group_name}" group members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
+def assert_user_sees_group_page(selenium, browser_id, group_name):
     driver = selenium[browser_id]
-    group_name_on_page = oz_page(driver)["groups"].selected_group_name
+    group_name_on_page = OZLoggedIn(driver)["groups"].selected_group_name
     err_msg = f"expected group name {group_name}, found {group_name_on_page}"
     assert group_name_on_page == group_name, err_msg
 

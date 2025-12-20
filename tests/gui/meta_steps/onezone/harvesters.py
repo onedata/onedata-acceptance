@@ -62,7 +62,7 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name, modal
     modal = "Remove space from harvester"
 
     click_remove_space_option_in_menu_in_discover_spaces_page(
-        selenium, browser_id, space_name, oz_page
+        selenium, browser_id, space_name
     )
     click_modal_button(selenium, browser_id, button, modal, modals)
 
@@ -82,10 +82,10 @@ def remove_space_from_given_harvester(
     option = "Spaces"
 
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
     click_remove_space_option_in_menu_in_discover_spaces_page(
-        selenium, browser_id, space_name, oz_page
+        selenium, browser_id, space_name
     )
     click_modal_button(selenium, browser_id, button, modal, modals)
 
@@ -102,13 +102,11 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name, modals):
     option = "Remove"
     modal = "Remove harvester"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, where)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_type, harvester_name, oz_page
+        selenium, browser_id, list_type, harvester_name
     )
-    click_on_option_in_harvester_menu(
-        selenium, browser_id, option, harvester_name, oz_page
-    )
+    click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     click_modal_button(selenium, browser_id, option, modal, modals)
 
 
@@ -134,20 +132,16 @@ def create_harvester(
     button_name = "create new harvester"
     option = "Copy ID"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
-    click_button_on_discovery_on_left_sidebar_menu(
-        selenium, browser_id, button_name, oz_page
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, where)
+    click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id, button_name)
     type_text_to_input_field_in_discovery_page(
-        selenium, browser_id, oz_page, harvester_name, input_name
+        selenium, browser_id, harvester_name, input_name
     )
     type_endpoint_to_input_field_in_discovery_page(
-        selenium, browser_id, oz_page, endpoint_input, hosts
+        selenium, browser_id, endpoint_input, hosts
     )
-    click_create_button_in_discovery_page(selenium, browser_id, oz_page)
-    click_on_option_in_harvester_menu(
-        selenium, browser_id, option, harvester_name, oz_page
-    )
+    click_create_button_in_discovery_page(selenium, browser_id)
+    click_on_option_in_harvester_menu(selenium, browser_id, option, harvester_name)
     harvesters[harvester_name] = clipboard.paste(display=displays[browser_id])
 
 
@@ -177,26 +171,22 @@ def join_space_to_harvester(
     modal = "Add one of spaces"
     modal_name = "Add one of your spaces"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option2)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option3, harvester_name, oz_page
+        selenium, browser_id, option3, harvester_name
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
     try:
-        click_button_in_harvester_spaces_page(
-            selenium, browser_id, oz_page, button_name
-        )
+        click_button_in_harvester_spaces_page(selenium, browser_id, button_name)
     except RuntimeError:
         click_option_in_discovery_page_menu(
-            selenium, browser_id, oz_page, button_name.capitalize()
+            selenium, browser_id, button_name.capitalize()
         )
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, space_name, modals, popups
-    )
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, space_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -228,7 +218,7 @@ def add_group_to_harvester(
     modal_name = "Add one of your groups"
 
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
     click_on_option_in_members_list_menu(
         selenium,
@@ -236,14 +226,10 @@ def add_group_to_harvester(
         button,
         member,
         where + "s",
-        oz_page,
         onepanel,
-        popups,
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, popups
-    )
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -261,15 +247,13 @@ def create_index_in_harvester(
     member_menu_option = "Create new index"
 
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
     click_on_member_menu_option_in_harvester_indices_page(
-        selenium, browser_id, member_menu_option, oz_page, popups
+        selenium, browser_id, member_menu_option
     )
-    type_index_name_to_input_field_in_indices_page(
-        selenium, browser_id, oz_page, index_name
-    )
-    click_create_button_in_indices_page(selenium, browser_id, oz_page)
+    type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name)
+    click_create_button_in_indices_page(selenium, browser_id)
 
 
 @wt(
@@ -300,12 +284,12 @@ def send_invitation_token(
     modal = "Invite using token"
     item_type = "token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id1, where, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id1, where)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id1, list_type + "s", harvester_name, oz_page
+        selenium, browser_id1, list_type + "s", harvester_name
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id1, harvester_name, option, oz_page
+        selenium, browser_id1, harvester_name, option
     )
     click_on_option_in_members_list_menu(
         selenium,
@@ -313,9 +297,7 @@ def send_invitation_token(
         button,
         list_type,
         member,
-        oz_page,
         onepanel,
-        popups,
     )
     copy_token_from_modal(selenium, browser_id1)
     close_modal(selenium, browser_id1, modal, modals)
@@ -347,13 +329,12 @@ def change_privilege_config_in_harvester(
     menu_option = "Members"
 
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, menu_option, oz_page
+        selenium, browser_id, harvester_name, menu_option
     )
     click_element_in_members_list(
         selenium,
         browser_id,
         user_name,
-        oz_page,
         where,
         list_type + "s",
         onepanel,
@@ -366,7 +347,6 @@ def change_privilege_config_in_harvester(
         where,
         config,
         onepanel,
-        oz_page,
         option,
     )
 
@@ -383,15 +363,13 @@ def rename_harvester(selenium, browser_id, oz_page, harvester_name, harvester_re
     menu_option = "Rename"
 
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option, harvester_name, oz_page
+        selenium, browser_id, option, harvester_name
     )
-    click_on_option_in_harvester_menu(
-        selenium, browser_id, menu_option, harvester_name, oz_page
-    )
+    click_on_option_in_harvester_menu(selenium, browser_id, menu_option, harvester_name)
     type_text_to_rename_input_field_in_discovery_page(
-        selenium, browser_id, oz_page, harvester_renamed
+        selenium, browser_id, harvester_renamed
     )
-    confirm_harvester_rename_using_button(selenium, browser_id, oz_page)
+    confirm_harvester_rename_using_button(selenium, browser_id)
 
 
 @wt(
@@ -405,14 +383,14 @@ def assert_space_on_harvester_list(selenium, browser_id, space, harvester, oz_pa
     option2 = "harvesters"
     option3 = "Spaces"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option2, harvester, oz_page
+        selenium, browser_id, option2, harvester
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, option3, oz_page
+        selenium, browser_id, harvester, option
     )
-    assert_space_has_appeared_in_discovery_page(selenium, browser_id, space, oz_page)
+    assert_space_has_appeared_in_discovery_page(selenium, browser_id, space)
 
 
 @wt(parsers.parse('user of {browser_id} configures "{harvester}" harvester as public'))
@@ -426,24 +404,20 @@ def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
     is_checked = "checked"
     general_tab = "General tab"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, scope, harvester, oz_page
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope, harvester)
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, config_tab, oz_page
+        selenium, browser_id, harvester, config_tab
     )
 
     click_button_in_tab_of_harvester_config_page(
-        selenium, browser_id, oz_page, edit_button, general_tab
+        selenium, browser_id, edit_button, general_tab
     )
-    check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page, action)
+    check_public_toggle_on_harvester_config_page(selenium, browser_id, action)
     click_button_in_tab_of_harvester_config_page(
-        selenium, browser_id, oz_page, save_button, general_tab
+        selenium, browser_id, save_button, general_tab
     )
-    assert_public_toggle_on_harvester_config_page(
-        selenium, browser_id, oz_page, is_checked
-    )
+    assert_public_toggle_on_harvester_config_page(selenium, browser_id, is_checked)
 
 
 @wt(
@@ -459,16 +433,14 @@ def check_harvesting_process_in_harvester(
     scope = "harvesters"
     indices_tab = "Indices"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, scope, harvester, oz_page
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope, harvester)
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester, indices_tab, oz_page
+        selenium, browser_id, harvester, indices_tab
     )
-    assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page, index)
-    expand_index_record_in_indices_page(selenium, browser_id, oz_page, index)
-    assert_progress_in_harvesting(selenium, browser_id, oz_page, index)
+    assert_used_by_gui_tag_on_indices_page(selenium, browser_id, index)
+    expand_index_record_in_indices_page(selenium, browser_id, index)
+    assert_progress_in_harvesting(selenium, browser_id, index)
 
 
 @wt(
@@ -490,16 +462,12 @@ def create_index_with_toggles_list(
     option = "Indices"
     text = "Create new index"
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
-    click_on_member_menu_option_in_harvester_indices_page(
-        selenium, browser_id, text, oz_page, popups
-    )
-    type_index_name_to_input_field_in_indices_page(
-        selenium, browser_id, oz_page, index_name
-    )
-    uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page, toggles_list)
-    click_create_button_in_indices_page(selenium, browser_id, oz_page)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, text)
+    type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name)
+    uncheck_toggles_on_create_index_page(selenium, browser_id, toggles_list)
+    click_create_button_in_indices_page(selenium, browser_id)
 
 
 @wt(
@@ -515,7 +483,7 @@ def change_indices_for_harvester(
     option = "Configuration"
     tab_name = "GUI plugin"
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option, oz_page
+        selenium, browser_id, harvester_name, option
     )
-    click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name, oz_page)
-    change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name, popups)
+    click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name)
+    change_indices_on_gui_plugin_tab(selenium, browser_id, index_name)

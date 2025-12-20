@@ -15,6 +15,7 @@ from tests.gui.meta_steps.onezone.members import (
     fail_to_set_privileges_using_op_gui,
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
+from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.mixed.steps.rest.onezone.members import (
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,
@@ -45,8 +46,6 @@ def fail_to_set_privileges_in_space_in_oz(
     config,
     hosts,
     selenium,
-    onepanel,
-    oz_page,
     space_name,
     users,
     spaces,
@@ -61,8 +60,8 @@ def fail_to_set_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            onepanel,
-            oz_page,
+            Onepanel,
+            OZLoggedIn,
         )
 
     elif client_lower == "rest":
@@ -88,9 +87,7 @@ def assert_privileges_in_space_in_oz(
     user,
     space_name,
     hosts,
-    oz_page,
     member_name,
-    onepanel,
     users,
     member_type,
     config,
@@ -106,8 +103,8 @@ def assert_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            onepanel,
-            oz_page,
+            Onepanel,
+            OZLoggedIn,
         )
     elif client_lower == "rest":
         assert_privileges_in_space_using_rest(
@@ -130,10 +127,6 @@ def fail_to_create_invitation_in_space_in_oz(
     selenium,
     user,
     space_name,
-    oz_page,
-    onepanel,
-    popups,
-    modals,
     users,
     hosts,
     member_name,
@@ -143,7 +136,7 @@ def fail_to_create_invitation_in_space_in_oz(
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_invitation_in_space_using_op_gui(
-            user, space_name, popups, modals, selenium, onepanel, oz_page
+            user, space_name, Popups, Modals, selenium, Onepanel, OZLoggedIn
         )
     elif client_lower == "rest":
         fail_to_create_invitation_in_space_using_rest(
@@ -167,8 +160,6 @@ def assert_not_user_in_space_in_oz(
     user,
     member_name,
     space_name,
-    oz_page,
-    onepanel,
     users,
     hosts,
     host,
@@ -177,7 +168,7 @@ def assert_not_user_in_space_in_oz(
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_not_user_in_space_using_op_gui(
-            user, space_name, member_name, selenium, onepanel, oz_page
+            user, space_name, member_name, selenium, Onepanel, OZLoggedIn
         )
 
     elif client_lower == "rest":

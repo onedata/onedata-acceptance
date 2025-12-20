@@ -42,9 +42,7 @@ def open_transfers_page(
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, option, oz_page
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option)
 
     if provider_name != check_current_provider_in_space(selenium, browser_id, oz_page):
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)

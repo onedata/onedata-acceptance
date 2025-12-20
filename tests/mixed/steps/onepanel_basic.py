@@ -170,8 +170,6 @@ def modify_provider_using_test_hostname_in_op_panel(
     hosts,
     selenium,
     onepanel,
-    login_page,
-    modals,
 ):
 
     test_domain = f"{hosts[provider_name]['hostname']}.test"
@@ -190,11 +188,7 @@ def modify_provider_using_test_hostname_in_op_panel(
             hosts[provider_name]["name"],
             new_provider_name,
             test_domain,
-            login_page,
-            users,
-            hosts,
             user,
-            modals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -218,8 +212,6 @@ def modify_provider_using_known_hostname_in_op_panel(
     hosts,
     selenium,
     onepanel,
-    login_page,
-    modals,
 ):
 
     if client.lower() == "rest":
@@ -241,11 +233,7 @@ def modify_provider_using_known_hostname_in_op_panel(
             provider_name,
             hosts[target_provider]["name"],
             hosts[target_provider]["hostname"],
-            login_page,
-            users,
-            hosts,
             user,
-            modals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

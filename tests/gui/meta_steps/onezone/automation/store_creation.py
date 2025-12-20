@@ -59,7 +59,7 @@ def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, po
     option = "checks" if user_input else "unchecks"
     button = "Create"
 
-    click_add_store_button(selenium, browser_id, oz_page)
+    click_add_store_button(selenium, browser_id)
     write_name_into_text_field_in_modal(
         selenium, browser_id, name, modal_name, modals, name_textfield
     )

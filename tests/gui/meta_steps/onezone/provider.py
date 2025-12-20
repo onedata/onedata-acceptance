@@ -46,9 +46,9 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
     if with_refresh:
         refresh_site(selenium, user)
 
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     click_on_provider_in_providers_sidebar_with_provider_name(
-        selenium, user, oz_page, provider_name
+        selenium, user, provider_name
     )
 
     if test_domain:
@@ -60,14 +60,12 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
             user,
             domain_provider,
             hosts,
-            popups,
-            oz_page,
             displays,
             clipboard,
         )
     else:
         assert_provider_hostname_matches_known_domain(
-            selenium, user, domain_provider, hosts, popups
+            selenium, user, domain_provider, hosts
         )
 
 
@@ -77,9 +75,9 @@ def assert_there_is_no_provider_in_oz_gui(
     option = "Data"
 
     refresh_site(selenium, user)
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     assert_provider_is_not_in_providers_list_in_data_sidebar(
-        selenium, user, oz_page, provider_name, hosts
+        selenium, user, provider_name, hosts
     )
 
 
@@ -111,11 +109,11 @@ def revoke_support_of_provider_in_list(
     notify_text_regexp = "Ceased.*[Ss]upport.*"
 
     click_on_menu_button_of_provider_on_providers_list(
-        selenium, browser_id, provider, oz_page, hosts
+        selenium, browser_id, provider, hosts
     )
-    click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
-    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals)
-    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
+    click_on_cease_support_in_menu_of_provider_on_providers_list(driver)
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
     notify_visible_with_text(selenium, browser_id, notify_type, notify_text_regexp)
 
 

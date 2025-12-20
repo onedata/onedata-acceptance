@@ -69,14 +69,14 @@ def invite_user_to_cluster(
     modal = "Invite using token"
     item_type = "token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster, hosts)
     wt_click_on_subitem_for_item(
         selenium, browser_id, option, sub_item, cluster, onepanel, hosts
     )
 
     click_on_option_in_members_list_menu(
-        selenium, browser_id, button, where, member, oz_page, onepanel, popups
+        selenium, browser_id, button, where, member, onepanel
     )
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
@@ -106,10 +106,10 @@ def change_privilege_config_in_cluster(
     option = "sets"
 
     click_element_in_members_list(
-        selenium, browser_id, user_name, oz_page, where, list_type, onepanel
+        selenium, browser_id, user_name, where, list_type, onepanel
     )
     see_privileges_for_member(
-        selenium, browser_id, oz_page, where, member_type, user_name, onepanel
+        selenium, browser_id, where, member_type, user_name, onepanel
     )
     try_setting_privileges_in_members_subpage(
         selenium,
@@ -119,7 +119,6 @@ def change_privilege_config_in_cluster(
         where,
         config,
         onepanel,
-        oz_page,
         option,
     )
 
@@ -150,7 +149,7 @@ def add_group_to_cluster(
     where = "cluster"
     member = "groups"
     modal_name = "add one of your groups"
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster_name, hosts)
     wt_click_on_subitem_for_item(
         selenium,
@@ -162,7 +161,7 @@ def add_group_to_cluster(
         hosts,
     )
     click_on_option_in_members_list_menu(
-        selenium, browser_id, sub_item, where, member, oz_page, onepanel, popups
+        selenium, browser_id, sub_item, where, member, onepanel
     )
     for _ in range(5):
         try:
@@ -170,19 +169,10 @@ def add_group_to_cluster(
             break
         except TimeoutException:
             click_on_option_in_members_list_menu(
-                selenium,
-                browser_id,
-                sub_item,
-                where,
-                member,
-                oz_page,
-                onepanel,
-                popups,
+                selenium, browser_id, sub_item, where, member, onepanel
             )
 
-    choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, popups
-    )
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 
 
@@ -212,11 +202,9 @@ def no_member_in_parent(
             member_name,
             member_type,
             name,
-            oz_page,
             tmp_memory,
             onepanel,
             where,
-            popups,
         )
     except RuntimeError:
         pass
@@ -272,7 +260,7 @@ def set_gui_settings(
     option = "GUI settings"
     box = kind_of_agreement + " input"
     button = "save " + kind_of_agreement
-    click_on_option_in_the_sidebar(selenium, browser_id, menu, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, menu)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts)
     click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
     click_button_in_gui_settings_page(selenium, browser_id, oz_page, kind_of_agreement)

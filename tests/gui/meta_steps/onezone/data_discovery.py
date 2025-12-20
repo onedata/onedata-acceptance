@@ -168,12 +168,12 @@ def open_data_discovery_of_harvester(
     list_name = "harvesters"
     option2 = "data discovery"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, list_name, harvester_name, oz_page
+        selenium, browser_id, list_name, harvester_name
     )
     click_on_option_of_harvester_on_left_sidebar_menu(
-        selenium, browser_id, harvester_name, option2, oz_page
+        selenium, browser_id, harvester_name, option2
     )
     assert_data_discovery_page(selenium, browser_id, data_discovery)
 

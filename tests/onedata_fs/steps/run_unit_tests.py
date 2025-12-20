@@ -34,9 +34,9 @@ def unit_tests_directory_in_client_container(hosts, client):
     check_call_with_logging(cmd)
 
 
-@when(parsers.re('root user starts onedata_fs unit tests in "(?P<client>.*)" '
-                 'container using python <python_version> and following test '
-                 'configuration:\n(?P<cfg>(.|\s)*)'))
+@when(parsers.re(r'root user starts onedata_fs unit tests in "(?P<client>.*)" '
+                 r'container using python <python_version> and following test '
+                 r'configuration:\n(?P<cfg>(.|\s)*)'))
 def run_tests_in_container(client, cfg, hosts, users, python_version):
     cfg = yaml.load(cfg, Loader=yaml.Loader)
 

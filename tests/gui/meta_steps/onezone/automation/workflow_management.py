@@ -63,12 +63,12 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_workflow_using_gui(selenium, browser_id, oz_page, workflow_name):
-    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, "Add new workflow")
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
-        selenium, browser_id, oz_page, workflow_name
+        selenium, browser_id, workflow_name
     )
 
-    confirm_workflow_creation(selenium, browser_id, oz_page)
+    confirm_workflow_creation(selenium, browser_id)
 
 
 @wt(
@@ -88,16 +88,12 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     tmp_memory,
 ):
     driver = selenium[browser_id]
-    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, "workflows", oz_page, tmp_memory
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
+    go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
     upload_workflow_as_json(selenium, browser_id, file_name, oz_page)
     _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow", modals)
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, "workflows", oz_page, tmp_memory
-    )
+    go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
 
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, "sees")
 
@@ -173,10 +169,8 @@ def _upload_workflow_from_automation_examples(
     button = "Apply"
     driver = selenium[browser_id]
 
-    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, subpage, oz_page, tmp_memory
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
     upload_workflow_from_repository(selenium, browser_id, workflow, oz_page)
     _wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
     if method == "as new workflow":
@@ -186,9 +180,7 @@ def _upload_workflow_from_automation_examples(
         method_button = "Merge into existing workflow"
         click_modal_button(selenium, browser_id, method_button, modal, modals)
     click_modal_button(selenium, browser_id, button, modal, modals)
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, subpage, oz_page, tmp_memory
-    )
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
     visible_workflow_name = change_workflow_dump_name_to_visible_name(workflow)
     assert_workflow_exists(selenium, browser_id, oz_page, visible_workflow_name, "sees")
 
@@ -264,13 +256,11 @@ def _execute_workflow_with_input_config(
     tab_name = "Run workflow"
 
     try:
-        click_element_on_lists_on_left_sidebar_menu(
-            selenium, browser_id, spaces, space, oz_page
-        )
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
     except IndexError:
         pass
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows, oz_page
+        selenium, browser_id, space, automation_workflows
     )
     click_button_in_navigation_tab(selenium, browser_id, op_container, tab_name)
     choose_workflow_revision_to_run(
@@ -366,7 +356,6 @@ def execute_workflow_and_wait(
     execute_workflow(
         browser_id,
         selenium,
-        oz_page,
         space,
         op_container,
         ordinal,
@@ -392,7 +381,6 @@ def execute_workflow_and_wait(
 def execute_workflow(
     browser_id,
     selenium,
-    oz_page,
     space,
     op_container,
     ordinal,
@@ -407,11 +395,9 @@ def execute_workflow(
     tab_name = "Run workflow"
     driver = selenium[browser_id]
 
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, spaces, space, oz_page
-    )
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, spaces, space)
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, automation_workflows, oz_page
+        selenium, browser_id, space, automation_workflows
     )
     click_button_in_navigation_tab(selenium, browser_id, op_container, tab_name)
     choose_workflow_revision_to_run(

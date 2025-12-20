@@ -99,10 +99,10 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     option = "Tokens"
     button = "Consume token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_received_token_into_text_field(selenium, browser_id, oz_page, tmp_memory)
-    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} joins cluster using copied token"))
@@ -113,12 +113,12 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, di
     option = "Tokens"
     button = "Consume token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
         selenium, browser_id, oz_page, clipboard, displays
     )
-    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
 
 @wt(
@@ -140,13 +140,13 @@ def add_element_with_copied_token(
     option = "Tokens"
     button = "Consume token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
         selenium, browser_id, oz_page, clipboard, displays
     )
-    select_member_from_dropdown(selenium, browser_id, elem_name, popups, oz_page)
-    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
+    select_member_from_dropdown(selenium, browser_id, elem_name)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
 
 @wt(
@@ -185,12 +185,12 @@ def assert_alert_while_consuming_token(
     option = "Tokens"
     button = "Consume token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
         selenium, browser_id, oz_page, clipboard, displays
     )
-    assert_alert_on_tokens_page(browser_id, text, oz_page, selenium)
+    assert_alert_on_tokens_page(browser_id, text, selenium)
 
 
 @wt(
@@ -228,16 +228,14 @@ def _create_token_of_type(
     if iteration:
         token_name = token_name + str(iteration)
 
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
-    click_create_custom_token(selenium, browser_id, oz_page)
-    type_new_token_name(selenium, browser_id, oz_page, token_name)
-    choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    click_create_custom_token(selenium, browser_id)
+    type_new_token_name(selenium, browser_id, token_name)
+    choose_token_type_to_create(selenium, browser_id, token_type)
     if token_type == "invite":
         invite_type = "Register Oneprovider"
-        choose_invite_type_in_oz_token_page(
-            selenium, browser_id, oz_page, invite_type, popups
-        )
-    click_create_token_button_in_create_token_page(selenium, browser_id, oz_page)
+        choose_invite_type_in_oz_token_page(selenium, browser_id, invite_type)
+    click_create_token_button_in_create_token_page(selenium, browser_id)
 
 
 @wt(
@@ -343,9 +341,9 @@ def _create_token_with_config(
 ):
     option = "Tokens"
     button = "Create new token"
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
-    click_create_custom_token(selenium, browser_id, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    click_create_custom_token(selenium, browser_id)
 
     data = yaml.load(config, yaml.Loader)
     name = data.get("name", False)
@@ -357,23 +355,19 @@ def _create_token_with_config(
     privileges = data.get("privileges", False)
 
     if name:
-        type_new_token_name(selenium, browser_id, oz_page, name)
-    choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
+        type_new_token_name(selenium, browser_id, name)
+    choose_token_type_to_create(selenium, browser_id, token_type)
     if invite_type:
-        choose_invite_type_in_oz_token_page(
-            selenium, browser_id, oz_page, invite_type, popups
-        )
+        choose_invite_type_in_oz_token_page(selenium, browser_id, invite_type)
     if invite_target:
-        choose_invite_select(
-            selenium, browser_id, oz_page, invite_target, hosts, popups
-        )
+        choose_invite_select(selenium, browser_id, invite_target, hosts)
     if usage_limit:
-        select_token_usage_limit(selenium, browser_id, str(usage_limit), oz_page)
+        select_token_usage_limit(selenium, browser_id, str(usage_limit))
     if privileges:
-        tree = get_privileges_tree(selenium, browser_id, oz_page)
+        tree = get_privileges_tree(selenium, browser_id)
         tree.set_privileges(selenium, browser_id, privileges)
     if caveats:
-        show_inactive_caveats(selenium, browser_id, oz_page)
+        show_inactive_caveats(selenium, browser_id)
         _set_tokens_caveats(
             selenium,
             browser_id,
@@ -385,7 +379,7 @@ def _create_token_with_config(
             hosts,
             tmp_memory,
         )
-    click_create_token_button_in_create_token_page(selenium, browser_id, oz_page)
+    click_create_token_button_in_create_token_page(selenium, browser_id)
 
 
 def _set_tokens_caveats(
@@ -412,22 +406,22 @@ def _set_tokens_caveats(
     object_id_caveats = caveats.get("object ID", False)
 
     if expiration_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "expiration")
+        caveat = get_caveat_by_name(selenium, browser_id, "expiration")
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "region")
+        caveat = get_caveat_by_name(selenium, browser_id, "region")
         caveat.set_region_caveats(selenium, browser_id, region_caveats, popups)
     if country_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "country")
+        caveat = get_caveat_by_name(selenium, browser_id, "country")
         caveat.set_country_caveats(selenium, browser_id, country_caveats, popups)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "asn")
+        caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "ip")
+        caveat = get_caveat_by_name(selenium, browser_id, "ip")
         caveat.set_ip_caveats(selenium, browser_id, ip_caveats)
     if consumer_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "consumer")
+        caveat = get_caveat_by_name(selenium, browser_id, "consumer")
         caveat.set_consumer_caveats(
             selenium,
             browser_id,
@@ -439,19 +433,19 @@ def _set_tokens_caveats(
             oz_page,
         )
     if service_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "service")
+        caveat = get_caveat_by_name(selenium, browser_id, "service")
         caveat.set_service_caveats(selenium, browser_id, service_caveats, popups)
     if interface_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "interface")
+        caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)
     if readonly_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "readonly")
+        caveat = get_caveat_by_name(selenium, browser_id, "readonly")
         caveat.set_readonly_caveat()
     if path_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "path")
+        caveat = get_caveat_by_name(selenium, browser_id, "path")
         caveat.set_path_caveats(path_caveats)
     if object_id_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "object_id")
+        caveat = get_caveat_by_name(selenium, browser_id, "object_id")
         time.sleep(0.5)
         caveat.set_object_id_caveats(object_id_caveats)
 
@@ -545,7 +539,7 @@ def assert_token_configuration_gui(
     spaces,
 ):
     token_name = yaml.load(config, yaml.Loader)["name"]
-    click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
+    click_on_token_on_tokens_list(selenium, browser_id, token_name)
     _assert_token_configuration(
         selenium,
         browser_id,
@@ -583,23 +577,21 @@ def _assert_token_configuration(
     caveats = data.get("caveats", False)
 
     if token_name:
-        assert_token_name(selenium, browser_id, oz_page, token_name)
-    assert_token_revoked(selenium, browser_id, oz_page, revoked)
+        assert_token_name(selenium, browser_id, token_name)
+    assert_token_revoked(selenium, browser_id, revoked)
     if token_type:
-        assert_token_type(selenium, browser_id, oz_page, token_type)
+        assert_token_type(selenium, browser_id, token_type)
     if invite_type:
-        assert_invite_type(selenium, browser_id, oz_page, invite_type)
+        assert_invite_type(selenium, browser_id, invite_type)
     if invite_target:
-        assert_invite_target(
-            selenium, browser_id, oz_page, invite_target, hosts, spaces
-        )
+        assert_invite_target(selenium, browser_id, invite_target, hosts, spaces)
     if usage_count:
-        assert_token_usage_count_value(selenium, browser_id, usage_count, oz_page)
+        assert_token_usage_count_value(selenium, browser_id, usage_count)
     if usage_limit:
         usage_starter = f"0/{usage_limit}"
-        assert_token_usage_count_value(selenium, browser_id, usage_starter, oz_page)
+        assert_token_usage_count_value(selenium, browser_id, usage_starter)
     if privileges:
-        tree = get_privileges_tree(selenium, browser_id, oz_page)
+        tree = get_privileges_tree(selenium, browser_id)
         tree.assert_privileges(selenium, browser_id, privileges)
     if caveats:
         assert_token_caveats(
@@ -639,37 +631,37 @@ def assert_token_caveats(
     object_id_caveats = caveats.get("object ID", False)
 
     if expiration_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "expiration")
+        caveat = get_caveat_by_name(selenium, browser_id, "expiration")
         caveat.assert_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "region")
+        caveat = get_caveat_by_name(selenium, browser_id, "region")
         caveat.assert_region_caveats(region_caveats)
     if country_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "country")
+        caveat = get_caveat_by_name(selenium, browser_id, "country")
         caveat.assert_country_caveats(country_caveats)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "asn")
+        caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.assert_asn_caveats(asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "ip")
+        caveat = get_caveat_by_name(selenium, browser_id, "ip")
         caveat.assert_ip_caveats(ip_caveats)
     if consumer_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "consumer")
+        caveat = get_caveat_by_name(selenium, browser_id, "consumer")
         caveat.assert_consumer_caveats(consumer_caveats, users, groups, hosts, creation)
     if service_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "service")
+        caveat = get_caveat_by_name(selenium, browser_id, "service")
         caveat.assert_service_caveats(service_caveats)
     if interface_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "interface")
+        caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.assert_interface_caveat(interface_caveat)
     if readonly_caveat:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "readonly")
+        caveat = get_caveat_by_name(selenium, browser_id, "readonly")
         caveat.assert_readonly_caveat()
     if path_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "path")
+        caveat = get_caveat_by_name(selenium, browser_id, "path")
         caveat.assert_path_caveats(path_caveats)
     if object_id_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, "object_id")
+        caveat = get_caveat_by_name(selenium, browser_id, "object_id")
         caveat.assert_object_id_caveats(object_id_caveats)
 
 
@@ -679,11 +671,11 @@ def revoke_token(selenium, browser_id, token_name, oz_page, popups):
     option = "Modify"
     action = "revoke"
 
-    click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
-    click_menu_button_of_tokens_page(selenium, browser_id, oz_page)
-    click_option_in_token_page_menu(selenium, browser_id, option, popups)
-    switch_toggle_to_change_token(selenium, browser_id, action, oz_page)
-    click_save_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_token_on_tokens_list(selenium, browser_id, token_name)
+    click_menu_button_of_tokens_page(selenium, browser_id)
+    click_option_in_token_page_menu(selenium, browser_id, option)
+    switch_toggle_to_change_token(selenium, browser_id, action)
+    click_save_button_on_tokens_page(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
@@ -693,7 +685,7 @@ def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
     button = "Remove"
     modal = "Remove token"
 
-    wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, oz_page, popups)
+    wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, popups)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -711,7 +703,7 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
 
         for token in oz_page(driver)["tokens"].sidebar.tokens:
             token.menu_button.click()
-            click_option_for_token_row_menu(driver, btn, popups)
+            click_option_for_token_row_menu(driver, btn)
             click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -763,7 +755,7 @@ def choose_and_revoke_token_in_oz_gui(
 ):
     option = "Tokens"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
     revoke_token(selenium, browser_id, token_name, oz_page, popups)
 
 
@@ -776,10 +768,10 @@ def choose_and_revoke_token_in_oz_gui(
 def create_token_with_basic_template(selenium, browser_id, name, template, oz_page):
     button = "Create new token"
 
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
-    choose_token_template(selenium, browser_id, template, oz_page)
-    type_new_token_name(selenium, browser_id, oz_page, name)
-    click_create_token_button_in_create_token_page(selenium, browser_id, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    choose_token_template(selenium, browser_id, template)
+    type_new_token_name(selenium, browser_id, name)
+    click_create_token_button_in_create_token_page(selenium, browser_id)
 
 
 @wt(
@@ -805,7 +797,7 @@ def create_token_with_copied_object_id(
     config = (
         f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
     )
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     create_token_with_config(
         selenium,
         user,
@@ -891,7 +883,7 @@ def create_token_with_object_id(
         f"name: access_token\ntype: access\ncaveats:\n  object ID:\n    -  {object_id}"
     )
 
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     create_token_with_config(
         selenium,
         user,
@@ -903,7 +895,7 @@ def create_token_with_object_id(
         hosts,
         tmp_memory,
     )
-    click_copy_button_in_token_view(selenium, user, oz_page)
+    click_copy_button_in_token_view(selenium, user)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
 
@@ -912,8 +904,8 @@ def copy_token_and_store_value(
     selenium, browser_id, token_name, oz_page, clipboard, displays, tmp_memory
 ):
     option = "Tokens"
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_token_containing_name(selenium, browser_id, token_name, oz_page)
-    click_copy_button_in_token_view(selenium, browser_id, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_token_containing_name(selenium, browser_id, token_name)
+    click_copy_button_in_token_view(selenium, browser_id)
     copied_token = clipboard.paste(display=displays[browser_id])
     tmp_memory["copied_token"] = copied_token

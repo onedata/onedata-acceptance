@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -18,9 +19,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_account_settings_in_oz(selenium, browser_id, oz_page):
+def expand_account_settings_in_oz(selenium, browser_id):
     driver = selenium[browser_id]
-    oz_page(driver)["profile"].profile()
+    OZLoggedIn(driver)["profile"].profile()
 
 
 @wt(
@@ -31,16 +32,16 @@ def expand_account_settings_in_oz(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_account_settings_in_oz(selenium, browser_id, option, popups):
+def click_on_option_in_account_settings_in_oz(selenium, browser_id, option):
     driver = selenium[browser_id]
-    popups(driver).user_account_menu.options[option].click()
+    Popups(driver).user_account_menu.options[option].click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_user_menu_button_in_oz(selenium, browser_id, oz_page):
+def click_on_user_menu_button_in_oz(selenium, browser_id):
     driver = selenium[browser_id]
-    oz_page(driver)["profile"].show_user_account_menu_toolbar.click()
+    OZLoggedIn(driver)["profile"].show_user_account_menu_toolbar.click()
 
 
 @wt(
@@ -49,9 +50,9 @@ def click_on_user_menu_button_in_oz(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_remove_user_button_in_oz(selenium, browser_id, popups):
+def click_remove_user_button_in_oz(selenium, browser_id):
     driver = selenium[browser_id]
-    popups(driver).user_delete_account_popover_menu.click()
+    Popups(driver).user_delete_account_popover_menu.click()
 
 
 @wt(
@@ -80,9 +81,9 @@ def click_delete_account_button_in_oz(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name, oz_page):
+def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name):
     driver = selenium[browser_id]
-    displayed_user_name = oz_page(driver)["profile"].user_name
+    displayed_user_name = OZLoggedIn(driver)["profile"].user_name
     err_msg = (
         f"expected {expected_user_name} as user name, but instead "
         f"displayed is {displayed_user_name} in USER NAME oz panel"
@@ -96,14 +97,14 @@ def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name, oz_
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_user_alias_in_sidebar(selenium, browser_id, oz_page, username):
+def wt_assert_user_alias_in_sidebar(selenium, browser_id, username):
     driver = selenium[browser_id]
     err_msg = "User alias: {} not found in the sidebar, visible alias: {}"
 
     try:
-        name = oz_page(driver).profile_username
+        name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)
     except AssertionError:
-        oz_page(driver)["profile"].profile()
-        name = oz_page(driver).profile_username
+        OZLoggedIn(driver)["profile"].profile()
+        name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)

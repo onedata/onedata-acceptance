@@ -219,7 +219,7 @@ def assert_qos_file_status_in_op_gui(
     option_of_space = "Files"
     status_type = "QoS"
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option_of_space, oz_page
+        selenium, user, space_name, option_of_space
     )
     assert_browser_in_tab_in_op(
         selenium, user, op_container, tmp_memory, "file browser"
@@ -247,9 +247,7 @@ def delete_qos_requirement_in_op_gui(
     status_type = "QoS"
     button = "X"
     modal = "Details modal"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option1, oz_page
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
     assert_browser_in_tab_in_op(
         selenium, user, op_container, tmp_memory, "file browser"
     )

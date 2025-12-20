@@ -290,7 +290,7 @@ def check_dataset_structure_in_op(
     if client_lower == "web gui":
         option_in_submenu = "datasets, archives"
         click_on_option_of_space_on_left_sidebar_menu(
-            selenium, user, space_name, option_in_submenu, oz_page
+            selenium, user, space_name, option_in_submenu
         )
         assert_space_content_in_op_gui(
             config,

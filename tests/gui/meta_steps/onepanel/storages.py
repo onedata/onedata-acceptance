@@ -43,6 +43,7 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.utils import repeat_failed
@@ -71,7 +72,7 @@ def remove_storage_in_op_panel_using_gui(
     )
 )
 def add_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, provider_name, config, oz_page, hosts, onepanel, popups
+    selenium, browser_id, name, provider_name, config, hosts, onepanel
 ):
     """Create storage according to given config.
 
@@ -82,15 +83,13 @@ def add_storage_in_op_panel_using_gui(
         imported storage: true                 --> optional
     """
     _go_to_storage_view_in_clusters(
-        selenium, browser_id, provider_name, oz_page, hosts, onepanel
+        selenium, browser_id, provider_name, hosts, onepanel
     )
-    _add_storage_in_op_panel_using_gui(
-        selenium, browser_id, config, onepanel, name, popups
-    )
+    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel, name)
 
 
 def _go_to_storage_view_in_clusters(
-    selenium, browser_id, provider_name, oz_page, hosts, onepanel
+    selenium, browser_id, provider_name, hosts, onepanel
 ):
     driver = selenium[browser_id]
     onezone_url_pattern = "https?://[^/]*/ozw/.*"
@@ -98,9 +97,9 @@ def _go_to_storage_view_in_clusters(
     sub_item = "Storage backends"
 
     if re.match(onezone_url_pattern, driver.current_url):
-        click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+        click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
         click_on_record_in_clusters_menu(
-            selenium, browser_id, oz_page, provider_name, hosts
+            selenium, browser_id, OZLoggedIn(selenium[browser_id]), provider_name, hosts
         )
 
     wt_click_on_subitem_for_item(
@@ -109,7 +108,7 @@ def _go_to_storage_view_in_clusters(
 
 
 def _add_storage_in_op_panel_using_gui(
-    selenium, browser_id, config, onepanel, storage_name, popups
+    selenium, browser_id, config, onepanel, storage_name
 ):
     content = "storages"
     btn = "Add storage backend"
@@ -127,7 +126,7 @@ def _add_storage_in_op_panel_using_gui(
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
-        selenium, browser_id, storage_type, onepanel, popups
+        selenium, browser_id, storage_type, onepanel, Popups(selenium[browser_id])
     )
     wt_type_text_to_in_box_in_storages_page_op_panel(
         selenium, browser_id, storage_name, form, onepanel, input_box

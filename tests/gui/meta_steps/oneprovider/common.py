@@ -198,7 +198,7 @@ def open_record_of_clusters_submenu(
     selenium, browser_id, provider_name, oz_page, hosts
 ):
     sidebar = "Clusters"
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
     click_on_record_in_clusters_menu(
         selenium, browser_id, oz_page, provider_name, hosts
     )

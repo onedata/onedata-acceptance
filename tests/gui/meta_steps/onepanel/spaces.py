@@ -47,6 +47,7 @@ from tests.gui.steps.onepanel.spaces import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.utils import repeat_failed
@@ -297,9 +298,7 @@ def assert_proper_space_configuration_in_op_panel_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(
-    selenium, browser_id, onepanel, popups, modals, hosts, oz_page
-):
+def revoke_all_space_supports(selenium, browser_id, onepanel, hosts):
     sidebar = "CLUSTERS"
     sub_item = "Spaces"
     record = "oneprovider-1"
@@ -307,8 +306,10 @@ def revoke_all_space_supports(
     option = "Revoke space support"
     button = "Cease support"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts)
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
+    click_on_record_in_clusters_menu(
+        selenium, browser_id, OZLoggedIn(selenium[browser_id]), record, hosts
+    )
     # wait for load cluster
     time.sleep(5)
     wt_click_on_subitem_for_item(
@@ -323,11 +324,11 @@ def revoke_all_space_supports(
         wt_expands_toolbar_icon_for_space_in_onepanel(
             selenium, browser_id, space.name, onepanel
         )
-        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, popups)
-        wt_clicks_on_understand_risk_in_cease_support_modal(
-            selenium, browser_id, modals
+        wt_clicks_on_btn_in_space_toolbar_in_panel(
+            selenium, browser_id, option, Popups(selenium[browser_id])
         )
-        wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
+        wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
+        wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces

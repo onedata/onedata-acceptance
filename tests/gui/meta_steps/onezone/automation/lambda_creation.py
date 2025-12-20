@@ -105,16 +105,14 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
     read_only_option = "checks" if read_only else "unchecks"
     mount_space_option = "checks" if mount_space else "unchecks"
 
-    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, button)
-    write_text_into_lambda_form(selenium, browser_id, oz_page, name, name_field)
-    write_text_into_lambda_form(
-        selenium, browser_id, oz_page, docker_image, docker_field
+    click_add_new_button_in_menu_bar(selenium, browser_id, button)
+    write_text_into_lambda_form(selenium, browser_id, name, name_field)
+    write_text_into_lambda_form(selenium, browser_id, docker_image, docker_field)
+    switch_toggle_in_lambda_form(
+        selenium, browser_id, read_only_option, read_only_toggle
     )
     switch_toggle_in_lambda_form(
-        selenium, browser_id, oz_page, read_only_option, read_only_toggle
-    )
-    switch_toggle_in_lambda_form(
-        selenium, browser_id, oz_page, mount_space_option, mount_space_toggle
+        selenium, browser_id, mount_space_option, mount_space_toggle
     )
 
     def ordinal(n):
@@ -159,7 +157,7 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
                 ordinal(i + 1),
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, option)
 
 
 @wt(
@@ -178,23 +176,15 @@ def create_lambda_using_gui(
     inventory,
     tmp_memory,
 ):
-    click_on_automation_option_in_the_sidebar(selenium, browser_id, oz_page, tmp_memory)
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, "lambdas", oz_page, tmp_memory
-    )
-    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, "Add new lambda")
-    write_text_into_lambda_form(
-        selenium, browser_id, oz_page, lambda_name, "lambda name"
-    )
-    write_text_into_lambda_form(
-        selenium, browser_id, oz_page, docker_image, "docker image"
-    )
+    click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
+    go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
+    click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
+    write_text_into_lambda_form(selenium, browser_id, lambda_name, "lambda name")
+    write_text_into_lambda_form(selenium, browser_id, docker_image, "docker image")
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, "lambda")
+    confirm_lambda_creation_or_edition(selenium, browser_id, "lambda")
 
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, "lambdas", oz_page, tmp_memory
-    )
+    go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
 
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 
@@ -342,9 +332,7 @@ def _upload_lambda_dump_from_automation_examples(
     upload_lambda_from_repository(selenium, browser_id, lambda_name, oz_page)
     click_modal_button(selenium, browser_id, button, modal, modals)
     # hide lambda revision page
-    go_to_inventory_subpage(
-        selenium, browser_id, inventory, subpage, oz_page, tmp_memory
-    )
+    go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
 
 
 @wt(

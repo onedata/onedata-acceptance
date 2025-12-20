@@ -131,7 +131,7 @@ def open_shares_view_of_given_space(
     items_browser = "shares_browser"
 
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option, oz_page
+        selenium, browser_id, space_name, option
     )
     assert_browser_in_tab_in_op(
         selenium, browser_id, op_container, tmp_memory, items_browser

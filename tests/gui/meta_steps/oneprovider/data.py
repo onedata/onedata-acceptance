@@ -240,11 +240,11 @@ def see_items_in_op_gui(
     try:
         option_in_menu = "Data"
         _click_on_option_in_the_sidebar(
-            selenium, browser_id, option_in_menu, oz_page, force=False
+            selenium, browser_id, option_in_menu, force=False
         )
         option = "Files"
         _click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space, option, oz_page, force=False
+            selenium, browser_id, space, option, force=False
         )
         assert_browser_in_tab_in_op(
             selenium, browser_id, op_container, tmp_memory, "file browser"
@@ -387,12 +387,12 @@ def go_to_and_assert_browser(
 ):
     option = "Data"
     element = "spaces"
-    _click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page, force=False)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option, force=False)
     click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, element, space_name, oz_page
+        selenium, browser_id, element, space_name
     )
     _click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option_in_space, oz_page, force=False
+        selenium, browser_id, space_name, option_in_space, force=False
     )
     assert_browser_in_tab_in_op(
         selenium,
@@ -811,15 +811,12 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, s
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
 
-    _click_on_option_in_the_sidebar(
-        selenium, browser_id, option_in_menu, oz_page, force=False
-    )
+    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, force=False)
     _click_on_option_of_space_on_left_sidebar_menu(
         selenium,
         browser_id,
         space,
         option_in_space_submenu,
-        oz_page,
         force=False,
     )
     assert_browser_in_tab_in_op(
@@ -1170,7 +1167,7 @@ def get_file_id_from_details_modal(
     option_in_menu = "Information"
 
     _click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space_name, option_in_space, oz_page, force=False
+        selenium, browser_id, space_name, option_in_space, force=False
     )
     assert_browser_in_tab_in_op(
         selenium, browser_id, op_container, tmp_memory, "file browser"

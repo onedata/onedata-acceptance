@@ -149,11 +149,9 @@ def visit_file_browser(
         parse_seq(providers_list),
         parse_seq(spaces_list),
     ):
-        click_element_on_lists_on_left_sidebar_menu(
-            selenium, browser_id, option, space, oz_page
-        )
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
         click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space, option_in_submenu, oz_page
+            selenium, browser_id, space, option_in_submenu
         )
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)

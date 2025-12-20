@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import (
     parse_seq,
     transform,
@@ -123,13 +124,11 @@ def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def go_to_inventory_subpage(
-    selenium, browser_id, inventory, subpage, oz_page, tmp_memory
-):
+def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory):
     try:
         page = tmp_memory[browser_id]["oz_page"]
     except KeyError:
-        page = oz_page(selenium[browser_id]).get_page_and_click("automation")
+        page = OZLoggedIn(selenium[browser_id]).get_page_and_click("automation")
         tmp_memory[browser_id]["oz_page"] = page
     page.elements_list[inventory]()
     if subpage != "main":

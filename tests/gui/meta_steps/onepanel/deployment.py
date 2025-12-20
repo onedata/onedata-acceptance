@@ -28,6 +28,7 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
+from tests.gui.utils import Modals, Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -38,7 +39,7 @@ from tests.utils.bdd_utils import parsers, wt
         "configuration:\n{config}"
     )
 )
-def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts, modals):
+def setup_step1(selenium, browser_id, host_regexp, config, hosts):
     """
     config:
 
@@ -50,19 +51,17 @@ def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts, moda
      - Cluster Manager
      - Primary Cluster Manager
     """
-    _setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts, modals)
+    _setup_step1(selenium, browser_id, host_regexp, config, hosts)
 
 
-def _setup_step1(
-    selenium, browser_id, onepanel, host_regexp, configuration, hosts, modals
-):
+def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
     config = yaml.load(configuration, yaml.Loader)
     options = config.get("options", [])
     step = "step 1"
     btn = "Deploy"
 
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, options, host_regexp, onepanel
+        selenium, browser_id, options, host_regexp
     )
     if "onezone" in host_regexp:
         zone_for_name, zone_for_domain = _parse_zone_data(
@@ -73,13 +72,14 @@ def _setup_step1(
             browser_id,
             zone_for_name,
             zone_for_domain,
-            onepanel,
             hosts,
         )
-        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel)
-        wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals)
+        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
+        wt_assert_begin_of_cluster_deployment(
+            selenium, browser_id, Modals(selenium[browser_id])
+        )
     else:
-        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel)
+        wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
 
 
 def _parse_zone_data(zone_name, zone_domain):
@@ -89,7 +89,7 @@ def _parse_zone_data(zone_name, zone_domain):
 
 
 def _setup_onezone_in_step1(
-    selenium, browser_id, zone_for_name, zone_for_domain, onepanel, hosts
+    selenium, browser_id, zone_for_name, zone_for_domain, hosts
 ):
     step = "step 1"
 
@@ -102,7 +102,6 @@ def _setup_onezone_in_step1(
         name_property,
         name_input_box,
         step,
-        onepanel,
         hosts,
     )
     hostname_property = "hostname"
@@ -114,7 +113,6 @@ def _setup_onezone_in_step1(
         hostname_property,
         hostname_input_box,
         step,
-        onepanel,
         hosts,
     )
 
@@ -125,10 +123,10 @@ def _setup_onezone_in_step1(
         "setup DNS step and proceeds"
     )
 )
-def setup_dns(selenium, browser_id, onepanel, modals):
-    wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel)
-    wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel)
-    wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals)
+def setup_dns(selenium, browser_id):
+    wt_click_perform_check_in_dns_setup_step(selenium, browser_id)
+    wt_click_proceed_in_dns_setup_step(selenium, browser_id)
+    wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id)
 
 
 @wt(
@@ -143,7 +141,6 @@ def enable_provider_cluster_registration_for_user(
     browser_id,
     user_login,
     browser_id2,
-    onepanel,
     login_page,
     users,
     oz_page,
@@ -153,9 +150,7 @@ def enable_provider_cluster_registration_for_user(
 ):
     last_step_btn = "Manage cluster via onezone"
     last_step = "last step"
-    wt_click_on_btn_in_deployment_step(
-        selenium, browser_id, last_step_btn, last_step, onepanel
-    )
+    wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
     service = "Onezone"
     login_using_basic_auth(selenium, browser_id, user_login, login_page, users, service)
     send_copied_invite_token_in_oz_gui(
@@ -176,17 +171,17 @@ def enable_provider_cluster_registration_for_user(
         "{config}"
     )
 )
-def setup_step2(selenium, browser_id, onepanel, hosts, config):
+def setup_step2(selenium, browser_id, hosts, config):
     """
     provider: provider_name
     request a subdomain: True/False
     email: email@email.email
     """
-    _setup_step2(selenium, browser_id, onepanel, hosts, config)
+    _setup_step2(selenium, browser_id, hosts, config)
     time.sleep(5)
 
 
-def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
+def _setup_step2(selenium, browser_id, hosts, configuration):
     config = yaml.load(configuration, yaml.Loader)
     provider_for_name, provider_for_domain = _parse_provider(
         config["name"], config["domain"]
@@ -204,12 +199,11 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
         name_property,
         name_input_box,
         step,
-        onepanel,
         hosts,
     )
 
     if not request_a_subdomain:
-        deactivate_request_subdomain_toggle(selenium, browser_id, onepanel)
+        deactivate_request_subdomain_toggle(selenium, browser_id)
 
     hostname_property = "hostname"
     hostname_input_box = "domain"
@@ -220,19 +214,16 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
         hostname_property,
         hostname_input_box,
         step,
-        onepanel,
         hosts,
     )
 
     email_input_box = "admin email"
     wt_type_text_to_in_box_in_deployment_step(
-        selenium, browser_id, email, email_input_box, step, onepanel
+        selenium, browser_id, email, email_input_box, step
     )
 
     register_button = "Register"
-    wt_click_on_btn_in_deployment_step(
-        selenium, browser_id, register_button, step, onepanel
-    )
+    wt_click_on_btn_in_deployment_step(selenium, browser_id, register_button, step)
 
 
 def _parse_provider(provider_name, provider_domain):
@@ -247,15 +238,15 @@ def _parse_provider(provider_name, provider_domain):
         "process in Onepanel with following config:\n{config}"
     )
 )
-def add_storage_in_step5(selenium, browser_id, onepanel, config, popups):
+def add_storage_in_step5(selenium, browser_id, config):
     """
     storage type: type of storage
     storage name: name of storage
     """
-    _add_storage_in_step5(selenium, browser_id, onepanel, config, popups)
+    _add_storage_in_step5(selenium, browser_id, config)
 
 
-def _add_storage_in_step5(selenium, browser_id, onepanel, configuration, popups):
+def _add_storage_in_step5(selenium, browser_id, configuration):
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]
@@ -264,10 +255,10 @@ def _add_storage_in_step5(selenium, browser_id, onepanel, configuration, popups)
     text_regexp = ".*[Ss]torage.*added.*"
 
     wt_select_storage_type_in_deployment_step5(
-        selenium, browser_id, storage_type, onepanel, popups
+        selenium, browser_id, storage_type, Popups(selenium[browser_id])
     )
     wt_type_text_to_in_box_in_deployment_step5(
-        selenium, browser_id, name, storage_type, onepanel, name_box
+        selenium, browser_id, name, storage_type, name_box
     )
-    wt_click_on_add_btn_in_storage_add_form(selenium, browser_id, onepanel)
+    wt_click_on_add_btn_in_storage_add_form(selenium, browser_id)
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)

@@ -330,12 +330,10 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     path = item_list.replace('"', "")
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, browser_id, option, space, oz_page
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, option_in_submenu, oz_page
+        selenium, browser_id, space, option_in_submenu
     )
     assert_browser_in_tab_in_op(
         selenium, browser_id, op_container, tmp_memory, "file browser"

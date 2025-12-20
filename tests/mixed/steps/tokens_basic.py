@@ -65,7 +65,7 @@ def create_token(
             hosts,
             tmp_memory,
         )
-        click_copy_button_in_token_view(selenium, user, oz_page)
+        click_copy_button_in_token_view(selenium, user)
         tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
     elif client_lower == "rest":
         create_token_with_config_rest(
@@ -138,7 +138,7 @@ def copy_named_token_if_gui(
     token_name,
 ):
     if client == "web gui":
-        click_copy_button_in_token_view(selenium, user, oz_page)
+        click_copy_button_in_token_view(selenium, user)
         token = clipboard.paste(display=displays[user])
         tmp_memory[user]["token"] = token
         tokens[token_name] = {"token": token}
@@ -146,7 +146,7 @@ def copy_named_token_if_gui(
 
 @wt(parsers.parse("using web gui, {user} copies created token"))
 def copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory):
-    click_copy_button_in_token_view(selenium, user, oz_page)
+    click_copy_button_in_token_view(selenium, user)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
 
@@ -177,15 +177,11 @@ def join_space_with_token(
     client_lower = client.lower()
     if client_lower == "web gui":
         consume_received_token(selenium, user, oz_page, tmp_memory)
-        assert_new_created_space_has_appeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(
             user, users, "onezone", hosts, space_name, tmp_memory
         )
-        assert_new_created_space_has_appeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

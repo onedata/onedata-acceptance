@@ -109,29 +109,23 @@ def _create_task_using_previously_created_lambda(
 
     if "another" in which:
         position = data["where parallel box"]
-        add_another_parallel_box_to_lane(
-            selenium, browser_id, oz_page, lane_name, position
-        )
+        add_another_parallel_box_to_lane(selenium, browser_id, lane_name, position)
     else:
-        add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name)
+        add_parallel_box_to_lane(selenium, browser_id, lane_name)
 
     time.sleep(0.5)
-    add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name)
+    add_task_to_empty_parallel_box(selenium, browser_id, lane_name)
     time.sleep(0.5)
-    add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name, ordinal)
+    add_lambda_revision_to_workflow(selenium, browser_id, lambda_name, ordinal)
 
     if task_name:
-        write_task_name_in_task_edition_text_field(
-            selenium, browser_id, oz_page, task_name
-        )
+        write_task_name_in_task_edition_text_field(selenium, browser_id, task_name)
 
     if configuration_parameters:
         for param_name, param in configuration_parameters.items():
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 param["value builder"],
                 param_name,
                 conf_param_option,
@@ -139,7 +133,6 @@ def _create_task_using_previously_created_lambda(
             write_text_into_editor_bracket(
                 selenium,
                 browser_id,
-                oz_page,
                 param["value"],
                 param_name,
                 conf_param_option,
@@ -150,8 +143,6 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 arg["value builder"],
                 arg_name,
                 arg_type,
@@ -160,7 +151,6 @@ def _create_task_using_previously_created_lambda(
                 write_text_into_editor_bracket(
                     selenium,
                     browser_id,
-                    oz_page,
                     arg["value"],
                     arg_name,
                     arg_type,
@@ -171,14 +161,12 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 res["target store"],
                 res_name,
                 res_type,
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, option)
 
 
 @wt(
@@ -249,8 +237,6 @@ def modify_task_results(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 param["value builder"],
                 param_name,
                 conf_param_option,
@@ -258,10 +244,9 @@ def modify_task_results(
             write_text_into_editor_bracket(
                 selenium,
                 browser_id,
-                oz_page,
                 param["value"],
                 param_name,
                 conf_param_option,
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, task_option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, task_option)
