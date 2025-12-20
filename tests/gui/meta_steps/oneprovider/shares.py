@@ -125,7 +125,7 @@ def remove_current_share(
 @wt(parsers.parse('user of {browser_id} opens shares view of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_shares_view_of_given_space(
-    selenium, browser_id, oz_page, space_name, op_container, tmp_memory
+    selenium, browser_id, space_name, op_container, tmp_memory
 ):
     option = "Shares, Public Data"
     items_browser = "shares_browser"

@@ -50,7 +50,6 @@ def get_item_name_from_path(
     selenium,
     browser_id,
     space_name,
-    oz_page,
     op_container,
     tmp_memory,
     path,

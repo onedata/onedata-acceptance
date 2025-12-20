@@ -135,7 +135,7 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, di
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(
-    selenium, browser_id, elem_name, oz_page, clipboard, displays, popups
+    selenium, browser_id, elem_name, oz_page, clipboard, displays
 ):
     option = "Tokens"
     button = "Consume token"
@@ -221,7 +221,7 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
 
 
 def _create_token_of_type(
-    selenium, browser_id, token_type, oz_page, popups, iteration=None
+    selenium, browser_id, token_type, iteration=None
 ):
     button = "Create new token"
     token_name = f"{token_type}_token"
@@ -610,7 +610,6 @@ def _assert_token_configuration(
 def assert_token_caveats(
     selenium,
     browser_id,
-    oz_page,
     caveats,
     users,
     groups,
@@ -667,7 +666,7 @@ def assert_token_caveats(
 
 @wt(parsers.parse('user of {browser_id} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_token(selenium, browser_id, token_name, oz_page, popups):
+def revoke_token(selenium, browser_id, token_name):
     option = "Modify"
     action = "revoke"
 
@@ -680,7 +679,7 @@ def revoke_token(selenium, browser_id, token_name, oz_page, popups):
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
+def remove_token(selenium, browser_id, token_name, popups, modals):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -691,7 +690,7 @@ def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
+def remove_all_tokens(selenium, browser_id, oz_page, modals):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -765,7 +764,7 @@ def choose_and_revoke_token_in_oz_gui(
         "basic {template} template"
     )
 )
-def create_token_with_basic_template(selenium, browser_id, name, template, oz_page):
+def create_token_with_basic_template(selenium, browser_id, name, template):
     button = "Create new token"
 
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
@@ -901,7 +900,7 @@ def create_token_with_object_id(
 
 @wt(parsers.parse('user of {browser_id} copies token "{token_name}" from tokens page'))
 def copy_token_and_store_value(
-    selenium, browser_id, token_name, oz_page, clipboard, displays, tmp_memory
+    selenium, browser_id, token_name, clipboard, displays, tmp_memory
 ):
     option = "Tokens"
     click_on_option_in_the_sidebar(selenium, browser_id, option)

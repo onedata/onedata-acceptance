@@ -58,7 +58,6 @@ def invite_user_to_cluster(
     tmp_memory,
     displays,
     clipboard,
-    popups,
     modals,
 ):
     option = "Clusters"
@@ -99,7 +98,7 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_cluster(
-    selenium, browser_id, oz_page, onepanel, where, user_name, config
+    selenium, browser_id, onepanel, where, user_name, config
 ):
     member_type = "user"
     list_type = "users"
@@ -137,7 +136,6 @@ def add_group_to_cluster(
     hosts,
     group_name,
     cluster_name,
-    popups,
     tmp_memory,
     modals,
 ):
@@ -189,11 +187,9 @@ def no_member_in_parent(
     member_name,
     member_type,
     name,
-    oz_page,
     tmp_memory,
     onepanel,
     where,
-    popups,
 ):
     try:
         remove_member_from_parent(

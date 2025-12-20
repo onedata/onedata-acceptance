@@ -162,7 +162,7 @@ def see_files_with_order(selenium, browser_id, data_discovery, config):
     )
 )
 def open_data_discovery_of_harvester(
-    selenium, browser_id, harvester_name, data_discovery, oz_page
+    selenium, browser_id, harvester_name, data_discovery
 ):
     option = "Discovery"
     list_name = "harvesters"

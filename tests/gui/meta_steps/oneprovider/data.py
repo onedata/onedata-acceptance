@@ -378,7 +378,6 @@ def check_metadata_for_file_in_directory(
 def go_to_and_assert_browser(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     option_in_space,
     op_container,
@@ -807,7 +806,7 @@ def get_item_name_and_containing_dir_path(path):
         r' "(?P<space>.*)" space'
     )
 )
-def go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space):
+def go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space):
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
 
@@ -1153,7 +1152,6 @@ def click_and_press_enter_with_content_check(
 def get_file_id_from_details_modal(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,

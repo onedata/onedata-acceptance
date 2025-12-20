@@ -25,7 +25,6 @@ def fail_to_set_privileges_using_op_gui(
     config,
     selenium,
     onepanel,
-    oz_page,
 ):
     button = "Members"
     option = "fails to set"
@@ -56,7 +55,6 @@ def assert_privileges_in_space_using_op_gui(
     config,
     selenium,
     onepanel,
-    oz_page,
 ):
     option = "Members"
     list_type = "users"
@@ -78,7 +76,7 @@ def assert_privileges_in_space_using_op_gui(
 
 
 def fail_to_create_invitation_in_space_using_op_gui(
-    user, space_name, popups, modals, selenium, onepanel, oz_page
+    user, space_name, modals, selenium, onepanel
 ):
     option = "Members"
     button = "Invite user using token"
@@ -95,7 +93,7 @@ def fail_to_create_invitation_in_space_using_op_gui(
 
 
 def assert_not_user_in_space_using_op_gui(
-    user, space_name, member_name, selenium, onepanel, oz_page
+    user, space_name, member_name, selenium, onepanel
 ):
     option = "does not see"
     member_type = "user"
@@ -113,7 +111,7 @@ def assert_not_user_in_space_using_op_gui(
 
 
 def assert_group_in_space_using_op_gui(
-    selenium, user, space_name, oz_page, group_name, onepanel
+    selenium, user, space_name, group_name, onepanel
 ):
     option1 = "Members"
     option2 = "sees"

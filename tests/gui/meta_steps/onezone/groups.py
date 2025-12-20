@@ -52,7 +52,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
+def rename_group(selenium, browser_id, group, new_group, confirm_type):
     option = "Rename"
     text = new_group
 
@@ -67,7 +67,7 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_group(selenium, browser_id, group, oz_page, popups):
+def leave_group(selenium, browser_id, group):
     option = "Leave"
     modal = "LEAVE GROUP"
     modals = selenium["request"].getfixturevalue("modals")
@@ -93,7 +93,7 @@ def leave_user_groups_in_onezone_using_rest(hosts, users, user):
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium, browser_id, group_list, oz_page, popups):
+def remove_group(selenium, browser_id, group_list):
     option = "Remove"
     modal = "REMOVE GROUP"
     modals = selenium["request"].getfixturevalue("modals")
@@ -105,21 +105,21 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_groups_using_op_gui(selenium, browser_id, group_list, oz_page):
+def create_groups_using_op_gui(selenium, browser_id, group_list):
     for group in parse_seq(group_list):
         click_create_group_button_in_panel(selenium, browser_id)
         input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
-def see_groups_using_op_gui(selenium, user, oz_page, group_list):
+def see_groups_using_op_gui(selenium, user, group_list):
     option = "sees"
 
     for group in parse_seq(group_list):
         assert_group_exists(selenium, user, option, group)
 
 
-def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names, popups):
+def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names):
     confirm_type = "enter"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -127,7 +127,7 @@ def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names, p
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list):
+def fail_to_see_groups_using_op_gui(selenium, user, group_list):
     option = "does not see"
 
     for group in parse_seq(group_list):
@@ -139,7 +139,7 @@ def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
         leave_group(selenium, user, group, oz_page, popups)
 
 
-def _open_member_from_list(selenium, user, oz_page, parent, onepanel):
+def _open_member_from_list(selenium, user, parent, onepanel):
     where = "group"
     list_type = "users"
     subpage = "members"
@@ -177,14 +177,12 @@ def _create_group_token(
     selenium,
     user,
     user2,
-    oz_page,
     name,
     tmp_memory,
     displays,
     clipboard,
     member,
     onepanel,
-    popups,
 ):
     item_type = "token"
     where = "group"
@@ -307,7 +305,7 @@ def add_subgroups_using_op_gui(
 
 
 def remove_subgroups_using_op_gui(
-    selenium, user, oz_page, group_list, tmp_memory, parent, onepanel, popups
+    selenium, user, group_list, tmp_memory, parent, onepanel
 ):
     member_type = "group"
 

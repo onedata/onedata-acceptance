@@ -184,7 +184,7 @@ def wait_for_next_step_in_deployment(onepanel, driver, modals, next_step_num):
 
 @wt(parsers.parse("user of {browser_id} sees that cluster deployment has started"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
+def wt_assert_begin_of_cluster_deployment(selenium, browser_id):
     _ = Modals(selenium[browser_id]).cluster_deployment
 
 

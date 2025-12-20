@@ -171,7 +171,6 @@ def _create_archive(
     config,
     item_name,
     space_name,
-    oz_page,
     op_container,
     tmp_memory,
     modals,

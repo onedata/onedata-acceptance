@@ -322,7 +322,6 @@ def grant_acl_privileges_in_op_gui(
     tmp_memory,
     popups,
     space,
-    oz_page,
     modals,
 ):
     option_in_menu = "Data"

@@ -62,7 +62,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_workflow_using_gui(selenium, browser_id, oz_page, workflow_name):
+def create_workflow_using_gui(selenium, browser_id, workflow_name):
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
         selenium, browser_id, workflow_name
@@ -242,7 +242,6 @@ def execute_workflow_with_input_config(
 def _execute_workflow_with_input_config(
     browser_id,
     selenium,
-    oz_page,
     space,
     op_container,
     ordinal,
@@ -342,7 +341,6 @@ def _execute_workflow_with_input_config(
 def execute_workflow_and_wait(
     browser_id,
     selenium,
-    oz_page,
     space,
     op_container,
     ordinal,

@@ -43,7 +43,7 @@ def create_store_for_workflow(browser_id, config, selenium, oz_page, modals, pop
     _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups)
 
 
-def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups):
+def _create_store_for_workflow(browser_id, config, selenium, modals, popups):
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 

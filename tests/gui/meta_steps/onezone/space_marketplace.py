@@ -71,7 +71,7 @@ def configure_space_manually_without_saving(
 
 
 def _configure_space_manually(
-    browser_id, config, selenium, oz_page, popups, with_save=True
+    browser_id, config, selenium, with_save=True
 ):
     data = yaml.load(config, yaml.Loader)
 
@@ -158,7 +158,7 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, confi
     _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page)
 
 
-def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page):
+def _assert_space_in_marketplace_with_config(browser_id, config, selenium):
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"

@@ -212,7 +212,6 @@ def assert_qos_file_status_in_op_gui(
     space_name,
     tmp_memory,
     selenium,
-    oz_page,
     op_container,
     option,
 ):
@@ -236,7 +235,6 @@ def delete_qos_requirement_in_op_gui(
     selenium,
     user,
     space_name,
-    oz_page,
     modals,
     popups,
     file_name,

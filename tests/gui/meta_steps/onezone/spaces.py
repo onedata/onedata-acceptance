@@ -65,7 +65,7 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(
-    selenium, user, oz_page, space_list, spaces, popups, clipboard, displays
+    selenium, user, space_list, spaces, clipboard, displays
 ):
     option = "enter"
     button = "Create space"
@@ -91,7 +91,6 @@ def send_support_token_in_oz_using_gui(
     user,
     space_name,
     browser_id,
-    oz_page,
     tmp_memory,
     displays,
     clipboard,
@@ -115,7 +114,7 @@ def send_support_token_in_oz_using_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups, modals):
+def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
     where = "spaces"
     option = "Leave"
     confirmation_button = "Leave"
@@ -145,7 +144,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups, mo
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_spaces_in_oz_using_gui(
-    selenium, browser_id, space_list, oz_page, popups, modals
+    selenium, browser_id, space_list, modals
 ):
     where = "Data"
     option = "Remove"
@@ -162,7 +161,7 @@ def remove_spaces_in_oz_using_gui(
         click_modal_button(selenium, browser_id, option, modal, modals)
 
 
-def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, new_names_list):
+def rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list):
     where = "spaces"
     option = "enter"
     option_in_submenu = "overview"
@@ -181,7 +180,7 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, new_names
 
 
 def remove_provider_support_for_space_in_oz_using_gui(
-    selenium, user, space_name, onepanel, popups, hosts, modals
+    selenium, user, space_name, onepanel, popups, hosts
 ):
     sidebar = "CLUSTERS"
     record = "Spaces"
@@ -206,12 +205,10 @@ def invite_other_users_to_space_using_gui(
     user,
     space_name,
     user_list,
-    oz_page,
     tmp_memory,
     displays,
     clipboard,
     onepanel,
-    popups,
     modals,
 ):
     option = "spaces"
@@ -244,7 +241,6 @@ def invite_other_users_to_space_using_gui(
 def request_space_support_using_gui(
     selenium,
     user,
-    oz_page,
     space_name,
     tmp_memory,
     displays,
@@ -277,18 +273,18 @@ def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory):
         consume_received_token(selenium, user, oz_page, tmp_memory)
 
 
-def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):
+def assert_spaces_have_appeared_in_oz_gui(selenium, user, space_list):
     for space_name in parse_seq(space_list):
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
 
 
-def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list):
+def assert_there_are_no_spaces_in_oz_gui(selenium, user, space_list):
     for space_name in parse_seq(space_list):
         assert_space_has_disappeared_on_spaces(selenium, user, space_name)
 
 
 def assert_spaces_have_been_renamed_in_oz_gui(
-    selenium, user, oz_page, space_list, new_names_list
+    selenium, user, space_list, new_names_list
 ):
     for space_name, new_space_name in zip(
         parse_seq(space_list), parse_seq(new_names_list)
@@ -298,7 +294,7 @@ def assert_spaces_have_been_renamed_in_oz_gui(
 
 
 def assert_there_is_no_provider_for_space_in_oz_gui(
-    selenium, user, oz_page, space_name
+    selenium, user, space_name
 ):
     number = 0
 
@@ -306,7 +302,7 @@ def assert_there_is_no_provider_for_space_in_oz_gui(
 
 
 def assert_user_is_member_of_space_gui(
-    selenium, user, space_name, oz_page, user_list, onepanel
+    selenium, user, space_name, user_list, onepanel
 ):
     where = "Members"
     option = "sees"
@@ -329,7 +325,7 @@ def assert_user_is_member_of_space_gui(
 
 
 def assert_provider_does_not_support_space_in_oz_gui(
-    selenium, user, oz_page, space_name, provider_name, hosts
+    selenium, user, space_name, provider_name, hosts
 ):
     where = "spaces"
     option = "Providers"
@@ -402,12 +398,10 @@ def leave_user_spaces_in_onezone_using_rest(hosts, users, user):
 def add_harvester_to_existing_space(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     harvester_name,
     tmp_memory,
     modals,
-    popups,
 ):
     option = "Harvesters, Discovery"
     button_name = "add one of harvesters"
@@ -445,9 +439,7 @@ def add_group_to_space_or_group(
     group_name,
     where_name,
     selenium,
-    oz_page,
     onepanel,
-    popups,
     where,
     modals,
 ):
@@ -484,7 +476,7 @@ def add_group_to_space_or_group(
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(
-    browser_id, space_name, selenium, oz_page, onepanel, popups, modals
+    browser_id, space_name, selenium, onepanel, modals
 ):
     option = "spaces"
     option_in_space = "Members"

@@ -33,11 +33,9 @@ from tests.utils.bdd_utils import parsers, wt
 def assert_provider_has_name_and_hostname_in_oz_gui(
     selenium,
     user,
-    oz_page,
     provider_name,
     domain_provider,
     hosts,
-    popups,
     with_refresh=False,
     test_domain=False,
 ):
@@ -70,7 +68,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
 
 
 def assert_there_is_no_provider_in_oz_gui(
-    selenium, user, oz_page, provider_name, hosts
+    selenium, user, provider_name, hosts
 ):
     option = "Data"
 
@@ -101,7 +99,7 @@ def send_copied_invite_token_in_oz_gui(
     )
 )
 def revoke_support_of_provider_in_list(
-    selenium, browser_id, provider, oz_page, popups, modals, hosts
+    selenium, browser_id, provider, hosts
 ):
     driver = selenium[browser_id]
     button = "Cease support"

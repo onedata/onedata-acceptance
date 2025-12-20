@@ -30,7 +30,7 @@ def click_option_for_token_row_menu(driver, option):
     Popups(driver).menu_popup_with_text.menu[option.capitalize()]()
 
 
-def _click_on_btn_for_token(driver, token_name, btn, popups):
+def _click_on_btn_for_token(driver, token_name, btn):
     _open_menu_for_token(driver, token_name)
     click_option_for_token_row_menu(driver, btn)
 

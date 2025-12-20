@@ -128,7 +128,6 @@ def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_
 )
 def copy_named_token_if_gui(
     selenium,
-    oz_page,
     client,
     user,
     displays,
@@ -145,7 +144,7 @@ def copy_named_token_if_gui(
 
 
 @wt(parsers.parse("using web gui, {user} copies created token"))
-def copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory):
+def copy_token_gui(selenium, user, displays, clipboard, tmp_memory):
     click_copy_button_in_token_view(selenium, user)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
