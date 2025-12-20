@@ -82,7 +82,6 @@ def add_qos_requirement_in_modal(
     item_name,
     tmp_memory,
     expression,
-    oz_page,
     op_container,
     popups,
     space_name,
@@ -90,7 +89,7 @@ def add_qos_requirement_in_modal(
     replicas_number = 1
 
     go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space_name
+        selenium, browser_id, op_container, tmp_memory, space_name
     )
     _add_qos_requirement_in_modal(
         selenium,
@@ -119,14 +118,13 @@ def add_qos_requirement_in_modal_with_replicas(
     item_name,
     tmp_memory,
     expression,
-    oz_page,
     space_name,
     op_container,
     popups,
     replicas_number,
 ):
     go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space_name
+        selenium, browser_id, op_container, tmp_memory, space_name
     )
     _add_qos_requirement_in_modal(
         selenium,

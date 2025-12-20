@@ -40,7 +40,7 @@ def create_store_for_workflow(browser_id, config, selenium, oz_page, modals, pop
         type dropdown: List
         data type dropdown: Object
     """
-    _create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups)
+    _create_store_for_workflow(browser_id, config, selenium, modals, popups)
 
 
 def _create_store_for_workflow(browser_id, config, selenium, modals, popups):

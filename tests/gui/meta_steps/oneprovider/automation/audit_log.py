@@ -428,7 +428,6 @@ def assert_file_id_in_store_details(
     tmp_memory,
     file_list,
     popups,
-    oz_page,
     space_name,
     option,
 ):
@@ -460,7 +459,6 @@ def assert_file_id_in_store_details(
         get_file_id_from_details_modal(
             selenium,
             browser_id,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,
@@ -770,7 +768,6 @@ def compare_to_expected_if_element_exist_for_store(
             elem = get_file_id_from_details_modal(
                 selenium,
                 browser_id,
-                oz_page,
                 file_info[0],
                 op_container,
                 tmp_memory,
@@ -911,7 +908,6 @@ def compare_content_reason_of_task_audit_log(
                 get_file_id_from_details_modal(
                     selenium,
                     browser_id,
-                    oz_page,
                     placeholder_file_id[0],
                     op_container,
                     tmp_memory,
@@ -971,7 +967,6 @@ def compare_content_of_task_audit_log(
         item["fileId"] = get_file_id_from_details_modal(
             selenium,
             browser_id,
-            oz_page,
             file_id[0],
             op_container,
             tmp_memory,

@@ -129,7 +129,6 @@ def create_file_in_op(
             result,
             space,
             modals,
-            oz_page,
         )
     elif client_lower == "rest":
         create_file_in_op_rest(user, users, host, hosts, full_path, result)
@@ -286,7 +285,7 @@ def create_dir_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         if "/" in abs_path:
-            go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+            go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
             go_to_path_without_last_elem(
                 selenium, user, tmp_memory, abs_path, op_container
             )
@@ -301,7 +300,6 @@ def create_dir_in_op(
                 result,
                 space,
                 modals,
-                oz_page,
             )
             change_cwd_using_breadcrumbs_in_data_tab_in_op(
                 selenium, user, cwd, op_container
@@ -318,7 +316,6 @@ def create_dir_in_op(
                 result,
                 space,
                 modals,
-                oz_page,
             )
     elif client_lower == "rest":
         create_dir_in_op_rest(user, users, host, hosts, full_path, result)
@@ -336,7 +333,7 @@ def create_dir_in_op(
     )
 )
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
-    go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
     click_and_press_enter_on_item_in_browser(
         selenium, user, item_name, tmp_memory, op_container, "file browser"
     )
@@ -381,7 +378,6 @@ def see_item_in_op(
             op_container,
             result,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         see_items_in_op_rest(user, users, host, hosts, name, result, space)
@@ -1535,7 +1531,7 @@ def upload_local_file_to_op(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         upload_file_to_cwd_in_data_tab(
             selenium, user, path, tmpdir, op_container, popups
         )

@@ -167,7 +167,7 @@ def result_to_consume_token_for_elem(
     popups,
 ):
     add_element_with_copied_token(
-        selenium, browser_id, elem_name, oz_page, clipboard, displays, popups
+        selenium, browser_id, elem_name, oz_page, clipboard, displays
     )
     _result_to_consume_token(selenium, browser_id, result, modals)
 
@@ -246,10 +246,10 @@ def _create_token_of_type(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(
-    selenium, browser_id, number: int, token_type, oz_page, popups
+    selenium, browser_id, number: int, token_type
 ):
     for i in range(number):
-        _create_token_of_type(selenium, browser_id, token_type, oz_page, popups, i)
+        _create_token_of_type(selenium, browser_id, token_type, i)
 
 
 @wt(
@@ -597,7 +597,6 @@ def _assert_token_configuration(
         assert_token_caveats(
             selenium,
             browser_id,
-            oz_page,
             caveats,
             users,
             groups,
@@ -684,7 +683,7 @@ def remove_token(selenium, browser_id, token_name, popups, modals):
     button = "Remove"
     modal = "Remove token"
 
-    wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, popups)
+    wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -755,7 +754,7 @@ def choose_and_revoke_token_in_oz_gui(
     option = "Tokens"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
-    revoke_token(selenium, browser_id, token_name, oz_page, popups)
+    revoke_token(selenium, browser_id, token_name)
 
 
 @wt(
@@ -828,7 +827,7 @@ def _copy_object_id(
     modal = "File details"
 
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, user, name, space, tmp_memory, oz_page, op_container
+        selenium, user, name, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
     click_modal_button(selenium, user, button, modal, modals)

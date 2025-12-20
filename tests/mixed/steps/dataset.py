@@ -160,7 +160,6 @@ def assert_top_level_dataset_in_space_in_op(
         assert_top_level_dataset_in_space_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,
@@ -204,7 +203,6 @@ def remove_dataset_in_op(
         remove_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,
@@ -300,7 +298,6 @@ def check_dataset_structure_in_op(
             tmp_memory,
             tmpdir,
             space_name,
-            oz_page,
             which_browser="dataset browser",
         )
     elif client_lower == "rest":
@@ -389,7 +386,6 @@ def set_protection_flags_for_dataset(
         set_protection_flags_for_dataset_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,
@@ -485,7 +481,6 @@ def detach_dataset_in_op(
         detach_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,

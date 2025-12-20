@@ -134,7 +134,6 @@ def assert_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
             op_container,
             tmp_memory,
             option,
@@ -190,7 +189,6 @@ def remove_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
             op_container,
             tmp_memory,
             modals,
@@ -235,7 +233,6 @@ def assert_archive_with_option_in_op(
         assert_archive_with_option_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
             op_container,
             tmp_memory,

@@ -75,7 +75,7 @@ def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
             hosts,
         )
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
-        wt_assert_begin_of_cluster_deployment(selenium, browser_id, Modals)
+        wt_assert_begin_of_cluster_deployment(selenium, browser_id)
     else:
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
 

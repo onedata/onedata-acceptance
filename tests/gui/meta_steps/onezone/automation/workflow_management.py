@@ -228,7 +228,6 @@ def execute_workflow_with_input_config(
     _execute_workflow_with_input_config(
         browser_id,
         selenium,
-        oz_page,
         space,
         op_container,
         ordinal,

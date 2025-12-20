@@ -77,11 +77,9 @@ def create_task_using_previously_created_lambda(
         browser_id,
         config,
         selenium,
-        oz_page,
         lane_name,
         lambda_name,
         ordinal,
-        popups,
         which,
     )
 

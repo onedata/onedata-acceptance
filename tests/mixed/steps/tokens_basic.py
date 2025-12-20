@@ -117,7 +117,7 @@ def assert_token(
 @wt(parsers.parse("if {client} is web gui, {user} copies created token"))
 def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_memory):
     if client.lower() == "web gui":
-        copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory)
+        copy_token_gui(selenium, user, displays, clipboard, tmp_memory)
 
 
 @wt(parsers.parse('using {client}, {user} copies created token named "{token_name}"'))

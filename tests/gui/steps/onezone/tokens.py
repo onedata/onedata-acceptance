@@ -49,9 +49,9 @@ def click_on_token_on_tokens_list(selenium, browser_id, token_name):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, popups):
+def wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name):
     driver = selenium[browser_id]
-    _click_on_btn_for_token(driver, token_name, btn, popups)
+    _click_on_btn_for_token(driver, token_name, btn)
 
 
 @wt(

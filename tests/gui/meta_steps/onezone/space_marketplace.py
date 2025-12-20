@@ -23,7 +23,7 @@ from tests.utils.bdd_utils import parsers, wt
 @wt(
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
-def configure_space_manually(browser_id, config, selenium, oz_page, popups):
+def configure_space_manually(browser_id, config, selenium):
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -49,7 +49,7 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
             - science
         description: "space advertised in marketplace"
     """
-    _configure_space_manually(browser_id, config, selenium, oz_page, popups)
+    _configure_space_manually(browser_id, config, selenium)
 
 
 @wt(
@@ -66,7 +66,7 @@ def configure_space_manually_without_saving(
     Config format given in yaml is as in the previous function:
     """
     _configure_space_manually(
-        browser_id, config, selenium, oz_page, popups, with_save=False
+        browser_id, config, selenium, with_save=False
     )
 
 
@@ -155,7 +155,7 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, confi
 
     """
 
-    _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page)
+    _assert_space_in_marketplace_with_config(browser_id, config, selenium)
 
 
 def _assert_space_in_marketplace_with_config(browser_id, config, selenium):

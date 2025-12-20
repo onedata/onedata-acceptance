@@ -111,7 +111,6 @@ def create_dataset(
             selenium,
             browser_id,
             space_name,
-            oz_page,
             op_container,
             tmp_memory,
             item_name,
@@ -171,7 +170,6 @@ def fail_to_create_dataset_in_op_gui(
 def assert_top_level_dataset_in_space_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -183,7 +181,6 @@ def assert_top_level_dataset_in_space_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -211,7 +208,6 @@ def assert_top_level_dataset_in_space_in_op_gui(
 def remove_dataset_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -226,7 +222,6 @@ def remove_dataset_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -249,7 +244,6 @@ def remove_dataset_in_op_gui(
 def check_dataset_structure_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     config,
     op_container,
@@ -263,7 +257,6 @@ def check_dataset_structure_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -334,7 +327,6 @@ def check_effective_protection_flag(
 def set_protection_flags_for_dataset_in_op_gui(
     browser_id,
     selenium,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -349,7 +341,6 @@ def set_protection_flags_for_dataset_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -390,7 +381,6 @@ def set_protection_flags_for_dataset_in_op_gui(
 def detach_dataset_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -406,7 +396,6 @@ def detach_dataset_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -442,7 +431,6 @@ def assert_dataset_detached_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -485,7 +473,6 @@ def reattach_dataset_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,

@@ -271,11 +271,9 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
         assert_provider_has_name_and_hostname_in_oz_gui(
             selenium,
             user,
-            oz_page,
             provider_name,
             provider,
             hosts,
-            popups,
             with_refresh=True,
             test_domain=True,
         )
@@ -329,7 +327,7 @@ def assert_there_is_no_provider_in_oz(
     elif client.lower() == "web gui":
 
         assert_there_is_no_provider_in_oz_gui(
-            selenium, user, oz_page, provider_name, hosts
+            selenium, user, provider_name, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -363,7 +361,7 @@ def assert_provider_does_not_support_space_in_oz(
     elif client.lower() == "web gui":
 
         assert_provider_does_not_support_space_in_oz_gui(
-            selenium, user, oz_page, space_name, provider_name, hosts
+            selenium, user, space_name, provider_name, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -455,7 +453,6 @@ def request_space_support(
         request_space_support_using_gui(
             selenium,
             user,
-            oz_page,
             space_name,
             tmp_memory,
             displays,

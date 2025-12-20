@@ -71,7 +71,7 @@ def open_permission_modal(
     modal_name = "Details modal"
 
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory, oz_page, op_container
+        selenium, browser_id, path, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)

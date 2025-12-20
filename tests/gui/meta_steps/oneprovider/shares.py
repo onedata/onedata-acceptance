@@ -151,11 +151,10 @@ def open_single_share_view_by_sidebar(
     share_name,
     op_container,
     tmp_memory,
-    oz_page,
     space_name,
 ):
     open_shares_view_of_given_space(
-        selenium, browser_id, oz_page, space_name, op_container, tmp_memory
+        selenium, browser_id, space_name, op_container, tmp_memory
     )
     click_share_in_shares_browser(selenium, browser_id, share_name, op_container)
     change_shares_browser_to_file_browser(

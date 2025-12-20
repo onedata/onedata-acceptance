@@ -364,7 +364,7 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups, mo
     time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(
-            selenium, browser_id, space_name, oz_page, popups, modals
+            selenium, browser_id, space_name, oz_page
         )
     except RuntimeError:
         pass

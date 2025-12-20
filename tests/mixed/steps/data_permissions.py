@@ -80,7 +80,6 @@ def grant_acl_privileges_in_op(
             tmp_memory,
             popups,
             space,
-            oz_page,
             modals,
         )
     elif client_lower == "rest":

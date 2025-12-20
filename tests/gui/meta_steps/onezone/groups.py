@@ -119,11 +119,11 @@ def see_groups_using_op_gui(selenium, user, group_list):
         assert_group_exists(selenium, user, option, group)
 
 
-def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names):
+def rename_groups_using_op_gui(selenium, user, group_list, new_names):
     confirm_type = "enter"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_group(selenium, user, group, new_name, confirm_type, oz_page)
+        rename_group(selenium, user, group, new_name, confirm_type)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -134,9 +134,9 @@ def fail_to_see_groups_using_op_gui(selenium, user, group_list):
         assert_group_exists(selenium, user, option, group)
 
 
-def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
+def leave_groups_using_op_gui(selenium, user, group_list):
     for group in parse_seq(group_list):
-        leave_group(selenium, user, group, oz_page, popups)
+        leave_group(selenium, user, group)
 
 
 def _open_member_from_list(selenium, user, parent, onepanel):
@@ -149,11 +149,11 @@ def _open_member_from_list(selenium, user, parent, onepanel):
 
 
 def assert_subgroups_using_op_gui(
-    selenium, user, oz_page, group_list, parent, onepanel
+    selenium, user, group_list, parent, onepanel
 ):
     where = "group"
 
-    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
+    _open_member_from_list(selenium, user, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(
             selenium, user, group, parent, where, where, where
@@ -161,11 +161,11 @@ def assert_subgroups_using_op_gui(
 
 
 def fail_to_see_subgroups_using_op_gui(
-    selenium, user, oz_page, group_list, parent, onepanel
+    selenium, user, group_list, parent, onepanel
 ):
     where = "group"
 
-    _open_member_from_list(selenium, user, oz_page, parent, onepanel)
+    _open_member_from_list(selenium, user, parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(
             selenium, user, group, where, parent, where, where
@@ -226,14 +226,12 @@ def create_group_token_to_invite_user_using_op_gui(
         selenium,
         user,
         user2,
-        oz_page,
         name,
         tmp_memory,
         displays,
         clipboard,
         member,
         onepanel,
-        popups,
     )
 
 
@@ -241,7 +239,6 @@ def create_group_token_to_invite_group_using_op_gui(
     selenium,
     user,
     user2,
-    oz_page,
     name,
     tmp_memory,
     displays,
@@ -254,14 +251,12 @@ def create_group_token_to_invite_group_using_op_gui(
         selenium,
         user,
         user2,
-        oz_page,
         name,
         tmp_memory,
         displays,
         clipboard,
         member,
         onepanel,
-        popups,
     )
 
 
@@ -291,7 +286,6 @@ def add_subgroups_using_op_gui(
             selenium,
             user,
             user,
-            oz_page,
             parent,
             tmp_memory,
             displays,
@@ -300,7 +294,7 @@ def add_subgroups_using_op_gui(
             popups,
         )
         add_element_with_copied_token(
-            selenium, user, child, oz_page, clipboard, displays, popups
+            selenium, user, child, oz_page, clipboard, displays
         )
 
 
@@ -328,7 +322,7 @@ def fail_to_rename_groups_using_op_gui(
     text = "failed"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name, popups)
+        rename_groups_using_op_gui(selenium, user, group, new_name)
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 
@@ -348,7 +342,6 @@ def fail_to_add_subgroups_using_op_gui(
         selenium,
         user,
         user,
-        oz_page,
         parent,
         tmp_memory,
         displays,
@@ -362,7 +355,7 @@ def fail_to_add_subgroups_using_op_gui(
         modal = "error"
 
         add_element_with_copied_token(
-            selenium, user, child, oz_page, clipboard, displays, popups
+            selenium, user, child, oz_page, clipboard, displays
         )
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)

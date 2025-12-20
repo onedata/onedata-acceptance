@@ -43,7 +43,6 @@ def replicate_file_to_provider_op(
     selenium,
     popups,
     modals,
-    oz_page,
     op_container,
     tmp_memory,
 ):
@@ -61,7 +60,7 @@ def replicate_file_to_provider_op(
         )
     elif client.lower() == "web gui":
         result = "replicates"
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         replicate_file_to_provider(
             selenium, user, path, tmp_memory, provider_to, hosts, popups, modals, result
         )
@@ -87,7 +86,6 @@ def migrate_file_to_provider_op(
     selenium,
     popups,
     modals,
-    oz_page,
     op_container,
     tmp_memory,
 ):
@@ -106,7 +104,7 @@ def migrate_file_to_provider_op(
         )
     elif client.lower() == "web gui":
         result = "migrates"
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         migrate_file_to_provider(
             selenium,
             user,
@@ -140,7 +138,6 @@ def evict_file_to_provider_op(
     selenium,
     popups,
     modals,
-    oz_page,
     op_container,
     tmp_memory,
 ):
@@ -157,7 +154,7 @@ def evict_file_to_provider_op(
             evicting_provider=provider_from,
         )
     elif client.lower() == "web gui":
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         evict_file(
             selenium, user, provider_from, popups, path, tmp_memory, modals, hosts
         )

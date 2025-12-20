@@ -69,7 +69,7 @@ from tests.utils.utils import repeat_failed
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
-    selenium, browser_id, path, space, tmp_memory, oz_page, op_container
+    selenium, browser_id, path, space, tmp_memory, op_container
 ):
     item_name, _ = get_item_name_and_containing_dir_path(path)
 
@@ -82,7 +82,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, RuntimeError, StaleElementReferenceException):
         go_to_filebrowser(
-            selenium, browser_id, oz_page, op_container, tmp_memory, space
+            selenium, browser_id, op_container, tmp_memory, space
         )
         # TODO VFS-12315 remove sleep in acc tests
         time.sleep(0.5)
@@ -233,7 +233,6 @@ def see_items_in_op_gui(
     op_container,
     res,
     space,
-    oz_page,
 ):
     selenium[browser_id].refresh()
 
@@ -251,7 +250,7 @@ def see_items_in_op_gui(
         )
     except NoSuchElementException:
         go_to_filebrowser(
-            selenium, browser_id, oz_page, op_container, tmp_memory, space
+            selenium, browser_id, op_container, tmp_memory, space
         )
 
     if path:
@@ -284,7 +283,6 @@ def create_item_in_op_gui(
     res,
     space,
     modals,
-    oz_page,
 ):
     # change None to empty string if path not given
     path = path.lstrip("/") if path else ""
@@ -303,7 +301,7 @@ def create_item_in_op_gui(
         _open_menu_for_item_in_file_browser()
     except (RuntimeError, KeyError):
         go_to_filebrowser(
-            selenium, browser_id, oz_page, op_container, tmp_memory, space
+            selenium, browser_id, op_container, tmp_memory, space
         )
         _open_menu_for_item_in_file_browser()
 
@@ -410,7 +408,6 @@ def assert_space_content_in_op_gui(
     tmp_memory,
     tmpdir,
     space_name,
-    oz_page,
     which_browser="file browser",
 ):
     try:
@@ -424,7 +421,6 @@ def assert_space_content_in_op_gui(
         go_to_and_assert_browser(
             selenium,
             user,
-            oz_page,
             space_name,
             option_in_space,
             op_container,
@@ -492,7 +488,7 @@ def assert_file_content_in_op_gui(
         )
         go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         go_to_path_without_last_elem(selenium, user, tmp_memory, path, op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     click_and_press_enter_on_item_in_browser(
@@ -572,7 +568,6 @@ def _create_item(
             "succeeds",
             space,
             modals,
-            oz_page,
         )
     else:
         upload_file_to_op_gui(
@@ -655,7 +650,7 @@ def _create_content(
 def successfully_upload_file_to_op_gui(
     path, selenium, browser_id, space, op_container, tmp_memory, oz_page, popups
 ):
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container, popups)
     assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
 
@@ -685,7 +680,7 @@ def upload_file_to_op_gui(
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(
-            selenium, browser_id, oz_page, op_container, tmp_memory, space
+            selenium, browser_id, op_container, tmp_memory, space
         )
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     if res == "succeeds":
@@ -836,7 +831,7 @@ def open_modal_for_file_browser_item(
     op_container,
 ):
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory, oz_page, op_container
+        selenium, browser_id, path, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -1023,7 +1018,7 @@ def _create_link_in_file_browser(
 ):
     if go_to_file_browser:
         go_to_filebrowser(
-            selenium, browser_id, oz_page, op_container, tmp_memory, space
+            selenium, browser_id, op_container, tmp_memory, space
         )
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium,
@@ -1031,7 +1026,6 @@ def _create_link_in_file_browser(
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
     )
     # TODO VFS-12315 remove sleep in acc tests
@@ -1065,7 +1059,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     # At the end of the function, user always goes back to main space
     # directory (go_to_file_browser is executed)
 
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
 
     source_parent_path = "/".join(source_path.split("/")[:-1])
 
@@ -1122,7 +1116,7 @@ def copy_object_id_to_tmp_memory(
     if modal == "Directory Details":
         modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, user, name, space, tmp_memory, oz_page, op_container
+        selenium, user, name, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
     click_modal_button(selenium, user, button, modal, modals)
@@ -1287,7 +1281,7 @@ def copy_show_or_download_link_from_file_details_modal(
     button = f"{link_type} link"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory, oz_page, op_container
+        selenium, browser_id, path, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
     click_modal_button(selenium, browser_id, button, modal, modals)

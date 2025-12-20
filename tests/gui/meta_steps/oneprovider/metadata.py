@@ -376,7 +376,7 @@ def open_filebrowser_and_remove_meta(
     button = "Save"
     option = "Metadata"
 
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
