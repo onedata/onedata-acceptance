@@ -25,6 +25,7 @@ from tests.utils.utils import repeat_failed
 def select_columns_to_be_visible_in_browser(
     selenium, browser_id, columns, which_browser, tmp_memory, popups
 ):
+    # This function enables the selected columns and disables the rest.
     option_select = "select"
     option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -56,7 +57,6 @@ def change_visibility_for_xattr_columns(
 ):
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
-    # The previous function enables the selected columns and disables the rest.
 
     option_select = "select"
     option_unselect = "unselect"
@@ -111,7 +111,7 @@ def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, p
         r" browser|archive browser|dataset browser) table"
     )
 )
-def modify_label_for_xattr_column_in_columns_menu(
+def modify_props_of_xattr_column_in_columns_menu(
     selenium, browser_id, which_browser, tmp_memory, popups, name, elem, new_elem_name
 ):
 

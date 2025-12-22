@@ -556,9 +556,10 @@ def assert_value_in_column_for_item(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" (?P<res>has|does not have) "(?P<value>.*)" value in xattr'
-        r" column "
-        r"in (?P<which_browser>archive file browser|file browser)"
+        r'"(?P<item_name>.*)" (?P<res>has|does not have)'
+        r' "(?P<value>.*)" value in xattr'
+        r" column in (?P<which_browser>archive file browser|"
+        r"file browser)"
     )
 )
 def assert_value_in_xattr_column_for_item(

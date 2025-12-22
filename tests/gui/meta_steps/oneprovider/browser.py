@@ -16,10 +16,9 @@ from tests.utils.bdd_utils import parsers, wt
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new xattr column with "(?P<key_name>.*)"'
-        r" key in "
-        r"(?P<which_browser>file browser|archive browser|"
-        r"dataset browser) table"
+        r"user of (?P<browser_id>.*) creates new xattr column with "
+        r'"(?P<key_name>.*)" key in (?P<which_browser>file browser|'
+        r"archive browser|dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
@@ -32,10 +31,10 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new xattr column with "(?P<key_name>.*)"'
-        r" key and"
-        r' "(?P<label_name>.*)" column label in (?P<which_browser>file'
-        r" browser|archive browser|dataset browser) table"
+        r"user of (?P<browser_id>.*) creates new xattr column with"
+        r' "(?P<key_name>.*)" key and "(?P<label_name>.*)" column label'
+        r" in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
@@ -85,10 +84,10 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column named"
-        r' "(?P<name>.*)"'
-        r" in columns configuration popover in (?P<which_browser>file"
-        r" browser|archive browser|dataset browser) table"
+        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column"
+        r' named"(?P<name>.*)" in columns configuration popover'
+        r" in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
     )
 )
 def assert_xattr_column_presence(
