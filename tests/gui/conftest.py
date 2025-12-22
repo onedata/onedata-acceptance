@@ -481,6 +481,11 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
         yield [os.environ.get("DISPLAY", "DUMMY_DISPLAY")]
 
 
+@fixture(scope="session")
+def should_record():
+    return True
+
+
 # ============================================================================
 # Miscellaneous.
 # ============================================================================
