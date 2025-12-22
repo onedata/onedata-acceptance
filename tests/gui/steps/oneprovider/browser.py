@@ -536,8 +536,7 @@ def click_tag_for_elem_in_browser(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
         r'"(?P<item_name>.*)" has \'(?P<value>.*)\' value in'
-        r" (?P<option>json)"
-        r" column "
+        r" (?P<option>json) column "
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
@@ -545,8 +544,7 @@ def click_tag_for_elem_in_browser(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
         r'"(?P<item_name>.*)" has "(?P<value>.*)" value in'
-        r" (?P<option>xattr)"
-        r" column "
+        r" (?P<option>xattr) column "
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )

@@ -82,7 +82,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | Directory details  | dir1  |
 
 
-  Scenario Outline: User sets nested json metadata for item and can see that it is properly displayed in json column
+  Scenario Outline: User successfully creates new json column displaying the whole json
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
@@ -118,7 +118,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | dir1  |
   
 
-  Scenario Outline: User sets nested metadata for item and then creates json column of type query
+  Scenario Outline: User creates json column of type query
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 

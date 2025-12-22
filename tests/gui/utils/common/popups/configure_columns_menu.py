@@ -61,7 +61,7 @@ class JsonMode(PageObject):
 
 
 class NewJsonColumn(PageObject):
-    enter_json_key = WebElement(".autocomplete-dropdown-field-trigger")
+    json_key = WebElement(".autocomplete-dropdown-field-trigger")
     column_label = WebElement(".columnLabel-field input")
     query = WebElement(".jsonQuery-field input")
 
@@ -73,6 +73,8 @@ class NewJsonColumn(PageObject):
         ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(
             Keys.CONTROL
         ).key_down(Keys.BACKSPACE).perform()
+        # Using send_keys(Keys.CONTROL, "a", Keys.BACKSPACE) does not work reliably
+        # in this case, so ActionChains are used instead.
 
 
 class ConfigureColumnsMenu(PageObject):

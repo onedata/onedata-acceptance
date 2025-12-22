@@ -88,9 +88,8 @@ def create_xattr_columns_in_columns_menu_in_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) (?P<res>sees|does not see) (?P<option>xattr|json)"
-        r" column named"
-        r' "(?P<name>.*)"'
-        r" in columns configuration popover in (?P<which_browser>file"
+        r' column named "(?P<name>.*)" in '
+        r"columns configuration popover in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
     )
 )
@@ -122,9 +121,9 @@ def assert_column_presence(
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) creates new json column with "Whole'
-        r' document" mode and'
-        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
-        r" browser|archive browser|dataset browser) table"
+        r' document" mode and "(?P<label_name>.*)" custom label'
+        r" in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
     )
 )
 def wt_create_json_column_for_whole_document_with_label(
@@ -133,7 +132,7 @@ def wt_create_json_column_for_whole_document_with_label(
     which_browser,
     tmp_memory,
     popups,
-    label_name: str,
+    label_name,
 ):
     create_json_column_in_columns_menu(
         selenium,
@@ -141,27 +140,26 @@ def wt_create_json_column_for_whole_document_with_label(
         tmp_memory,
         which_browser,
         popups,
-        None if label_name.lower() == "no" else label_name,
+        label_name,
         "whole document",
+        option=None,
     )
 
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with "Extract'
-        r' key" mode for "(?P<key_name>.*)" key and with'
-        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
-        r" browser|archive browser|dataset browser) table"
+        r'user of (?P<browser_id>.*) creates new json column with "Whole'
+        r' document" mode in (?P<which_browser>file browser|'
+        r"archive browser|dataset browser) table"
     )
 )
-def wt_create_json_column_for_extract_key_with_label(
+def wt_create_json_column_for_whole_document(
     selenium,
     browser_id,
     which_browser,
     tmp_memory,
     popups,
-    label_name: str,
-    key_name: str,
+    label_name,
 ):
     create_json_column_in_columns_menu(
         selenium,
@@ -169,28 +167,38 @@ def wt_create_json_column_for_extract_key_with_label(
         tmp_memory,
         which_browser,
         popups,
-        None if label_name.lower() == "no" else label_name,
-        "extract key",
-        key_name=key_name,
+        label_name,
+        "whole document",
+        option=None,
     )
 
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) creates new json column with "Query"'
-        r' mode for "(?P<query>.*)" query and with'
+        r"user of (?P<browser_id>.*) creates new json column with"
+        r' "(?P<mode>Extract key)" mode for "(?P<option>.*)" key and with'
         r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
 )
-def wt_create_json_column_for_query_with_label(
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) creates new json column with"
+        r' "(?P<mode>Query)" mode'
+        r' for "(?P<option>.*)" query and with'
+        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def wt_create_json_column_for_query_or_key_with_label(
     selenium,
     browser_id,
     tmp_memory,
     which_browser,
     popups,
-    query: str,
     label_name: str,
+    mode: str,
+    option: str,
 ):
     create_json_column_in_columns_menu(
         selenium,
@@ -198,9 +206,40 @@ def wt_create_json_column_for_query_with_label(
         tmp_memory,
         which_browser,
         popups,
-        None if label_name.lower() == "no" else label_name,
-        "query",
-        query=query,
+        label_name,
+        mode.lower(),
+        option=option,
+    )
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) creates new json column with"
+        r' "(?P<mode>Extract key)" mode for "(?P<option>.*)" key'
+        r" in (?P<which_browser>file"
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) creates new json column with"
+        r' "(?P<mode>Query)" mode'
+        r' for "(?P<option>.*)" query in (?P<which_browser>file'
+        r" browser|archive browser|dataset browser) table"
+    )
+)
+def wt_create_json_column_for_query_or_key(
+    selenium, browser_id, tmp_memory, which_browser, popups, mode: str, option: str
+):
+    create_json_column_in_columns_menu(
+        selenium,
+        browser_id,
+        tmp_memory,
+        which_browser,
+        popups,
+        None,
+        mode.lower(),
+        option=option,
     )
 
 
@@ -212,7 +251,7 @@ def create_json_column_in_columns_menu(
     popups,
     label_name: str | None,
     mode: str,
-    **kwargs,
+    option,
 ):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -233,10 +272,10 @@ def create_json_column_in_columns_menu(
     mode = mode.lower()
     if mode == "query":
         new_json_col.query.clear()
-        new_json_col.query.send_keys(kwargs["query"])
+        new_json_col.query.send_keys(option)
     elif mode == "extract key":
-        new_json_col.enter_json_key.click()
-        popups(driver).dropdown.options[kwargs["key_name"]].click()
+        new_json_col.json_key.click()
+        popups(driver).dropdown.options[option].click()
 
     if label_name:
         new_json_col.column_label.clear()
@@ -251,8 +290,8 @@ def create_json_column_in_columns_menu(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) copies content of json column"
-        r" for item \"(?P<item_name>.*)\" and sees that it is equal to '(?P<value>.*)'"
-        r" in (?P<which_browser>file"
+        r' for item "(?P<item_name>.*)" and sees that it is equal to'
+        r" '(?P<value>.*)' in (?P<which_browser>file"
         r" browser|archive browser|dataset browser)"
     )
 )
@@ -301,22 +340,16 @@ def modify_json_column_in_columns_menu(
     popups,
 ):
     """
-    config is a list of changes to be applied sequentially.
+    Config is a list of changes applied sequentially.
 
-    For example, suppose we have a column with:
-        label: col1
-        mode: "Whole document"
+    Each item in the list may contain the following optional fields:
+    - mode:   New column mode
+    - key:    New column key
+    - label:  New column label
 
-    If we apply the following configuration:
-        mode: "extract key"
-        label: col2
-        key: key1
-
-    Then the column will:
-    - switch to "extract key" mode
-    - be renamed to col2
-    - contain the value extracted from the key "key1"
+    Only provided fields are updated.
     """
+
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
 
@@ -337,7 +370,7 @@ def modify_json_column_in_columns_menu(
             modify_json_column.column_label.clear()
             modify_json_column.column_label.send_keys(new_option_name)
         elif option == "key":
-            enter_key = modify_json_column.enter_json_key
+            enter_key = modify_json_column.json_key
             enter_key.click()
             modify_json_column.clear_actual_key(driver)
             popups(driver).dropdown.options[new_option_name].click()
