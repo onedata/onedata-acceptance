@@ -535,7 +535,7 @@ def click_tag_for_elem_in_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that "
-        r'"item named "(?P<item_name>.*)"'
+        r'item named "(?P<item_name>.*)"'
         r" has '(?P<value>.*)' value in"
         r" (?P<option>json) column "
         r"in (?P<which_browser>archive file browser|file browser)"
@@ -577,8 +577,8 @@ def assert_value_in_column_for_item(
 
     if option == "json":
         value = sort_json_from_string(value)
-        
-        if not item_elem.endswith("…"): # JSON text may be truncated in the UI
+
+        if not item_elem.endswith("…"):  # JSON text may be truncated in the UI
             item_elem = json.loads(item_elem.replace("\n", ""))
         else:
             displayed = item_elem.removesuffix("…").replace("\n", "").strip()
