@@ -85,7 +85,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column"
-        r' named"(?P<name>.*)" in columns configuration popover'
+        r' named "(?P<name>.*)" in columns configuration popover'
         r" in (?P<which_browser>file browser|archive browser|"
         r"dataset browser) table"
     )

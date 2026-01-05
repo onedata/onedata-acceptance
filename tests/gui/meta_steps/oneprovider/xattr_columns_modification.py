@@ -15,10 +15,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) enables only (?P<columns>.*) "
-        "columns? in columns configuration popover in "
-        "(?P<which_browser>file browser|archive browser|"
-        "dataset browser) table"
+        r"user of (?P<browser_id>.*) enables only (?P<columns>.*) "
+        r"columns? in columns configuration popover in "
+        r"(?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -158,7 +158,6 @@ def modify_existing_xattr_entry(
     entry = modal.xattrs.entries[attr_name]
 
     if entry_elem == "key":
-        entry.edit_existing_key.click()
         edit_xattr_entry_key(entry, new_text)
     elif entry_elem == "value":
         entry.value = new_text

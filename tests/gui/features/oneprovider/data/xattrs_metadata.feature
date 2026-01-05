@@ -183,16 +183,21 @@ Feature: Basic files tab operations on directory xattrs metadata in file browser
     And user of browser sees that item named "dir1" has "val" value in xattr column in file browser
 
 
-  Scenario: User successfully modifies key and value of xattr entry
+  Scenario Outline: User successfully modifies key and value of xattr entry
     When user of browser opens file browser for "space1" space
-    And user of browser clicks on "Metadata" in context menu for "file1"
-    And user of browser sees that "File details" modal is opened on "Metadata" tab
+    And user of browser clicks on "Metadata" in context menu for "<item>"
+    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds xattr entry with key "attr" and value "val"
     And user of browser sees xattr metadata entry with key "attr" and value "val"
 
     Then user of browser modifies key field by typing "aaaa" for exisiting xattr metadata entry with "attr" key
     And user of browser modifies value field by typing "bbbb" for exisiting xattr metadata entry with "aaaa" key
     And user of browser sees xattr metadata entry with key "aaaa" and value "bbbb"
+
+    Examples:
+    | modal              | item  |
+    | File details       | file1 |
+    | Directory details  | dir1  |
 
 
   Scenario Outline: User modifies key for xattr entry and label for xattr column, that was initialized for previous entry
