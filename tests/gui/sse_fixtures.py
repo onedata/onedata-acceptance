@@ -17,6 +17,8 @@ from concurrent.futures._base import CancelledError
 
 class MonitorEntry(NamedTuple):
     monitor: SpaceFilesMonitorClientImpl
+    # Future representing the background execution of monitor.run()
+    # used for cancellation and graceful shutdown.
     future: asyncio.Future
 
 

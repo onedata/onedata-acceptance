@@ -10,14 +10,14 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import NoReturn
+from typing import NoReturn, Final
 
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
 
-INITIAL_BACKOFF_TIMEOUT: int = 1
-MAX_BACKOFF_TIMEOUT: int = 60
-BACKOFF_INCREASE_FACTOR: int = 2
+INITIAL_BACKOFF_TIMEOUT: Final[int] = 1
+MAX_BACKOFF_TIMEOUT: Final[int] = 60
+BACKOFF_INCREASE_FACTOR: Final[int] = 2
 
 
 class SSEEvent(Enum):
@@ -62,8 +62,6 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         """
         Main loop
         """
-        max_backoff: int = MAX_BACKOFF_TIMEOUT
-        backoff_increase_factor: int = BACKOFF_INCREASE_FACTOR
         loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         while True:
             try:
@@ -83,7 +81,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 except asyncio.CancelledError:
                     print("Cancelled during backoff sleep, shutting down")
                     break
-                self.backoff = min(self.backoff * backoff_increase_factor, max_backoff)
+                self.backoff = min(self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT)
 
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
@@ -132,7 +130,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             print(f"Cannot decode data: {data_raw!r}")
             return
 
-        # Only put heartbeat event to the queue
+        # Only put heartbeat event to the queue as event id is saved above
         if event_type == SSEEvent.HEARTBEAT.value:
             await self.heartbeat_events.put(
                 (

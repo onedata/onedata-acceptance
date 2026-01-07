@@ -238,18 +238,18 @@ def get_file_action_in_observed_directory(
 ):
     monitor: SpaceFilesMonitorClientImpl = tmp_memory["monitor"]
     if file_action == ObservedFileAction.CREATION:
-        monitor_object = monitor.created_file_ids
+        coroutine = monitor.created_file_ids.get()
     elif file_action == ObservedFileAction.DELETION:
-        monitor_object = monitor.deleted_file_ids
+        coroutine = monitor.deleted_file_ids.get()
     elif file_action == ObservedFileAction.CHANGED_OR_CREATED:
-        monitor_object = monitor.changed_or_created_events
+        coroutine = monitor.changed_or_created_events.get()
     elif file_action == ObservedFileAction.HEARTBEAT:
-        monitor_object = monitor.heartbeat_events
+        coroutine = monitor.heartbeat_events.get()
     else:
         raise AssertionError(f"file action: {file_action} not found")
 
     future = asyncio.run_coroutine_threadsafe(
-        monitor_object.get(),
+        coroutine,
         async_loop_in_thread,
     )
     try:
@@ -287,12 +287,13 @@ def stop_last_file_monitor(
 def start_last_file_monitor(
     monitors: list[MonitorEntry], async_loop_in_thread: asyncio.AbstractEventLoop
 ):
-    monitors[-1].monitor.last_event_id = monitors[-1].monitor.first_event_id
+    last_monitor: SpaceFilesMonitorClientImpl = monitors[-1].monitor
+    last_monitor.last_event_id = last_monitor.first_event_id
     future = asyncio.run_coroutine_threadsafe(
-        monitors[-1].monitor.run(),
+        last_monitor.run(),
         async_loop_in_thread,
     )
     monitors[-1] = MonitorEntry(
-        monitor=monitors[-1].monitor,
+        monitor=last_monitor,
         future=future,
     )
