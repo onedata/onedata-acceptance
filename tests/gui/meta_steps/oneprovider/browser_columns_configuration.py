@@ -50,7 +50,7 @@ def select_columns_to_be_visible_in_browser(
         r"dataset browser) table"
     )
 )
-def change_visibility_for_xattr_columns(
+def change_visibility_for_browser_columns(
     selenium, browser_id, res, columns, which_browser, tmp_memory, popups
 ):
     # This function updates only the specified columns (enable/disable).
