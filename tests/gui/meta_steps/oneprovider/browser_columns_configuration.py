@@ -1,4 +1,4 @@
-"""Meta steps for xattr columns modification"""
+"""Meta steps for browser columns configuration"""
 
 __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
