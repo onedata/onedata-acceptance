@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
@@ -213,3 +214,35 @@ def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
     item_status = modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f"{item_status} does not match expected {text}"
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) modifies (?P<entry_elem>key|value)"
+        r' field by typing "(?P<new_text>.*)" for exisiting'
+        r' xattr metadata entry with "(?P<attr_name>.*)" key'
+    )
+)
+def modify_existing_xattr_entry(
+    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name: str
+):
+    driver = selenium[browser_id]
+    modal = modals(driver).details_modal.metadata
+    entry_elem = entry_elem.lower()
+    entry = modal.xattrs.entries[attr_name]
+
+    if entry_elem == "key":
+        edit_xattr_entry_key(entry, new_text)
+    elif entry_elem == "value":
+        entry.value = new_text
+
+    modal.xattrs.click_on_background_in_xattrs_panel()
+
+
+def edit_xattr_entry_key(entry, new_key):
+    entry.edit_existing_key.click()
+    time.sleep(0.5)
+    # this sleep is necessary, because there is small delay between
+    # clicking edit icon and user being able to write new key
+    entry.press_backspace_to_delete_selected()
+    entry.edit_key = new_key

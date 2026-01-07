@@ -4,8 +4,6 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import time
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import parse_seq, transform
@@ -140,35 +138,3 @@ def modify_props_of_xattr_column_in_columns_menu(
 
     # hide columns menu popup
     browser.configure_columns.click()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.+?) modifies (?P<entry_elem>key|value)"
-        r' field by typing "(?P<new_text>.*)" for exisiting'
-        r' xattr metadata entry with "(?P<attr_name>.*)" key'
-    )
-)
-def modify_existing_xattr_entry(
-    selenium, modals, browser_id, entry_elem: str, new_text: str, attr_name: str
-):
-    driver = selenium[browser_id]
-    modal = modals(driver).details_modal.metadata
-    entry_elem = entry_elem.lower()
-    entry = modal.xattrs.entries[attr_name]
-
-    if entry_elem == "key":
-        edit_xattr_entry_key(entry, new_text)
-    elif entry_elem == "value":
-        entry.value = new_text
-
-    modal.xattrs.click_on_background_in_xattrs_panel()
-
-
-def edit_xattr_entry_key(entry, new_key):
-    entry.edit_existing_key.click()
-    time.sleep(0.5)
-    # this sleep is necessary, because there is small delay between
-    # clicking edit icon and user being able to write new key
-    entry.press_backspace_to_delete_selected()
-    entry.edit_key = new_key

@@ -101,15 +101,13 @@ def assert_xattr_column_presence(
     )
 
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
-    if name in [col.name for col in columns_menu]:
-        if res == "sees":
-            browser.configure_columns.click()
-            return
-        raise AssertionError(
-            f"An xattr column named '{name}' exists, but it was expected not to."
-        )
 
-    if res == "sees":
+    if name in [col.name for col in columns_menu]:
+        if res == "does not see":
+            raise AssertionError(
+                f"An xattr column named '{name}' exists, but it was expected not to."
+            )
+    elif res == "sees":
         raise AssertionError(f"An xattr column with name: {name} does not exist")
     browser.configure_columns.click()
 

@@ -582,8 +582,7 @@ def assert_value_in_xattr_column_for_item(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" has no xattr'
-        r" column "
+        r'"(?P<item_name>.*)" has no xattr column '
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
