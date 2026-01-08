@@ -39,7 +39,7 @@ class ColumnOption(PageObject):
         ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()
 
 
-class AddOrModifyXattrColumn(PageObject):
+class XattrColumnEditor(PageObject):
     enter_an_xattr_key = WebElement(
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
@@ -60,7 +60,7 @@ class JsonMode(PageObject):
     query = Button(".clickable.option-query .one-way-radio-control")
 
 
-class NewJsonColumn(PageObject):
+class JsonColumnEditor(PageObject):
     json_key = WebElement(".autocomplete-dropdown-field-trigger")
     column_label = WebElement(".columnLabel-field input")
     query = WebElement(".jsonQuery-field input")
@@ -84,5 +84,5 @@ class ConfigureColumnsMenu(PageObject):
     choose_xattr = Button(".clickable.option-xattr")
     choose_json = Button(".clickable.option-json")
 
-    new_xattr_column = WebItem(".column-editor", cls=AddOrModifyXattrColumn)
-    new_json_column = WebItem(".column-editor", cls=NewJsonColumn)
+    new_xattr_column = WebItem(".column-editor", cls=XattrColumnEditor)
+    new_json_column = WebItem(".column-editor", cls=JsonColumnEditor)

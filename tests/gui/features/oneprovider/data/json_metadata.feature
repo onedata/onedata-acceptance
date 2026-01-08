@@ -149,3 +149,42 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | item  |
     | file1 |
     | dir1  |
+
+  
+  Scenario Outline: User creates json column and hides its visibility
+    When user of browser opens file browser for "space1" space
+    And user of browser enables only [] column in columns configuration popover in file browser table
+
+    And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
+    And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
+    And user of browser enables only ["aaaa"] column in columns configuration popover in file browser table
+    And user of browser sees json column named "aaaa" in columns configuration popover in file browser table
+
+    And user of browser enables only [] column in columns configuration popover in file browser table
+    Then user of browser does not see json column named "aaaa" in columns configuration popover in file browser table
+
+    Examples:
+    | item  |
+    | file1 |
+    | dir1  |
+  
+
+  Scenario Outline: User creates json column with mode Whole document and changes it to mode Extract key
+    When user of browser opens file browser for "space1" space
+    And user of browser enables only [] column in columns configuration popover in file browser table
+
+    And user of browser adds and saves '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' JSON metadata for "<item>"
+
+    And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
+    And user of browser enables only ["aaaa"] column in columns configuration popover in file browser table
+
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it as follows:
+      mode: Extract key
+      key: key1
+
+    Then user of browser copies content of json column for item "<item>" and sees that it is equal to '"val1"' in file browser
+
+    Examples:
+    | item  |
+    | file1 |
+    | dir1  |

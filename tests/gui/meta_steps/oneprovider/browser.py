@@ -104,16 +104,12 @@ def assert_column_presence(
     )
 
     columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
-    for col in columns_menu:
-        if col.name == name:
-            if res == "sees":
-                browser.configure_columns.click()
-                return
+    if name in [col.name for col in columns_menu]:
+        if res == "does not see":
             raise AssertionError(
                 f"An xattr column named '{name}' exists, but it was expected not to."
             )
-
-    if res == "sees":
+    elif res == "sees":
         raise AssertionError(f"An xattr column with name: {name} does not exist")
     browser.configure_columns.click()
 
@@ -159,7 +155,6 @@ def wt_create_json_column_for_whole_document(
     which_browser,
     tmp_memory,
     popups,
-    label_name,
 ):
     create_json_column_in_columns_menu(
         selenium,
@@ -167,7 +162,7 @@ def wt_create_json_column_for_whole_document(
         tmp_memory,
         which_browser,
         popups,
-        label_name,
+        None,
         "whole document",
         option=None,
     )
@@ -176,16 +171,8 @@ def wt_create_json_column_for_whole_document(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) creates new json column with"
-        r' "(?P<mode>Extract key)" mode for "(?P<option>.*)" key and with'
-        r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
-        r" browser|archive browser|dataset browser) table"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) creates new json column with"
-        r' "(?P<mode>Query)" mode'
-        r' for "(?P<option>.*)" query and with'
+        r' "(?P<mode>Extract key|Query)" mode for "(?P<option>.*)" '
+        r"(?P<input_type>key|query) and with"
         r' "(?P<label_name>.*)" custom label in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
     )
@@ -215,16 +202,9 @@ def wt_create_json_column_for_query_or_key_with_label(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) creates new json column with"
-        r' "(?P<mode>Extract key)" mode for "(?P<option>.*)" key'
-        r" in (?P<which_browser>file"
-        r" browser|archive browser|dataset browser) table"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) creates new json column with"
-        r' "(?P<mode>Query)" mode'
-        r' for "(?P<option>.*)" query in (?P<which_browser>file'
+        r' "(?P<mode>Query|Extract key)" mode'
+        r' for "(?P<option>.*)" (?P<input_type>key|query) '
+        r"in (?P<which_browser>file"
         r" browser|archive browser|dataset browser) table"
     )
 )
@@ -262,14 +242,13 @@ def create_json_column_in_columns_menu(
     )
 
     columns_menu = popups(driver).configure_columns_menu
-    new_column_button = columns_menu.new_column_button
-    new_column_button.click()
+    columns_menu.new_column_button.click()
 
     columns_menu.choose_json.click()
     new_json_col = columns_menu.new_json_column
-    getattr(new_json_col.choose_mode, transform(mode.lower())).click()
-
     mode = mode.lower()
+    getattr(new_json_col.choose_mode, transform(mode)).click()
+
     if mode == "query":
         new_json_col.query.clear()
         new_json_col.query.send_keys(option)
@@ -327,7 +306,7 @@ def assert_json_column_content(
         r' name "(?P<col_name>.*)" in (?P<which_browser>file'
         r" browser|archive browser|dataset browser) table"
         r" by changing it as follows:\n"
-        r"(?P<config>.*)"
+        r"(?P<config>(.|\s)*)"
     )
 )
 def modify_json_column_in_columns_menu(
