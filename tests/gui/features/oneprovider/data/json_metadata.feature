@@ -170,11 +170,11 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | dir1  |
   
 
-  Scenario Outline: User creates json column with mode Whole document and changes it to mode Extract key
+  Scenario Outline: User creates json column with mode Whole document and changes it to mode Extract key, and then to Query
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
-    And user of browser adds and saves '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' JSON metadata for "<item>"
+    And user of browser adds and saves '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val2"}}}' JSON metadata for "<item>"
 
     And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
     And user of browser enables only ["aaaa"] column in columns configuration popover in file browser table
@@ -184,6 +184,12 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
       key: key1
 
     Then user of browser copies content of json column for item "<item>" and sees that it is equal to '"val1"' in file browser
+
+    And user of browser modifies json column with name "aaaa" in file browser table by changing it as follows:
+      mode: Query
+      query: key2.key2.key1
+
+    And user of browser copies content of json column for item "<item>" and sees that it is equal to '"val2"' in file browser
 
     Examples:
     | item  |

@@ -329,7 +329,7 @@ def modify_json_column_in_columns_menu(
 
     Each item in the list may contain the following optional fields:
     - mode:   New column mode
-    - key:    New column key
+    - key/query:    New column key/query
     - label:  New column label
 
     Only provided fields are updated.
@@ -359,6 +359,9 @@ def modify_json_column_in_columns_menu(
             enter_key.click()
             modify_json_column.clear_actual_key(driver)
             popups(driver).dropdown.options[new_option_name].click()
+        elif option == "query":
+            modify_json_column.query.clear()
+            modify_json_column.query.send_keys(new_option_name)
         elif option == "mode":
             getattr(
                 modify_json_column.choose_mode, transform(new_option_name.lower())
