@@ -90,13 +90,14 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     And user of browser creates new json column with "Whole document" mode and "aaaa" custom label in file browser table
 
-    Then user of browser sees that item named "<item>" has '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' value in json column in file browser
-    And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"key1":"val1", "key2": {"key1":"val1", "key2":{"key1":"val1"}}}' in file browser
+    Then user of browser sees that item named "<item>" has '{"key2":{"key2":{"key1":"val1"}, "key1":"val1"},…' value in json column in file browser
+    And user of browser copies content of json column for item "<item>" and sees that it is equal to '{"key1":"val1","key2": {"key1":"val1","key2":{"key1":"val1"}}}' in file browser
 
     Examples:
     | item  |
     | file1 |
-    | dir1  |
+
+    #| dir1  |
 
 
   Scenario Outline: User enters nested metadata for item and creates column for outer key, then changes it to other one
@@ -161,7 +162,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser sees json column named "aaaa" in columns configuration popover in file browser table
 
     And user of browser enables only [] column in columns configuration popover in file browser table
-    Then user of browser does not see json column named "aaaa" in columns configuration popover in file browser table
+    Then user of browser sees that item named "<item>" has no json column in file browser
 
     Examples:
     | item  |

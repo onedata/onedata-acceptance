@@ -8,15 +8,13 @@ import json
 
 import yaml
 
-from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.utils.generic import sort_json_from_string, transform
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -80,7 +78,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     wait_for_item_to_appear(new_column_button.web_elem)
     new_column_button.click()
 
-    new_xattr_column = popups(driver).configure_columns_menu.column_editor
+    new_xattr_column = popups(driver).configure_columns_menu.xattr_column_editor
     new_xattr_column.enter_an_xattr_key.send_keys(name)
 
     if with_label:
@@ -253,7 +251,7 @@ def create_json_column_in_columns_menu(
     columns_menu.new_column_button.click()
 
     columns_menu.choose_json.click()
-    new_json_col = columns_menu.new_json_column
+    new_json_col = columns_menu.json_column_editor
     mode = mode.lower()
     getattr(new_json_col.choose_mode, transform(mode)).click()
 
@@ -348,7 +346,7 @@ def modify_json_column_in_columns_menu(
     current_column = popups(driver).configure_columns_menu.columns[col_name]
 
     current_column.hover_to_button_and_click("modify", driver)
-    modify_json_column = popups(driver).configure_columns_menu.new_json_column
+    modify_json_column = popups(driver).configure_columns_menu.json_column_editor
 
     config = yaml.load(config, yaml.Loader)
 

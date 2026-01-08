@@ -43,8 +43,8 @@ class DataRow(BrowserRow):
     clickable_field = WebElement(".file-name")
     tag_label = Label(".file-status-tag")
     size_statistics_icon = WebElement(".dir-size-container .one-icon")
-    xattr = Label(".table-cell-xattr-info")
 
+    xattr = Label(".table-cell-xattr-info")
     json = Label(".table-cell-json-info")
     copy_json_icon = Button(".oneicon-browser-copy")
 

@@ -10,14 +10,12 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import (
     WhichBrowser,
     parse_seq,
     sort_json_from_string,
     transform,
 )
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -569,21 +567,12 @@ def assert_value_in_column_for_item(
     )
 
     if option == "json":
-        value = sort_json_from_string(value)
-
-        if not item_elem.endswith("…"):  # JSON text may be truncated in the UI
+        if not item_elem.endswith("…"):
+            value = sort_json_from_string(value)
             item_elem = json.loads(item_elem.replace("\n", ""))
         else:
-            displayed = item_elem.removesuffix("…").replace("\n", "").strip()
-            expected = json.dumps(value).replace(" ", "")
-
-            # assert that the visible prefix matches the full JSON value
-            assert expected.startswith(displayed), (
-                "Displayed JSON prefix does not match.\n"
-                f"Displayed: {displayed}\n"
-                f"Expected:  {expected}"
-            )
-            return
+            value = value.replace(" ", "")
+            item_elem = item_elem.replace("\n", "").replace(" ", "")
 
     assert value == item_elem, err_msg
 
@@ -616,22 +605,22 @@ def assert_value_in_xattr_column_for_item(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" has no xattr column '
+        r'"(?P<item_name>.*)" has no (?P<option>json|xattr) column '
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
-def assert_no_xattr_column(
-    browser_id, item_name, which_browser, selenium, op_container
+def assert_no_column_for_item(
+    browser_id, item_name, option, which_browser, selenium, op_container
 ):
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
 
     try:  # this try except block covers cases when xattr value doesn't exist
-        _ = browser.data[item_name].xattr
+        _ = getattr(browser.data[item_name], option)
 
     except RuntimeError as e:
         if "item found in" not in str(e):
-            raise e  # if the error does not match expected error
+            raise AssertionError from e  # if the error does not match expected error
             # The expected error:
             # RuntimeError: no {} item found in {} in file browser in Oneprovider page
 
