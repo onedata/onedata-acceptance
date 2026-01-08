@@ -11,6 +11,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.storages import *
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.qos import *

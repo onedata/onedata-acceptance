@@ -84,5 +84,5 @@ class ConfigureColumnsMenu(PageObject):
     choose_xattr = Button(".clickable.option-xattr")
     choose_json = Button(".clickable.option-json")
 
-    new_xattr_column = WebItem(".column-editor", cls=XattrColumnEditor)
-    new_json_column = WebItem(".column-editor", cls=JsonColumnEditor)
+    xattr_column_editor = WebItem(".column-editor", cls=XattrColumnEditor)
+    json_column_editor = WebItem(".column-editor", cls=JsonColumnEditor)
