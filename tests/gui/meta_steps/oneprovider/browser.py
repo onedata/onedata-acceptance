@@ -4,35 +4,41 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.steps.oneprovider.file_browser import (
+    click_on_status_tag_for_file_in_file_browser,
+)
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" in '
-        "(?P<which_browser>file browser|archive browser|"
-        "dataset browser) table"
+        r"user of (?P<browser_id>.*) creates new xattr column with "
+        r'"(?P<key_name>.*)" key in (?P<which_browser>file browser|'
+        r"archive browser|dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
-    selenium, browser_id, which_browser, tmp_memory, popups, name
+    selenium, browser_id, which_browser, tmp_memory, popups, key_name
 ):
     create_xattr_columns_in_columns_menu_in_browser(
-        selenium, browser_id, which_browser, tmp_memory, popups, name
+        selenium, browser_id, which_browser, tmp_memory, popups, key_name
     )
 
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) creates new xattr column named "(?P<name>.*)" with'
-        ' custom label named "(?P<label_name>.*)" in (?P<which_browser>file'
-        " browser|archive browser|dataset browser) table"
+        r"user of (?P<browser_id>.*) creates new xattr column with"
+        r' "(?P<key_name>.*)" key and "(?P<label_name>.*)" column label'
+        r" in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
-    selenium, browser_id, which_browser, tmp_memory, popups, name, label_name
+    selenium, browser_id, which_browser, tmp_memory, popups, key_name, label_name
 ):
     create_xattr_columns_in_columns_menu_in_browser(
         selenium,
@@ -40,7 +46,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
         which_browser,
         tmp_memory,
         popups,
-        name,
+        key_name,
         with_label=True,
         label_name=label_name,
     )
@@ -63,7 +69,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     wait_for_item_to_appear(new_column_button.web_elem)
     new_column_button.click()
 
-    new_xattr_column = popups(driver).configure_columns_menu.new_xattr_column
+    new_xattr_column = popups(driver).configure_columns_menu.column_editor
     new_xattr_column.enter_an_xattr_key.send_keys(name)
 
     if with_label:
@@ -74,3 +80,52 @@ def create_xattr_columns_in_columns_menu_in_browser(
 
     # hide columns menu popup
     browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) xattr column"
+        r' named "(?P<name>.*)" in columns configuration popover'
+        r" in (?P<which_browser>file browser|archive browser|"
+        r"dataset browser) table"
+    )
+)
+def assert_xattr_column_presence(
+    selenium, browser_id, res, name, which_browser, tmp_memory, popups
+):
+
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.configure_columns.click()
+    wait_for_item_to_appear(
+        popups(selenium[browser_id]).configure_columns_menu.web_elem
+    )
+
+    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+
+    if name in [col.name for col in columns_menu]:
+        if res == "does not see":
+            raise AssertionError(
+                f"An xattr column named '{name}' exists, but it was expected not to."
+            )
+    elif res == "sees":
+        raise AssertionError(f"An xattr column with name: {name} does not exist")
+    browser.configure_columns.click()
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*) opens "Metadata" tab in "(?P<modal_name>.*)" modal'
+        r' via clicking on metadata status tag for "(?P<item_name>.*)"'
+    )
+)
+def open_metadata_tab_using_tag(
+    selenium, browser_id, tmp_memory, item_name, modal_name, modals
+):
+    tab_name = "Metadata"
+    click_on_status_tag_for_file_in_file_browser(
+        browser_id, tab_name.lower(), item_name, tmp_memory
+    )
+
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+
+    assert_tab_in_modal(selenium, browser_id, tab_name, modals, modal_name)

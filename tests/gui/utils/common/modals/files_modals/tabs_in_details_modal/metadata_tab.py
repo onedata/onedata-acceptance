@@ -29,9 +29,14 @@ class XattrMetadataEntry(PageObject):
     key_input = Input(".one-inline-editor .form-control")
     value = Input('.form-control[placeholder="Value"]')
     remove = Button(".remove-param")
+    edit_existing_key = Button(".edit-icon.clickable")
 
     def __str__(self):
         return "metadata basic entry"
+
+    def press_backspace_to_delete_selected(self):
+        action = ActionChains(self.driver)
+        action.key_down(Keys.BACKSPACE).perform()
 
 
 class XattrMetadataNewEntry(PageObject):
@@ -44,6 +49,12 @@ class XattrsMetadataPanel(PageObject):
     entries = WebItemsSequence(
         ".form-group-editable:not([class~=last-record])", cls=XattrMetadataEntry
     )
+    description = WebElement(".metadata-description")
+
+    def click_on_background_in_xattrs_panel(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.description, 0, 0
+        ).click().perform()
 
 
 class AceEditorMetadataPanel(PageObject):
