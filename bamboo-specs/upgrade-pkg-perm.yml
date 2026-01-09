@@ -12,7 +12,9 @@ plan-permissions:
   - wojciech
   permissions:
   - view
+  - edit
   - build
+  - clone
   - view-configuration
 - users:
   - plgmstanisz
