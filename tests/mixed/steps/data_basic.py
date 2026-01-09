@@ -112,7 +112,6 @@ def create_file_in_op(
     op_container,
     result,
     modals,
-    oz_page,
     request,
 ):
     full_path = f"{space}/{name}"
@@ -278,7 +277,6 @@ def create_dir_in_op(
     op_container,
     result,
     modals,
-    oz_page,
 ):
     cwd = "space root"
     full_path = f"{space}/{abs_path}"
@@ -332,7 +330,7 @@ def create_dir_in_op(
         'named "(?P<item_name>.*)" in "(?P<space>.*)"'
     )
 )
-def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
+def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space):
     go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
     click_and_press_enter_on_item_in_browser(
         selenium, user, item_name, tmp_memory, op_container, "file browser"
@@ -358,7 +356,6 @@ def see_item_in_op(
     selenium,
     tmp_memory,
     op_container,
-    oz_page,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -793,7 +790,6 @@ def read_from_file_in_op(
             space,
             selenium,
             user,
-            oz_page,
             op_container,
             tmp_memory,
             tmpdir,
@@ -1504,7 +1500,6 @@ def upload_file_to_op(
             space,
             op_container,
             tmp_memory,
-            oz_page,
             popups,
         )
     else:
@@ -1526,7 +1521,6 @@ def upload_local_file_to_op(
     op_container,
     popups,
     space,
-    oz_page,
     tmp_memory,
 ):
     client_lower = client.lower()

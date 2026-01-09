@@ -127,7 +127,6 @@ def rename_item(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     write_name_into_text_field_in_modal(
@@ -173,7 +172,6 @@ def remove_item_in_op_gui(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     click_modal_button(selenium, browser_id, button, modal, modals)
@@ -476,7 +474,6 @@ def assert_file_content_in_op_gui(
     space,
     selenium,
     user,
-    oz_page,
     op_container,
     tmp_memory,
     tmpdir,
@@ -579,7 +576,6 @@ def _create_item(
             name,
             op_container,
             tmp_memory,
-            oz_page,
             popups,
         )
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
@@ -648,7 +644,7 @@ def _create_content(
     )
 )
 def successfully_upload_file_to_op_gui(
-    path, selenium, browser_id, space, op_container, tmp_memory, oz_page, popups
+    path, selenium, browser_id, space, op_container, tmp_memory, popups
 ):
     go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container, popups)
@@ -670,7 +666,6 @@ def upload_file_to_op_gui(
     filename,
     op_container,
     tmp_memory,
-    oz_page,
     popups,
 ):
     try:
@@ -827,7 +822,6 @@ def open_modal_for_file_browser_item(
     tmp_memory,
     option,
     space,
-    oz_page,
     op_container,
 ):
     _click_menu_for_elem_somewhere_in_file_browser(
@@ -953,7 +947,6 @@ def create_symlinks_of_file_with_path(
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
         popups,
         option,
@@ -992,7 +985,6 @@ def create_hardlinks_of_file_with_path(
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
         popups,
         option,
@@ -1008,7 +1000,6 @@ def _create_link_in_file_browser(
     file_name,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
     option,
@@ -1082,7 +1073,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
         popups,
         option,
@@ -1105,7 +1095,6 @@ def copy_object_id_to_tmp_memory(
     user,
     name,
     space,
-    oz_page,
     op_container,
     modals,
     modal,
@@ -1272,7 +1261,6 @@ def copy_show_or_download_link_from_file_details_modal(
     space,
     selenium,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
     modals,

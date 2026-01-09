@@ -115,7 +115,7 @@ def assert_token(
 
 
 @wt(parsers.parse("if {client} is web gui, {user} copies created token"))
-def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_memory):
+def copy_token_if_gui(selenium, client, user, displays, clipboard, tmp_memory):
     if client.lower() == "web gui":
         copy_token_gui(selenium, user, displays, clipboard, tmp_memory)
 
@@ -159,7 +159,7 @@ def revoke_token_in_oz(
         zone_name = "onezone"
         revoke_token_rest(user, users, hosts, zone_name, tokens, token_name)
     elif client_lower == "web gui":
-        choose_and_revoke_token_in_oz_gui(selenium, user, token_name, oz_page, popups)
+        choose_and_revoke_token_in_oz_gui(selenium, user, token_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 

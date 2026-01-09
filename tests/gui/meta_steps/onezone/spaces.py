@@ -357,7 +357,7 @@ def assert_space_is_supported_by_provider_in_oz_gui(
         'there is no "{space_name}" space in Onezone used by user of {browser_id}'
     )
 )
-def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups, modals):
+def leave_space_in_onezone(selenium, browser_id, space_name, oz_page):
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)

@@ -70,7 +70,6 @@ def create_spaces_in_oz(
     users,
     selenium,
     spaces,
-    popups,
     clipboard,
     displays,
 ):
@@ -110,8 +109,6 @@ def leave_spaces_in_oz(
     users,
     hosts,
     spaces,
-    popups,
-    modals,
 ):
 
     if client.lower() == "rest":
@@ -140,7 +137,6 @@ def rename_spaces_in_oz(
     new_names_list,
     host,
     selenium,
-    oz_page,
     users,
     hosts,
     spaces,
@@ -243,7 +239,6 @@ def remove_provider_support_for_space_in_oz(
     admin_credentials,
     onepanel,
     popups,
-    modals,
 ):
 
     if client.lower() == "rest":
@@ -287,9 +282,7 @@ def invite_other_users_to_space(
     spaces,
     displays,
     clipboard,
-    oz_page,
     onepanel,
-    popups,
     modals,
 ):
 
@@ -355,7 +348,7 @@ def join_space_in_oz(
     )
 )
 def assert_there_are_spaces_in_oz(
-    client, user, space_list, selenium, oz_page, users, hosts, host
+    client, user, space_list, selenium, users, hosts, host
 ):
 
     if client.lower() == "web gui":
@@ -381,7 +374,6 @@ def assert_there_are_no_spaces_in_oz(
     space_list,
     host,
     selenium,
-    oz_page,
     users,
     spaces,
     hosts,
@@ -413,7 +405,6 @@ def assert_spaces_have_been_renamed_in_oz(
     new_names_list,
     host,
     selenium,
-    oz_page,
     users,
     hosts,
     spaces,
@@ -448,7 +439,6 @@ def assert_there_is_no_provider_for_space_in_oz(
     space_name,
     host,
     selenium,
-    oz_page,
     users,
     hosts,
     spaces,
@@ -493,7 +483,6 @@ def assert_user_is_member_of_space(
     users,
     hosts,
     selenium,
-    oz_page,
     onepanel,
 ):
 

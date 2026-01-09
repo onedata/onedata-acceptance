@@ -64,7 +64,6 @@ def grant_acl_privileges_in_op(
     tmp_memory,
     popups,
     modals,
-    oz_page,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()

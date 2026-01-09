@@ -54,7 +54,7 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def create_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def create_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         create_groups_using_rest(user, users, hosts, group_list, host)
@@ -111,7 +111,7 @@ def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
         ' "(?P<host>.*)" Onezone service'
     )
 )
-def assert_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def assert_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         see_groups_using_rest(user, users, hosts, group_list, host)
@@ -137,8 +137,6 @@ def rename_groups(
     hosts,
     users,
     selenium,
-    oz_page,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -158,7 +156,7 @@ def rename_groups(
         "Onezone service"
     )
 )
-def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
@@ -175,7 +173,7 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, o
     )
 )
 def remove_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
+    client, user, group_list, host, hosts, users, selenium
 ):
 
     if client.lower() == "rest":
@@ -193,7 +191,7 @@ def remove_groups(
     )
 )
 def leave_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
+    client, user, group_list, host, hosts, users, selenium
 ):
 
     if client.lower() == "rest":
@@ -262,11 +260,9 @@ def remove_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     parent,
     onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -300,7 +296,6 @@ def assert_subgroups(
     users,
     selenium,
     parent,
-    oz_page,
     onepanel,
 ):
 
@@ -329,7 +324,6 @@ def fail_to_see_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     parent,
     onepanel,
 ):
@@ -377,13 +371,11 @@ def invite_to_group(
             selenium,
             user1,
             user2,
-            oz_page,
             group,
             tmp_memory,
             displays,
             clipboard,
             onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -431,7 +423,7 @@ def fail_to_rename_groups(
         )
     elif client.lower() == "web gui":
         fail_to_rename_groups_using_op_gui(
-            selenium, user, oz_page, group_list, new_names, popups
+            selenium, user, group_list, new_names
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

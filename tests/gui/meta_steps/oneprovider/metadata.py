@@ -153,7 +153,6 @@ def set_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     if tab_name == "xattrs":
@@ -218,7 +217,6 @@ def assert_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     if res == "fails":
@@ -265,7 +263,6 @@ def assert_such_metadata_not_exist_in_op_gui(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
 
@@ -314,7 +311,6 @@ def remove_all_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", modals, option)
@@ -386,7 +382,6 @@ def open_filebrowser_and_remove_meta(
         tmp_memory,
         option,
         space,
-        oz_page,
         op_container,
     )
     click_on_del_metadata_record_button(selenium, browser_id, key, modals)

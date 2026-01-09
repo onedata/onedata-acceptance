@@ -255,8 +255,6 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
     users,
     hosts,
     selenium,
-    oz_page,
-    popups,
 ):
 
     test_domain = f"{hosts[provider]['hostname']}.test"
@@ -318,7 +316,7 @@ def deregister_provider_in_op_panel(
     )
 )
 def assert_there_is_no_provider_in_oz(
-    client, user, provider_name, host, hosts, users, selenium, oz_page
+    client, user, provider_name, host, hosts, users, selenium
 ):
 
     if client.lower() == "rest":
@@ -349,7 +347,6 @@ def assert_provider_does_not_support_space_in_oz(
     host,
     hosts,
     selenium,
-    oz_page,
     users,
 ):
 
@@ -437,7 +434,6 @@ def request_space_support(
     users,
     selenium,
     tmp_memory,
-    oz_page,
     displays,
     clipboard,
     supporting_user,

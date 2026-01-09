@@ -38,7 +38,6 @@ def create_qos_requirement_in_op(
     file_name,
     tmp_memory,
     expression,
-    oz_page,
     op_container,
     popups,
     space_name,

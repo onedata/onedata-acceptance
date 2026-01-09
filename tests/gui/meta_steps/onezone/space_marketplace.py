@@ -59,7 +59,7 @@ def configure_space_manually(browser_id, config, selenium):
     )
 )
 def configure_space_manually_without_saving(
-    browser_id, config, selenium, oz_page, popups
+    browser_id, config, selenium
 ):
     """Adjust space configuration according to given config.
 
@@ -128,7 +128,7 @@ def _configure_space_manually(
         "subpage with following parameters:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, config):
+def assert_space_in_marketplace_with_config(browser_id, selenium, config):
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:

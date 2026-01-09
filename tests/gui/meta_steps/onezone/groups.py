@@ -213,13 +213,11 @@ def create_group_token_to_invite_user_using_op_gui(
     selenium,
     user,
     user2,
-    oz_page,
     name,
     tmp_memory,
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
     member = "user"
     _create_group_token(
@@ -244,7 +242,6 @@ def create_group_token_to_invite_group_using_op_gui(
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
     member = "group"
     _create_group_token(
@@ -291,7 +288,6 @@ def add_subgroups_using_op_gui(
             displays,
             clipboard,
             onepanel,
-            popups,
         )
         add_element_with_copied_token(
             selenium, user, child, oz_page, clipboard, displays
@@ -317,7 +313,7 @@ def remove_subgroups_using_op_gui(
 
 
 def fail_to_rename_groups_using_op_gui(
-    selenium, user, oz_page, group_list, new_names, popups
+    selenium, user, group_list, new_names
 ):
     text = "failed"
 
@@ -347,7 +343,6 @@ def fail_to_add_subgroups_using_op_gui(
         displays,
         clipboard,
         onepanel,
-        popups,
     )
     modals = selenium["request"].getfixturevalue("modals")
     for child in parse_seq(group_list):

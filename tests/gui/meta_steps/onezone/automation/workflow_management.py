@@ -200,7 +200,6 @@ def change_workflow_dump_name_to_visible_name(workflow_name):
 def execute_workflow_with_input_config(
     browser_id,
     selenium,
-    oz_page,
     space,
     op_container,
     ordinal,

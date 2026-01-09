@@ -25,7 +25,7 @@ from tests.utils.bdd_utils import parsers, wt
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(browser_id, config, selenium, oz_page, modals, popups):
+def create_store_for_workflow(browser_id, config, selenium, modals, popups):
     """Create store according to given config.
 
     Config format given in yaml is as follows:

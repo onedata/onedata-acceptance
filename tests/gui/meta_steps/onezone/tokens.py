@@ -164,7 +164,6 @@ def result_to_consume_token_for_elem(
     clipboard,
     displays,
     modals,
-    popups,
 ):
     add_element_with_copied_token(
         selenium, browser_id, elem_name, oz_page, clipboard, displays
@@ -557,7 +556,6 @@ def _assert_token_configuration(
     selenium,
     browser_id,
     config,
-    oz_page,
     users,
     groups,
     hosts,
@@ -678,7 +676,7 @@ def revoke_token(selenium, browser_id, token_name):
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_token(selenium, browser_id, token_name, popups, modals):
+def remove_token(selenium, browser_id, token_name, modals):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -738,7 +736,6 @@ def create_and_check_token(
         selenium,
         browser_id,
         config,
-        oz_page,
         users,
         groups,
         hosts,
@@ -749,7 +746,7 @@ def create_and_check_token(
 
 
 def choose_and_revoke_token_in_oz_gui(
-    selenium, browser_id, token_name, oz_page, popups
+    selenium, browser_id, token_name
 ):
     option = "Tokens"
 
@@ -814,7 +811,6 @@ def _copy_object_id(
     clipboard,
     user,
     selenium,
-    oz_page,
     tmp_memory,
     modals,
     name,
@@ -867,7 +863,6 @@ def create_token_with_object_id(
         clipboard,
         user,
         selenium,
-        oz_page,
         tmp_memory,
         modals,
         name,
