@@ -242,9 +242,9 @@ def get_prov_version(provider_host):
     return get_provider_configuration(provider_host)["version"]
 
 
-def is_prov_version_lower_than(actual_version, reference_version):
+def is_version_lower_than(actual_version, reference_version):
     """
-    Returns true if actual provider version is lower than reference one, e.g.
+    Returns true if actual version is lower than reference one, e.g.
     21.02.8 < 25.0
     25.0 < 25.0.1
     25.1.1 < 25.1.2
