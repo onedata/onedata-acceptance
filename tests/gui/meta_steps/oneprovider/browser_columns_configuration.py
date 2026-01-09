@@ -4,7 +4,8 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import json, yaml
+import json
+import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
