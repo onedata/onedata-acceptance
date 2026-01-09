@@ -9,17 +9,9 @@ plan-permissions:
   permissions:
   - view
 - users:
-  - wojciech
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
-  - view-configuration
-- users:
   - plgmstanisz
   - plgagneska
+  - wojciech
   permissions:
   - view
   - edit
