@@ -15,6 +15,7 @@ plan-permissions:
   - edit
   - build
   - clone
+  - admin
   - view-configuration
 - users:
   - plgmstanisz
