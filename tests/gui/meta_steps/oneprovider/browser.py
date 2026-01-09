@@ -4,17 +4,13 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import json
-
-import yaml
-
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.utils.generic import sort_json_from_string, transform
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -88,35 +84,6 @@ def create_xattr_columns_in_columns_menu_in_browser(
     new_xattr_column.create.click()
 
     # hide columns menu popup
-    browser.configure_columns.click()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) (?P<res>sees|does not see) (?P<option>xattr|json)"
-        r' column named "(?P<name>.*)" in '
-        r"columns configuration popover in (?P<which_browser>file"
-        r" browser|archive browser|dataset browser) table"
-    )
-)
-def assert_column_presence(
-    selenium, browser_id, res, name, which_browser, tmp_memory, popups
-):
-
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
-    wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
-    if name in [col.name for col in columns_menu]:
-        if res == "does not see":
-            raise AssertionError(
-                f"An xattr column named '{name}' exists, but it was expected not to."
-            )
-    elif res == "sees":
-        raise AssertionError(f"An xattr column with name: {name} does not exist")
     browser.configure_columns.click()
 
 
@@ -268,106 +235,6 @@ def create_json_column_in_columns_menu(
 
     new_json_col.create()
 
-    # hide columns menu popup
-    browser.configure_columns.click()
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) copies content of json column"
-        r' for item "(?P<item_name>.*)" and sees that it is equal to'
-        r" '(?P<value>.*)' in (?P<which_browser>file"
-        r" browser|archive browser|dataset browser)"
-    )
-)
-def assert_json_column_content(
-    selenium,
-    browser_id,
-    tmp_memory,
-    which_browser,
-    item_name,
-    value,
-    clipboard,
-    displays,
-):
-
-    driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    item = browser.data[item_name]
-
-    item.hover_to_btn_and_click("copy_json_icon", driver)
-    copied = clipboard.paste(display=displays[browser_id])
-
-    value = sort_json_from_string(value)
-    copied = json.loads(copied.replace("\n", ""))
-
-    assert (
-        copied == value
-    ), f"Copied value: {copied} is not equal to expected value: {value}"
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) modifies json column with"
-        r' name "(?P<col_name>.*)" in (?P<which_browser>file'
-        r" browser|archive browser|dataset browser) table"
-        r" by changing it as follows:\n"
-        r"(?P<config>(.|\s)*)"
-    )
-)
-def modify_json_column_in_columns_menu(
-    selenium,
-    browser_id,
-    col_name,
-    config,
-    which_browser,
-    tmp_memory,
-    popups,
-):
-    """
-    Config is a list of changes applied sequentially.
-
-    Each item in the list may contain the following optional fields:
-    - mode:   New column mode
-    - key/query:    New column key/query
-    - label:  New column label
-
-    Only provided fields are updated.
-    """
-
-    driver = selenium[browser_id]
-    browser = tmp_memory[browser_id][transform(which_browser)]
-
-    browser.configure_columns.click()
-    wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-
-    current_column = popups(driver).configure_columns_menu.columns[col_name]
-
-    current_column.hover_to_button_and_click("modify", driver)
-    modify_json_column = popups(driver).configure_columns_menu.json_column_editor
-
-    config = yaml.load(config, yaml.Loader)
-
-    for option, new_option_name in config.items():
-        if option == "label":
-            modify_json_column.column_label.clear()
-            modify_json_column.column_label.send_keys(new_option_name)
-        elif option == "key":
-            enter_key = modify_json_column.json_key
-            enter_key.click()
-            modify_json_column.clear_actual_key(driver)
-            popups(driver).dropdown.options[new_option_name].click()
-        elif option == "query":
-            modify_json_column.query.clear()
-            modify_json_column.query.send_keys(new_option_name)
-        elif option == "mode":
-            getattr(
-                modify_json_column.choose_mode, transform(new_option_name.lower())
-            ).click()
-
-    modify_json_column.apply_changes.click()
     # hide columns menu popup
     browser.configure_columns.click()
 
