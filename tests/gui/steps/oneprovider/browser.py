@@ -512,8 +512,8 @@ def click_menu_for_elem_in_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) "
-        'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
+        r"user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) "
+        r'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
     )
 )
 @wt(
@@ -531,15 +531,6 @@ def click_tag_for_elem_in_browser(
     getattr(browser.data[item_name], transform(tag)).click()
 
 
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees that "
-        r'item named "(?P<item_name>.*)"'
-        r" has '(?P<value>.*)' value in"
-        r" (?P<option>json) column "
-        r"in (?P<which_browser>archive file browser|file browser)"
-    )
-)
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
@@ -566,14 +557,6 @@ def assert_value_in_column_for_item(
         f"match expected {value}"
     )
 
-    if option == "json":
-        if not item_elem.endswith("…"):
-            value = sort_json_from_string(value)
-            item_elem = json.loads(item_elem.replace("\n", ""))
-        else:
-            value = value.replace(" ", "")
-            item_elem = item_elem.replace("\n", "").replace(" ", "")
-
     assert value == item_elem, err_msg
 
 
@@ -581,18 +564,35 @@ def assert_value_in_column_for_item(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
         r'"(?P<item_name>.*)" (?P<res>has|does not have)'
-        r' "(?P<value>.*)" value in (?P<option>json|xattr)'
+        r' "(?P<value>.*)" value in (?P<option>xattr)'
         r" column in (?P<which_browser>archive file browser|"
         r"file browser)"
     )
 )
-def assert_value_in_xattr_column_for_item(
-    browser_id, item_name, res, value, which_browser, selenium, op_container
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that "
+        r'item named "(?P<item_name>.*)"'
+        r" (?P<res>has|does not have) '(?P<value>.*)'"
+        r" value in (?P<option>json) column "
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+def assert_value_in_xattr_or_json_column_for_item(
+    browser_id, item_name, res, value, option, which_browser, selenium, op_container
 ):
     driver = selenium[browser_id]
     browser = getattr(op_container(driver), transform(which_browser))
-    item_elem = browser.data[item_name].xattr
-    err_msg_prefix = f"displayed xattr value {item_elem} for {item_name}"
+    item_elem = getattr(browser.data[item_name], option)
+    err_msg_prefix = f"displayed {option} value {item_elem} for {item_name}"
+
+    if option == "json":
+        if not item_elem.endswith("…"):  # json column is not truncated in UI
+            value = sort_json_from_string(value)
+            item_elem = json.loads(item_elem.replace("\n", ""))
+        else:
+            value = value.replace(" ", "")
+            item_elem = item_elem.replace("\n", "").replace(" ", "")
 
     if res == "has":
         err_msg = err_msg_prefix + f" does not match expected {value}"
