@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -200,21 +201,20 @@ def modify_json_column_in_columns_menu(
     assert flag, "Given configuration of changes to a json column is invalid"
 
     for option, new_option_name in config.items():
-        if option == "label":
-            modify_json_column.column_label.clear()
-            modify_json_column.column_label.send_keys(new_option_name)
-        elif option == "key":
-            enter_key = modify_json_column.json_key
-            enter_key.click()
-            modify_json_column.clear_actual_key(driver)
-            popups(driver).dropdown.options[new_option_name].click()
-        elif option == "query":
-            modify_json_column.query.clear()
-            modify_json_column.query.send_keys(new_option_name)
-        elif option == "mode":
+        if option == "mode":
             getattr(
                 modify_json_column.choose_mode, transform(new_option_name.lower())
             ).click()
+        elif option == "label":
+            modify_json_column.column_label.clear()
+            modify_json_column.column_label.send_keys(new_option_name)
+        elif option == "query":
+            modify_json_column.query.clear()
+            modify_json_column.query.send_keys(new_option_name)
+        elif option == "key":
+            modify_json_column.json_key.click()
+            modify_json_column.clear_actual_key(driver)
+            popups(driver).dropdown.options[new_option_name].click()
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
