@@ -169,7 +169,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | dir1  |
   
 
-  Scenario Outline: User creates json column with mode Whole document and changes it to mode Extract key, and then to Query
+  Scenario Outline: User creates json column with mode Whole document, changes its mode to Extract key, and then to Query
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 
