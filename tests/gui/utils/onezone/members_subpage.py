@@ -28,7 +28,7 @@ from tests.gui.utils.core.web_elements import (
 
 
 class MembersHeaderRow(PageObject):
-    checkbox = Button("div.item-checkbox")
+    checkbox = Button("div.one-checkbox")
     search_bar = Input("input.form-control")
     menu_button = Button(
         "li.list-header-row .collapsible-toolbar-toggle.btn-menu-toggle"
