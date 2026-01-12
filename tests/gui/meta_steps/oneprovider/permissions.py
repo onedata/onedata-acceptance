@@ -90,7 +90,6 @@ def _assert_posix_permissions(
     space,
     path,
     perm,
-    oz_page,
     op_container,
     tmp_memory,
     modals,
@@ -120,7 +119,6 @@ def assert_posix_permissions_in_op_gui(
     space,
     path,
     perm,
-    oz_page,
     op_container,
     tmp_memory,
     modals,
@@ -136,7 +134,6 @@ def assert_posix_permissions_in_op_gui(
             space,
             path,
             perm,
-            oz_page,
             op_container,
             tmp_memory,
             modals,
@@ -149,7 +146,6 @@ def assert_posix_permissions_in_op_gui(
             space,
             path,
             perm,
-            oz_page,
             op_container,
             tmp_memory,
             modals,
@@ -172,7 +168,6 @@ def set_posix_permissions_in_op_gui(
     op_container,
     tmp_memory,
     modals,
-    oz_page,
     popups,
 ):
     modal_name = "Details modal"
@@ -206,7 +201,6 @@ def fail_to_set_posix_permissions_in_op_gui(
     op_container,
     tmp_memory,
     modals,
-    oz_page,
     popups,
 ):
     button = "Save"
@@ -353,7 +347,6 @@ def read_items_acl(
     res,
     space,
     modals,
-    oz_page,
     op_container,
     popups,
 ):
@@ -400,7 +393,6 @@ def assert_ace_in_op_gui(
     tmp_memory,
     modals,
     numerals,
-    oz_page,
     op_container,
     popups,
 ):
@@ -440,7 +432,6 @@ def assert_user_id_in_ace_in_op_gui(
     tmp_memory,
     modals,
     numerals,
-    oz_page,
     op_container,
     popups,
     users,
@@ -482,7 +473,6 @@ def change_acl_privileges(
     space,
     modals,
     op_container,
-    oz_page,
     name,
     popups,
 ):

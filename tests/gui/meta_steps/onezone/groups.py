@@ -276,7 +276,6 @@ def add_subgroups_using_op_gui(
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(
@@ -332,7 +331,6 @@ def fail_to_add_subgroups_using_op_gui(
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
     create_group_token_to_invite_group_using_op_gui(
         selenium,

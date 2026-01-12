@@ -101,7 +101,6 @@ def create_file_symlink(
     space,
     spaces,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
 ):
@@ -113,7 +112,6 @@ def create_file_symlink(
             file_name,
             space,
             tmp_memory,
-            oz_page,
             op_container,
             popups,
             path,
@@ -177,7 +175,6 @@ def create_file_hardlink(
     hardlink_path,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
 ):
@@ -188,7 +185,6 @@ def create_file_hardlink(
             user,
             space,
             tmp_memory,
-            oz_page,
             op_container,
             popups,
             file_path,

@@ -107,7 +107,6 @@ def rename_item(
     res,
     space,
     modals,
-    oz_page,
     op_container,
     popups,
 ):
@@ -154,7 +153,6 @@ def remove_item_in_op_gui(
     res,
     space,
     modals,
-    oz_page,
     popups,
 ):
     option = "Delete"
@@ -191,7 +189,6 @@ def remove_dir_and_parents_in_op_gui(
     res,
     space,
     modals,
-    oz_page,
     popups,
 ):
     item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
@@ -204,7 +201,6 @@ def remove_dir_and_parents_in_op_gui(
         res,
         space,
         modals,
-        oz_page,
         popups,
     )
 
@@ -931,7 +927,6 @@ def create_symlinks_of_file_with_path(
     file_name,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
     path,
@@ -968,7 +963,6 @@ def create_hardlinks_of_file_with_path(
     file_name,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
     path,
@@ -1038,7 +1032,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     browser_id,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
     source_path,

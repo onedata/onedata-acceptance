@@ -217,7 +217,6 @@ def add_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     parent,
     displays,
@@ -232,7 +231,6 @@ def add_subgroups(
         add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,
@@ -354,12 +352,10 @@ def invite_to_group(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -412,9 +408,7 @@ def fail_to_rename_groups(
     hosts,
     users,
     selenium,
-    oz_page,
     new_names,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -470,7 +464,6 @@ def fail_to_add_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     parent,
     tmp_memory,
     displays,
@@ -485,7 +478,6 @@ def fail_to_add_subgroups(
         fail_to_add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,

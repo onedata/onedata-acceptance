@@ -138,7 +138,6 @@ def assert_ace_in_op(
     numerals,
     tmp_memory,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{path}"
@@ -157,7 +156,6 @@ def assert_ace_in_op(
             tmp_memory,
             modals,
             numerals,
-            oz_page,
             op_container,
             popups,
         )
@@ -215,7 +213,6 @@ def assert_posix_permissions_in_op(
     modals,
     users,
     hosts,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{item_path}"
@@ -227,7 +224,6 @@ def assert_posix_permissions_in_op(
             space,
             item_path,
             mode,
-            oz_page,
             op_container,
             tmp_memory,
             modals,
@@ -265,7 +261,6 @@ def set_posix_permissions_in_op(
     modals,
     users,
     hosts,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{item_path}"
@@ -281,7 +276,6 @@ def set_posix_permissions_in_op(
                 op_container,
                 tmp_memory,
                 modals,
-                oz_page,
                 popups,
             )
         else:
@@ -294,7 +288,6 @@ def set_posix_permissions_in_op(
                 op_container,
                 tmp_memory,
                 modals,
-                oz_page,
                 popups,
             )
     elif client_lower == "rest":

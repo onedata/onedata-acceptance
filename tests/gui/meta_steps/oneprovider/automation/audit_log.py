@@ -797,7 +797,6 @@ def assert_content_of_store(
     config,
     clipboard,
     displays,
-    oz_page,
     tmp_memory,
     popups,
 ):
@@ -926,7 +925,6 @@ def compare_content_of_task_audit_log(
     task_name,
     selenium,
     browser_id,
-    oz_page,
     op_container,
     tmp_memory,
     popups,
@@ -1140,7 +1138,6 @@ def assert_content_of_task_audit_log(
     displays,
     popups,
     tmp_memory,
-    oz_page,
 ):
     expected_identical = ["source", "severity", "timestamp"]
     click = "click"
@@ -1178,7 +1175,6 @@ def assert_content_of_task_audit_log(
             task_name,
             selenium,
             browser_id,
-            oz_page,
             op_container,
             tmp_memory,
             popups,

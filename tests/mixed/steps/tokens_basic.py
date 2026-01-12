@@ -152,7 +152,7 @@ def copy_token_gui(selenium, user, displays, clipboard, tmp_memory):
 @wt(parsers.parse('using {client}, {user} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def revoke_token_in_oz(
-    client, user, token_name, users, hosts, tokens, selenium, oz_page, popups
+    client, user, token_name, users, hosts, tokens, selenium
 ):
     client_lower = client.lower()
     if client_lower == "rest":

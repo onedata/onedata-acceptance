@@ -133,7 +133,6 @@ def set_metadata_in_op_gui(
     tab_name,
     val,
     modals,
-    oz_page,
     item,
     popups,
 ):
@@ -200,7 +199,6 @@ def assert_metadata_in_op_gui(
     tab_name,
     val,
     modals,
-    oz_page,
     item,
     popups,
 ):
@@ -245,7 +243,6 @@ def assert_such_metadata_not_exist_in_op_gui(
     tab_name,
     val,
     modals,
-    oz_page,
     item,
     popups,
 ):
@@ -294,7 +291,6 @@ def remove_all_metadata_in_op_gui(
     op_container,
     tmp_memory,
     path,
-    oz_page,
     modals,
     item,
     popups,
@@ -363,7 +359,6 @@ def open_filebrowser_and_remove_meta(
     path,
     space,
     modals,
-    oz_page,
     op_container,
     tmp_memory,
     popups,

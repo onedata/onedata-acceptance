@@ -405,7 +405,6 @@ def remove_empty_dir_in_op(
     tmp_memory,
     host,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{name}"
@@ -420,7 +419,6 @@ def remove_empty_dir_in_op(
             "succeds",
             space,
             modals,
-            oz_page,
             popups,
         )
     elif client_lower == "rest":
@@ -453,7 +451,6 @@ def remove_empty_dir_and_parents_in_op(
     tmp_memory,
     host,
     modals,
-    oz_page,
     popups,
 ):
     first_path_elem = get_first_path_element(name)
@@ -468,7 +465,6 @@ def remove_empty_dir_and_parents_in_op(
             "succeds",
             space,
             modals,
-            oz_page,
             popups,
         )
     elif client_lower == "rest":
@@ -499,7 +495,6 @@ def remove_dir_in_op(
     tmp_memory,
     host,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{name}"
@@ -514,7 +509,6 @@ def remove_dir_in_op(
             "succeds",
             space,
             modals,
-            oz_page,
             popups,
         )
     elif client_lower == "rest":
@@ -546,7 +540,6 @@ def remove_file_in_op(
     op_container,
     result,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{name}"
@@ -561,7 +554,6 @@ def remove_file_in_op(
             result,
             space,
             modals,
-            oz_page,
             popups,
         )
     elif client_lower == "rest":
@@ -617,7 +609,6 @@ def rename_item_in_op(
     op_container,
     cdmi,
     modals,
-    oz_page,
     popups,
 ):
     old_path = f"{space}/{old_name}"
@@ -634,7 +625,6 @@ def rename_item_in_op(
             result,
             space,
             modals,
-            oz_page,
             op_container,
             popups,
         )
@@ -776,7 +766,6 @@ def read_from_file_in_op(
     users,
     hosts,
     selenium,
-    oz_page,
     op_container,
     tmp_memory,
     tmpdir,
@@ -1268,7 +1257,6 @@ def set_metadata_in_op(
     users,
     tmp_memory,
     modals,
-    oz_page,
     item,
     popups,
 ):
@@ -1287,7 +1275,6 @@ def set_metadata_in_op(
             tab_name,
             val,
             modals,
-            oz_page,
             item,
             popups,
         )
@@ -1331,7 +1318,6 @@ def assert_metadata_in_op(
     tmp_memory,
     item,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{path}"
@@ -1349,7 +1335,6 @@ def assert_metadata_in_op(
             tab_name,
             val,
             modals,
-            oz_page,
             item,
             popups,
         )
@@ -1386,7 +1371,6 @@ def remove_all_metadata_in_op(
     host,
     hosts,
     cdmi,
-    oz_page,
     modals,
     item,
     popups,
@@ -1401,7 +1385,6 @@ def remove_all_metadata_in_op(
             op_container,
             tmp_memory,
             path,
-            oz_page,
             modals,
             item,
             popups,
@@ -1440,7 +1423,6 @@ def assert_no_such_metadata_in_op(
     tab_name,
     item,
     modals,
-    oz_page,
     popups,
 ):
     full_path = f"{space}/{path}"
@@ -1457,7 +1439,6 @@ def assert_no_such_metadata_in_op(
             tab_name,
             val,
             modals,
-            oz_page,
             item,
             popups,
         )
@@ -1488,7 +1469,6 @@ def upload_file_to_op(
     space,
     tmp_memory,
     op_container,
-    oz_page,
     popups,
 ):
     client_lower = client.lower()
