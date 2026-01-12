@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -169,9 +168,10 @@ class CaveatField(PageObject):
         users,
         groups,
         hosts,
+        oz_page
     ):
         self.activate()
-        OZLoggedIn(selenium[browser_id])["tokens"].create_token_page.hide_caveats()
+        oz_page(selenium[browser_id])["tokens"].create_token_page.hide_caveats()
         for consumer in consumer_caveats:
             consumer_type = consumer.get("type")
             method = consumer.get("by")
@@ -190,7 +190,7 @@ class CaveatField(PageObject):
             self.set_consumer_in_consumer_caveat(
                 selenium, browser_id, popups, consumer_type, method, value
             )
-        OZLoggedIn(selenium[browser_id])["tokens"].create_token_page.expand_caveats()
+        oz_page(selenium[browser_id])["tokens"].create_token_page.expand_caveats()
 
     def set_consumer_in_consumer_caveat(
         self, selenium, browser_id, popups, consumer_type, method, value
