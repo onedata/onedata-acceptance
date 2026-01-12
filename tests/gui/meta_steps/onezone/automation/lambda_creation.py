@@ -35,6 +35,7 @@ from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import OZLoggedIn, Popups
 
 ALL_LAMBDA_NAMES = []
 
@@ -234,10 +235,10 @@ def change_parameter_type_in_lambda_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
-    selenium, browser_id, oz_page, popups, option, name, param_type, ordinal
+    selenium, browser_id, popups, option, name, param_type, ordinal
 ):
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver)["automation"].lambdas_page.form
 
     subpage = getattr(page, transform(option))
     subpage.add_button()
@@ -354,7 +355,7 @@ def download_and_remove_all_lambda_dumps_from_inventory(
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium, browser_id, oz_page, popups, modals, tmp_memory, lamda_name
+    selenium, browser_id, popups, modals, tmp_memory, lamda_name
 ):
     option = "Download (json)"
     option_unlink = "Unlink"
@@ -362,12 +363,11 @@ def download_and_remove_lambda_dump_from_inventory(
     page_name = "lambda"
     modal = "Unlink lambda"
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"]
+    page = OZLoggedIn(driver)["automation"]
 
     click_option_in_revision_menu_button(
         selenium,
         browser_id,
-        oz_page,
         option,
         lamda_name,
         number,

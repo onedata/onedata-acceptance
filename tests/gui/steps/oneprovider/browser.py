@@ -13,6 +13,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import OZLoggedIn, Popups
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -468,7 +469,7 @@ def assert_option_state_in_data_row_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_state_view_mode_tab(
-    browser_id, oz_page, selenium, state, which, tmp_memory
+    browser_id, selenium, state, which, tmp_memory
 ):
     driver = selenium[browser_id]
     if which == "archive file":
@@ -478,7 +479,7 @@ def click_on_state_view_mode_tab(
     else:
         driver.switch_to.default_content()
         header = f"{transform(which)}_header"
-        getattr(getattr(oz_page(driver)["data"], header), transform(state))()
+        getattr(getattr(OZLoggedIn(driver)["data"], header), transform(state))()
     # if we make call to fast after changing view mode
     # we do not see items in this mode, to avoid this wait some time
     time.sleep(0.5)

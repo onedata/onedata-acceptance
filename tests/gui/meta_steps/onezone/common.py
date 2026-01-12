@@ -25,6 +25,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import OZLoggedIn, Popups
 
 
 @given(
@@ -86,9 +87,9 @@ def login_using_gui(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium, browser_id, oz_page, provider_name, popups):
+def visit_op(selenium, browser_id, provider_name, popups):
     driver = selenium[browser_id]
-    providers_panel = oz_page(driver).get_page_and_click("providers")
+    providers_panel = OZLoggedIn(driver).get_page_and_click("providers")
     time.sleep(0.5)
     providers_panel[provider_name]()
     click_visit_provider(driver, popups)

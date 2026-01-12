@@ -222,7 +222,6 @@ def add_subgroups(
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -237,7 +236,6 @@ def add_subgroups(
             displays,
             clipboard,
             onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -383,12 +381,12 @@ def invite_to_group(
         'was invited to in "(?P<host>.*)" Onezone service'
     )
 )
-def join_group(client, user, host, hosts, users, selenium, oz_page, tmp_memory):
+def join_group(client, user, host, hosts, users, selenium, tmp_memory):
 
     if client.lower() == "rest":
         join_group_using_rest(user, tmp_memory, hosts, users, host)
     elif client.lower() == "web gui":
-        join_group_using_op_gui(selenium, user, oz_page, tmp_memory)
+        join_group_using_op_gui(selenium, user, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -469,7 +467,6 @@ def fail_to_add_subgroups(
     displays,
     clipboard,
     onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -484,7 +481,6 @@ def fail_to_add_subgroups(
             displays,
             clipboard,
             onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

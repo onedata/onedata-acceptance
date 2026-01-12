@@ -173,10 +173,10 @@ def upload_workflow_from_repository(selenium, browser_id, workflow_name, oz_page
 
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_lambda_from_repository(selenium, browser_id, lambda_name, oz_page):
+def upload_lambda_from_repository(selenium, browser_id, lambda_name):
     driver = selenium[browser_id]
     lambda_name = "".join([lambda_name, "/", lambda_name, ".json"])
-    automation_page = oz_page(driver)["automation"]
+    automation_page = OZLoggedIn(driver)["automation"]
     automation_page.upload_lambda(upload_lambda_path(lambda_name))
 
 
@@ -208,8 +208,8 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow, option):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
-    page = oz_page(selenium[browser_id])["automation"]
+def assert_lambda_exists(selenium, browser_id, lambda_name):
+    page = OZLoggedIn(selenium[browser_id])["automation"]
 
     assert (
         lambda_name in page.lambdas_page.elements_list
@@ -245,9 +245,9 @@ def collapse_revision_list(subpage):
     subpage.show_revisions_button.click()
 
 
-def get_lambda_or_workflow_bracket(selenium, browser_id, oz_page, page, object_name):
+def get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name):
     page_name = page + "s_page"
-    subpage = getattr(oz_page(selenium[browser_id])["automation"], page_name)
+    subpage = getattr(OZLoggedIn(selenium[browser_id])["automation"], page_name)
 
     bracket = subpage.elements_list[object_name]
 
@@ -279,7 +279,7 @@ def assert_revision_description_in_object_bracket(
     description,
 ):
     bracket = get_lambda_or_workflow_bracket(
-        selenium, browser_id, oz_page, page, object_name
+        selenium, browser_id, page, object_name
     )
 
     revision = bracket.revision_list[ordinal[:-2]]
@@ -299,10 +299,10 @@ def assert_revision_description_in_object_bracket(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_revision_of_object(
-    selenium, browser_id, oz_page, ordinal, option, object_name, page
+    selenium, browser_id, ordinal, option, object_name, page
 ):
     bracket = get_lambda_or_workflow_bracket(
-        selenium, browser_id, oz_page, page, object_name
+        selenium, browser_id, page, object_name
     )
 
     if option == "does not see":
@@ -320,12 +320,11 @@ def assert_revision_of_object(
     )
 )
 def click_option_in_revision_menu_button_ordinal(
-    selenium, browser_id, oz_page, option, object_name, ordinal, popups, page
+    selenium, browser_id, option, object_name, ordinal, popups, page
 ):
     click_option_in_revision_menu_button(
         selenium,
         browser_id,
-        oz_page,
         option,
         object_name,
         ordinal[:-2],
@@ -336,10 +335,10 @@ def click_option_in_revision_menu_button_ordinal(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(
-    selenium, browser_id, oz_page, option, object_name, number, popups, page
+    selenium, browser_id, option, object_name, number, popups, page
 ):
     item = get_lambda_or_workflow_bracket(
-        selenium, browser_id, oz_page, page, object_name
+        selenium, browser_id, page, object_name
     )
     item.revision_list[number].menu_button.click()
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()

@@ -699,7 +699,6 @@ def see_num_of_items_in_op(
     tmp_memory,
     selenium,
     op_container,
-    oz_page,
     popups,
 ):
     num = int(num) if num is not None else 1
@@ -713,8 +712,6 @@ def see_num_of_items_in_op(
             "",
             space,
             num,
-            oz_page,
-            host,
             hosts,
             popups,
         )
@@ -911,7 +908,6 @@ def create_directory_structure_in_op(
     host,
     client,
     modals,
-    oz_page,
     popups,
     request,
 ):
@@ -925,7 +921,6 @@ def create_directory_structure_in_op(
             space,
             tmp_memory,
             modals,
-            oz_page,
             popups,
         )
     elif client_lower == "rest":

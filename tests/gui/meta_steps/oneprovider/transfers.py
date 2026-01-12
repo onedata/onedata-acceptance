@@ -98,10 +98,10 @@ def evict_file(
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium, browser_id, provider, space, hosts, oz_page, op_container
+    selenium, browser_id, provider, space, hosts, op_container
 ):
     open_transfers_page(
-        selenium, browser_id, provider, space, hosts, oz_page, op_container
+        selenium, browser_id, provider, space, hosts, op_container
     )
     wait_for_waiting_transfer_to_start(selenium, browser_id, op_container)
     wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container)

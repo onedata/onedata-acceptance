@@ -452,7 +452,7 @@ def see_num_of_items_in_path_in_op_gui(
         )
     except KeyError:
         navigate_to_tab_in_op_using_gui(
-            selenium, user, oz_page, provider, tab_name, hosts, popups
+            selenium, user, provider, tab_name, hosts, popups
         )
         _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)

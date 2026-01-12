@@ -56,11 +56,12 @@ from tests.gui.steps.onezone.tokens import (
 )
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import OZLoggedIn, Popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _paste_token_into_text_field(selenium, browser_id, oz_page, token):
-    page = oz_page(selenium[browser_id])["tokens"]
+def _paste_token_into_text_field(selenium, browser_id, token):
+    page = OZLoggedIn(selenium[browser_id])["tokens"]
     page.input_name = token
 
 
@@ -94,14 +95,14 @@ def paste_received_token_into_text_field(selenium, browser_id, tmp_memory):
         "received token"
     )
 )
-def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
+def consume_received_token(selenium, browser_id, tmp_memory):
     # step doesn`t check whether token consumption was successful
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
-    paste_received_token_into_text_field(selenium, browser_id, oz_page, tmp_memory)
+    paste_received_token_into_text_field(selenium, browser_id, tmp_memory)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
 
@@ -109,14 +110,14 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
 @wt(parsers.parse("user of {browser_id} joins group using copied token"))
 @wt(parsers.parse("user of {browser_id} joins to harvester in Onezone page"))
 @wt(parsers.parse("user of {browser_id} joins inventory using copied token"))
-def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, displays):
+def consume_token_from_copied_token(selenium, browser_id, clipboard, displays):
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
-        selenium, browser_id, oz_page, clipboard, displays
+        selenium, browser_id, clipboard, displays
     )
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
@@ -829,7 +830,6 @@ def create_token_with_object_id(
     clipboard,
     user,
     selenium,
-    oz_page,
     popups,
     users,
     groups,
@@ -866,7 +866,6 @@ def create_token_with_object_id(
         selenium,
         user,
         config,
-        oz_page,
         popups,
         users,
         groups,

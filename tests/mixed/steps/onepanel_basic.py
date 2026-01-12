@@ -542,7 +542,6 @@ def w_assert_space_is_supported_by_provider_in_oz(
     provider_name,
     host,
     selenium,
-    oz_page,
     hosts,
     users,
 ):
@@ -550,7 +549,7 @@ def w_assert_space_is_supported_by_provider_in_oz(
     if client.lower() == "web gui":
 
         assert_space_is_supported_by_provider_in_oz_gui(
-            selenium, user, oz_page, space_name, provider_name, hosts
+            selenium, user, space_name, provider_name, hosts
         )
     elif client.lower() == "rest":
 
@@ -901,12 +900,12 @@ def copy_id_of_space(
     )
 )
 def send_copied_invite_token(
-    client, user, selenium, oz_page, tmp_memory, displays, clipboard, send_to
+    client, user, selenium, tmp_memory, displays, clipboard, send_to
 ):
     if client.lower() == "web gui":
 
         send_copied_invite_token_in_oz_gui(
-            selenium, user, oz_page, send_to, tmp_memory, displays, clipboard
+            selenium, user, send_to, tmp_memory, displays, clipboard
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

@@ -99,7 +99,7 @@ def _go_to_storage_view_in_clusters(
     if re.match(onezone_url_pattern, driver.current_url):
         click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
         click_on_record_in_clusters_menu(
-            selenium, browser_id, OZLoggedIn, provider_name, hosts
+            selenium, browser_id, provider_name, hosts
         )
 
     wt_click_on_subitem_for_item(

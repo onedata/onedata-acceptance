@@ -60,6 +60,7 @@ from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import OZLoggedIn, Popups
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -114,7 +115,7 @@ def send_support_token_in_oz_using_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
+def leave_spaces_in_oz_using_gui(selenium, user, space_list):
     where = "spaces"
     option = "Leave"
     confirmation_button = "Leave"
@@ -123,7 +124,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
 
     if space_list == "all":
         space_list = [
-            elem.name for elem in oz_page(selenium[user])["data"].spaces_header_list
+            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
         ]
     else:
         space_list = parse_seq(space_list)

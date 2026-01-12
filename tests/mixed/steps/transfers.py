@@ -181,14 +181,13 @@ def assert_details_of_recent_transfer_op(
     selenium,
     op_container,
     popups,
-    oz_page,
 ):
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(
             user, users, host, hosts, space, spaces, config
         )
     elif client.lower() == "web gui":
-        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
+        open_transfers_page(selenium, user, host, space, hosts, op_container)
         assert_ended_transfer(
             selenium, user, item_type, config, hosts, op_container, popups
         )
@@ -203,14 +202,14 @@ def assert_details_of_recent_transfer_op(
     )
 )
 def wait_for_recent_transfer_to_finish_op(
-    client, user, users, host, hosts, space, spaces, selenium, oz_page, op_container
+    client, user, users, host, hosts, space, spaces, selenium, op_container
 ):
     if client.lower() == "rest":
         assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
     elif client.lower() == "web gui":
-        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
+        open_transfers_page(selenium, user, host, space, hosts, op_container)
         wait_for_all_transfers_to_start_and_finish(
-            selenium, user, host, space, hosts, oz_page, op_container
+            selenium, user, host, space, hosts, op_container
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -224,7 +223,6 @@ def wait_for_recent_transfer_to_finish_op(
 )
 def upload_file_to_provider_browser(
     selenium,
-    oz_page,
     client,
     user,
     path,
@@ -238,7 +236,7 @@ def upload_file_to_provider_browser(
 ):
     if client.lower() == "web gui":
         wt_visit_file_browser(
-            selenium, oz_page, provider, space, user, op_container, tmp_memory, hosts
+            selenium, provider, space, user, op_container, tmp_memory, hosts
         )
         upload_file_to_cwd_in_data_tab(
             selenium, user, path, tmpdir, op_container, popups

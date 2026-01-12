@@ -28,6 +28,8 @@ from tests.utils.entities_setup import (
 )
 from tests.utils.utils import repeat_failed
 
+from tests.gui.utils import OZLoggedIn, Popups
+
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def check_browser_to_load(selenium, browser_id, tmp_memory, op_container, browser):
@@ -729,12 +731,12 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
         'user of {browser_id} clicks on "{provider}" provider on {which} page'
     )
 )
-def choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page):
+def choose_provider_in_selected_page(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     driver.switch_to.default_content()
 
-    oz_page(driver)["data"].providers[provider].click()
+    OZLoggedIn(driver)["data"].providers[provider].click()
 
 
 @wt(
@@ -743,21 +745,21 @@ def choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_p
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page):
+def click_choose_other_oneprovider_on_file_browser(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)["data"].choose_other_provider()
+    OZLoggedIn(driver)["data"].choose_other_provider()
 
 
-def check_current_provider_in_space(selenium, browser_id, oz_page):
+def check_current_provider_in_space(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    current_provider = oz_page(driver)["data"].current_provider
+    current_provider = OZLoggedIn(driver)["data"].current_provider
     return current_provider
 
 
-def _assert_current_provider_in_space(selenium, browser_id, provider, oz_page):
-    current_provider = check_current_provider_in_space(selenium, browser_id, oz_page)
+def _assert_current_provider_in_space(selenium, browser_id, provider):
+    current_provider = check_current_provider_in_space(selenium, browser_id)
     assert (
         provider == current_provider
     ), f"{provider} is not current provider on file browser page"
@@ -778,8 +780,8 @@ def _assert_provider_in_space(selenium, browser_id, provider, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_current_provider_in_space(selenium, browser_id, provider, oz_page):
-    _assert_current_provider_in_space(selenium, browser_id, provider, oz_page)
+def assert_current_provider_in_space(selenium, browser_id, provider):
+    _assert_current_provider_in_space(selenium, browser_id, provider)
 
 
 @wt(
@@ -790,10 +792,10 @@ def assert_current_provider_in_space(selenium, browser_id, provider, oz_page):
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_current_provider_name_in_space(
-    selenium, browser_id, provider, hosts, oz_page
+    selenium, browser_id, provider, hosts
 ):
     provider = hosts[provider]["name"]
-    _assert_current_provider_in_space(selenium, browser_id, provider, oz_page)
+    _assert_current_provider_in_space(selenium, browser_id, provider)
 
 
 @wt(

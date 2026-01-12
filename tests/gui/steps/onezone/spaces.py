@@ -488,12 +488,12 @@ def assert_harvester_on_list_on_space_harvesters_subpage(
 @wt(parsers.parse('user of {browser_id} sees "{provider}" is on the providers list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_providers_list_contains_provider(
-    selenium, browser_id, provider, hosts, oz_page
+    selenium, browser_id, provider, hosts
 ):
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]["name"]
-    providers_list = oz_page(driver)["data"].providers_page.providers_list
+    providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
     assert provider in providers_list, f'provider "{provider}" not found'
 
 

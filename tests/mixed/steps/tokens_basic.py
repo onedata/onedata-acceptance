@@ -41,7 +41,6 @@ def create_token(
     user,
     config,
     selenium,
-    oz_page,
     popups,
     users,
     groups,
@@ -58,7 +57,6 @@ def create_token(
             selenium,
             user,
             config,
-            oz_page,
             popups,
             users,
             groups,
@@ -86,7 +84,6 @@ def assert_token(
     user,
     config,
     selenium,
-    oz_page,
     users,
     groups,
     hosts,
@@ -99,7 +96,6 @@ def assert_token(
             selenium,
             user,
             config,
-            oz_page,
             users,
             groups,
             hosts,
@@ -171,11 +167,11 @@ def revoke_token_in_oz(
     )
 )
 def join_space_with_token(
-    selenium, user, oz_page, tmp_memory, client, users, hosts, space_name
+    selenium, user, tmp_memory, client, users, hosts, space_name
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        consume_received_token(selenium, user, oz_page, tmp_memory)
+        consume_received_token(selenium, user, tmp_memory)
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(

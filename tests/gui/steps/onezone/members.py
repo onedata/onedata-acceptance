@@ -1036,7 +1036,7 @@ def assert_privilege_config_for_user(
         go_to_group_subpage(selenium, browser_id, item_name, option2.lower())
     elif where == "cluster":
         click_on_record_in_clusters_menu(
-            selenium, browser_id, OZLoggedIn, item_name, hosts
+            selenium, browser_id, item_name, hosts
         )
         wt_click_on_subitem_for_item(
             selenium, browser_id, option, option2, item_name, onepanel, hosts

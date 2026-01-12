@@ -105,7 +105,6 @@ def leave_spaces_in_oz(
     space_list,
     host,
     selenium,
-    oz_page,
     users,
     hosts,
     spaces,
@@ -117,7 +116,7 @@ def leave_spaces_in_oz(
     elif client.lower() == "web gui":
 
         leave_spaces_in_oz_using_gui(
-            selenium, user, space_list, oz_page
+            selenium, user, space_list
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -322,7 +321,6 @@ def join_space_in_oz(
     item_name,
     host,
     selenium,
-    oz_page,
     tmp_memory,
     users,
     hosts,
@@ -335,7 +333,7 @@ def join_space_in_oz(
         )
     elif client.lower() == "web gui":
 
-        join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory)
+        join_space_in_oz_using_gui(selenium, user_list, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
