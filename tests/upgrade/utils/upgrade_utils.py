@@ -8,10 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 
+from packaging.version import Version
+
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
-
 from tests.conftest import export_logs
 from tests.upgrade.utils.rest_utils import get_provider_configuration
 from tests.utils.environment_utils import (
@@ -241,19 +242,15 @@ def get_prov_version(provider_host):
     return get_provider_configuration(provider_host)["version"]
 
 
-def is_prov_version_lower_than(actual_version, reference_version):
-    actual_version_split = [int(s) for s in actual_version.split("-")[0].split(".")]
-    reference_version_split = [
-        int(s) for s in reference_version.split("-")[0].split(".")
-    ]
-    if actual_version_split[0] < reference_version_split[0]:
-        return True
-    if actual_version_split[0] == reference_version_split[0]:
-        if actual_version_split[1] < reference_version_split[1]:
-            return True
-        if actual_version_split[1] == reference_version_split[1]:
-            return actual_version_split[2] < reference_version_split[2]
-    return False
+def is_version_lower_than(actual_version, reference_version):
+    """
+    Returns true if actual version is lower than reference one, e.g.
+    21.02.8 < 25.0
+    25.0 < 25.0.1
+    25.1.1 < 25.1.2
+    """
+
+    return Version(actual_version) < Version(reference_version)
 
 
 def format_failed_test_results(when, exception, test):

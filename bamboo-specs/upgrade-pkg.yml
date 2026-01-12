@@ -41,6 +41,7 @@ stages:
     - 20.02.19 - current
     - 21.02.1 - current
     - 21.02.8 - current
+    - 25.0 - current
 
 _Codetag Tracker:
   key: CDTR
@@ -184,6 +185,15 @@ _Static analysis:
 
 21.02.8 - current:
   key: U28C
+  other: *common-opts
+  tasks: *tasks
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+
+25.0 - current:
+  key: U25C
   other: *common-opts
   tasks: *tasks
   final-tasks: *final-tasks
