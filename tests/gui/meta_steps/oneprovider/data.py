@@ -439,9 +439,7 @@ def see_num_of_items_in_path_in_op_gui(
     tmp_memory,
     op_container,
     path,
-    _space,
     num,
-    oz_page,
     provider,
     hosts,
     popups,
@@ -514,7 +512,6 @@ def create_directory_structure_in_op_gui(
     space,
     tmp_memory,
     modals,
-    oz_page,
     popups,
 ):
     items = yaml.load(config, yaml.Loader)
@@ -529,7 +526,6 @@ def create_directory_structure_in_op_gui(
         tmp_memory,
         op_container,
         modals,
-        oz_page,
         popups,
     )
 
@@ -544,7 +540,6 @@ def _create_item(
     tmp_memory,
     op_container,
     modals,
-    oz_page,
     popups,
 ):
     path = "space root"
@@ -589,7 +584,6 @@ def _create_item(
         tmp_memory,
         op_container,
         modals,
-        oz_page,
         popups,
     )
 
@@ -603,7 +597,6 @@ def _create_content(
     tmp_memory,
     op_container,
     modals,
-    oz_page,
     popups,
 ):
     for item in content:
@@ -622,7 +615,6 @@ def _create_content(
             tmp_memory,
             op_container,
             modals,
-            oz_page,
             popups,
         )
 
@@ -852,7 +844,6 @@ def create_hardlinks_of_file(
     file_name,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
 ):
@@ -871,7 +862,6 @@ def create_hardlinks_of_file(
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
         popups,
         option,
@@ -891,7 +881,6 @@ def create_symlinks_of_file(
     file_name,
     space,
     tmp_memory,
-    oz_page,
     op_container,
     popups,
 ):
@@ -907,7 +896,6 @@ def create_symlinks_of_file(
         file_name,
         space,
         tmp_memory,
-        oz_page,
         op_container,
         popups,
         option,

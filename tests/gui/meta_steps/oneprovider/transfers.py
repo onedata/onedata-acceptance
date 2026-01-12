@@ -37,16 +37,16 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_transfers_page(
-    selenium, browser_id, provider, space, hosts, oz_page, op_container
+    selenium, browser_id, provider, space, hosts,  op_container
 ):
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option)
 
-    if provider_name != check_current_provider_in_space(selenium, browser_id, oz_page):
-        click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
-        choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)
+    if provider_name != check_current_provider_in_space(selenium, browser_id):
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
+        choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
 
     wait_for_transfers_page_to_load(selenium, browser_id, op_container)
 

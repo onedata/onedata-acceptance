@@ -44,7 +44,7 @@ ALL_LAMBDA_NAMES = []
         "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
-def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
+def create_lambda_manually(browser_id, config, selenium, popups):
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -78,10 +78,10 @@ def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
           - name: "result"
             type: Object
     """
-    _create_lambda_manually(browser_id, config, selenium, oz_page, popups)
+    _create_lambda_manually(browser_id, config, selenium, popups)
 
 
-def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
+def _create_lambda_manually(browser_id, config, selenium, popups):
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -123,7 +123,6 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                oz_page,
                 popups,
                 conf_param_option,
                 config_param["name"],
@@ -136,7 +135,6 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                oz_page,
                 popups,
                 argument_option,
                 args["name"],
@@ -149,7 +147,6 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                oz_page,
                 popups,
                 result_option,
                 res["name"],
@@ -170,7 +167,6 @@ def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
 def create_lambda_using_gui(
     selenium,
     browser_id,
-    oz_page,
     lambda_name,
     docker_image,
     inventory,
@@ -186,7 +182,7 @@ def create_lambda_using_gui(
 
     go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
 
-    assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
+    assert_lambda_exists(selenium, browser_id, lambda_name)
 
 
 @wt(
@@ -302,7 +298,7 @@ def modify_parameter_in_lambda_form(
     )
 )
 def upload_all_lambda_dumps_from_automation_examples(
-    selenium, browser_id, oz_page, modals, inventory, tmp_memory
+    selenium, browser_id, modals, inventory, tmp_memory
 ):
     global ALL_LAMBDA_NAMES
     ALL_LAMBDA_NAMES = [
@@ -314,7 +310,6 @@ def upload_all_lambda_dumps_from_automation_examples(
         _upload_lambda_dump_from_automation_examples(
             selenium,
             browser_id,
-            oz_page,
             modals,
             inventory,
             lambda_name,
@@ -323,13 +318,13 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium, browser_id, oz_page, modals, inventory, lambda_name, tmp_memory
+    selenium, browser_id,  modals, inventory, lambda_name, tmp_memory
 ):
     subpage = "lambdas"
     modal = "Upload workflow"
     button = "Apply"
 
-    upload_lambda_from_repository(selenium, browser_id, lambda_name, oz_page)
+    upload_lambda_from_repository(selenium, browser_id, lambda_name)
     click_modal_button(selenium, browser_id, button, modal, modals)
     # hide lambda revision page
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
@@ -342,7 +337,7 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium, browser_id, oz_page, popups, modals, tmp_memory
+    selenium, browser_id,  popups, modals, tmp_memory
 ):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
@@ -351,7 +346,6 @@ def download_and_remove_all_lambda_dumps_from_inventory(
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
-            oz_page,
             popups,
             modals,
             tmp_memory,

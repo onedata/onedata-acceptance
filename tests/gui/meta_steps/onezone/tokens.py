@@ -67,17 +67,17 @@ def _paste_token_into_text_field(selenium, browser_id, oz_page, token):
 @wt(parsers.parse("user of {browser_id} pastes copied token into token text field"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def paste_copied_token_into_text_field(
-    selenium, browser_id, oz_page, clipboard, displays
+    selenium, browser_id,  clipboard, displays
 ):
     token = clipboard.paste(display=displays[browser_id])
-    _paste_token_into_text_field(selenium, browser_id, oz_page, token)
+    _paste_token_into_text_field(selenium, browser_id, token)
 
 
 @wt(parsers.parse("user of {browser_id} pastes received token into token text field"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def paste_received_token_into_text_field(selenium, browser_id, oz_page, tmp_memory):
+def paste_received_token_into_text_field(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]["mailbox"]["token"]
-    _paste_token_into_text_field(selenium, browser_id, oz_page, token)
+    _paste_token_into_text_field(selenium, browser_id, token)
 
 
 @wt(
@@ -135,7 +135,7 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, di
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(
-    selenium, browser_id, elem_name, oz_page, clipboard, displays
+    selenium, browser_id, elem_name, clipboard, displays
 ):
     option = "Tokens"
     button = "Consume token"
@@ -143,7 +143,7 @@ def add_element_with_copied_token(
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
-        selenium, browser_id, oz_page, clipboard, displays
+        selenium, browser_id, clipboard, displays
     )
     select_member_from_dropdown(selenium, browser_id, elem_name)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
@@ -158,7 +158,6 @@ def add_element_with_copied_token(
 def result_to_consume_token_for_elem(
     selenium,
     browser_id,
-    oz_page,
     elem_name,
     result,
     clipboard,
@@ -166,7 +165,7 @@ def result_to_consume_token_for_elem(
     modals,
 ):
     add_element_with_copied_token(
-        selenium, browser_id, elem_name, oz_page, clipboard, displays
+        selenium, browser_id, elem_name, clipboard, displays
     )
     _result_to_consume_token(selenium, browser_id, result, modals)
 
@@ -179,7 +178,7 @@ def result_to_consume_token_for_elem(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_while_consuming_token(
-    selenium, browser_id, oz_page, clipboard, displays, text
+    selenium, browser_id, clipboard, displays, text
 ):
     option = "Tokens"
     button = "Consume token"
@@ -187,7 +186,7 @@ def assert_alert_while_consuming_token(
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
     paste_copied_token_into_text_field(
-        selenium, browser_id, oz_page, clipboard, displays
+        selenium, browser_id, clipboard, displays
     )
     assert_alert_on_tokens_page(browser_id, text, selenium)
 
@@ -198,9 +197,9 @@ def assert_alert_while_consuming_token(
     )
 )
 def result_to_consume_token(
-    selenium, browser_id, oz_page, result, clipboard, displays, modals
+    selenium, browser_id, result, clipboard, displays, modals
 ):
-    consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, displays)
+    consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result, modals)
 
 
@@ -261,7 +260,6 @@ def create_token_with_config(
     selenium,
     browser_id,
     config,
-    oz_page,
     popups,
     users,
     groups,
@@ -318,7 +316,6 @@ def create_token_with_config(
         selenium,
         browser_id,
         config,
-        oz_page,
         popups,
         users,
         groups,
@@ -331,7 +328,6 @@ def _create_token_with_config(
     selenium,
     browser_id,
     config,
-    oz_page,
     popups,
     users,
     groups,
@@ -370,7 +366,6 @@ def _create_token_with_config(
         _set_tokens_caveats(
             selenium,
             browser_id,
-            oz_page,
             caveats,
             popups,
             users,
@@ -384,7 +379,6 @@ def _create_token_with_config(
 def _set_tokens_caveats(
     selenium,
     browser_id,
-    oz_page,
     caveats,
     popups,
     users,
@@ -429,7 +423,6 @@ def _set_tokens_caveats(
             users,
             groups,
             hosts,
-            oz_page,
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
@@ -460,7 +453,6 @@ def assert_token_configuration(
     selenium,
     browser_id,
     config,
-    oz_page,
     users,
     groups,
     hosts,
@@ -516,7 +508,6 @@ def assert_token_configuration(
         selenium,
         browser_id,
         config,
-        oz_page,
         users,
         groups,
         hosts,
@@ -530,7 +521,6 @@ def assert_token_configuration_gui(
     selenium,
     browser_id,
     config,
-    oz_page,
     users,
     groups,
     hosts,
@@ -543,7 +533,6 @@ def assert_token_configuration_gui(
         selenium,
         browser_id,
         config,
-        oz_page,
         users,
         groups,
         hosts,
@@ -713,7 +702,6 @@ def create_and_check_token(
     browser_id,
     config,
     selenium,
-    oz_page,
     popups,
     users,
     groups,
@@ -725,7 +713,6 @@ def create_and_check_token(
         selenium,
         browser_id,
         config,
-        oz_page,
         popups,
         users,
         groups,
@@ -780,7 +767,6 @@ def create_token_with_copied_object_id(
     clipboard,
     user,
     selenium,
-    oz_page,
     popups,
     users,
     groups,
@@ -797,7 +783,6 @@ def create_token_with_copied_object_id(
         selenium,
         user,
         config,
-        oz_page,
         popups,
         users,
         groups,

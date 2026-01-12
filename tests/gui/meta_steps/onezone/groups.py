@@ -262,14 +262,13 @@ def create_group_token_to_invite_group_using_op_gui(
         "user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
     )
 )
-def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
-    consume_received_token(selenium, browser_id, oz_page, tmp_memory)
+def join_group_using_op_gui(selenium, browser_id, tmp_memory):
+    consume_received_token(selenium, browser_id, tmp_memory)
 
 
 def add_subgroups_using_op_gui(
     selenium,
     user,
-    oz_page,
     parent,
     group_list,
     tmp_memory,
@@ -289,7 +288,7 @@ def add_subgroups_using_op_gui(
             onepanel,
         )
         add_element_with_copied_token(
-            selenium, user, child, oz_page, clipboard, displays
+            selenium, user, child, clipboard, displays
         )
 
 
@@ -324,7 +323,6 @@ def fail_to_rename_groups_using_op_gui(
 def fail_to_add_subgroups_using_op_gui(
     selenium,
     user,
-    oz_page,
     parent,
     group_list,
     tmp_memory,
@@ -348,7 +346,7 @@ def fail_to_add_subgroups_using_op_gui(
         modal = "error"
 
         add_element_with_copied_token(
-            selenium, user, child, oz_page, clipboard, displays
+            selenium, user, child, clipboard, displays
         )
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)

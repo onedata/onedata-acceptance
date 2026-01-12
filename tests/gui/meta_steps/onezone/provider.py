@@ -80,13 +80,13 @@ def assert_there_is_no_provider_in_oz_gui(
 
 
 def send_copied_invite_token_in_oz_gui(
-    selenium, user, oz_page, browser_list, tmp_memory, displays, clipboard
+    selenium, user, browser_list, tmp_memory, displays, clipboard
 ):
     item_type = "token"
     button = "add new provider cluster"
 
-    click_button_in_cluster_page(selenium, user, oz_page, button)
-    copy_registration_cluster_token(selenium, user, oz_page)
+    click_button_in_cluster_page(selenium, user, button)
+    copy_registration_cluster_token(selenium, user)
     send_copied_item_to_other_users(
         user, item_type, browser_list, tmp_memory, displays, clipboard
     )

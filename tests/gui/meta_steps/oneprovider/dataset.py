@@ -81,7 +81,6 @@ def create_dataset(
     item_name,
     space_name,
     selenium,
-    oz_page,
     op_container,
     modals,
     popups,
@@ -98,7 +97,6 @@ def create_dataset(
         go_to_and_assert_browser(
             selenium,
             browser_id,
-            oz_page,
             space_name,
             option_in_space,
             op_container,
@@ -141,7 +139,6 @@ def fail_to_create_dataset_in_op_gui(
     item_name,
     space_name,
     selenium,
-    oz_page,
     op_container,
     modals,
     popups,
@@ -152,7 +149,6 @@ def fail_to_create_dataset_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -277,7 +273,6 @@ def check_dataset_structure_in_op_gui(
 def check_effective_protection_flags_for_file_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -291,7 +286,6 @@ def check_effective_protection_flags_for_file_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         option_in_space,
         op_container,
@@ -418,7 +412,6 @@ def detach_dataset_in_op_gui(
 def assert_dataset_detached_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     item_name,
     space_name,
     op_container,
@@ -438,7 +431,7 @@ def assert_dataset_detached_in_op_gui(
         item_browser=item_browser,
     )
     click_on_state_view_mode_tab(
-        browser_id, oz_page, selenium, state, which, tmp_memory
+        browser_id, selenium, state, which, tmp_memory
     )
     assert_browser_in_tab_in_op(
         selenium,
@@ -455,7 +448,6 @@ def assert_dataset_detached_in_op_gui(
 def reattach_dataset_in_op_gui(
     selenium,
     browser_id,
-    oz_page,
     space_name,
     op_container,
     tmp_memory,
@@ -480,7 +472,7 @@ def reattach_dataset_in_op_gui(
         item_browser=item_browser,
     )
     click_on_state_view_mode_tab(
-        browser_id, oz_page, selenium, state, which, tmp_memory
+        browser_id, selenium, state, which, tmp_memory
     )
     assert_browser_in_tab_in_op(
         selenium,

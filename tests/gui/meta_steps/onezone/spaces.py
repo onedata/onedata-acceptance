@@ -268,9 +268,9 @@ def request_space_support_using_gui(
     )
 
 
-def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory):
+def join_space_in_oz_using_gui(selenium, user_list, tmp_memory):
     for user in parse_seq(user_list):
-        consume_received_token(selenium, user, oz_page, tmp_memory)
+        consume_received_token(selenium, user, tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, space_list):
@@ -337,7 +337,7 @@ def assert_provider_does_not_support_space_in_oz_gui(
 
 
 def assert_space_is_supported_by_provider_in_oz_gui(
-    selenium, user, oz_page, space_name, provider_name, hosts
+    selenium, user, space_name, provider_name, hosts
 ):
     where = "Data"
     option = "Providers"
@@ -348,7 +348,7 @@ def assert_space_is_supported_by_provider_in_oz_gui(
     )
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     assert_providers_list_contains_provider(
-        selenium, user, provider_name, hosts, oz_page
+        selenium, user, provider_name, hosts
     )
 
 
@@ -357,14 +357,14 @@ def assert_space_is_supported_by_provider_in_oz_gui(
         'there is no "{space_name}" space in Onezone used by user of {browser_id}'
     )
 )
-def leave_space_in_onezone(selenium, browser_id, space_name, oz_page):
+def leave_space_in_onezone(selenium, browser_id, space_name):
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(
-            selenium, browser_id, space_name, oz_page
+            selenium, browser_id, space_name
         )
     except RuntimeError:
         pass

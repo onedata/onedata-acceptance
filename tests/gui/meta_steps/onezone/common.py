@@ -99,14 +99,14 @@ def click_visit_provider(driver, popups):
     popups(driver).provider_map_popover.visit_provider()
 
 
-def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups):
+def g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(
         list_parser(browser_id_list),
         providers_list,
         fillvalue=providers_list[-1],
     ):
-        visit_op(selenium, browser_id, oz_page, hosts[provider]["name"], popups)
+        visit_op(selenium, browser_id, hosts[provider]["name"], popups)
 
 
 @given(
@@ -116,8 +116,8 @@ def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, pop
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups)
+def g_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
+    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, popups)
 
 
 @wt(
@@ -127,13 +127,12 @@ def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, popups
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals)
+def wt_visit_op(selenium, browser_id_list, providers_list, hosts, modals):
+    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, modals)
 
 
 def visit_file_browser(
     selenium,
-    oz_page,
     providers_list,
     spaces_list,
     browser_id_list,
@@ -153,8 +152,8 @@ def visit_file_browser(
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option_in_submenu
         )
-        click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
-        choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id )
+        choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
         assert_browser_in_tab_in_op(
             selenium, browser_id, op_container, tmp_memory, "file browser"
         )
@@ -169,7 +168,6 @@ def visit_file_browser(
 )
 def g_visit_file_browser(
     selenium,
-    oz_page,
     providers_list,
     spaces_list,
     browser_id_list,
@@ -179,7 +177,6 @@ def g_visit_file_browser(
 ):
     visit_file_browser(
         selenium,
-        oz_page,
         providers_list,
         spaces_list,
         browser_id_list,
@@ -198,7 +195,6 @@ def g_visit_file_browser(
 )
 def wt_visit_file_browser(
     selenium,
-    oz_page,
     providers_list,
     spaces_list,
     browser_id_list,
@@ -208,7 +204,6 @@ def wt_visit_file_browser(
 ):
     visit_file_browser(
         selenium,
-        oz_page,
         providers_list,
         spaces_list,
         browser_id_list,

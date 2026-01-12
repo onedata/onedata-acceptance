@@ -49,12 +49,12 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(
-    selenium, user, oz_page, provider, main_menu_tab, hosts, popups
+    selenium, user, provider, main_menu_tab, hosts, popups
 ):
     title = selenium[user].title
 
     if "onezone" in title.lower():
-        g_wt_visit_op(selenium, oz_page, user, provider, hosts, popups)
+        g_wt_visit_op(selenium, user, provider, hosts, popups)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
@@ -195,12 +195,12 @@ def migrate_file_to_provider(
 
 @wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters submenu'))
 def open_record_of_clusters_submenu(
-    selenium, browser_id, provider_name, oz_page, hosts
+    selenium, browser_id, provider_name, hosts
 ):
     sidebar = "Clusters"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
     click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, provider_name, hosts
+        selenium, browser_id, provider_name, hosts
     )
 
 

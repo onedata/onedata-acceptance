@@ -141,7 +141,6 @@ def enable_provider_cluster_registration_for_user(
     browser_id2,
     login_page,
     users,
-    oz_page,
     tmp_memory,
     displays,
     clipboard,
@@ -154,7 +153,6 @@ def enable_provider_cluster_registration_for_user(
     send_copied_invite_token_in_oz_gui(
         selenium,
         browser_id,
-        oz_page,
         browser_id2,
         tmp_memory,
         displays,
