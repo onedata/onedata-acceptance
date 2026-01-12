@@ -1154,7 +1154,6 @@ def assert_directory_structure_is_as_previous_in_op(
     selenium,
     user,
     op_container,
-    oz_page,
     tmp_memory,
     tmpdir,
     space,
@@ -1175,7 +1174,6 @@ def assert_directory_structure_is_as_previous_in_op(
             tmp_memory,
             tmpdir,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
@@ -1198,7 +1196,6 @@ def assert_directory_structure_in_op(
     selenium,
     user,
     op_container,
-    oz_page,
     tmp_memory,
     tmpdir,
     space,
@@ -1218,7 +1215,6 @@ def assert_directory_structure_in_op(
             tmp_memory,
             tmpdir,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)

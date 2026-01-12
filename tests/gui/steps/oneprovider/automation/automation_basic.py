@@ -16,6 +16,7 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -306,11 +307,9 @@ def click_button_on_status_bar(selenium, browser_id, op_container, button):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_workflow_in_inventory_subpage(
-    oz_page, selenium, browser_id, ordinal, workflow
-):
+def click_on_workflow_in_inventory_subpage(selenium, browser_id, ordinal, workflow):
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"]
+    page = OZLoggedIn(driver)["automation"]
     revision = int(ordinal[:-2]) - 1
     page.workflows_page.elements_list[workflow].revision_list[revision].click()
     # wait for page to open

@@ -11,6 +11,7 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -284,10 +285,10 @@ def assert_page_with_text_appeared(browser_id, text, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_back_to_dataset_page_from_archive_browser(selenium, browser_id, oz_page):
+def go_back_to_dataset_page_from_archive_browser(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)["data"].archive_header.back_to_dataset_page()
+    OZLoggedIn(driver)["data"].archive_header.back_to_dataset_page()
 
 
 def assert_not_archive_with_description(tmp_memory, browser_id, description):

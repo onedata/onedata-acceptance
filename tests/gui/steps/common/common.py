@@ -62,9 +62,7 @@ def _get_page(where, driver):
         " the sidebar"
     )
 )
-def wt_assert_n_items_in_items_list(
-    selenium, browser_id, number: int, oz_page, items, where
-):
+def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
     driver = selenium[browser_id]
     page = _get_page(where, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)

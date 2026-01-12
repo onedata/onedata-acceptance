@@ -792,7 +792,6 @@ def assert_space_content_in_op(
     space_name,
     spaces,
     host,
-    oz_page,
 ):
     """Assert space has given content in provider.
 
@@ -820,7 +819,6 @@ def assert_space_content_in_op(
             tmp_memory,
             tmpdir,
             space_name,
-            oz_page,
         )
     elif client.lower() == "rest":
 

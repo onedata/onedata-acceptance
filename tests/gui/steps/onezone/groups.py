@@ -266,8 +266,8 @@ def assert_user_sees_group_page(selenium, browser_id, group_name):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_group_in_groups_page(browser_id, selenium, group_name, oz_page):
+def assert_group_in_groups_page(browser_id, selenium, group_name):
     driver = selenium[browser_id]
     assert (
-        group_name in oz_page(driver)["groups"].elements_list
+        group_name in OZLoggedIn(driver)["groups"].elements_list
     ), f"There is no group {group_name} in groups list."

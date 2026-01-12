@@ -399,11 +399,11 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(
-    selenium, browser_id, space_name, element_list, oz_page
+    selenium, browser_id, space_name, element_list
 ):
     driver = selenium[browser_id]
     element_list = _parse_tabs_list(element_list)
-    space = oz_page(driver)["data"].elements_list[space_name]
+    space = OZLoggedIn(driver)["data"].elements_list[space_name]
     error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
         element_list
@@ -473,10 +473,10 @@ def assert_error_popup_has_appeared(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_harvester_on_list_on_space_harvesters_subpage(
-    selenium, browser_id, harvester_name, oz_page, see
+    selenium, browser_id, harvester_name, see
 ):
     driver = selenium[browser_id]
-    harvesters_list = oz_page(driver)["data"].harvesters_page.harvesters_list
+    harvesters_list = OZLoggedIn(driver)["data"].harvesters_page.harvesters_list
     if see == "sees":
         error_msg = f" Harvester {harvester_name} not found on harvesters list"
         assert harvester_name in harvesters_list, error_msg

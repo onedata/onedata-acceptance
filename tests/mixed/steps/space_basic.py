@@ -509,7 +509,6 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
     users,
     hosts,
     selenium,
-    oz_page,
     popups,
 ):
 
@@ -523,7 +522,7 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
     elif client.lower() == "web gui":
 
         assert_provider_has_name_and_hostname_in_oz_gui(
-            selenium, user, oz_page, provider_name, provider, hosts, popups
+            selenium, user, provider_name, provider, hosts, popups
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

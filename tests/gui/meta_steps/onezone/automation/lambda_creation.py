@@ -262,11 +262,9 @@ def add_parameter_into_lambda_form(
         r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
     )
 )
-def modify_parameter_in_lambda_form(
-    selenium, browser_id, oz_page, popups, ordinal, config
-):
+def modify_parameter_in_lambda_form(selenium, browser_id, popups, ordinal, config):
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver)["automation"].lambdas_page.form
     data = yaml.load(config, yaml.Loader)
     subpage = page.argument
     ordinal = "1st" if not ordinal else ordinal
