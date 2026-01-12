@@ -15,7 +15,7 @@ from tests.gui.meta_steps.onezone.members import (
     fail_to_set_privileges_using_op_gui,
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
-from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
+from tests.gui.utils import Modals, Onepanel
 from tests.mixed.steps.rest.onezone.members import (
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,

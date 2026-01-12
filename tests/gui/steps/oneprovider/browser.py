@@ -10,7 +10,7 @@ from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

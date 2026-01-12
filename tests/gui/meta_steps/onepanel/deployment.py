@@ -28,7 +28,7 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
-from tests.gui.utils import Modals, Popups
+from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
