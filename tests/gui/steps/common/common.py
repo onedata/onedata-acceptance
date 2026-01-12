@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.utils import OZLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -45,13 +46,13 @@ def wait_for_checking_toggle(toggle, toggle_name=""):
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where, oz_page, driver):
+def _get_page(where, driver):
     if where == "shares":
-        return oz_page(driver)["shares"]
+        return OZLoggedIn(driver)["shares"]
     if where == "groups":
-        return oz_page(driver)["groups"]
+        return OZLoggedIn(driver)["groups"]
     if where == "spaces":
-        return oz_page(driver)["data"]
+        return OZLoggedIn(driver)["data"]
     raise AssertionError(f"page {where} not found")
 
 
@@ -65,7 +66,7 @@ def wt_assert_n_items_in_items_list(
     selenium, browser_id, number: int, oz_page, items, where
 ):
     driver = selenium[browser_id]
-    page = _get_page(where, oz_page, driver)
+    page = _get_page(where, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
 
 

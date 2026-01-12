@@ -57,10 +57,10 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -144,9 +144,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_spaces_in_oz_using_gui(
-    selenium, browser_id, space_list, modals
-):
+def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, modals):
     where = "Data"
     option = "Remove"
     modal = "Remove space"
@@ -294,17 +292,13 @@ def assert_spaces_have_been_renamed_in_oz_gui(
         assert_space_has_disappeared_on_spaces(selenium, user, space_name)
 
 
-def assert_there_is_no_provider_for_space_in_oz_gui(
-    selenium, user, space_name
-):
+def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, space_name):
     number = 0
 
     assert_number_of_supporting_providers_of_space(selenium, user, number, space_name)
 
 
-def assert_user_is_member_of_space_gui(
-    selenium, user, space_name, user_list, onepanel
-):
+def assert_user_is_member_of_space_gui(selenium, user, space_name, user_list, onepanel):
     where = "Members"
     option = "sees"
     member_type = "user"
@@ -348,9 +342,7 @@ def assert_space_is_supported_by_provider_in_oz_gui(
         selenium, user, where.lower(), space_name
     )
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
-    assert_providers_list_contains_provider(
-        selenium, user, provider_name, hosts
-    )
+    assert_providers_list_contains_provider(selenium, user, provider_name, hosts)
 
 
 @given(
@@ -364,9 +356,7 @@ def leave_space_in_onezone(selenium, browser_id, space_name):
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     time.sleep(2)
     try:
-        leave_spaces_in_oz_using_gui(
-            selenium, browser_id, space_name
-        )
+        leave_spaces_in_oz_using_gui(selenium, browser_id, space_name)
     except RuntimeError:
         pass
 
@@ -476,9 +466,7 @@ def add_group_to_space_or_group(
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_user_space_invite_token(
-    browser_id, space_name, selenium, onepanel, modals
-):
+def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel, modals):
     option = "spaces"
     option_in_space = "Members"
     where = "space"
@@ -520,9 +508,9 @@ def copy_command_from_rest_api_modal(modals, selenium, browser_id, command, popu
         " sidebar"
     )
 )
-def open_space_in_spaces_list(selenium, browser_id, space_name, oz_page):
+def open_space_in_spaces_list(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)["data"]
+    page = OZLoggedIn(driver)["data"]
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
@@ -553,9 +541,9 @@ def _get_visible_spaces_list(page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_opened_space(selenium, browser_id, space_name, oz_page):
+def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)["data"]
+    page = OZLoggedIn(driver)["data"]
     vis_spaces = _get_visible_spaces_list(page)
     vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
     index = vis_spaces_names.index(space_name)

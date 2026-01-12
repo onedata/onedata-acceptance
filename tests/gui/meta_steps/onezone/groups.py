@@ -148,9 +148,7 @@ def _open_member_from_list(selenium, user, parent, onepanel):
     click_element_in_members_list(selenium, user, user, where, list_type, onepanel)
 
 
-def assert_subgroups_using_op_gui(
-    selenium, user, group_list, parent, onepanel
-):
+def assert_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel):
     where = "group"
 
     _open_member_from_list(selenium, user, parent, onepanel)
@@ -160,9 +158,7 @@ def assert_subgroups_using_op_gui(
         )
 
 
-def fail_to_see_subgroups_using_op_gui(
-    selenium, user, group_list, parent, onepanel
-):
+def fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel):
     where = "group"
 
     _open_member_from_list(selenium, user, parent, onepanel)
@@ -287,9 +283,7 @@ def add_subgroups_using_op_gui(
             clipboard,
             onepanel,
         )
-        add_element_with_copied_token(
-            selenium, user, child, clipboard, displays
-        )
+        add_element_with_copied_token(selenium, user, child, clipboard, displays)
 
 
 def remove_subgroups_using_op_gui(
@@ -310,9 +304,7 @@ def remove_subgroups_using_op_gui(
         )
 
 
-def fail_to_rename_groups_using_op_gui(
-    selenium, user, group_list, new_names
-):
+def fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names):
     text = "failed"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -345,8 +337,6 @@ def fail_to_add_subgroups_using_op_gui(
         error = "Consuming token failed"
         modal = "error"
 
-        add_element_with_copied_token(
-            selenium, user, child, clipboard, displays
-        )
+        add_element_with_copied_token(selenium, user, child, clipboard, displays)
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)

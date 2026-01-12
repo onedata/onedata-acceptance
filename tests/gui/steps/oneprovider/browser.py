@@ -10,10 +10,10 @@ from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -468,9 +468,7 @@ def assert_option_state_in_data_row_menu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_state_view_mode_tab(
-    browser_id, selenium, state, which, tmp_memory
-):
+def click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory):
     driver = selenium[browser_id]
     if which == "archive file":
         which_browser = which + " browser"

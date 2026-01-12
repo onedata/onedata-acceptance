@@ -487,9 +487,7 @@ def assert_harvester_on_list_on_space_harvesters_subpage(
 
 @wt(parsers.parse('user of {browser_id} sees "{provider}" is on the providers list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_providers_list_contains_provider(
-    selenium, browser_id, provider, hosts
-):
+def assert_providers_list_contains_provider(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]["name"]

@@ -147,9 +147,7 @@ def copy_token_gui(selenium, user, displays, clipboard, tmp_memory):
 
 @wt(parsers.parse('using {client}, {user} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def revoke_token_in_oz(
-    client, user, token_name, users, hosts, tokens, selenium
-):
+def revoke_token_in_oz(client, user, token_name, users, hosts, tokens, selenium):
     client_lower = client.lower()
     if client_lower == "rest":
         zone_name = "onezone"
@@ -166,9 +164,7 @@ def revoke_token_in_oz(
         "space_name} with received token"
     )
 )
-def join_space_with_token(
-    selenium, user, tmp_memory, client, users, hosts, space_name
-):
+def join_space_with_token(selenium, user, tmp_memory, client, users, hosts, space_name):
     client_lower = client.lower()
     if client_lower == "web gui":
         consume_received_token(selenium, user, tmp_memory)

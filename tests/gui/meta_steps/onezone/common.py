@@ -21,11 +21,11 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @given(
@@ -153,7 +153,7 @@ def visit_file_browser(
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space, option_in_submenu
         )
-        click_choose_other_oneprovider_on_file_browser(selenium, browser_id )
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
         assert_browser_in_tab_in_op(
             selenium, browser_id, op_container, tmp_memory, "file browser"
@@ -234,19 +234,17 @@ def search_for_members(driver, records, member_name, parent_name, fun):
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout_from_onezone_page(selenium, browser_id, oz_page, popups):
+def logout_from_onezone_page(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    oz_page(driver)["profile"].profile()
+    OZLoggedIn(driver)["profile"].profile()
     popups(driver).user_account_menu.options["Logout"].click()
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_username(
-    selenium, browser_id, username, new_username, oz_page, popups, users
-):
+def change_username(selenium, browser_id, username, new_username, popups, users):
     driver = selenium[browser_id]
-    profile = oz_page(driver)["profile"]
+    profile = OZLoggedIn(driver)["profile"]
     profile.profile()
     popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_username()
@@ -257,12 +255,10 @@ def change_username(
 
 @wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_password(
-    selenium, browser_id, new_password, username, oz_page, users, popups
-):
+def change_password(selenium, browser_id, new_password, username, users, popups):
     driver = selenium[browser_id]
     cur_passwd = users[username].password
-    profile = oz_page(driver)["profile"]
+    profile = OZLoggedIn(driver)["profile"]
     profile.profile()
     popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_password()

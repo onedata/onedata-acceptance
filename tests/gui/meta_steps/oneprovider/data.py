@@ -81,9 +81,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(
         browser.click_on_background()
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, RuntimeError, StaleElementReferenceException):
-        go_to_filebrowser(
-            selenium, browser_id, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
         # TODO VFS-12315 remove sleep in acc tests
         time.sleep(0.5)
         go_to_path_without_last_elem(
@@ -243,9 +241,7 @@ def see_items_in_op_gui(
             selenium, browser_id, op_container, tmp_memory, "file browser"
         )
     except NoSuchElementException:
-        go_to_filebrowser(
-            selenium, browser_id, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
 
     if path:
         for item in path.split("/"):
@@ -294,9 +290,7 @@ def create_item_in_op_gui(
     try:
         _open_menu_for_item_in_file_browser()
     except (RuntimeError, KeyError):
-        go_to_filebrowser(
-            selenium, browser_id, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
         _open_menu_for_item_in_file_browser()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
@@ -662,9 +656,7 @@ def upload_file_to_op_gui(
         )
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
-        go_to_filebrowser(
-            selenium, browser_id, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     if res == "succeeds":
         upload_file_to_cwd_in_file_browser(
@@ -990,9 +982,7 @@ def _create_link_in_file_browser(
     go_to_file_browser=True,
 ):
     if go_to_file_browser:
-        go_to_filebrowser(
-            selenium, browser_id, op_container, tmp_memory, space
-        )
+        go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium,
         browser_id,

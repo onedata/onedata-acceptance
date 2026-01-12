@@ -430,9 +430,7 @@ def assert_dataset_detached_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_on_state_view_mode_tab(
-        browser_id, selenium, state, which, tmp_memory
-    )
+    click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory)
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
@@ -471,9 +469,7 @@ def reattach_dataset_in_op_gui(
         tmp_memory,
         item_browser=item_browser,
     )
-    click_on_state_view_mode_tab(
-        browser_id, selenium, state, which, tmp_memory
-    )
+    click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory)
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,

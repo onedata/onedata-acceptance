@@ -80,7 +80,6 @@ def create_workflow_using_gui(selenium, browser_id, workflow_name):
 def upload_and_assert_workflow_to_inventory_using_gui(
     selenium,
     browser_id,
-    oz_page,
     modals,
     inventory,
     workflow,
@@ -90,12 +89,12 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     driver = selenium[browser_id]
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
-    upload_workflow_as_json(selenium, browser_id, file_name, oz_page)
+    upload_workflow_as_json(selenium, browser_id, file_name)
     _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow", modals)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
 
-    assert_workflow_exists(selenium, browser_id, oz_page, workflow, "sees")
+    assert_workflow_exists(selenium, browser_id, workflow, "sees")
 
 
 @given(
@@ -105,10 +104,10 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory
+    selenium, browser_id, modals, inventory, workflow, tmp_memory
 ):
     upload_workflow_from_automation_examples(
-        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory
+        selenium, browser_id, modals, inventory, workflow, tmp_memory
     )
 
 
@@ -119,10 +118,10 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory
+    selenium, browser_id, modals, inventory, workflow, tmp_memory
 ):
     _upload_workflow_from_automation_examples(
-        selenium, browser_id, oz_page, modals, inventory, workflow, tmp_memory
+        selenium, browser_id, modals, inventory, workflow, tmp_memory
     )
 
 
@@ -135,7 +134,6 @@ def upload_workflow_from_automation_examples(
 def upload_workflow_from_automation_examples_with_given_method(
     selenium,
     browser_id,
-    oz_page,
     modals,
     inventory,
     workflow,
@@ -145,7 +143,6 @@ def upload_workflow_from_automation_examples_with_given_method(
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
-        oz_page,
         modals,
         inventory,
         workflow,
@@ -157,7 +154,6 @@ def upload_workflow_from_automation_examples_with_given_method(
 def _upload_workflow_from_automation_examples(
     selenium,
     browser_id,
-    oz_page,
     modals,
     inventory,
     workflow,
@@ -171,7 +167,7 @@ def _upload_workflow_from_automation_examples(
 
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
-    upload_workflow_from_repository(selenium, browser_id, workflow, oz_page)
+    upload_workflow_from_repository(selenium, browser_id, workflow)
     _wait_for_modal_to_appear(driver, browser_id, modal, tmp_memory)
     if method == "as new workflow":
         method_button = "Persist as new workflow"
@@ -182,7 +178,7 @@ def _upload_workflow_from_automation_examples(
     click_modal_button(selenium, browser_id, button, modal, modals)
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
     visible_workflow_name = change_workflow_dump_name_to_visible_name(workflow)
-    assert_workflow_exists(selenium, browser_id, oz_page, visible_workflow_name, "sees")
+    assert_workflow_exists(selenium, browser_id, visible_workflow_name, "sees")
 
 
 def change_workflow_dump_name_to_visible_name(workflow_name):
@@ -453,7 +449,6 @@ def execute_workflow(
 def modify_data_type_in_store(
     selenium,
     browser_id,
-    oz_page,
     store_name,
     modals,
     popups,
@@ -467,7 +462,7 @@ def modify_data_type_in_store(
     modal_name = "Modify store"
     value = value.lower()
 
-    page = get_oz_workflow_visualizer(oz_page, driver)
+    page = get_oz_workflow_visualizer(driver)
     page.stores_list[store_name].click()
 
     if "data" in menu:

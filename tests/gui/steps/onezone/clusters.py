@@ -10,18 +10,20 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {button} button in clusters {where}"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_cluster_page(selenium, browser_id, button):
     driver = selenium[browser_id]
-    getattr(OZLoggedIn(driver).get_page_and_click("clusters"), transform(button)).click()
+    getattr(
+        OZLoggedIn(driver).get_page_and_click("clusters"), transform(button)
+    ).click()
 
 
 @wt(parsers.parse("user of {browser_id} copies registration token from clusters page"))
@@ -107,15 +109,15 @@ def click_button_in_gui_settings_page(selenium, browser_id, button):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_input_in_gui_settings_page(selenium, browser_id, box, text):
     driver = selenium[browser_id]
-    input_box = getattr(OZLoggedIn(driver)["clusters"].gui_settings_page, transform(box))
+    input_box = getattr(
+        OZLoggedIn(driver)["clusters"].gui_settings_page, transform(box)
+    )
     _enter_text(input_box, text)
 
 
 @wt(parsers.parse("user of {browser_id} removes {notification} in GUI settings page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_notification_in_gui_settings_page(
-    selenium, browser_id, notification
-):
+def remove_notification_in_gui_settings_page(selenium, browser_id, notification):
     notification = notification + " input"
     text = " "
     write_input_in_gui_settings_page(selenium, browser_id, notification, text)
@@ -135,12 +137,8 @@ def check_the_understand_notice(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_cluster_not_working_in_oz_panel(
-    selenium, browser_id, provider, hosts
-):
-    provider_record = _get_cluster_record(
-        selenium, browser_id, provider, hosts
-    )
+def assert_cluster_not_working_in_oz_panel(selenium, browser_id, provider, hosts):
+    provider_record = _get_cluster_record(selenium, browser_id, provider, hosts)
     time.sleep(3)
     assert provider_record.is_not_working(), f"Provider {provider} is working"
 
@@ -153,17 +151,13 @@ def assert_cluster_not_working_in_oz_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_cluster_working_in_oz_panel(selenium, browser_id, provider, hosts):
-    provider_record = _get_cluster_record(
-        selenium, browser_id, provider, hosts
-    )
+    provider_record = _get_cluster_record(selenium, browser_id, provider, hosts)
     assert provider_record.is_working(), f"Provider {provider} is not working"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cluster_menu_button(selenium, browser_id, provider, hosts):
-    provider_record = _get_cluster_record(
-        selenium, browser_id, provider, hosts
-    )
+    provider_record = _get_cluster_record(selenium, browser_id, provider, hosts)
     provider_record.menu_button()
 
 
@@ -223,9 +217,7 @@ def get_old_or_new_cluster_record_from_list(
 
 @wt(parsers.parse('user of browser sees that {age} "{provider}" cluster is working'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_new_cluster_working(
-    selenium, browser_id, provider,  hosts, age, tmp_memory
-):
+def assert_new_cluster_working(selenium, browser_id, provider, hosts, age, tmp_memory):
     record = _get_old_or_new_cluster_record(
         selenium, browser_id, provider, age, tmp_memory, hosts
     )

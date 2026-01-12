@@ -67,9 +67,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
         )
 
 
-def assert_there_is_no_provider_in_oz_gui(
-    selenium, user, provider_name, hosts
-):
+def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
     option = "Data"
 
     refresh_site(selenium, user)
@@ -98,9 +96,7 @@ def send_copied_invite_token_in_oz_gui(
         "provider in oneproviders list in data sidebar"
     )
 )
-def revoke_support_of_provider_in_list(
-    selenium, browser_id, provider, hosts
-):
+def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     button = "Cease support"
     notify_type = "info"

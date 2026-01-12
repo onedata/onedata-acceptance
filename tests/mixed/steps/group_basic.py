@@ -142,9 +142,7 @@ def rename_groups(
     if client.lower() == "rest":
         rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
-        rename_groups_using_op_gui(
-            selenium, user, group_list, new_names
-        )
+        rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -172,9 +170,7 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium):
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def remove_groups(
-    client, user, group_list, host, hosts, users, selenium
-):
+def remove_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         remove_groups_using_rest(user, users, hosts, group_list, host)
@@ -190,9 +186,7 @@ def remove_groups(
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def leave_groups(
-    client, user, group_list, host, hosts, users, selenium
-):
+def leave_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         leave_groups_using_rest(user, users, hosts, group_list, host)
@@ -298,9 +292,7 @@ def assert_subgroups(
     if client.lower() == "rest":
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
-        assert_subgroups_using_op_gui(
-            selenium, user, group_list, parent, onepanel
-        )
+        assert_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -327,9 +319,7 @@ def fail_to_see_subgroups(
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
-        fail_to_see_subgroups_using_op_gui(
-            selenium, user, group_list, parent, onepanel
-        )
+        fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -414,9 +404,7 @@ def fail_to_rename_groups(
             user, users, hosts, group_list, new_names, host
         )
     elif client.lower() == "web gui":
-        fail_to_rename_groups_using_op_gui(
-            selenium, user, group_list, new_names
-        )
+        fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

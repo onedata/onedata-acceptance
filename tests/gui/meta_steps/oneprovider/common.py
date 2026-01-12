@@ -194,14 +194,10 @@ def migrate_file_to_provider(
 
 
 @wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters submenu'))
-def open_record_of_clusters_submenu(
-    selenium, browser_id, provider_name, hosts
-):
+def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
     sidebar = "Clusters"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, provider_name, hosts
-    )
+    click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
 
 @wt(

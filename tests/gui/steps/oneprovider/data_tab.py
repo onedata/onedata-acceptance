@@ -18,6 +18,7 @@ from tests.gui.conftest import (
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -27,8 +28,6 @@ from tests.utils.entities_setup import (
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
 from tests.utils.utils import repeat_failed
-
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -765,10 +764,10 @@ def _assert_current_provider_in_space(selenium, browser_id, provider):
     ), f"{provider} is not current provider on file browser page"
 
 
-def _assert_provider_in_space(selenium, browser_id, provider, oz_page):
+def _assert_provider_in_space(selenium, browser_id, provider):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    providers = oz_page(selenium[browser_id])["data"].providers
+    providers = OZLoggedIn(selenium[browser_id])["data"].providers
 
     assert provider in providers, f"{provider} provider not found on file browser page"
 
@@ -791,9 +790,7 @@ def assert_current_provider_in_space(selenium, browser_id, provider):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_current_provider_name_in_space(
-    selenium, browser_id, provider, hosts
-):
+def assert_current_provider_name_in_space(selenium, browser_id, provider, hosts):
     provider = hosts[provider]["name"]
     _assert_current_provider_in_space(selenium, browser_id, provider)
 
@@ -804,9 +801,9 @@ def assert_current_provider_name_in_space(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
+def assert_provider_in_space(selenium, browser_id, provider, hosts):
     provider = hosts[provider]["name"]
-    _assert_provider_in_space(selenium, browser_id, provider, oz_page)
+    _assert_provider_in_space(selenium, browser_id, provider)
 
 
 @wt(

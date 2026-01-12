@@ -88,9 +88,7 @@ def add_qos_requirement_in_modal(
 ):
     replicas_number = 1
 
-    go_to_filebrowser(
-        selenium, browser_id, op_container, tmp_memory, space_name
-    )
+    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
@@ -123,9 +121,7 @@ def add_qos_requirement_in_modal_with_replicas(
     popups,
     replicas_number,
 ):
-    go_to_filebrowser(
-        selenium, browser_id, op_container, tmp_memory, space_name
-    )
+    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,

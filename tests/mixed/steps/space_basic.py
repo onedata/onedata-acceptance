@@ -115,9 +115,7 @@ def leave_spaces_in_oz(
         leave_spaces_in_oz_using_rest(user, users, host, hosts, space_list, spaces)
     elif client.lower() == "web gui":
 
-        leave_spaces_in_oz_using_gui(
-            selenium, user, space_list
-        )
+        leave_spaces_in_oz_using_gui(selenium, user, space_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -148,9 +146,7 @@ def rename_spaces_in_oz(
         )
     elif client.lower() == "web gui":
 
-        rename_spaces_in_oz_using_gui(
-            selenium, user, space_list, new_names_list
-        )
+        rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -457,9 +453,7 @@ def assert_there_is_no_provider_for_space_in_oz(
         )
     elif client.lower() == "web gui":
 
-        assert_there_is_no_provider_for_space_in_oz_gui(
-            selenium, user, space_name
-        )
+        assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

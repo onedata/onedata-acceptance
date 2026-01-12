@@ -54,9 +54,9 @@ from tests.gui.steps.onezone.tokens import (
     type_new_token_name,
     wt_click_on_btn_for_oz_token,
 )
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -67,9 +67,7 @@ def _paste_token_into_text_field(selenium, browser_id, token):
 
 @wt(parsers.parse("user of {browser_id} pastes copied token into token text field"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def paste_copied_token_into_text_field(
-    selenium, browser_id,  clipboard, displays
-):
+def paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays):
     token = clipboard.paste(display=displays[browser_id])
     _paste_token_into_text_field(selenium, browser_id, token)
 
@@ -116,9 +114,7 @@ def consume_token_from_copied_token(selenium, browser_id, clipboard, displays):
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
-    paste_copied_token_into_text_field(
-        selenium, browser_id, clipboard, displays
-    )
+    paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
 
@@ -135,17 +131,13 @@ def consume_token_from_copied_token(selenium, browser_id, clipboard, displays):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_element_with_copied_token(
-    selenium, browser_id, elem_name, clipboard, displays
-):
+def add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays):
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
-    paste_copied_token_into_text_field(
-        selenium, browser_id, clipboard, displays
-    )
+    paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     select_member_from_dropdown(selenium, browser_id, elem_name)
     click_on_confirm_button_on_tokens_page(selenium, browser_id)
 
@@ -165,9 +157,7 @@ def result_to_consume_token_for_elem(
     displays,
     modals,
 ):
-    add_element_with_copied_token(
-        selenium, browser_id, elem_name, clipboard, displays
-    )
+    add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result, modals)
 
 
@@ -178,17 +168,13 @@ def result_to_consume_token_for_elem(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_alert_while_consuming_token(
-    selenium, browser_id, clipboard, displays, text
-):
+def assert_alert_while_consuming_token(selenium, browser_id, clipboard, displays, text):
     option = "Tokens"
     button = "Consume token"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
-    paste_copied_token_into_text_field(
-        selenium, browser_id, clipboard, displays
-    )
+    paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays)
     assert_alert_on_tokens_page(browser_id, text, selenium)
 
 
@@ -197,9 +183,7 @@ def assert_alert_while_consuming_token(
         "user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token"
     )
 )
-def result_to_consume_token(
-    selenium, browser_id, result, clipboard, displays, modals
-):
+def result_to_consume_token(selenium, browser_id, result, clipboard, displays, modals):
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result, modals)
 
@@ -219,9 +203,7 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-def _create_token_of_type(
-    selenium, browser_id, token_type, iteration=None
-):
+def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
     button = "Create new token"
     token_name = f"{token_type}_token"
     if iteration:
@@ -244,9 +226,7 @@ def _create_token_of_type(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def create_number_of_typed_token(
-    selenium, browser_id, number: int, token_type
-):
+def create_number_of_typed_token(selenium, browser_id, number: int, token_type):
     for i in range(number):
         _create_token_of_type(selenium, browser_id, token_type, i)
 
@@ -677,17 +657,17 @@ def remove_token(selenium, browser_id, token_name, modals):
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_all_tokens(selenium, browser_id, oz_page, modals):
+def remove_all_tokens(selenium, browser_id, modals):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    tokens = oz_page(driver).get_page_and_click("tokens").sidebar.tokens
+    tokens = OZLoggedIn(driver).get_page_and_click("tokens").sidebar.tokens
     if len(tokens):
         tokens[0].click()
 
-        for token in oz_page(driver)["tokens"].sidebar.tokens:
+        for token in OZLoggedIn(driver)["tokens"].sidebar.tokens:
             token.menu_button.click()
             click_option_for_token_row_menu(driver, btn)
             click_modal_button(selenium, browser_id, button, modal, modals)
@@ -733,9 +713,7 @@ def create_and_check_token(
     )
 
 
-def choose_and_revoke_token_in_oz_gui(
-    selenium, browser_id, token_name
-):
+def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name):
     option = "Tokens"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)

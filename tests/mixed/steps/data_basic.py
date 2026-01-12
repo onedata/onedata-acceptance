@@ -710,7 +710,7 @@ def see_num_of_items_in_op(
             tmp_memory,
             op_container,
             "",
-            space,
+            host,
             num,
             hosts,
             popups,

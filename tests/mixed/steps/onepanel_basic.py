@@ -324,9 +324,7 @@ def assert_there_is_no_provider_in_oz(
         assert_there_is_no_provider_in_oz_rest(user, users, host, hosts, provider_name)
     elif client.lower() == "web gui":
 
-        assert_there_is_no_provider_in_oz_gui(
-            selenium, user, provider_name, hosts
-        )
+        assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

@@ -30,12 +30,12 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_lambda_form,
 )
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import OZLoggedIn, Popups
 
 ALL_LAMBDA_NAMES = []
 
@@ -194,11 +194,11 @@ def create_lambda_using_gui(
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium, browser_id, oz_page, popups, option, param_type, ordinal
+    selenium, browser_id, popups, option, param_type, ordinal
 ):
     driver = selenium[browser_id]
     param_type = param_type.lower()
-    page = oz_page(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver)["automation"].lambdas_page.form
     subpage = getattr(page, transform(option))
 
     ordinal = "1st" if not ordinal else ordinal
@@ -319,7 +319,7 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium, browser_id,  modals, inventory, lambda_name, tmp_memory
+    selenium, browser_id, modals, inventory, lambda_name, tmp_memory
 ):
     subpage = "lambdas"
     modal = "Upload workflow"
@@ -338,7 +338,7 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium, browser_id,  popups, modals, tmp_memory
+    selenium, browser_id, popups, modals, tmp_memory
 ):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][

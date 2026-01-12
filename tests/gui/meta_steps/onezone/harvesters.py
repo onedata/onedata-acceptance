@@ -235,9 +235,7 @@ def add_group_to_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_index_in_harvester(
-    selenium, browser_id, index_name, harvester_name
-):
+def create_index_in_harvester(selenium, browser_id, index_name, harvester_name):
     option = "Indices"
     member_menu_option = "Create new index"
 
@@ -418,9 +416,7 @@ def configure_harvester_as_public(selenium, browser_id, harvester):
         '"{harvester}" is finished for all spaces in "{index}"'
     )
 )
-def check_harvesting_process_in_harvester(
-    selenium, browser_id, harvester, index
-):
+def check_harvesting_process_in_harvester(selenium, browser_id, harvester, index):
     discovery_tab = "Discovery"
     scope = "harvesters"
     indices_tab = "Indices"
@@ -467,9 +463,7 @@ def create_index_with_toggles_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_indices_for_harvester(
-    browser_id, selenium, index_name, harvester_name
-):
+def change_indices_for_harvester(browser_id, selenium, index_name, harvester_name):
     option = "Configuration"
     tab_name = "GUI plugin"
     click_on_option_of_harvester_on_left_sidebar_menu(

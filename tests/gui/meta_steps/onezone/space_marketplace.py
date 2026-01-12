@@ -58,21 +58,15 @@ def configure_space_manually(browser_id, config, selenium):
         "saving as follows:\n{config}"
     )
 )
-def configure_space_manually_without_saving(
-    browser_id, config, selenium
-):
+def configure_space_manually_without_saving(browser_id, config, selenium):
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as in the previous function:
     """
-    _configure_space_manually(
-        browser_id, config, selenium, with_save=False
-    )
+    _configure_space_manually(browser_id, config, selenium, with_save=False)
 
 
-def _configure_space_manually(
-    browser_id, config, selenium, with_save=True
-):
+def _configure_space_manually(browser_id, config, selenium, with_save=True):
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
