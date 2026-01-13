@@ -153,12 +153,9 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
   
   Scenario Outline: User creates json column and hides its visibility
     When user of browser opens file browser for "space1" space
-    And user of browser enables only [] column in columns configuration popover in file browser table
 
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
     And user of browser creates new json column with "Whole document" mode and "test" custom label in file browser table
-    And user of browser enables only ["test"] column in columns configuration popover in file browser table
-    And user of browser sees json column named "test" in columns configuration popover in file browser table
 
     And user of browser enables only [] column in columns configuration popover in file browser table
     Then user of browser sees that item named "<item>" has no json column in file browser
@@ -167,9 +164,25 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     | item  |
     | file1 |
     | dir1  |
+
+
+  Scenario Outline: User deletes json column
+    When user of browser opens file browser for "space1" space
+
+    And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
+    And user of browser creates new json column with "Whole document" mode and "test" custom label in file browser table
+    And user of browser sees json column named "test" in columns configuration popover in file browser table
+
+    And user of browser removes json column named "test" in columns configuration popover in file browser table
+    Then user of browser does not see json column named "test" in columns configuration popover in file browser table
+
+    Examples:
+    | item  |
+    | file1 |
+    | dir1  |
   
 
-  Scenario Outline: User creates json column with mode Whole document, changes its mode to Extract key, and then to Query
+  Scenario Outline: User modifies json column mode from Whole document to Extract key, and then to Query
     When user of browser opens file browser for "space1" space
     And user of browser enables only [] column in columns configuration popover in file browser table
 

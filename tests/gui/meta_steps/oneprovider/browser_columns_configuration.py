@@ -84,12 +84,12 @@ def change_visibility_for_browser_columns(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*) removes xattr column named "(?P<name>.*)"'
-        r" in columns configuration popover in (?P<which_browser>file"
-        r" browser|archive browser|dataset browser) table"
+        r"user of (?P<browser_id>.*) removes (?P<option>json|xattr) column "
+        r'named "(?P<name>.*)" in columns configuration popover in (?P<which_browser>'
+        r"file browser|archive browser|dataset browser) table"
     )
 )
-def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, popups):
+def remove_column(selenium, browser_id, name, which_browser, tmp_memory, popups):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
@@ -98,8 +98,8 @@ def remove_xattr_column(selenium, browser_id, name, which_browser, tmp_memory, p
         popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_xattr_column = popups(driver).configure_columns_menu.columns[name]
-    current_xattr_column.hover_to_button_and_click("remove", driver)
+    current_column = popups(driver).configure_columns_menu.columns[name]
+    current_column.hover_to_button_and_click("remove", driver)
 
     # hide columns menu popup
     browser.configure_columns.click()
@@ -163,16 +163,19 @@ def modify_json_column_in_columns_menu(
     popups,
 ):
     """
-    Config is a list of changes applied sequentially.
+    Config is a list of column updates applied sequentially.
 
-    Each item in the list may contain the following optional fields in given order:
-    - mode: New column mode
-    - key/query: New column key/query
-    - label: New column label
+    Each item in the list represents a single update and may define
+    the following optional fields, which are applied in this order:
 
-    Only provided fields are updated.
-    The safest way to perform those operations is to
-    follow the order given above.
+    1. mode        – New column mode
+    2. key/query   – New column key or query
+    3. label       – New column label
+
+    Only the fields provided in an item are updated.
+
+    Updates are always applied in the order listed above to ensure
+    safe and predictable behavior.
     """
 
     driver = selenium[browser_id]
