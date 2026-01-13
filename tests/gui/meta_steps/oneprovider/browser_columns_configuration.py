@@ -165,12 +165,14 @@ def modify_json_column_in_columns_menu(
     """
     Config is a list of changes applied sequentially.
 
-    Each item in the list may contain the following optional fields:
-    - mode:   New column mode
-    - key/query:    New column key/query
-    - label:  New column label
+    Each item in the list may contain the following optional fields in given order:
+    - mode: New column mode
+    - key/query: New column key/query
+    - label: New column label
 
     Only provided fields are updated.
+    The safest way to perform those operations is to
+    follow the order given above.
     """
 
     driver = selenium[browser_id]
@@ -186,21 +188,18 @@ def modify_json_column_in_columns_menu(
     current_column.hover_to_button_and_click("modify", driver)
     modify_json_column = popups(driver).configure_columns_menu.json_column_editor
 
-    config = yaml.load(config, yaml.Loader)
+    config_items = list(yaml.load(config, yaml.Loader).items())
+    config_options = [item[0] for item in config_items]
     expected_order = [["mode"], ["key", "query"], ["label"]]
+    seq_options = []
 
-    changes, idx, flag = list(config.items()), 0, False
-    for ex_options in expected_order:
-        option, new_option_name = changes[idx]
-        if option in ex_options:
-            idx += 1
-            if idx == len(changes):
-                flag = True
+    for curr_options in expected_order:
+        for option in curr_options:
+            if option in config_options:
+                seq_options.append(config_items[config_options.index(option)])
                 break
 
-    assert flag, "Given configuration of changes to a json column is invalid"
-
-    for option, new_option_name in config.items():
+    for option, new_option_name in seq_options:
         if option == "mode":
             getattr(
                 modify_json_column.choose_mode, transform(new_option_name.lower())
@@ -264,7 +263,7 @@ def assert_json_column_content(
     )
 )
 def assert_column_presence(
-    selenium, browser_id, res, name, which_browser, tmp_memory, popups
+    selenium, browser_id, res, name, which_browser, tmp_memory, option, popups
 ):
 
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -277,7 +276,7 @@ def assert_column_presence(
     if name in [col.name for col in columns_menu]:
         if res == "does not see":
             raise AssertionError(
-                f"An xattr column named '{name}' exists, but it was expected not to."
+                f"{option} column named '{name}' exists, but it was expected not to."
             )
     elif res == "sees":
         raise AssertionError(f"An xattr column with name: {name} does not exist")

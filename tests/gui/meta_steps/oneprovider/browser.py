@@ -111,7 +111,7 @@ def wt_create_json_column_for_whole_document_with_label(
         popups,
         label_name,
         "whole document",
-        option=None,
+        None,
     )
 
 
@@ -137,7 +137,7 @@ def wt_create_json_column_for_whole_document(
         popups,
         None,
         "whole document",
-        option=None,
+        None,
     )
 
 
@@ -168,7 +168,7 @@ def wt_create_json_column_for_query_or_key_with_label(
         popups,
         label_name,
         mode.lower(),
-        option=option,
+        option,
     )
 
 
