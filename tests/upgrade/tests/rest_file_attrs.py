@@ -14,7 +14,7 @@ from tests.upgrade.utils.rest_utils import (
     get_file_attributes,
     lookup_file_id,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_prov_version_lower_than
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_version_lower_than
 from tests.utils.utils import repeat_failed
 
 TIMEOUT_FOR_UPDATING_FILE_ATTRS = 15
@@ -27,7 +27,7 @@ ALL_ATTRS = [
     attr.value
     for attr in FileAttr
     if attr.value not in ("hasJsonMetadata", "jsonMetadata")
-]  # excluded hasJsonMetadata, jsonMetadata as they are available since 21.02.9
+]  # excluded hasJsonMetadata, jsonMetadata as they are available since 25.0
 
 ATTRS_MAP = {
     "file_id": "fileId",
@@ -80,7 +80,7 @@ def setup_metadata(tests_controller):
         provider_host, token, file_id, ALL_ATTRS
     )
 
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
 
         file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
         RESULTS["file_attrs_hardlink_setup"] = get_file_attributes(
@@ -92,7 +92,7 @@ def setup_metadata(tests_controller):
             provider_host, token, file_id, ALL_ATTRS
         )
 
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
         RESULTS["dir_stats_setup"] = get_directory_size_statistics(
             provider_host, token, file_id, "layout"
@@ -110,7 +110,7 @@ def verify_metadata(tests_controller):
         tests_controller,
     )
 
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
 
         file_id = lookup_file_id(f"{SPACE_NAME}/{HARDLINK_NAME}", provider_host, token)
         compare_attrs(
@@ -126,7 +126,7 @@ def verify_metadata(tests_controller):
             tests_controller,
         )
 
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         file_id = lookup_file_id(f"{SPACE_NAME}/{DIR_NAME}", provider_host, token)
         assert RESULTS["dir_stats_setup"] == get_directory_size_statistics(
             provider_host, token, file_id, "layout"
@@ -138,7 +138,7 @@ def create_example_content_in_space(client, tests_controller):
     file_path = os.path.join(space_path, REG_NAME)
     client.create_file(file_path)
     client.write(TEXT, file_path)
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "21.02.1"):
         link_path = os.path.join(space_path, HARDLINK_NAME)
         client.create_hardlink(file_path, link_path)
         link_path = os.path.join(space_path, SYMLINK_NAME)
@@ -154,9 +154,7 @@ def compare_attrs(old_attrs, new_attrs, tests_controller):
             f"Attr: {attr} is different after upgrade. Attrs before"
             f" upgrade:\n{old_attrs}.\nAttrs after upgrade:\n{new_attrs}."
         )
-        if is_prov_version_lower_than(
-            tests_controller.initial_prov_version, "21.02.01"
-        ):
+        if is_version_lower_than(tests_controller.initial_prov_version, "21.02.01"):
             val = format_attr_val(attr, old_attrs)
         else:
             val = old_attrs[attr]

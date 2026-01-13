@@ -6,6 +6,7 @@ plan-permissions:
       - plglopiola
       - plgmstanisz
       - plgagneska
+      - wojciech
     groups:
       - plggveildev
     permissions:
