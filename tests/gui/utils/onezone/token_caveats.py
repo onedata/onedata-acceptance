@@ -168,7 +168,7 @@ class CaveatField(PageObject):
         users,
         groups,
         hosts,
-        oz_page
+        oz_page,
     ):
         self.activate()
         oz_page(selenium[browser_id])["tokens"].create_token_page.hide_caveats()

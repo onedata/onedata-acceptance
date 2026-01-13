@@ -480,7 +480,7 @@ def remove_empty_dir_and_parents_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
         r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r"(?P<host>.*)"
     )
 )
 def remove_dir_in_op(
