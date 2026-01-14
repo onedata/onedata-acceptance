@@ -252,6 +252,12 @@ def click_relation_menu_button(selenium, browser_id, member_name, name, where):
     search_for_members(driver, records, member_name, name, click_on_menu)
 
 
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
+        "in (?P<where>space|group) membership relation menu"
+    )
+)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_relation_menu_button(selenium, browser_id, option):
     driver = selenium[browser_id]
