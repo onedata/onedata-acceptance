@@ -198,11 +198,7 @@ def wt_assert_items_presence_in_browser(
     selenium, browser_id, item_list, tmp_memory, which_browser
 ):
     assert_items_presence_in_browser(
-        selenium,
-        browser_id,
-        item_list,
-        tmp_memory,
-        which_browser=which_browser.value,
+        selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
     )
 
 

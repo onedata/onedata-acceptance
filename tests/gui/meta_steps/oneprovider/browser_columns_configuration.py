@@ -191,32 +191,23 @@ def modify_json_column_in_columns_menu(
     current_column.hover_to_button_and_click("modify", driver)
     modify_json_column = popups(driver).configure_columns_menu.json_column_editor
 
-    config_items = list(yaml.load(config, yaml.Loader).items())
-    config_options = [item[0] for item in config_items]
-    expected_order = [["mode"], ["key", "query"], ["label"]]
-    seq_options = []
+    config_dict = dict(yaml.load(config, yaml.Loader).items())
 
-    for curr_options in expected_order:
-        for option in curr_options:
-            if option in config_options:
-                seq_options.append(config_items[config_options.index(option)])
-                break
-
-    for option, new_option_name in seq_options:
-        if option == "mode":
-            getattr(
-                modify_json_column.choose_mode, transform(new_option_name.lower())
-            ).click()
-        elif option == "label":
-            modify_json_column.column_label.clear()
-            modify_json_column.column_label.send_keys(new_option_name)
-        elif option == "query":
+    if "mode" in config_dict:
+        getattr(
+            modify_json_column.choose_mode, transform(config_dict["mode"].lower())
+        ).click()
+    if "label" in config_dict:
+        modify_json_column.column_label.clear()
+        modify_json_column.column_label.send_keys(config_dict["label"])
+    else:
+        if "query" in config_dict:
             modify_json_column.query.clear()
-            modify_json_column.query.send_keys(new_option_name)
-        elif option == "key":
+            modify_json_column.query.send_keys(config_dict["query"])
+        elif "key" in config_dict:
             modify_json_column.json_key.click()
             modify_json_column.clear_actual_key(driver)
-            popups(driver).dropdown.options[new_option_name].click()
+            popups(driver).dropdown.options[config_dict["key"]].click()
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
