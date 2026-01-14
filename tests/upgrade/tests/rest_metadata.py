@@ -77,7 +77,7 @@ def verify_metadata(tests_controller):
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
 
     expected_xattrs_meta = XATTRS_META.copy()
-    if not is_version_lower_than(tests_controller.initial_prov_version, "22.0.0"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "26.0"):
         expected_xattrs_meta[1] = {"license2": "2"}
 
     assert formatted_res == expected_xattrs_meta, err_msg.format(
