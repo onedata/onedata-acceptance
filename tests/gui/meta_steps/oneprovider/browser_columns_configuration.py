@@ -200,14 +200,14 @@ def modify_json_column_in_columns_menu(
     if "label" in config_dict:
         modify_json_column.column_label.clear()
         modify_json_column.column_label.send_keys(config_dict["label"])
-    else:
-        if "query" in config_dict:
-            modify_json_column.query.clear()
-            modify_json_column.query.send_keys(config_dict["query"])
-        elif "key" in config_dict:
-            modify_json_column.json_key.click()
-            modify_json_column.clear_actual_key(driver)
-            popups(driver).dropdown.options[config_dict["key"]].click()
+
+    if "query" in config_dict:
+        modify_json_column.query.clear()
+        modify_json_column.query.send_keys(config_dict["query"])
+    elif "key" in config_dict:
+        modify_json_column.json_key.click()
+        modify_json_column.clear_actual_key(driver)
+        popups(driver).dropdown.options[config_dict["key"]].click()
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
