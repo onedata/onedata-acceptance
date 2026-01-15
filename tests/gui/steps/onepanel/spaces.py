@@ -23,6 +23,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import Popups
 
 
 @wt(
@@ -353,8 +354,8 @@ def wt_expands_toolbar_icon_for_space_in_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, popups):
-    toolbar = popups(selenium[browser_id]).toolbar
+def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option):
+    toolbar = Popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:

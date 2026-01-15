@@ -106,7 +106,6 @@ def rename_item(
     space,
     modals,
     op_container,
-    popups,
 ):
     option = "Rename"
     modal_header = "Rename"
@@ -118,7 +117,6 @@ def rename_item(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_header,
         path,
         tmp_memory,
@@ -150,8 +148,6 @@ def remove_item_in_op_gui(
     op_container,
     res,
     space,
-    modals,
-    popups,
 ):
     option = "Delete"
     button = "Yes"
@@ -162,7 +158,6 @@ def remove_item_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_header,
         path,
         tmp_memory,
@@ -170,7 +165,7 @@ def remove_item_in_op_gui(
         space,
         op_container,
     )
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
 
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
@@ -186,8 +181,6 @@ def remove_dir_and_parents_in_op_gui(
     op_container,
     res,
     space,
-    modals,
-    popups,
 ):
     item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
     remove_item_in_op_gui(
@@ -198,8 +191,6 @@ def remove_dir_and_parents_in_op_gui(
         op_container,
         res,
         space,
-        modals,
-        popups,
     )
 
 
@@ -272,7 +263,6 @@ def create_item_in_op_gui(
     op_container,
     res,
     space,
-    modals,
 ):
     # change None to empty string if path not given
     path = path.lstrip("/") if path else ""
@@ -294,8 +284,8 @@ def create_item_in_op_gui(
         _open_menu_for_item_in_file_browser()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
-    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, modals)
-    confirm_create_new_directory(selenium, browser_id, option, modals)
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name)
+    confirm_create_new_directory(selenium, browser_id, option)
     if res == "fails":
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
@@ -303,7 +293,7 @@ def create_item_in_op_gui(
 
 
 @wt(parsers.parse('user of {browser_id} creates dir "{dir_name}" in current dir'))
-def create_dir_in_current_dir(selenium, browser_id, tmp_memory, modals, dir_name):
+def create_dir_in_current_dir(selenium, browser_id, tmp_memory, dir_name):
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"
@@ -312,9 +302,9 @@ def create_dir_in_current_dir(selenium, browser_id, tmp_memory, modals, dir_name
     click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
     write_name_into_text_field_in_modal(
-        selenium, browser_id, dir_name, modal_name, modals
+        selenium, browser_id, dir_name, modal_name
     )
-    confirm_create_new_directory(selenium, browser_id, option, modals)
+    confirm_create_new_directory(selenium, browser_id, option)
     # clicking on the background of browser in order to deselect
     # already created directory
     browser = tmp_memory[browser_id]["file_browser"]
@@ -436,7 +426,6 @@ def see_num_of_items_in_path_in_op_gui(
     num,
     provider,
     hosts,
-    popups,
 ):
     tab_name = "data"
 
@@ -446,7 +435,7 @@ def see_num_of_items_in_path_in_op_gui(
         )
     except KeyError:
         navigate_to_tab_in_op_using_gui(
-            selenium, user, provider, tab_name, hosts, popups
+            selenium, user, provider, tab_name, hosts
         )
         _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
@@ -505,8 +494,6 @@ def create_directory_structure_in_op_gui(
     config,
     space,
     tmp_memory,
-    modals,
-    popups,
 ):
     items = yaml.load(config, yaml.Loader)
     cwd = ""
@@ -519,8 +506,6 @@ def create_directory_structure_in_op_gui(
         space,
         tmp_memory,
         op_container,
-        modals,
-        popups,
     )
 
 
@@ -533,8 +518,6 @@ def _create_item(
     space,
     tmp_memory,
     op_container,
-    modals,
-    popups,
 ):
     path = "space root"
     item_type = "directory" if name.startswith("dir") else "file"
@@ -549,7 +532,6 @@ def _create_item(
             op_container,
             "succeeds",
             space,
-            modals,
         )
     else:
         upload_file_to_op_gui(
@@ -561,7 +543,6 @@ def _create_item(
             name,
             op_container,
             tmp_memory,
-            popups,
         )
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
         selenium, browser_id, path, op_container
@@ -577,8 +558,6 @@ def _create_item(
         space,
         tmp_memory,
         op_container,
-        modals,
-        popups,
     )
 
 
@@ -591,7 +570,6 @@ def _create_content(
     tmp_memory,
     op_container,
     modals,
-    popups,
 ):
     for item in content:
         try:
@@ -609,7 +587,6 @@ def _create_content(
             tmp_memory,
             op_container,
             modals,
-            popups,
         )
 
 
@@ -626,10 +603,10 @@ def _create_content(
     )
 )
 def successfully_upload_file_to_op_gui(
-    path, selenium, browser_id, space, op_container, tmp_memory, popups
+    path, selenium, browser_id, space, op_container, tmp_memory
 ):
     go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
-    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container, popups)
+    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container)
     assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
 
 
@@ -648,7 +625,6 @@ def upload_file_to_op_gui(
     filename,
     op_container,
     tmp_memory,
-    popups,
 ):
     try:
         assert_browser_in_tab_in_op(
@@ -660,14 +636,14 @@ def upload_file_to_op_gui(
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     if res == "succeeds":
         upload_file_to_cwd_in_file_browser(
-            selenium, browser_id, filename, op_container, popups
+            selenium, browser_id, filename, op_container
         )
         assert_items_presence_in_browser(selenium, browser_id, filename, tmp_memory)
     else:
         upload_file_to_cwd_in_file_browser_no_waiting(
             selenium, browser_id, filename, op_container
         )
-        check_error_in_upload_presenter(selenium, browser_id, popups)
+        check_error_in_upload_presenter(selenium, browser_id)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -796,7 +772,6 @@ def go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space):
 def open_modal_for_file_browser_item(
     selenium,
     browser_id,
-    popups,
     modal_name,
     path,
     tmp_memory,
@@ -807,18 +782,18 @@ def open_modal_for_file_browser_item(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory, op_container
     )
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
 def check_file_owner(
-    selenium, browser_id, owner, file_name, tmp_memory, modals, popups
+    selenium, browser_id, owner, file_name, tmp_memory, modals
 ):
     option = "Information"
     modal_name = "File details"
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
     close_modal(selenium, browser_id, modal_name, modals)
@@ -837,7 +812,6 @@ def create_hardlinks_of_file(
     space,
     tmp_memory,
     op_container,
-    popups,
 ):
 
     # This function works only with the files in main space.
@@ -855,7 +829,6 @@ def create_hardlinks_of_file(
         space,
         tmp_memory,
         op_container,
-        popups,
         option,
         button,
     )
@@ -874,7 +847,6 @@ def create_symlinks_of_file(
     space,
     tmp_memory,
     op_container,
-    popups,
 ):
 
     # Note: this function works similarly to the function above
@@ -889,7 +861,6 @@ def create_symlinks_of_file(
         space,
         tmp_memory,
         op_container,
-        popups,
         option,
         button,
     )
@@ -908,7 +879,6 @@ def create_symlinks_of_file_with_path(
     space,
     tmp_memory,
     op_container,
-    popups,
     path,
 ):
     # Note: this function works similarly to the function below
@@ -923,7 +893,6 @@ def create_symlinks_of_file_with_path(
         space,
         tmp_memory,
         op_container,
-        popups,
         option,
         button,
         path=path,
@@ -944,7 +913,6 @@ def create_hardlinks_of_file_with_path(
     space,
     tmp_memory,
     op_container,
-    popups,
     path,
 ):
     # This function creates a hardlink from a file in a currently opened directory
@@ -960,7 +928,6 @@ def create_hardlinks_of_file_with_path(
         space,
         tmp_memory,
         op_container,
-        popups,
         option,
         button,
         path=path,
@@ -975,7 +942,6 @@ def _create_link_in_file_browser(
     space,
     tmp_memory,
     op_container,
-    popups,
     option,
     button,
     path=None,
@@ -993,7 +959,7 @@ def _create_link_in_file_browser(
     )
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(0.5)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     click_file_browser_button(browser_id, button, "file browser", tmp_memory)
@@ -1011,7 +977,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     space,
     tmp_memory,
     op_container,
-    popups,
     source_path,
     path_to_place,
 ):
@@ -1045,7 +1010,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
         space,
         tmp_memory,
         op_container,
-        popups,
         option,
         button,
         relative_path,
@@ -1069,7 +1033,6 @@ def copy_object_id_to_tmp_memory(
     op_container,
     modals,
     modal,
-    popups,
 ):
     option = "Information"
     button = "File ID"
@@ -1078,7 +1041,7 @@ def copy_object_id_to_tmp_memory(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, user, name, space, tmp_memory, op_container
     )
-    click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, user, option)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
 
@@ -1110,7 +1073,6 @@ def get_file_id_from_details_modal(
     op_container,
     tmp_memory,
     file_name,
-    popups,
     modals,
     clipboard,
     displays,
@@ -1133,7 +1095,7 @@ def get_file_id_from_details_modal(
     modal_name = "Directory details" if "dir" in file_name else "File details"
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, popups
+        selenium, browser_id, option_in_menu
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, "file_id", modal_name, modals)
@@ -1149,7 +1111,7 @@ def get_file_id_from_details_modal(
     )
 )
 def go_to_size_statistics_per_provider_by_breadcrumbs(
-    selenium, modals, popups, op_container, browser_id, tmp_memory, space
+    selenium, modals, op_container, browser_id, tmp_memory, space
 ):
     browser = "file browser"
     option = "Information"
@@ -1163,13 +1125,13 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
         selenium, browser_id, path, op_container, which_browser=browser
     )
     click_on_breadcrumbs_menu(selenium, browser_id, op_container, browser)
-    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+    click_option_in_popup_labeled_menu(selenium, browser_id, option)
     click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals, modal)
     expand_size_statistics_for_providers(selenium, browser_id, modals)
 
 
 def delete_first_n_files(
-    browser_id, num_files_to_delete, tmp_memory, selenium, popups, modals
+    browser_id, num_files_to_delete, tmp_memory, selenium, modals
 ):
     option_to_select = "Delete"
     modal = "Delete modal"
@@ -1177,12 +1139,12 @@ def delete_first_n_files(
     select_first_n_files(browser_id, num_files_to_delete, tmp_memory)
     if num_files_to_delete > 1:
         choose_option_from_selection_menu(
-            browser_id, selenium, option_to_select, popups, tmp_memory
+            browser_id, selenium, option_to_select, tmp_memory
         )
     else:
         click_menu_for_elem_in_browser(browser_id, 0, tmp_memory)
         click_option_in_data_row_menu_in_browser(
-            selenium, browser_id, option_to_select, popups
+            selenium, browser_id, option_to_select
         )
     click_modal_button(selenium, browser_id, modal_option, modal, modals)
 
@@ -1194,13 +1156,13 @@ def delete_first_n_files(
     )
 )
 def delete_first_n_files_with_fixed_step(
-    browser_id, num_files_to_delete: int, tmp_memory, selenium, popups, modals
+    browser_id, num_files_to_delete: int, tmp_memory, selenium, modals
 ):
     deleted_files = 0
     fixed_step = 5
     while deleted_files + fixed_step <= num_files_to_delete:
         delete_first_n_files(
-            browser_id, fixed_step, tmp_memory, selenium, popups, modals
+            browser_id, fixed_step, tmp_memory, selenium, modals
         )
         deleted_files += fixed_step
     num_remaining_files_to_delete = num_files_to_delete - deleted_files
@@ -1210,7 +1172,6 @@ def delete_first_n_files_with_fixed_step(
             num_remaining_files_to_delete,
             tmp_memory,
             selenium,
-            popups,
             modals,
         )
         deleted_files += num_remaining_files_to_delete
@@ -1233,7 +1194,6 @@ def copy_show_or_download_link_from_file_details_modal(
     selenium,
     tmp_memory,
     op_container,
-    popups,
     modals,
 ):
     option = "Information"
@@ -1242,6 +1202,6 @@ def copy_show_or_download_link_from_file_details_modal(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory, op_container
     )
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     click_modal_button(selenium, browser_id, button, modal, modals)
     close_modal(selenium, browser_id, modal, modals)

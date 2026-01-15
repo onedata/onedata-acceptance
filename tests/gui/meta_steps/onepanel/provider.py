@@ -89,7 +89,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium, browser_id, provider_name, onepanel, popups, hosts
+    selenium, browser_id, provider_name, onepanel,  hosts
 ):
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
@@ -102,7 +102,7 @@ def deregister_provider_in_op_panel_using_gui(
     wt_click_on_btn_in_content(
         selenium, browser_id, "Deregister provider", content, onepanel
     )
-    wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup, popups)
+    wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
         selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
     )

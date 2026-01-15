@@ -75,7 +75,6 @@ def add_json_rdf_metadata_for_item(
     input_type,
     item_name,
     tmp_memory,
-    popups,
 ):
 
     modal_name = get_modal_name_from_item_name(item_name.lower())
@@ -84,7 +83,7 @@ def add_json_rdf_metadata_for_item(
     close_button = "X"
 
     click_on_context_menu_item(
-        selenium, browser_id, popups, item_name, tmp_memory, panel
+        selenium, browser_id, item_name, tmp_memory, panel
     )
     assert_tab_in_modal(selenium, browser_id, panel, modals, modal_name)
     click_on_navigation_tab_in_panel(selenium, browser_id, input_type, modals, panel)
@@ -102,12 +101,12 @@ def add_json_rdf_metadata_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
-    selenium, browser_id, tab, item_name, modals, tmp_memory, popups
+    selenium, browser_id, tab, item_name, modals, tmp_memory
 ):
     modal_name = get_modal_name_from_item_name(item_name.lower())
     option = "Metadata"
     click_on_context_menu_item(
-        selenium, browser_id, popups, item_name, tmp_memory, option
+        selenium, browser_id, item_name, tmp_memory, option
     )
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
     click_on_navigation_tab_in_panel(selenium, browser_id, tab, modals, option)
@@ -134,7 +133,6 @@ def set_metadata_in_op_gui(
     val,
     modals,
     item,
-    popups,
 ):
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
@@ -146,7 +144,6 @@ def set_metadata_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
@@ -200,7 +197,6 @@ def assert_metadata_in_op_gui(
     val,
     modals,
     item,
-    popups,
 ):
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
@@ -209,7 +205,6 @@ def assert_metadata_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
@@ -244,7 +239,6 @@ def assert_such_metadata_not_exist_in_op_gui(
     val,
     modals,
     item,
-    popups,
 ):
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
@@ -254,7 +248,6 @@ def assert_such_metadata_not_exist_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
@@ -293,7 +286,6 @@ def remove_all_metadata_in_op_gui(
     path,
     modals,
     item,
-    popups,
 ):
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
@@ -301,7 +293,6 @@ def remove_all_metadata_in_op_gui(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,
@@ -361,7 +352,6 @@ def open_filebrowser_and_remove_meta(
     modals,
     op_container,
     tmp_memory,
-    popups,
 ):
     modal_name = "File details"
     button = "Save"
@@ -371,7 +361,6 @@ def open_filebrowser_and_remove_meta(
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
-        popups,
         modal_name,
         path,
         tmp_memory,

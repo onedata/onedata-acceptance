@@ -39,7 +39,7 @@ class ColumnOption(PageObject):
         ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()
 
 
-class ColumnEditor(PageObject):
+class XattrColumnEditor(PageObject):
     enter_an_xattr_key = WebElement(
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
@@ -54,7 +54,35 @@ class ColumnEditor(PageObject):
     column_label = WebElement(".columnLabel-field input")
 
 
+class JsonMode(PageObject):
+    whole_document = Button(".clickable.option-all .one-way-radio-control")
+    extract_key = Button(".clickable.option-key .one-way-radio-control")
+    query = Button(".clickable.option-query .one-way-radio-control")
+
+
+class JsonColumnEditor(PageObject):
+    json_key = WebElement(".autocomplete-dropdown-field-trigger")
+    column_label = WebElement(".columnLabel-field input")
+    query = WebElement(".jsonQuery-field input")
+
+    choose_mode = WebItem(".jsonType-field.field-edit-mode", cls=JsonMode)
+    create = NamedButton(".edit-column-btn", text="Create")
+    apply_changes = NamedButton(".edit-column-btn", text="Apply")
+
+    def clear_actual_key(self, driver):
+        ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(
+            Keys.CONTROL
+        ).key_down(Keys.BACKSPACE).perform()
+        # Using send_keys(Keys.CONTROL, "a", Keys.BACKSPACE) does not work reliably
+        # in this case, so ActionChains are used instead.
+
+
 class ConfigureColumnsMenu(PageObject):
     columns = WebItemsSequence(".column-item", cls=ColumnOption)
-    new_xattr_column_button = Button(".new-column-item")
-    column_editor = WebItem(".column-editor", cls=ColumnEditor)
+    new_column_button = Button(".new-column-item")
+
+    choose_xattr = Button(".clickable.option-xattr")
+    choose_json = Button(".clickable.option-json")
+
+    xattr_column_editor = WebItem(".column-editor", cls=XattrColumnEditor)
+    json_column_editor = WebItem(".column-editor", cls=JsonColumnEditor)

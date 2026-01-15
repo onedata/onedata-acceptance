@@ -49,12 +49,12 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(
-    selenium, user, provider, main_menu_tab, hosts, popups
+    selenium, user, provider, main_menu_tab, hosts
 ):
     title = selenium[user].title
 
     if "onezone" in title.lower():
-        g_wt_visit_op(selenium, user, provider, hosts, popups)
+        g_wt_visit_op(selenium, user, provider, hosts)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
@@ -73,7 +73,6 @@ def replicate_file_to_provider(
     tmp_memory,
     provider,
     hosts,
-    popups,
     modals,
     result,
 ):
@@ -83,24 +82,24 @@ def replicate_file_to_provider(
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
 
-    replicate_item(selenium, browser_id, provider, hosts, popups)
+    replicate_item(selenium, browser_id, provider, hosts)
 
     if result == "replicates":
         click_modal_button(selenium, browser_id, close_button, details_modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups, modals):
+def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     option = "Data distribution"
     tab = "Distribution"
     details_modal = "Details modal"
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
     assert_see_history_btn_shown(selenium, browser_id)
     click_modal_button(selenium, browser_id, close_button, details_modal, modals)
@@ -120,14 +119,13 @@ def wt_assert_file_chunks(
     tmp_memory,
     hosts,
     modals,
-    popups,
 ):
     option = "Data distribution"
     details_modal = "Details modal"
     tab = "Distribution"
     close_button = "X"
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     click_modal_button(selenium, browser_id, close_button, details_modal, modals)
@@ -175,7 +173,6 @@ def migrate_file_to_provider(
     source,
     target,
     hosts,
-    popups,
     modals,
     result,
 ):
@@ -185,9 +182,9 @@ def migrate_file_to_provider(
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
-    migrate_item(selenium, browser_id, source, target, hosts, popups)
+    migrate_item(selenium, browser_id, source, target, hosts)
 
     if result == "migrates":
         click_modal_button(selenium, browser_id, close_button, details_modal, modals)
@@ -207,9 +204,9 @@ def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
     )
 )
 def open_modal_on_tab(
-    selenium, browser_id, filename, popups, tmp_memory, tab, modals, modal_name
+    selenium, browser_id, filename, tmp_memory, tab, modals, modal_name
 ):
     option = "Quality of Service" if tab == "QoS" else tab
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)

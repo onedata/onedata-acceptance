@@ -51,14 +51,14 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
 def remove_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, onepanel, popups, modals
+    selenium, browser_id, name, onepanel, modals
 ):
     option = "Remove storage backend"
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
 
     wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepanel)
-    wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option, popups)
+    wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option)
     click_modal_button(selenium, browser_id, button, modal, modals)
     assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel)
 

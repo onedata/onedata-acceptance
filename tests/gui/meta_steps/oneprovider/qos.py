@@ -39,7 +39,6 @@ def _add_qos_requirement_in_modal(
     item_name,
     tmp_memory,
     expression,
-    popups,
     replicas_number,
 ):
     qos_option = "Quality of Service"
@@ -52,7 +51,7 @@ def _add_qos_requirement_in_modal(
     details_modal = "Details modal"
 
     choose_option_for_file_from_selection_menu(
-        browser_id, selenium, qos_option, popups, tmp_memory, item_name
+        browser_id, selenium, qos_option, tmp_memory, item_name
     )
     click_panel_button(selenium, browser_id, add_button, panel, modals)
     click_enter_as_text_link(selenium, browser_id, modals)
@@ -83,7 +82,6 @@ def add_qos_requirement_in_modal(
     tmp_memory,
     expression,
     op_container,
-    popups,
     space_name,
 ):
     replicas_number = 1
@@ -96,7 +94,6 @@ def add_qos_requirement_in_modal(
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -118,7 +115,6 @@ def add_qos_requirement_in_modal_with_replicas(
     expression,
     space_name,
     op_container,
-    popups,
     replicas_number,
 ):
     go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space_name)
@@ -129,7 +125,6 @@ def add_qos_requirement_in_modal_with_replicas(
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -147,7 +142,6 @@ def add_id_qos_requirement_in_modal(
     modals,
     item_name,
     tmp_memory,
-    popups,
     clipboard,
     displays,
 ):
@@ -161,7 +155,6 @@ def add_id_qos_requirement_in_modal(
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -179,7 +172,6 @@ def add_no_id_qos_requirement_in_modal(
     modals,
     item_name,
     tmp_memory,
-    popups,
     clipboard,
     displays,
 ):
@@ -195,7 +187,6 @@ def add_no_id_qos_requirement_in_modal(
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -230,7 +221,6 @@ def delete_qos_requirement_in_op_gui(
     user,
     space_name,
     modals,
-    popups,
     file_name,
     tmp_memory,
     op_container,
@@ -246,5 +236,5 @@ def delete_qos_requirement_in_op_gui(
     click_on_status_tag_for_file_in_file_browser(
         user, status_type, file_name, tmp_memory
     )
-    delete_all_qualities_of_service(selenium, user, modals, popups)
+    delete_all_qualities_of_service(selenium, user, modals)
     click_modal_button(selenium, user, button, modal, modals)

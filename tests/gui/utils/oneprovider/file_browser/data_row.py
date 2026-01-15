@@ -43,7 +43,10 @@ class DataRow(BrowserRow):
     clickable_field = WebElement(".file-name")
     tag_label = Label(".file-status-tag")
     size_statistics_icon = WebElement(".dir-size-container .one-icon")
+
     xattr = Label(".table-cell-xattr-info")
+    json = Label(".table-cell-json-info")
+    copy_json_icon = Button(".oneicon-browser-copy")
 
     def __str__(self):
         return f"{self.name} in {self.parent}"
@@ -93,3 +96,7 @@ class DataRow(BrowserRow):
         ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
+
+    def hover_to_btn_and_click(self, btn_name, driver):
+        btn = getattr(self, btn_name)
+        ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()

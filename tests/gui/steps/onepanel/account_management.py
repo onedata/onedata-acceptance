@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.utils import Popups
 
 
 @wt(parsers.parse("user of {browser_id} clicks on logout button in main menu"))
@@ -26,8 +27,8 @@ def wt_click_on_user_account_btn_panel(selenium, browser_id, onepage):
     parsers.parse("user of {browser_id} clicks on {btn} button in user account popover")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_option_in_user_account_popover(selenium, browser_id, btn, popups):
-    popups(selenium[browser_id]).user_account_menu.options[btn].click()
+def wt_click_option_in_user_account_popover(selenium, browser_id, btn):
+    Popups(selenium[browser_id]).user_account_menu.options[btn].click()
 
 
 @wt(
