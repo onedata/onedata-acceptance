@@ -18,7 +18,7 @@ from tests.gui.conftest import (
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -345,11 +345,11 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_containe
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for file uploads? to finish"))
 @repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
-def wait_for_file_upload_to_finish(selenium, browser_id, popups):
+def wait_for_file_upload_to_finish(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     time.sleep(1)
-    assert not popups(
+    assert not Popups(
         driver
     ).is_upload_presenter(), "file upload not finished within given time"
     switch_to_iframe(selenium, browser_id)
@@ -361,10 +361,10 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     )
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
-def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
+def wait_extended_time_for_file_upload_to_finish(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    assert not popups(
+    assert not Popups(
         driver
     ).is_upload_presenter(), "file upload not finished within given time"
     switch_to_iframe(selenium, browser_id)
@@ -395,12 +395,12 @@ def upload_file_to_cwd_in_file_browser_no_waiting(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_automation_file_to_cwd_in_file_browser(
-    selenium, browser_id, file_name, op_container, inner_dir, popups
+    selenium, browser_id, file_name, op_container, inner_dir
 ):
     file_name = "automation/" + inner_dir + "/" + file_name.replace('"', "")
     driver = selenium[browser_id]
     op_container(driver).file_browser.upload_files(upload_file_path(file_name))
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -430,13 +430,11 @@ def upload_files_to_cwd_in_data_tab_no_waiting(
         'menu bar to upload file "{file_name}" to current dir'
     )
 )
-def upload_file_to_cwd_in_file_browser(
-    selenium, browser_id, file_name, op_container, popups
-):
+def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name, op_container):
     upload_file_to_cwd_in_file_browser_no_waiting(
         selenium, browser_id, file_name, op_container
     )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -448,12 +446,12 @@ def upload_file_to_cwd_in_file_browser(
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
-    selenium, browser_id, dir_path, tmpdir, op_container, popups
+    selenium, browser_id, dir_path, tmpdir, op_container
 ):
     upload_files_to_cwd_in_data_tab_no_waiting(
         selenium, browser_id, dir_path, tmpdir, op_container
     )
-    wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -464,12 +462,12 @@ def upload_files_to_cwd_in_data_tab_extended_wait(
     )
 )
 def upload_file_to_cwd_in_data_tab(
-    selenium, browser_id, file_path, tmpdir, op_container, popups
+    selenium, browser_id, file_path, tmpdir, op_container
 ):
     upload_file_to_cwd_in_data_tab_no_waiting(
         selenium, browser_id, file_path, tmpdir, op_container
     )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -480,12 +478,12 @@ def upload_file_to_cwd_in_data_tab(
     )
 )
 def upload_files_to_cwd_in_data_tab(
-    selenium, browser_id, dir_path, tmpdir, op_container, popups
+    selenium, browser_id, dir_path, tmpdir, op_container
 ):
     upload_files_to_cwd_in_data_tab_no_waiting(
         selenium, browser_id, dir_path, tmpdir, op_container
     )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -497,13 +495,13 @@ def upload_files_to_cwd_in_data_tab(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_number_of_files_to_cwd_in_data_tab(
-    selenium, browser_id, file_path, tmpdir, op_container, popups, number
+    selenium, browser_id, file_path, tmpdir, op_container, number
 ):
     for _ in range(int(number)):
         upload_file_to_cwd_in_data_tab_no_waiting(
             selenium, browser_id, file_path, tmpdir, op_container
         )
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -552,7 +550,7 @@ def network_normal_conditions(selenium, browser_id):
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_file_to_cwd_in_data_tab_with_network_throttling(
-    selenium, browser_id, file_path, tmpdir, op_container, popups
+    selenium, browser_id, file_path, tmpdir, op_container
 ):
     driver = selenium[browser_id]
     network_throttling_upload(selenium, browser_id)
@@ -562,7 +560,7 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
     else:
         raise RuntimeError(f"file {str(file)} does not exist")
 
-    wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
+    wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
 
 @wt(
@@ -693,11 +691,11 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def choose_option_from_selection_menu(browser_id, selenium, option, popups, tmp_memory):
+def choose_option_from_selection_menu(browser_id, selenium, option, tmp_memory):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
     file_browser.selection_menu_button()
-    popups(driver).menu_popup_with_label.menu[option].click()
+    Popups(driver).menu_popup_with_label.menu[option].click()
 
 
 @wt(
@@ -708,21 +706,21 @@ def choose_option_from_selection_menu(browser_id, selenium, option, popups, tmp_
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_file_from_selection_menu(
-    browser_id, selenium, option, popups, tmp_memory, file_name
+    browser_id, selenium, option, tmp_memory, file_name
 ):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
     file_browser.data[file_name].menu_button()
-    menu = popups(driver).menu_popup
+    menu = Popups(driver).menu_popup
     menu.choose_option(option)
 
 
 @wt(parsers.parse("user of {browser_id} sees that upload file failed"))
-def check_error_in_upload_presenter(selenium, browser_id, popups):
+def check_error_in_upload_presenter(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    assert popups(driver).upload_presenter[0].is_failed(), "upload not failed"
+    assert Popups(driver).upload_presenter[0].is_failed(), "upload not failed"
 
 
 @wt(

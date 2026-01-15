@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
+from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -111,12 +112,12 @@ def assert_origin_run_number_for_run_in_lane(
     )
 )
 def assert_status_for_run_in_popup(
-    selenium, browser_id, popups, option, value, op_container, lane_name, number
+    selenium, browser_id, option, value, op_container, lane_name, number
 ):
     click_on_run_indicator_for_lane(
         selenium, browser_id, op_container, lane_name, number
     )
-    info = popups(selenium[browser_id]).run_info
+    info = Popups(selenium[browser_id]).run_info
     info_dict_list = {
         elem.split(": ")[0].lower(): elem.split(": ")[1] for elem in info.split("\n")
     }

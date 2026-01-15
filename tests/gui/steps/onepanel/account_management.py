@@ -10,10 +10,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from time import sleep
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import Popups
 
 
 @wt(parsers.parse("user of {browser_id} clicks on logout button in main menu"))

@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
+from tests.gui.utils import Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
@@ -27,12 +28,12 @@ PROVIDER_PREFIX_CHAR = "@"
 
 @wt(parsers.parse("user of {browser_id} deletes all QoS requirements"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
+def delete_all_qualities_of_service(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.qos
     while len(modal.requirements):
         modal.requirements[0].delete.click()
-        popups(driver).delete_qos_popup.confirm.click()
+        Popups(driver).delete_qos_popup.confirm.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that all QoS requirements are {state}"))
@@ -333,9 +334,9 @@ def start_query_block_no(selenium, browser_id, modals, number):
         '"Add QoS condition" popup'
     )
 )
-def choose_property_in_add_condition_popup(selenium, browser_id, property_name, popups):
+def choose_property_in_add_condition_popup(selenium, browser_id, property_name):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.choose_property(property_name)
 
 
@@ -347,14 +348,14 @@ def choose_property_in_add_condition_popup(selenium, browser_id, property_name, 
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_item_at_provider_in_add_cond_popup(
-    selenium, browser_id, popups, item, provider, hosts
+    selenium, browser_id, item, provider, hosts
 ):
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = PROVIDER_PREFIX_CHAR
-    popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
+    Popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
 
 
 @wt(
@@ -363,16 +364,14 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
         'providers? on values list in "Add QoS condition" popup'
     )
 )
-def assert_list_of_providers_in_add_cond_popup(
-    selenium, browser_id, providers, hosts, popups
-):
+def assert_list_of_providers_in_add_cond_popup(selenium, browser_id, providers, hosts):
     expected = [hosts[provider]["name"] for provider in parse_seq(providers)]
 
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = f" {PROVIDER_PREFIX_CHAR}"
-    actual = [v.text.split(separator)[0] for v in popups(driver).power_select.items]
+    actual = [v.text.split(separator)[0] for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -382,9 +381,7 @@ def assert_list_of_providers_in_add_cond_popup(
         'storages? on values list in "Add QoS condition" popup'
     )
 )
-def assert_list_of_storages_in_add_cond_popup(
-    selenium, browser_id, storages, hosts, popups
-):
+def assert_list_of_storages_in_add_cond_popup(selenium, browser_id, storages, hosts):
     expected_expressions = parse_seq(storages)
     expected = []
     separator = f" {PROVIDER_PREFIX_CHAR}"
@@ -394,9 +391,9 @@ def assert_list_of_storages_in_add_cond_popup(
         expected.append(f"{name} {PROVIDER_PREFIX_CHAR}{provider_name}")
 
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    actual = [v.text for v in popups(driver).power_select.items]
+    actual = [v.text for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -408,19 +405,19 @@ def assert_list_of_storages_in_add_cond_popup(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_provider_item_in_add_cond_popup(
-    selenium, browser_id, popups, provider, hosts
+    selenium, browser_id, provider, hosts
 ):
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    popups(driver).power_select.choose_item_with_id(f"{provider_name}")
+    Popups(driver).power_select.choose_item_with_id(f"{provider_name}")
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" in "Add QoS condition" popup'))
-def click_add_in_add_cond_popup(selenium, browser_id, popups):
+def click_add_in_add_cond_popup(selenium, browser_id):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.add_button()
 
 
@@ -448,7 +445,7 @@ def assert_num_of_matching_storages(selenium, browser_id, number, modals):
         "(is|are) (?P<storages>.+)"
     )
 )
-def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
+def assert_matching_storage(selenium, browser_id, storages, hosts):
     css_sel = ".storages-matching-info-icon"
     driver = selenium[browser_id]
     expected_expressions = parse_seq(storages)
@@ -461,7 +458,7 @@ def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
     scroll_to_css_selector_bottom(driver, css_sel)
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
 
-    actual = [elem.text for elem in popups(driver).storages_matching_popover.storages]
+    actual = [elem.text for elem in Popups(driver).storages_matching_popover.storages]
     compare_lists(expected, actual)
     # unclick element
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
@@ -481,9 +478,9 @@ def compare_lists(expected, actual):
         '"Add QoS condition" popup'
     )
 )
-def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
+def choose_operator_in_add_cond_popup(selenium, browser_id, operator):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     getattr(popup, f"{operator.lower()}_operator").click()
 
 

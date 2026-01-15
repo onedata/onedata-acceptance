@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -23,10 +24,10 @@ DATASET_BROWSER = "dataset browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals, kind):
+def assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind):
     driver = selenium[browser_id]
     protection_kind = f"ancestor_{kind}_protection"
-    toggle = getattr(modals(driver).datasets, protection_kind)
+    toggle = getattr(Modals(driver).datasets, protection_kind)
     assert (
         toggle.is_checked()
     ), f"{kind} write protection toggle is unchecked in ancestor dataset menu"
@@ -205,9 +206,9 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
         'user of {browser_id} fails to click on "{button}" button in modal "{modal}"'
     )
 )
-def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
+def fail_to_click_button_in_modal(browser_id, button, modal, selenium):
     try:
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
         raise AssertionError(f'User can click on "{button}" in modal "{modal}"')
     except RuntimeError:
         pass

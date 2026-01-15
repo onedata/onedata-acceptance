@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -18,18 +18,18 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_cancel_upload_button_on_popup(selenium, browser_id, popups, number: int):
+def click_on_cancel_upload_button_on_popup(selenium, browser_id, number: int):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    popups(driver).upload_presenter[number - 1].cancel_button.click()
+    Popups(driver).upload_presenter[number - 1].cancel_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} confirms canceling the upload"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirm_cancel_upload(selenium, browser_id, popups):
+def click_on_confirm_cancel_upload(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    popups(driver).menu_popup_with_text.confirm_cancel_button.click()
+    Popups(driver).menu_popup_with_text.confirm_cancel_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that number of uploads is equal {number}"))

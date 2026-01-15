@@ -19,11 +19,10 @@ from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.utils import Modals
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.gui.utils import Popups
 
 
 @wt(
@@ -38,8 +37,7 @@ def wt_select_storage_in_support_space_form(selenium, browser_id, storage, onepa
         selenium[browser_id]
     ).content.spaces.form.storage_selector
     storage_selector.click()
-    popups = selenium["request"].getfixturevalue("popups")
-    popups(selenium[browser_id]).power_select.choose_item(storage)
+    Popups(selenium[browser_id]).power_select.choose_item(storage)
 
 
 @wt(

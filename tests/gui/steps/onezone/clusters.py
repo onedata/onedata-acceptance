@@ -10,7 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -253,17 +253,17 @@ def click_deregister_link_in_cluster_page(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_link_in_cookies_popup(selenium, browser_id, popups, kind_of_agreement):
+def click_on_link_in_cookies_popup(selenium, browser_id, kind_of_agreement):
     driver = selenium[browser_id]
     kind_of_agreement = transform(kind_of_agreement) + "_link"
-    getattr(popups(driver).cookies, kind_of_agreement)()
+    getattr(Popups(driver).cookies, kind_of_agreement)()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button in cookies popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_cookies_popup(selenium, browser_id, popups, button):
+def click_button_in_cookies_popup(selenium, browser_id, button):
     driver = selenium[browser_id]
-    getattr(popups(driver).cookies, transform(button))()
+    getattr(Popups(driver).cookies, transform(button))()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" on {kind_of_agreement} page'))
@@ -301,7 +301,7 @@ def click_button_on_agreement_page(
 
 @wt(parsers.parse("user of {browser_id} goes to {kind_of_agreement} page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_agreement_page(selenium, browser_id, popups, kind_of_agreement):
+def go_to_agreement_page(selenium, browser_id, kind_of_agreement):
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
-    popups(driver).user_account_menu.options[kind_of_agreement].click()
+    Popups(driver).user_account_menu.options[kind_of_agreement].click()

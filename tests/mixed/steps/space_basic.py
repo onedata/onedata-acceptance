@@ -233,7 +233,6 @@ def remove_provider_support_for_space_in_oz(
     spaces,
     admin_credentials,
     onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -251,7 +250,7 @@ def remove_provider_support_for_space_in_oz(
     elif client.lower() == "web gui":
 
         remove_provider_support_for_space_in_oz_using_gui(
-            selenium, user, space_name, onepanel, popups, hosts
+            selenium, user, space_name, onepanel, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -509,7 +508,6 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
     users,
     hosts,
     selenium,
-    popups,
 ):
 
     provider_name = hosts[provider_name]["name"]
@@ -522,7 +520,7 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
     elif client.lower() == "web gui":
 
         assert_provider_has_name_and_hostname_in_oz_gui(
-            selenium, user, provider_name, provider, hosts, popups
+            selenium, user, provider_name, provider, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

@@ -11,7 +11,7 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -227,11 +227,11 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals, selenium)
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium):
+def click_menu_for_archive(browser_id, tmp_memory, description, selenium):
     browser = tmp_memory[browser_id]["archive_browser"]
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
-    if popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
+    if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":
         raise RuntimeError(f"Archive with description {description} did not open")
 
 
@@ -483,11 +483,9 @@ def hover_over_button_in_archive_browser(browser_id, tmp_memory, selenium, butto
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def hover_over_option_in_data_row_menu_in_archive_browser(
-    selenium, browser_id, popups, option
-):
+def hover_over_option_in_data_row_menu_in_archive_browser(selenium, browser_id, option):
     driver = selenium[browser_id]
-    menu = popups(selenium[browser_id]).archive_row_menu
+    menu = Popups(selenium[browser_id]).archive_row_menu
     menu.move_to_elem(driver, transform(option))
 
 
@@ -522,10 +520,10 @@ def assert_archive_creation_link(browser_id, res, link, tmp_memory):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_insufficient_privileges_message_in_archive_browser(
-    browser_id, privilege, popups, selenium
+    browser_id, privilege, selenium
 ):
     driver = selenium[browser_id]
-    toggle_info = popups(driver).toggle_label
+    toggle_info = Popups(driver).toggle_label
     message_dict = {
         "manage archives": (
             'Insufficient privileges (requires "manage archives" privilege in '

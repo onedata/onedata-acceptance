@@ -53,7 +53,7 @@ def _add_qos_requirement_in_modal(
     choose_option_for_file_from_selection_menu(
         browser_id, selenium, qos_option, tmp_memory, item_name
     )
-    click_panel_button(selenium, browser_id, add_button, panel, modals)
+    click_panel_button(selenium, browser_id, add_button, panel)
     click_enter_as_text_link(selenium, browser_id, modals)
     write_name_into_text_field_in_panel(
         selenium, browser_id, expression, panel, modals, expression_field
@@ -63,8 +63,8 @@ def _add_qos_requirement_in_modal(
         write_name_into_text_field_in_panel(
             selenium, browser_id, replicas_number, panel, modals, replicas_field
         )
-    click_panel_button(selenium, browser_id, save_button, panel, modals)
-    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+    click_panel_button(selenium, browser_id, save_button, panel)
+    click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(
@@ -237,4 +237,4 @@ def delete_qos_requirement_in_op_gui(
         user, status_type, file_name, tmp_memory
     )
     delete_all_qualities_of_service(selenium, user, modals)
-    click_modal_button(selenium, user, button, modal, modals)
+    click_modal_button(selenium, user, button, modal)

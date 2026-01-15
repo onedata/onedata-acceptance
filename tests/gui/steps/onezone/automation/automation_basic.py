@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     parse_seq,
     transform,
@@ -65,12 +65,12 @@ def confirm_name_input_on_main_automation_page(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_inventory_menu(selenium, browser_id, option, inventory, popups):
+def click_option_in_inventory_menu(selenium, browser_id, option, inventory):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("automation")
     page.elements_list[inventory]()
     page.elements_list[inventory].menu()
-    popups(driver).menu_popup_with_text.menu[option]()
+    Popups(driver).menu_popup_with_text.menu[option]()
 
 
 @wt(
@@ -309,7 +309,7 @@ def assert_revision_of_object(selenium, browser_id, ordinal, option, object_name
     )
 )
 def click_option_in_revision_menu_button_ordinal(
-    selenium, browser_id, option, object_name, ordinal, popups, page
+    selenium, browser_id, option, object_name, ordinal, page
 ):
     click_option_in_revision_menu_button(
         selenium,
@@ -317,18 +317,17 @@ def click_option_in_revision_menu_button_ordinal(
         option,
         object_name,
         ordinal[:-2],
-        popups,
         page,
     )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(
-    selenium, browser_id, option, object_name, number, popups, page
+    selenium, browser_id, option, object_name, number, page
 ):
     item = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
     item.revision_list[number].menu_button.click()
-    popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+    Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
 @wt(
@@ -338,12 +337,10 @@ def click_option_in_revision_menu_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_workflow_menu_button(
-    selenium, browser_id, workflow, option, popups
-):
+def click_option_in_workflow_menu_button(selenium, browser_id, workflow, option):
     page = OZLoggedIn(selenium[browser_id])["automation"]
     page.workflows_page.elements_list[workflow].menu_button.click()
-    popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+    Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{file_name}" has been downloaded'))
@@ -382,8 +379,8 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
     ).click()
 
 
-def try_to_close_workflow_creation_popup(popups, driver):
+def try_to_close_workflow_creation_popup(driver):
     try:
-        popups(driver).workflow_creation_alert.close()
+        Popups(driver).workflow_creation_alert.close()
     except Exception:  # pylint: disable=broad-exception-caught
         pass

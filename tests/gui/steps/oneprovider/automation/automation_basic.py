@@ -16,7 +16,7 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -262,11 +262,11 @@ def assert_workflow_on_executed_workflows_list(
         "data row menu in automation workflows page is disabled"
     )
 )
-def assert_option_disabled_in_automation_page(selenium, browser_id, option, popups):
+def assert_option_disabled_in_automation_page(selenium, browser_id, option):
     err_msg = (
         f"Option {option} is not disabled in data row menu in automation workflows page"
     )
-    disabled_options = popups(selenium[browser_id]).workflow_menu.disabled_options
+    disabled_options = Popups(selenium[browser_id]).workflow_menu.disabled_options
     assert option in disabled_options, err_msg
 
 
@@ -276,14 +276,12 @@ def assert_option_disabled_in_automation_page(selenium, browser_id, option, popu
         'for "{lane_name}" lane'
     )
 )
-def click_option_for_lane(
-    selenium, browser_id, op_container, lane_name, option, popups
-):
+def click_option_for_lane(selenium, browser_id, op_container, lane_name, option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
     lane.latest_run_menu()
-    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+    click_option_in_popup_labeled_menu(selenium, browser_id, option)
 
 
 @wt(
@@ -318,11 +316,11 @@ def click_on_workflow_in_inventory_subpage(selenium, browser_id, ordinal, workfl
 
 @wt(parsers.parse('user of {browser_id} chooses "{level}" logging level'))
 def select_logging_level_in_automation_subpage(
-    browser_id, selenium, op_container, popups, level
+    browser_id, selenium, op_container, level
 ):
     driver = selenium[browser_id]
     op_container(driver).automation_page.logging_level()
-    options = popups(driver).logging_level
+    options = Popups(driver).logging_level
     options.choose_item(level)
 
 

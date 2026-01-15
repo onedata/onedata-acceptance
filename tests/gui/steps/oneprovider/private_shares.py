@@ -25,11 +25,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_option_for_publish_handle_service_as_open_data(
-    browser_id, option, popups, selenium
-):
+def choose_option_for_publish_handle_service_as_open_data(browser_id, option, selenium):
     driver = selenium[browser_id]
-    popups(driver).handle_service.options[option].click()
+    Popups(driver).handle_service.options[option].click()
 
 
 @wt(
@@ -39,11 +37,9 @@ def choose_option_for_publish_handle_service_as_open_data(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_option_for_publish_metadata_as_open_data(
-    browser_id, option, popups, selenium
-):
+def choose_option_for_publish_metadata_as_open_data(browser_id, option, selenium):
     driver = selenium[browser_id]
-    popups(driver).metadata_type.options[option].click()
+    Popups(driver).metadata_type.options[option].click()
 
 
 @wt(

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Modals, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -38,15 +39,13 @@ def check_if_select_files_modal_disappeared(modals, driver, files):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(
-    op_container, driver, popups, modals, store_name=False
-):
+def open_select_initial_files_modal(op_container, driver, modals, store_name=False):
     option = "Select/upload file"
 
     click_input_link_in_automation_page(op_container, driver, store_name)
     time.sleep(1)
     menu_option = get_select_option_from_initial_value_popup(
-        option, popups(driver).workflow_initial_values.menu
+        option, Popups(driver).workflow_initial_values.menu
     )
     menu_option.click()
     time.sleep(1)
@@ -61,7 +60,7 @@ def open_select_initial_files_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(
-    op_container, selenium, browser_id, popups, modals, store_name
+    op_container, selenium, browser_id, modals, store_name
 ):
     option = "Select groups"
     driver = selenium[browser_id]
@@ -69,7 +68,7 @@ def open_select_initial_groups_modal(
     click_input_link_in_automation_page(op_container, driver, store_name)
     time.sleep(1)
     menu_option = get_select_option_from_initial_value_popup(
-        option, popups(driver).workflow_group_initial_value.menu
+        option, Popups(driver).workflow_group_initial_value.menu
     )
     menu_option.click()
     time.sleep(1)
@@ -78,14 +77,14 @@ def open_select_initial_groups_modal(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_datasets_modal(op_container, driver, popups, modals):
+def open_select_initial_datasets_modal(op_container, driver):
     option = "Select datasets"
     op_container(driver).automation_page.input_link()
     time.sleep(1)
-    popups(driver).workflow_dataset_initial_value.menu[option].click()
+    Popups(driver).workflow_dataset_initial_value.menu[option].click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_dataset  # pylint: disable=expression-not-assigned
+    Modals(driver).select_dataset  # pylint: disable=expression-not-assigned
 
 
 def get_select_option_from_initial_value_popup(option, popup_menu):

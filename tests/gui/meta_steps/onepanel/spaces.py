@@ -237,7 +237,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     )
 )
 def revoke_space_support_in_op_panel_using_gui(
-    selenium, user, provider_name, onepanel, space_name, modals, hosts
+    selenium, user, provider_name, onepanel, space_name, hosts
 ):
     sidebar = "Clusters"
     sub_item = "Spaces"
@@ -256,7 +256,7 @@ def revoke_space_support_in_op_panel_using_gui(
     # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
     # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
     # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-    remove_space_instead_of_revoke(selenium, user, modals)
+    remove_space_instead_of_revoke(selenium, user)
 
 
 def configure_sync_parameters_for_space_in_op_panel_gui(
@@ -322,7 +322,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, hosts):
         wt_expands_toolbar_icon_for_space_in_onepanel(
             selenium, browser_id, space.name, onepanel
         )
-        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option, Popups)
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option)
         wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
         wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
         # wait for update spaces list

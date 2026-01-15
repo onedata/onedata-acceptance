@@ -62,7 +62,6 @@ def grant_acl_privileges_in_op(
     name,
     groups,
     tmp_memory,
-    popups,
     modals,
 ):
     full_path = f"{space}/{path}"
@@ -77,7 +76,6 @@ def grant_acl_privileges_in_op(
             name,
             op_container,
             tmp_memory,
-            popups,
             space,
             modals,
         )
@@ -138,7 +136,6 @@ def assert_ace_in_op(
     numerals,
     tmp_memory,
     modals,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -154,10 +151,8 @@ def assert_ace_in_op(
             space,
             path,
             tmp_memory,
-            modals,
             numerals,
             op_container,
-            popups,
         )
     elif client_lower == "rest":
         priv = _remove_parent_acl_from_string(priv)
@@ -213,7 +208,6 @@ def assert_posix_permissions_in_op(
     modals,
     users,
     hosts,
-    popups,
 ):
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
@@ -227,7 +221,6 @@ def assert_posix_permissions_in_op(
             op_container,
             tmp_memory,
             modals,
-            popups,
         )
     elif client_lower == "rest":
         assert_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts)
@@ -261,7 +254,6 @@ def set_posix_permissions_in_op(
     modals,
     users,
     hosts,
-    popups,
 ):
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
@@ -276,7 +268,6 @@ def set_posix_permissions_in_op(
                 op_container,
                 tmp_memory,
                 modals,
-                popups,
             )
         else:
             set_posix_permissions_in_op_gui(
@@ -288,7 +279,6 @@ def set_posix_permissions_in_op(
                 op_container,
                 tmp_memory,
                 modals,
-                popups,
             )
     elif client_lower == "rest":
         set_posix_permissions_in_op_rest(

@@ -169,7 +169,7 @@ def add_group_to_cluster(
             )
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
-    click_modal_button(selenium, browser_id, button_name, modal, modals)
+    click_modal_button(selenium, browser_id, button_name, modal)
 
 
 @given(
@@ -211,7 +211,6 @@ def remember_cluster_id(
     browser_id,
     provider,
     hosts,
-    popups,
     tmp_memory,
     clipboard,
     displays,
@@ -219,7 +218,7 @@ def remember_cluster_id(
     option = "Copy ID"
     click_on_record_in_clusters_menu(selenium, browser_id, provider, hosts)
     click_cluster_menu_button(selenium, browser_id, provider, hosts)
-    click_option_in_popup_text_menu(selenium, browser_id, option, popups)
+    click_option_in_popup_text_menu(selenium, browser_id, option)
     cluster_id = clipboard.paste(display=displays[browser_id])
     tmp_memory[provider]["cluster id"] = cluster_id
 

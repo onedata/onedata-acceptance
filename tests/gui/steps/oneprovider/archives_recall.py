@@ -12,6 +12,7 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -147,13 +148,13 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium, browser_id, modals, popups, option, modal
+    selenium, browser_id, modals, option, modal
 ):
     driver = selenium[browser_id]
     modal = transform(modal)
     getattr(modals(driver), modal).dropdown_menu.click()
 
-    popups(driver).power_select.choose_item(option)
+    Popups(driver).power_select.choose_item(option)
 
 
 @wt(

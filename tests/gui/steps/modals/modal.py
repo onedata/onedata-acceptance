@@ -17,7 +17,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import Modals
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -406,8 +406,8 @@ def assert_element_text(elem, selector, elem_text):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_panel_button(selenium, browser_id, button, panel_name, modals):
-    tab = getattr(modals(selenium[browser_id]).details_modal, transform(panel_name))
+def click_panel_button(selenium, browser_id, button, panel_name):
+    tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, transform(button))()
 
 
@@ -436,9 +436,9 @@ def click_panel_question_icon(selenium, browser_id, modals, panel_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_popup_link(selenium, browser_id, link, popups):
+def click_popup_link(selenium, browser_id, link):
     link = "documentation_link" if "documentation" in link else link
-    tab = getattr(popups(selenium[browser_id]), transform("info"))
+    tab = getattr(Popups(selenium[browser_id]), transform("info"))
     getattr(tab, transform(link)).click()
 
 
@@ -473,8 +473,8 @@ def assert_there_is_no_button_in_panel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_button(selenium, browser_id, button, modal_name, modals):
-    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+def click_modal_button(selenium, browser_id, button, modal_name):
+    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     button = button.replace(".", "")
     getattr(modal, transform(button))()
 
@@ -535,14 +535,13 @@ def write_name_into_text_field_in_panel(
     )
 )
 def wt_write_name_into_text_field_in_modal(
-    selenium, browser_id, item_name, modal_name, modals, name_textfield
+    selenium, browser_id, item_name, modal_name, name_textfield
 ):
     write_name_into_text_field_in_modal(
         selenium,
         browser_id,
         item_name,
         modal_name,
-        modals,
         name_textfield=name_textfield,
     )
 
@@ -553,13 +552,12 @@ def write_name_into_text_field_in_modal(
     browser_id,
     item_name,
     modal_name,
-    modals,
     name_textfield="input name",
 ):
     if name_textfield == "":
         name_textfield = "input name"
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), check_modal_name(modal_name))
+    modal = getattr(Modals(driver), check_modal_name(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -717,14 +715,14 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium, browser_id, modals, dropdown_name, popups, option, modal_name
+    selenium, browser_id, modals, dropdown_name, option, modal_name
 ):
     driver = selenium[browser_id]
     modal = getattr(modals(driver), transform(modal_name))
     dropdown_menu = getattr(modal, transform(dropdown_name))
     dropdown_menu.click()
 
-    popups(driver).power_select.choose_item(option)
+    Popups(driver).power_select.choose_item(option)
 
 
 @wt(

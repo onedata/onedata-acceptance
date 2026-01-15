@@ -390,13 +390,13 @@ def assert_empty_dir_msg_in_file_browser(browser_id, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_create_new_directory(selenium, browser_id, option, modals):
+def confirm_create_new_directory(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
         button = "Create"
         modal = "Create dir"
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
@@ -405,13 +405,13 @@ def confirm_create_new_directory(selenium, browser_id, option, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_directory(selenium, browser_id, option, modals):
+def confirm_rename_directory(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
         button = "Rename"
         modal = "Rename modal"
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
@@ -695,11 +695,11 @@ def scroll_to_top_in_file_browser(browser_id, tmp_memory):
     )
 )
 def assert_physical_location_path_and_copy_in_file_details(
-    selenium, browser_id, clipboard, displays, modals
+    selenium, browser_id, clipboard, displays
 ):
     button = "physical_location"
     modal = "details modal"
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     path = clipboard.paste(display=displays[browser_id])
     err_msg = "there is no physical location path visible in file details"
     assert path is not None, err_msg

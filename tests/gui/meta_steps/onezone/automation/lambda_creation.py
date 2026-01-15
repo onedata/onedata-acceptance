@@ -30,7 +30,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_lambda_form,
 )
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.acceptance_utils import get_lambda_dump
@@ -45,7 +45,7 @@ ALL_LAMBDA_NAMES = []
         "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
-def create_lambda_manually(browser_id, config, selenium, popups):
+def create_lambda_manually(browser_id, config, selenium):
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -79,10 +79,10 @@ def create_lambda_manually(browser_id, config, selenium, popups):
           - name: "result"
             type: Object
     """
-    _create_lambda_manually(browser_id, config, selenium, popups)
+    _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(browser_id, config, selenium, popups):
+def _create_lambda_manually(browser_id, config, selenium):
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -124,7 +124,6 @@ def _create_lambda_manually(browser_id, config, selenium, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                popups,
                 conf_param_option,
                 config_param["name"],
                 config_param["type"],
@@ -136,7 +135,6 @@ def _create_lambda_manually(browser_id, config, selenium, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                popups,
                 argument_option,
                 args["name"],
                 args["type"],
@@ -148,7 +146,6 @@ def _create_lambda_manually(browser_id, config, selenium, popups):
             add_parameter_into_lambda_form(
                 selenium,
                 browser_id,
-                popups,
                 result_option,
                 res["name"],
                 res["type"],
@@ -194,7 +191,7 @@ def create_lambda_using_gui(
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium, browser_id, popups, option, param_type, ordinal
+    selenium, browser_id, option, param_type, ordinal
 ):
     driver = selenium[browser_id]
     param_type = param_type.lower()
@@ -206,7 +203,7 @@ def change_parameter_type_in_lambda_form(
     object_bracket = getattr(subpage, bracket_name)
     css_sel = "#" + object_bracket.name.web_elem.get_attribute("id")
 
-    try_to_close_workflow_creation_popup(popups, driver)
+    try_to_close_workflow_creation_popup(driver)
 
     scroll_to_css_selector(driver, css_sel)
 
@@ -218,11 +215,11 @@ def change_parameter_type_in_lambda_form(
     object_bracket.remove_element()
     object_bracket.type_dropdown.click()
 
-    popups(driver).power_select.choose_item(new_type)
+    Popups(driver).power_select.choose_item(new_type)
 
     if "array" in param_type:
         object_bracket.type_dropdown.click()
-        popups(driver).power_select.choose_item(split_type[1])
+        Popups(driver).power_select.choose_item(split_type[1])
 
 
 @wt(
@@ -235,7 +232,7 @@ def change_parameter_type_in_lambda_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
-    selenium, browser_id, popups, option, name, param_type, ordinal
+    selenium, browser_id, option, name, param_type, ordinal
 ):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
@@ -252,7 +249,7 @@ def add_parameter_into_lambda_form(
     name_input.value = name
 
     object_bracket.type_dropdown.click()
-    popups(driver).power_select.choose_item(param_type)
+    Popups(driver).power_select.choose_item(param_type)
 
 
 @wt(
@@ -262,7 +259,7 @@ def add_parameter_into_lambda_form(
         r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
     )
 )
-def modify_parameter_in_lambda_form(selenium, browser_id, popups, ordinal, config):
+def modify_parameter_in_lambda_form(selenium, browser_id, ordinal, config):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
     data = yaml.load(config, yaml.Loader)
@@ -276,7 +273,7 @@ def modify_parameter_in_lambda_form(selenium, browser_id, popups, ordinal, confi
         [(arg, val)] = item.items()
         if arg == "File type":
             setts.file_type()
-            popups(driver).power_select.choose_item(val)
+            Popups(driver).power_select.choose_item(val)
         if arg == "Carried file attributes":
             # remove default file attrs
             for attr in setts.attrs:
@@ -284,10 +281,10 @@ def modify_parameter_in_lambda_form(selenium, browser_id, popups, ordinal, confi
             setts.carried_file_attrs()
             for el in val:
                 try:
-                    popups(driver).options_selector.choose_option(transform(el))
+                    Popups(driver).options_selector.choose_option(transform(el))
                 except (ElementNotInteractableException, RuntimeError):
                     time.sleep(1)
-                    popups(driver).options_selector.choose_option(transform(el))
+                    Popups(driver).options_selector.choose_option(transform(el))
 
 
 @wt(
@@ -324,7 +321,7 @@ def _upload_lambda_dump_from_automation_examples(
     button = "Apply"
 
     upload_lambda_from_repository(selenium, browser_id, lambda_name)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     # hide lambda revision page
     go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory)
 
@@ -336,7 +333,7 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium, browser_id, popups, modals, tmp_memory
+    selenium, browser_id, modals, tmp_memory
 ):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
@@ -345,7 +342,6 @@ def download_and_remove_all_lambda_dumps_from_inventory(
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
-            popups,
             modals,
             tmp_memory,
             visible_lambda_name,
@@ -353,7 +349,7 @@ def download_and_remove_all_lambda_dumps_from_inventory(
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium, browser_id, popups, modals, tmp_memory, lamda_name
+    selenium, browser_id, modals, tmp_memory, lamda_name
 ):
     option = "Download (json)"
     option_unlink = "Unlink"
@@ -369,14 +365,13 @@ def download_and_remove_lambda_dump_from_inventory(
         option,
         lamda_name,
         number,
-        popups,
         page_name,
     )
 
     page.lambdas_page.elements_list[lamda_name].lambda_menu.click()
-    popups(driver).menu_popup_with_label.menu[option_unlink].click()
+    Popups(driver).menu_popup_with_label.menu[option_unlink].click()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
-    click_modal_button(selenium, browser_id, option_unlink, modal, modals)
+    click_modal_button(selenium, browser_id, option_unlink, modal)
 
 
 @wt(

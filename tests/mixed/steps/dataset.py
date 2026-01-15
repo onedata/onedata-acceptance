@@ -63,7 +63,6 @@ def create_dataset_in_op(
     users,
     hosts,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -75,7 +74,6 @@ def create_dataset_in_op(
             selenium,
             op_container,
             modals,
-            popups,
             option=option,
         )
     elif client_lower == "rest":
@@ -106,7 +104,6 @@ def fail_to_create_dataset_in_op(
     modals,
     users,
     hosts,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -118,7 +115,6 @@ def fail_to_create_dataset_in_op(
             selenium,
             op_container,
             modals,
-            popups,
         )
     elif client_lower == "rest":
         fail_to_create_dataset_in_op_rest(
@@ -190,7 +186,6 @@ def remove_dataset_in_op(
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -201,8 +196,6 @@ def remove_dataset_in_op(
             op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         remove_dataset_in_op_rest(
@@ -323,7 +316,6 @@ def check_effective_protection_flags_for_file(
     modals,
     users,
     hosts,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -336,7 +328,6 @@ def check_effective_protection_flags_for_file(
             item_name,
             modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -369,7 +360,6 @@ def set_protection_flags_for_dataset(
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -382,7 +372,6 @@ def set_protection_flags_for_dataset(
             item_name,
             modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -416,7 +405,6 @@ def check_effective_protection_flags_for_dataset(
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -429,7 +417,6 @@ def check_effective_protection_flags_for_dataset(
             item_name,
             modals,
             option,
-            popups,
         )
     elif client_lower == "rest":
         check_effective_protection_flags_for_dataset_in_op_rest(
@@ -456,12 +443,10 @@ def detach_dataset_in_op(
     op_container,
     tmp_memory,
     item_name,
-    modals,
     users,
     hosts,
     host,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -472,8 +457,6 @@ def detach_dataset_in_op(
             op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         detach_dataset_in_op_rest(
@@ -543,7 +526,6 @@ def reattach_dataset_in_op(
     hosts,
     host,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -555,7 +537,6 @@ def reattach_dataset_in_op(
             tmp_memory,
             item_name,
             modals,
-            popups,
         )
     elif client_lower == "rest":
         reattach_dataset_in_op_rest(

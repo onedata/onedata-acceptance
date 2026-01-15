@@ -31,6 +31,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -47,20 +48,18 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_share(
-    selenium, browser_id, share_name, item_name, tmp_memory, modals, popups
-):
+def create_share(selenium, browser_id, share_name, item_name, tmp_memory, modals):
     option = "Share / Publish"
     modal_name = "Share / Publish directory"
     button = "Create"
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(
         selenium, browser_id, share_name, modal_name, modals
     )
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    click_modal_button(selenium, browser_id, button, modal_name)
 
 
 @wt(
@@ -109,17 +108,15 @@ def create_another_share(selenium, browser_id, share_name, modals):
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_current_share(
-    selenium, browser_id, op_container, modals, tmp_memory, popups
-):
+def remove_current_share(selenium, browser_id, op_container, modals, tmp_memory):
     option = "Remove"
     modal_name = "Remove share"
     button = "Remove"
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_share_row_menu(selenium, browser_id, option, popups)
+    click_option_in_share_row_menu(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    click_modal_button(selenium, browser_id, button, modal_name)
 
 
 @wt(parsers.parse('user of {browser_id} opens shares view of "{space_name}"'))
@@ -188,7 +185,7 @@ def hand_share_url_to_another_user(
     send_copied_item_to_other_users(
         browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
     )
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    click_modal_button(selenium, browser_id, button, modal_name)
 
 
 @wt(
@@ -216,19 +213,19 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, modals, tmp_m
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_share_from_single_view(
-    selenium, browser_id, new_name, op_container, modals, tmp_memory, popups
+    selenium, browser_id, new_name, op_container, modals, tmp_memory
 ):
     option = "Rename"
     modal_name = "Rename share"
     button = "Rename"
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_share_row_menu(selenium, browser_id, option, popups)
+    click_option_in_share_row_menu(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(
         selenium, browser_id, new_name, modal_name, modals
     )
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    click_modal_button(selenium, browser_id, button, modal_name)
     is_selected_share_named(selenium, browser_id, new_name, op_container)
 
 
@@ -238,14 +235,12 @@ def rename_share_from_single_view(
         " API section from (file|directory) details modal"
     )
 )
-def copy_command_from_api_in_file_details_modal(
-    modals, selenium, browser_id, command, popups
-):
+def copy_command_from_api_in_file_details_modal(modals, selenium, browser_id, command):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal
     command = f"{command}\nREST"
 
     modal.navigation["API"].click()
     modal.api.operations.click()
-    popups(driver).power_select.choose_item(command)
+    Popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()

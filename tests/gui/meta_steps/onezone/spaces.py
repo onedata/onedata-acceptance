@@ -57,7 +57,7 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -157,7 +157,7 @@ def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, modals):
     for space_name in space_list:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option)
         check_remove_space_understand_notice(selenium, browser_id, modals)
-        click_modal_button(selenium, browser_id, option, modal, modals)
+        click_modal_button(selenium, browser_id, option, modal)
 
 
 def rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list):
@@ -179,7 +179,7 @@ def rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list):
 
 
 def remove_provider_support_for_space_in_oz_using_gui(
-    selenium, user, space_name, onepanel, popups, hosts
+    selenium, user, space_name, onepanel, hosts
 ):
     sidebar = "CLUSTERS"
     record = "Spaces"
@@ -193,7 +193,7 @@ def remove_provider_support_for_space_in_oz_using_gui(
         selenium, user, sidebar, record, provider_name, onepanel, hosts
     )
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name, onepanel)
-    wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
+    wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
     notify_visible_with_text(selenium, user, notify_type, text_regexp)
@@ -414,7 +414,7 @@ def add_harvester_to_existing_space(
     choose_element_from_dropdown_in_add_element_modal(
         selenium, browser_id, harvester_name
     )
-    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
+    click_modal_button(selenium, browser_id, button_in_modal, modal)
 
 
 @wt(
@@ -461,7 +461,7 @@ def add_group_to_space_or_group(
     )
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
-    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
+    click_modal_button(selenium, browser_id, button_in_modal, modal)
 
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
@@ -492,13 +492,13 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel, mod
         'user of {browser_id} copies command "{command}" from "REST API" modal'
     )
 )
-def copy_command_from_rest_api_modal(modals, selenium, browser_id, command, popups):
+def copy_command_from_rest_api_modal(modals, selenium, browser_id, command):
     driver = selenium[browser_id]
     modal = modals(driver).rest_api
     command = f"{command}\nREST"
 
     modal.api.operations.click()
-    popups(driver).power_select.choose_item(command)
+    Popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()
 
 

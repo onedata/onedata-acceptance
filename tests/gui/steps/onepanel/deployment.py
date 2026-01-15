@@ -12,7 +12,7 @@ import time
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import Modals, Onepanel
+from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -349,14 +349,12 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_storage_type_in_deployment_step5(
-    selenium, browser_id, storage_type, popups
-):
+def wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type):
     storage_selector = Onepanel(
         selenium[browser_id]
     ).content.deployment.step5.form.storage_selector
     storage_selector.expand()
-    storage_selector_list = popups(selenium[browser_id]).dropdown
+    storage_selector_list = Popups(selenium[browser_id]).dropdown
     storage_selector_list.options[storage_type].click()
 
 

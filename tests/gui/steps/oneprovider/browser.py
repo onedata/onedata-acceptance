@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     WhichBrowser,
     parse_seq,
@@ -412,21 +412,21 @@ def assert_not_status_tag_for_file_in_browser(
     assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-def _choose_menu(selenium, browser_id, which_browser, popups):
+def _choose_menu(selenium, browser_id, which_browser):
     if which_browser == "archive browser":
-        return popups(selenium[browser_id]).archive_row_menu
+        return Popups(selenium[browser_id]).archive_row_menu
     if which_browser == "dataset browser":
-        return popups(selenium[browser_id]).dataset_row_menu
+        return Popups(selenium[browser_id]).dataset_row_menu
     if which_browser == "automation workflows page":
-        return popups(selenium[browser_id]).workflow_menu
-    return popups(selenium[browser_id]).data_row_menu
+        return Popups(selenium[browser_id]).workflow_menu
+    return Popups(selenium[browser_id]).data_row_menu
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(
-    selenium, browser_id, option, popups, which_browser="file browser"
+    selenium, browser_id, option, which_browser="file browser"
 ):
-    menu = _choose_menu(selenium, browser_id, which_browser, popups)
+    menu = _choose_menu(selenium, browser_id, which_browser)
     menu.choose_option(option)
 
 
@@ -437,10 +437,10 @@ def click_option_in_data_row_menu_in_browser(
     )
 )
 def wt_click_option_in_data_row_menu_in_browser(
-    selenium, browser_id, option, popups, which_browser
+    selenium, browser_id, option, which_browser
 ):
     click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option, popups, which_browser=which_browser
+        selenium, browser_id, option, which_browser=which_browser
     )
 
 
@@ -452,13 +452,13 @@ def wt_click_option_in_data_row_menu_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_state_in_data_row_menu(
-    selenium, browser_id, option, popups, option_state, which_browser
+    selenium, browser_id, option, option_state, which_browser
 ):
     err_msg = (
         f"{option} option is not {option_state} in opened item menu in file browser"
     )
 
-    menu = _choose_menu(selenium, browser_id, which_browser, popups)
+    menu = _choose_menu(selenium, browser_id, which_browser)
     menu_option = menu.return_option(option)
     assert menu_option.get_state() == option_state, err_msg
 

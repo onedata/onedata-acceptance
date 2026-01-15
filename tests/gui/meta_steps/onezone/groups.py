@@ -73,7 +73,7 @@ def leave_group(selenium, browser_id, group):
     modals = selenium["request"].getfixturevalue("modals")
 
     click_on_group_menu_button(selenium, browser_id, option, group)
-    click_modal_button(selenium, browser_id, option, modal, modals)
+    click_modal_button(selenium, browser_id, option, modal)
 
 
 @given(parsers.parse("{user} user does not have access to any group"))
@@ -100,7 +100,7 @@ def remove_group(selenium, browser_id, group_list):
 
     for group in parse_seq(group_list):
         click_on_group_menu_button(selenium, browser_id, option, group)
-        click_modal_button(selenium, browser_id, option, modal, modals)
+        click_modal_button(selenium, browser_id, option, modal)
 
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))

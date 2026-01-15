@@ -21,7 +21,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
@@ -87,27 +87,27 @@ def login_using_gui(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium, browser_id, provider_name, popups):
+def visit_op(selenium, browser_id, provider_name):
     driver = selenium[browser_id]
     providers_panel = OZLoggedIn(driver).get_page_and_click("providers")
     time.sleep(0.5)
     providers_panel[provider_name]()
-    click_visit_provider(driver, popups)
+    click_visit_provider(driver)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_visit_provider(driver, popups):
-    popups(driver).provider_map_popover.visit_provider()
+def click_visit_provider(driver):
+    Popups(driver).provider_map_popover.visit_provider()
 
 
-def g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
+def g_wt_visit_op(selenium, browser_id_list, providers_list, hosts):
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(
         list_parser(browser_id_list),
         providers_list,
         fillvalue=providers_list[-1],
     ):
-        visit_op(selenium, browser_id, hosts[provider]["name"], popups)
+        visit_op(selenium, browser_id, hosts[provider]["name"])
 
 
 @given(
@@ -117,8 +117,8 @@ def g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
-    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, popups)
+def g_visit_op(selenium, browser_id_list, providers_list, hosts):
+    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
 
 @wt(
@@ -129,7 +129,7 @@ def g_visit_op(selenium, browser_id_list, providers_list, hosts, popups):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_visit_op(selenium, browser_id_list, providers_list, hosts, modals):
-    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts, modals)
+    g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
 
 def visit_file_browser(
@@ -234,19 +234,19 @@ def search_for_members(driver, records, member_name, parent_name, fun):
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout_from_onezone_page(selenium, browser_id, popups):
+def logout_from_onezone_page(selenium, browser_id):
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
-    popups(driver).user_account_menu.options["Logout"].click()
+    Popups(driver).user_account_menu.options["Logout"].click()
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_username(selenium, browser_id, username, new_username, popups, users):
+def change_username(selenium, browser_id, username, new_username, users):
     driver = selenium[browser_id]
     profile = OZLoggedIn(driver)["profile"]
     profile.profile()
-    popups(driver).user_account_menu.options["Manage account"].click()
+    Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_username()
     profile.edit_user_name_box.value = new_username
     getattr(profile.edit_user_name_box, "confirm").click()
@@ -255,12 +255,12 @@ def change_username(selenium, browser_id, username, new_username, popups, users)
 
 @wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_password(selenium, browser_id, new_password, username, users, popups):
+def change_password(selenium, browser_id, new_password, username, users):
     driver = selenium[browser_id]
     cur_passwd = users[username].password
     profile = OZLoggedIn(driver)["profile"]
     profile.profile()
-    popups(driver).user_account_menu.options["Manage account"].click()
+    Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_password()
     profile.current_password_box = cur_passwd
     profile.type_new_password_box = new_password

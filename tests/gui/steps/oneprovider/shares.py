@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.utils import OPLoggedIn
+from tests.gui.utils import OPLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -119,8 +119,8 @@ def click_menu_button_on_shares_page(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_share_row_menu(selenium, browser_id, option, popups):
-    popups(selenium[browser_id]).shares_row_menu.options[option].click()
+def click_option_in_share_row_menu(selenium, browser_id, option):
+    Popups(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
 @wt(parsers.parse("user of {browser_id} sees there are no shares on shares view"))
@@ -275,9 +275,9 @@ def click_share_link_type_selector(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_share_link_type(selenium, browser_id, url_type, popups):
+def choose_share_link_type(selenium, browser_id, url_type):
     driver = selenium[browser_id]
-    popups(driver).power_select.choose_item(url_type)
+    Popups(driver).power_select.choose_item(url_type)
 
 
 @wt(parsers.parse("user of {browser_id} opens description tab on share view"))

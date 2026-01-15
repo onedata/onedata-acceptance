@@ -218,7 +218,7 @@ def checks_events_for_task(
     assert_events_containing_lambda_name(
         selenium, browser_id, modals, events, option, lambda_name
     )
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     click_on_task_in_lane(
         selenium, browser_id, op_container, lane, task, ordinal, close
     )
@@ -256,7 +256,7 @@ def assert_pod_name_for_task(
         selenium, browser_id, op_container, lane, task, link, ordinal
     )
     assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_name)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     click_on_task_in_lane(
         selenium, browser_id, op_container, lane, task, ordinal, close
     )
@@ -300,7 +300,7 @@ def assert_number_of_events_in_task(
     wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
     click_on_first_terminated_pod(selenium, browser_id, modals)
     check_number_of_events(selenium, browser_id, modals, exp_num, task)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     click_on_task_in_lane(
         selenium, browser_id, op_container, lane, task, ordinal, close
     )

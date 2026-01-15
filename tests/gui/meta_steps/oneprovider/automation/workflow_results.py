@@ -219,7 +219,7 @@ def assert_checksums_are_the_same(
         )
         assert workflow_checksum[key] == counted_checksum[key], err_msg
 
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    click_modal_button(selenium, browser_id, button, modal_name)
 
 
 @wt(

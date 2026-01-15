@@ -82,7 +82,6 @@ def create_dataset(
     space_name,
     selenium,
     op_container,
-    modals,
     option,
 ):
     option_in_space = "Files"
@@ -119,17 +118,11 @@ def create_dataset(
     click_option_in_data_row_menu_in_browser(
         selenium, browser_id, option_in_data_row_menu
     )
-    click_modal_button(
-        selenium, browser_id, create_button, option_in_data_row_menu, modals
-    )
+    click_modal_button(selenium, browser_id, create_button, option_in_data_row_menu)
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
-        click_protection_toggle(
-            browser_id, selenium, modals, flag, option_in_data_row_menu
-        )
-    click_modal_button(
-        selenium, browser_id, close_button, option_in_data_row_menu, modals
-    )
+        click_protection_toggle(browser_id, selenium, flag, option_in_data_row_menu)
+    click_modal_button(selenium, browser_id, close_button, option_in_data_row_menu)
 
 
 def fail_to_create_dataset_in_op_gui(
@@ -139,7 +132,6 @@ def fail_to_create_dataset_in_op_gui(
     space_name,
     selenium,
     op_container,
-    modals,
 ):
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
@@ -157,7 +149,7 @@ def fail_to_create_dataset_in_op_gui(
         selenium, browser_id, option_in_data_row_menu
     )
     fail_to_click_button_in_modal(
-        browser_id, create_button, option_in_data_row_menu, selenium, modals
+        browser_id, create_button, option_in_data_row_menu, selenium
     )
 
 
@@ -272,7 +264,6 @@ def check_effective_protection_flags_for_file_in_op_gui(
     op_container,
     tmp_memory,
     item_name,
-    modals,
     option,
 ):
     option_in_space = "Files"
@@ -296,13 +287,11 @@ def check_effective_protection_flags_for_file_in_op_gui(
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
         check_effective_protection_flag(
-            browser_id, selenium, modals, flag, item_name, tmp_memory
+            browser_id, selenium, flag, item_name, tmp_memory
         )
 
 
-def check_effective_protection_flag(
-    browser_id, selenium, kind, item_name, tmp_memory
-):
+def check_effective_protection_flag(browser_id, selenium, kind, item_name, tmp_memory):
     try:
         assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind)
     except AssertionError:
@@ -319,7 +308,6 @@ def set_protection_flags_for_dataset_in_op_gui(
     op_container,
     tmp_memory,
     item_name,
-    modals,
     option,
 ):
     option_in_space = "Datasets, Archives"
@@ -356,12 +344,8 @@ def set_protection_flags_for_dataset_in_op_gui(
     button_name = "Close"
     flags = [item.replace("_protection", "") for item in get_flags(option)]
     for flag in flags:
-        click_protection_toggle(
-            browser_id, selenium, modals, flag, option_in_data_row_menu
-        )
-    click_modal_button(
-        selenium, browser_id, button_name, option_in_data_row_menu, modals
-    )
+        click_protection_toggle(browser_id, selenium, flag, option_in_data_row_menu)
+    click_modal_button(selenium, browser_id, button_name, option_in_data_row_menu)
 
 
 def detach_dataset_in_op_gui(
@@ -439,7 +423,6 @@ def reattach_dataset_in_op_gui(
     op_container,
     tmp_memory,
     item_name,
-    modals,
 ):
     option_in_space = "Datasets, Archives"
     item_browser = "dataset browser"
@@ -474,4 +457,4 @@ def reattach_dataset_in_op_gui(
         option_in_data_row_menu,
         which_browser=item_browser,
     )
-    click_modal_button(selenium, browser_id, button_name, modal, modals)
+    click_modal_button(selenium, browser_id, button_name, modal)

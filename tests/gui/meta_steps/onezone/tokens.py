@@ -200,7 +200,7 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
         modal = "Error"
 
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
 
 
 def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
@@ -241,7 +241,6 @@ def create_token_with_config(
     selenium,
     browser_id,
     config,
-    popups,
     users,
     groups,
     hosts,
@@ -297,7 +296,6 @@ def create_token_with_config(
         selenium,
         browser_id,
         config,
-        popups,
         users,
         groups,
         hosts,
@@ -309,7 +307,6 @@ def _create_token_with_config(
     selenium,
     browser_id,
     config,
-    popups,
     users,
     groups,
     hosts,
@@ -348,7 +345,6 @@ def _create_token_with_config(
             selenium,
             browser_id,
             caveats,
-            popups,
             users,
             groups,
             hosts,
@@ -361,7 +357,6 @@ def _set_tokens_caveats(
     selenium,
     browser_id,
     caveats,
-    popups,
     users,
     groups,
     hosts,
@@ -384,10 +379,10 @@ def _set_tokens_caveats(
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
-        caveat.set_region_caveats(selenium, browser_id, region_caveats, popups)
+        caveat.set_region_caveats(selenium, browser_id, region_caveats)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "country")
-        caveat.set_country_caveats(selenium, browser_id, country_caveats, popups)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
@@ -399,7 +394,6 @@ def _set_tokens_caveats(
         caveat.set_consumer_caveats(
             selenium,
             browser_id,
-            popups,
             consumer_caveats,
             users,
             groups,
@@ -407,7 +401,7 @@ def _set_tokens_caveats(
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
-        caveat.set_service_caveats(selenium, browser_id, service_caveats, popups)
+        caveat.set_service_caveats(selenium, browser_id, service_caveats)
     if interface_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)
@@ -652,7 +646,7 @@ def remove_token(selenium, browser_id, token_name, modals):
     modal = "Remove token"
 
     wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
@@ -670,7 +664,7 @@ def remove_all_tokens(selenium, browser_id, modals):
         for token in OZLoggedIn(driver)["tokens"].sidebar.tokens:
             token.menu_button.click()
             click_option_for_token_row_menu(driver, btn)
-            click_modal_button(selenium, browser_id, button, modal, modals)
+            click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
@@ -683,7 +677,6 @@ def create_and_check_token(
     browser_id,
     config,
     selenium,
-    popups,
     users,
     groups,
     hosts,
@@ -694,7 +687,6 @@ def create_and_check_token(
         selenium,
         browser_id,
         config,
-        popups,
         users,
         groups,
         hosts,
@@ -746,7 +738,6 @@ def create_token_with_copied_object_id(
     clipboard,
     user,
     selenium,
-    popups,
     users,
     groups,
     hosts,
@@ -762,7 +753,6 @@ def create_token_with_copied_object_id(
         selenium,
         user,
         config,
-        popups,
         users,
         groups,
         hosts,
@@ -780,7 +770,6 @@ def _copy_object_id(
     name,
     space,
     op_container,
-    popups,
 ):
     option = "Information"
     button = "File ID"
@@ -789,8 +778,8 @@ def _copy_object_id(
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, user, name, space, tmp_memory, op_container
     )
-    click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
-    click_modal_button(selenium, user, button, modal, modals)
+    click_option_in_data_row_menu_in_browser(selenium, user, option)
+    click_modal_button(selenium, user, button, modal)
     close_modal(selenium, user, modal, modals)
 
     tmp_memory["object_id"] = clipboard.paste(display=displays[user])
@@ -808,7 +797,6 @@ def create_token_with_object_id(
     clipboard,
     user,
     selenium,
-    popups,
     users,
     groups,
     hosts,
@@ -831,7 +819,6 @@ def create_token_with_object_id(
         name,
         space,
         op_container,
-        popups,
     )
 
     object_id = tmp_memory["object_id"]
@@ -844,7 +831,6 @@ def create_token_with_object_id(
         selenium,
         user,
         config,
-        popups,
         users,
         groups,
         hosts,

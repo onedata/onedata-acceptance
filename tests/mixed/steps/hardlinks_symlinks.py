@@ -102,7 +102,6 @@ def create_file_symlink(
     spaces,
     tmp_memory,
     op_container,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -113,7 +112,6 @@ def create_file_symlink(
             space,
             tmp_memory,
             op_container,
-            popups,
             path,
         )
     elif client_lower == "rest":
@@ -176,7 +174,6 @@ def create_file_hardlink(
     space,
     tmp_memory,
     op_container,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -186,7 +183,6 @@ def create_file_hardlink(
             space,
             tmp_memory,
             op_container,
-            popups,
             file_path,
             hardlink_path,
         )

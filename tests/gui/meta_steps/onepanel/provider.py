@@ -89,7 +89,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium, browser_id, provider_name, onepanel,  hosts
+    selenium, browser_id, provider_name, onepanel, hosts
 ):
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"

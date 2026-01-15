@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -22,13 +23,13 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_storage_page_op_panel(
-    selenium, browser_id, storage_type, onepanel, popups
+    selenium, browser_id, storage_type, onepanel
 ):
     storage_selector = onepanel(
         selenium[browser_id]
     ).content.storages.form.storage_selector
     storage_selector.expand()
-    storage_selector_list = popups(selenium[browser_id]).dropdown
+    storage_selector_list = Popups(selenium[browser_id]).dropdown
 
     for storage in storage_selector_list.options:
         if storage.text.lower() == storage_type.lower():
@@ -144,8 +145,8 @@ def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepa
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option, popups):
-    toolbar = popups(selenium[browser_id]).toolbar
+def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option):
+    toolbar = Popups(selenium[browser_id]).toolbar
     if toolbar.is_displayed():
         toolbar.options[option].click()
     else:

@@ -28,7 +28,6 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
-from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -250,9 +249,7 @@ def _add_storage_in_step5(selenium, browser_id, configuration):
     notify_type = "info"
     text_regexp = ".*[Ss]torage.*added.*"
 
-    wt_select_storage_type_in_deployment_step5(
-        selenium, browser_id, storage_type, Popups
-    )
+    wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_deployment_step5(
         selenium, browser_id, name, storage_type, name_box
     )

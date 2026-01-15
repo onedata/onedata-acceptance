@@ -96,13 +96,12 @@ def change_user_password_in_oz_panel(
     onepage,
     users,
     hosts,
-    popups,
 ):
 
     if client.lower() == "web gui":
 
         change_user_password_in_oz_panel_using_gui(
-            selenium, user, onepage, users, new_password, popups
+            selenium, user, onepage, users, new_password
         )
     elif client.lower() == "rest":
 
@@ -119,11 +118,11 @@ def change_user_password_in_oz_panel(
         '"(?P<host>.+?)" Onezone panel service'
     )
 )
-def log_out_from_oz_panel(client, user, selenium, onepage, login_page, popups):
+def log_out_from_oz_panel(client, user, selenium, onepage, login_page):
 
     if client.lower() == "web gui":
 
-        log_out_from_oz_panel_gui(user, selenium, onepage, login_page, popups)
+        log_out_from_oz_panel_gui(user, selenium, onepage, login_page)
     elif client.lower() == "rest":
         pass
         # pytest.skip('This step is not required using {} client'.format(client))
@@ -292,7 +291,6 @@ def deregister_provider_in_op_panel(
     hosts,
     selenium,
     onepanel,
-    popups,
     users,
 ):
 
@@ -301,9 +299,7 @@ def deregister_provider_in_op_panel(
         deregister_provider_in_op_panel_using_rest(user, users, host, hosts)
     elif client.lower() == "web gui":
 
-        deregister_provider_in_op_panel_using_gui(
-            selenium, user, host, onepanel, popups, hosts
-        )
+        deregister_provider_in_op_panel_using_gui(selenium, user, host, onepanel, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -574,7 +570,6 @@ def revoke_space_support_in_op_panel(
     host,
     selenium,
     onepanel,
-    popups,
     modals,
     users,
     hosts,
@@ -590,7 +585,6 @@ def revoke_space_support_in_op_panel(
             provider_name,
             onepanel,
             space_name,
-            popups,
             modals,
             hosts,
         )

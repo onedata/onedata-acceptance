@@ -32,21 +32,22 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
 )
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def open_initial_modal(data_type, op_container, driver, popups, modals):
+def open_initial_modal(data_type, op_container, driver):
     if "dataset" in data_type:
-        open_select_initial_datasets_modal(op_container, driver, popups, modals)
+        open_select_initial_datasets_modal(op_container, driver)
     else:
-        open_select_initial_files_modal(op_container, driver, popups, modals)
+        open_select_initial_files_modal(op_container, driver)
 
 
-def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
+def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
     if "/" in path:
-        modal = getattr(modals(driver), transform(modal_name))
+        modal = getattr(Modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)
         for item in path_list:
             modal.files[item].click_and_enter()
@@ -55,7 +56,7 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
 
 
 def select_initial_items_for_workflow_in_modal(
-    files, modals, driver, data_type, op_container, popups
+    files, modals, driver, data_type, op_container
 ):
     if not isinstance(files, list):
         files = parse_seq(files)
@@ -70,13 +71,13 @@ def select_initial_items_for_workflow_in_modal(
         for file in select_files_modal.files:
             if file.name == file_name:
                 file.clickable_field.click()
-                if popups(driver).is_upload_presenter():
-                    popups(driver).upload_presenter[0].cancel_button.click()
+                if Popups(driver).is_upload_presenter():
+                    Popups(driver).upload_presenter[0].cancel_button.click()
                 select_files_modal.confirm_button.click()
                 # wait a moment for modal to close
                 time.sleep(0.25)
                 if file_name != files[-1].split("/")[-1]:
-                    open_initial_modal(data_type, op_container, driver, popups, modals)
+                    open_initial_modal(data_type, op_container, driver)
                     # wait a moment for modal to open
                     time.sleep(0.25)
                 break
@@ -92,26 +93,26 @@ def select_initial_items_for_workflow_in_modal(
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium, browser_id, file_list, modals, op_container, popups, store_name
+    selenium, browser_id, file_list, modals, op_container, store_name
 ):
     data_type = "file"
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(op_container, driver, popups, modals, store_name)
+    open_select_initial_files_modal(op_container, driver, modals, store_name)
     select_initial_items_for_workflow_in_modal(
-        file_list, modals, driver, data_type, op_container, popups
+        file_list, modals, driver, data_type, op_container
     )
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium, browser_id, group_list, modals, op_container, popups, store_name
+    selenium, browser_id, group_list, modals, op_container, store_name
 ):
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_select_initial_groups_modal(
-        op_container, selenium, browser_id, popups, modals, store_name
+        op_container, selenium, browser_id, modals, store_name
     )
     modals(driver).select_groups.select(group_list)
 
@@ -145,13 +146,12 @@ def fails_to_choose_directory_as_initial_workflow_value(
     dir_name,
     modals,
     op_container,
-    popups,
     expected_err_msg,
 ):
     data_type = "directory"
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_initial_modal(data_type, op_container, driver, popups, modals)
+    open_initial_modal(data_type, op_container, driver)
     modals(driver).select_files.files[dir_name].click()
     actual_err_msg = modals(driver).select_files.error_msg
     assert actual_err_msg == expected_err_msg, (
@@ -168,14 +168,14 @@ def fails_to_choose_directory_as_initial_workflow_value(
     )
 )
 def choose_file_as_initial_workflow_value(
-    selenium, browser_id, file_list, modals, op_container, popups, data_type
+    selenium, browser_id, file_list, modals, op_container, data_type
 ):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_initial_modal(data_type, op_container, driver, popups, modals)
+    open_initial_modal(data_type, op_container, driver)
 
     select_initial_items_for_workflow_in_modal(
-        file_list, modals, driver, data_type, op_container, popups
+        file_list, modals, driver, data_type, op_container
     )
 
 
@@ -276,8 +276,8 @@ def await_for_task_status(
         ' "{resolution}" in modal "{modal}"'
     )
 )
-def change_time_resolution_in_modal(selenium, browser_id, modals, popups, resolution):
+def change_time_resolution_in_modal(selenium, browser_id, modals, resolution):
     button = "Time resolution"
     modal_name = "Task time series"
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
-    choose_time_resolution(selenium, browser_id, popups, resolution, modal_name)
+    click_modal_button(selenium, browser_id, button, modal_name)
+    choose_time_resolution(selenium, browser_id, resolution, modal_name)

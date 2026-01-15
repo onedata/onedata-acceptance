@@ -14,6 +14,7 @@ from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser,
 )
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -69,9 +70,9 @@ def assert_button_in_modal_not_active(browser_id, modal, element, modals, seleni
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tooltip_on_chart_in_modal(browser_id, selenium, popups):
+def assert_tooltip_on_chart_in_modal(browser_id, selenium):
     driver = selenium[browser_id]
-    header = popups(driver).chart_statistics.header
+    header = Popups(driver).chart_statistics.header
     try:
         datetime.strptime(header, "%H:%M %d/%m/%Y")
     except ValueError:
@@ -161,11 +162,9 @@ def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
     )
 )
 def click_on_context_menu_item(
-    selenium, browser_id, popups, item_name, tmp_memory, context_menu_item
+    selenium, browser_id, item_name, tmp_memory, context_menu_item
 ):
     if item_name[0] == '"':
         item_name = item_name.replace('"', "")
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, context_menu_item, popups
-    )
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, context_menu_item)

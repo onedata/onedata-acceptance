@@ -22,6 +22,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
@@ -81,9 +82,9 @@ def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals
         ' time resolution list in modal "{modal}"'
     )
 )
-def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
+def choose_time_resolution(selenium, browser_id, resolution, modal):
     driver = selenium[browser_id]
-    for option in popups(driver).time_resolutions_list:
+    for option in Popups(driver).time_resolutions_list:
         if option.text == resolution:
             option.click()
             break

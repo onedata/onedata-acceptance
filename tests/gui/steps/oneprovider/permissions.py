@@ -10,15 +10,16 @@ import pytest
 from selenium.common.exceptions import InvalidElementStateException, JavascriptException
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _get_index(selenium, browser_id, num, modals, numerals):
+def _get_index(selenium, browser_id, num, numerals):
     n = numerals[num]
     if n < 0:
-        perm = modals(
+        perm = Modals(
             selenium[browser_id]
         ).details_modal.edit_permissions.acl.permissions
         n += len(perm)
@@ -174,10 +175,10 @@ def expand_acl_modal(selenium, browser_id, num, numerals, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_subject(selenium, browser_id, subject, modals, popups):
+def select_acl_subject(selenium, browser_id, subject, modals):
     driver = selenium[browser_id]
     modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
-    popups(driver).dropdown.options[subject].click()
+    Popups(driver).dropdown.options[subject].click()
 
 
 @wt(
@@ -280,11 +281,11 @@ def assert_acl_record_not_editable(selenium, browser_id, modals, num, numerals, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, option_list):
+def assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list):
     driver = selenium[browser_id]
-    n = _get_index(selenium, browser_id, num, modals, numerals)
+    n = _get_index(selenium, browser_id, num, numerals)
 
-    perm = modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
+    perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     perm.click()
 
     options = [x.lower() for x in parse_seq(option_list)]
@@ -321,7 +322,7 @@ def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, optio
 )
 def assert_set_all_acl_privileges(selenium, browser_id, modals, num, numerals):
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
-    assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, option_list)
+    assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
 
 
 @wt(
@@ -354,16 +355,14 @@ def assert_acl_subject(selenium, browser_id, modals, num, numerals, sub_type, na
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_btn_in_acl_record(
-    selenium, browser_id, modals, btn, num, numerals, popups
-):
+def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num, numerals):
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
 
     btn = btn.strip('"')
     perm = modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]
     perm.menu_button()
-    popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
+    Popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
 
 
 @wt(
@@ -373,12 +372,10 @@ def click_on_btn_in_acl_record(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_subject_in_list_in_acl_record(
-    selenium, browser_id, subjects, modals, popups
-):
+def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals):
     driver = selenium[browser_id]
     modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
-    subject_list = popups(driver).dropdown.options
+    subject_list = Popups(driver).dropdown.options
     for subject in parse_seq(subjects):
         assert subject in subject_list, f"{subject} not found in subjects list"
 

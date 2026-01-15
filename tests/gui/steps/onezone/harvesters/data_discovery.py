@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -131,9 +132,9 @@ def start_query_block_no(selenium, browser_id, data_discovery, number: str):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_condition_properties_list(selenium, browser_id, popups):
+def open_condition_properties_list(selenium, browser_id):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.expand_properties()
 
 
@@ -144,11 +145,11 @@ def open_condition_properties_list(selenium, browser_id, popups):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_properties_on_condition_properties_list(
-    selenium, browser_id, properties_list, popups
+    selenium, browser_id, properties_list
 ):
     driver = selenium[browser_id]
     properties = parse_seq(properties_list)
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     for prop in properties:
         assert query_builder_popup.assert_property(
             prop
@@ -162,9 +163,9 @@ def assert_properties_on_condition_properties_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_property_for_query(selenium, browser_id, property_name, popups):
+def choose_property_for_query(selenium, browser_id, property_name):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_property(property_name)
 
 
@@ -175,9 +176,9 @@ def choose_property_for_query(selenium, browser_id, property_name, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_comparator_in_query_builder(selenium, browser_id, comparator, popups):
+def choose_comparator_in_query_builder(selenium, browser_id, comparator):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_comparator(comparator)
 
 
@@ -187,9 +188,9 @@ def choose_comparator_in_query_builder(selenium, browser_id, comparator, popups)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_value_in_query_builder(selenium, browser_id, value: str, popups):
+def write_value_in_query_builder(selenium, browser_id, value: str):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.value = value
 
 
@@ -200,17 +201,17 @@ def write_value_in_query_builder(selenium, browser_id, value: str, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_in_query_builder(selenium, browser_id, value: str, popups):
+def choose_value_in_query_builder(selenium, browser_id, value: str):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_value(value)
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_button_in_query_builder(selenium, browser_id, popups):
+def click_add_button_in_query_builder(selenium, browser_id):
     driver = selenium[browser_id]
-    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.add_button()
 
 
@@ -220,9 +221,9 @@ def click_add_button_in_query_builder(selenium, browser_id, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_operator_in_query_builder(selenium, browser_id, operator, popups):
+def click_operator_in_query_builder(selenium, browser_id, operator):
     driver = selenium[browser_id]
-    query_builder = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder = Popups(driver).get_query_builder_not_hidden_popup()
     getattr(query_builder, f"{operator.lower()}_operator")()
 
 

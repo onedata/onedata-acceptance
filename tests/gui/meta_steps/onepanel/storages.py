@@ -43,23 +43,20 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.utils import Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
-def remove_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, onepanel, modals
-):
+def remove_storage_in_op_panel_using_gui(selenium, browser_id, name, onepanel):
     option = "Remove storage backend"
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
 
     wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepanel)
     wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel)
 
 
@@ -124,7 +121,7 @@ def _add_storage_in_op_panel_using_gui(
 
     storage_type = options["storage type"]
     wt_select_storage_type_in_storage_page_op_panel(
-        selenium, browser_id, storage_type, onepanel, Popups
+        selenium, browser_id, storage_type, onepanel
     )
     wt_type_text_to_in_box_in_storages_page_op_panel(
         selenium, browser_id, storage_name, form, onepanel, input_box
@@ -285,26 +282,24 @@ def _add_storage_in_op_panel_using_rest(
         "QoS parameters form in storage edit page"
     )
 )
-def add_key_value_in_storage_page(selenium, browser_id, key, val, onepanel, modals):
+def add_key_value_in_storage_page(selenium, browser_id, key, val, onepanel):
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     type_string_into_active_element(selenium, browser_id, val)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
+    confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
-def delete_additional_param_in_storage_page(selenium, browser_id, onepanel, modals):
+def delete_additional_param_in_storage_page(selenium, browser_id, onepanel):
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
+    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
-def _delete_all_additional_params_in_storage_page(
-    selenium, browser_id, onepanel, modals
-):
+def _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
     deleted = False
     name = "posix"
 
@@ -319,7 +314,7 @@ def _delete_all_additional_params_in_storage_page(
                 selenium, browser_id, onepanel
             )
         save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-        _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
+        _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
 @given(
@@ -328,12 +323,8 @@ def _delete_all_additional_params_in_storage_page(
         "in storage edit page used by {browser_id}"
     )
 )
-def g_delete_all_additional_params_in_storage_page(
-    selenium, browser_id, onepanel, modals
-):
-    _delete_all_additional_params_in_storage_page(
-        selenium, browser_id, onepanel, modals
-    )
+def g_delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
+    _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel)
 
 
 @wt(
@@ -342,22 +333,18 @@ def g_delete_all_additional_params_in_storage_page(
         "QoS parameters form in storage edit page"
     )
 )
-def wt_delete_all_additional_params_in_storage_page(
-    selenium, browser_id, onepanel, modals
-):
-    _delete_all_additional_params_in_storage_page(
-        selenium, browser_id, onepanel, modals
-    )
+def wt_delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
+    _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel)
 
 
-def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
+def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id):
     button = "Proceed"
     checkbox = "Understand checkbox"
     modal = "Modify Storage"
     # if modal will not appear
     try:
-        click_modal_button(selenium, browser_id, checkbox, modal, modals)
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, checkbox, modal)
+        click_modal_button(selenium, browser_id, button, modal)
         wait_for_named_modal_to_disappear(
             selenium, browser_id, modal, wait_time=WAIT_BACKEND * 5
         )
@@ -370,5 +357,5 @@ def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
         'user of {browser_id} confirms committed changes in modal "Modify Storage"'
     )
 )
-def confirm_changes_in_modify_storage_modal(selenium, browser_id, modals):
-    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id, modals)
+def confirm_changes_in_modify_storage_modal(selenium, browser_id):
+    _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)

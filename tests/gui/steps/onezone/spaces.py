@@ -602,7 +602,6 @@ def remove_harvester_from_harvesters_list(
     selenium,
     browser_id,
     harvester_name,
-    popups,
     modals,
     tmp_memory,
 ):
@@ -612,7 +611,7 @@ def remove_harvester_from_harvesters_list(
     driver = selenium[browser_id]
     harvesters_list = OZLoggedIn(driver)["data"].harvesters_page.harvesters_list
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
-    popups(driver).menu_popup_with_text.menu[popup_name]()
+    Popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_modal.remove()
 

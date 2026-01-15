@@ -65,7 +65,6 @@ def create_archive_in_op(
     clipboard,
     displays,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -81,7 +80,6 @@ def create_archive_in_op(
             clipboard,
             displays,
             option,
-            popups,
         )
     elif client_lower == "rest":
         create_archive_in_op_rest(
@@ -176,7 +174,6 @@ def remove_archive_in_op(
     modals,
     description,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -190,7 +187,6 @@ def remove_archive_in_op(
             modals,
             description,
             option,
-            popups,
         )
     elif client_lower == "rest":
         remove_archive_in_op_rest(
@@ -348,7 +344,6 @@ def assert_archive_callback(
     expected_callback,
     client,
     selenium,
-    popups,
     modals,
 ):
     client_lower = client.lower()
@@ -358,7 +353,6 @@ def assert_archive_callback(
             tmp_memory,
             description,
             selenium,
-            popups,
             modals,
             expected_callback,
             option,
@@ -394,7 +388,6 @@ def recall_archive_for_archive_in_op(
     space_name,
     host,
     tmp_memory,
-    popups,
     selenium,
     modals,
     users,
@@ -405,7 +398,7 @@ def recall_archive_for_archive_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         recall_archive_for_archive_in_op_gui(
-            user, description, tmp_memory, popups, selenium, modals, target_name
+            user, description, tmp_memory, selenium, modals, target_name
         )
     elif client_lower == "rest":
         recall_archive_for_archive_in_op_rest(

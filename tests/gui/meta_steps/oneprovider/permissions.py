@@ -61,7 +61,6 @@ def open_permission_modal(
     path,
     space,
     tmp_memory,
-    modals,
     op_container,
     permission_type,
 ):
@@ -72,13 +71,13 @@ def open_permission_modal(
         selenium, browser_id, path, space, tmp_memory, op_container
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
+    assert_tab_in_modal(selenium, browser_id, option, modal_name)
 
     try:
-        select_permission_type(selenium, browser_id, permission_type, modals)
+        select_permission_type(selenium, browser_id, permission_type)
     except RuntimeError as err:
         if permission_type == "posix":
-            assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name)
+            assert_posix_tab_in_panel(selenium, browser_id, modal_name)
         else:
             raise err
 
@@ -106,7 +105,7 @@ def _assert_posix_permissions(
         "posix",
     )
     check_permission(selenium, browser_id, perm, modals)
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -123,7 +122,7 @@ def assert_posix_permissions_in_op_gui(
     modal_name = "Details modal"
     close_button = "X"
     try:
-        click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+        click_modal_button(selenium, browser_id, close_button, modal_name)
         _assert_posix_permissions(
             selenium,
             browser_id,
@@ -180,8 +179,8 @@ def set_posix_permissions_in_op_gui(
     )
     set_posix_permission(selenium, browser_id, perm, modals)
 
-    click_panel_button(selenium, browser_id, button, panel, modals)
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+    click_panel_button(selenium, browser_id, button, panel)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 def fail_to_set_posix_permissions_in_op_gui(
@@ -211,7 +210,7 @@ def fail_to_set_posix_permissions_in_op_gui(
     )
     fail_to_set_posix_permission(selenium, browser_id, perm, modals)
     assert_there_is_no_button_in_panel(selenium, browser_id, button, panel, modals)
-    click_modal_button(selenium, browser_id, x_button, details_modal, modals)
+    click_modal_button(selenium, browser_id, x_button, details_modal)
 
 
 @wt(
@@ -247,16 +246,14 @@ def _set_acl_privilages_for_selected(
             browser_id, selenium, option, tmp_memory, path[0]
         )
     else:
-        choose_option_from_selection_menu(
-            browser_id, selenium, option, tmp_memory
-        )
+        choose_option_from_selection_menu(browser_id, selenium, option, tmp_memory)
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals)
-    click_panel_button(selenium, browser_id, button, panel, modals)
+    click_panel_button(selenium, browser_id, button, panel)
     if check_warning_modal(selenium, browser_id):
-        click_modal_button(selenium, browser_id, proceed_button, warning_modal, modals)
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+        click_modal_button(selenium, browser_id, proceed_button, warning_modal)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 @wt(
@@ -340,14 +337,7 @@ def read_items_acl(
     modal_name = "Details modal"
     close_button = "X"
     open_permission_modal(
-        selenium,
-        browser_id,
-        path,
-        space,
-        tmp_memory,
-        modals,
-        op_container,
-        "acl"
+        selenium, browser_id, path, space, tmp_memory, modals, op_container, "acl"
     )
 
     if res == "fails":
@@ -357,7 +347,7 @@ def read_items_acl(
     else:
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id, modals)
 
-    click_modal_button(selenium, browser_id, close_button, modal_name, modals)
+    click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
 @wt(
@@ -427,9 +417,7 @@ def assert_user_id_in_ace_in_op_gui(
         op_container,
         "acl",
     )
-    visible_id = get_unknown_user_id_from_acl_entry(
-        selenium, browser_id, num, numerals
-    )
+    visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
     user_id = users[name].user_id
     err_msg = f"id in acl entry: {visible_id} differs from actual user id: {user_id}"
     assert visible_id == user_id, err_msg

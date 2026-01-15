@@ -16,6 +16,7 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.utils import Popups
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -31,7 +32,6 @@ def _assert_transfer(
     selenium,
     browser_id,
     op_container,
-    popups,
 ):
     assert getattr(
         transfer, f"is_{item_type}"
@@ -48,7 +48,7 @@ def _assert_transfer(
             # if key differs from column name, consider creating suitable dict
             cols = [key.replace(" ", "_")]
             _select_columns_to_be_visible_in_transfers(
-                selenium, browser_id, cols, op_container, popups
+                selenium, browser_id, cols, op_container
             )
             transfer_val = getattr(transfer, key.replace(" ", "_"))
         try:
@@ -81,11 +81,9 @@ def _assert_transfer(
     )
 )
 @repeat_failed(interval=0.5, timeout=240)
-def assert_ended_transfer(
-    selenium, browser_id, item_type, desc, hosts, op_container, popups
-):
+def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts, op_container):
     transfers = _get_transfers_and_enable_initial_cols(
-        browser_id, selenium, op_container, popups
+        browser_id, selenium, op_container
     )
     transfer = transfers.ended[0]
     _assert_transfer(
@@ -97,7 +95,6 @@ def assert_ended_transfer(
         selenium,
         browser_id,
         op_container,
-        popups,
     )
 
 
@@ -108,11 +105,9 @@ def assert_ended_transfer(
     )
 )
 @repeat_failed(interval=0.5, timeout=40)
-def assert_waiting_transfer(
-    selenium, browser_id, item_type, desc, hosts, op_container, popups
-):
+def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts, op_container):
     transfers = _get_transfers_and_enable_initial_cols(
-        browser_id, selenium, op_container, popups
+        browser_id, selenium, op_container
     )
     transfer = transfers.waiting[0]
     _assert_transfer(
@@ -124,7 +119,6 @@ def assert_waiting_transfer(
         selenium,
         browser_id,
         op_container,
-        popups,
     )
 
 
@@ -141,9 +135,9 @@ def assert_waiting_transfer(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups, option, state):
+def cancel_or_rerun_transfer(selenium, browser_id, op_container, option, state):
     transfers = _get_transfers_and_enable_initial_cols(
-        browser_id, selenium, op_container, popups
+        browser_id, selenium, op_container
     )
     if state == "waiting":
         try:
@@ -154,7 +148,7 @@ def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups, option,
         getattr(transfers, transform(state))[0].menu_button()
 
     option = "Cancel transfer" if option == "cancels" else "Rerun transfer"
-    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+    click_option_in_popup_labeled_menu(selenium, browser_id, option)
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for all transfers to start"))
@@ -183,9 +177,9 @@ def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
 
 @wt(parsers.re("user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_transfer_record(selenium, browser_id, op_container, popups):
+def expand_transfer_record(selenium, browser_id, op_container):
     transfers = _get_transfers_and_enable_initial_cols(
-        browser_id, selenium, op_container, popups
+        browser_id, selenium, op_container
     )
     transfers.ended[0].expand()
 
@@ -197,19 +191,19 @@ def expand_transfer_record(selenium, browser_id, op_container, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_non_zero_transfer_speed(selenium, browser_id, op_container, popups):
+def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
     transfers = _get_transfers_and_enable_initial_cols(
-        browser_id, selenium, op_container, popups
+        browser_id, selenium, op_container
     )
     chart = transfers.ended[0].get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _expand_dropdown_in_migrate_record(driver, popups):
+def _expand_dropdown_in_migrate_record(driver):
     data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.migrate.expand_dropdown()
-    assert len(popups(driver).migrate_dropdown.providers_list) > 0
+    assert len(Popups(driver).migrate_dropdown.providers_list) > 0
 
 
 def check_provider_in_migrate_dropdown(driver, provider_name):
@@ -223,7 +217,7 @@ def check_provider_in_migrate_dropdown(driver, provider_name):
         'provider "(?P<source>.*)" to provider "(?P<target>.*)"'
     )
 )
-def migrate_item(selenium, browser_id, source, target, hosts, popups):
+def migrate_item(selenium, browser_id, source, target, hosts):
     menu_option = "Migrate..."
 
     driver = selenium[browser_id]
@@ -232,11 +226,11 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
 
     data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[source_name].menu_button()
-    popups(driver).data_distribution_popup.menu[menu_option]()
+    Popups(driver).data_distribution_popup.menu[menu_option]()
 
     if not check_provider_in_migrate_dropdown(driver, target_name):
-        _expand_dropdown_in_migrate_record(driver, popups)
-        popups(driver).migrate_dropdown.providers_list[target_name].click()
+        _expand_dropdown_in_migrate_record(driver)
+        Popups(driver).migrate_dropdown.providers_list[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
 
@@ -248,14 +242,14 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def replicate_item(selenium, browser_id, provider, hosts, popups):
+def replicate_item(selenium, browser_id, provider, hosts):
     menu_option = "Replicate here"
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     modals(driver).details_modal.data_distribution.providers[
         provider_name
     ].menu_button()
-    popups(driver).data_distribution_popup.menu[menu_option]()
+    Popups(driver).data_distribution_popup.menu[menu_option]()
 
 
 @wt(
@@ -280,12 +274,10 @@ def click_menu_button_in_data_distribution_panel(selenium, browser_id, provider,
         "panel"
     )
 )
-def fail_to_click_option_in_data_distribution_popup(
-    browser_id, option, selenium, popups
-):
+def fail_to_click_option_in_data_distribution_popup(browser_id, option, selenium):
     driver = selenium[browser_id]
     try:
-        popups(driver).data_distribution_popup.menu[option]()
+        Popups(driver).data_distribution_popup.menu[option]()
         raise AssertionError(
             f'User can click on "{option}" option in in data row '
             'menu in "Data distribution" panel'
@@ -332,7 +324,7 @@ def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     )
 )
 def assert_option_in_provider_popup_menu(
-    selenium, browser_id, provider, hosts, popups, options
+    selenium, browser_id, provider, hosts, options
 ):
 
     driver = selenium[browser_id]
@@ -342,23 +334,23 @@ def assert_option_in_provider_popup_menu(
         provider_name
     ].menu_button()
 
-    menu = popups(driver).menu_popup_with_text.menu
+    menu = Popups(driver).menu_popup_with_text.menu
     for element in parse_seq(options):
         assert element not in menu, f"{element} should not be in selection menu"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _select_columns_to_be_visible_in_transfers(
-    selenium, browser_id, columns, op_container, popups
+    selenium, browser_id, columns, op_container
 ):
     option_select = "select"
     option_unselect = "unselect"
     columns = [column.lower() for column in columns]
     transfer = op_container(selenium[browser_id]).transfers
     transfer.configure_columns.click()
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
     for column in columns_menu:
         if column.name.lower() in columns:
@@ -370,10 +362,10 @@ def _select_columns_to_be_visible_in_transfers(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container, popups):
+def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container):
     columns = ["user", "type", "status"]
     _select_columns_to_be_visible_in_transfers(
-        selenium, browser_id, columns, op_container, popups
+        selenium, browser_id, columns, op_container
     )
     return op_container(selenium[browser_id]).transfers
 
@@ -386,10 +378,10 @@ def _get_transfers_and_enable_initial_cols(browser_id, selenium, op_container, p
     )
 )
 def select_columns_to_be_visible_in_transfers(
-    selenium, browser_id, columns, op_container, popups
+    selenium, browser_id, columns, op_container
 ):
     _select_columns_to_be_visible_in_transfers(
-        selenium, browser_id, parse_seq(columns), op_container, popups
+        selenium, browser_id, parse_seq(columns), op_container
     )
 
 

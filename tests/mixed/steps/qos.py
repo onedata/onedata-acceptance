@@ -39,7 +39,6 @@ def create_qos_requirement_in_op(
     tmp_memory,
     expression,
     op_container,
-    popups,
     space_name,
     users,
     hosts,
@@ -55,7 +54,6 @@ def create_qos_requirement_in_op(
             tmp_memory,
             expression,
             op_container,
-            popups,
             space_name,
         )
     elif client_lower == "rest":
@@ -120,7 +118,6 @@ def delete_qos_requirement_in_op(
     user,
     space_name,
     modals,
-    popups,
     file_name,
     tmp_memory,
     op_container,
@@ -135,7 +132,6 @@ def delete_qos_requirement_in_op(
             user,
             space_name,
             modals,
-            popups,
             file_name,
             tmp_memory,
             op_container,

@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import title_contains
+from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -78,12 +79,12 @@ def assert_active_section_in_api_docks(selenium, browser_id, label):
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_file_details(
-    selenium, browser_id, modals, popups
+    selenium, browser_id, modals
 ):
     driver = selenium[browser_id]
     modal = modals(driver).details_modal.api
     modal.operations.click()
-    popup = popups(driver).power_select
+    popup = Popups(driver).power_select
     commands = [item.text for item in popup.items]
     s = {
         "Download directory (tar)\nREST": "GET Download file content",
@@ -111,7 +112,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
         if command == "Get data distribution\nREST":
             continue
         modal = modals(driver).details_modal.api
-        popups(driver).power_select.choose_item(command)
+        Popups(driver).power_select.choose_item(command)
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         title_contains(selenium, browser_id, "Onedata | API")
@@ -130,13 +131,11 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
         " correctly for each selected operation in space menu API section"
     )
 )
-def assert_all_links_to_rest_api_docs_works_in_space_menu(
-    selenium, browser_id, modals, popups
-):
+def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modal = modals(driver).rest_api.api
     modal.operations.click()
-    popup = popups(driver).power_select
+    popup = Popups(driver).power_select
     commands = [item.text for item in popup.items]
     s = {
         "Get space details\nREST": "GET Get space details",
@@ -170,7 +169,7 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
 
     for command in commands:
         modal = modals(driver).rest_api.api
-        popups(driver).power_select.choose_item(command)
+        Popups(driver).power_select.choose_item(command)
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         title_contains(selenium, browser_id, "Onedata | API")
