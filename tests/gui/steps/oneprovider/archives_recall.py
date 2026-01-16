@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import Popups
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -24,11 +24,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_info_in_archive_recall_information_modal(
-    selenium, browser_id, modals, info, text
-):
+def assert_info_in_archive_recall_information_modal(selenium, browser_id, info, text):
     info_type = transform(info)
-    recall_modal = modals(selenium[browser_id]).archive_recall_information
+    recall_modal = Modals(selenium[browser_id]).archive_recall_information
     information = getattr(recall_modal, info_type)
     if info_type in ["files_recalled", "data_recalled"]:
         current_progress = recall_modal.get_progress_info(info_type)
@@ -52,9 +50,9 @@ def assert_info_in_archive_recall_information_modal(
         "in archive recall information modal"
     )
 )
-def fail_to_see_recalled_data_statistics(selenium, browser_id, modals, info):
+def fail_to_see_recalled_data_statistics(selenium, browser_id, info):
 
-    recall_modal = modals(selenium[browser_id]).archive_recall_information
+    recall_modal = Modals(selenium[browser_id]).archive_recall_information
     information = getattr(recall_modal, transform(info)).split("/")
     err_msg = f"There is visible statistics of {info}"
     assert information[0] == "", err_msg
@@ -67,16 +65,14 @@ def fail_to_see_recalled_data_statistics(selenium, browser_id, modals, info):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_status_in_archive_recall_information_modal(
-    selenium, browser_id, modals, status
-):
+def wait_for_status_in_archive_recall_information_modal(selenium, browser_id, status):
     driver = selenium[browser_id]
-    recall_status = modals(driver).archive_recall_information.status
+    recall_status = Modals(driver).archive_recall_information.status
     for _ in range(100):
         if recall_status == status:
             break
         time.sleep(2)
-        recall_status = modals(driver).archive_recall_information.status
+        recall_status = Modals(driver).archive_recall_information.status
     else:
         err_msg = f"Archive status:{recall_status} does not match expected"
         assert recall_status == status, err_msg
@@ -90,14 +86,14 @@ def wait_for_status_in_archive_recall_information_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_recall_duration_in_archive_recall_information_modal(
-    selenium, browser_id, modals, start, stop
+    selenium, browser_id, start, stop
 ):
     """
     start variable could be the time of starting or canceling the recall,
     stop variable could be the time of canceling or finishing the recall
     """
 
-    archive_recall_information = modals(selenium[browser_id]).archive_recall_information
+    archive_recall_information = Modals(selenium[browser_id]).archive_recall_information
     start = f"{start}_at"
     stop = f"{stop}_at"
 
@@ -112,11 +108,11 @@ def assert_recall_duration_in_archive_recall_information_modal(
 
 @wt(parsers.parse("user of {browser_id} sees that not all {kind} were recalled"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
+def assert_not_all_files_were_recalled(selenium, browser_id, kind):
     kind = kind + " recalled"
     characters = "[\nMiB ]"
     data_info = getattr(
-        modals(selenium[browser_id]).archive_recall_information, transform(kind)
+        Modals(selenium[browser_id]).archive_recall_information, transform(kind)
     )
     info = re.sub(characters, "", data_info).split("/")
     all_data = float(info[1])
@@ -131,9 +127,9 @@ def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
+def assert_number_of_item_greater_than_zero(selenium, browser_id):
     driver = selenium[browser_id]
-    items_failed = modals(driver).archive_recall_information.items_failed
+    items_failed = Modals(driver).archive_recall_information.items_failed
     try:
         number = int(items_failed)
     except ValueError:
@@ -147,12 +143,10 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_option_in_dropdown_menu_in_modal(
-    selenium, browser_id, modals, option, modal
-):
+def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, option, modal):
     driver = selenium[browser_id]
     modal = transform(modal)
-    getattr(modals(driver), modal).dropdown_menu.click()
+    getattr(Modals(driver), modal).dropdown_menu.click()
 
     Popups(driver).power_select.choose_item(option)
 
@@ -182,9 +176,9 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
         "which is equal to number of items failed in status tab"
     )
 )
-def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
+def assert_number_of_entries_in_archive_recall(browser_id, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).archive_recall_information
+    modal = Modals(driver).archive_recall_information
     items_failed = modal.items_failed
     try:
         number_of_items_failed = int(items_failed)
@@ -200,9 +194,7 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
         # just pass
         _ = index
 
-    detected_entries = _scroll_and_check_condition(
-        browser_id, selenium, modals, condition
-    )
+    detected_entries = _scroll_and_check_condition(browser_id, selenium, condition)
     err_msg = (
         f"number of entries is {len(detected_entries)} is not equal to "
         f"number of items failed {number_of_items_failed}"
@@ -217,13 +209,11 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium, modals):
         'file name "{file_name}" or its duplicate names'
     )
 )
-def assert_entries_with_file_names_in_archive_recall(
-    browser_id, file_name, selenium, modals
-):
+def assert_entries_with_file_names_in_archive_recall(browser_id, file_name, selenium):
     # this test assumes that original file name does not
     # contain '(' or ')' characters
     driver = selenium[browser_id]
-    modal = modals(driver).archive_recall_information
+    modal = Modals(driver).archive_recall_information
     file_name_p = file_name.split(".")[0]
     file_name_s = file_name.split(".")[1]
     # if we want to scroll cursor need to be somewhere on the
@@ -248,7 +238,7 @@ def assert_entries_with_file_names_in_archive_recall(
             )
             assert file_name_p == file_name_p_ and file_name_s == file_name_s_, err_msg
 
-    _scroll_and_check_condition(browser_id, selenium, modals, condition)
+    _scroll_and_check_condition(browser_id, selenium, condition)
 
 
 @wt(
@@ -258,11 +248,9 @@ def assert_entries_with_file_names_in_archive_recall(
         'error message "{message}"'
     )
 )
-def assert_entries_with_error_messages_in_archive_recall(
-    browser_id, message, selenium, modals
-):
+def assert_entries_with_error_messages_in_archive_recall(browser_id, message, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).archive_recall_information
+    modal = Modals(driver).archive_recall_information
     # if we want to scroll cursor need to be somewhere on the
     # table containing error logs
     modal.move_to_error_logs_table(driver)
@@ -282,12 +270,12 @@ def assert_entries_with_error_messages_in_archive_recall(
             )
             assert entry_mes == message, err_msg
 
-    _scroll_and_check_condition(browser_id, selenium, modals, condition)
+    _scroll_and_check_condition(browser_id, selenium, condition)
 
 
-def _scroll_and_check_condition(browser_id, selenium, modals, condition, *args):
+def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
-    modal = modals(driver).archive_recall_information
+    modal = Modals(driver).archive_recall_information
     entries = modal.error_file_row
     new_entries = [
         entry.text.split("\n")[1]
@@ -323,7 +311,7 @@ def _scroll_and_check_condition(browser_id, selenium, modals, condition, *args):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_recall_information(browser_id, selenium, modals):
+def scroll_to_top_in_archive_recall_information(browser_id, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).archive_recall_information
+    modal = Modals(driver).archive_recall_information
     modal.scroll_to_top()

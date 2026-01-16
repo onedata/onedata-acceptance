@@ -55,18 +55,14 @@ def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
     return path
 
 
-def select_initial_items_for_workflow_in_modal(
-    files, modals, driver, data_type, op_container
-):
+def select_initial_items_for_workflow_in_modal(files, driver, data_type, op_container):
     if not isinstance(files, list):
         files = parse_seq(files)
 
     for path in files:
         modal_name = "select files"
-        file_name = go_to_path_and_return_file_name_in_modal(
-            path, modals, driver, modal_name
-        )
-        select_files_modal = modals(driver).select_files
+        file_name = go_to_path_and_return_file_name_in_modal(path, driver, modal_name)
+        select_files_modal = Modals(driver).select_files
 
         for file in select_files_modal.files:
             if file.name == file_name:
@@ -82,7 +78,7 @@ def select_initial_items_for_workflow_in_modal(
                     time.sleep(0.25)
                 break
 
-    check_if_select_files_modal_disappeared(modals, driver, files)
+    check_if_select_files_modal_disappeared(driver, files)
 
 
 @wt(
@@ -93,28 +89,26 @@ def select_initial_items_for_workflow_in_modal(
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium, browser_id, file_list, modals, op_container, store_name
+    selenium, browser_id, file_list, op_container, store_name
 ):
     data_type = "file"
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(op_container, driver, modals, store_name)
+    open_select_initial_files_modal(op_container, driver, store_name)
     select_initial_items_for_workflow_in_modal(
-        file_list, modals, driver, data_type, op_container
+        file_list, driver, data_type, op_container
     )
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium, browser_id, group_list, modals, op_container, store_name
+    selenium, browser_id, group_list, op_container, store_name
 ):
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_groups_modal(
-        op_container, selenium, browser_id, modals, store_name
-    )
-    modals(driver).select_groups.select(group_list)
+    open_select_initial_groups_modal(op_container, selenium, browser_id, store_name)
+    Modals(driver).select_groups.select(group_list)
 
 
 def provide_text_to_object_initial_workflow_value_store(
@@ -144,7 +138,6 @@ def fails_to_choose_directory_as_initial_workflow_value(
     selenium,
     browser_id,
     dir_name,
-    modals,
     op_container,
     expected_err_msg,
 ):
@@ -152,8 +145,8 @@ def fails_to_choose_directory_as_initial_workflow_value(
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_initial_modal(data_type, op_container, driver)
-    modals(driver).select_files.files[dir_name].click()
-    actual_err_msg = modals(driver).select_files.error_msg
+    Modals(driver).select_files.files[dir_name].click()
+    actual_err_msg = Modals(driver).select_files.error_msg
     assert actual_err_msg == expected_err_msg, (
         f'User does not see expected error: "{expected_err_msg}" while trying'
         f' to set "{dir_name}" as initial value for workflow'
@@ -168,14 +161,14 @@ def fails_to_choose_directory_as_initial_workflow_value(
     )
 )
 def choose_file_as_initial_workflow_value(
-    selenium, browser_id, file_list, modals, op_container, data_type
+    selenium, browser_id, file_list, op_container, data_type
 ):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_initial_modal(data_type, op_container, driver)
 
     select_initial_items_for_workflow_in_modal(
-        file_list, modals, driver, data_type, op_container
+        file_list, driver, data_type, op_container
     )
 
 
@@ -276,7 +269,7 @@ def await_for_task_status(
         ' "{resolution}" in modal "{modal}"'
     )
 )
-def change_time_resolution_in_modal(selenium, browser_id, modals, resolution):
+def change_time_resolution_in_modal(selenium, browser_id, resolution):
     button = "Time resolution"
     modal_name = "Task time series"
     click_modal_button(selenium, browser_id, button, modal_name)

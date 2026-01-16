@@ -237,7 +237,7 @@ def create_json_column_in_columns_menu(
     )
 )
 def open_metadata_tab_using_tag(
-    selenium, browser_id, tmp_memory, item_name, modal_name, modals
+    selenium, browser_id, tmp_memory, item_name, modal_name
 ):
     tab_name = "Metadata"
     click_on_status_tag_for_file_in_file_browser(
@@ -246,4 +246,4 @@ def open_metadata_tab_using_tag(
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
-    assert_tab_in_modal(selenium, browser_id, tab_name, modals, modal_name)
+    assert_tab_in_modal(selenium, browser_id, tab_name, modal_name)

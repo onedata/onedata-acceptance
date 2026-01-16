@@ -254,8 +254,8 @@ def click_confirm_or_cancel_button_on_leave_space_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_remove_space_understand_notice(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_modal.understand_notice()
+def check_remove_space_understand_notice(selenium, browser_id):
+    Modals(selenium[browser_id]).remove_modal.understand_notice()
 
 
 @wt(
@@ -264,8 +264,8 @@ def check_remove_space_understand_notice(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_remove_space_button(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_modal.remove()
+def check_remove_space_button(selenium, browser_id):
+    Modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(
@@ -458,9 +458,9 @@ def click_option_on_welcome_page(selenium, browser_id, option):
 
 @wt(parsers.parse("user of {browser_id} sees that error popup has appeared"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_popup_has_appeared(selenium, browser_id, modals):
+def assert_error_popup_has_appeared(selenium, browser_id):
     assert (
-        "failed" in modals(selenium[browser_id]).error.content
+        "failed" in Modals(selenium[browser_id]).error.content
     ), "error popup not found"
 
 
@@ -602,7 +602,6 @@ def remove_harvester_from_harvesters_list(
     selenium,
     browser_id,
     harvester_name,
-    modals,
     tmp_memory,
 ):
     modal_name = "remove harvester from space"
@@ -613,7 +612,7 @@ def remove_harvester_from_harvesters_list(
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
     Popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(driver).remove_modal.remove()
+    Modals(driver).remove_modal.remove()
 
 
 @wt(parsers.parse("user of {browser_id} clicks Copy button on Add support page"))

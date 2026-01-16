@@ -15,7 +15,7 @@ from tests.gui.meta_steps.onezone.members import (
     fail_to_set_privileges_using_op_gui,
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
-from tests.gui.utils import Modals, Onepanel
+from tests.gui.utils import Onepanel
 from tests.mixed.steps.rest.onezone.members import (
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,
@@ -134,7 +134,7 @@ def fail_to_create_invitation_in_space_in_oz(
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_invitation_in_space_using_op_gui(
-            user, space_name, Modals, selenium, Onepanel
+            user, space_name, selenium, Onepanel
         )
     elif client_lower == "rest":
         fail_to_create_invitation_in_space_using_rest(
@@ -193,7 +193,6 @@ def add_group_to_space_in_oz(
     space_name,
     group_name,
     onepanel,
-    modals,
     users,
     hosts,
     host,
@@ -209,7 +208,6 @@ def add_group_to_space_in_oz(
             selenium,
             onepanel,
             where,
-            modals,
         )
     elif client_lower == "rest":
         add_group_to_space_using_rest(

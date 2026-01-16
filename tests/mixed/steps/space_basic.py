@@ -277,7 +277,6 @@ def invite_other_users_to_space(
     displays,
     clipboard,
     onepanel,
-    modals,
 ):
 
     if client.lower() == "rest":
@@ -297,7 +296,6 @@ def invite_other_users_to_space(
             displays,
             clipboard,
             onepanel,
-            modals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

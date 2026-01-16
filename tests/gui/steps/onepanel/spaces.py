@@ -384,11 +384,11 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_instead_of_revoke(selenium, browser_id, modals):
-    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+def remove_space_instead_of_revoke(selenium, browser_id):
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(2)
-    modals(selenium[browser_id]).remove_modal.understand_notice()
-    modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice()
+    Modals(selenium[browser_id]).remove_modal.remove()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
@@ -401,17 +401,17 @@ def remove_space_instead_of_revoke(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_and_remove_space_instead_of_revoke(
-    selenium, browser_id, modals, user, login_page, users, tmp_memory
+    selenium, browser_id, user, login_page, users, tmp_memory
 ):
     modal_name = "Cease oneprovider support for space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
     login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(selenium[browser_id]).remove_modal.understand_notice()
-    modals(selenium[browser_id]).remove_modal.remove()
+    Modals(selenium[browser_id]).remove_modal.understand_notice()
+    Modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(

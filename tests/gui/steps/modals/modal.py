@@ -49,9 +49,9 @@ def check_modal_name(modal_name):
 
 @wt(parsers.parse('user of {browser_id} sees that modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_add_storage_modal_to_appear(selenium, browser_id, tmp_memory, modals):
+def wait_for_add_storage_modal_to_appear(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
-    modal = modals(driver).add_storage
+    modal = Modals(driver).add_storage
     tmp_memory[browser_id]["window"]["modal"] = modal
 
 
@@ -187,11 +187,10 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
 def wait_for_named_modal_to_disappear(
     selenium, browser_id, modal_name, wait_time=WAIT_FRONTEND
 ):
-    modals = selenium["request"].getfixturevalue("modals")
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
     try:
-        modal = getattr(modals(driver), transform(modal_name))
+        modal = getattr(Modals(driver), transform(modal_name))
     except RuntimeError:
         return
     Wait(
@@ -387,11 +386,11 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_element_text_in_modal(selenium, browser_id, modals, modal, text, element):
+def assert_element_text_in_modal(selenium, browser_id, modal, text, element):
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
     element_sel = "forbidden_alert" if element == "alert" else "info"
-    assert_element_text(getattr(modals(driver), modal), element_sel, text)
+    assert_element_text(getattr(Modals(driver), modal), element_sel, text)
 
 
 def assert_element_text(elem, selector, elem_text):
@@ -424,9 +423,9 @@ def click_panel_button(selenium, browser_id, button, panel_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_panel_question_icon(selenium, browser_id, modals, panel_name):
+def click_panel_question_icon(selenium, browser_id, panel_name):
     panel_name = "qos" if panel_name == "Quality of Service" else panel_name
-    tab = getattr(modals(selenium[browser_id]).details_modal, transform(panel_name))
+    tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, "question_icon").click()
 
 
@@ -449,11 +448,9 @@ def click_popup_link(selenium, browser_id, link):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_there_is_no_button_in_panel(
-    selenium, browser_id, button, panel_name, modals
-):
+def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name):
     modal = getattr(
-        modals(selenium[browser_id]).details_modal, check_modal_name(panel_name)
+        Modals(selenium[browser_id]).details_modal, check_modal_name(panel_name)
     )
 
     try:
@@ -486,8 +483,8 @@ def click_modal_button(selenium, browser_id, button, modal_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_link(selenium, browser_id, link, modal_name, modals):
-    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+def click_modal_link(selenium, browser_id, link, modal_name):
+    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     getattr(modal, transform(link)).click()
 
 
@@ -499,14 +496,13 @@ def click_modal_link(selenium, browser_id, link, modal_name, modals):
     )
 )
 def wt_write_name_into_text_field_in_panel(
-    selenium, browser_id, item_name, panel_name, modals, name_textfield
+    selenium, browser_id, item_name, panel_name, name_textfield
 ):
     write_name_into_text_field_in_panel(
         selenium,
         browser_id,
         item_name,
         panel_name,
-        modals,
         name_textfield=name_textfield,
     )
 
@@ -517,13 +513,12 @@ def write_name_into_text_field_in_panel(
     browser_id,
     item_name,
     panel_name,
-    modals,
     name_textfield="input name",
 ):
     if name_textfield == "":
         name_textfield = "input name"
     driver = selenium[browser_id]
-    modal = getattr(modals(driver).details_modal, check_modal_name(panel_name))
+    modal = getattr(Modals(driver).details_modal, check_modal_name(panel_name))
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -569,11 +564,11 @@ def write_name_into_text_field_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number, modals):
+def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number):
     name = "Shares"
     driver = selenium[browser_id]
-    shares_tab = modals(driver).details_modal.shares
-    navigation = modals(driver).details_modal.navigation
+    shares_tab = Modals(driver).details_modal.shares
+    navigation = Modals(driver).details_modal.navigation
     links = shares_tab.share_options
     info = look_for_tab_name(navigation, name)
     err_msg = f"Item {item_name} is not shared {number} times"
@@ -598,8 +593,8 @@ def _assert_number_of_shares_in_modal(number, links, info):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_details_link_in_shares_panel(selenium, browser_id, modals, share_name):
-    modal = modals(selenium[browser_id]).details_modal.shares
+def click_share_details_link_in_shares_panel(selenium, browser_id, share_name):
+    modal = Modals(selenium[browser_id]).details_modal.shares
 
     icon = modal.share_options[share_name].share_details_link
     icon.click()
@@ -613,10 +608,8 @@ def click_share_details_link_in_shares_panel(selenium, browser_id, modals, share
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_icon_in_share_directory_modal(
-    selenium, browser_id, modals, owner_name, icon_name
-):
-    elem_groups = modals(selenium[browser_id]).details_modal.shares.share_options
+def click_icon_in_share_directory_modal(selenium, browser_id, owner_name, icon_name):
+    elem_groups = Modals(selenium[browser_id]).details_modal.shares.share_options
     icon_name = transform(icon_name) + "_icon"
     if owner_name:
         icon = getattr(elem_groups[owner_name], icon_name)
@@ -632,18 +625,16 @@ def click_icon_in_share_directory_modal(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
-    modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal does not contain text "{text}"'
-    modal_text = modals(selenium[browser_id]).error.content.lower()
+    modal_text = Modals(selenium[browser_id]).error.content.lower()
     assert text.lower().replace("\\", "") in modal_text, message
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{title}" error modal appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_titled_error_modal_appeared(selenium, browser_id, title):
-    modals = selenium["request"].getfixturevalue("modals")
     message = f'Modal is not titled "{title}"'
-    modal_text = modals(selenium[browser_id]).error.title.lower()
+    modal_text = Modals(selenium[browser_id]).error.title.lower()
     assert title.lower() in modal_text, message
 
 
@@ -664,8 +655,7 @@ def assert_invalid_id_in_error_modal(
     inventories,
     harvesters,
 ):
-    modals = selenium["request"].getfixturevalue("modals")
-    modal_text = modals(selenium[browser_id]).error.content.lower()
+    modal_text = Modals(selenium[browser_id]).error.content.lower()
     assert (
         "is invalid" in modal_text
     ), "There is no info about invalid target in error modal"
@@ -686,15 +676,15 @@ def assert_invalid_id_in_error_modal(
 
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_modal(selenium, browser_id, modal, modals):
+def close_modal(selenium, browser_id, modal):
     modal = check_modal_name(modal)
     try:
-        getattr(modals(selenium[browser_id]), modal).close()
+        getattr(Modals(selenium[browser_id]), modal).close()
     except AttributeError:
         try:
-            getattr(modals(selenium[browser_id]), modal).cancel()
+            getattr(Modals(selenium[browser_id]), modal).cancel()
         except AttributeError:
-            getattr(modals(selenium[browser_id]), modal).x()
+            getattr(Modals(selenium[browser_id]), modal).x()
     except RuntimeError:
         return
 
@@ -703,8 +693,8 @@ def close_modal(selenium, browser_id, modal, modals):
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
-    modals(selenium[browser_id]).rest_api_modal.copy_command_button()
+def click_copy_icon_in_rest_api_modal(selenium, browser_id):
+    Modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
 @wt(
@@ -715,10 +705,10 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium, browser_id, modals, dropdown_name, option, modal_name
+    selenium, browser_id, dropdown_name, option, modal_name
 ):
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), transform(modal_name))
+    modal = getattr(Modals(driver), transform(modal_name))
     dropdown_menu = getattr(modal, transform(dropdown_name))
     dropdown_menu.click()
 
@@ -734,9 +724,8 @@ def choose_option_in_dropdown_menu_in_modal(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, modal):
     driver = selenium[browser_id]
-    modals = selenium["request"].getfixturevalue("modals")
     modal = transform(modal)
-    modal = getattr(modals(driver), modal)
+    modal = getattr(Modals(driver), modal)
     path = modal.path.replace("\n", "")
 
     assert (
@@ -751,11 +740,9 @@ def assert_path_where_symbolic_link_points(selenium, browser_id, expected_path, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_modal(
-    selenium, browser_id, modals, toggle_name, option, modal_name
-):
+def switch_toggle_in_modal(selenium, browser_id, toggle_name, option, modal_name):
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), check_modal_name(modal_name))
+    modal = getattr(Modals(driver), check_modal_name(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
 
@@ -768,9 +755,9 @@ def switch_toggle_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_checkbox_in_advertise_space_modal(selenium, browser_id, modals):
+def check_checkbox_in_advertise_space_modal(selenium, browser_id):
     driver = selenium[browser_id]
-    modal = modals(driver).advertise_space_in_the_marketplace
+    modal = Modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
 
 

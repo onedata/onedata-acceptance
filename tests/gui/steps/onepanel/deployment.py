@@ -159,7 +159,7 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_try_to_register_prov_using_register_btn(selenium, browser_id, step, modals):
+def wt_try_to_register_prov_using_register_btn(selenium, browser_id, step):
     driver = selenium[browser_id]
     btn = "Register"
     step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
@@ -167,7 +167,7 @@ def wt_try_to_register_prov_using_register_btn(selenium, browser_id, step, modal
 
     # if error modal occurred close it and repeat function execution
     try:
-        error_modal = modals(driver).error
+        error_modal = Modals(driver).error
         error_modal.close.click()
         raise AssertionError("Did not menage to register provider")
     except RuntimeError:
@@ -175,10 +175,10 @@ def wt_try_to_register_prov_using_register_btn(selenium, browser_id, step, modal
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_next_step_in_deployment(onepanel, driver, modals, next_step_num):
+def wait_for_next_step_in_deployment(onepanel, driver, next_step_num):
     assert (
         int(onepanel(driver).content.deployment.num) == next_step_num
-        or modals(driver).error.is_displayed()
+        or Modals(driver).error.is_displayed()
     )
 
 
@@ -194,12 +194,12 @@ def wt_assert_begin_of_cluster_deployment(selenium, browser_id):
         "for cluster deployment to finish"
     )
 )
-def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout, modals):
+def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout):
     driver = selenium[browser_id]
     limit = time.time() + timeout
     while time.time() < limit:
         try:
-            modals(driver).cluster_deployment
+            Modals(driver).cluster_deployment
         except RuntimeError:
             break
         else:

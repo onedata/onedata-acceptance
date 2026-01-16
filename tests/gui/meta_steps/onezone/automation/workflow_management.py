@@ -55,7 +55,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.utils import Popups
+from tests.gui.utils import Modals, Popups
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -81,7 +81,6 @@ def create_workflow_using_gui(selenium, browser_id, workflow_name):
 def upload_and_assert_workflow_to_inventory_using_gui(
     selenium,
     browser_id,
-    modals,
     inventory,
     workflow,
     file_name,
@@ -105,10 +104,10 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium, browser_id, modals, inventory, workflow, tmp_memory
+    selenium, browser_id, inventory, workflow, tmp_memory
 ):
     upload_workflow_from_automation_examples(
-        selenium, browser_id, modals, inventory, workflow, tmp_memory
+        selenium, browser_id, inventory, workflow, tmp_memory
     )
 
 
@@ -119,10 +118,10 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium, browser_id, modals, inventory, workflow, tmp_memory
+    selenium, browser_id, inventory, workflow, tmp_memory
 ):
     _upload_workflow_from_automation_examples(
-        selenium, browser_id, modals, inventory, workflow, tmp_memory
+        selenium, browser_id, inventory, workflow, tmp_memory
     )
 
 
@@ -135,7 +134,6 @@ def upload_workflow_from_automation_examples(
 def upload_workflow_from_automation_examples_with_given_method(
     selenium,
     browser_id,
-    modals,
     inventory,
     workflow,
     tmp_memory,
@@ -144,7 +142,6 @@ def upload_workflow_from_automation_examples_with_given_method(
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
-        modals,
         inventory,
         workflow,
         tmp_memory,
@@ -155,7 +152,6 @@ def upload_workflow_from_automation_examples_with_given_method(
 def _upload_workflow_from_automation_examples(
     selenium,
     browser_id,
-    modals,
     inventory,
     workflow,
     tmp_memory,
@@ -201,7 +197,6 @@ def execute_workflow_with_input_config(
     op_container,
     ordinal,
     workflow,
-    modals,
     config,
 ):
     """Adjust configuration of input values for stores according to given config.
@@ -227,7 +222,6 @@ def execute_workflow_with_input_config(
         op_container,
         ordinal,
         workflow,
-        modals,
         config,
     )
 
@@ -239,7 +233,6 @@ def _execute_workflow_with_input_config(
     op_container,
     ordinal,
     workflow,
-    modals,
     config,
 ):
     spaces = "spaces"
@@ -271,7 +264,6 @@ def _execute_workflow_with_input_config(
                 selenium,
                 browser_id,
                 file_list,
-                modals,
                 op_container,
                 store,
             )
@@ -285,7 +277,6 @@ def _execute_workflow_with_input_config(
                     selenium,
                     browser_id,
                     item_list,
-                    modals,
                     op_container,
                     store,
                 )
@@ -294,7 +285,6 @@ def _execute_workflow_with_input_config(
                     selenium,
                     browser_id,
                     item_list,
-                    modals,
                     op_container,
                     store,
                 )
@@ -334,7 +324,6 @@ def execute_workflow_and_wait(
     op_container,
     ordinal,
     workflow,
-    modals,
     item_list,
     data_type,
 ):
@@ -346,7 +335,6 @@ def execute_workflow_and_wait(
         op_container,
         ordinal,
         workflow,
-        modals,
         item_list,
         data_type,
     )
@@ -370,7 +358,6 @@ def execute_workflow(
     op_container,
     ordinal,
     workflow,
-    modals,
     item_list,
     data_type,
 ):
@@ -423,7 +410,6 @@ def execute_workflow(
             selenium,
             browser_id,
             item_list,
-            modals,
             op_container,
             data_type,
         )
@@ -441,7 +427,6 @@ def modify_data_type_in_store(
     selenium,
     browser_id,
     store_name,
-    modals,
     value,
     menu,
     tmp_memory,
@@ -458,14 +443,13 @@ def modify_data_type_in_store(
     if "data" in menu:
         # wait a moment for modal to open
         _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
-        modals(driver).modify_store.data_type_remove()
+        Modals(driver).modify_store.data_type_remove()
 
     split_value = value.replace(")", "").split(" (")
     new_value = split_value[0] if "array" in value else value
     choose_option_in_dropdown_menu_in_modal(
         selenium,
         browser_id,
-        modals,
         dropdown_menu,
         new_value,
         modal_name,
@@ -474,7 +458,6 @@ def modify_data_type_in_store(
         choose_option_in_dropdown_menu_in_modal(
             selenium,
             browser_id,
-            modals,
             dropdown_menu,
             split_value[1],
             modal_name,

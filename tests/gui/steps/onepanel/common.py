@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -101,8 +102,8 @@ def click_info_button_on_warning_bar(selenium, browser_id, onepage):
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_open_in_onezone_in_modal(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id])
+def click_open_in_onezone_in_modal(selenium, browser_id):
+    modal = Modals(selenium[browser_id])
     modal.emergency_interface.open_in_onezone()
 
 

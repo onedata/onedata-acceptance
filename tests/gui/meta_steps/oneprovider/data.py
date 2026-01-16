@@ -1060,7 +1060,6 @@ def get_file_id_from_details_modal(
     op_container,
     tmp_memory,
     file_name,
-    modals,
     clipboard,
     displays,
 ):

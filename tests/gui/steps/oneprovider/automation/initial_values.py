@@ -28,9 +28,9 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(modals, driver, files):
+def check_if_select_files_modal_disappeared(driver, files):
     try:
-        modals(driver).select_files  # pylint: disable=expression-not-assigned
+        Modals(driver).select_files  # pylint: disable=expression-not-assigned
         raise AssertionError(
             f"Files: {files} as initial value for workflow was not selected"
         )
@@ -39,7 +39,7 @@ def check_if_select_files_modal_disappeared(modals, driver, files):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(op_container, driver, modals, store_name=False):
+def open_select_initial_files_modal(op_container, driver, store_name=False):
     option = "Select/upload file"
 
     click_input_link_in_automation_page(op_container, driver, store_name)
@@ -50,7 +50,7 @@ def open_select_initial_files_modal(op_container, driver, modals, store_name=Fal
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_files  # pylint: disable=expression-not-assigned
+    Modals(driver).select_files  # pylint: disable=expression-not-assigned
 
 
 @wt(
@@ -59,9 +59,7 @@ def open_select_initial_files_modal(op_container, driver, modals, store_name=Fal
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_groups_modal(
-    op_container, selenium, browser_id, modals, store_name
-):
+def open_select_initial_groups_modal(op_container, selenium, browser_id, store_name):
     option = "Select groups"
     driver = selenium[browser_id]
 
@@ -73,7 +71,7 @@ def open_select_initial_groups_modal(
     menu_option.click()
     time.sleep(1)
     # check if modal opened
-    modals(driver).select_groups  # pylint: disable=expression-not-assigned
+    Modals(driver).select_groups  # pylint: disable=expression-not-assigned
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -142,11 +140,9 @@ def get_data_type_of_array_initial_value_store(driver, op_container, store_name)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_group_in_select_initial_groups_modal(
-    selenium, browser_id, option, modals, group
-):
+def assert_group_in_select_initial_groups_modal(selenium, browser_id, option, group):
     driver = selenium[browser_id]
-    modal = modals(driver).select_groups
+    modal = Modals(driver).select_groups
     err_msg = "there {} visible {} in select groups modal, but should {}"
     if option == "sees":
         assert group in modal.groups, err_msg.format("is not", group, "be")

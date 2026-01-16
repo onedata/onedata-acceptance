@@ -57,7 +57,6 @@ def create_archive_in_op(
     tmp_memory,
     selenium,
     op_container,
-    modals,
     users,
     hosts,
     config,
@@ -76,7 +75,6 @@ def create_archive_in_op(
             space_name,
             op_container,
             tmp_memory,
-            modals,
             clipboard,
             displays,
             option,
@@ -171,7 +169,6 @@ def remove_archive_in_op(
     op_container,
     users,
     hosts,
-    modals,
     description,
     option,
 ):
@@ -184,7 +181,6 @@ def remove_archive_in_op(
             space_name,
             op_container,
             tmp_memory,
-            modals,
             description,
             option,
         )
@@ -344,7 +340,6 @@ def assert_archive_callback(
     expected_callback,
     client,
     selenium,
-    modals,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -353,7 +348,6 @@ def assert_archive_callback(
             tmp_memory,
             description,
             selenium,
-            modals,
             expected_callback,
             option,
         )
@@ -389,7 +383,6 @@ def recall_archive_for_archive_in_op(
     host,
     tmp_memory,
     selenium,
-    modals,
     users,
     hosts,
     spaces,
@@ -398,7 +391,7 @@ def recall_archive_for_archive_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         recall_archive_for_archive_in_op_gui(
-            user, description, tmp_memory, selenium, modals, target_name
+            user, description, tmp_memory, selenium, target_name
         )
     elif client_lower == "rest":
         recall_archive_for_archive_in_op_rest(
@@ -430,7 +423,6 @@ def recall_archive_details_in_op(
     config,
     name,
     tmp_memory,
-    modals,
     selenium,
     users,
     hosts,
@@ -442,9 +434,7 @@ def recall_archive_details_in_op(
     client_lower = client.lower()
     data = yaml.load(config, yaml.Loader)
     if client_lower == "web gui":
-        recalled_archive_details_in_op_gui(
-            user, name, tmp_memory, data, modals, selenium
-        )
+        recalled_archive_details_in_op_gui(user, name, tmp_memory, data, selenium)
     elif client_lower == "rest":
         recalled_archive_details_in_op_rest(
             user, users, hosts, host, data, name, space_name, spaces

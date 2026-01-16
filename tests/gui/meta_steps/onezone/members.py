@@ -76,7 +76,7 @@ def assert_privileges_in_space_using_op_gui(
 
 
 def fail_to_create_invitation_in_space_using_op_gui(
-    user, space_name, modals, selenium, onepanel
+    user, space_name, selenium, onepanel
 ):
     option = "Members"
     button = "Invite user using token"
@@ -89,7 +89,7 @@ def fail_to_create_invitation_in_space_using_op_gui(
     click_on_option_in_members_list_menu(
         selenium, user, button, where, member, onepanel
     )
-    assert_element_text_in_modal(selenium, user, modals, modal, text, element)
+    assert_element_text_in_modal(selenium, user, modal, text, element)
 
 
 def assert_not_user_in_space_using_op_gui(

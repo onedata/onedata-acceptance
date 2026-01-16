@@ -25,7 +25,7 @@ from tests.utils.bdd_utils import parsers, wt
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(browser_id, config, selenium, modals):
+def create_store_for_workflow(browser_id, config, selenium):
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -40,10 +40,10 @@ def create_store_for_workflow(browser_id, config, selenium, modals):
         type dropdown: List
         data type dropdown: Object
     """
-    _create_store_for_workflow(browser_id, config, selenium, modals)
+    _create_store_for_workflow(browser_id, config, selenium)
 
 
-def _create_store_for_workflow(browser_id, config, selenium, modals):
+def _create_store_for_workflow(browser_id, config, selenium):
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 
@@ -66,7 +66,6 @@ def _create_store_for_workflow(browser_id, config, selenium, modals):
     choose_option_in_dropdown_menu_in_modal(
         selenium,
         browser_id,
-        modals,
         type_dropdown_menu,
         type_dropdown,
         modal_name,
@@ -74,12 +73,9 @@ def _create_store_for_workflow(browser_id, config, selenium, modals):
     choose_option_in_dropdown_menu_in_modal(
         selenium,
         browser_id,
-        modals,
         data_type_dropdown_menu,
         data_type_dropdown,
         modal_name,
     )
-    switch_toggle_in_modal(
-        selenium, browser_id, modals, toggle_name, option, modal_name
-    )
+    switch_toggle_in_modal(selenium, browser_id, toggle_name, option, modal_name)
     click_modal_button(selenium, browser_id, button, modal_name)

@@ -128,7 +128,7 @@ def g_visit_op(selenium, browser_id_list, providers_list, hosts):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_visit_op(selenium, browser_id_list, providers_list, hosts, modals):
+def wt_visit_op(selenium, browser_id_list, providers_list, hosts):
     g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
 

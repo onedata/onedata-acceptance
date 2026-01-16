@@ -30,7 +30,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -351,9 +351,9 @@ def assert_token_area_appeared(selenium, browser_id, who, tmp_memory):
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in token area"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_generated_token_is_present(selenium, browser_id, modals):
+def assert_generated_token_is_present(selenium, browser_id):
     try:
-        text = modals(selenium[browser_id]).invite_using_token.token
+        text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
     except RuntimeError as exc:
         raise RuntimeError("No token area found on page") from exc
@@ -362,8 +362,7 @@ def assert_generated_token_is_present(selenium, browser_id, modals):
 @wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium, browser_id):
-    modals = selenium["request"].getfixturevalue("modals")
-    modals(selenium[browser_id]).invite_using_token.copy()
+    Modals(selenium[browser_id]).invite_using_token.copy()
 
 
 @wt(
@@ -482,7 +481,6 @@ def remove_member_from_parent(
     where,
 ):
     driver = selenium[browser_id]
-    modals = selenium["request"].getfixturevalue("modals")
     if where != "cluster":
         main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
             _change_to_tab_name(where)
@@ -511,7 +509,7 @@ def remove_member_from_parent(
     Popups(driver).menu_popup_with_text.menu["Remove this member"]()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(driver).remove_modal.remove()
+    Modals(driver).remove_modal.remove()
 
 
 @wt(
@@ -598,7 +596,7 @@ def assert_user_not_in_cluster_members_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_invitation_token(selenium, browser_id, group, who, tmp_memory, modals):
+def copy_invitation_token(selenium, browser_id, group, who, tmp_memory):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("groups")
     page.elements_list[group]()
@@ -609,8 +607,8 @@ def copy_invitation_token(selenium, browser_id, group, who, tmp_memory, modals):
     Popups(driver).menu_popup_with_text.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
-    modals(selenium[browser_id]).invite_using_token.copy()
-    modals(selenium[browser_id]).invite_using_token.close()
+    Modals(selenium[browser_id]).invite_using_token.copy()
+    Modals(selenium[browser_id]).invite_using_token.close()
 
 
 @wt(
@@ -767,12 +765,12 @@ def set_some_privileges_in_members_subpage_other_granted(
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config, modals):
+def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
-    tree = modals(driver).change_privileges.privilege_tree
+    tree = Modals(driver).change_privileges.privilege_tree
     tree.set_privileges(selenium, browser_id, privileges)
-    modals(driver).change_privileges.save_button.click()
+    Modals(driver).change_privileges.save_button.click()
 
 
 @wt(
@@ -817,10 +815,10 @@ def assert_privileges_in_members_subpage(
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config, modals):
+def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
-    tree = modals(driver).change_privileges.privilege_tree
+    tree = Modals(driver).change_privileges.privilege_tree
     tree.assert_privileges(selenium, browser_id, privileges)
 
 

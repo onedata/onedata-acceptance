@@ -41,7 +41,6 @@ def replicate_file_to_provider_op(
     users,
     hosts,
     selenium,
-    modals,
     op_container,
     tmp_memory,
 ):
@@ -61,7 +60,7 @@ def replicate_file_to_provider_op(
         result = "replicates"
         go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
         replicate_file_to_provider(
-            selenium, user, path, tmp_memory, provider_to, hosts, modals, result
+            selenium, user, path, tmp_memory, provider_to, hosts, result
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -83,7 +82,6 @@ def migrate_file_to_provider_op(
     users,
     hosts,
     selenium,
-    modals,
     op_container,
     tmp_memory,
 ):
@@ -111,7 +109,6 @@ def migrate_file_to_provider_op(
             provider_from,
             provider_to,
             hosts,
-            modals,
             result,
         )
     else:
@@ -133,7 +130,6 @@ def evict_file_to_provider_op(
     users,
     hosts,
     selenium,
-    modals,
     op_container,
     tmp_memory,
 ):
@@ -151,7 +147,7 @@ def evict_file_to_provider_op(
         )
     elif client.lower() == "web gui":
         go_to_filebrowser(selenium, user, op_container, tmp_memory, space)
-        evict_file(selenium, user, provider_from, path, tmp_memory, modals, hosts)
+        evict_file(selenium, user, provider_from, path, tmp_memory, hosts)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 

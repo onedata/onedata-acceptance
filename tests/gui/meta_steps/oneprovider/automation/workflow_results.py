@@ -28,6 +28,7 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
+from tests.gui.utils import Modals
 from tests.gui.utils.common.count_checksums import (
     adler32_sum,
     md5_sum,
@@ -43,7 +44,6 @@ def get_store_details_json(
     op_container,
     driver,
     browser_id,
-    modals,
     clipboard,
     displays,
     store_name,
@@ -55,7 +55,6 @@ def get_store_details_json(
             browser_id,
             driver,
             page,
-            modals,
             clipboard,
             displays,
             store_name,
@@ -70,7 +69,6 @@ def open_modal_and_get_store_content(
     browser_id,
     driver,
     page,
-    modals,
     clipboard,
     displays,
     store_name,
@@ -78,7 +76,7 @@ def open_modal_and_get_store_content(
     index=0,
 ):
     page.stores_list[store_name].click()
-    modal = modals(driver).store_details
+    modal = Modals(driver).store_details
     store_value = get_store_content(
         modal, store_type, index, clipboard, displays, browser_id
     )
@@ -99,7 +97,6 @@ def compare_store_contents(
     op_container,
     store1,
     store2,
-    modals,
     clipboard,
     displays,
     option,
@@ -114,7 +111,6 @@ def compare_store_contents(
             browser_id,
             driver,
             page,
-            modals,
             clipboard,
             displays,
             store1,
@@ -126,7 +122,6 @@ def compare_store_contents(
             browser_id,
             driver,
             page,
-            modals,
             clipboard,
             displays,
             store2,
@@ -194,7 +189,7 @@ def checksums_counted_in_workflow(metadata_modal):
     )
 )
 def assert_checksums_are_the_same(
-    browser_id, checksum_list, file_name, tmp_memory, modals, selenium
+    browser_id, checksum_list, file_name, tmp_memory, selenium
 ):
 
     status_type = "Metadata"
@@ -208,7 +203,7 @@ def assert_checksums_are_the_same(
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, file_name, tmp_memory
     )
-    metadata_modal = modals(selenium[browser_id]).details_modal.metadata
+    metadata_modal = Modals(selenium[browser_id]).details_modal.metadata
     workflow_checksum = checksums_counted_in_workflow(metadata_modal)
 
     for key in checksums:
@@ -237,7 +232,6 @@ def count_checksums_and_compare_them(
     checksum_list,
     selenium,
     op_container,
-    modals,
 ):
     count_checksums_for_file(
         browser_id,
@@ -249,7 +243,7 @@ def count_checksums_and_compare_them(
         op_container,
     )
     assert_checksums_are_the_same(
-        browser_id, checksum_list, file_name, tmp_memory, modals, selenium
+        browser_id, checksum_list, file_name, tmp_memory, selenium
     )
 
 
@@ -314,7 +308,7 @@ def assert_status_of_task(
     )
 )
 def open_link_and_assert_processing_stats_chart(
-    selenium, browser_id, op_container, lane, task, ordinal, link, modals
+    selenium, browser_id, op_container, lane, task, ordinal, link
 ):
     click = "clicks on"
     click_on_task_in_lane(
@@ -323,4 +317,4 @@ def open_link_and_assert_processing_stats_chart(
     click_on_link_in_task_box(
         selenium, browser_id, op_container, lane, task, link, ordinal
     )
-    assert_processing_chart(browser_id, selenium, modals)
+    assert_processing_chart(browser_id, selenium)

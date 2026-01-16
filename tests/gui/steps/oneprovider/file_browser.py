@@ -19,6 +19,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -459,26 +460,22 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
         " modal"
     )
 )
-def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
-    assert_tab_in_modal(selenium, browser_id, "Info", modals, "File details")
-    actual = modals(selenium[browser_id]).details_modal.owner
+def check_file_owner_in_file_details_modal(selenium, browser_id, owner):
+    assert_tab_in_modal(selenium, browser_id, "Info", "File details")
+    actual = Modals(selenium[browser_id]).details_modal.owner
     assert actual == owner, f"Expected {owner} as file owner but got {actual}"
 
 
-def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-    selenium, browser_id, number, modals
-):
-    name = modals(selenium[browser_id]).details_modal.hardlinks.tab.text
+def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number):
+    name = Modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip("(").strip(")")
     assert (
         number == actual_num
     ), f"Expected {number}, got {actual_num} in hardlinks tab name"
 
 
-def assert_num_of_hardlinks_entry_in_file_dets_modal(
-    selenium, browser_id, number, modals
-):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     assert len(entries) == int(
         number
     ), f"Expected {number} hardlinks entries, got {len(entries)}"
@@ -490,13 +487,9 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
         'hardlinks in "File details" modal'
     )
 )
-def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, modals):
-    assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-        selenium, browser_id, number, modals
-    )
-    assert_num_of_hardlinks_entry_in_file_dets_modal(
-        selenium, browser_id, number, modals
-    )
+def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number):
+    assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number)
+    assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number)
 
 
 @wt(
@@ -506,8 +499,8 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, mod
         r'is "(?P<path>.*)" in "File details" modal'
     )
 )
-def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
     assert (
         path == actual_path
@@ -521,8 +514,8 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, mo
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
@@ -537,9 +530,9 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modal
     )
 )
 def assert_property_in_symlink_dets_modal(
-    selenium, browser_id, link_property, value, modals, clipboard, displays
+    selenium, browser_id, link_property, value, clipboard, displays
 ):
-    modal = modals(selenium[browser_id]).symbolic_link_details
+    modal = Modals(selenium[browser_id]).symbolic_link_details
     actual_value = modal.get_property(link_property, clipboard, displays, browser_id)
     assert (
         actual_value == value
@@ -659,9 +652,9 @@ def write_to_jump_input(browser_id, tmp_memory, prefix):
         "{option} because of insufficient privileges"
     )
 )
-def assert_message_at_alert_modal(browser_id, option, modals, selenium):
+def assert_message_at_alert_modal(browser_id, option, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).error
+    modal = Modals(driver).error
     messages_dict = {
         "downloaded": (
             "Starting file download failed!\nYou are not authorized "

@@ -111,7 +111,6 @@ def create_file_in_op(
     selenium,
     op_container,
     result,
-    modals,
     request,
 ):
     full_path = f"{space}/{name}"
@@ -275,7 +274,6 @@ def create_dir_in_op(
     selenium,
     op_container,
     result,
-    modals,
 ):
     cwd = "space root"
     full_path = f"{space}/{abs_path}"
@@ -401,7 +399,6 @@ def remove_empty_dir_in_op(
     op_container,
     tmp_memory,
     host,
-    modals,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -444,7 +441,6 @@ def remove_empty_dir_and_parents_in_op(
     op_container,
     tmp_memory,
     host,
-    modals,
 ):
     first_path_elem = get_first_path_element(name)
     client_lower = client.lower()
@@ -485,7 +481,6 @@ def remove_dir_in_op(
     op_container,
     tmp_memory,
     host,
-    modals,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -527,7 +522,6 @@ def remove_file_in_op(
     selenium,
     op_container,
     result,
-    modals,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -593,7 +587,6 @@ def rename_item_in_op(
     selenium,
     op_container,
     cdmi,
-    modals,
 ):
     old_path = f"{space}/{old_name}"
     new_path = f"{space}/{new_name}"
@@ -608,7 +601,6 @@ def rename_item_in_op(
             tmp_memory,
             result,
             space,
-            modals,
             op_container,
         )
     elif client_lower == "rest":
@@ -888,7 +880,6 @@ def create_directory_structure_in_op(
     hosts,
     host,
     client,
-    modals,
     request,
 ):
     client_lower = client.lower()
@@ -1225,7 +1216,6 @@ def set_metadata_in_op(
     hosts,
     users,
     tmp_memory,
-    modals,
     item,
 ):
     full_path = f"{space}/{path}"
@@ -1242,7 +1232,6 @@ def set_metadata_in_op(
             space,
             tab_name,
             val,
-            modals,
             item,
         )
     elif client_lower == "rest":
@@ -1284,7 +1273,6 @@ def assert_metadata_in_op(
     users,
     tmp_memory,
     item,
-    modals,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1300,7 +1288,6 @@ def assert_metadata_in_op(
             space,
             tab_name,
             val,
-            modals,
             item,
         )
     elif client_lower == "rest":
@@ -1336,7 +1323,6 @@ def remove_all_metadata_in_op(
     host,
     hosts,
     cdmi,
-    modals,
     item,
 ):
     full_path = f"{space}/{path}"
@@ -1349,7 +1335,6 @@ def remove_all_metadata_in_op(
             op_container,
             tmp_memory,
             path,
-            modals,
             item,
         )
     elif client_lower == "rest":
@@ -1385,7 +1370,6 @@ def assert_no_such_metadata_in_op(
     val,
     tab_name,
     item,
-    modals,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1400,7 +1384,6 @@ def assert_no_such_metadata_in_op(
             space,
             tab_name,
             val,
-            modals,
             item,
         )
     elif client_lower == "rest":
@@ -1528,5 +1511,5 @@ def open_path_in_space(client, user, path, space, users):
 @wt(
     parsers.parse('using web GUI, {user} sees that "{owner}" is owner of "{file_name}"')
 )
-def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory, modals):
-    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals)
+def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory):
+    check_file_owner(selenium, user, owner, file_name, tmp_memory)

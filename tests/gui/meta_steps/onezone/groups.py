@@ -70,7 +70,6 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type):
 def leave_group(selenium, browser_id, group):
     option = "Leave"
     modal = "LEAVE GROUP"
-    modals = selenium["request"].getfixturevalue("modals")
 
     click_on_group_menu_button(selenium, browser_id, option, group)
     click_modal_button(selenium, browser_id, option, modal)
@@ -96,7 +95,6 @@ def leave_user_groups_in_onezone_using_rest(hosts, users, user):
 def remove_group(selenium, browser_id, group_list):
     option = "Remove"
     modal = "REMOVE GROUP"
-    modals = selenium["request"].getfixturevalue("modals")
 
     for group in parse_seq(group_list):
         click_on_group_menu_button(selenium, browser_id, option, group)
@@ -186,14 +184,13 @@ def _create_group_token(
     member += "s"
     modal = "Invite using token"
     subpage = "members"
-    modals = selenium["request"].getfixturevalue("modals")
 
     go_to_group_subpage(selenium, user, name, subpage)
     click_on_option_in_members_list_menu(
         selenium, user, button, where, member, onepanel
     )
     copy_token_from_modal(selenium, user)
-    close_modal(selenium, user, modal, modals)
+    close_modal(selenium, user, modal)
     send_copied_item_to_other_users(
         user, item_type, user2, tmp_memory, displays, clipboard
     )
@@ -332,11 +329,10 @@ def fail_to_add_subgroups_using_op_gui(
         clipboard,
         onepanel,
     )
-    modals = selenium["request"].getfixturevalue("modals")
     for child in parse_seq(group_list):
         error = "Consuming token failed"
         modal = "error"
 
         add_element_with_copied_token(selenium, user, child, clipboard, displays)
         assert_error_modal_with_text_appeared(selenium, user, error)
-        close_modal(selenium, user, modal, modals)
+        close_modal(selenium, user, modal)

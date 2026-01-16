@@ -57,7 +57,7 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -144,7 +144,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, modals):
+def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list):
     where = "Data"
     option = "Remove"
     modal = "Remove space"
@@ -156,7 +156,7 @@ def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, modals):
     click_on_option_in_the_sidebar(selenium, browser_id, where)
     for space_name in space_list:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option)
-        check_remove_space_understand_notice(selenium, browser_id, modals)
+        check_remove_space_understand_notice(selenium, browser_id)
         click_modal_button(selenium, browser_id, option, modal)
 
 
@@ -208,7 +208,6 @@ def invite_other_users_to_space_using_gui(
     displays,
     clipboard,
     onepanel,
-    modals,
 ):
     option = "spaces"
     option_in_space = "Members"
@@ -234,7 +233,7 @@ def invite_other_users_to_space_using_gui(
         user_list,
         tmp_memory,
     )
-    close_modal(selenium, user, modal, modals)
+    close_modal(selenium, user, modal)
 
 
 def request_space_support_using_gui(
@@ -392,7 +391,6 @@ def add_harvester_to_existing_space(
     space_name,
     harvester_name,
     tmp_memory,
-    modals,
 ):
     option = "Harvesters, Discovery"
     button_name = "add one of harvesters"
@@ -432,7 +430,6 @@ def add_group_to_space_or_group(
     selenium,
     onepanel,
     where,
-    modals,
 ):
     option = where + "s"
     option_in_function = "Members"
@@ -466,7 +463,7 @@ def add_group_to_space_or_group(
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel, modals):
+def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel):
     option = "spaces"
     option_in_space = "Members"
     where = "space"
@@ -484,7 +481,7 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel, mod
         selenium, browser_id, button, where, member, onepanel
     )
     copy_token_from_modal(selenium, browser_id)
-    close_modal(selenium, browser_id, modal, modals)
+    close_modal(selenium, browser_id, modal)
 
 
 @wt(
@@ -492,9 +489,9 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel, mod
         'user of {browser_id} copies command "{command}" from "REST API" modal'
     )
 )
-def copy_command_from_rest_api_modal(modals, selenium, browser_id, command):
+def copy_command_from_rest_api_modal(selenium, browser_id, command):
     driver = selenium[browser_id]
-    modal = modals(driver).rest_api
+    modal = Modals(driver).rest_api
     command = f"{command}\nREST"
 
     modal.api.operations.click()

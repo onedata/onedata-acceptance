@@ -155,10 +155,9 @@ def result_to_consume_token_for_elem(
     result,
     clipboard,
     displays,
-    modals,
 ):
     add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays)
-    _result_to_consume_token(selenium, browser_id, result, modals)
+    _result_to_consume_token(selenium, browser_id, result)
 
 
 @wt(
@@ -183,12 +182,12 @@ def assert_alert_while_consuming_token(selenium, browser_id, clipboard, displays
         "user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token"
     )
 )
-def result_to_consume_token(selenium, browser_id, result, clipboard, displays, modals):
+def result_to_consume_token(selenium, browser_id, result, clipboard, displays):
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
-    _result_to_consume_token(selenium, browser_id, result, modals)
+    _result_to_consume_token(selenium, browser_id, result)
 
 
-def _result_to_consume_token(selenium, browser_id, result, modals):
+def _result_to_consume_token(selenium, browser_id, result):
     if result == "succeeds":
         notify_type = "success"
         text_regexp = ".*joined.*"
@@ -392,12 +391,7 @@ def _set_tokens_caveats(
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "consumer")
         caveat.set_consumer_caveats(
-            selenium,
-            browser_id,
-            consumer_caveats,
-            users,
-            groups,
-            hosts,
+            selenium, browser_id, consumer_caveats, users, groups, hosts, OZLoggedIn
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
@@ -640,7 +634,7 @@ def revoke_token(selenium, browser_id, token_name):
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_token(selenium, browser_id, token_name, modals):
+def remove_token(selenium, browser_id, token_name):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -651,7 +645,7 @@ def remove_token(selenium, browser_id, token_name, modals):
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_all_tokens(selenium, browser_id, modals):
+def remove_all_tokens(selenium, browser_id):
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -766,7 +760,6 @@ def _copy_object_id(
     user,
     selenium,
     tmp_memory,
-    modals,
     name,
     space,
     op_container,
@@ -780,7 +773,7 @@ def _copy_object_id(
     )
     click_option_in_data_row_menu_in_browser(selenium, user, option)
     click_modal_button(selenium, user, button, modal)
-    close_modal(selenium, user, modal, modals)
+    close_modal(selenium, user, modal)
 
     tmp_memory["object_id"] = clipboard.paste(display=displays[user])
 
@@ -801,7 +794,6 @@ def create_token_with_object_id(
     groups,
     hosts,
     tmp_memory,
-    modals,
     name,
     space,
     op_container,
@@ -815,7 +807,6 @@ def create_token_with_object_id(
         user,
         selenium,
         tmp_memory,
-        modals,
         name,
         space,
         op_container,

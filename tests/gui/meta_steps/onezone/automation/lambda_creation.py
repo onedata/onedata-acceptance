@@ -294,7 +294,7 @@ def modify_parameter_in_lambda_form(selenium, browser_id, ordinal, config):
     )
 )
 def upload_all_lambda_dumps_from_automation_examples(
-    selenium, browser_id, modals, inventory, tmp_memory
+    selenium, browser_id, inventory, tmp_memory
 ):
     global ALL_LAMBDA_NAMES
     ALL_LAMBDA_NAMES = [
@@ -306,7 +306,6 @@ def upload_all_lambda_dumps_from_automation_examples(
         _upload_lambda_dump_from_automation_examples(
             selenium,
             browser_id,
-            modals,
             inventory,
             lambda_name,
             tmp_memory,
@@ -314,7 +313,7 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium, browser_id, modals, inventory, lambda_name, tmp_memory
+    selenium, browser_id, inventory, lambda_name, tmp_memory
 ):
     subpage = "lambdas"
     modal = "Upload workflow"
@@ -333,7 +332,7 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium, browser_id, modals, tmp_memory
+    selenium, browser_id, tmp_memory
 ):
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
@@ -342,14 +341,13 @@ def download_and_remove_all_lambda_dumps_from_inventory(
         download_and_remove_lambda_dump_from_inventory(
             selenium,
             browser_id,
-            modals,
             tmp_memory,
             visible_lambda_name,
         )
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium, browser_id, modals, tmp_memory, lamda_name
+    selenium, browser_id, tmp_memory, lamda_name
 ):
     option = "Download (json)"
     option_unlink = "Unlink"

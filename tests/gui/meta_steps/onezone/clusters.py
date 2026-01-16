@@ -57,7 +57,6 @@ def invite_user_to_cluster(
     tmp_memory,
     displays,
     clipboard,
-    modals,
 ):
     option = "Clusters"
     sub_item = "Members"
@@ -77,7 +76,7 @@ def invite_user_to_cluster(
         selenium, browser_id, button, where, member, onepanel
     )
     copy_token_from_modal(selenium, browser_id)
-    close_modal(selenium, browser_id, modal, modals)
+    close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, browser, tmp_memory, displays, clipboard
     )
@@ -135,7 +134,6 @@ def add_group_to_cluster(
     group_name,
     cluster_name,
     tmp_memory,
-    modals,
 ):
     sidebar = "CLUSTERS"
     menu_option = "Members"

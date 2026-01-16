@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.gui.utils.common.modals import Modals as modals
+from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -204,7 +204,7 @@ def click_on_option_in_relation_menu(selenium, browser_id, option):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_group_in_create_new_child_group_modal(selenium, browser_id, group_name):
     driver = selenium[browser_id]
-    modals(driver).create_group.input_name = group_name
+    Modals(driver).create_group.input_name = group_name
 
 
 @wt(

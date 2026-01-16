@@ -18,7 +18,7 @@ from tests.gui.conftest import (
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -571,11 +571,11 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunk_in_data_distribution_size(
-    selenium, browser_id, size, provider, modals, hosts
+    selenium, browser_id, size, provider, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    prov_rec = modals(driver).details_modal.data_distribution.providers[provider]
+    prov_rec = Modals(driver).details_modal.data_distribution.providers[provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
     assert displayed_size == size, (
@@ -592,11 +592,11 @@ def assert_provider_chunk_in_data_distribution_size(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_provider_chunk_in_data_distribution_filled(
-    selenium, browser_id, provider, modals, hosts
+    selenium, browser_id, provider, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    data_distribution = modals(driver).details_modal.data_distribution
+    data_distribution = Modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -617,11 +617,11 @@ def assert_provider_chunk_in_data_distribution_filled(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_empty(
-    selenium, browser_id, provider, modals, hosts
+    selenium, browser_id, provider, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    data_distribution = modals(driver).details_modal.data_distribution
+    data_distribution = Modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -638,11 +638,11 @@ def assert_provider_chunk_in_data_distribution_empty(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunks_in_data_distribution(
-    selenium, browser_id, chunks, provider, modals, hosts
+    selenium, browser_id, chunks, provider, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    data_distribution = modals(driver).details_modal.data_distribution
+    data_distribution = Modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     displayed_chunks = distribution.chunks(size)
@@ -851,13 +851,13 @@ def download_file_with_network_throttling(
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_data_distribution_percentage_for_provider(
-    selenium, browser_id, provider, percentage, modals, hosts
+    selenium, browser_id, provider, percentage, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(1)
-    data_distribution = modals(driver).details_modal.data_distribution
+    data_distribution = Modals(driver).details_modal.data_distribution
     percentage_label = data_distribution.providers[provider].percentage_label
     assert percentage_label == percentage, (
         f"Data distribution at {percentage_label} instead of {percentage}"
@@ -872,11 +872,11 @@ def check_data_distribution_percentage_for_provider(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_data_distribution_size_for_provider(
-    selenium, browser_id, provider, size, modals, hosts
+    selenium, browser_id, provider, size, hosts
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    data_distribution = modals(driver).details_modal.data_distribution
+    data_distribution = Modals(driver).details_modal.data_distribution
     size_label = data_distribution.providers[provider].size_label
     assert (
         size_label == size
@@ -890,9 +890,9 @@ def check_data_distribution_size_for_provider(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_size_statistics_for_providers(selenium, browser_id, modals):
+def expand_size_statistics_for_providers(selenium, browser_id):
     driver = selenium[browser_id]
-    modals(driver).details_modal.size_statistics.expand_stats_button()
+    Modals(driver).details_modal.size_statistics.expand_stats_button()
 
 
 @wt(
@@ -904,12 +904,12 @@ def expand_size_statistics_for_providers(selenium, browser_id, modals):
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(
-    selenium, hosts, modals, browser_id, elem_type, provider, expected
+    selenium, hosts, browser_id, elem_type, provider, expected
 ):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     size = getattr(
-        modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
+        Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
             provider_name
         ],
         transform(elem_type),
@@ -926,13 +926,11 @@ def check_size_stats_for_provider(
     )
 )
 @repeat_failed(WAIT_FRONTEND)
-def check_error_cell_for_provider(
-    selenium, hosts, modals, browser_id, provider, message
-):
+def check_error_cell_for_provider(selenium, hosts, browser_id, provider, message):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     error_cell = (
-        modals(driver)
+        Modals(driver)
         .details_modal.size_statistics.dir_stats_row_per_provider[provider_name]
         .error_cell
     )
@@ -943,11 +941,11 @@ def check_error_cell_for_provider(
 
 @wt(parsers.parse('user of {browser_id} sees that {provider} content is "{content}"'))
 @repeat_failed(WAIT_FRONTEND)
-def check_content_for_provider(selenium, hosts, modals, browser_id, provider, content):
+def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     provider_content = (
-        modals(driver)
+        Modals(driver)
         .details_modal.size_statistics.dir_stats_row_per_provider[provider_name]
         .content
     )
@@ -957,10 +955,8 @@ def check_content_for_provider(selenium, hosts, modals, browser_id, provider, co
 
 
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
-def check_size_statistic_in_dir_details(
-    selenium, modals, browser_id, elem_type, expected
-):
+def check_size_statistic_in_dir_details(selenium, browser_id, elem_type, expected):
     driver = selenium[browser_id]
-    size = getattr(modals(driver).details_modal.size_statistics, transform(elem_type))
+    size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))
 
     assert size == expected, f"{elem_type} is {size} instead of {expected}!"

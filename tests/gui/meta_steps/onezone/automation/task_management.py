@@ -170,7 +170,7 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(selenium, browser_id, lane, modals, task):
+def remove_task_from_lane(selenium, browser_id, lane, task):
     modal = "Remove task"
     option = "Remove"
 

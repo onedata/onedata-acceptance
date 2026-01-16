@@ -17,7 +17,7 @@ from tests.gui.steps.common.miscellaneous import (
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Popups
-from tests.gui.utils.common.modals import Modals as modals
+from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -201,13 +201,13 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _expand_dropdown_in_migrate_record(driver):
-    data_distribution_modal = modals(driver).details_modal.data_distribution
+    data_distribution_modal = Modals(driver).details_modal.data_distribution
     data_distribution_modal.migrate.expand_dropdown()
     assert len(Popups(driver).migrate_dropdown.providers_list) > 0
 
 
 def check_provider_in_migrate_dropdown(driver, provider_name):
-    data_distribution_modal = modals(driver).details_modal.data_distribution
+    data_distribution_modal = Modals(driver).details_modal.data_distribution
     return provider_name == data_distribution_modal.migrate.target_provider
 
 
@@ -224,7 +224,7 @@ def migrate_item(selenium, browser_id, source, target, hosts):
     source_name = hosts[source]["name"]
     target_name = hosts[target]["name"]
 
-    data_distribution_modal = modals(driver).details_modal.data_distribution
+    data_distribution_modal = Modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[source_name].menu_button()
     Popups(driver).data_distribution_popup.menu[menu_option]()
 
@@ -246,7 +246,7 @@ def replicate_item(selenium, browser_id, provider, hosts):
     menu_option = "Replicate here"
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    modals(driver).details_modal.data_distribution.providers[
+    Modals(driver).details_modal.data_distribution.providers[
         provider_name
     ].menu_button()
     Popups(driver).data_distribution_popup.menu[menu_option]()
@@ -262,7 +262,7 @@ def replicate_item(selenium, browser_id, provider, hosts):
 def click_menu_button_in_data_distribution_panel(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    modals(driver).details_modal.data_distribution.providers[
+    Modals(driver).details_modal.data_distribution.providers[
         provider_name
     ].menu_button()
 
@@ -294,7 +294,7 @@ def fail_to_click_option_in_data_distribution_popup(browser_id, option, selenium
 @repeat_failed(interval=1, timeout=90)
 def assert_see_history_btn_shown(selenium, browser_id):
     driver = selenium[browser_id]
-    button = getattr(modals(driver).details_modal.data_distribution, "see_history_btn")
+    button = getattr(Modals(driver).details_modal.data_distribution, "see_history_btn")
     assert (
         button.is_displayed()
     ), 'Button "see history" not found in data distribution modal'
@@ -330,7 +330,7 @@ def assert_option_in_provider_popup_menu(
     driver = selenium[browser_id]
 
     provider_name = hosts[provider]["name"]
-    modals(driver).details_modal.data_distribution.providers[
+    Modals(driver).details_modal.data_distribution.providers[
         provider_name
     ].menu_button()
 

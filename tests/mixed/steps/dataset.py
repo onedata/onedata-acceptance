@@ -59,7 +59,6 @@ def create_dataset_in_op(
     tmp_memory,
     selenium,
     op_container,
-    modals,
     users,
     hosts,
     option,
@@ -73,7 +72,6 @@ def create_dataset_in_op(
             space_name,
             selenium,
             op_container,
-            modals,
             option=option,
         )
     elif client_lower == "rest":
@@ -101,7 +99,6 @@ def fail_to_create_dataset_in_op(
     tmp_memory,
     selenium,
     op_container,
-    modals,
     users,
     hosts,
 ):
@@ -114,7 +111,6 @@ def fail_to_create_dataset_in_op(
             space_name,
             selenium,
             op_container,
-            modals,
         )
     elif client_lower == "rest":
         fail_to_create_dataset_in_op_rest(
@@ -182,7 +178,6 @@ def remove_dataset_in_op(
     selenium,
     op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
@@ -313,7 +308,6 @@ def check_effective_protection_flags_for_file(
     selenium,
     op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
 ):
@@ -326,7 +320,6 @@ def check_effective_protection_flags_for_file(
             op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
         )
 
@@ -356,7 +349,6 @@ def set_protection_flags_for_dataset(
     selenium,
     op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
@@ -370,7 +362,6 @@ def set_protection_flags_for_dataset(
             op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
         )
 
@@ -401,7 +392,6 @@ def check_effective_protection_flags_for_dataset(
     selenium,
     op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
@@ -415,7 +405,6 @@ def check_effective_protection_flags_for_dataset(
             op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
         )
     elif client_lower == "rest":
@@ -521,7 +510,6 @@ def reattach_dataset_in_op(
     op_container,
     tmp_memory,
     item_name,
-    modals,
     users,
     hosts,
     host,
@@ -536,7 +524,6 @@ def reattach_dataset_in_op(
             op_container,
             tmp_memory,
             item_name,
-            modals,
         )
     elif client_lower == "rest":
         reattach_dataset_in_op_rest(

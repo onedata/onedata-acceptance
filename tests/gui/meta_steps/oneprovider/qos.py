@@ -35,7 +35,6 @@ from tests.utils.utils import repeat_failed
 def _add_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
@@ -54,14 +53,14 @@ def _add_qos_requirement_in_modal(
         browser_id, selenium, qos_option, tmp_memory, item_name
     )
     click_panel_button(selenium, browser_id, add_button, panel)
-    click_enter_as_text_link(selenium, browser_id, modals)
+    click_enter_as_text_link(selenium, browser_id)
     write_name_into_text_field_in_panel(
-        selenium, browser_id, expression, panel, modals, expression_field
+        selenium, browser_id, expression, panel, expression_field
     )
-    confirm_entering_text(selenium, browser_id, modals)
+    confirm_entering_text(selenium, browser_id)
     if replicas_number != 1:
         write_name_into_text_field_in_panel(
-            selenium, browser_id, replicas_number, panel, modals, replicas_field
+            selenium, browser_id, replicas_number, panel, replicas_field
         )
     click_panel_button(selenium, browser_id, save_button, panel)
     click_modal_button(selenium, browser_id, close_button, details_modal)
@@ -77,7 +76,6 @@ def _add_qos_requirement_in_modal(
 def add_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
@@ -90,7 +88,6 @@ def add_qos_requirement_in_modal(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
@@ -109,7 +106,6 @@ def add_qos_requirement_in_modal(
 def add_qos_requirement_in_modal_with_replicas(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
@@ -121,7 +117,6 @@ def add_qos_requirement_in_modal_with_replicas(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
@@ -139,7 +134,6 @@ def add_qos_requirement_in_modal_with_replicas(
 def add_id_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     clipboard,
@@ -151,7 +145,6 @@ def add_id_qos_requirement_in_modal(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
@@ -169,7 +162,6 @@ def add_id_qos_requirement_in_modal(
 def add_no_id_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     clipboard,
@@ -183,7 +175,6 @@ def add_no_id_qos_requirement_in_modal(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
@@ -220,7 +211,6 @@ def delete_qos_requirement_in_op_gui(
     selenium,
     user,
     space_name,
-    modals,
     file_name,
     tmp_memory,
     op_container,
@@ -236,5 +226,5 @@ def delete_qos_requirement_in_op_gui(
     click_on_status_tag_for_file_in_file_browser(
         user, status_type, file_name, tmp_memory
     )
-    delete_all_qualities_of_service(selenium, user, modals)
+    delete_all_qualities_of_service(selenium, user)
     click_modal_button(selenium, user, button, modal)

@@ -57,7 +57,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_harvester(selenium, browser_id, space_name, modals):
+def remove_space_from_harvester(selenium, browser_id, space_name):
     button = "Remove"
     modal = "Remove space from harvester"
 
@@ -74,9 +74,7 @@ def remove_space_from_harvester(selenium, browser_id, space_name, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_given_harvester(
-    selenium, browser_id, space_name, harvester_name, modals
-):
+def remove_space_from_given_harvester(selenium, browser_id, space_name, harvester_name):
     button = "Remove"
     modal = "Remove space from harvester"
     option = "Spaces"
@@ -96,7 +94,7 @@ def remove_space_from_given_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_harvester(selenium, browser_id, harvester_name, modals):
+def remove_harvester(selenium, browser_id, harvester_name):
     where = "Discovery"
     list_type = "harvesters"
     option = "Remove"
@@ -158,7 +156,6 @@ def join_space_to_harvester(
     space_name,
     harvester_name,
     tmp_memory,
-    modals,
 ):
     option = "Spaces"
     option2 = "Discovery"
@@ -202,7 +199,6 @@ def add_group_to_harvester(
     harvester_name,
     onepanel,
     tmp_memory,
-    modals,
 ):
     option = "Members"
     button = "Add one of your groups"
@@ -265,7 +261,6 @@ def send_invitation_token(
     displays,
     clipboard,
     onepanel,
-    modals,
 ):
     where = "Discovery"
     list_type = "harvester"
@@ -291,7 +286,7 @@ def send_invitation_token(
         onepanel,
     )
     copy_token_from_modal(selenium, browser_id1)
-    close_modal(selenium, browser_id1, modal, modals)
+    close_modal(selenium, browser_id1, modal)
     send_copied_item_to_other_users(
         browser_id1, item_type, browser_id2, tmp_memory, displays, clipboard
     )

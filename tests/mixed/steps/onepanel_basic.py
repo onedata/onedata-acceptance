@@ -570,7 +570,6 @@ def revoke_space_support_in_op_panel(
     host,
     selenium,
     onepanel,
-    modals,
     users,
     hosts,
     admin_credentials,
@@ -585,7 +584,6 @@ def revoke_space_support_in_op_panel(
             provider_name,
             onepanel,
             space_name,
-            modals,
             hosts,
         )
     elif client.lower() == "rest":

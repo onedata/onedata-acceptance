@@ -14,7 +14,7 @@ from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser,
 )
-from tests.gui.utils import Popups
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -27,10 +27,10 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_chart_title_in_details_modal(
-    selenium, browser_id, modals, title, which_title, modal
+    selenium, browser_id, title, which_title, modal
 ):
     modal = check_modal_name(modal)
-    modal = getattr(modals(selenium[browser_id]), modal).size_statistics
+    modal = getattr(Modals(selenium[browser_id]), modal).size_statistics
     if which_title == "charts title":
         charts_title = modal.charts_title
     elif which_title == "count chart title":
@@ -44,9 +44,9 @@ def assert_chart_title_in_details_modal(
 
 @wt(parsers.parse('user of {browser_id} clicks on chart in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_chart_in_modal(browser_id, modals, selenium, modal):
+def click_on_chart_in_modal(browser_id, selenium, modal):
     modal = check_modal_name(modal)
-    getattr(modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
+    getattr(Modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
 
 @wt(
@@ -56,9 +56,9 @@ def click_on_chart_in_modal(browser_id, modals, selenium, modal):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_button_in_modal_not_active(browser_id, modal, element, modals, selenium):
+def assert_button_in_modal_not_active(browser_id, modal, element, selenium):
     driver = selenium[browser_id]
-    modal = getattr(modals(driver), check_modal_name(modal))
+    modal = getattr(Modals(driver), check_modal_name(modal))
     err_msg = f'"{element}" button is in active state'
     assert not modal.is_element_active(transform(element)), err_msg
 
@@ -88,8 +88,8 @@ def assert_tooltip_on_chart_in_modal(browser_id, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals, modal):
-    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal))
+def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modal):
+    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal))
     tab = modal.navigation[tab_name]
     tab.web_elem.click()
 
@@ -101,8 +101,8 @@ def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals, mod
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, modal):
-    modal = getattr(modals(selenium[browser_id]).details_modal, check_modal_name(modal))
+def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modal):
+    modal = getattr(Modals(selenium[browser_id]).details_modal, check_modal_name(modal))
     tab = modal.navigation[tab_name]
     tab.web_elem.click()
 
@@ -113,7 +113,7 @@ def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modals, mod
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
+def assert_tab_in_modal(selenium, browser_id, tab, modal_name):
     # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
     # trying to get active tab, when file details panel is being animated. There are
     # plans to add special class to the modal/panel saying that the transition ended, so
@@ -123,7 +123,7 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
     sleep(2)
     active_tab = getattr(
-        modals(selenium[browser_id]), check_modal_name(transform(modal_name))
+        Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
     ).active_tab
     err_msg = (
         f"Expected tab: {tab} does not match actual active tab: "
@@ -139,10 +139,10 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
+def assert_posix_tab_in_panel(selenium, browser_id, modal_name):
     elem_name = "posix_permission_edition"
     posix_hidden = getattr(
-        modals(selenium[browser_id]), check_modal_name(transform(modal_name))
+        Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
     ).edit_permissions.is_hidden(elem_name)
     assert (
         not posix_hidden

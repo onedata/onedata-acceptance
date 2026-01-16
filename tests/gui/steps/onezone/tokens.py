@@ -11,7 +11,7 @@ import time
 from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -469,9 +469,9 @@ def get_privileges_tree(selenium, browser_id):
         'in modal "Clean up obsolete tokens"'
     )
 )
-def deselect_tokens_on_modal(browser_id, token_name, selenium, modals):
+def deselect_tokens_on_modal(browser_id, token_name, selenium):
     driver = selenium[browser_id]
-    clean_modal = modals(driver).clean_up_obsolete_tokens
+    clean_modal = Modals(driver).clean_up_obsolete_tokens
 
     # expand token types to make tokens visible
     for token_type in clean_modal.token_types:
@@ -486,9 +486,9 @@ def deselect_tokens_on_modal(browser_id, token_name, selenium, modals):
         'in modal "Clean up obsolete tokens"'
     )
 )
-def deselect_token_type_on_modal(browser_id, token_type, selenium, modals):
+def deselect_token_type_on_modal(browser_id, token_type, selenium):
     driver = selenium[browser_id]
-    clean_modal = modals(driver).clean_up_obsolete_tokens
+    clean_modal = Modals(driver).clean_up_obsolete_tokens
 
     clean_modal.token_types[token_type].checkbox.click()
 
