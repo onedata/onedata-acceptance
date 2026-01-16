@@ -197,7 +197,6 @@ def add_group_to_harvester(
     browser_id,
     group_name,
     harvester_name,
-    onepanel,
     tmp_memory,
 ):
     option = "Members"
@@ -217,7 +216,6 @@ def add_group_to_harvester(
         button,
         member,
         where + "s",
-        onepanel,
     )
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
@@ -260,7 +258,6 @@ def send_invitation_token(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     where = "Discovery"
     list_type = "harvester"
@@ -283,7 +280,6 @@ def send_invitation_token(
         button,
         list_type,
         member,
-        onepanel,
     )
     copy_token_from_modal(selenium, browser_id1)
     close_modal(selenium, browser_id1, modal)
@@ -303,7 +299,6 @@ def send_invitation_token(
 def change_privilege_config_in_harvester(
     selenium,
     browser_id,
-    onepanel,
     config,
     user_name,
     harvester_name,
@@ -322,7 +317,6 @@ def change_privilege_config_in_harvester(
         user_name,
         where,
         list_type + "s",
-        onepanel,
     )
     try_setting_privileges_in_members_subpage(
         selenium,
@@ -331,7 +325,6 @@ def change_privilege_config_in_harvester(
         list_type,
         where,
         config,
-        onepanel,
         option,
     )
 

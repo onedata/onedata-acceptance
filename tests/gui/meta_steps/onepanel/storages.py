@@ -43,21 +43,22 @@ from tests.gui.steps.onepanel.storages import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.utils import Onepanel
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
-def remove_storage_in_op_panel_using_gui(selenium, browser_id, name, onepanel):
+def remove_storage_in_op_panel_using_gui(selenium, browser_id, name):
     option = "Remove storage backend"
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
 
-    wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name, onepanel)
+    wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name)
     wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option)
     click_modal_button(selenium, browser_id, button, modal)
-    assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel)
+    assert_storage_disappeared_from_list(selenium, browser_id, name)
 
 
 @wt(
@@ -69,7 +70,7 @@ def remove_storage_in_op_panel_using_gui(selenium, browser_id, name, onepanel):
     )
 )
 def add_storage_in_op_panel_using_gui(
-    selenium, browser_id, name, provider_name, config, hosts, onepanel
+    selenium, browser_id, name, provider_name, config, hosts
 ):
     """Create storage according to given config.
 
@@ -79,15 +80,11 @@ def add_storage_in_op_panel_using_gui(
         mount point: mount_point               --> required
         imported storage: true                 --> optional
     """
-    _go_to_storage_view_in_clusters(
-        selenium, browser_id, provider_name, hosts, onepanel
-    )
-    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel, name)
+    _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts)
+    _add_storage_in_op_panel_using_gui(selenium, browser_id, config, name)
 
 
-def _go_to_storage_view_in_clusters(
-    selenium, browser_id, provider_name, hosts, onepanel
-):
+def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name, hosts):
     driver = selenium[browser_id]
     onezone_url_pattern = "https?://[^/]*/ozw/.*"
     sidebar = "Clusters"
@@ -98,13 +95,11 @@ def _go_to_storage_view_in_clusters(
         click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, onepanel, hosts
+        selenium, browser_id, sidebar, sub_item, provider_name, hosts
     )
 
 
-def _add_storage_in_op_panel_using_gui(
-    selenium, browser_id, config, onepanel, storage_name
-):
+def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, storage_name):
     content = "storages"
     btn = "Add storage backend"
     form = "POSIX"
@@ -115,26 +110,22 @@ def _add_storage_in_op_panel_using_gui(
     options = yaml.load(config, yaml.Loader)
 
     try:
-        wt_click_on_btn_in_content(selenium, browser_id, btn, content, onepanel)
+        wt_click_on_btn_in_content(selenium, browser_id, btn, content)
     except RuntimeError:
         pass
 
     storage_type = options["storage type"]
-    wt_select_storage_type_in_storage_page_op_panel(
-        selenium, browser_id, storage_type, onepanel
-    )
+    wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id, storage_type)
     wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, storage_name, form, onepanel, input_box
+        selenium, browser_id, storage_name, form, input_box
     )
     mount_point = options[mount_point_option]
     wt_type_text_to_in_box_in_storages_page_op_panel(
-        selenium, browser_id, mount_point, form, onepanel, mount_point_option
+        selenium, browser_id, mount_point, form, mount_point_option
     )
     if options.get("imported storage", False):
-        enable_import_in_add_storage_form(selenium, browser_id, onepanel)
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page(
-        selenium, browser_id, onepanel
-    )
+        enable_import_in_add_storage_form(selenium, browser_id)
+    wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium, browser_id)
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
 
 
@@ -282,38 +273,36 @@ def _add_storage_in_op_panel_using_rest(
         "QoS parameters form in storage edit page"
     )
 )
-def add_key_value_in_storage_page(selenium, browser_id, key, val, onepanel):
+def add_key_value_in_storage_page(selenium, browser_id, key, val):
 
-    type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
-    click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    type_key_in_posix_storage_edit_page(selenium, browser_id, key)
+    click_value_in_posix_storage_edit_page(selenium, browser_id)
     type_string_into_active_element(selenium, browser_id, val)
-    save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    save_changes_in_posix_storage_edit_page(selenium, browser_id)
     confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
-def delete_additional_param_in_storage_page(selenium, browser_id, onepanel):
+def delete_additional_param_in_storage_page(selenium, browser_id):
 
-    delete_additional_param_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
+    save_changes_in_posix_storage_edit_page(selenium, browser_id)
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
-def _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
+def _delete_all_additional_params_in_storage_page(selenium, browser_id):
     deleted = False
     name = "posix"
 
     while not deleted:
-        click_modify_storage_in_onepanel(selenium, browser_id, name, onepanel)
+        click_modify_storage_in_onepanel(selenium, browser_id, name)
         driver = selenium[browser_id]
-        storage = onepanel(driver).content.storages.storages["posix"]
+        storage = Onepanel(driver).content.storages.storages["posix"]
         if storage.edit_form.posix_editor.params.get_key_values_count() == 2:
             deleted = True
         if not deleted:
-            delete_additional_param_in_posix_storage_edit_page(
-                selenium, browser_id, onepanel
-            )
-        save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+            delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
+        save_changes_in_posix_storage_edit_page(selenium, browser_id)
         _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)
 
 
@@ -323,8 +312,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel
         "in storage edit page used by {browser_id}"
     )
 )
-def g_delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
-    _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel)
+def g_delete_all_additional_params_in_storage_page(selenium, browser_id):
+    _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
 @wt(
@@ -333,8 +322,8 @@ def g_delete_all_additional_params_in_storage_page(selenium, browser_id, onepane
         "QoS parameters form in storage edit page"
     )
 )
-def wt_delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel):
-    _delete_all_additional_params_in_storage_page(selenium, browser_id, onepanel)
+def wt_delete_all_additional_params_in_storage_page(selenium, browser_id):
+    _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
 def _try_confirm_changes_in_modify_storage_modal(selenium, browser_id):

@@ -215,7 +215,6 @@ def add_subgroups(
     parent,
     displays,
     clipboard,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -229,7 +228,6 @@ def add_subgroups(
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -252,7 +250,6 @@ def remove_subgroups(
     selenium,
     tmp_memory,
     parent,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -264,7 +261,6 @@ def remove_subgroups(
             group_list,
             tmp_memory,
             parent,
-            onepanel,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -286,13 +282,12 @@ def assert_subgroups(
     users,
     selenium,
     parent,
-    onepanel,
 ):
 
     if client.lower() == "rest":
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
-        assert_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel)
+        assert_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -313,13 +308,12 @@ def fail_to_see_subgroups(
     users,
     selenium,
     parent,
-    onepanel,
 ):
 
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
-        fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel)
+        fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -343,7 +337,6 @@ def invite_to_group(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -359,7 +352,6 @@ def invite_to_group(
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -454,7 +446,6 @@ def fail_to_add_subgroups(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -468,7 +459,6 @@ def fail_to_add_subgroups(
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

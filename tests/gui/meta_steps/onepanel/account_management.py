@@ -82,9 +82,7 @@ def log_out_from_oz_panel_gui(username, selenium, onepage, login_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_passphrase(
-    selenium, browser_id, onepanel, current_passphrase, new_passphrase, hosts
-):
+def change_passphrase(selenium, browser_id, current_passphrase, new_passphrase, hosts):
     change_passphrase_button = "Change passphrase"
     confirm_button = "Change"
     current_passphrase_input = "Current passphrase"
@@ -94,29 +92,23 @@ def change_passphrase(
     sub_item = "Emergency passphrase"
     record = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, record, onepanel, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item, record, hosts)
     click_button_on_emergency_passphrase_page(
-        selenium, browser_id, onepanel, change_passphrase_button
+        selenium, browser_id, change_passphrase_button
     )
     type_text_to_input_on_emergency_passphrase_page(
         selenium,
         browser_id,
-        onepanel,
         current_passphrase,
         current_passphrase_input,
     )
     type_text_to_input_on_emergency_passphrase_page(
-        selenium, browser_id, onepanel, new_passphrase, new_passphrase_input
+        selenium, browser_id, new_passphrase, new_passphrase_input
     )
     type_text_to_input_on_emergency_passphrase_page(
         selenium,
         browser_id,
-        onepanel,
         new_passphrase,
         retype_new_passphrase_input,
     )
-    click_button_on_emergency_passphrase_page(
-        selenium, browser_id, onepanel, confirm_button
-    )
+    click_button_on_emergency_passphrase_page(selenium, browser_id, confirm_button)

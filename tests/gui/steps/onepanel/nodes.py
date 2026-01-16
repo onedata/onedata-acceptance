@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -23,11 +24,11 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(
-    selenium, browser_id, options, host_regexp, onepanel
+    selenium, browser_id, options, host_regexp
 ):
     options = [transform(option) for option in parse_seq(options)]
     err_msg = f"{{}} not enabled for {host_regexp} in Nodes page in Onepanel"
-    for host in onepanel(selenium[browser_id]).content.nodes.hosts:
+    for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):
             for option in options:
                 toggle = getattr(host, option)
@@ -43,14 +44,14 @@ def wt_assert_options_enabled_for_host_in_nodes(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_cannot_be_changed_for_host_in_nodes(
-    selenium, browser_id, options, host_regexp, onepanel
+    selenium, browser_id, options, host_regexp
 ):
     options = [transform(option) for option in parse_seq(options)]
     err_msg = (
         f"{{}} can be changed for {host_regexp} in Nodes page in Onepanel, "
         "while it should not be"
     )
-    for host in onepanel(selenium[browser_id]).content.nodes.hosts:
+    for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):
             for option in options:
                 toggle = getattr(host, option)

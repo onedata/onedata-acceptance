@@ -232,7 +232,6 @@ def remove_provider_support_for_space_in_oz(
     hosts,
     spaces,
     admin_credentials,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -250,7 +249,7 @@ def remove_provider_support_for_space_in_oz(
     elif client.lower() == "web gui":
 
         remove_provider_support_for_space_in_oz_using_gui(
-            selenium, user, space_name, onepanel, hosts
+            selenium, user, space_name, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -276,7 +275,6 @@ def invite_other_users_to_space(
     spaces,
     displays,
     clipboard,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -295,7 +293,6 @@ def invite_other_users_to_space(
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -472,7 +469,6 @@ def assert_user_is_member_of_space(
     users,
     hosts,
     selenium,
-    onepanel,
 ):
 
     if client.lower() == "rest":
@@ -482,9 +478,7 @@ def assert_user_is_member_of_space(
         )
     elif client.lower() == "web gui":
 
-        assert_user_is_member_of_space_gui(
-            selenium, user, space_name, user_list, onepanel
-        )
+        assert_user_is_member_of_space_gui(selenium, user, space_name, user_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

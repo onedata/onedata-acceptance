@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
-from tests.gui.utils import Modals
+from tests.gui.utils import Modals, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -22,9 +22,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content, onepanel):
+def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content):
     for browser_id in parse_seq(browser_id_list):
-        content = getattr(onepanel(selenium[browser_id]).content, transform(content))
+        content = getattr(Onepanel(selenium[browser_id]).content, transform(content))
         getattr(content, transform(btn)).click()
 
 
@@ -37,11 +37,11 @@ def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content, onepanel
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_subitem_for_item(
-    selenium, browser_id_list, sidebar, sub_item, record, onepanel, hosts
+    selenium, browser_id_list, sidebar, sub_item, record, hosts
 ):
     record = hosts[record]["name"]
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
+        nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
@@ -53,10 +53,10 @@ def wt_click_on_subitem_for_item(
     )
 )
 def g_click_on_subitem_for_item(
-    selenium, browser_id_list, sidebar, sub_item, record, onepanel, hosts
+    selenium, browser_id_list, sidebar, sub_item, record, hosts
 ):
     wt_click_on_subitem_for_item(
-        selenium, browser_id_list, sidebar, sub_item, record, onepanel, hosts
+        selenium, browser_id_list, sidebar, sub_item, record, hosts
     )
 
 
@@ -70,10 +70,10 @@ def g_click_on_subitem_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(
-    selenium, browser_id_list, sidebar, sub_item, record, onepanel
+    selenium, browser_id_list, sidebar, sub_item, record
 ):
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
+        nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].submenu[sub_item].click()
 
 
@@ -84,9 +84,9 @@ def wt_click_on_subitem_for_item_with_name(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record, onepanel):
+def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record):
     for browser_id in parse_seq(browser_id_list):
-        nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
+        nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
         nav.items[record].click()
 
 
@@ -121,10 +121,10 @@ def click_open_in_onezone(selenium, browser_id, login_page):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_working_in_clusters_sidebar(
-    selenium, browser_id, age, record, onepanel, hosts, tmp_memory
+    selenium, browser_id, age, record, hosts, tmp_memory
 ):
     sidebar = "CLUSTERS"
-    nav = getattr(onepanel(selenium[browser_id]).sidebar, transform(sidebar))
+    nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
     items = nav.get_all_items(selenium[browser_id])
     item = get_old_or_new_cluster_record_from_list(
         record, items, age, tmp_memory, hosts
@@ -134,8 +134,8 @@ def assert_not_working_in_clusters_sidebar(
 
 @wt(parsers.parse('user of {browser_id} sees Overview page of "{cluster}" cluster'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel, hosts):
-    found = onepanel(selenium[browser_id]).content.overview.cluster_name
+def assert_overview_page_of_cluster(selenium, browser_id, cluster, hosts):
+    found = Onepanel(selenium[browser_id]).content.overview.cluster_name
     expected = hosts[cluster]["name"]
     assert found == expected, f"Overview of {expected} not visible"
 
@@ -146,8 +146,8 @@ def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel, hos
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_sidebar_submenu_link(selenium, browser_id, view_name, onepanel):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+def click_on_sidebar_submenu_link(selenium, browser_id, view_name):
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     nav.documentation_link.click()
 
 
@@ -158,10 +158,8 @@ def click_on_sidebar_submenu_link(selenium, browser_id, view_name, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_sidebar_submenu_subdomain_delegation_link(
-    selenium, browser_id, view_name, onepanel
-):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+def click_on_sidebar_submenu_subdomain_delegation_link(selenium, browser_id, view_name):
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     nav.subdomain_delegation_documentation_link.click()
 
 
@@ -171,8 +169,8 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, onepanel, toggle):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, toggle):
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     getattr(nav, transform(toggle.replace("-", "_"))).check()
 
 
@@ -183,10 +181,8 @@ def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, onepanel, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_checked_in_onepanel_view(
-    selenium, browser_id, view_name, onepanel, toggle
-):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+def assert_toggle_checked_in_onepanel_view(selenium, browser_id, view_name, toggle):
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
     assert toggle_elem.is_checked(), f"toggle {toggle} is not checked in {view_name}"
 
@@ -199,9 +195,9 @@ def assert_toggle_checked_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_label_content_in_onepanel_view(
-    selenium, browser_id, view_name, onepanel, label, label_content
+    selenium, browser_id, view_name, label, label_content
 ):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
     err_msg = f"{label} should be {label_content} but is {actual_label}"
     assert actual_label == label_content, err_msg
@@ -215,9 +211,9 @@ def assert_label_content_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_label_ends_with_in_onepanel_view(
-    selenium, browser_id, view_name, onepanel, label, suffix
+    selenium, browser_id, view_name, label, suffix
 ):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
     err_msg = f"{label} should end with {suffix} but it is {actual_label}"
     assert actual_label.endswith(suffix), err_msg
@@ -231,9 +227,9 @@ def assert_label_ends_with_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_label_contains_prov_domain_in_onepanel_view(
-    selenium, browser_id, provider, label, view_name, onepanel, hosts
+    selenium, browser_id, provider, label, view_name, hosts
 ):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
     expected_domain = hosts[provider]["hostname"]
     err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
@@ -248,9 +244,9 @@ def assert_label_contains_prov_domain_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_warning_in_dns_names_in_onepanel_view(
-    selenium, browser_id, warning, view_name, onepanel
+    selenium, browser_id, warning, view_name
 ):
-    nav = getattr(onepanel(selenium[browser_id]).content, transform(view_name))
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_warning = nav.dns_names_warning
     warning = warning.replace("\\", "")
     err_msg = f"Actual warning {actual_warning} does not match expected {warning}"

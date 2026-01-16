@@ -15,7 +15,6 @@ from tests.gui.meta_steps.onezone.members import (
     fail_to_set_privileges_using_op_gui,
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
-from tests.gui.utils import Onepanel
 from tests.mixed.steps.rest.onezone.members import (
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,
@@ -60,7 +59,6 @@ def fail_to_set_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            Onepanel,
         )
 
     elif client_lower == "rest":
@@ -102,7 +100,6 @@ def assert_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            Onepanel,
         )
     elif client_lower == "rest":
         assert_privileges_in_space_using_rest(
@@ -134,7 +131,7 @@ def fail_to_create_invitation_in_space_in_oz(
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_invitation_in_space_using_op_gui(
-            user, space_name, selenium, Onepanel
+            user, space_name, selenium
         )
     elif client_lower == "rest":
         fail_to_create_invitation_in_space_using_rest(
@@ -166,7 +163,7 @@ def assert_not_user_in_space_in_oz(
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_not_user_in_space_using_op_gui(
-            user, space_name, member_name, selenium, Onepanel
+            user, space_name, member_name, selenium
         )
 
     elif client_lower == "rest":
@@ -192,7 +189,6 @@ def add_group_to_space_in_oz(
     user,
     space_name,
     group_name,
-    onepanel,
     users,
     hosts,
     host,
@@ -206,7 +202,6 @@ def add_group_to_space_in_oz(
             group_name,
             space_name,
             selenium,
-            onepanel,
             where,
         )
     elif client_lower == "rest":
@@ -233,16 +228,13 @@ def assert_group_in_space_in_oz(
     space_name,
     host,
     selenium,
-    onepanel,
     users,
     hosts,
     spaces,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        assert_group_in_space_using_op_gui(
-            selenium, user, space_name, group_name, onepanel
-        )
+        assert_group_in_space_using_op_gui(selenium, user, space_name, group_name)
     elif client_lower == "rest":
         assert_group_in_space_using_rest(
             user, users, hosts, host, group_name, spaces, space_name

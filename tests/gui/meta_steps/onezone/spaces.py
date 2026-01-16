@@ -179,7 +179,7 @@ def rename_spaces_in_oz_using_gui(selenium, user, space_list, new_names_list):
 
 
 def remove_provider_support_for_space_in_oz_using_gui(
-    selenium, user, space_name, onepanel, hosts
+    selenium, user, space_name, hosts
 ):
     sidebar = "CLUSTERS"
     record = "Spaces"
@@ -189,10 +189,8 @@ def remove_provider_support_for_space_in_oz_using_gui(
     text_regexp = "Ceased.*[Ss]upport.*"
     provider_name = "oneprovider-1"
 
-    wt_click_on_subitem_for_item(
-        selenium, user, sidebar, record, provider_name, onepanel, hosts
-    )
-    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name, onepanel)
+    wt_click_on_subitem_for_item(selenium, user, sidebar, record, provider_name, hosts)
+    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user)
     wt_clicks_on_btn_in_cease_support_modal(selenium, user, confirmation_button)
@@ -207,7 +205,6 @@ def invite_other_users_to_space_using_gui(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     option = "spaces"
     option_in_space = "Members"
@@ -221,9 +218,7 @@ def invite_other_users_to_space_using_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, option_in_space
     )
-    click_on_option_in_members_list_menu(
-        selenium, user, button, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
     send_invitation_token_to_browser(
         user,
@@ -297,7 +292,7 @@ def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, space_name):
     assert_number_of_supporting_providers_of_space(selenium, user, number, space_name)
 
 
-def assert_user_is_member_of_space_gui(selenium, user, space_name, user_list, onepanel):
+def assert_user_is_member_of_space_gui(selenium, user, space_name, user_list):
     where = "Members"
     option = "sees"
     member_type = "user"
@@ -314,7 +309,6 @@ def assert_user_is_member_of_space_gui(selenium, user, space_name, user_list, on
             member_type,
             space_name,
             parent_type,
-            onepanel,
         )
 
 
@@ -428,7 +422,6 @@ def add_group_to_space_or_group(
     group_name,
     where_name,
     selenium,
-    onepanel,
     where,
 ):
     option = where + "s"
@@ -453,9 +446,7 @@ def add_group_to_space_or_group(
             option_in_function.lower(),
         )
 
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, button, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal)
@@ -463,7 +454,7 @@ def add_group_to_space_or_group(
 
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel):
+def copy_user_space_invite_token(browser_id, space_name, selenium):
     option = "spaces"
     option_in_space = "Members"
     where = "space"
@@ -477,9 +468,7 @@ def copy_user_space_invite_token(browser_id, space_name, selenium, onepanel):
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option_in_space
     )
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, button, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal)
 

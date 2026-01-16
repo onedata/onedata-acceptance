@@ -137,29 +137,29 @@ def leave_groups_using_op_gui(selenium, user, group_list):
         leave_group(selenium, user, group)
 
 
-def _open_member_from_list(selenium, user, parent, onepanel):
+def _open_member_from_list(selenium, user, parent):
     where = "group"
     list_type = "users"
     subpage = "members"
 
     go_to_group_subpage(selenium, user, parent, subpage)
-    click_element_in_members_list(selenium, user, user, where, list_type, onepanel)
+    click_element_in_members_list(selenium, user, user, where, list_type)
 
 
-def assert_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel):
+def assert_subgroups_using_op_gui(selenium, user, group_list, parent):
     where = "group"
 
-    _open_member_from_list(selenium, user, parent, onepanel)
+    _open_member_from_list(selenium, user, parent)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(
             selenium, user, group, parent, where, where, where
         )
 
 
-def fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent, onepanel):
+def fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent):
     where = "group"
 
-    _open_member_from_list(selenium, user, parent, onepanel)
+    _open_member_from_list(selenium, user, parent)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(
             selenium, user, group, where, parent, where, where
@@ -176,7 +176,6 @@ def _create_group_token(
     displays,
     clipboard,
     member,
-    onepanel,
 ):
     item_type = "token"
     where = "group"
@@ -186,9 +185,7 @@ def _create_group_token(
     subpage = "members"
 
     go_to_group_subpage(selenium, user, name, subpage)
-    click_on_option_in_members_list_menu(
-        selenium, user, button, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, user, button, where, member)
     copy_token_from_modal(selenium, user)
     close_modal(selenium, user, modal)
     send_copied_item_to_other_users(
@@ -210,7 +207,6 @@ def create_group_token_to_invite_user_using_op_gui(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     member = "user"
     _create_group_token(
@@ -222,7 +218,6 @@ def create_group_token_to_invite_user_using_op_gui(
         displays,
         clipboard,
         member,
-        onepanel,
     )
 
 
@@ -234,7 +229,6 @@ def create_group_token_to_invite_group_using_op_gui(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     member = "group"
     _create_group_token(
@@ -246,7 +240,6 @@ def create_group_token_to_invite_group_using_op_gui(
         displays,
         clipboard,
         member,
-        onepanel,
     )
 
 
@@ -267,7 +260,6 @@ def add_subgroups_using_op_gui(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(
@@ -278,14 +270,11 @@ def add_subgroups_using_op_gui(
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
         )
         add_element_with_copied_token(selenium, user, child, clipboard, displays)
 
 
-def remove_subgroups_using_op_gui(
-    selenium, user, group_list, tmp_memory, parent, onepanel
-):
+def remove_subgroups_using_op_gui(selenium, user, group_list, tmp_memory, parent):
     member_type = "group"
 
     for child in parse_seq(group_list):
@@ -296,7 +285,6 @@ def remove_subgroups_using_op_gui(
             member_type,
             parent,
             tmp_memory,
-            onepanel,
             member_type,
         )
 
@@ -317,7 +305,6 @@ def fail_to_add_subgroups_using_op_gui(
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
 ):
     create_group_token_to_invite_group_using_op_gui(
         selenium,
@@ -327,7 +314,6 @@ def fail_to_add_subgroups_using_op_gui(
         tmp_memory,
         displays,
         clipboard,
-        onepanel,
     )
     for child in parse_seq(group_list):
         error = "Consuming token failed"

@@ -53,7 +53,6 @@ def invite_user_to_cluster(
     browser,
     cluster,
     hosts,
-    onepanel,
     tmp_memory,
     displays,
     clipboard,
@@ -68,13 +67,9 @@ def invite_user_to_cluster(
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_record_in_clusters_menu(selenium, browser_id, cluster, hosts)
-    wt_click_on_subitem_for_item(
-        selenium, browser_id, option, sub_item, cluster, onepanel, hosts
-    )
+    wt_click_on_subitem_for_item(selenium, browser_id, option, sub_item, cluster, hosts)
 
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, button, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
@@ -95,19 +90,13 @@ def join_to_cluster(selenium, browser_id, displays, clipboard):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_privilege_config_in_cluster(
-    selenium, browser_id, onepanel, where, user_name, config
-):
+def change_privilege_config_in_cluster(selenium, browser_id, where, user_name, config):
     member_type = "user"
     list_type = "users"
     option = "sets"
 
-    click_element_in_members_list(
-        selenium, browser_id, user_name, where, list_type, onepanel
-    )
-    see_privileges_for_member(
-        selenium, browser_id, where, member_type, user_name, onepanel
-    )
+    click_element_in_members_list(selenium, browser_id, user_name, where, list_type)
+    see_privileges_for_member(selenium, browser_id, where, member_type, user_name)
     try_setting_privileges_in_members_subpage(
         selenium,
         browser_id,
@@ -115,7 +104,6 @@ def change_privilege_config_in_cluster(
         member_type,
         where,
         config,
-        onepanel,
         option,
     )
 
@@ -129,7 +117,6 @@ def change_privilege_config_in_cluster(
 def add_group_to_cluster(
     selenium,
     browser_id,
-    onepanel,
     hosts,
     group_name,
     cluster_name,
@@ -151,19 +138,16 @@ def add_group_to_cluster(
         sidebar,
         menu_option,
         cluster_name,
-        onepanel,
         hosts,
     )
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, sub_item, where, member, onepanel
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, sub_item, where, member)
     for _ in range(5):
         try:
             wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
             break
         except TimeoutException:
             click_on_option_in_members_list_menu(
-                selenium, browser_id, sub_item, where, member, onepanel
+                selenium, browser_id, sub_item, where, member
             )
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
@@ -184,7 +168,6 @@ def no_member_in_parent(
     member_type,
     name,
     tmp_memory,
-    onepanel,
     where,
 ):
     try:
@@ -195,7 +178,6 @@ def no_member_in_parent(
             member_type,
             name,
             tmp_memory,
-            onepanel,
             where,
         )
     except RuntimeError:
