@@ -4,13 +4,18 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import json
 import re
 import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import (
+    WhichBrowser,
+    parse_seq,
+    sort_json_from_string,
+    transform,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -193,11 +198,7 @@ def wt_assert_items_presence_in_browser(
     selenium, browser_id, item_list, tmp_memory, which_browser
 ):
     assert_items_presence_in_browser(
-        selenium,
-        browser_id,
-        item_list,
-        tmp_memory,
-        which_browser=which_browser.value,
+        selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
     )
 
 
@@ -479,7 +480,7 @@ def click_on_state_view_mode_tab(
         driver.switch_to.default_content()
         header = f"{transform(which)}_header"
         getattr(getattr(oz_page(driver)["data"], header), transform(state))()
-    # if we make call to fast after changing view mode
+    # if we make call too fast after changing view mode
     # we do not see items in this mode, to avoid this wait some time
     time.sleep(0.5)
 
@@ -507,8 +508,8 @@ def click_menu_for_elem_in_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) "
-        'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
+        r"user of (?P<browser_id>.*) clicks on (?P<tag>.*tag.*|.*icon.*) "
+        r'for "(?P<item_name>.*)" (?P<type>.*) in (?P<which_browser>.*)'
     )
 )
 @wt(
@@ -528,23 +529,16 @@ def click_tag_for_elem_in_browser(
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that item named "
-        '"(?P<item_name>.*)" has "(?P<value>.*)" value in (?P<option>xattr) column '
-        "in (?P<which_browser>archive file browser|file browser)"
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
+        r"(?P<which_browser>archive file browser|file browser)"
     )
 )
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) sees that item named "
-        '"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
-        "(?P<which_browser>archive file browser|file browser)"
-    )
-)
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*) sees that item named "
-        '"(?P<item_name>.*)" has (?P<value>.*) (?P<option>replication '
-        "rate) in (?P<which_browser>archive file browser|file browser)"
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has (?P<value>.*) (?P<option>replication '
+        r"rate) in (?P<which_browser>archive file browser|file browser)"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -558,7 +552,73 @@ def assert_value_in_column_for_item(
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
+
     assert value == item_elem, err_msg
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" (?P<res>has|does not have)'
+        r' "(?P<value>.*)" value in (?P<option>xattr)'
+        r" column in (?P<which_browser>archive file browser|"
+        r"file browser)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that "
+        r'item named "(?P<item_name>.*)"'
+        r" (?P<res>has|does not have) '(?P<value>.*)'"
+        r" value in (?P<option>json) column "
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+def assert_value_in_xattr_or_json_column_for_item(
+    browser_id, item_name, res, value, option, which_browser, selenium, op_container
+):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+    item_elem = getattr(browser.data[item_name], option)
+    err_msg_prefix = f"displayed {option} value {item_elem} for {item_name}"
+
+    if option == "json":
+        if not item_elem.endswith("…"):  # json column is not truncated in UI
+            value = sort_json_from_string(value)
+            item_elem = json.loads(item_elem.replace("\n", ""))
+        else:
+            value = value.replace(" ", "")
+            item_elem = item_elem.replace("\n", "").replace(" ", "")
+
+    if res == "has":
+        err_msg = err_msg_prefix + f" does not match expected {value}"
+        assert value == item_elem, err_msg
+    else:
+        err_msg = err_msg_prefix + f" is not supposed to be equal to {value}"
+        assert value != item_elem, err_msg
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has no (?P<option>json|xattr) column '
+        r"in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+def assert_no_column_for_item(
+    browser_id, item_name, option, which_browser, selenium, op_container
+):
+    driver = selenium[browser_id]
+    browser = getattr(op_container(driver), transform(which_browser))
+
+    try:  # this try except block covers cases when xattr value doesn't exist
+        _ = getattr(browser.data[item_name], option)
+
+    except RuntimeError as e:
+        if "item found in" not in str(e):
+            raise AssertionError from e  # if the error does not match expected error
+            # The expected error:
+            # RuntimeError: no {} item found in {} in file browser in Oneprovider page
 
 
 @wt(
@@ -609,36 +669,6 @@ def compare_value_in_column_for_item(
     old_value = datetime.strptime(old_value, "%d %b %Y %H:%M:%S")
     err_msg = f"visible date time: {new_value} is not more current than {old_value}"
     assert new_value > old_value, err_msg
-
-
-@wt(
-    parsers.re(
-        "user of (?P<browser_id>.*) enables only (?P<columns>.*) "
-        "columns? in columns configuration popover in "
-        "(?P<which_browser>file browser|archive browser|"
-        "dataset browser) table"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_columns_to_be_visible_in_browser(
-    selenium, browser_id, columns, which_browser, tmp_memory, popups
-):
-    option_select = "select"
-    option_unselect = "unselect"
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    browser.configure_columns.click()
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
-    wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
-    )
-    columns = list(map(lambda s: s.lower(), parse_seq(columns)))
-    for column in columns_menu:
-        if column.name.lower() in columns:
-            getattr(columns_menu[column.name], option_select)()
-        else:
-            getattr(columns_menu[column.name], option_unselect)()
-    # hide columns menu popup
-    browser.configure_columns.click()
 
 
 @wt(

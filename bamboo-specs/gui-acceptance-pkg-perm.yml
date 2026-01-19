@@ -8,6 +8,7 @@ plan-permissions:
       - plgmstanisz
       - plgdutka
       - plgagneska
+      - wojciech
     groups:
       - plggveildev
     permissions:

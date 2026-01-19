@@ -28,7 +28,7 @@ from tests.gui.utils.core.web_elements import (
 
 
 class MembersHeaderRow(PageObject):
-    checkbox = Button("div.item-checkbox")
+    checkbox = Button("div.one-checkbox")
     search_bar = Input("input.form-control")
     menu_button = Button(
         "li.list-header-row .collapsible-toolbar-toggle.btn-menu-toggle"
@@ -129,7 +129,7 @@ class MembersPage(PageObject):
     )
 
     forbidden_alert = WebElement(".alert.forbidden")
-    bulk_edit_button = NamedButton(".btn", text="Bulk edit")
+    bulk_edit_button = Button(".header-row .btn")
 
     def close_member(self, driver):
         driver.execute_script("window.scrollBy(0,0)")

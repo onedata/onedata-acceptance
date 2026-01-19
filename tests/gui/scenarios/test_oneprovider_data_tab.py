@@ -13,6 +13,7 @@ from pytest import fixture, mark
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *

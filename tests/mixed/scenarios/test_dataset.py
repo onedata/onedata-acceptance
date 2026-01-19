@@ -8,6 +8,7 @@ from pytest_bdd import scenario, scenarios
 
 from tests.gui.conftest import *
 from tests.gui.meta_steps.oneprovider.browser import *
+from tests.gui.meta_steps.oneprovider.browser_columns_configuration import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.onezone import *

@@ -27,7 +27,7 @@ from tests.upgrade.utils.rest_utils import (
 from tests.upgrade.utils.upgrade_utils import (
     UpgradeTest,
     get_prov_version,
-    is_prov_version_lower_than,
+    is_version_lower_than,
 )
 from tests.utils.utils import repeat_failed
 
@@ -402,7 +402,7 @@ def compare_share_details(details_s, details_v):
 
 def compare_handle_details(details_s, details_v, tests_controller):
     # update xml metadata by publicHandle identifier
-    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+    if is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         public_handle = details_s["publicHandle"]
         root = ET.fromstring(details_s["metadata"])
         ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
@@ -420,19 +420,19 @@ def compare_handle_details(details_s, details_v, tests_controller):
 
     # the metadataPrefix field has been added in 21.02.5 and defaults to oai_dc for
     # preexisting records
-    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
+    if is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         details_s.update({"metadataPrefix": "oai_dc"})
-    if is_prov_version_lower_than(
+    if is_version_lower_than(
         get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.5"
     ):
         details_v.update({"metadataPrefix": "oai_dc"})
 
-    # the metadataPrefix has been renamed to metadataSchema in 21.02.9, but the
+    # the metadataPrefix has been renamed to metadataSchema in 25.0, but the
     # metadataPrefix is also retained in the payload for backward compatibility
-    if is_prov_version_lower_than(tests_controller.initial_prov_version, "21.02.9"):
+    if is_version_lower_than(tests_controller.initial_prov_version, "25.0"):
         details_s.update({"metadataSchema": "oai_dc"})
-    if is_prov_version_lower_than(
-        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "21.02.9"
+    if is_version_lower_than(
+        get_prov_version(tests_controller.hosts["oneprovider-1"]["hostname"]), "25.0"
     ):
         details_v.update({"metadataSchema": "oai_dc"})
 

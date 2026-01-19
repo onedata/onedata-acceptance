@@ -20,7 +20,7 @@ from tests.upgrade.utils.rest_utils import (
     set_file_json_metadata,
     set_file_rdf_metadata,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_prov_version_lower_than
+from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_version_lower_than
 
 SPACE_NAME = "space_posix"
 FILE_NAME = "file_meta"
@@ -77,7 +77,7 @@ def verify_metadata(tests_controller):
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
 
     expected_xattrs_meta = XATTRS_META.copy()
-    if not is_prov_version_lower_than(tests_controller.initial_prov_version, "22.0.0"):
+    if not is_version_lower_than(tests_controller.initial_prov_version, "26.0"):
         expected_xattrs_meta[1] = {"license2": "2"}
 
     assert formatted_res == expected_xattrs_meta, err_msg.format(
