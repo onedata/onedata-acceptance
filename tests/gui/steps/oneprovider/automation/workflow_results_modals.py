@@ -180,9 +180,9 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium, browser_id, op_container, store_name):
+def open_store_details_modal(selenium, browser_id, store_name):
     driver = selenium[browser_id]
-    page = get_op_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
     time.sleep(0.25)
     return Modals(driver).store_details
@@ -277,12 +277,11 @@ def open_url_from_store_content(
     option,
     store_name,
     selenium,
-    op_container,
     clipboard,
     displays,
 ):
 
-    modal = open_store_details_modal(selenium, browser_id, op_container, store_name)
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
     modal.copy_button()
     items = json.loads(clipboard.paste(display=displays[browser_id]))

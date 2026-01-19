@@ -37,7 +37,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_transfers_page(selenium, browser_id, provider, space, hosts, op_container):
+def open_transfers_page(selenium, browser_id, provider, space, hosts):
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
@@ -47,7 +47,7 @@ def open_transfers_page(selenium, browser_id, provider, space, hosts, op_contain
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
 
-    wait_for_transfers_page_to_load(selenium, browser_id, op_container)
+    wait_for_transfers_page_to_load(selenium, browser_id)
 
 
 @wt(
@@ -58,7 +58,7 @@ def open_transfers_page(selenium, browser_id, provider, space, hosts, op_contain
     )
 )
 def open_transfer_page_by_clicking_on_link(
-    browser_id, file, tmp_memory, selenium, link, op_container
+    browser_id, file, tmp_memory, selenium, link
 ):
     option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
@@ -67,7 +67,7 @@ def open_transfer_page_by_clicking_on_link(
         Modals(selenium[browser_id]).details_modal.data_distribution,
         transform(link),
     )()
-    wait_for_transfers_page_to_load(selenium, browser_id, op_container)
+    wait_for_transfers_page_to_load(selenium, browser_id)
 
 
 @wt(
@@ -95,8 +95,8 @@ def evict_file(selenium, browser_id, provider, file_name, tmp_memory, hosts):
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium, browser_id, provider, space, hosts, op_container
+    selenium, browser_id, provider, space, hosts
 ):
-    open_transfers_page(selenium, browser_id, provider, space, hosts, op_container)
-    wait_for_waiting_transfer_to_start(selenium, browser_id, op_container)
-    wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container)
+    open_transfers_page(selenium, browser_id, provider, space, hosts)
+    wait_for_waiting_transfer_to_start(selenium, browser_id)
+    wait_for_ongoing_tranfers_to_finish(selenium, browser_id)

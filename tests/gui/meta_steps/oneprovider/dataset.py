@@ -30,6 +30,7 @@ from tests.gui.steps.oneprovider.dataset import (
     fail_to_click_button_in_modal,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -50,7 +51,6 @@ def get_item_name_from_path(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     path,
     option_in_space,
@@ -59,12 +59,8 @@ def get_item_name_from_path(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option_in_space
     )
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, item_browser
-    )
-    go_to_path_without_last_elem(
-        selenium, browser_id, tmp_memory, path, op_container, item_browser
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser)
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path, item_browser)
     return path.split("/")[-1]
 
 
@@ -81,7 +77,6 @@ def create_dataset(
     item_name,
     space_name,
     selenium,
-    op_container,
     option,
 ):
     option_in_space = "Files"
@@ -90,14 +85,13 @@ def create_dataset(
     close_button = "X"
 
     try:
-        op_container(selenium[browser_id]).file_browser.breadcrumbs
+        OPLoggedIn(selenium[browser_id]).file_browser.breadcrumbs
     except RuntimeError:
         go_to_and_assert_browser(
             selenium,
             browser_id,
             space_name,
             option_in_space,
-            op_container,
             tmp_memory,
         )
 
@@ -107,7 +101,6 @@ def create_dataset(
             selenium,
             browser_id,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             option_in_space,
@@ -131,7 +124,6 @@ def fail_to_create_dataset_in_op_gui(
     item_name,
     space_name,
     selenium,
-    op_container,
 ):
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
@@ -141,7 +133,6 @@ def fail_to_create_dataset_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
     )
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
@@ -157,7 +148,6 @@ def assert_top_level_dataset_in_space_in_op_gui(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     option,
@@ -169,7 +159,6 @@ def assert_top_level_dataset_in_space_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -195,7 +184,6 @@ def remove_dataset_in_op_gui(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
 ):
@@ -208,7 +196,6 @@ def remove_dataset_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -229,7 +216,6 @@ def check_dataset_structure_in_op_gui(
     browser_id,
     space_name,
     config,
-    op_container,
     tmpdir,
     tmp_memory,
 ):
@@ -242,7 +228,6 @@ def check_dataset_structure_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -251,7 +236,6 @@ def check_dataset_structure_in_op_gui(
         config,
         selenium,
         tmp_memory,
-        op_container,
         tmpdir,
         which_browser=item_browser,
     )
@@ -261,7 +245,6 @@ def check_effective_protection_flags_for_file_in_op_gui(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     option,
@@ -273,12 +256,9 @@ def check_effective_protection_flags_for_file_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
     )
-    go_to_path_without_last_elem(
-        selenium, browser_id, tmp_memory, item_name, op_container
-    )
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory, item_name)
     item_name = item_name.split("/")[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(
@@ -305,7 +285,6 @@ def set_protection_flags_for_dataset_in_op_gui(
     browser_id,
     selenium,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     option,
@@ -318,7 +297,6 @@ def set_protection_flags_for_dataset_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -327,7 +305,6 @@ def set_protection_flags_for_dataset_in_op_gui(
         browser_id,
         tmp_memory,
         item_name,
-        op_container,
         item_browser=item_browser,
     )
     item_name = item_name.split("/")[-1]
@@ -352,7 +329,6 @@ def detach_dataset_in_op_gui(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
 ):
@@ -366,7 +342,6 @@ def detach_dataset_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -387,7 +362,6 @@ def assert_dataset_detached_in_op_gui(
     browser_id,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
 ):
     option_in_space = "Datasets, Archives"
@@ -399,7 +373,6 @@ def assert_dataset_detached_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -407,7 +380,6 @@ def assert_dataset_detached_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -420,7 +392,6 @@ def reattach_dataset_in_op_gui(
     selenium,
     browser_id,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
 ):
@@ -436,7 +407,6 @@ def reattach_dataset_in_op_gui(
         browser_id,
         space_name,
         option_in_space,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )
@@ -444,7 +414,6 @@ def reattach_dataset_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=item_browser,
     )

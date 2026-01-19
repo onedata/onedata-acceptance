@@ -55,7 +55,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.utils import Modals, Popups
+from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -194,7 +194,6 @@ def execute_workflow_with_input_config(
     browser_id,
     selenium,
     space,
-    op_container,
     ordinal,
     workflow,
     config,
@@ -219,7 +218,6 @@ def execute_workflow_with_input_config(
         browser_id,
         selenium,
         space,
-        op_container,
         ordinal,
         workflow,
         config,
@@ -230,7 +228,6 @@ def _execute_workflow_with_input_config(
     browser_id,
     selenium,
     space,
-    op_container,
     ordinal,
     workflow,
     config,
@@ -246,10 +243,8 @@ def _execute_workflow_with_input_config(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, automation_workflows
     )
-    click_button_in_navigation_tab(selenium, browser_id, op_container, tab_name)
-    choose_workflow_revision_to_run(
-        selenium, browser_id, op_container, ordinal, workflow
-    )
+    click_button_in_navigation_tab(selenium, browser_id, tab_name)
+    choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
 
     # wait a moment for workflow revision to open
     time.sleep(1)
@@ -257,27 +252,23 @@ def _execute_workflow_with_input_config(
     data = yaml.load(config, yaml.Loader)
     for store in data:
         driver = selenium[browser_id]
-        data_type = get_data_type_in_initial_value_store(driver, op_container, store)
+        data_type = get_data_type_in_initial_value_store(driver, store)
         if data_type == "FILE":
             file_list = data[store]
             choose_file_as_initial_workflow_value_for_store(
                 selenium,
                 browser_id,
                 file_list,
-                op_container,
                 store,
             )
         elif data_type == "ARRAY":
             item_list = data[store]
-            array_store_type = get_data_type_of_array_initial_value_store(
-                driver, op_container, store
-            )
+            array_store_type = get_data_type_of_array_initial_value_store(driver, store)
             if array_store_type == "group":
                 choose_group_as_initial_workflow_value_for_store(
                     selenium,
                     browser_id,
                     item_list,
-                    op_container,
                     store,
                 )
             elif array_store_type == "file":
@@ -285,27 +276,22 @@ def _execute_workflow_with_input_config(
                     selenium,
                     browser_id,
                     item_list,
-                    op_container,
                     store,
                 )
             else:
                 raise ValueError(f"unknown data type {array_store_type}")
         elif data_type == "OBJECT":
             text = data[store][0]
-            provide_text_to_object_initial_workflow_value_store(
-                driver, op_container, store, text
-            )
+            provide_text_to_object_initial_workflow_value_store(driver, store, text)
         elif data_type == "STRING":
             text = data[store][0]
-            provide_text_to_string_initial_workflow_value_store(
-                driver, op_container, store, text
-            )
+            provide_text_to_string_initial_workflow_value_store(driver, store, text)
         else:
             raise ValueError(f"unknown data type {data_type}")
 
-    confirm_workflow_to_execute(selenium, browser_id, op_container)
-    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container)
-    expand_first_executed_workflow_record(selenium, browser_id, op_container)
+    confirm_workflow_to_execute(selenium, browser_id)
+    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id)
+    expand_first_executed_workflow_record(selenium, browser_id)
 
 
 @wt(
@@ -321,7 +307,6 @@ def execute_workflow_and_wait(
     browser_id,
     selenium,
     space,
-    op_container,
     ordinal,
     workflow,
     item_list,
@@ -332,15 +317,14 @@ def execute_workflow_and_wait(
         browser_id,
         selenium,
         space,
-        op_container,
         ordinal,
         workflow,
         item_list,
         data_type,
     )
 
-    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container)
-    expand_first_executed_workflow_record(selenium, browser_id, op_container)
+    wait_for_workflow_execution_in_atm_subpage(selenium, browser_id)
+    expand_first_executed_workflow_record(selenium, browser_id)
 
 
 @wt(
@@ -355,7 +339,6 @@ def execute_workflow(
     browser_id,
     selenium,
     space,
-    op_container,
     ordinal,
     workflow,
     item_list,
@@ -370,39 +353,35 @@ def execute_workflow(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, automation_workflows
     )
-    click_button_in_navigation_tab(selenium, browser_id, op_container, tab_name)
-    choose_workflow_revision_to_run(
-        selenium, browser_id, op_container, ordinal, workflow
-    )
+    click_button_in_navigation_tab(selenium, browser_id, tab_name)
+    choose_workflow_revision_to_run(selenium, browser_id, ordinal, workflow)
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
         item_list = literal_eval(item_list)
         if isinstance(item_list, list):
             for item in item_list:
-                choose_range_as_initial_workflow_value(
-                    selenium, browser_id, op_container, item
-                )
+                choose_range_as_initial_workflow_value(selenium, browser_id, item)
         else:
             choose_range_as_initial_workflow_value(
-                selenium, browser_id, op_container, item_list, False
+                selenium, browser_id, item_list, False
             )
     elif "number" in data_type:
         items = literal_eval(item_list)
         if isinstance(items, list):
             for number in items:
-                numbers = get_input_element(op_container, driver, "numbers_input")
+                numbers = get_input_element(driver, "numbers_input")
                 numbers[len(numbers) - 1].input = str(number)
         else:
-            numbers = op_container(driver).automation_page.numbers_input
+            numbers = OPLoggedIn(driver).automation_page.numbers_input
             numbers[len(numbers) - 1].input = str(item_list)
     elif "string" in data_type:
-        op_container(driver).automation_page.string_input.input = item_list
+        OPLoggedIn(driver).automation_page.string_input.input = item_list
     elif "boolean" in data_type:
         items = json.loads(item_list)
         if isinstance(items, list):
             for boolean in items:
-                booleans = get_input_element(op_container, driver, "booleans_input")
+                booleans = get_input_element(driver, "booleans_input")
                 booleans[len(booleans) - 1].click()
                 Popups(driver).boolean_values.options[str(boolean).lower()].click()
     else:
@@ -410,11 +389,10 @@ def execute_workflow(
             selenium,
             browser_id,
             item_list,
-            op_container,
             data_type,
         )
 
-    confirm_workflow_to_execute(selenium, browser_id, op_container)
+    confirm_workflow_to_execute(selenium, browser_id)
 
 
 @wt(

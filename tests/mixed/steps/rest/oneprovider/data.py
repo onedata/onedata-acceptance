@@ -20,6 +20,7 @@ from oneprovider_client import (
 from oneprovider_client.rest import ApiException as OPException
 
 from tests import OP_REST_PORT
+from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 from tests.mixed.utils.common import login_to_cdmi, login_to_provider
@@ -217,7 +218,7 @@ def create_item_in_op_rest(
 
 
 def assert_ace_in_op_rest(
-    user, users, host, hosts, cdmi, numerals, path, num, priv, item_type, name
+    user, users, host, hosts, numerals, path, num, priv, item_type, name
 ):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
@@ -225,7 +226,7 @@ def assert_ace_in_op_rest(
 
 
 def grant_acl_privileges_in_op_rest(
-    user, users, host, hosts, cdmi, path, priv, item_type, name, groups
+    user, users, host, hosts, path, priv, item_type, name, groups
 ):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     try:
@@ -236,12 +237,12 @@ def grant_acl_privileges_in_op_rest(
     client.write_metadata(path, {"cdmi_acl": acl})
 
 
-def write_to_file_in_op_rest(user, users, host, hosts, cdmi, path, text, offset=0):
+def write_to_file_in_op_rest(user, users, host, hosts, path, text, offset=0):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_to_file(path, text, offset)
 
 
-def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path, text):
+def append_to_file_in_op_rest(user, users, host, hosts, path, text):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     try:
@@ -252,7 +253,7 @@ def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path, text):
         client.write_to_file(path, text, file_size)
 
 
-def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user, users):
+def move_item_in_op_rest(src_path, dst_path, result, host, hosts, user, users):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if result == "fails":
         with pytest.raises(HTTPError):
@@ -262,7 +263,7 @@ def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user, us
 
 
 def move_item_in_op_rest_using_token(
-    src_path, dst_path, result, host, hosts, user, _users, tmp_memory, cdmi
+    src_path, dst_path, result, host, hosts, user, tmp_memory
 ):
     access_token = tmp_memory[user]["mailbox"].get("token", None)
     client = cdmi(hosts[host]["hostname"], access_token)
@@ -273,7 +274,7 @@ def move_item_in_op_rest_using_token(
         client.move_item(src_path, dst_path)
 
 
-def copy_item_in_op_rest(src_path, dst_path, cdmi, host, hosts, user, users):
+def copy_item_in_op_rest(src_path, dst_path, host, hosts, user, users):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.copy_item(src_path, dst_path)
 
@@ -305,7 +306,7 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts, resul
         file_api.set_attr(file_id, attribute={"mode": perm})
 
 
-def get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts, time_name):
+def get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     attr = time_attr(time_name, "cdmi")
@@ -323,7 +324,6 @@ def compare_file_time_with_copied_time_in_op_rest(
     path,
     user,
     users,
-    cdmi,
     host,
     hosts,
     time_name1,
@@ -331,9 +331,7 @@ def compare_file_time_with_copied_time_in_op_rest(
     comparator,
     time_name2,
 ):
-    time1 = get_time_for_file_in_op_rest(
-        path, user, users, cdmi, host, hosts, time_name1
-    )
+    time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name1)
     err_msg = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
         f"Time2: {time_name2} = {time2} \nComparator: {comparator}"
@@ -351,14 +349,9 @@ def assert_files_time_relation_in_op_rest(
     hosts,
     user,
     users,
-    cdmi,
 ):
-    time1 = get_time_for_file_in_op_rest(
-        path, user, users, cdmi, host, hosts, time1_name
-    )
-    time2 = get_time_for_file_in_op_rest(
-        path2, user, users, cdmi, host, hosts, time2_name
-    )
+    time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time1_name)
+    time2 = get_time_for_file_in_op_rest(path2, user, users, host, hosts, time2_name)
 
     err_msg = (
         f"Time comparison failed. \nTime1: {time1_name} = {time1} \n"
@@ -369,7 +362,7 @@ def assert_files_time_relation_in_op_rest(
 
 
 def assert_time_relation_in_op_rest(
-    path, time1_name, time2_name, comparator, host, hosts, user, users, cdmi
+    path, time1_name, time2_name, comparator, host, hosts, user, users
 ):
     assert_files_time_relation_in_op_rest(
         path,
@@ -381,7 +374,6 @@ def assert_time_relation_in_op_rest(
         hosts,
         user,
         users,
-        cdmi,
     )
 
 

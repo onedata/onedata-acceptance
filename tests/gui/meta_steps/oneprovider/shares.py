@@ -71,7 +71,6 @@ def open_single_share_view_by_modal(
     selenium,
     browser_id,
     share_name,
-    op_container,
     tmp_memory,
     item_name,
 ):
@@ -83,10 +82,8 @@ def open_single_share_view_by_modal(
         browser_id, status_type, item_name, tmp_memory
     )
     click_share_details_link_in_shares_panel(selenium, browser_id, share_name)
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, items_browser
-    )
-    is_selected_share_named(selenium, browser_id, share_name, op_container)
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, items_browser)
+    is_selected_share_named(selenium, browser_id, share_name)
 
 
 @wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
@@ -103,12 +100,12 @@ def create_another_share(selenium, browser_id, share_name):
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_current_share(selenium, browser_id, op_container, tmp_memory):
+def remove_current_share(selenium, browser_id, tmp_memory):
     option = "Remove"
     modal_name = "Remove share"
     button = "Remove"
 
-    click_menu_button_on_shares_page(selenium, browser_id, op_container)
+    click_menu_button_on_shares_page(selenium, browser_id)
     click_option_in_share_row_menu(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, button, modal_name)
@@ -116,18 +113,14 @@ def remove_current_share(selenium, browser_id, op_container, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} opens shares view of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_shares_view_of_given_space(
-    selenium, browser_id, space_name, op_container, tmp_memory
-):
+def open_shares_view_of_given_space(selenium, browser_id, space_name, tmp_memory):
     option = "Shares, Public Data"
     items_browser = "shares_browser"
 
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option
     )
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, items_browser
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, items_browser)
 
 
 @wt(
@@ -141,17 +134,12 @@ def open_single_share_view_by_sidebar(
     selenium,
     browser_id,
     share_name,
-    op_container,
     tmp_memory,
     space_name,
 ):
-    open_shares_view_of_given_space(
-        selenium, browser_id, space_name, op_container, tmp_memory
-    )
-    click_share_in_shares_browser(selenium, browser_id, share_name, op_container)
-    change_shares_browser_to_file_browser(
-        selenium, browser_id, op_container, tmp_memory
-    )
+    open_shares_view_of_given_space(selenium, browser_id, space_name, tmp_memory)
+    click_share_in_shares_browser(selenium, browser_id, share_name)
+    change_shares_browser_to_file_browser(selenium, browser_id, tmp_memory)
 
 
 @wt(
@@ -204,19 +192,17 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_share_from_single_view(
-    selenium, browser_id, new_name, op_container, tmp_memory
-):
+def rename_share_from_single_view(selenium, browser_id, new_name, tmp_memory):
     option = "Rename"
     modal_name = "Rename share"
     button = "Rename"
 
-    click_menu_button_on_shares_page(selenium, browser_id, op_container)
+    click_menu_button_on_shares_page(selenium, browser_id)
     click_option_in_share_row_menu(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name, modal_name)
     click_modal_button(selenium, browser_id, button, modal_name)
-    is_selected_share_named(selenium, browser_id, new_name, op_container)
+    is_selected_share_named(selenium, browser_id, new_name)
 
 
 @wt(

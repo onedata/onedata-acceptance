@@ -25,9 +25,8 @@ def assert_item_in_file_browser_in_shares_page(
     selenium,
     browser_id,
     item_name,
-    op_container,
 ):
-    shares_file_browser = op_container(
+    shares_file_browser = OPLoggedIn(
         selenium[browser_id]
     ).shares_page.shares_file_browser
     data = {f.name for f in shares_file_browser.data}
@@ -41,8 +40,8 @@ def assert_item_in_file_browser_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_share_abs_path_correct(selenium, browser_id, path, op_container):
-    displayed_path = op_container(selenium[browser_id]).shares_page.path.pwd()
+def is_share_abs_path_correct(selenium, browser_id, path):
+    displayed_path = OPLoggedIn(selenium[browser_id]).shares_page.path.pwd()
     assert (
         displayed_path == path
     ), f"displayed share absolute path is {displayed_path} instead of expected {path}"
@@ -55,8 +54,8 @@ def is_share_abs_path_correct(selenium, browser_id, path, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_cwd_correct(selenium, browser_id, cwd, op_container):
-    displayed_cwd = op_container(selenium[browser_id]).shares_page.breadcrumbs.pwd()
+def is_cwd_correct(selenium, browser_id, cwd):
+    displayed_cwd = OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.pwd()
     assert displayed_cwd == cwd, (
         "displayed share cwd in file browser"
         f" is {displayed_cwd} "
@@ -71,14 +70,14 @@ def is_cwd_correct(selenium, browser_id, cwd, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_dir_in_abs_path(selenium, browser_id, path, op_container):
-    op_container(selenium[browser_id]).shares_page.path.chdir(path)
+def click_on_dir_in_abs_path(selenium, browser_id, path):
+    OPLoggedIn(selenium[browser_id]).shares_page.path.chdir(path)
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy icon on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_on_shares_view(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.copy_icon()
+def click_copy_icon_on_shares_view(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon()
 
 
 @wt(parsers.parse("user of {browser_id} copies URL"))
@@ -94,8 +93,8 @@ def copy_current_url(selenium, browser_id, clipboard, displays):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_selected_share_named(selenium, browser_id, share_name, op_container):
-    displayed_name = op_container(selenium[browser_id]).shares_page.name
+def is_selected_share_named(selenium, browser_id, share_name):
+    displayed_name = OPLoggedIn(selenium[browser_id]).shares_page.name
     assert (
         displayed_name == share_name
     ), f'displayed share name is "{displayed_name}" instead of expected "{share_name}"'
@@ -103,8 +102,8 @@ def is_selected_share_named(selenium, browser_id, share_name, op_container):
 
 @wt(parsers.parse("user of {browser_id} clicks on menu on share view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_button_on_shares_page(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.menu_button.click()
+def click_menu_button_on_shares_page(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.menu_button.click()
 
 
 @wt(
@@ -125,14 +124,14 @@ def click_option_in_share_row_menu(selenium, browser_id, option):
 
 @wt(parsers.parse("user of {browser_id} sees there are no shares on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def no_shares_message(selenium, browser_id, op_container):
+def no_shares_message(selenium, browser_id):
     driver = selenium[browser_id]
     try:
-        msg = op_container(driver).shares_page.no_shares_msg
+        msg = OPLoggedIn(driver).shares_page.no_shares_msg
     except RuntimeError:
         driver.refresh()
         switch_to_iframe(selenium, browser_id)
-        msg = op_container(driver).shares_page.no_shares_msg
+        msg = OPLoggedIn(driver).shares_page.no_shares_msg
     assert (
         "no shares" in msg.lower()
     ), "There are shares on the view but shouldn't be any"
@@ -144,10 +143,8 @@ def no_shares_message(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_share_in_shares_browser_in_shares_page(
-    selenium, browser_id, op_container, share_name
-):
-    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id, share_name):
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
     assert share_name not in shares_browser, f"Share {share_name} in shares browser"
 
 
@@ -157,10 +154,8 @@ def assert_not_share_in_shares_browser_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_share_in_shares_browser_in_shares_page(
-    selenium, browser_id, op_container, share_name
-):
-    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+def assert_share_in_shares_browser_in_shares_page(selenium, browser_id, share_name):
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
 
 
@@ -172,10 +167,8 @@ def assert_share_in_shares_browser_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_share_point_to_del_dir_on_list(
-    selenium, browser_id, op_container, share_name
-):
-    shares_browser = op_container(selenium[browser_id]).shares_page.shares_browser
+def assert_share_point_to_del_dir_on_list(selenium, browser_id, share_name):
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
     share = shares_browser[share_name]
     assert (
@@ -189,10 +182,8 @@ def assert_share_point_to_del_dir_on_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_shares_browser(
-    selenium, browser_id, item_name, op_container
-):
-    browser = op_container(selenium[browser_id]).shares_page.shares_browser
+def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name):
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
     browser[item_name].menu_button.click()
 
 
@@ -203,8 +194,8 @@ def click_menu_for_elem_in_shares_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_in_shares_browser(selenium, browser_id, share_name, op_container):
-    browser = op_container(selenium[browser_id]).shares_page.shares_browser
+def click_share_in_shares_browser(selenium, browser_id, share_name):
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
     browser[share_name].click()
 
 
@@ -212,10 +203,8 @@ def click_share_in_shares_browser(selenium, browser_id, share_name, op_container
     parsers.parse("user of {browser_id} sees share's file browser on single share view")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_shares_browser_to_file_browser(
-    selenium, browser_id, op_container, tmp_memory
-):
-    browser = op_container(selenium[browser_id]).file_browser
+def change_shares_browser_to_file_browser(selenium, browser_id, tmp_memory):
+    browser = OPLoggedIn(selenium[browser_id]).file_browser
     tmp_memory[browser_id]["shares_file_browser"] = browser
 
 
@@ -226,8 +215,8 @@ def change_shares_browser_to_file_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_container):
-    op_container(selenium[browser_id]).shares_page.breadcrumbs.chdir(path)
+def change_cwd_using_breadcrumbs(selenium, browser_id, path):
+    OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.chdir(path)
 
 
 @wt(
@@ -238,8 +227,8 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.breadcrumbs.space_root()
+def change_cwd_to_home_using_breadcrumbs(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.space_root()
 
 
 @wt(
@@ -248,8 +237,8 @@ def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_urls_are_equal(selenium, browser_id, op_container, clipboard, displays):
-    share_url = op_container(selenium[browser_id]).shares_page.url
+def check_urls_are_equal(selenium, browser_id, clipboard, displays):
+    share_url = OPLoggedIn(selenium[browser_id]).shares_page.url
     modal_url = clipboard.paste(display=displays[browser_id])
     err_msg = f"modal URL is {modal_url} and share URL is {share_url}"
     assert share_url == modal_url, err_msg
@@ -257,16 +246,16 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard, displays
 
 @wt(parsers.parse("user of {browser_id} copies share REST endpoint on shares view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_share_link(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.copy_icon()
+def copy_share_link(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.copy_icon()
 
 
 @wt(
     parsers.parse("user of {browser_id} clicks share link type selector on shares view")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_link_type_selector(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.link_type_selector()
+def click_share_link_type_selector(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.link_type_selector()
 
 
 @wt(
@@ -282,8 +271,8 @@ def choose_share_link_type(selenium, browser_id, url_type):
 
 @wt(parsers.parse("user of {browser_id} opens description tab on share view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_description_tab(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.description_tab()
+def open_description_tab(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.description_tab()
 
 
 @wt(
@@ -292,8 +281,8 @@ def open_description_tab(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_description_button(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.create_description()
+def click_add_description_button(selenium, browser_id):
+    OPLoggedIn(selenium[browser_id]).shares_page.create_description()
 
 
 @wt(
@@ -303,13 +292,13 @@ def click_add_description_button(selenium, browser_id, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def append_description(selenium, browser_id, description, op_container):
+def append_description(selenium, browser_id, description):
     driver = selenium[browser_id]
 
     # check if editor is in preview or edit mode
-    if op_container(driver).shares_page.editor_mode == "Edit Markdown":
-        op_container(driver).shares_page.switch_editor_markdown()
-    op_container(driver).shares_page.description_input += description
+    if OPLoggedIn(driver).shares_page.editor_mode == "Edit Markdown":
+        OPLoggedIn(driver).shares_page.switch_editor_markdown()
+    OPLoggedIn(driver).shares_page.description_input += description
 
 
 @wt(
@@ -318,9 +307,9 @@ def append_description(selenium, browser_id, description, op_container):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def save_description_changes(selenium, browser_id, op_container):
+def save_description_changes(selenium, browser_id):
     driver = selenium[browser_id]
-    op_container(driver).shares_page.save_description()
+    OPLoggedIn(driver).shares_page.save_description()
 
 
 @wt(

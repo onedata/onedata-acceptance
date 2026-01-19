@@ -38,11 +38,11 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def open_initial_modal(data_type, op_container, driver):
+def open_initial_modal(data_type, driver):
     if "dataset" in data_type:
-        open_select_initial_datasets_modal(op_container, driver)
+        open_select_initial_datasets_modal(driver)
     else:
-        open_select_initial_files_modal(op_container, driver)
+        open_select_initial_files_modal(driver)
 
 
 def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
@@ -55,7 +55,7 @@ def go_to_path_and_return_file_name_in_modal(path, driver, modal_name):
     return path
 
 
-def select_initial_items_for_workflow_in_modal(files, driver, data_type, op_container):
+def select_initial_items_for_workflow_in_modal(files, driver, data_type):
     if not isinstance(files, list):
         files = parse_seq(files)
 
@@ -73,7 +73,7 @@ def select_initial_items_for_workflow_in_modal(files, driver, data_type, op_cont
                 # wait a moment for modal to close
                 time.sleep(0.25)
                 if file_name != files[-1].split("/")[-1]:
-                    open_initial_modal(data_type, op_container, driver)
+                    open_initial_modal(data_type, driver)
                     # wait a moment for modal to open
                     time.sleep(0.25)
                 break
@@ -89,41 +89,35 @@ def select_initial_items_for_workflow_in_modal(files, driver, data_type, op_cont
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium, browser_id, file_list, op_container, store_name
+    selenium, browser_id, file_list, store_name
 ):
     data_type = "file"
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_files_modal(op_container, driver, store_name)
-    select_initial_items_for_workflow_in_modal(
-        file_list, driver, data_type, op_container
-    )
+    open_select_initial_files_modal(driver, store_name)
+    select_initial_items_for_workflow_in_modal(file_list, driver, data_type)
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium, browser_id, group_list, op_container, store_name
+    selenium, browser_id, group_list, store_name
 ):
 
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_select_initial_groups_modal(op_container, selenium, browser_id, store_name)
+    open_select_initial_groups_modal(selenium, browser_id, store_name)
     Modals(driver).select_groups.select(group_list)
 
 
-def provide_text_to_object_initial_workflow_value_store(
-    driver, op_container, store_name, text
-):
-    store = get_initial_value_store(driver, op_container, store_name)
+def provide_text_to_object_initial_workflow_value_store(driver, store_name, text):
+    store = get_initial_value_store(driver, store_name)
     store.content.send_keys([Keys.CONTROL, "a", Keys.BACKSPACE])
     text = str(text).replace("'", '"')
     store.content.send_keys(text)
 
 
-def provide_text_to_string_initial_workflow_value_store(
-    driver, op_container, store_name, text
-):
-    store = get_initial_value_store(driver, op_container, store_name)
+def provide_text_to_string_initial_workflow_value_store(driver, store_name, text):
+    store = get_initial_value_store(driver, store_name)
     store.input = text
 
 
@@ -138,13 +132,12 @@ def fails_to_choose_directory_as_initial_workflow_value(
     selenium,
     browser_id,
     dir_name,
-    op_container,
     expected_err_msg,
 ):
     data_type = "directory"
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_initial_modal(data_type, op_container, driver)
+    open_initial_modal(data_type, driver)
     Modals(driver).select_files.files[dir_name].click()
     actual_err_msg = Modals(driver).select_files.error_msg
     assert actual_err_msg == expected_err_msg, (
@@ -160,16 +153,12 @@ def fails_to_choose_directory_as_initial_workflow_value(
         'workflow in "Select files" modal'
     )
 )
-def choose_file_as_initial_workflow_value(
-    selenium, browser_id, file_list, op_container, data_type
-):
+def choose_file_as_initial_workflow_value(selenium, browser_id, file_list, data_type):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
-    open_initial_modal(data_type, op_container, driver)
+    open_initial_modal(data_type, driver)
 
-    select_initial_items_for_workflow_in_modal(
-        file_list, driver, data_type, op_container
-    )
+    select_initial_items_for_workflow_in_modal(file_list, driver, data_type)
 
 
 @wt(
@@ -181,12 +170,8 @@ def choose_file_as_initial_workflow_value(
     interval=1,
     timeout=360,
 )
-def wait_for_workflows_in_automation_subpage(
-    selenium, browser_id, op_container, option
-):
-    _wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, option
-    )
+def wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
+    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
 @wt(
@@ -201,40 +186,32 @@ def wait_for_workflows_in_automation_subpage(
     exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflows_in_automation_subpage_extended_time(
-    selenium, browser_id, op_container, option
+    selenium, browser_id, option
 ):
-    _wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, option
-    )
+    _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
-def wait_for_workflow_execution_in_atm_subpage(selenium, browser_id, op_container):
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, "start"
-    )
-    wait_for_workflows_in_automation_subpage(
-        selenium, browser_id, op_container, "finish"
-    )
-    assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id, op_container)
+def wait_for_workflow_execution_in_atm_subpage(selenium, browser_id):
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
+    wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
+    assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
 
 
-def _wait_for_workflows_in_automation_subpage(
-    selenium, browser_id, op_container, option
-):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+def _wait_for_workflows_in_automation_subpage(selenium, browser_id, option):
+    page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
-        change_tab_in_automation_subpage(selenium, browser_id, op_container, "Waiting")
+        change_tab_in_automation_subpage(selenium, browser_id, "Waiting")
         err = "Waiting workflows did not start"
     else:
-        change_tab_in_automation_subpage(selenium, browser_id, op_container, "Ongoing")
+        change_tab_in_automation_subpage(selenium, browser_id, "Ongoing")
         err = "Ongoing workflows did not finish their run"
 
     assert len(page.workflow_executions_list) == 0, err
 
 
-def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id, op_container):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    change_tab_in_automation_subpage(selenium, browser_id, op_container, "Suspended")
+def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id):
+    page = switch_to_automation_page(selenium, browser_id)
+    change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
     err_msg = "Workflow did not finished successfully and it is in suspended state."
     assert len(page.workflow_executions_list) == 0, err_msg
 
@@ -246,21 +223,15 @@ def assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id, op_contai
         '"{expected_status}"'
     )
 )
-def await_for_task_status(
-    selenium, browser_id, op_container, lane, task, ordinal, expected_status
-):
+def await_for_task_status(selenium, browser_id, lane, task, ordinal, expected_status):
     click = "clicks on"
     close = "closes"
 
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, click
-    )
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     await_for_task_status_in_parallel_box(
-        selenium, browser_id, op_container, lane, task, ordinal, expected_status
+        selenium, browser_id, lane, task, ordinal, expected_status
     )
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, close
-    )
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 
 @wt(

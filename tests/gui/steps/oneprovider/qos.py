@@ -14,7 +14,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
-from tests.gui.utils import Modals, Popups
+from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
@@ -510,11 +510,11 @@ def assert_button_disabled_in_qos_panel(selenium, browser_id, button):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_status_in_browser(
-    selenium, browser_id, op_container, status, item_name, which_browser
+    selenium, browser_id, status, item_name, which_browser
 ):
 
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     vis_status = getattr(browser.data[item_name], "qos_status")
     err_msg = (
         f"status {status} for item {item_name} is not displayed in {which_browser}"
@@ -532,9 +532,7 @@ def assert_qos_status_in_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_qos_status_in_browser(
-    selenium, browser_id, op_container, item_name, which_browser
-):
+def click_qos_status_in_browser(selenium, browser_id, item_name, which_browser):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     getattr(browser.data[item_name], "qos_status").click()

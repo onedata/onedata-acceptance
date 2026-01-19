@@ -79,12 +79,11 @@ def add_qos_requirement_in_modal(
     item_name,
     tmp_memory,
     expression,
-    op_container,
     space_name,
 ):
     replicas_number = 1
 
-    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space_name)
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
@@ -110,10 +109,9 @@ def add_qos_requirement_in_modal_with_replicas(
     tmp_memory,
     expression,
     space_name,
-    op_container,
     replicas_number,
 ):
-    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space_name)
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
@@ -188,7 +186,6 @@ def assert_qos_file_status_in_op_gui(
     space_name,
     tmp_memory,
     selenium,
-    op_container,
     option,
 ):
     option_of_space = "Files"
@@ -196,9 +193,7 @@ def assert_qos_file_status_in_op_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, option_of_space
     )
-    assert_browser_in_tab_in_op(
-        selenium, user, op_container, tmp_memory, "file browser"
-    )
+    assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     if option == "has some":
         assert_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
     else:
@@ -213,16 +208,13 @@ def delete_qos_requirement_in_op_gui(
     space_name,
     file_name,
     tmp_memory,
-    op_container,
 ):
     option1 = "Files"
     status_type = "QoS"
     button = "X"
     modal = "Details modal"
     click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
-    assert_browser_in_tab_in_op(
-        selenium, user, op_container, tmp_memory, "file browser"
-    )
+    assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     click_on_status_tag_for_file_in_file_browser(
         user, status_type, file_name, tmp_memory
     )

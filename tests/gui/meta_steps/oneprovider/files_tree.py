@@ -51,7 +51,6 @@ def check_tree_browser(
     selenium,
     user,
     tmp_memory,
-    op_container,
     tmpdir,
     which_browser,
 ):
@@ -69,7 +68,6 @@ def check_tree_browser(
                 user,
                 child.name,
                 tmp_memory,
-                op_container,
                 which_browser,
             )
             if child.content is not None:
@@ -83,12 +81,11 @@ def check_tree_browser(
                     selenium,
                     user,
                     tmp_memory,
-                    op_container,
                     tmpdir,
                     which_browser,
                 )
             go_one_back_using_breadcrumbs_in_data_tab_in_op(
-                selenium, user, op_container, which_browser
+                selenium, user, which_browser
             )
         elif child.content is not None:
             click_and_press_enter_on_item_in_browser(
@@ -96,7 +93,6 @@ def check_tree_browser(
                 user,
                 child.name,
                 tmp_memory,
-                op_container,
                 which_browser,
             )
             has_downloaded_file_content(user, child.name, str(child.content), tmpdir)
@@ -122,7 +118,6 @@ def wt_check_file_structure_in_browser(
     config,
     selenium,
     tmp_memory,
-    op_container,
     tmpdir,
     which_browser,
 ):
@@ -131,7 +126,6 @@ def wt_check_file_structure_in_browser(
         config,
         selenium,
         tmp_memory,
-        op_container,
         tmpdir,
         which_browser=which_browser,
     )
@@ -142,7 +136,6 @@ def check_file_structure_in_browser(
     config,
     selenium,
     tmp_memory,
-    op_container,
     tmpdir,
     which_browser="file browser",
 ):
@@ -153,7 +146,6 @@ def check_file_structure_in_browser(
         selenium,
         browser_id,
         tmp_memory,
-        op_container,
         tmpdir,
         which_browser,
     )

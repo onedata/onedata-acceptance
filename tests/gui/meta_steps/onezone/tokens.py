@@ -769,14 +769,13 @@ def _copy_object_id(
     tmp_memory,
     name,
     space,
-    op_container,
 ):
     option = "Information"
     button = "File ID"
     modal = "File details"
 
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, user, name, space, tmp_memory, op_container
+        selenium, user, name, space, tmp_memory
     )
     click_option_in_data_row_menu_in_browser(selenium, user, option)
     click_modal_button(selenium, user, button, modal)
@@ -803,7 +802,6 @@ def create_token_with_object_id(
     tmp_memory,
     name,
     space,
-    op_container,
 ):
 
     option = "Tokens"
@@ -816,7 +814,6 @@ def create_token_with_object_id(
         tmp_memory,
         name,
         space,
-        op_container,
     )
 
     object_id = tmp_memory["object_id"]

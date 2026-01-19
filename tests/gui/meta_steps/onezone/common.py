@@ -137,7 +137,6 @@ def visit_file_browser(
     providers_list,
     spaces_list,
     browser_id_list,
-    op_container,
     tmp_memory,
     hosts,
 ):
@@ -155,9 +154,7 @@ def visit_file_browser(
         )
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory, "file browser"
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
 
 
 @given(
@@ -172,7 +169,6 @@ def g_visit_file_browser(
     providers_list,
     spaces_list,
     browser_id_list,
-    op_container,
     tmp_memory,
     hosts,
 ):
@@ -181,7 +177,6 @@ def g_visit_file_browser(
         providers_list,
         spaces_list,
         browser_id_list,
-        op_container,
         tmp_memory,
         hosts,
     )
@@ -199,7 +194,6 @@ def wt_visit_file_browser(
     providers_list,
     spaces_list,
     browser_id_list,
-    op_container,
     tmp_memory,
     hosts,
 ):
@@ -208,7 +202,6 @@ def wt_visit_file_browser(
         providers_list,
         spaces_list,
         browser_id_list,
-        op_container,
         tmp_memory,
         hosts,
     )

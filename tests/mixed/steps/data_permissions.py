@@ -50,8 +50,6 @@ def grant_acl_privileges_in_op(
     client,
     selenium,
     user,
-    cdmi,
-    op_container,
     space,
     path,
     host,
@@ -73,7 +71,6 @@ def grant_acl_privileges_in_op(
             path,
             priv,
             name,
-            op_container,
             tmp_memory,
             space,
         )
@@ -84,7 +81,6 @@ def grant_acl_privileges_in_op(
             users,
             host,
             hosts,
-            cdmi,
             full_path,
             priv,
             item_type,
@@ -120,8 +116,6 @@ def assert_ace_in_op(
     client,
     selenium,
     user,
-    cdmi,
-    op_container,
     space,
     path,
     host,
@@ -149,7 +143,6 @@ def assert_ace_in_op(
             path,
             tmp_memory,
             numerals,
-            op_container,
         )
     elif client_lower == "rest":
         priv = _remove_parent_acl_from_string(priv)
@@ -158,7 +151,6 @@ def assert_ace_in_op(
             users,
             host,
             hosts,
-            cdmi,
             numerals,
             full_path,
             num,
@@ -200,7 +192,6 @@ def assert_posix_permissions_in_op(
     mode,
     host,
     selenium,
-    op_container,
     tmp_memory,
     users,
     hosts,
@@ -214,7 +205,6 @@ def assert_posix_permissions_in_op(
             space,
             item_path,
             mode,
-            op_container,
             tmp_memory,
         )
     elif client_lower == "rest":
@@ -244,7 +234,6 @@ def set_posix_permissions_in_op(
     result,
     host,
     selenium,
-    op_container,
     tmp_memory,
     users,
     hosts,
@@ -259,7 +248,6 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
             )
         else:
@@ -269,7 +257,6 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
             )
     elif client_lower == "rest":

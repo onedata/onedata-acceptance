@@ -305,14 +305,11 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(
-    browser_id, text, tmp_memory, selenium, op_container
-):
+def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium):
     which_browser = "archive container"
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=which_browser,
     )

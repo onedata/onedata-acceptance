@@ -118,7 +118,6 @@ def set_metadata_in_op_gui(
     browser_id,
     path,
     tmp_memory,
-    op_container,
     res,
     space,
     tab_name,
@@ -140,7 +139,6 @@ def set_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        op_container,
     )
     if tab_name == "xattrs":
         attr, val = val.split("=")
@@ -179,7 +177,6 @@ def assert_metadata_in_op_gui(
     browser_id,
     path,
     tmp_memory,
-    op_container,
     res,
     space,
     tab_name,
@@ -198,7 +195,6 @@ def assert_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        op_container,
     )
     if res == "fails":
         _assert_metadata_loading_alert(selenium, browser_id)
@@ -217,7 +213,6 @@ def assert_such_metadata_not_exist_in_op_gui(
     browser_id,
     path,
     tmp_memory,
-    op_container,
     space,
     tab_name,
     val,
@@ -236,7 +231,6 @@ def assert_such_metadata_not_exist_in_op_gui(
         tmp_memory,
         option,
         space,
-        op_container,
     )
 
     if tab_name == "xattrs":
@@ -264,7 +258,6 @@ def remove_all_metadata_in_op_gui(
     selenium,
     browser_id,
     space,
-    op_container,
     tmp_memory,
     path,
     item,
@@ -280,7 +273,6 @@ def remove_all_metadata_in_op_gui(
         tmp_memory,
         option,
         space,
-        op_container,
     )
     click_on_navigation_tab_in_panel(selenium, browser_id, "xattrs", option)
     remove_all_xattrs_metadata(selenium, browser_id)
@@ -331,14 +323,13 @@ def open_filebrowser_and_remove_meta(
     key,
     path,
     space,
-    op_container,
     tmp_memory,
 ):
     modal_name = "File details"
     button = "Save"
     option = "Metadata"
 
-    go_to_filebrowser(selenium, browser_id, op_container, tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space)
     open_modal_for_file_browser_item(
         selenium,
         browser_id,
@@ -347,7 +338,6 @@ def open_filebrowser_and_remove_meta(
         tmp_memory,
         option,
         space,
-        op_container,
     )
     click_on_del_metadata_record_button(selenium, browser_id, key)
     click_panel_button(selenium, browser_id, button, option)

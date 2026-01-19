@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -503,12 +503,10 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider, host
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_toggle_on_providers_subpage(
-    browser_id, toggle, selenium, op_container, option
-):
+def click_toggle_on_providers_subpage(browser_id, toggle, selenium, option):
     driver = selenium[browser_id]
     getattr(
-        getattr(op_container(driver).provider_configuration, transform(toggle)),
+        getattr(OPLoggedIn(driver).provider_configuration, transform(toggle)),
         option,
     )()
 

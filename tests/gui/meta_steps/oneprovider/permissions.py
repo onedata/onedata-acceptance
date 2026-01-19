@@ -62,14 +62,13 @@ def open_permission_modal(
     path,
     space,
     tmp_memory,
-    op_container,
     permission_type,
 ):
     option = "Permissions"
     modal_name = "Details modal"
 
     _click_menu_for_elem_somewhere_in_file_browser(
-        selenium, browser_id, path, space, tmp_memory, op_container
+        selenium, browser_id, path, space, tmp_memory
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, option, modal_name)
@@ -89,7 +88,6 @@ def _assert_posix_permissions(
     space,
     path,
     perm,
-    op_container,
     tmp_memory,
 ):
     modal_name = "Details modal"
@@ -100,7 +98,6 @@ def _assert_posix_permissions(
         path,
         space,
         tmp_memory,
-        op_container,
         "posix",
     )
     check_permission(selenium, browser_id, perm)
@@ -114,7 +111,6 @@ def assert_posix_permissions_in_op_gui(
     space,
     path,
     perm,
-    op_container,
     tmp_memory,
 ):
     modal_name = "Details modal"
@@ -127,7 +123,6 @@ def assert_posix_permissions_in_op_gui(
             space,
             path,
             perm,
-            op_container,
             tmp_memory,
         )
     except (AttributeError, StaleElementReferenceException, RuntimeError):
@@ -137,7 +132,6 @@ def assert_posix_permissions_in_op_gui(
             space,
             path,
             perm,
-            op_container,
             tmp_memory,
         )
 
@@ -154,7 +148,6 @@ def set_posix_permissions_in_op_gui(
     space,
     path,
     perm,
-    op_container,
     tmp_memory,
 ):
     modal_name = "Details modal"
@@ -168,7 +161,6 @@ def set_posix_permissions_in_op_gui(
         path,
         space,
         tmp_memory,
-        op_container,
         "posix",
     )
     set_posix_permission(selenium, browser_id, perm)
@@ -183,7 +175,6 @@ def fail_to_set_posix_permissions_in_op_gui(
     space,
     path,
     perm,
-    op_container,
     tmp_memory,
 ):
     button = "Save"
@@ -197,7 +188,6 @@ def fail_to_set_posix_permissions_in_op_gui(
         path,
         space,
         tmp_memory,
-        op_container,
         "posix",
     )
     fail_to_set_posix_permission(selenium, browser_id, perm)
@@ -260,13 +250,10 @@ def grant_acl_privileges_to_selected_in_filebrowser(
     browser_id,
     priv,
     name,
-    op_container,
     tmp_memory,
     item_name,
 ):
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, "file browser"
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     _set_acl_privilages_for_selected(
         browser_id, selenium, tmp_memory, priv, name, item_name
     )
@@ -285,7 +272,6 @@ def grant_acl_privileges_in_op_gui(
     item_list,
     priv,
     name,
-    op_container,
     tmp_memory,
     space,
 ):
@@ -299,9 +285,7 @@ def grant_acl_privileges_in_op_gui(
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, option_in_submenu
     )
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, "file browser"
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, tmp_memory, priv, name, path)
 
@@ -319,13 +303,10 @@ def read_items_acl(
     tmp_memory,
     res,
     space,
-    op_container,
 ):
     modal_name = "Details modal"
     close_button = "X"
-    open_permission_modal(
-        selenium, browser_id, path, space, tmp_memory, op_container, "acl"
-    )
+    open_permission_modal(selenium, browser_id, path, space, tmp_memory, "acl")
 
     if res == "fails":
         check_permission_denied_alert_in_edit_permissions_modal(selenium, browser_id)
@@ -353,7 +334,6 @@ def assert_ace_in_op_gui(
     path,
     tmp_memory,
     numerals,
-    op_container,
 ):
     modal_name = "Details modal"
     close_button = "X"
@@ -363,7 +343,6 @@ def assert_ace_in_op_gui(
         path,
         space,
         tmp_memory,
-        op_container,
         "acl",
     )
     if acl_type != "unknown":
@@ -388,7 +367,6 @@ def assert_user_id_in_ace_in_op_gui(
     path,
     tmp_memory,
     numerals,
-    op_container,
     users,
 ):
     modal_name = "Details modal"
@@ -399,7 +377,6 @@ def assert_user_id_in_ace_in_op_gui(
         path,
         space,
         tmp_memory,
-        op_container,
         "acl",
     )
     visible_id = get_unknown_user_id_from_acl_entry(selenium, browser_id, num, numerals)
@@ -422,7 +399,6 @@ def change_acl_privileges(
     tmp_memory,
     res,
     space,
-    op_container,
     name,
 ):
     privileges_option_list = "[attributes]" if res == "succeeds" else "[acl:change acl]"
@@ -436,7 +412,6 @@ def change_acl_privileges(
         path,
         space,
         tmp_memory,
-        op_container,
         "acl",
     )
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id, name)
@@ -456,7 +431,6 @@ def change_acl_privileges(
             path,
             space,
             tmp_memory,
-            op_container,
             "acl",
         )
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id)

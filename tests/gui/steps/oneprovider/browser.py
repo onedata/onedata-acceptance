@@ -10,7 +10,7 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     WhichBrowser,
     parse_seq,
@@ -27,7 +27,6 @@ def click_and_press_enter_on_item_in_browser(
     browser_id,
     item_name,
     tmp_memory,
-    op_container,
     which_browser,
 ):
     which_browser = transform(which_browser)
@@ -45,7 +44,7 @@ def click_and_press_enter_on_item_in_browser(
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError("waited too long")
 
-    click_and_enter_with_check(driver, op_container, browser, which_browser, item_name)
+    click_and_enter_with_check(driver, browser, which_browser, item_name)
 
 
 @wt(
@@ -55,28 +54,25 @@ def click_and_press_enter_on_item_in_browser(
     )
 )
 def wt_click_and_press_enter_on_item_in_browser(
-    selenium, browser_id, item_name, tmp_memory, op_container, which_browser
+    selenium, browser_id, item_name, tmp_memory, which_browser
 ):
     click_and_press_enter_on_item_in_browser(
         selenium,
         browser_id,
         item_name,
         tmp_memory,
-        op_container,
         which_browser=which_browser,
     )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_and_enter_with_check(driver, op_container, browser, which_browser, item_name):
+def click_and_enter_with_check(driver, browser, which_browser, item_name):
     # this function does not check correctly if parent and children directory
     # have the same name
     browser.data[item_name].click_and_enter()
     if item_name.startswith("dir"):
         for _ in range(5):
-            breadcrumbs = check_if_breadcrumbs_on_share_page(
-                driver, op_container, which_browser
-            )
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver, which_browser)
             if breadcrumbs.split("/")[-1] == item_name:
                 return
             time.sleep(1)
@@ -84,14 +80,14 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser, ite
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def check_if_breadcrumbs_on_share_page(driver, op_container, which_browser):
+def check_if_breadcrumbs_on_share_page(driver, which_browser):
     try:
-        breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+        breadcrumbs = OPLoggedIn(driver).shares_page.breadcrumbs.pwd()
     except RuntimeError:
         which_browser = transform(which_browser)
         if which_browser == "shares_file_browser":
             which_browser = "file_browser"
-        breadcrumbs = getattr(op_container(driver), which_browser).breadcrumbs.pwd()
+        breadcrumbs = getattr(OPLoggedIn(driver), which_browser).breadcrumbs.pwd()
     return breadcrumbs
 
 
@@ -102,20 +98,20 @@ def check_if_breadcrumbs_on_share_page(driver, op_container, which_browser):
     )
 )
 def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-    selenium, browser_id, path, op_container, which_browser
+    selenium, browser_id, path, which_browser
 ):
     is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-        selenium, browser_id, path, op_container, which_browser=which_browser
+        selenium, browser_id, path, which_browser=which_browser
     )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-    selenium, browser_id, path, op_container, which_browser="file browser"
+    selenium, browser_id, path, which_browser="file browser"
 ):
     driver = selenium[browser_id]
     breadcrumbs = getattr(
-        op_container(driver), transform(which_browser)
+        OPLoggedIn(driver), transform(which_browser)
     ).breadcrumbs.pwd()
 
     if which_browser == "archive file browser":
@@ -130,18 +126,14 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         "user of {browser_id} clicks on menu on breadcrumbs in {which_browser}"
     )
 )
-def wt_click_on_breadcrumbs_menu(selenium, browser_id, op_container, which_browser):
-    click_on_breadcrumbs_menu(
-        selenium, browser_id, op_container, which_browser=which_browser
-    )
+def wt_click_on_breadcrumbs_menu(selenium, browser_id, which_browser):
+    click_on_breadcrumbs_menu(selenium, browser_id, which_browser=which_browser)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_breadcrumbs_menu(
-    selenium, browser_id, op_container, which_browser="file browser"
-):
+def click_on_breadcrumbs_menu(selenium, browser_id, which_browser="file browser"):
     driver = selenium[browser_id]
-    breadcrumbs = getattr(op_container(driver), transform(which_browser)).breadcrumbs
+    breadcrumbs = getattr(OPLoggedIn(driver), transform(which_browser)).breadcrumbs
     breadcrumbs.menu_button()
 
 
@@ -542,10 +534,10 @@ def click_tag_for_elem_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_value_in_column_for_item(
-    browser_id, item_name, value, option, which_browser, selenium, op_container
+    browser_id, item_name, value, option, which_browser, selenium
 ):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
     err_msg = (
         f"displayed {option} {item_elem} for {item_name} does not "
@@ -574,10 +566,10 @@ def assert_value_in_column_for_item(
     )
 )
 def assert_value_in_xattr_or_json_column_for_item(
-    browser_id, item_name, res, value, option, which_browser, selenium, op_container
+    browser_id, item_name, res, value, option, which_browser, selenium
 ):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], option)
     err_msg_prefix = f"displayed {option} value {item_elem} for {item_name}"
 
@@ -604,11 +596,9 @@ def assert_value_in_xattr_or_json_column_for_item(
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
-def assert_no_column_for_item(
-    browser_id, item_name, option, which_browser, selenium, op_container
-):
+def assert_no_column_for_item(browser_id, item_name, option, which_browser, selenium):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
 
     try:  # this try except block covers cases when xattr value doesn't exist
         _ = getattr(browser.data[item_name], option)
@@ -634,11 +624,10 @@ def save_value_in_column_for_item(
     option,
     which_browser,
     selenium,
-    op_container,
     tmp_memory,
 ):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     value = getattr(browser.data[item_name], transform(option))
     tmp_memory["columns-content"] = {item_name: value}
 
@@ -657,11 +646,10 @@ def compare_value_in_column_for_item(
     option,
     which_browser,
     selenium,
-    op_container,
     tmp_memory,
 ):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     new_value = getattr(browser.data[item_name], transform(option))
     old_value = tmp_memory["columns-content"][item_name]
     new_value = datetime.strptime(new_value, "%d %b %Y %H:%M:%S")

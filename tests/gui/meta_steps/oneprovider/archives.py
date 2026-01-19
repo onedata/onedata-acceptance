@@ -52,7 +52,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.utils import Modals
+from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -77,7 +77,6 @@ def create_archive(
     config,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     clipboard,
     displays,
@@ -107,7 +106,6 @@ def create_archive(
         config,
         item_name,
         space_name,
-        op_container,
         tmp_memory,
         clipboard,
         displays,
@@ -130,7 +128,6 @@ def create_archive_with_follow_symbolic_link(
     config,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     clipboard,
     displays,
@@ -145,7 +142,6 @@ def create_archive_with_follow_symbolic_link(
         config,
         item_name,
         space_name,
-        op_container,
         tmp_memory,
         clipboard,
         displays,
@@ -160,7 +156,6 @@ def _create_archive(
     config,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     clipboard,
     displays,
@@ -171,14 +166,12 @@ def _create_archive(
     button_name = "Create"
     option_state = "disabled"
     try:
-        op_container(selenium[browser_id]).dataset_browser.breadcrumbs
+        OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, space_name, OPTION_IN_SPACE
         )
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory, DATASET_BROWSER
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
 
     if "/" in item_name:
         go_to_path_without_last_elem(
@@ -186,7 +179,6 @@ def _create_archive(
             browser_id,
             tmp_memory,
             item_name,
-            op_container,
             DATASET_BROWSER,
         )
         item_name = item_name.split("/")[-1]
@@ -231,7 +223,6 @@ def _create_archive(
             copy_archive_id_to_tmp_memory(
                 selenium,
                 browser_id,
-                op_container,
                 client,
                 tmp_memory,
                 clipboard,
@@ -254,7 +245,6 @@ def _create_archive(
 def copy_archive_id_to_tmp_memory(
     selenium,
     browser_id,
-    op_container,
     client,
     tmp_memory,
     clipboard,
@@ -263,9 +253,7 @@ def copy_archive_id_to_tmp_memory(
 ):
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory, ARCHIVE_BROWSER
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
         click_menu_for_archive(browser_id, tmp_memory, description, selenium)
         click_option_in_data_row_menu_in_browser(
             selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
@@ -278,7 +266,6 @@ def assert_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     option,
     description,
@@ -288,7 +275,6 @@ def assert_archive_in_op_gui(
         browser_id,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -297,7 +283,6 @@ def assert_archive_in_op_gui(
             selenium,
             browser_id,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             OPTION_IN_SPACE,
@@ -309,7 +294,6 @@ def assert_archive_in_op_gui(
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
-            op_container,
             tmp_memory,
             item_browser=ARCHIVE_BROWSER,
         )
@@ -317,7 +301,6 @@ def assert_archive_in_op_gui(
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
-            op_container,
             tmp_memory,
             item_browser=ARCHIVE_FILE_BROWSER,
         )
@@ -339,7 +322,6 @@ def assert_archive_in_op_gui(
             assert_browser_in_tab_in_op(
                 selenium,
                 browser_id,
-                op_container,
                 tmp_memory,
                 item_browser=ARCHIVE_BROWSER,
             )
@@ -351,7 +333,6 @@ def remove_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     description,
     option,
@@ -365,7 +346,6 @@ def remove_archive_in_op_gui(
         browser_id,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -373,7 +353,6 @@ def remove_archive_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
@@ -402,7 +381,6 @@ def assert_archive_with_option_in_op_gui(
     browser_id,
     selenium,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     option,
@@ -414,7 +392,6 @@ def assert_archive_with_option_in_op_gui(
         browser_id,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -422,7 +399,6 @@ def assert_archive_with_option_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
@@ -436,7 +412,6 @@ def assert_number_of_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     number,
 ):
@@ -445,7 +420,6 @@ def assert_number_of_archive_in_op_gui(
         browser_id,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -454,7 +428,6 @@ def assert_number_of_archive_in_op_gui(
             selenium,
             browser_id,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             OPTION_IN_SPACE,
@@ -470,7 +443,6 @@ def assert_base_archive_for_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    op_container,
     tmp_memory,
     description,
     base_description,
@@ -480,7 +452,6 @@ def assert_base_archive_for_archive_in_op_gui(
         browser_id,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -488,7 +459,6 @@ def assert_base_archive_for_archive_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )

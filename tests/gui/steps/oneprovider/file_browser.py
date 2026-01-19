@@ -19,7 +19,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.utils import Modals
+from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -145,14 +145,12 @@ def assert_item_in_file_browser_is_of_size(browser_id, item_name, size, tmp_memo
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_size_to_be_displayed_in_data_row(
-    selenium, browser_id, op_container, tmp_memory, item_name, size
+    selenium, browser_id, tmp_memory, item_name, size
 ):
     # refresh site after enabling size statistics to see displayed size
     # in data row
     refresh_site(selenium, browser_id)
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, "file_browser"
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file_browser")
     browser = tmp_memory[browser_id]["file_browser"]
     displayed_size = browser.data[item_name].size
     assert (
@@ -709,14 +707,13 @@ def assert_empty_file_browser(
     browser_id,
     tmp_memory,
     public_share,
-    op_container,
     expected_msg,
     which_browser,
 ):
     if which_browser.lower() == "shares file browser":
         file_browser = public_share(selenium[browser_id]).file_browser
     else:
-        file_browser = op_container(selenium[browser_id]).file_browser
+        file_browser = OPLoggedIn(selenium[browser_id]).file_browser
 
     tmp_memory[browser_id]["file_browser"] = file_browser
 

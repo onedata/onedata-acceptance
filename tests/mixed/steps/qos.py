@@ -37,7 +37,6 @@ def create_qos_requirement_in_op(
     file_name,
     tmp_memory,
     expression,
-    op_container,
     space_name,
     users,
     hosts,
@@ -51,7 +50,6 @@ def create_qos_requirement_in_op(
             file_name,
             tmp_memory,
             expression,
-            op_container,
             space_name,
         )
     elif client_lower == "rest":
@@ -78,7 +76,6 @@ def assert_qos_file_status_in_op(
     host,
     tmp_memory,
     selenium,
-    op_container,
     users,
     hosts,
     option,
@@ -91,7 +88,6 @@ def assert_qos_file_status_in_op(
             space_name,
             tmp_memory,
             selenium,
-            op_container,
             option,
         )
     elif client_lower == "rest":
@@ -117,7 +113,6 @@ def delete_qos_requirement_in_op(
     space_name,
     file_name,
     tmp_memory,
-    op_container,
     users,
     hosts,
     host,
@@ -130,7 +125,6 @@ def delete_qos_requirement_in_op(
             space_name,
             file_name,
             tmp_memory,
-            op_container,
         )
     elif client_lower == "rest":
         delete_qos_requirement_in_op_rest(
