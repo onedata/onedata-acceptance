@@ -54,7 +54,7 @@ from tests.gui.steps.onezone.tokens import (
     type_new_token_name,
     wt_click_on_btn_for_oz_token,
 )
-from tests.gui.utils import OZLoggedIn
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -381,7 +381,7 @@ def _set_tokens_caveats(
         caveat.set_region_caveats(selenium, browser_id, region_caveats)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "country")
-        caveat.set_country_caveats(selenium, browser_id, country_caveats)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats, Popups)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "asn")
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
@@ -391,7 +391,14 @@ def _set_tokens_caveats(
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "consumer")
         caveat.set_consumer_caveats(
-            selenium, browser_id, consumer_caveats, users, groups, hosts, OZLoggedIn
+            selenium,
+            browser_id,
+            Popups,
+            consumer_caveats,
+            users,
+            groups,
+            hosts,
+            OZLoggedIn,
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")

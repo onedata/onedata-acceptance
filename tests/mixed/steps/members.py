@@ -130,9 +130,7 @@ def fail_to_create_invitation_in_space_in_oz(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        fail_to_create_invitation_in_space_using_op_gui(
-            user, space_name, selenium
-        )
+        fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium)
     elif client_lower == "rest":
         fail_to_create_invitation_in_space_using_rest(
             user, users, hosts, host, spaces, space_name, member_name
@@ -162,9 +160,7 @@ def assert_not_user_in_space_in_oz(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        assert_not_user_in_space_using_op_gui(
-            user, space_name, member_name, selenium
-        )
+        assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium)
 
     elif client_lower == "rest":
         assert_not_user_in_space_using_rest(
