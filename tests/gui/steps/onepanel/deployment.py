@@ -12,7 +12,7 @@ import time
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils import Modals, Onepanel, Popups
+from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -486,5 +486,5 @@ def add_prov_with_oz_subdomain_to_etc_host(hosts, provider):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wait_for_emergency_interface_onepanel(browser_id, selenium, login_page):
-    assert login_page(selenium[browser_id]).open_in_onezone.is_displayed()
+def wait_for_emergency_interface_onepanel(browser_id, selenium):
+    assert LoginPage(selenium[browser_id]).open_in_onezone.is_displayed()

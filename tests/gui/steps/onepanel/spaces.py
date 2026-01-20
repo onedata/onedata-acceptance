@@ -393,13 +393,13 @@ def remove_space_instead_of_revoke(selenium, browser_id):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_and_remove_space_instead_of_revoke(
-    selenium, browser_id, user, login_page, users, tmp_memory
+    selenium, browser_id, user, users, tmp_memory
 ):
     modal_name = "Cease oneprovider support for space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(3)
-    login_using_basic_auth(selenium, browser_id, user, login_page, users, "Onezone")
+    login_using_basic_auth(selenium, browser_id, user, users, "Onezone")
     modal_name = "Remove space"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     Modals(selenium[browser_id]).remove_modal.understand_notice()

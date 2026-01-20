@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
-from tests.gui.utils import Modals, Onepanel
+from tests.gui.utils import LoginPage, Modals, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -109,8 +109,8 @@ def click_open_in_onezone_in_modal(selenium, browser_id):
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in Onepanel login page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_open_in_onezone(selenium, browser_id, login_page):
-    login_page(selenium[browser_id]).open_in_onezone()
+def click_open_in_onezone(selenium, browser_id):
+    LoginPage(selenium[browser_id]).open_in_onezone()
 
 
 @wt(

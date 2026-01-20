@@ -53,25 +53,23 @@ def change_user_password_in_oz_panel_using_gui(
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def login_to_oz_panel_using_new_password_gui(selenium, user, password, login_page):
+def login_to_oz_panel_using_new_password_gui(selenium, user, password):
     notify_type = "info"
     notify_text_regexp = ".*[Aa]uthentication.*succeeded.*"
 
-    wt_enter_text_to_field_in_login_form(selenium, user, "Username", user, login_page)
-    wt_enter_text_to_field_in_login_form(
-        selenium, user, "Password", password, login_page
-    )
-    wt_press_sign_in_btn_on_login_page(selenium, user, login_page)
+    wt_enter_text_to_field_in_login_form(selenium, user, "Username", user)
+    wt_enter_text_to_field_in_login_form(selenium, user, "Password", password)
+    wt_press_sign_in_btn_on_login_page(selenium, user)
 
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def log_out_from_oz_panel_gui(username, selenium, onepage, login_page):
+def log_out_from_oz_panel_gui(username, selenium, onepage):
     button_name = "Logout"
 
     wt_click_on_user_account_btn_panel(selenium, username, onepage)
     wt_click_option_in_user_account_popover(selenium, username, button_name)
-    wt_assert_login_page(selenium, username, login_page)
+    wt_assert_login_page(selenium, username)
 
 
 @wt(

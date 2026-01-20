@@ -47,7 +47,6 @@ def login_using_gui(
     screen_height,
     hosts,
     users,
-    login_page,
     browser_id_list,
     user_list,
     test_type,
@@ -83,7 +82,7 @@ def login_using_gui(
     # mixed tests use user_list instead of browser_id_list because
     # some mixed steps don't use browser
     login_ids = browser_id_list if test_type == "gui" else user_list
-    login_using_basic_auth(selenium, login_ids, user_list, login_page, users, host_list)
+    login_using_basic_auth(selenium, login_ids, user_list, users, host_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

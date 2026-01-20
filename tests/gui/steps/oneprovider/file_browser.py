@@ -20,6 +20,7 @@ from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -706,12 +707,11 @@ def assert_empty_file_browser(
     selenium,
     browser_id,
     tmp_memory,
-    public_share,
     expected_msg,
     which_browser,
 ):
-    if which_browser.lower() == "shares file browser":
-        file_browser = public_share(selenium[browser_id]).file_browser
+    if transform(which_browser) == "shares_file_browser":
+        file_browser = public_share(selenium[browser_id]).shares_file_browser
     else:
         file_browser = OPLoggedIn(selenium[browser_id]).file_browser
 
