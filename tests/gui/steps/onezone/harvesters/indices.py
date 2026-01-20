@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
 )
+from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -161,9 +162,9 @@ def change_indices_on_gui_plugin_tab(selenium, browser_id, index_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_text_on_data_discovery_page(selenium, browser_id, data_discovery, name):
+def assert_not_text_on_data_discovery_page(selenium, browser_id, name):
     driver = selenium[browser_id]
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     for item in results_list:
         assert name not in item.text, f"{name} in result list"
 
@@ -201,7 +202,6 @@ def text_in_result_list(key, value, results_list):
 def assert_rejection_reason_on_data_discovery_page(
     selenium,
     browser_id,
-    data_discovery,
     field_name,
     field_type,
     clipboard,
@@ -215,7 +215,7 @@ def assert_rejection_reason_on_data_discovery_page(
         f" {field_type} in document with id '{file_id}'. Preview of "
         "field's value"
     )
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     text_in_result_list(key, info, results_list)
 
 
@@ -225,13 +225,11 @@ def assert_rejection_reason_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_id_on_data_discovery_page(
-    selenium, browser_id, data_discovery, clipboard, displays
-):
+def assert_id_on_data_discovery_page(selenium, browser_id, clipboard, displays):
     driver = selenium[browser_id]
     archive_id = f'"{clipboard.paste(display=displays[browser_id])}"'
     key = "archiveId"
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     text_in_result_list(key, archive_id, results_list)
 
 
@@ -243,14 +241,12 @@ def assert_id_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_creation_time_on_data_discovery_page(
-    selenium, browser_id, data_discovery, tmp_memory
-):
+def assert_creation_time_on_data_discovery_page(selenium, browser_id, tmp_memory):
     created_at = tmp_memory["created_at"]
     created_at = datetime.strptime(created_at, "%d %b %Y %H:%M").timestamp()
     driver = selenium[browser_id]
     timestamp = float(
-        data_discovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
+        DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
     )
     err_msg = (
         "archive creation time is not compatible with creation time on archives page"
@@ -265,21 +261,17 @@ def assert_creation_time_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_info_on_data_discovery_page(
-    selenium, browser_id, data_discovery, info, text
-):
+def assert_info_on_data_discovery_page(selenium, browser_id, info, text):
     driver = selenium[browser_id]
     key = set_key(text)
     try:
-        results_list = data_discovery(driver).results_list
+        results_list = DataDiscovery(driver).results_list
         text_in_result_list(key, info, results_list)
     except AssertionError:
         button_name = "Query"
-        click_button_on_data_disc_page(
-            selenium, browser_id, data_discovery, button_name
-        )
+        click_button_on_data_disc_page(selenium, browser_id, button_name)
         time.sleep(1)
-        results_list = data_discovery(driver).results_list
+        results_list = DataDiscovery(driver).results_list
         text_in_result_list(key, info, results_list)
 
 

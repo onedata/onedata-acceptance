@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
-from tests.gui.utils import LoginPage, Modals, Onepanel
+from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -96,8 +96,8 @@ def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_info_button_on_warning_bar(selenium, browser_id, onepage):
-    onepage(selenium[browser_id]).warning_bar.info()
+def click_info_button_on_warning_bar(selenium, browser_id):
+    OnePage(selenium[browser_id]).warning_bar.info()
 
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in modal"))

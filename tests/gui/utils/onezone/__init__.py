@@ -10,7 +10,6 @@ from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequ
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
-from .common import OZPanel
 from .data_page import DataPage
 from .discovery_page import DiscoveryPage
 from .groups.groups_page import GroupsPage

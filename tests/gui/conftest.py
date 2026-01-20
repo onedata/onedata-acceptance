@@ -210,41 +210,6 @@ def test_type(request):
 
 
 @fixture(scope="session")
-def cdmi():
-    from tests.gui.utils import CDMIClient
-
-    return CDMIClient
-
-
-@fixture(scope="session")
-def onepage():
-    from tests.gui.utils import OnePage
-
-    return OnePage
-
-
-@fixture(scope="session")
-def public_onepage():
-    from tests.gui.utils import PublicOnePage
-
-    return PublicOnePage
-
-
-@fixture(scope="session")
-def onepanel():
-    from tests.gui.utils import Onepanel
-
-    return Onepanel
-
-
-@fixture(scope="session")
-def login_page():
-    from tests.gui.utils import LoginPage
-
-    return LoginPage
-
-
-@fixture(scope="session")
 def oz_page():
     from tests.gui.utils import OZLoggedIn
 
@@ -252,38 +217,10 @@ def oz_page():
 
 
 @fixture(scope="session")
-def op_container():
-    from tests.gui.utils import OPLoggedIn
+def popups():
+    from tests.gui.utils import Popups
 
-    return OPLoggedIn
-
-
-@fixture(scope="session")
-def public_share():
-    from tests.gui.utils import PublicShareView
-
-    return PublicShareView
-
-
-@fixture(scope="session")
-def private_share():
-    from tests.gui.utils import PrivateShareView
-
-    return PrivateShareView
-
-
-@fixture(scope="session")
-def privacy_policy():
-    from tests.gui.utils import PrivacyPolicy
-
-    return PrivacyPolicy
-
-
-@fixture(scope="session")
-def terms_of_use():
-    from tests.gui.utils import TermsOfUse
-
-    return TermsOfUse
+    return Popups
 
 
 @fixture(scope="session")
@@ -291,20 +228,6 @@ def data_discovery():
     from tests.gui.utils import DataDiscoveryPage
 
     return DataDiscoveryPage
-
-
-@fixture(scope="session")
-def modals():
-    from tests.gui.utils import Modals
-
-    return Modals
-
-
-@fixture(scope="session")
-def popups():
-    from tests.gui.utils import Popups
-
-    return Popups
 
 
 @fixture

@@ -10,7 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -268,14 +268,12 @@ def click_button_in_cookies_popup(selenium, browser_id, button):
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" on {kind_of_agreement} page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_message_on_agreement_page(
-    selenium, browser_id, privacy_policy, terms_of_use, text, kind_of_agreement
-):
+def assert_message_on_agreement_page(selenium, browser_id, text, kind_of_agreement):
     err_msg = f"Message on {kind_of_agreement} page is not as expected"
     if kind_of_agreement == "privacy policy":
-        assert privacy_policy(selenium[browser_id]).message.text == text, err_msg
+        assert PrivacyPolicy(selenium[browser_id]).message.text == text, err_msg
     else:
-        assert terms_of_use(selenium[browser_id]).message.text == text, err_msg
+        assert TermsOfUse(selenium[browser_id]).message.text == text, err_msg
 
 
 @wt(
@@ -288,15 +286,13 @@ def assert_message_on_agreement_page(
 def click_button_on_agreement_page(
     selenium,
     browser_id,
-    privacy_policy,
-    terms_of_use,
     button,
     kind_of_agreement,
 ):
     if kind_of_agreement == "privacy policy":
-        getattr(privacy_policy(selenium[browser_id]), transform(button))()
+        getattr(PrivacyPolicy(selenium[browser_id]), transform(button))()
     else:
-        getattr(terms_of_use(selenium[browser_id]), transform(button))()
+        getattr(TermsOfUse(selenium[browser_id]), transform(button))()
 
 
 @wt(parsers.parse("user of {browser_id} goes to {kind_of_agreement} page"))

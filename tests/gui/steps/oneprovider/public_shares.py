@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -204,7 +205,7 @@ def assert_tab_in_public_share(selenium, browser_id, tab_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_share(selenium, browser_id, private_share, button, option):
+def click_button_in_share(selenium, browser_id, button, option):
     driver = selenium[browser_id]
     if option == "public":
         getattr(public_share(driver), transform(button))()

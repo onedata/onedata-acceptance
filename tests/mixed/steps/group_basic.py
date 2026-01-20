@@ -421,7 +421,7 @@ def fail_to_remove_groups(
     # TODO VFS-12393 uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
     #  and writing suitable scenario
     # elif client.lower() == 'web gui':
-    #     fail_to_remove_groups_using_op_gui(selenium, user, op_container, group_list,
+    #     fail_to_remove_groups_using_op_gui(selenium, user, group_list,
     #                                        tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

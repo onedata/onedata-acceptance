@@ -93,16 +93,13 @@ def change_user_password_in_oz_panel(
     new_password,
     host,
     selenium,
-    onepage,
     users,
     hosts,
 ):
 
     if client.lower() == "web gui":
 
-        change_user_password_in_oz_panel_using_gui(
-            selenium, user, onepage, users, new_password
-        )
+        change_user_password_in_oz_panel_using_gui(selenium, user, users, new_password)
     elif client.lower() == "rest":
 
         change_user_password_in_oz_panel_using_rest(
@@ -118,11 +115,11 @@ def change_user_password_in_oz_panel(
         '"(?P<host>.+?)" Onezone panel service'
     )
 )
-def log_out_from_oz_panel(client, user, selenium, onepage):
+def log_out_from_oz_panel(client, user, selenium):
 
     if client.lower() == "web gui":
 
-        log_out_from_oz_panel_gui(user, selenium, onepage)
+        log_out_from_oz_panel_gui(user, selenium)
     elif client.lower() == "rest":
         pass
         # pytest.skip('This step is not required using {} client'.format(client))

@@ -11,7 +11,7 @@ import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
-from tests.gui.utils import LoginPage
+from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -115,8 +115,8 @@ def wt_press_sign_in_btn_on_login_page(selenium, browser_id):
 
 @wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_successful_login(selenium, browser_id, onepage, service):
-    logged_in_service = onepage(selenium[browser_id]).service
+def wt_assert_successful_login(selenium, browser_id, service):
+    logged_in_service = OnePage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
     ), f"logged in {logged_in_service} instead of {service}"

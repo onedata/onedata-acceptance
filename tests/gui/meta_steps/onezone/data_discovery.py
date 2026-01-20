@@ -23,6 +23,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -40,17 +41,17 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
-def assert_data_discovery_files(selenium, browser_id, data_discovery, config, spaces):
+def assert_data_discovery_files(selenium, browser_id, config, spaces):
     button_name = "Query"
 
-    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
+    click_button_on_data_disc_page(selenium, browser_id, button_name)
     time.sleep(1)
-    assert_files(selenium, browser_id, data_discovery, config, spaces)
+    assert_files(selenium, browser_id, config, spaces)
 
 
-def assert_files(selenium, browser_id, data_discovery, config, spaces):
+def assert_files(selenium, browser_id, config, spaces):
     expected_data = yaml.load(config, yaml.Loader)
-    data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
+    data_dict = _unpack_files_data(selenium, browser_id)
     _assert_elem_num_equals(expected_data, data_dict)
     for file in expected_data:
         if file == "spaces":
@@ -76,12 +77,12 @@ def _check_spaces_of_data_disc(expected, actual):
         assert space in actual, f"space {space} not harvested"
 
 
-def _unpack_files_data(selenium, browser_id, data_discovery):
+def _unpack_files_data(selenium, browser_id):
     driver = selenium[browser_id]
     regex = r'fileName: "(?P<file_name>[^\s]+)"'
     files_data_dict = {}
 
-    for file in data_discovery(driver).results_list:
+    for file in DataDiscovery(driver).results_list:
         files_data_dict[re.findall(regex, file.text)[0]] = file
     return files_data_dict
 
@@ -132,9 +133,9 @@ def _assert_unexpected_properties_of_files(unexpected, actual, spaces):
         "files in data discovery page:\n{config}"
     )
 )
-def assert_not_files_properties(selenium, browser_id, data_discovery, config, spaces):
+def assert_not_files_properties(selenium, browser_id, config, spaces):
     unexpected_data = yaml.load(config, yaml.Loader)
-    data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
+    data_dict = _unpack_files_data(selenium, browser_id)
     for file in unexpected_data:
         _assert_unexpected_properties_of_files(
             unexpected_data[file], data_dict[file].text, spaces
@@ -148,9 +149,9 @@ def assert_not_files_properties(selenium, browser_id, data_discovery, config, sp
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_files_with_order(selenium, browser_id, data_discovery, config):
+def see_files_with_order(selenium, browser_id, config):
     files_list = yaml.load(config, yaml.Loader)
-    data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
+    data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
     for pair in zip(files_list, data_dict):
         assert pair[0] == pair[1], "Files are not in order"
@@ -161,9 +162,7 @@ def see_files_with_order(selenium, browser_id, data_discovery, config):
         'user of {browser_id} opens Data Discovery page of "{harvester_name}" harvester'
     )
 )
-def open_data_discovery_of_harvester(
-    selenium, browser_id, harvester_name, data_discovery
-):
+def open_data_discovery_of_harvester(selenium, browser_id, harvester_name):
     option = "Discovery"
     list_name = "harvesters"
     option2 = "data discovery"
@@ -175,7 +174,7 @@ def open_data_discovery_of_harvester(
     click_on_option_of_harvester_on_left_sidebar_menu(
         selenium, browser_id, harvester_name, option2
     )
-    assert_data_discovery_page(selenium, browser_id, data_discovery)
+    assert_data_discovery_page(selenium, browser_id)
 
 
 @wt(
@@ -183,17 +182,15 @@ def open_data_discovery_of_harvester(
         'user of {browser_id} clicks on "Go to source file..." for "{filename}"'
     )
 )
-def go_to_source_of_file(selenium, browser_id, filename, data_discovery):
-    data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
+def go_to_source_of_file(selenium, browser_id, filename):
+    data_dict = _unpack_files_data(selenium, browser_id)
     data_dict[filename].source_button()
 
 
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_number_of_files_on_data_disc(
-    selenium, browser_id, data_discovery, number: int
-):
-    files_dict = _unpack_files_data(selenium, browser_id, data_discovery)
+def assert_number_of_files_on_data_disc(selenium, browser_id, number: int):
+    files_dict = _unpack_files_data(selenium, browser_id)
     assert (
         len(files_dict) == number
     ), f"Expected: {number} files but only {len(files_dict)} given"
@@ -205,13 +202,13 @@ def assert_number_of_files_on_data_disc(
         "filter on data discovery page:\n{config}"
     )
 )
-def choose_properties_to_filter(selenium, browser_id, config, data_discovery):
+def choose_properties_to_filter(selenium, browser_id, config):
     data = yaml.load(config, yaml.Loader)
-    _parse_data(data, data_discovery, selenium, browser_id)
+    _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data, data_discovery, selenium, browser_id):
-    page = data_discovery(selenium[browser_id])
+def _parse_data(data, selenium, browser_id):
+    page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):
             if [*item][0] == "__onedata":

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -16,7 +17,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page"))
 @wt(parsers.parse("user of {browser_id} sees public data discovery page"))
-def assert_data_discovery_page(selenium, browser_id, data_discovery):
+def assert_data_discovery_page(selenium, browser_id):
     # this function can only be used when we are sure that
     # there will be some files harvested as to use active waiting
     # instead of just sleep
@@ -24,21 +25,21 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
     # assert_empty_data_discovery_page(...) function
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    _wait_for_files_list(selenium, browser_id, data_discovery)
+    _wait_for_files_list(selenium, browser_id)
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=1.5)
-def _wait_for_files_list(selenium, browser_id, data_discovery):
+def _wait_for_files_list(selenium, browser_id):
     button_name = "Query"
 
-    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
-    assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
+    click_button_on_data_disc_page(selenium, browser_id, button_name)
+    assert_files_list_on_data_disc(selenium, browser_id)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND / 2)
-def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
+def assert_files_list_on_data_disc(selenium, browser_id):
     msg = "files list is not visible on data discovery page"
-    assert len(data_discovery(selenium[browser_id]).results_list), msg
+    assert len(DataDiscovery(selenium[browser_id]).results_list), msg
 
 
 @wt(
@@ -46,11 +47,11 @@ def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
         "user of {browser_id} sees public data discovery page with no harvested data"
     )
 )
-def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
+def assert_empty_data_discovery_page(selenium, browser_id):
     button_name = "Query"
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name)
+    click_button_on_data_disc_page(selenium, browser_id, button_name)
 
 
 @wt(
@@ -59,11 +60,9 @@ def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 9, interval=10)
-def assert_alert_text_on_data_disc_page(
-    selenium, browser_id, error_msg, data_discovery
-):
+def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg):
     msg = f"alert with {error_msg} message is not visible"
-    assert error_msg == data_discovery(selenium[browser_id]).error_message, msg
+    assert error_msg == DataDiscovery(selenium[browser_id]).error_message, msg
 
 
 @wt(
@@ -72,9 +71,9 @@ def assert_alert_text_on_data_disc_page(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_alert_on_data_discovery_page(selenium, browser_id, data_discovery, error_msg):
+def see_alert_on_data_discovery_page(selenium, browser_id, error_msg):
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
-    assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg, data_discovery)
+    assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg)
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page with Ecrin GUI"))
@@ -82,11 +81,11 @@ def see_alert_on_data_discovery_page(selenium, browser_id, data_discovery, error
     parsers.parse("user of {browser_id} sees public data discovery page with Ecrin GUI")
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
+def assert_data_discovery_page_ecrin(selenium, browser_id):
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
     driver = selenium[browser_id]
     assert (
-        data_discovery(driver).ecrin_gui_app_logo == "MDR"
+        DataDiscovery(driver).ecrin_gui_app_logo == "MDR"
     ), "Ecrin GUI not loaded in given time"
 
 
@@ -96,9 +95,9 @@ def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block(selenium, browser_id, data_discovery):
+def start_query_block(selenium, browser_id):
     driver = selenium[browser_id]
-    data_discovery(driver).query_builder.root_block()
+    DataDiscovery(driver).query_builder.root_block()
 
 
 @wt(
@@ -108,9 +107,9 @@ def start_query_block(selenium, browser_id, data_discovery):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_another_query_block(selenium, browser_id, data_discovery):
+def start_another_query_block(selenium, browser_id):
     driver = selenium[browser_id]
-    data_discovery(driver).query_builder.another_block_buttons[0].click()
+    DataDiscovery(driver).query_builder.another_block_buttons[0].click()
 
 
 @wt(
@@ -120,10 +119,10 @@ def start_another_query_block(selenium, browser_id, data_discovery):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(selenium, browser_id, data_discovery, number: str):
+def start_query_block_no(selenium, browser_id, number: str):
     driver = selenium[browser_id]
     no = int(number.split()[0])
-    data_discovery(driver).query_builder.another_block_buttons[no - 1].click()
+    DataDiscovery(driver).query_builder.another_block_buttons[no - 1].click()
 
 
 @wt(
@@ -233,23 +232,23 @@ def click_operator_in_query_builder(selenium, browser_id, operator):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_data_disc_page(selenium, browser_id, data_discovery, button_name):
+def click_button_on_data_disc_page(selenium, browser_id, button_name):
     driver = selenium[browser_id]
-    page = data_discovery(driver)
+    page = DataDiscovery(driver)
     getattr(page, f"{transform(button_name)}_button")()
 
 
 @wt(parsers.parse("user of {browser_id} sees that paging is set for {number} pages"))
-def assert_page_size(selenium, browser_id, data_discovery, number: str):
+def assert_page_size(selenium, browser_id, number: str):
     driver = selenium[browser_id]
-    given = data_discovery(driver).page_size
+    given = DataDiscovery(driver).page_size
     assert given == number, f"Expected page size was {number}, but got {given}"
 
 
 @wt(parsers.parse("user of {browser_id} opens next page of data discovery page"))
-def open_next_data_disc_page(selenium, browser_id, data_discovery):
+def open_next_data_disc_page(selenium, browser_id):
     driver = selenium[browser_id]
-    data_discovery(driver).next_page()
+    DataDiscovery(driver).next_page()
 
 
 @wt(
@@ -258,9 +257,7 @@ def open_next_data_disc_page(selenium, browser_id, data_discovery):
         "{item} on data discovery page"
     )
 )
-def choose_sorting_parameter_or_order(
-    selenium, browser_id, parameter, item, data_discovery
-):
+def choose_sorting_parameter_or_order(selenium, browser_id, parameter, item):
     driver = selenium[browser_id]
-    getattr(data_discovery(driver), f"sorting_{item}_selector")()
-    data_discovery(driver).choose_item(parameter)
+    getattr(DataDiscovery(driver), f"sorting_{item}_selector")()
+    DataDiscovery(driver).choose_item(parameter)
