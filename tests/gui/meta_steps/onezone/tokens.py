@@ -378,7 +378,7 @@ def _set_tokens_caveats(
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
     if region_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "region")
-        caveat.set_region_caveats(selenium, browser_id, region_caveats)
+        caveat.set_region_caveats(selenium, browser_id, region_caveats, Popups)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "country")
         caveat.set_country_caveats(selenium, browser_id, country_caveats, Popups)
@@ -402,7 +402,7 @@ def _set_tokens_caveats(
         )
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, "service")
-        caveat.set_service_caveats(selenium, browser_id, service_caveats)
+        caveat.set_service_caveats(selenium, browser_id, service_caveats, Popups)
     if interface_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "interface")
         caveat.set_interface_caveat(interface_caveat)
