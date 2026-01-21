@@ -15,6 +15,8 @@ import urllib3
 import yaml
 from requests.exceptions import ConnectTimeout
 
+# pylint: disable=import-error,no-name-in-module
+from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
@@ -289,16 +291,40 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
 
     if test_config:
         if not oz_image:
-            oz_version = test_config["initialVersions"]["onezone"]
-            up_args.extend(["-zi", f"docker.onedata.org/onezone-dev:{oz_version}"])
+            up_args.extend(
+                [
+                    "-zi",
+                    ensure_image_resolved(
+                        "onezone", test_config["initialVersions"]["onezone"]
+                    ),
+                ]
+            )
         if not op_image:
-            op_version = test_config["initialVersions"]["oneprovider"]
-            up_args.extend(["-pi", f"docker.onedata.org/oneprovider-dev:{op_version}"])
+            up_args.extend(
+                [
+                    "-pi",
+                    ensure_image_resolved(
+                        "oneprovider", test_config["initialVersions"]["oneprovider"]
+                    ),
+                ]
+            )
         if not oc_image:
-            oc_version = test_config["initialVersions"]["oneclient"]
-            up_args.extend(["-ci", f"docker.onedata.org/oneclient-dev:{oc_version}"])
+            up_args.extend(
+                [
+                    "-ci",
+                    ensure_image_resolved(
+                        "oneclient", test_config["initialVersions"]["oneclient"]
+                    ),
+                ]
+            )
 
     return up_args
+
+
+def ensure_image_resolved(service, version):
+    if version == "default":
+        return resolve_image(service)
+    return f"docker.onedata.org/{service}-dev:{version}"
 
 
 def create_users_in_pod(pod_name: str, users: List[str]) -> None:

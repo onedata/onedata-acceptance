@@ -140,6 +140,7 @@ class UpgradeTestsController:
                     admin_user,
                     self.hosts,
                     self.test_config["targetVersions"][service_name],
+                    self.test_config["initialVersions"][service_name],
                 )
 
         setup_hosts_cfg(self.hosts, self.request)
@@ -193,45 +194,55 @@ class UpgradeTestsController:
             print(test_result)
 
 
-def upgrade_service(service_name, admin_user, hosts, version):
+def upgrade_service(service_name, admin_user, hosts, version, prev_version):
     for service in hosts.keys():
         if service.startswith(service_name):
             pod_name = hosts[service]["pod-name"]
-            run_upgrade_command(pod_name, service_name, version)
+            run_upgrade_command(pod_name, service_name, version, prev_version)
 
     # etc hosts update needed so it is possible to connect
     update_etc_hosts()
     verify_env_ready(admin_user, hosts)
 
 
-def run_upgrade_command(pod_name, service, version):
-    cmd = [pod_name]
-    if isinstance(version, str):
-        cmd.extend(prepare_image_upgrade_command(service, version))
-        run_onenv_command("upgrade", cmd)
+def run_upgrade_command(pod_name, service, version, prev_version):
+    current_image = get_service_image(service, version)
+    # check isinstance so sources upgrade is always performed
+    if get_service_image(
+        service, prev_version
+    ) == current_image and not is_sources_upgrade(version):
+        if service == "oneclient":
+            # do nothing with oneclient, it should reconnect after provider restart
+            return
+        run_onenv_command("service", ["stop", pod_name])
+        run_onenv_command("service", ["start", pod_name])
     else:
-        cmd.extend(prepare_sources_upgrade_command(service, version))
+        pull_image_with_retries(current_image)
+        cmd = [pod_name]
+        cmd.extend(["-i", current_image])
+        cmd.extend(prepare_sources_upgrade_command(version))
         run_onenv_command("upgrade", cmd)
 
 
-def prepare_image_upgrade_command(service, version):
-    if version == "default":
-        image = resolve_image(service)
-    else:
-        image = f"docker.onedata.org/{service}-dev:{version}"
-    pull_image_with_retries(image)
-    return ["-i", image]
-
-
-def prepare_sources_upgrade_command(service, version):
-    image = f"docker.onedata.org/{service}-dev:{version["sources"]["baseImage"]}"
-    pull_image_with_retries(image)
-    components = []
+def prepare_sources_upgrade_command(version):
+    if not is_sources_upgrade(version):
+        return []
+    components = ["--sources-path", "."]
     for component in version["sources"]["components"]:
         components.append(f"--{component}")
-    cmd = ["-i", image, "--sources-path", "."]
-    cmd.extend(components)
-    return cmd
+    return components
+
+
+def get_service_image(service, version):
+    if is_sources_upgrade(version):
+        version = version["sources"]["baseImage"]
+    if version == "default":
+        return resolve_image(service)
+    return f"docker.onedata.org/{service}-dev:{version}"
+
+
+def is_sources_upgrade(version):
+    return isinstance(version, dict)
 
 
 def get_major_prov_version(provider_host):
