@@ -4,6 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import time
 from typing import Dict, List
 
 from selenium.common.exceptions import TimeoutException
@@ -144,3 +145,16 @@ def assert_logs_order_with_optional_logs(
         if severity[expected_log] == "Optional":
             if idx < n and expected_log == logs_actual[idx]:
                 idx += 1
+
+
+# Function closes error modal and repeat execution until error modal
+# will no longer appear
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_till_error_modal_stop_appearing(modals, driver):
+    try:
+        time.sleep(0.2)
+        error_modal = modals(driver).error
+        error_modal.close.click()
+        raise AssertionError(f"There is error modal {error_modal}")
+    except RuntimeError:
+        pass

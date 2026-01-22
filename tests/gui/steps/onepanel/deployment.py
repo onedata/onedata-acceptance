@@ -12,6 +12,7 @@ import time
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_till_error_modal_stop_appearing
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -157,20 +158,27 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel
         " {step} of deployment process in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def wt_try_to_register_prov_using_register_btn(
     selenium, browser_id, step, onepanel, modals
 ):
     driver = selenium[browser_id]
     btn = "Register"
     step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
-    getattr(step, transform(btn)).click()
+    btn = getattr(step, transform(btn))
+    btn.click()
 
     # if error modal occurred close it and repeat function execution
+    wait_till_error_modal_stop_appearing(modals, driver)
+    # wait for provider registration, due to rare possibilities it can take some time
+    wait_for_provider_registration(btn)
+
+
+@repeat_failed(timeout=120)
+def wait_for_provider_registration(button):
     try:
-        error_modal = modals(driver).error
-        error_modal.close.click()
-        raise AssertionError("Did not menage to register provider")
+        assert (
+            not button.is_displayed()
+        ), "Provider registration is still in progress after 120s"
     except RuntimeError:
         pass
 
