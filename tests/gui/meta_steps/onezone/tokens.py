@@ -220,6 +220,7 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def _create_token_of_type(
     selenium, browser_id, token_type, oz_page, popups, iteration=None
 ):
@@ -246,7 +247,6 @@ def _create_token_of_type(
         r"(?P<token_type>.*?) tokens?"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(
     selenium, browser_id, number: int, token_type, oz_page, popups
 ):
