@@ -179,7 +179,9 @@ def wait_for_provider_registration(button):
         assert (
             not button.is_displayed()
         ), "Provider registration is still in progress after 120s"
-    except RuntimeError:
+    except AssertionError:
+        raise
+    except Exception:  # pylint: disable=broad-exception-caught
         pass
 
 
