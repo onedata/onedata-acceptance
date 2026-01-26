@@ -34,13 +34,9 @@ def create_qos_requirement_in_op(
     client,
     user,
     selenium,
-    modals,
     file_name,
     tmp_memory,
     expression,
-    oz_page,
-    op_container,
-    popups,
     space_name,
     users,
     hosts,
@@ -51,13 +47,9 @@ def create_qos_requirement_in_op(
         add_qos_requirement_in_modal(
             selenium,
             user,
-            modals,
             file_name,
             tmp_memory,
             expression,
-            oz_page,
-            op_container,
-            popups,
             space_name,
         )
     elif client_lower == "rest":
@@ -84,8 +76,6 @@ def assert_qos_file_status_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
     users,
     hosts,
     option,
@@ -98,8 +88,6 @@ def assert_qos_file_status_in_op(
             space_name,
             tmp_memory,
             selenium,
-            oz_page,
-            op_container,
             option,
         )
     elif client_lower == "rest":
@@ -123,12 +111,8 @@ def delete_qos_requirement_in_op(
     selenium,
     user,
     space_name,
-    oz_page,
-    modals,
-    popups,
     file_name,
     tmp_memory,
-    op_container,
     users,
     hosts,
     host,
@@ -139,12 +123,8 @@ def delete_qos_requirement_in_op(
             selenium,
             user,
             space_name,
-            oz_page,
-            modals,
-            popups,
             file_name,
             tmp_memory,
-            op_container,
         )
     elif client_lower == "rest":
         delete_qos_requirement_in_op_rest(

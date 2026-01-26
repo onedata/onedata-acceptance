@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -74,8 +75,8 @@ def title_contains(selenium, browser_id, text):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
-    getattr(popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
+def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup):
+    getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
 
 @given(
@@ -85,20 +86,20 @@ def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
-    getattr(popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
+def g_click_on_btn_in_popup(selenium, browser_id, btn, popup):
+    getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu popup'))
-def click_option_in_popup_labeled_menu(selenium, browser_id, option, popups):
+def click_option_in_popup_labeled_menu(selenium, browser_id, option):
     driver = selenium[browser_id]
-    popups(driver).menu_popup_with_label.menu[option]()
+    Popups(driver).menu_popup_with_label.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu'))
-def click_option_in_popup_text_menu(selenium, browser_id, option, popups):
+def click_option_in_popup_text_menu(selenium, browser_id, option):
     driver = selenium[browser_id]
-    popups(driver).menu_popup_with_text.menu[option]()
+    Popups(driver).menu_popup_with_text.menu[option]()
 
 
 @wt(parsers.re("pass"))

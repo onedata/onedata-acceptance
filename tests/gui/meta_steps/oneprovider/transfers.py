@@ -24,6 +24,7 @@ from tests.gui.steps.oneprovider.transfers import (
     wait_for_waiting_transfer_to_start,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -36,21 +37,17 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_transfers_page(
-    selenium, browser_id, provider, space, hosts, oz_page, op_container
-):
+def open_transfers_page(selenium, browser_id, provider, space, hosts):
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, browser_id, space, option, oz_page
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option)
 
-    if provider_name != check_current_provider_in_space(selenium, browser_id, oz_page):
-        click_choose_other_oneprovider_on_file_browser(selenium, browser_id, oz_page)
-        choose_provider_in_selected_page(selenium, browser_id, provider, hosts, oz_page)
+    if provider_name != check_current_provider_in_space(selenium, browser_id):
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
+        choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
 
-    wait_for_transfers_page_to_load(selenium, browser_id, op_container)
+    wait_for_transfers_page_to_load(selenium, browser_id)
 
 
 @wt(
@@ -61,16 +58,16 @@ def open_transfers_page(
     )
 )
 def open_transfer_page_by_clicking_on_link(
-    browser_id, file, tmp_memory, selenium, popups, modals, link, op_container
+    browser_id, file, tmp_memory, selenium, link
 ):
     option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     getattr(
-        modals(selenium[browser_id]).details_modal.data_distribution,
+        Modals(selenium[browser_id]).details_modal.data_distribution,
         transform(link),
     )()
-    wait_for_transfers_page_to_load(selenium, browser_id, op_container)
+    wait_for_transfers_page_to_load(selenium, browser_id)
 
 
 @wt(
@@ -79,9 +76,7 @@ def open_transfer_page_by_clicking_on_link(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def evict_file(
-    selenium, browser_id, provider, popups, file_name, tmp_memory, modals, hosts
-):
+def evict_file(selenium, browser_id, provider, file_name, tmp_memory, hosts):
     option = "Data distribution"
     tab = "Distribution"
     menu_option = "Evict"
@@ -91,19 +86,17 @@ def evict_file(
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
-    data_distribution_modal = modals(driver).details_modal.data_distribution
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+    data_distribution_modal = Modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[provider_name].menu_button()
-    popups(driver).data_distribution_popup.menu[menu_option]()
-    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+    Popups(driver).data_distribution_popup.menu[menu_option]()
+    click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium, browser_id, provider, space, hosts, oz_page, op_container
+    selenium, browser_id, provider, space, hosts
 ):
-    open_transfers_page(
-        selenium, browser_id, provider, space, hosts, oz_page, op_container
-    )
-    wait_for_waiting_transfer_to_start(selenium, browser_id, op_container)
-    wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container)
+    open_transfers_page(selenium, browser_id, provider, space, hosts)
+    wait_for_waiting_transfer_to_start(selenium, browser_id)
+    wait_for_ongoing_tranfers_to_finish(selenium, browser_id)

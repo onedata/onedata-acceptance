@@ -41,8 +41,6 @@ def create_token(
     user,
     config,
     selenium,
-    oz_page,
-    popups,
     users,
     groups,
     hosts,
@@ -58,14 +56,12 @@ def create_token(
             selenium,
             user,
             config,
-            oz_page,
-            popups,
             users,
             groups,
             hosts,
             tmp_memory,
         )
-        click_copy_button_in_token_view(selenium, user, oz_page)
+        click_copy_button_in_token_view(selenium, user)
         tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
     elif client_lower == "rest":
         create_token_with_config_rest(
@@ -86,7 +82,6 @@ def assert_token(
     user,
     config,
     selenium,
-    oz_page,
     users,
     groups,
     hosts,
@@ -99,7 +94,6 @@ def assert_token(
             selenium,
             user,
             config,
-            oz_page,
             users,
             groups,
             hosts,
@@ -115,9 +109,9 @@ def assert_token(
 
 
 @wt(parsers.parse("if {client} is web gui, {user} copies created token"))
-def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_memory):
+def copy_token_if_gui(selenium, client, user, displays, clipboard, tmp_memory):
     if client.lower() == "web gui":
-        copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory)
+        copy_token_gui(selenium, user, displays, clipboard, tmp_memory)
 
 
 @wt(parsers.parse('using {client}, {user} copies created token named "{token_name}"'))
@@ -128,7 +122,6 @@ def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard, tmp_
 )
 def copy_named_token_if_gui(
     selenium,
-    oz_page,
     client,
     user,
     displays,
@@ -138,29 +131,27 @@ def copy_named_token_if_gui(
     token_name,
 ):
     if client == "web gui":
-        click_copy_button_in_token_view(selenium, user, oz_page)
+        click_copy_button_in_token_view(selenium, user)
         token = clipboard.paste(display=displays[user])
         tmp_memory[user]["token"] = token
         tokens[token_name] = {"token": token}
 
 
 @wt(parsers.parse("using web gui, {user} copies created token"))
-def copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory):
-    click_copy_button_in_token_view(selenium, user, oz_page)
+def copy_token_gui(selenium, user, displays, clipboard, tmp_memory):
+    click_copy_button_in_token_view(selenium, user)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
 
 @wt(parsers.parse('using {client}, {user} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def revoke_token_in_oz(
-    client, user, token_name, users, hosts, tokens, selenium, oz_page, popups
-):
+def revoke_token_in_oz(client, user, token_name, users, hosts, tokens, selenium):
     client_lower = client.lower()
     if client_lower == "rest":
         zone_name = "onezone"
         revoke_token_rest(user, users, hosts, zone_name, tokens, token_name)
     elif client_lower == "web gui":
-        choose_and_revoke_token_in_oz_gui(selenium, user, token_name, oz_page, popups)
+        choose_and_revoke_token_in_oz_gui(selenium, user, token_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -171,21 +162,15 @@ def revoke_token_in_oz(
         "space_name} with received token"
     )
 )
-def join_space_with_token(
-    selenium, user, oz_page, tmp_memory, client, users, hosts, space_name
-):
+def join_space_with_token(selenium, user, tmp_memory, client, users, hosts, space_name):
     client_lower = client.lower()
     if client_lower == "web gui":
-        consume_received_token(selenium, user, oz_page, tmp_memory)
-        assert_new_created_space_has_appeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        consume_received_token(selenium, user, tmp_memory)
+        assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     elif client_lower == "rest":
         join_space_in_oz_using_rest(
             user, users, "onezone", hosts, space_name, tmp_memory
         )
-        assert_new_created_space_has_appeared_on_spaces(
-            selenium, user, space_name, oz_page
-        )
+        assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
     else:
         raise NoSuchClientException(f"Client: {client} not found")

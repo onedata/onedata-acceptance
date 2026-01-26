@@ -52,14 +52,10 @@ def invite_user_to_cluster(
     browser_id,
     browser,
     cluster,
-    oz_page,
     hosts,
-    onepanel,
     tmp_memory,
     displays,
     clipboard,
-    popups,
-    modals,
 ):
     option = "Clusters"
     sub_item = "Members"
@@ -69,17 +65,13 @@ def invite_user_to_cluster(
     modal = "Invite using token"
     item_type = "token"
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster, hosts)
-    wt_click_on_subitem_for_item(
-        selenium, browser_id, option, sub_item, cluster, onepanel, hosts
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, option)
+    click_on_record_in_clusters_menu(selenium, browser_id, cluster, hosts)
+    wt_click_on_subitem_for_item(selenium, browser_id, option, sub_item, cluster, hosts)
 
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, button, where, member, oz_page, onepanel, popups
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where, member)
     copy_token_from_modal(selenium, browser_id)
-    close_modal(selenium, browser_id, modal, modals)
+    close_modal(selenium, browser_id, modal)
     send_copied_item_to_other_users(
         browser_id, item_type, browser, tmp_memory, displays, clipboard
     )
@@ -87,8 +79,8 @@ def invite_user_to_cluster(
 
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
-    consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard, displays)
+def join_to_cluster(selenium, browser_id, displays, clipboard):
+    consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
 
 
 @wt(
@@ -98,19 +90,13 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_privilege_config_in_cluster(
-    selenium, browser_id, oz_page, onepanel, where, user_name, config
-):
+def change_privilege_config_in_cluster(selenium, browser_id, where, user_name, config):
     member_type = "user"
     list_type = "users"
     option = "sets"
 
-    click_element_in_members_list(
-        selenium, browser_id, user_name, oz_page, where, list_type, onepanel
-    )
-    see_privileges_for_member(
-        selenium, browser_id, oz_page, where, member_type, user_name, onepanel
-    )
+    click_element_in_members_list(selenium, browser_id, user_name, where, list_type)
+    see_privileges_for_member(selenium, browser_id, where, member_type, user_name)
     try_setting_privileges_in_members_subpage(
         selenium,
         browser_id,
@@ -118,8 +104,6 @@ def change_privilege_config_in_cluster(
         member_type,
         where,
         config,
-        onepanel,
-        oz_page,
         option,
     )
 
@@ -133,14 +117,10 @@ def change_privilege_config_in_cluster(
 def add_group_to_cluster(
     selenium,
     browser_id,
-    oz_page,
-    onepanel,
     hosts,
     group_name,
     cluster_name,
-    popups,
     tmp_memory,
-    modals,
 ):
     sidebar = "CLUSTERS"
     menu_option = "Members"
@@ -150,40 +130,28 @@ def add_group_to_cluster(
     where = "cluster"
     member = "groups"
     modal_name = "add one of your groups"
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster_name, hosts)
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
+    click_on_record_in_clusters_menu(selenium, browser_id, cluster_name, hosts)
     wt_click_on_subitem_for_item(
         selenium,
         browser_id,
         sidebar,
         menu_option,
         cluster_name,
-        onepanel,
         hosts,
     )
-    click_on_option_in_members_list_menu(
-        selenium, browser_id, sub_item, where, member, oz_page, onepanel, popups
-    )
+    click_on_option_in_members_list_menu(selenium, browser_id, sub_item, where, member)
     for _ in range(5):
         try:
             wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
             break
         except TimeoutException:
             click_on_option_in_members_list_menu(
-                selenium,
-                browser_id,
-                sub_item,
-                where,
-                member,
-                oz_page,
-                onepanel,
-                popups,
+                selenium, browser_id, sub_item, where, member
             )
 
-    choose_element_from_dropdown_in_add_element_modal(
-        selenium, browser_id, group_name, modals, popups
-    )
-    click_modal_button(selenium, browser_id, button_name, modal, modals)
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id, group_name)
+    click_modal_button(selenium, browser_id, button_name, modal)
 
 
 @given(
@@ -199,11 +167,8 @@ def no_member_in_parent(
     member_name,
     member_type,
     name,
-    oz_page,
     tmp_memory,
-    onepanel,
     where,
-    popups,
 ):
     try:
         remove_member_from_parent(
@@ -212,11 +177,8 @@ def no_member_in_parent(
             member_name,
             member_type,
             name,
-            oz_page,
             tmp_memory,
-            onepanel,
             where,
-            popups,
         )
     except RuntimeError:
         pass
@@ -228,17 +190,15 @@ def remember_cluster_id(
     selenium,
     browser_id,
     provider,
-    oz_page,
     hosts,
-    popups,
     tmp_memory,
     clipboard,
     displays,
 ):
     option = "Copy ID"
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider, hosts)
-    click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)
-    click_option_in_popup_text_menu(selenium, browser_id, option, popups)
+    click_on_record_in_clusters_menu(selenium, browser_id, provider, hosts)
+    click_cluster_menu_button(selenium, browser_id, provider, hosts)
+    click_option_in_popup_text_menu(selenium, browser_id, option)
     cluster_id = clipboard.paste(display=displays[browser_id])
     tmp_memory[provider]["cluster id"] = cluster_id
 
@@ -261,7 +221,6 @@ def remember_cluster_id(
 def set_gui_settings(
     selenium,
     browser_id,
-    oz_page,
     record,
     hosts,
     kind_of_agreement,
@@ -272,17 +231,17 @@ def set_gui_settings(
     option = "GUI settings"
     box = kind_of_agreement + " input"
     button = "save " + kind_of_agreement
-    click_on_option_in_the_sidebar(selenium, browser_id, menu, oz_page)
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts)
-    click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
-    click_button_in_gui_settings_page(selenium, browser_id, oz_page, kind_of_agreement)
+    click_on_option_in_the_sidebar(selenium, browser_id, menu)
+    click_on_record_in_clusters_menu(selenium, browser_id, record, hosts)
+    click_option_of_record_in_the_sidebar(selenium, browser_id, option)
+    click_button_in_gui_settings_page(selenium, browser_id, kind_of_agreement)
     if operation == "sets":
-        write_input_in_gui_settings_page(selenium, browser_id, oz_page, box, text)
+        write_input_in_gui_settings_page(selenium, browser_id, box, text)
     else:
         remove_notification_in_gui_settings_page(
-            selenium, browser_id, oz_page, kind_of_agreement
+            selenium, browser_id, kind_of_agreement
         )
-    click_button_in_gui_settings_page(selenium, browser_id, oz_page, button)
+    click_button_in_gui_settings_page(selenium, browser_id, button)
     # wait for save button to be clicked
     time.sleep(0.1)
 
@@ -295,8 +254,8 @@ def set_gui_settings(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium, browser_id, oz_page, kind_of_agreement):
+def insert_setting_link(selenium, browser_id, kind_of_agreement):
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
-    click_button_in_gui_settings_page(selenium, browser_id, oz_page, link)
-    click_button_in_gui_settings_page(selenium, browser_id, oz_page, button)
+    click_button_in_gui_settings_page(selenium, browser_id, link)
+    click_button_in_gui_settings_page(selenium, browser_id, button)

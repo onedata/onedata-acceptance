@@ -56,9 +56,6 @@ def create_archive_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
-    modals,
     users,
     hosts,
     config,
@@ -66,7 +63,6 @@ def create_archive_in_op(
     clipboard,
     displays,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -76,14 +72,10 @@ def create_archive_in_op(
             config,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
             clipboard,
             displays,
             option,
-            popups,
         )
     elif client_lower == "rest":
         create_archive_in_op_rest(
@@ -119,8 +111,6 @@ def assert_archive_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
     users,
     hosts,
     spaces,
@@ -134,8 +124,6 @@ def assert_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             option,
             description,
@@ -174,14 +162,10 @@ def remove_archive_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
     users,
     hosts,
-    modals,
     description,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -190,13 +174,9 @@ def remove_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
             description,
             option,
-            popups,
         )
     elif client_lower == "rest":
         remove_archive_in_op_rest(
@@ -223,8 +203,6 @@ def assert_archive_with_option_in_op(
     host,
     option,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
     users,
     hosts,
@@ -235,9 +213,7 @@ def assert_archive_with_option_in_op(
         assert_archive_with_option_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             option,
@@ -267,8 +243,6 @@ def assert_number_of_archive_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
     users,
     hosts,
     spaces,
@@ -281,8 +255,6 @@ def assert_number_of_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             number,
         )
@@ -313,8 +285,6 @@ def assert_base_archive_for_archive_in_op(
     description,
     base_description,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
     users,
     hosts,
@@ -326,8 +296,6 @@ def assert_base_archive_for_archive_in_op(
             selenium,
             item_name,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             description,
             base_description,
@@ -360,8 +328,6 @@ def assert_archive_callback(
     expected_callback,
     client,
     selenium,
-    popups,
-    modals,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -370,8 +336,6 @@ def assert_archive_callback(
             tmp_memory,
             description,
             selenium,
-            popups,
-            modals,
             expected_callback,
             option,
         )
@@ -406,9 +370,7 @@ def recall_archive_for_archive_in_op(
     space_name,
     host,
     tmp_memory,
-    popups,
     selenium,
-    modals,
     users,
     hosts,
     spaces,
@@ -417,7 +379,7 @@ def recall_archive_for_archive_in_op(
     client_lower = client.lower()
     if client_lower == "web gui":
         recall_archive_for_archive_in_op_gui(
-            user, description, tmp_memory, popups, selenium, modals, target_name
+            user, description, tmp_memory, selenium, target_name
         )
     elif client_lower == "rest":
         recall_archive_for_archive_in_op_rest(
@@ -449,7 +411,6 @@ def recall_archive_details_in_op(
     config,
     name,
     tmp_memory,
-    modals,
     selenium,
     users,
     hosts,
@@ -461,9 +422,7 @@ def recall_archive_details_in_op(
     client_lower = client.lower()
     data = yaml.load(config, yaml.Loader)
     if client_lower == "web gui":
-        recalled_archive_details_in_op_gui(
-            user, name, tmp_memory, data, modals, selenium
-        )
+        recalled_archive_details_in_op_gui(user, name, tmp_memory, data, selenium)
     elif client_lower == "rest":
         recalled_archive_details_in_op_rest(
             user, users, hosts, host, data, name, space_name, spaces

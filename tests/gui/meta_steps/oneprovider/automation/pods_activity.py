@@ -18,6 +18,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_link_in_task_box,
     click_on_task_in_lane,
 )
+from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -41,9 +42,9 @@ def change_tab_in_function_pods_activity_modal(modal, tab_name):
     timeout=180,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
+def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).function_pods_activity
+    modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, "Current")
 
     assert len(modal.pods_list) == 0, "Pods has not been terminated"
@@ -56,9 +57,9 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
         'name "{lambda_name}"'
     )
 )
-def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_name):
+def assert_lambda_name_in_tab_name(selenium, browser_id, tab, lambda_name):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).function_pods_activity
+    modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
     pod_name = modal.pods_list[0].pod_name
     err_msg = f'Pod name: "{pod_name}" does not contain lambda name: "{lambda_name}"'
@@ -72,9 +73,9 @@ def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_nam
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_pod(selenium, browser_id, modals, tab):
+def click_on_first_pod(selenium, browser_id, tab):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).function_pods_activity
+    modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
     modal.pods_list[0].click()
 
@@ -86,9 +87,9 @@ def click_on_first_pod(selenium, browser_id, modals, tab):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_terminated_pod(selenium, browser_id, modals):
+def click_on_first_terminated_pod(selenium, browser_id):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).function_pods_activity
+    modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, "All")
 
     modal.pods_list[0].click()
@@ -111,11 +112,11 @@ def gather_events_list(modal, driver, option):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_events_in_pods_monitor(selenium, browser_id, modals, events, option):
+def assert_events_in_pods_monitor(selenium, browser_id, events, option):
 
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = modals(driver).function_pods_activity
+    modal = Modals(driver).function_pods_activity
     events_list = [
         event for event in yaml.load(events, yaml.Loader) if "+" not in event
     ]
@@ -137,11 +138,11 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events, option):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_containing_lambda_name(
-    selenium, browser_id, modals, events, option, lambda_name
+    selenium, browser_id, events, option, lambda_name
 ):
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    modal = modals(driver).function_pods_activity
+    modal = Modals(driver).function_pods_activity
     events_list = [
         event.replace('"', "").split(" + ")[1]
         for event in yaml.load(events, yaml.Loader)
@@ -187,12 +188,10 @@ def get_lambda_name(events):
 def checks_events_for_task(
     selenium,
     browser_id,
-    op_container,
     lane,
     task,
     ordinal,
     link,
-    modals,
     if_finished,
     option,
     events,
@@ -202,26 +201,20 @@ def checks_events_for_task(
     button = "X"
     modal = "Function pods activity"
 
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane, task, link, ordinal
-    )
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)
     if "finished" in if_finished:
-        wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
-        click_on_first_terminated_pod(selenium, browser_id, modals)
+        wait_for_ongoing_pods_to_be_terminated(selenium, browser_id)
+        click_on_first_terminated_pod(selenium, browser_id)
 
-    assert_events_in_pods_monitor(selenium, browser_id, modals, events, option)
+    assert_events_in_pods_monitor(selenium, browser_id, events, option)
     lambda_name = get_lambda_name(events)
 
     assert_events_containing_lambda_name(
-        selenium, browser_id, modals, events, option, lambda_name
+        selenium, browser_id, events, option, lambda_name
     )
-    click_modal_button(selenium, browser_id, button, modal, modals)
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, close
-    )
+    click_modal_button(selenium, browser_id, button, modal)
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 
 @wt(
@@ -235,11 +228,9 @@ def checks_events_for_task(
 def assert_pod_name_for_task(
     selenium,
     browser_id,
-    op_container,
     lane,
     task,
     ordinal,
-    modals,
     tab,
     lambda_name,
 ):
@@ -249,23 +240,17 @@ def assert_pod_name_for_task(
     button = "X"
     modal = "Function pods activity"
 
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane, task, link, ordinal
-    )
-    assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab, lambda_name)
-    click_modal_button(selenium, browser_id, button, modal, modals)
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, close
-    )
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)
+    assert_lambda_name_in_tab_name(selenium, browser_id, tab, lambda_name)
+    click_modal_button(selenium, browser_id, button, modal)
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)
 
 
-def check_number_of_events(selenium, browser_id, modals, exp_num, task):
+def check_number_of_events(selenium, browser_id, exp_num, task):
     driver = selenium[browser_id]
     actual_num = int(
-        modals(driver).function_pods_activity.get_number_of_data_rows(driver)
+        Modals(driver).function_pods_activity.get_number_of_data_rows(driver)
     )
     exp_num = int(exp_num)
     err_msg = (
@@ -282,25 +267,17 @@ def check_number_of_events(selenium, browser_id, modals, exp_num, task):
         ' parallel box in "{lane}" lane is about {exp_num}'
     )
 )
-def assert_number_of_events_in_task(
-    browser_id, task, lane, exp_num, ordinal, op_container, selenium, modals
-):
+def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal, selenium):
     click = "clicks on"
     close = "closes"
     link = "Pods activity"
     button = "X"
     modal = "Function pods activity"
 
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane, task, link, ordinal
-    )
-    wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
-    click_on_first_terminated_pod(selenium, browser_id, modals)
-    check_number_of_events(selenium, browser_id, modals, exp_num, task)
-    click_modal_button(selenium, browser_id, button, modal, modals)
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane, task, ordinal, close
-    )
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)
+    wait_for_ongoing_pods_to_be_terminated(selenium, browser_id)
+    click_on_first_terminated_pod(selenium, browser_id)
+    check_number_of_events(selenium, browser_id, exp_num, task)
+    click_modal_button(selenium, browser_id, button, modal)
+    click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, close)

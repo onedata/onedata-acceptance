@@ -58,13 +58,9 @@ def create_dataset_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
-    modals,
     users,
     hosts,
     option,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -74,10 +70,6 @@ def create_dataset_in_op(
             item_name,
             space_name,
             selenium,
-            oz_page,
-            op_container,
-            modals,
-            popups,
             option=option,
         )
     elif client_lower == "rest":
@@ -104,12 +96,8 @@ def fail_to_create_dataset_in_op(
     host,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
-    modals,
     users,
     hosts,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -119,10 +107,6 @@ def fail_to_create_dataset_in_op(
             item_name,
             space_name,
             selenium,
-            oz_page,
-            op_container,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         fail_to_create_dataset_in_op_rest(
@@ -147,8 +131,6 @@ def assert_top_level_dataset_in_space_in_op(
     space_name,
     host,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
     users,
     hosts,
@@ -160,9 +142,7 @@ def assert_top_level_dataset_in_space_in_op(
         assert_top_level_dataset_in_space_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
             option,
@@ -190,27 +170,19 @@ def remove_dataset_in_op(
     space_name,
     host,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         remove_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         remove_dataset_in_op_rest(
@@ -276,8 +248,6 @@ def check_dataset_structure_in_op(
     host,
     config,
     selenium,
-    oz_page,
-    op_container,
     tmpdir,
     tmp_memory,
     users,
@@ -290,17 +260,15 @@ def check_dataset_structure_in_op(
     if client_lower == "web gui":
         option_in_submenu = "datasets, archives"
         click_on_option_of_space_on_left_sidebar_menu(
-            selenium, user, space_name, option_in_submenu, oz_page
+            selenium, user, space_name, option_in_submenu
         )
         assert_space_content_in_op_gui(
             config,
             selenium,
             user,
-            op_container,
             tmp_memory,
             tmpdir,
             space_name,
-            oz_page,
             which_browser="dataset browser",
         )
     elif client_lower == "rest":
@@ -328,27 +296,19 @@ def check_effective_protection_flags_for_file(
     space_name,
     host,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -375,28 +335,20 @@ def set_protection_flags_for_dataset(
     space_name,
     host,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         set_protection_flags_for_dataset_in_op_gui(
             user,
             selenium,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
 
     elif client_lower == "rest":
@@ -424,28 +376,20 @@ def check_effective_protection_flags_for_dataset(
     space_name,
     host,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         check_effective_protection_flags_for_file_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
             option,
-            popups,
         )
     elif client_lower == "rest":
         check_effective_protection_flags_for_dataset_in_op_rest(
@@ -469,29 +413,21 @@ def detach_dataset_in_op(
     user,
     selenium,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
-    modals,
-    oz_page,
     users,
     hosts,
     host,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         detach_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         detach_dataset_in_op_rest(
@@ -513,9 +449,7 @@ def assert_dataset_detached_in_op(
     client,
     selenium,
     user,
-    oz_page,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     users,
@@ -528,10 +462,8 @@ def assert_dataset_detached_in_op(
         assert_dataset_detached_in_op_gui(
             selenium,
             user,
-            oz_page,
             item_name,
             space_name,
-            op_container,
             tmp_memory,
         )
     elif client_lower == "rest":
@@ -555,29 +487,21 @@ def reattach_dataset_in_op(
     user,
     selenium,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
-    modals,
-    oz_page,
     users,
     hosts,
     host,
     spaces,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
         reattach_dataset_in_op_gui(
             selenium,
             user,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             item_name,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         reattach_dataset_in_op_rest(

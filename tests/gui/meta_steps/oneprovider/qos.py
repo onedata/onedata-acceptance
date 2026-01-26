@@ -35,11 +35,9 @@ from tests.utils.utils import repeat_failed
 def _add_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
-    popups,
     replicas_number,
 ):
     qos_option = "Quality of Service"
@@ -52,20 +50,20 @@ def _add_qos_requirement_in_modal(
     details_modal = "Details modal"
 
     choose_option_for_file_from_selection_menu(
-        browser_id, selenium, qos_option, popups, tmp_memory, item_name
+        browser_id, selenium, qos_option, tmp_memory, item_name
     )
-    click_panel_button(selenium, browser_id, add_button, panel, modals)
-    click_enter_as_text_link(selenium, browser_id, modals)
+    click_panel_button(selenium, browser_id, add_button, panel)
+    click_enter_as_text_link(selenium, browser_id)
     write_name_into_text_field_in_panel(
-        selenium, browser_id, expression, panel, modals, expression_field
+        selenium, browser_id, expression, panel, expression_field
     )
-    confirm_entering_text(selenium, browser_id, modals)
+    confirm_entering_text(selenium, browser_id)
     if replicas_number != 1:
         write_name_into_text_field_in_panel(
-            selenium, browser_id, replicas_number, panel, modals, replicas_field
+            selenium, browser_id, replicas_number, panel, replicas_field
         )
-    click_panel_button(selenium, browser_id, save_button, panel, modals)
-    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+    click_panel_button(selenium, browser_id, save_button, panel)
+    click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(
@@ -78,28 +76,20 @@ def _add_qos_requirement_in_modal(
 def add_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
-    oz_page,
-    op_container,
-    popups,
     space_name,
 ):
     replicas_number = 1
 
-    go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space_name
-    )
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -115,27 +105,19 @@ def add_qos_requirement_in_modal(
 def add_qos_requirement_in_modal_with_replicas(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
     expression,
-    oz_page,
     space_name,
-    op_container,
-    popups,
     replicas_number,
 ):
-    go_to_filebrowser(
-        selenium, browser_id, oz_page, op_container, tmp_memory, space_name
-    )
+    go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -150,10 +132,8 @@ def add_qos_requirement_in_modal_with_replicas(
 def add_id_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
-    popups,
     clipboard,
     displays,
 ):
@@ -163,11 +143,9 @@ def add_id_qos_requirement_in_modal(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -182,10 +160,8 @@ def add_id_qos_requirement_in_modal(
 def add_no_id_qos_requirement_in_modal(
     selenium,
     browser_id,
-    modals,
     item_name,
     tmp_memory,
-    popups,
     clipboard,
     displays,
 ):
@@ -197,11 +173,9 @@ def add_no_id_qos_requirement_in_modal(
     _add_qos_requirement_in_modal(
         selenium,
         browser_id,
-        modals,
         item_name,
         tmp_memory,
         expression,
-        popups,
         replicas_number,
     )
 
@@ -212,18 +186,14 @@ def assert_qos_file_status_in_op_gui(
     space_name,
     tmp_memory,
     selenium,
-    oz_page,
-    op_container,
     option,
 ):
     option_of_space = "Files"
     status_type = "QoS"
     click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option_of_space, oz_page
+        selenium, user, space_name, option_of_space
     )
-    assert_browser_in_tab_in_op(
-        selenium, user, op_container, tmp_memory, "file browser"
-    )
+    assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     if option == "has some":
         assert_status_tag_for_file_in_browser(user, status_type, file_name, tmp_memory)
     else:
@@ -236,25 +206,17 @@ def delete_qos_requirement_in_op_gui(
     selenium,
     user,
     space_name,
-    oz_page,
-    modals,
-    popups,
     file_name,
     tmp_memory,
-    op_container,
 ):
     option1 = "Files"
     status_type = "QoS"
     button = "X"
     modal = "Details modal"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option1, oz_page
-    )
-    assert_browser_in_tab_in_op(
-        selenium, user, op_container, tmp_memory, "file browser"
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
+    assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
     click_on_status_tag_for_file_in_file_browser(
         user, status_type, file_name, tmp_memory
     )
-    delete_all_qualities_of_service(selenium, user, modals, popups)
-    click_modal_button(selenium, user, button, modal, modals)
+    delete_all_qualities_of_service(selenium, user)
+    click_modal_button(selenium, user, button, modal)

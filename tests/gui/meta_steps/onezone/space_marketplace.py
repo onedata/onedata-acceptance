@@ -23,7 +23,7 @@ from tests.utils.bdd_utils import parsers, wt
 @wt(
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
-def configure_space_manually(browser_id, config, selenium, oz_page, popups):
+def configure_space_manually(browser_id, config, selenium):
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -49,7 +49,7 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
             - science
         description: "space advertised in marketplace"
     """
-    _configure_space_manually(browser_id, config, selenium, oz_page, popups)
+    _configure_space_manually(browser_id, config, selenium)
 
 
 @wt(
@@ -58,21 +58,15 @@ def configure_space_manually(browser_id, config, selenium, oz_page, popups):
         "saving as follows:\n{config}"
     )
 )
-def configure_space_manually_without_saving(
-    browser_id, config, selenium, oz_page, popups
-):
+def configure_space_manually_without_saving(browser_id, config, selenium):
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as in the previous function:
     """
-    _configure_space_manually(
-        browser_id, config, selenium, oz_page, popups, with_save=False
-    )
+    _configure_space_manually(browser_id, config, selenium, with_save=False)
 
 
-def _configure_space_manually(
-    browser_id, config, selenium, oz_page, popups, with_save=True
-):
+def _configure_space_manually(browser_id, config, selenium, with_save=True):
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -88,7 +82,6 @@ def _configure_space_manually(
     set_space_data_in_configuration_tab(
         selenium,
         browser_id,
-        oz_page,
         space_name_option,
         space_name,
         with_save=with_save,
@@ -96,14 +89,11 @@ def _configure_space_manually(
     set_space_data_in_configuration_tab(
         selenium,
         browser_id,
-        oz_page,
         organization_name_option,
         organization_name,
         with_save=with_save,
     )
-    set_description_of_a_space(
-        selenium, browser_id, oz_page, description, with_save=with_save
-    )
+    set_description_of_a_space(selenium, browser_id, description, with_save=with_save)
 
     if tags:
         # KeyError when call tags[general_option] if not exists
@@ -111,8 +101,6 @@ def _configure_space_manually(
             add_tags_in_space_configuration_tab(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 general_option,
                 tags[general_option],
                 with_save=with_save,
@@ -121,8 +109,6 @@ def _configure_space_manually(
             add_tags_in_space_configuration_tab(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 domains_option,
                 tags[domains_option],
                 with_save=with_save,
@@ -136,7 +122,7 @@ def _configure_space_manually(
         "subpage with following parameters:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, config):
+def assert_space_in_marketplace_with_config(browser_id, selenium, config):
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:
@@ -163,10 +149,10 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, oz_page, confi
 
     """
 
-    _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page)
+    _assert_space_in_marketplace_with_config(browser_id, config, selenium)
 
 
-def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_page):
+def _assert_space_in_marketplace_with_config(browser_id, config, selenium):
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -184,7 +170,6 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_pa
     assert_element_in_space_marketplace(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         organization_name_option,
         organization_name,
@@ -192,13 +177,12 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_pa
 
     if tags:
         assert_elements_list_in_space_marketplace(
-            selenium, browser_id, oz_page, space_name, "tag", tags
+            selenium, browser_id, space_name, "tag", tags
         )
 
     assert_element_in_space_marketplace(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         creation_time_option,
         creation_time,
@@ -206,13 +190,12 @@ def _assert_space_in_marketplace_with_config(browser_id, config, selenium, oz_pa
 
     if providers:
         assert_elements_list_in_space_marketplace(
-            selenium, browser_id, oz_page, space_name, "provider", providers
+            selenium, browser_id, space_name, "provider", providers
         )
 
     assert_element_in_space_marketplace(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         description_option,
         description,

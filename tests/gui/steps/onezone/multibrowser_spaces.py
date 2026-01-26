@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -37,8 +38,6 @@ def send_invitation_token_to_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_group_on_groups_on_left_sidebar_menu(
-    selenium, browser_id, group_name, oz_page
-):
+def click_group_on_groups_on_left_sidebar_menu(selenium, browser_id, group_name):
     driver = selenium[browser_id]
-    oz_page(driver)["groups"].elements_list[group_name].click()
+    OZLoggedIn(driver)["groups"].elements_list[group_name].click()

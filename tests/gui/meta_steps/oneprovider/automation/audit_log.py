@@ -53,6 +53,7 @@ from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
@@ -60,7 +61,7 @@ from tests.utils.utils import repeat_failed
 
 
 def write_audit_logs_for_task_to_file(
-    task, modals, driver, clipboard, path, displays, browser_id, exp_status
+    task, driver, clipboard, path, displays, browser_id, exp_status
 ):
     task.drag_handle.click()
     # wait for task to open
@@ -68,7 +69,7 @@ def write_audit_logs_for_task_to_file(
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
     if task.status == exp_status:
-        modal, logs = get_modal_and_logs_for_task(path, task, modals, driver)
+        modal, logs = get_modal_and_logs_for_task(path, task, driver)
         for log in logs:
             if log.severity != "Info":
                 get_audit_log_json_and_write_to_file(
@@ -81,14 +82,13 @@ def write_audit_logs_for_task_to_file(
 
 
 def get_audit_logs_from_every_task_in_workflow(
-    lanes, modals, driver, clipboard, path, displays, browser_id, exp_status
+    lanes, driver, clipboard, path, displays, browser_id, exp_status
 ):
     for lane in lanes:
         for parallel_box in lane.parallel_boxes:
             for task in parallel_box.task_list:
                 write_audit_logs_for_task_to_file(
                     task,
-                    modals,
                     driver,
                     clipboard,
                     path,
@@ -104,10 +104,8 @@ def get_audit_logs_from_every_task_in_workflow(
         " saves audit logs for all tasks to logs"
     )
 )
-def save_audit_logs_to_logs(
-    selenium, browser_id, op_container, exp_status, modals, clipboard, displays
-):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+def save_audit_logs_to_logs(selenium, browser_id, exp_status, clipboard, displays):
+    page = switch_to_automation_page(selenium, browser_id)
     act_status = get_status_from_workflow_visualizer(page)
     driver = selenium[browser_id]
     if act_status == exp_status:
@@ -115,7 +113,6 @@ def save_audit_logs_to_logs(
         path = GUI_LOGDIR + "/audit_logs.txt"
         get_audit_logs_from_every_task_in_workflow(
             lanes,
-            modals,
             driver,
             clipboard,
             path,
@@ -134,9 +131,7 @@ def save_audit_logs_to_logs(
 def assert_audit_log_in_store(
     browser_id,
     selenium,
-    op_container,
     store_name,
-    modals,
     clipboard,
     displays,
     tmp_memory,
@@ -145,10 +140,8 @@ def assert_audit_log_in_store(
     driver = selenium[browser_id]
     store_type = "object"
     store_details = get_store_details_json(
-        op_container,
         driver,
         browser_id,
-        modals,
         clipboard,
         displays,
         store_name,
@@ -178,9 +171,7 @@ def assert_audit_log_in_store(
 def assert_content_in_audit_log_in_store(
     browser_id,
     selenium,
-    op_container,
     store_name,
-    modals,
     clipboard,
     displays,
     content,
@@ -189,10 +180,8 @@ def assert_content_in_audit_log_in_store(
     store_type = "object"
     expected_data = yaml.load(content, yaml.Loader)
     store_details = get_store_details_json(
-        op_container,
         driver,
         browser_id,
-        modals,
         clipboard,
         displays,
         store_name,
@@ -231,9 +220,7 @@ def assert_content_in_audit_log_in_store(
 def get_store_audit_log(
     browser_id,
     selenium,
-    op_container,
     store_name,
-    modals,
     clipboard,
     displays,
     tmp_memory,
@@ -243,9 +230,7 @@ def get_store_audit_log(
         assert_audit_log_in_store(
             browser_id,
             selenium,
-            op_container,
             store_name,
-            modals,
             clipboard,
             displays,
             tmp_memory,
@@ -255,7 +240,6 @@ def get_store_audit_log(
 
 
 def compare_audit_log_to_store_log(
-    modals,
     driver,
     clipboard,
     displays,
@@ -264,23 +248,20 @@ def compare_audit_log_to_store_log(
     elem_type,
     store_name,
     selenium,
-    op_container,
     tmp_memory,
 ):
     store_key = f"{store_name}_store_log"
     store_audit_log = get_store_audit_log(
         browser_id,
         selenium,
-        op_container,
         store_name,
-        modals,
         clipboard,
         displays,
         tmp_memory,
         store_key,
     )
 
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
 
     modal.user_log.click()
     modal.copy_json()
@@ -304,11 +285,9 @@ def compare_audit_log_to_store_log(
 def assert_task_audit_log_is_like_store_audit_log(
     selenium,
     browser_id,
-    op_container,
     lane_name,
     task_name,
     ordinal,
-    modals,
     clipboard,
     displays,
     tmp_memory,
@@ -317,7 +296,7 @@ def assert_task_audit_log_is_like_store_audit_log(
     elem_type = "task"
     driver = selenium[browser_id]
     number = from_ordinal_number_to_int(ordinal) - 1
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page = switch_to_automation_page(selenium, browser_id)
 
     task = (
         page.workflow_visualiser.workflow_lanes[lane_name]
@@ -330,7 +309,6 @@ def assert_task_audit_log_is_like_store_audit_log(
     time.sleep(1)
 
     compare_audit_log_to_store_log(
-        modals,
         driver,
         clipboard,
         displays,
@@ -339,10 +317,9 @@ def assert_task_audit_log_is_like_store_audit_log(
         elem_type,
         store_name,
         selenium,
-        op_container,
         tmp_memory,
     )
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     close_modal_and_task(modal, task)
 
 
@@ -356,8 +333,6 @@ def assert_task_audit_log_is_like_store_audit_log(
 def assert_workflow_audit_log_contains_store_audit_log_info(
     selenium,
     browser_id,
-    op_container,
-    modals,
     store_name,
     clipboard,
     displays,
@@ -365,12 +340,11 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     workflow,
 ):
     elem_type = "workflow"
-    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page = switch_to_automation_page(selenium, browser_id)
     page.workflow_visualiser.audit_log()
     driver = selenium[browser_id]
 
     compare_audit_log_to_store_log(
-        modals,
         driver,
         clipboard,
         displays,
@@ -379,10 +353,9 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
         elem_type,
         store_name,
         selenium,
-        op_container,
         tmp_memory,
     )
-    modals(driver).audit_log.x()
+    Modals(driver).audit_log.x()
 
 
 @wt(
@@ -393,9 +366,9 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     )
 )
 def assert_number_of_elements_in_store_details(
-    selenium, browser_id, modals, store_name, op_container, number
+    selenium, browser_id, store_name, number
 ):
-    _ = open_store_details_modal(selenium, browser_id, op_container, modals, store_name)
+    _ = open_store_details_modal(selenium, browser_id, store_name)
     check_number_of_elements_in_store_details_modal(
         selenium, browser_id, number, store_name
     )
@@ -420,32 +393,27 @@ def assert_number_of_elements_in_store_details(
 def assert_file_id_in_store_details(
     browser_id,
     selenium,
-    op_container,
     store_name,
-    modals,
     clipboard,
     displays,
     tmp_memory,
     file_list,
-    popups,
-    oz_page,
     space_name,
     option,
 ):
     driver = selenium[browser_id]
 
-    page = get_op_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(driver)
     store_type = "object"
     files = parse_seq(file_list)
 
-    elem_num = len(modals(driver).store_details.store_content_object)
+    elem_num = len(Modals(driver).store_details.store_content_object)
     storage_file_ids = [
         json.loads(
             open_modal_and_get_store_content(
                 browser_id,
                 driver,
                 page,
-                modals,
                 clipboard,
                 displays,
                 store_name,
@@ -460,13 +428,9 @@ def assert_file_id_in_store_details(
         get_file_id_from_details_modal(
             selenium,
             browser_id,
-            oz_page,
             space_name,
-            op_container,
             tmp_memory,
             file,
-            popups,
-            modals,
             clipboard,
             displays,
         )
@@ -512,8 +476,6 @@ def assert_each_element_contains_some_information(
     selenium,
     store_name,
     content,
-    op_container,
-    modals,
     clipboard,
     displays,
     option,
@@ -522,8 +484,8 @@ def assert_each_element_contains_some_information(
     store_type = "object"
     expected_data = yaml.load(content, yaml.Loader)
     actual_data = []
-    get_op_workflow_visualizer_page(op_container, driver)
-    modal = modals(driver).store_details
+    get_op_workflow_visualizer_page(driver)
+    modal = Modals(driver).store_details
     elem_num = len(modal.store_content_object)
     for i in range(elem_num):
         store_content = json.loads(
@@ -560,16 +522,14 @@ def assert_each_element_checksum_content_in_store(
     selenium,
     store_name,
     content,
-    op_container,
-    modals,
     clipboard,
     displays,
 ):
     driver = selenium[browser_id]
     store_type = "object"
     expected_data = yaml.load(content, yaml.Loader)
-    get_op_workflow_visualizer_page(op_container, driver)
-    modal = modals(driver).store_details
+    get_op_workflow_visualizer_page(driver)
+    modal = Modals(driver).store_details
     elem_num = len(modal.store_content_object)
     for i in range(elem_num):
         store_content = json.loads(
@@ -650,15 +610,11 @@ def check_visual_in_store_details_modal(modal, variable_type, item_list, store_n
 def assert_elements_in_store_details_modal(
     browser_id,
     selenium,
-    op_container,
     item_list,
     store_name,
-    modals,
     variable_type,
 ):
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+    modal = open_store_details_modal(selenium, browser_id, store_name)
 
     if variable_type == "string":
         compare_string_in_store_details_modal(
@@ -677,12 +633,8 @@ def assert_elements_in_store_details_modal(
         'Store details modal for "{store_name}" store'
     )
 )
-def assert_datasets_in_store_details(
-    selenium, browser_id, op_container, modals, store_name, item_list
-):
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+def assert_datasets_in_store_details(selenium, browser_id, store_name, item_list):
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     compare_datasets_in_store_details_modal(item_list, modal, store_name)
     modal.close()
 
@@ -693,12 +645,8 @@ def assert_datasets_in_store_details(
         'Store details modal for "{store_name}" store'
     )
 )
-def assert_file_in_store_details(
-    selenium, browser_id, op_container, modals, store_name, file
-):
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+def assert_file_in_store_details(selenium, browser_id, store_name, file):
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     actual_file = modal.single_file_container.name
 
     err_msg = f"{file} is not in Store details modal for {store_name} store"
@@ -713,11 +661,9 @@ def assert_file_in_store_details(
     )
 )
 def wt_click_on_elem_in_store_details_modal(
-    browser_id, selenium, op_container, name, store_name, modals, option
+    browser_id, selenium, name, store_name, option
 ):
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     click_on_elem_in_store_details_modal(
         modal,
         name,
@@ -740,12 +686,10 @@ def check_if_element_is_selected(tmp_memory, browser_id, name, which_browser):
     )
 )
 def assert_element_selected_in_new_browser_tab(
-    browser_id, selenium, op_container, name, tmp_memory, which_browser
+    browser_id, selenium, name, tmp_memory, which_browser
 ):
     switch_to_last_tab(selenium, browser_id)
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, which_browser
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, which_browser)
     check_if_element_is_selected(tmp_memory, browser_id, name, which_browser)
 
 
@@ -756,11 +700,7 @@ def compare_to_expected_if_element_exist_for_store(
     store_name,
     selenium,
     browser_id,
-    oz_page,
-    op_container,
     tmp_memory,
-    popups,
-    modals,
     clipboard,
     displays,
 ):
@@ -770,13 +710,9 @@ def compare_to_expected_if_element_exist_for_store(
             elem = get_file_id_from_details_modal(
                 selenium,
                 browser_id,
-                oz_page,
                 file_info[0],
-                op_container,
                 tmp_memory,
                 file_info[1],
-                popups,
-                modals,
                 clipboard,
                 displays,
             )
@@ -795,15 +731,11 @@ def compare_to_expected_if_element_exist_for_store(
 def assert_content_of_store(
     selenium,
     browser_id,
-    op_container,
-    modals,
     store_name,
     config,
     clipboard,
     displays,
-    oz_page,
     tmp_memory,
-    popups,
 ):
 
     options_to_check = [
@@ -816,9 +748,7 @@ def assert_content_of_store(
         "fileId",
     ]
     data = yaml.load(config, yaml.Loader)
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+    modal = open_store_details_modal(selenium, browser_id, store_name)
 
     if len(modal.store_content_list) == 0:
         modal.copy_button()
@@ -839,11 +769,7 @@ def assert_content_of_store(
                 store_name,
                 selenium,
                 browser_id,
-                oz_page,
-                op_container,
                 tmp_memory,
-                popups,
-                modals,
                 clipboard,
                 displays,
             )
@@ -878,11 +804,7 @@ def compare_content_reason_of_task_audit_log(
     actual_reason,
     selenium,
     browser_id,
-    oz_page,
-    op_container,
     tmp_memory,
-    popups,
-    modals,
     clipboard,
     displays,
     task_name,
@@ -911,13 +833,9 @@ def compare_content_reason_of_task_audit_log(
                 get_file_id_from_details_modal(
                     selenium,
                     browser_id,
-                    oz_page,
                     placeholder_file_id[0],
-                    op_container,
                     tmp_memory,
                     placeholder_file_id[1],
-                    popups,
-                    modals,
                     clipboard,
                     displays,
                 )
@@ -933,11 +851,7 @@ def compare_content_of_task_audit_log(
     task_name,
     selenium,
     browser_id,
-    oz_page,
-    op_container,
     tmp_memory,
-    popups,
-    modals,
     clipboard,
     displays,
 ):
@@ -957,11 +871,7 @@ def compare_content_of_task_audit_log(
             actual_details["reason"],
             selenium,
             browser_id,
-            oz_page,
-            op_container,
             tmp_memory,
-            popups,
-            modals,
             clipboard,
             displays,
             task_name,
@@ -971,13 +881,9 @@ def compare_content_of_task_audit_log(
         item["fileId"] = get_file_id_from_details_modal(
             selenium,
             browser_id,
-            oz_page,
             file_id[0],
-            op_container,
             tmp_memory,
             file_id[1],
-            popups,
-            modals,
             clipboard,
             displays,
         )
@@ -994,22 +900,18 @@ def compare_content_of_task_audit_log(
     )
 )
 def assert_content_of_user_task_audit_log(
-    selenium, browser_id, op_container, lane_name, task_name, ordinal, modals
+    selenium, browser_id, lane_name, task_name, ordinal
 ):
     click = "click"
     close = "closes"
     link = "Audit log"
     driver = selenium[browser_id]
 
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane_name, task_name, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane_name, task_name, link, ordinal
-    )
+    click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane_name, task_name, link, ordinal)
     # wait a moment for modal to open
     time.sleep(1)
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     try:
         modal.user_log  # pylint: disable=pointless-statement
         raise AssertionError(
@@ -1019,9 +921,7 @@ def assert_content_of_user_task_audit_log(
     except RuntimeError:
         pass
     modal.x()
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane_name, task_name, ordinal, close
-    )
+    click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
 
 
 @wt(
@@ -1037,11 +937,9 @@ def assert_exception_in_element_content_in_task_audit_log(
     element,
     selenium,
     browser_id,
-    op_container,
     lane_name,
     task_name,
     ordinal,
-    modals,
     clipboard,
     displays,
     tmp_memory,
@@ -1054,11 +952,9 @@ def assert_exception_in_element_content_in_task_audit_log(
         element,
         selenium,
         browser_id,
-        op_container,
         lane_name,
         task_name,
         ordinal,
-        modals,
         clipboard,
         displays,
     )
@@ -1076,11 +972,9 @@ def assert_element_content_in_task_audit_log(
     element,
     selenium,
     browser_id,
-    op_container,
     lane_name,
     task_name,
     ordinal,
-    modals,
     clipboard,
     displays,
 ):
@@ -1094,15 +988,11 @@ def assert_element_content_in_task_audit_log(
         expected_data = expected_data.replace('"', "")
         expected_data = expected_data.replace("\\n", "\n")
     driver = selenium[browser_id]
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane_name, task_name, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane_name, task_name, link, ordinal
-    )
+    click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane_name, task_name, link, ordinal)
     # wait a moment for modal to open
     time.sleep(1)
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     modal.user_log.click()
     modal.copy_json()
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
@@ -1124,9 +1014,7 @@ def assert_element_content_in_task_audit_log(
         )
         assert actual_data == expected_data, err_msg
     modal.x()
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane_name, task_name, ordinal, close
-    )
+    click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, close)
 
 
 @wt(
@@ -1140,16 +1028,12 @@ def assert_content_of_task_audit_log(
     config,
     selenium,
     browser_id,
-    op_container,
     lane_name,
     task_name,
     ordinal,
-    modals,
     clipboard,
     displays,
-    popups,
     tmp_memory,
-    oz_page,
 ):
     expected_identical = ["source", "severity", "timestamp"]
     click = "click"
@@ -1162,16 +1046,12 @@ def assert_content_of_task_audit_log(
     close = "closes"
     # wait a second for workflow to open
     time.sleep(1)
-    click_on_task_in_lane(
-        selenium, browser_id, op_container, lane_name, task_name, ordinal, click
-    )
-    click_on_link_in_task_box(
-        selenium, browser_id, op_container, lane_name, task_name, link, ordinal
-    )
+    click_on_task_in_lane(selenium, browser_id, lane_name, task_name, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, lane_name, task_name, link, ordinal)
     # wait a moment for modal to open
     time.sleep(1)
-    modal = modals(driver).audit_log
-    click_on_log_in_workflow_audit_log(modals, driver, severity, source)
+    modal = Modals(driver).audit_log
+    click_on_log_in_workflow_audit_log(driver, severity, source)
     modal.copy_json()
     actual_items = json.loads(clipboard.paste(display=displays[browser_id]))
 
@@ -1187,11 +1067,7 @@ def assert_content_of_task_audit_log(
             task_name,
             selenium,
             browser_id,
-            oz_page,
-            op_container,
             tmp_memory,
-            popups,
-            modals,
             clipboard,
             displays,
         )
@@ -1201,7 +1077,6 @@ def assert_content_of_task_audit_log(
         click_on_task_in_lane(
             selenium,
             browser_id,
-            op_container,
             lane_name,
             task_name,
             ordinal,
@@ -1212,8 +1087,8 @@ def assert_content_of_task_audit_log(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_log_in_workflow_audit_log(modals, driver, severity, source):
-    modal = modals(driver).audit_log
+def click_on_log_in_workflow_audit_log(driver, severity, source):
+    modal = Modals(driver).audit_log
     if severity in ["Error", "Debug"]:
         modal.logs_entry[severity].click()
     elif source == "user":
@@ -1230,10 +1105,10 @@ def click_on_log_in_workflow_audit_log(modals, driver, severity, source):
     )
 )
 def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
-    browser_id, tmpdir, modals, selenium, clipboard, displays
+    browser_id, tmpdir, selenium, clipboard, displays
 ):
     driver = selenium[browser_id]
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     path = tmpdir.join(browser_id, "download")
     file_name = os.listdir(path)[-1]
     file_path = tmpdir.join(browser_id, "download", file_name)
@@ -1270,22 +1145,20 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
     )
 )
 def assert_workflow_audit_log_contains_entries(
-    selenium, browser_id, modals, tmpdir, tmp_memory, config
+    selenium, browser_id, tmpdir, tmp_memory, config
 ):
     _assert_workflow_audit_log_contains_entries(
-        selenium, browser_id, modals, tmpdir, tmp_memory, config
+        selenium, browser_id, tmpdir, tmp_memory, config
     )
 
 
 def _assert_workflow_audit_log_contains_entries(
-    selenium, browser_id, modals, tmpdir, tmp_memory, config
+    selenium, browser_id, tmpdir, tmp_memory, config
 ):
     data = yaml.load(config, yaml.Loader)
     driver = selenium[browser_id]
-    modal = modals(driver).audit_log
-    file_path = _get_workflow_audit_log(
-        browser_id, selenium, tmp_memory, modals, tmpdir
-    )
+    modal = Modals(driver).audit_log
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
 
     with open(file_path) as f:
         data_file = json.load(f)
@@ -1317,11 +1190,9 @@ def compare_audit_log_debug_entries(actual_entry, expected_entry):
     )
 )
 def assert_workflow_audit_log_contains_entry(
-    selenium, browser_id, modals, tmpdir, tmp_memory, item_list
+    selenium, browser_id, tmpdir, tmp_memory, item_list
 ):
-    file_path = _get_workflow_audit_log(
-        browser_id, selenium, tmp_memory, modals, tmpdir
-    )
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
         data_file = json.load(f)
     item_list = parse_seq(item_list)
@@ -1354,11 +1225,9 @@ def _assert_all_items_in_json(item_list, data):
     )
 )
 def assert_no_debug_entry_in_workflow_audit_log(
-    browser_id, selenium, tmp_memory, modals, tmpdir
+    browser_id, selenium, tmp_memory, tmpdir
 ):
-    file_path = _get_workflow_audit_log(
-        browser_id, selenium, tmp_memory, modals, tmpdir
-    )
+    file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
         data_file = json.load(f)
         err_msg = "workflow audit log contains debug entry"
@@ -1367,14 +1236,14 @@ def assert_no_debug_entry_in_workflow_audit_log(
         ), err_msg
 
 
-def _get_workflow_audit_log(browser_id, selenium, tmp_memory, modals, tmpdir):
+def _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir):
     driver = selenium[browser_id]
     modal_name = "Workflow audit log"
     path = tmpdir.join(browser_id, "download")
     n_files_before_download = len(os.listdir(path))
     # wait for modal to appear
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     modal.download_as_json()
     wait_for_file_with_unknown_name_to_download(n_files_before_download, path)
     file_name = os.listdir(path)[-1]

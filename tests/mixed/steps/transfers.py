@@ -41,10 +41,6 @@ def replicate_file_to_provider_op(
     users,
     hosts,
     selenium,
-    popups,
-    modals,
-    oz_page,
-    op_container,
     tmp_memory,
 ):
     transfer_type = "replication"
@@ -61,9 +57,9 @@ def replicate_file_to_provider_op(
         )
     elif client.lower() == "web gui":
         result = "replicates"
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, tmp_memory, space)
         replicate_file_to_provider(
-            selenium, user, path, tmp_memory, provider_to, hosts, popups, modals, result
+            selenium, user, path, tmp_memory, provider_to, hosts, result
         )
     else:
         raise NoSuchClientException(f"Client {client} not found")
@@ -85,10 +81,6 @@ def migrate_file_to_provider_op(
     users,
     hosts,
     selenium,
-    popups,
-    modals,
-    oz_page,
-    op_container,
     tmp_memory,
 ):
     transfer_type = "migration"
@@ -106,7 +98,7 @@ def migrate_file_to_provider_op(
         )
     elif client.lower() == "web gui":
         result = "migrates"
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+        go_to_filebrowser(selenium, user, tmp_memory, space)
         migrate_file_to_provider(
             selenium,
             user,
@@ -115,8 +107,6 @@ def migrate_file_to_provider_op(
             provider_from,
             provider_to,
             hosts,
-            popups,
-            modals,
             result,
         )
     else:
@@ -138,10 +128,6 @@ def evict_file_to_provider_op(
     users,
     hosts,
     selenium,
-    popups,
-    modals,
-    oz_page,
-    op_container,
     tmp_memory,
 ):
     transfer_type = "eviction"
@@ -157,10 +143,8 @@ def evict_file_to_provider_op(
             evicting_provider=provider_from,
         )
     elif client.lower() == "web gui":
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
-        evict_file(
-            selenium, user, provider_from, popups, path, tmp_memory, modals, hosts
-        )
+        go_to_filebrowser(selenium, user, tmp_memory, space)
+        evict_file(selenium, user, provider_from, path, tmp_memory, hosts)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
@@ -182,19 +166,14 @@ def assert_details_of_recent_transfer_op(
     space,
     config,
     selenium,
-    op_container,
-    popups,
-    oz_page,
 ):
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(
             user, users, host, hosts, space, spaces, config
         )
     elif client.lower() == "web gui":
-        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
-        assert_ended_transfer(
-            selenium, user, item_type, config, hosts, op_container, popups
-        )
+        open_transfers_page(selenium, user, host, space, hosts)
+        assert_ended_transfer(selenium, user, item_type, config, hosts)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
@@ -206,15 +185,13 @@ def assert_details_of_recent_transfer_op(
     )
 )
 def wait_for_recent_transfer_to_finish_op(
-    client, user, users, host, hosts, space, spaces, selenium, oz_page, op_container
+    client, user, users, host, hosts, space, spaces, selenium
 ):
     if client.lower() == "rest":
         assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
     elif client.lower() == "web gui":
-        open_transfers_page(selenium, user, host, space, hosts, oz_page, op_container)
-        wait_for_all_transfers_to_start_and_finish(
-            selenium, user, host, space, hosts, oz_page, op_container
-        )
+        open_transfers_page(selenium, user, host, space, hosts)
+        wait_for_all_transfers_to_start_and_finish(selenium, user, host, space, hosts)
     else:
         raise NoSuchClientException(f"Client {client} not found")
 
@@ -227,24 +204,17 @@ def wait_for_recent_transfer_to_finish_op(
 )
 def upload_file_to_provider_browser(
     selenium,
-    oz_page,
     client,
     user,
     path,
     provider,
     space,
     tmp_memory,
-    op_container,
     hosts,
-    popups,
     tmpdir,
 ):
     if client.lower() == "web gui":
-        wt_visit_file_browser(
-            selenium, oz_page, provider, space, user, op_container, tmp_memory, hosts
-        )
-        upload_file_to_cwd_in_data_tab(
-            selenium, user, path, tmpdir, op_container, popups
-        )
+        wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
+        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
     else:
         raise NoSuchClientException(f"Client {client} not found")

@@ -93,17 +93,13 @@ def change_user_password_in_oz_panel(
     new_password,
     host,
     selenium,
-    onepage,
     users,
     hosts,
-    popups,
 ):
 
     if client.lower() == "web gui":
 
-        change_user_password_in_oz_panel_using_gui(
-            selenium, user, onepage, users, new_password, popups
-        )
+        change_user_password_in_oz_panel_using_gui(selenium, user, users, new_password)
     elif client.lower() == "rest":
 
         change_user_password_in_oz_panel_using_rest(
@@ -119,11 +115,11 @@ def change_user_password_in_oz_panel(
         '"(?P<host>.+?)" Onezone panel service'
     )
 )
-def log_out_from_oz_panel(client, user, selenium, onepage, login_page, popups):
+def log_out_from_oz_panel(client, user, selenium):
 
     if client.lower() == "web gui":
 
-        log_out_from_oz_panel_gui(user, selenium, onepage, login_page, popups)
+        log_out_from_oz_panel_gui(user, selenium)
     elif client.lower() == "rest":
         pass
         # pytest.skip('This step is not required using {} client'.format(client))
@@ -138,13 +134,11 @@ def log_out_from_oz_panel(client, user, selenium, onepage, login_page, popups):
         'password "(?P<password>.+?)"'
     )
 )
-def login_to_oz_panel_using_new_password(
-    client, user, host, selenium, login_page, hosts, password
-):
+def login_to_oz_panel_using_new_password(client, user, host, selenium, hosts, password):
 
     if client.lower() == "web gui":
 
-        login_to_oz_panel_using_new_password_gui(selenium, user, password, login_page)
+        login_to_oz_panel_using_new_password_gui(selenium, user, password)
     elif client.lower() == "rest":
 
         login_to_oz_panel_using_new_password_rest(user, password, hosts, host)
@@ -169,9 +163,6 @@ def modify_provider_using_test_hostname_in_op_panel(
     users,
     hosts,
     selenium,
-    onepanel,
-    login_page,
-    modals,
 ):
 
     test_domain = f"{hosts[provider_name]['hostname']}.test"
@@ -186,15 +177,10 @@ def modify_provider_using_test_hostname_in_op_panel(
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium,
             user,
-            onepanel,
             hosts[provider_name]["name"],
             new_provider_name,
             test_domain,
-            login_page,
-            users,
-            hosts,
             user,
-            modals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -217,9 +203,6 @@ def modify_provider_using_known_hostname_in_op_panel(
     users,
     hosts,
     selenium,
-    onepanel,
-    login_page,
-    modals,
 ):
 
     if client.lower() == "rest":
@@ -237,15 +220,10 @@ def modify_provider_using_known_hostname_in_op_panel(
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium,
             user,
-            onepanel,
             provider_name,
             hosts[target_provider]["name"],
             hosts[target_provider]["hostname"],
-            login_page,
-            users,
-            hosts,
             user,
-            modals,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -267,8 +245,6 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
     users,
     hosts,
     selenium,
-    oz_page,
-    popups,
 ):
 
     test_domain = f"{hosts[provider]['hostname']}.test"
@@ -283,11 +259,9 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
         assert_provider_has_name_and_hostname_in_oz_gui(
             selenium,
             user,
-            oz_page,
             provider_name,
             provider,
             hosts,
-            popups,
             with_refresh=True,
             test_domain=True,
         )
@@ -307,8 +281,6 @@ def deregister_provider_in_op_panel(
     host,
     hosts,
     selenium,
-    onepanel,
-    popups,
     users,
 ):
 
@@ -317,9 +289,7 @@ def deregister_provider_in_op_panel(
         deregister_provider_in_op_panel_using_rest(user, users, host, hosts)
     elif client.lower() == "web gui":
 
-        deregister_provider_in_op_panel_using_gui(
-            selenium, user, host, onepanel, popups, hosts
-        )
+        deregister_provider_in_op_panel_using_gui(selenium, user, host, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -332,7 +302,7 @@ def deregister_provider_in_op_panel(
     )
 )
 def assert_there_is_no_provider_in_oz(
-    client, user, provider_name, host, hosts, users, selenium, oz_page
+    client, user, provider_name, host, hosts, users, selenium
 ):
 
     if client.lower() == "rest":
@@ -340,9 +310,7 @@ def assert_there_is_no_provider_in_oz(
         assert_there_is_no_provider_in_oz_rest(user, users, host, hosts, provider_name)
     elif client.lower() == "web gui":
 
-        assert_there_is_no_provider_in_oz_gui(
-            selenium, user, oz_page, provider_name, hosts
-        )
+        assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -363,7 +331,6 @@ def assert_provider_does_not_support_space_in_oz(
     host,
     hosts,
     selenium,
-    oz_page,
     users,
 ):
 
@@ -375,7 +342,7 @@ def assert_provider_does_not_support_space_in_oz(
     elif client.lower() == "web gui":
 
         assert_provider_does_not_support_space_in_oz_gui(
-            selenium, user, oz_page, space_name, provider_name, hosts
+            selenium, user, space_name, provider_name, hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -388,9 +355,7 @@ def assert_provider_does_not_support_space_in_oz(
         r"configuration:\n(?P<config>(.|\s)*)"
     )
 )
-def register_provider_in_op(
-    client, user, hosts, users, selenium, onepanel, config, tmp_memory
-):
+def register_provider_in_op(client, user, hosts, users, selenium, config, tmp_memory):
     """Register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -427,9 +392,7 @@ def register_provider_in_op(
         register_provider_in_op_using_rest(user, users, hosts, config)
     elif client.lower() == "web gui":
 
-        register_provider_in_op_using_gui(
-            selenium, user, onepanel, hosts, config, tmp_memory
-        )
+        register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -451,7 +414,6 @@ def request_space_support(
     users,
     selenium,
     tmp_memory,
-    oz_page,
     displays,
     clipboard,
     supporting_user,
@@ -467,7 +429,6 @@ def request_space_support(
         request_space_support_using_gui(
             selenium,
             user,
-            oz_page,
             space_name,
             tmp_memory,
             displays,
@@ -499,7 +460,6 @@ def support_space_in_op_panel(
     user,
     selenium,
     tmp_memory,
-    onepanel,
     users,
     hosts,
     host,
@@ -531,7 +491,6 @@ def support_space_in_op_panel(
             selenium,
             user,
             config,
-            onepanel,
             tmp_memory,
             space_name,
             host,
@@ -561,7 +520,6 @@ def w_assert_space_is_supported_by_provider_in_oz(
     provider_name,
     host,
     selenium,
-    oz_page,
     hosts,
     users,
 ):
@@ -569,7 +527,7 @@ def w_assert_space_is_supported_by_provider_in_oz(
     if client.lower() == "web gui":
 
         assert_space_is_supported_by_provider_in_oz_gui(
-            selenium, user, oz_page, space_name, provider_name, hosts
+            selenium, user, space_name, provider_name, hosts
         )
     elif client.lower() == "rest":
 
@@ -595,9 +553,6 @@ def revoke_space_support_in_op_panel(
     provider_name,
     host,
     selenium,
-    onepanel,
-    popups,
-    modals,
     users,
     hosts,
     admin_credentials,
@@ -610,10 +565,7 @@ def revoke_space_support_in_op_panel(
             selenium,
             user,
             provider_name,
-            onepanel,
             space_name,
-            popups,
-            modals,
             hosts,
         )
     elif client.lower() == "rest":
@@ -695,7 +647,6 @@ def assert_proper_space_configuration_in_op_panel(
     space,
     config,
     selenium,
-    onepanel,
     users,
     host,
     hosts,
@@ -719,7 +670,7 @@ def assert_proper_space_configuration_in_op_panel(
     if client.lower() == "web gui":
 
         assert_proper_space_configuration_in_op_panel_gui(
-            selenium, user, space, onepanel, sync_type, config, host, hosts
+            selenium, user, space, sync_type, config, host, hosts
         )
     elif client.lower() == "rest":
 
@@ -752,7 +703,6 @@ def configure_sync_parameters_for_space_in_op_panel(
     host,
     config,
     selenium,
-    onepanel,
     users,
     hosts,
     onepanel_credentials,
@@ -774,9 +724,7 @@ def configure_sync_parameters_for_space_in_op_panel(
 
     if client.lower() == "web gui":
 
-        configure_sync_parameters_for_space_in_op_panel_gui(
-            selenium, user, onepanel, config
-        )
+        configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, config)
     elif client.lower() == "rest":
 
         configure_sync_parameters_for_space_in_op_panel_rest(
@@ -806,7 +754,6 @@ def assert_space_content_in_op(
     config,
     selenium,
     user,
-    op_container,
     tmp_memory,
     tmpdir,
     users,
@@ -814,7 +761,6 @@ def assert_space_content_in_op(
     space_name,
     spaces,
     host,
-    oz_page,
 ):
     """Assert space has given content in provider.
 
@@ -838,11 +784,9 @@ def assert_space_content_in_op(
             config,
             selenium,
             user,
-            op_container,
             tmp_memory,
             tmpdir,
             space_name,
-            oz_page,
         )
     elif client.lower() == "rest":
 
@@ -886,7 +830,6 @@ def copy_id_of_space(
     user,
     space_name,
     selenium,
-    onepanel,
     tmp_memory,
     users,
     hosts,
@@ -896,7 +839,7 @@ def copy_id_of_space(
 
     if client.lower() == "web gui":
 
-        copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory)
+        copy_id_of_space_gui(selenium, user, space_name, tmp_memory)
     elif client.lower() == "rest":
 
         copy_id_of_space_rest(
@@ -920,12 +863,12 @@ def copy_id_of_space(
     )
 )
 def send_copied_invite_token(
-    client, user, selenium, oz_page, tmp_memory, displays, clipboard, send_to
+    client, user, selenium, tmp_memory, displays, clipboard, send_to
 ):
     if client.lower() == "web gui":
 
         send_copied_invite_token_in_oz_gui(
-            selenium, user, oz_page, send_to, tmp_memory, displays, clipboard
+            selenium, user, send_to, tmp_memory, displays, clipboard
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -959,14 +902,13 @@ def force_start_and_wait_to_finish_storage_import_scan(
     hosts,
     onepanel_credentials,
     selenium,
-    onepanel,
 ):
     if client.lower() == "rest":
         space_id = spaces[space]
         force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
         wait_for_storage_scan_to_finish(space_id, provider, hosts, onepanel_credentials)
     elif client.lower() == "web gui":
-        run_scan_and_wait_till_finished(selenium, user, onepanel)
+        run_scan_and_wait_till_finished(selenium, user)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 

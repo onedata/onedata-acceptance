@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
+from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
@@ -27,21 +28,21 @@ PROVIDER_PREFIX_CHAR = "@"
 
 @wt(parsers.parse("user of {browser_id} deletes all QoS requirements"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
+def delete_all_qualities_of_service(selenium, browser_id):
     driver = selenium[browser_id]
-    modal = modals(driver).details_modal.qos
+    modal = Modals(driver).details_modal.qos
     while len(modal.requirements):
         modal.requirements[0].delete.click()
-        popups(driver).delete_qos_popup.confirm.click()
+        Popups(driver).delete_qos_popup.confirm.click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that all QoS requirements are {state}"))
 @repeat_failed(
     interval=1, timeout=90, exceptions=(NoSuchElementException, RuntimeError)
 )
-def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, state):
+def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, state):
     driver = selenium[browser_id]
-    modal = modals(driver).details_modal.qos
+    modal = Modals(driver).details_modal.qos
     for requirement in modal.requirements:
         assert hasattr(requirement, state), f"No all QoS requirements are {state}"
 
@@ -53,10 +54,10 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id, modals, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_option_qos(selenium, browser_id, modals, option_name):
+def select_option_qos(selenium, browser_id, option_name):
     driver = selenium[browser_id]
 
-    modal_qos = modals(driver).details_modal.qos
+    modal_qos = Modals(driver).details_modal.qos
     option_btn = getattr(modal_qos, "show_details_" + transform(option_name))
     modal_qos.scroll_to_top()
 
@@ -73,10 +74,10 @@ def select_option_qos(selenium, browser_id, modals, option_name):
     )
 )
 def assert_audit_log_logs_for_each_file_in_list(
-    selenium, browser_id, modals, files_list, config
+    selenium, browser_id, files_list, config
 ):
     driver = selenium[browser_id]
-    modal_qos = modals(driver).details_modal.qos
+    modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
     config = yaml.load(config, yaml.Loader)
 
@@ -98,9 +99,9 @@ def assert_audit_log_logs_for_each_file_in_list(
         ' and can see following information: "{info}"'
     )
 )
-def assert_no_logs_in_qos_audit_log(selenium, browser_id, modals, info):
+def assert_no_logs_in_qos_audit_log(selenium, browser_id, info):
     driver = selenium[browser_id]
-    modal_qos = modals(driver).details_modal.qos
+    modal_qos = Modals(driver).details_modal.qos
     audit_log = modal_qos.audit_log_list
     if audit_log.is_empty():
         assert audit_log.empty_info.text == info, (
@@ -117,9 +118,9 @@ def assert_no_logs_in_qos_audit_log(selenium, browser_id, modals, info):
         " are ordered from newest to oldest"
     )
 )
-def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
+def assert_qos_audit_log_entries_times_ordered(selenium, browser_id):
     driver = selenium[browser_id]
-    modal_qos = modals(driver).details_modal.qos
+    modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
     actual_log_dates = [entry.time.text for entry in entries]
 
@@ -141,10 +142,10 @@ def assert_qos_audit_log_entries_times_ordered(selenium, browser_id, modals):
     )
 )
 def click_on_first_link_with_file_name_in_qos_audit_log(
-    selenium, browser_id, modals, file_name
+    selenium, browser_id, file_name
 ):
     driver = selenium[browser_id]
-    modal_qos = modals(driver).details_modal.qos
+    modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
     file_entries = [entry for entry in entries if entry.file.text == file_name]
     file_entries[0].click()
@@ -156,11 +157,9 @@ def click_on_first_link_with_file_name_in_qos_audit_log(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_replicas_number_in_qualities_of_service_modal(
-    selenium, browser_id, modals, number
-):
+def assert_replicas_number_in_qualities_of_service_modal(selenium, browser_id, number):
     driver = selenium[browser_id]
-    replicas_number = modals(driver).details_modal.qos.replicas_number
+    replicas_number = Modals(driver).details_modal.qos.replicas_number
     assert (
         number == replicas_number
     ), f"Found {replicas_number} instead of {number} replicas number"
@@ -209,11 +208,9 @@ def process_expression(expression, hosts, users):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_expression_in_qos_panel(
-    selenium, browser_id, modals, expression, hosts, users
-):
+def assert_expression_in_qos_panel(selenium, browser_id, expression, hosts, users):
     driver = selenium[browser_id]
-    requirements = modals(driver).details_modal.qos.requirements
+    requirements = Modals(driver).details_modal.qos.requirements
     ready_expression = process_expression(expression, hosts, users)
     for requirement in requirements:
         expression_in_modal = requirement.expression.replace("\n", " ")
@@ -261,10 +258,10 @@ def process_whole_nested_expression(expression, hosts, users):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_nested_expression_in_qos_panel(
-    selenium, browser_id, modals, expression, hosts, users
+    selenium, browser_id, expression, hosts, users
 ):
     driver = selenium[browser_id]
-    requirements = modals(driver).details_modal.qos.requirements
+    requirements = Modals(driver).details_modal.qos.requirements
     ready_expression = process_whole_nested_expression(expression, hosts, users)
 
     for requirement in requirements:
@@ -279,10 +276,10 @@ def assert_nested_expression_in_qos_panel(
 
 @wt(parsers.parse("user of {browser_id} doesn't see any QoS requirement in QoS panel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id, modals):
+def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id):
     driver = selenium[browser_id]
     try:
-        modals(driver).details_modal.qos.requirements
+        Modals(driver).details_modal.qos.requirements
     except RuntimeError:
         assert True
     else:
@@ -290,9 +287,9 @@ def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id, mod
 
 
 @wt(parsers.parse('user of {browser_id} clicks "enter as text" label in QoS panel'))
-def click_enter_as_text_link(selenium, browser_id, modals):
+def click_enter_as_text_link(selenium, browser_id):
     driver = selenium[browser_id]
-    modals(driver).details_modal.qos.enter_as_text()
+    Modals(driver).details_modal.qos.enter_as_text()
 
 
 @wt(
@@ -301,15 +298,15 @@ def click_enter_as_text_link(selenium, browser_id, modals):
         "expression text field in QoS panel"
     )
 )
-def confirm_entering_text(selenium, browser_id, modals):
+def confirm_entering_text(selenium, browser_id):
     driver = selenium[browser_id]
-    modals(driver).details_modal.qos.confirm_text()
+    Modals(driver).details_modal.qos.confirm_text()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on add query block icon in QoS panel"))
-def click_add_query_block(selenium, browser_id, modals):
+def click_add_query_block(selenium, browser_id):
     driver = selenium[browser_id]
-    modal = modals(driver).details_modal.qos.query_builder
+    modal = Modals(driver).details_modal.qos.query_builder
     modal.another_block_buttons[0].click()
 
 
@@ -320,10 +317,10 @@ def click_add_query_block(selenium, browser_id, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(selenium, browser_id, modals, number):
+def start_query_block_no(selenium, browser_id, number):
     driver = selenium[browser_id]
     no = int(number.split()[0])
-    modal = modals(driver).details_modal.qos.query_builder
+    modal = Modals(driver).details_modal.qos.query_builder
     modal.another_block_buttons[no - 1].click()
 
 
@@ -333,9 +330,9 @@ def start_query_block_no(selenium, browser_id, modals, number):
         '"Add QoS condition" popup'
     )
 )
-def choose_property_in_add_condition_popup(selenium, browser_id, property_name, popups):
+def choose_property_in_add_condition_popup(selenium, browser_id, property_name):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.choose_property(property_name)
 
 
@@ -347,14 +344,14 @@ def choose_property_in_add_condition_popup(selenium, browser_id, property_name, 
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_item_at_provider_in_add_cond_popup(
-    selenium, browser_id, popups, item, provider, hosts
+    selenium, browser_id, item, provider, hosts
 ):
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = PROVIDER_PREFIX_CHAR
-    popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
+    Popups(driver).power_select.choose_item(f"{item} {separator}{provider_name}")
 
 
 @wt(
@@ -363,16 +360,14 @@ def choose_value_of_item_at_provider_in_add_cond_popup(
         'providers? on values list in "Add QoS condition" popup'
     )
 )
-def assert_list_of_providers_in_add_cond_popup(
-    selenium, browser_id, providers, hosts, popups
-):
+def assert_list_of_providers_in_add_cond_popup(selenium, browser_id, providers, hosts):
     expected = [hosts[provider]["name"] for provider in parse_seq(providers)]
 
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
     separator = f" {PROVIDER_PREFIX_CHAR}"
-    actual = [v.text.split(separator)[0] for v in popups(driver).power_select.items]
+    actual = [v.text.split(separator)[0] for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -382,9 +377,7 @@ def assert_list_of_providers_in_add_cond_popup(
         'storages? on values list in "Add QoS condition" popup'
     )
 )
-def assert_list_of_storages_in_add_cond_popup(
-    selenium, browser_id, storages, hosts, popups
-):
+def assert_list_of_storages_in_add_cond_popup(selenium, browser_id, storages, hosts):
     expected_expressions = parse_seq(storages)
     expected = []
     separator = f" {PROVIDER_PREFIX_CHAR}"
@@ -394,9 +387,9 @@ def assert_list_of_storages_in_add_cond_popup(
         expected.append(f"{name} {PROVIDER_PREFIX_CHAR}{provider_name}")
 
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    actual = [v.text for v in popups(driver).power_select.items]
+    actual = [v.text for v in Popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -408,19 +401,19 @@ def assert_list_of_storages_in_add_cond_popup(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_provider_item_in_add_cond_popup(
-    selenium, browser_id, popups, provider, hosts
+    selenium, browser_id, provider, hosts
 ):
     provider_name = hosts[provider]["name"]
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    popups(driver).power_select.choose_item_with_id(f"{provider_name}")
+    Popups(driver).power_select.choose_item_with_id(f"{provider_name}")
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" in "Add QoS condition" popup'))
-def click_add_in_add_cond_popup(selenium, browser_id, popups):
+def click_add_in_add_cond_popup(selenium, browser_id):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     popup.add_button()
 
 
@@ -431,9 +424,9 @@ def click_add_in_add_cond_popup(selenium, browser_id, popups):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_num_of_matching_storages(selenium, browser_id, number, modals):
+def assert_num_of_matching_storages(selenium, browser_id, number):
     driver = selenium[browser_id]
-    modal = modals(driver).details_modal.qos
+    modal = Modals(driver).details_modal.qos
     if number == "no":
         actual = modal.no_storage_matching
         number = "No storage backends match"
@@ -448,7 +441,7 @@ def assert_num_of_matching_storages(selenium, browser_id, number, modals):
         "(is|are) (?P<storages>.+)"
     )
 )
-def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
+def assert_matching_storage(selenium, browser_id, storages, hosts):
     css_sel = ".storages-matching-info-icon"
     driver = selenium[browser_id]
     expected_expressions = parse_seq(storages)
@@ -461,7 +454,7 @@ def assert_matching_storage(selenium, browser_id, storages, hosts, popups):
     scroll_to_css_selector_bottom(driver, css_sel)
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
 
-    actual = [elem.text for elem in popups(driver).storages_matching_popover.storages]
+    actual = [elem.text for elem in Popups(driver).storages_matching_popover.storages]
     compare_lists(expected, actual)
     # unclick element
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
@@ -481,19 +474,19 @@ def compare_lists(expected, actual):
         '"Add QoS condition" popup'
     )
 )
-def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
+def choose_operator_in_add_cond_popup(selenium, browser_id, operator):
     driver = selenium[browser_id]
-    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup = Popups(driver).get_query_builder_not_hidden_popup()
     getattr(popup, f"{operator.lower()}_operator").click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in QoS panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
+def assert_error_label_in_qos_modal(selenium, browser_id, text):
     driver = selenium[browser_id]
 
     assert (
-        text in modals(driver).details_modal.qos.privileges_message
+        text in Modals(driver).details_modal.qos.privileges_message
     ), f'Label with "{text}" not found '
 
 
@@ -502,10 +495,10 @@ def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
         'user of {browser_id} sees that "{button}" button is disabled in QoS panel'
     )
 )
-def assert_button_disabled_in_qos_panel(selenium, browser_id, modals, button):
+def assert_button_disabled_in_qos_panel(selenium, browser_id, button):
 
     driver = selenium[browser_id]
-    enabled = getattr(modals(driver).details_modal.qos, transform(button)).is_enabled()
+    enabled = getattr(Modals(driver).details_modal.qos, transform(button)).is_enabled()
     assert not enabled, f"{button} is not disabled"
 
 
@@ -517,11 +510,11 @@ def assert_button_disabled_in_qos_panel(selenium, browser_id, modals, button):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_status_in_browser(
-    selenium, browser_id, op_container, status, item_name, which_browser
+    selenium, browser_id, status, item_name, which_browser
 ):
 
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     vis_status = getattr(browser.data[item_name], "qos_status")
     err_msg = (
         f"status {status} for item {item_name} is not displayed in {which_browser}"
@@ -539,9 +532,7 @@ def assert_qos_status_in_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_qos_status_in_browser(
-    selenium, browser_id, op_container, item_name, which_browser
-):
+def click_qos_status_in_browser(selenium, browser_id, item_name, which_browser):
     driver = selenium[browser_id]
-    browser = getattr(op_container(driver), transform(which_browser))
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     getattr(browser.data[item_name], "qos_status").click()

@@ -12,6 +12,7 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
+from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -61,9 +62,9 @@ def wt_wait_for_op_session_to_start(selenium, browser_id_list):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, op_container, hosts):
+def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, hosts):
     val = hosts[val]["name"]
-    displayed_name = op_container(selenium[browser_id]).provider_name
+    displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
         f"displayed {displayed_name} provider name in Oneprovider GUI "
         f"instead of expected {val}"
@@ -77,8 +78,8 @@ def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, op_container, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container):
-    displayed_name = op_container(selenium[browser_id]).provider_name
+def wt_assert_provider_name_in_op(selenium, browser_id, val):
+    displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
         f"displayed {displayed_name} provider name in Oneprovider GUI instead"
         f" of expected {val}"

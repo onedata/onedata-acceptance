@@ -5,15 +5,11 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from time import sleep
-
-from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage
 from .clusters_page import ClustersPage
-from .common import OZPanel
 from .data_page import DataPage
 from .discovery_page import DiscoveryPage
 from .groups.groups_page import GroupsPage

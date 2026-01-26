@@ -24,20 +24,14 @@ def fail_to_set_privileges_using_op_gui(
     member_type,
     config,
     selenium,
-    onepanel,
-    oz_page,
 ):
     button = "Members"
     option = "fails to set"
     list_type = "users"
     where = "space"
 
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, button, oz_page
-    )
-    click_element_in_members_list(
-        selenium, user, member_name, oz_page, where, list_type, onepanel
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, button)
+    click_element_in_members_list(selenium, user, member_name, where, list_type)
     try_setting_privileges_in_members_subpage(
         selenium,
         user,
@@ -45,8 +39,6 @@ def fail_to_set_privileges_using_op_gui(
         member_type,
         where,
         config,
-        onepanel,
-        oz_page,
         option,
     )
 
@@ -58,18 +50,12 @@ def assert_privileges_in_space_using_op_gui(
     member_type,
     config,
     selenium,
-    onepanel,
-    oz_page,
 ):
     option = "Members"
     list_type = "users"
     where = "space"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option, oz_page
-    )
-    click_element_in_members_list(
-        selenium, user, member_name, oz_page, where, list_type, onepanel
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
+    click_element_in_members_list(selenium, user, member_name, where, list_type)
     assert_privileges_in_members_subpage(
         selenium,
         user,
@@ -77,15 +63,11 @@ def assert_privileges_in_space_using_op_gui(
         member_type,
         where,
         config,
-        onepanel,
-        oz_page,
         True,
     )
 
 
-def fail_to_create_invitation_in_space_using_op_gui(
-    user, space_name, popups, modals, selenium, onepanel, oz_page
-):
+def fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium):
     option = "Members"
     button = "Invite user using token"
     where = "space"
@@ -93,18 +75,12 @@ def fail_to_create_invitation_in_space_using_op_gui(
     modal = "Invite using token"
     text = "This resource could not be loaded"
     element = "alert"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option, oz_page
-    )
-    click_on_option_in_members_list_menu(
-        selenium, user, button, where, member, oz_page, onepanel, popups
-    )
-    assert_element_text_in_modal(selenium, user, modals, modal, text, element)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
+    click_on_option_in_members_list_menu(selenium, user, button, where, member)
+    assert_element_text_in_modal(selenium, user, modal, text, element)
 
 
-def assert_not_user_in_space_using_op_gui(
-    user, space_name, member_name, selenium, onepanel, oz_page
-):
+def assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium):
     option = "does not see"
     member_type = "user"
     parent_type = "space"
@@ -116,21 +92,15 @@ def assert_not_user_in_space_using_op_gui(
         member_type,
         space_name,
         parent_type,
-        oz_page,
-        onepanel,
     )
 
 
-def assert_group_in_space_using_op_gui(
-    selenium, user, space_name, oz_page, group_name, onepanel
-):
+def assert_group_in_space_using_op_gui(selenium, user, space_name, group_name):
     option1 = "Members"
     option2 = "sees"
     member_type = "group"
     parent_type = "space"
-    click_on_option_of_space_on_left_sidebar_menu(
-        selenium, user, space_name, option1, oz_page
-    )
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option1)
     assert_member_is_in_parent_members_list(
         selenium,
         user,
@@ -139,6 +109,4 @@ def assert_group_in_space_using_op_gui(
         member_type,
         space_name,
         parent_type,
-        oz_page,
-        onepanel,
     )

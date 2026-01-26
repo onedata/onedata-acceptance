@@ -54,12 +54,12 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def create_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def create_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         create_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        create_groups_using_op_gui(selenium, user, group_list, oz_page)
+        create_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -111,12 +111,12 @@ def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
         ' "(?P<host>.*)" Onezone service'
     )
 )
-def assert_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def assert_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         see_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        see_groups_using_op_gui(selenium, user, oz_page, group_list)
+        see_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -137,16 +137,12 @@ def rename_groups(
     hosts,
     users,
     selenium,
-    oz_page,
-    popups,
 ):
 
     if client.lower() == "rest":
         rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == "web gui":
-        rename_groups_using_op_gui(
-            selenium, user, oz_page, group_list, new_names, popups
-        )
+        rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -158,12 +154,12 @@ def rename_groups(
         "Onezone service"
     )
 )
-def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, oz_page):
+def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list)
+        fail_to_see_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -174,14 +170,12 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium, o
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def remove_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
-):
+def remove_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         remove_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        remove_group(selenium, user, group_list, oz_page, popups)
+        remove_group(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -192,14 +186,12 @@ def remove_groups(
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def leave_groups(
-    client, user, group_list, host, hosts, users, selenium, oz_page, popups
-):
+def leave_groups(client, user, group_list, host, hosts, users, selenium):
 
     if client.lower() == "rest":
         leave_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == "web gui":
-        leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups)
+        leave_groups_using_op_gui(selenium, user, group_list)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -219,13 +211,10 @@ def add_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     parent,
     displays,
     clipboard,
-    onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -234,14 +223,11 @@ def add_subgroups(
         add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -262,11 +248,8 @@ def remove_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     parent,
-    onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -275,12 +258,9 @@ def remove_subgroups(
         remove_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             group_list,
             tmp_memory,
             parent,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -302,16 +282,12 @@ def assert_subgroups(
     users,
     selenium,
     parent,
-    oz_page,
-    onepanel,
 ):
 
     if client.lower() == "rest":
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == "web gui":
-        assert_subgroups_using_op_gui(
-            selenium, user, oz_page, group_list, parent, onepanel
-        )
+        assert_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -331,17 +307,13 @@ def fail_to_see_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     parent,
-    onepanel,
 ):
 
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
     elif client.lower() == "web gui":
-        fail_to_see_subgroups_using_op_gui(
-            selenium, user, oz_page, group_list, parent, onepanel
-        )
+        fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -362,12 +334,9 @@ def invite_to_group(
     hosts,
     users,
     selenium,
-    oz_page,
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -379,13 +348,10 @@ def invite_to_group(
             selenium,
             user1,
             user2,
-            oz_page,
             group,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -397,12 +363,12 @@ def invite_to_group(
         'was invited to in "(?P<host>.*)" Onezone service'
     )
 )
-def join_group(client, user, host, hosts, users, selenium, oz_page, tmp_memory):
+def join_group(client, user, host, hosts, users, selenium, tmp_memory):
 
     if client.lower() == "rest":
         join_group_using_rest(user, tmp_memory, hosts, users, host)
     elif client.lower() == "web gui":
-        join_group_using_op_gui(selenium, user, oz_page, tmp_memory)
+        join_group_using_op_gui(selenium, user, tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -422,9 +388,7 @@ def fail_to_rename_groups(
     hosts,
     users,
     selenium,
-    oz_page,
     new_names,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -432,9 +396,7 @@ def fail_to_rename_groups(
             user, users, hosts, group_list, new_names, host
         )
     elif client.lower() == "web gui":
-        fail_to_rename_groups_using_op_gui(
-            selenium, user, oz_page, group_list, new_names, popups
-        )
+        fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
 
@@ -459,7 +421,7 @@ def fail_to_remove_groups(
     # TODO VFS-12393 uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
     #  and writing suitable scenario
     # elif client.lower() == 'web gui':
-    #     fail_to_remove_groups_using_op_gui(selenium, user, op_container, group_list,
+    #     fail_to_remove_groups_using_op_gui(selenium, user, group_list,
     #                                        tmp_memory)
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -480,13 +442,10 @@ def fail_to_add_subgroups(
     hosts,
     users,
     selenium,
-    oz_page,
     parent,
     tmp_memory,
     displays,
     clipboard,
-    onepanel,
-    popups,
 ):
 
     if client.lower() == "rest":
@@ -495,14 +454,11 @@ def fail_to_add_subgroups(
         fail_to_add_subgroups_using_op_gui(
             selenium,
             user,
-            oz_page,
             parent,
             group_list,
             tmp_memory,
             displays,
             clipboard,
-            onepanel,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")

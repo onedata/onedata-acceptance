@@ -22,6 +22,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_task_name_in_task_edition_text_field,
     write_text_into_editor_bracket,
 )
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -37,11 +38,9 @@ def create_task_using_previously_created_lambda(
     browser_id,
     config,
     selenium,
-    oz_page,
     lane_name,
     lambda_name,
     ordinal,
-    popups,
     which,
 ):
     """Create task using lambda according to given config.
@@ -77,11 +76,9 @@ def create_task_using_previously_created_lambda(
         browser_id,
         config,
         selenium,
-        oz_page,
         lane_name,
         lambda_name,
         ordinal,
-        popups,
         which,
     )
 
@@ -90,11 +87,9 @@ def _create_task_using_previously_created_lambda(
     browser_id,
     config,
     selenium,
-    oz_page,
     lane_name,
     lambda_name,
     ordinal,
-    popups,
     which,
 ):
     arg_type = "argument"
@@ -109,29 +104,23 @@ def _create_task_using_previously_created_lambda(
 
     if "another" in which:
         position = data["where parallel box"]
-        add_another_parallel_box_to_lane(
-            selenium, browser_id, oz_page, lane_name, position
-        )
+        add_another_parallel_box_to_lane(selenium, browser_id, lane_name, position)
     else:
-        add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name)
+        add_parallel_box_to_lane(selenium, browser_id, lane_name)
 
     time.sleep(0.5)
-    add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name)
+    add_task_to_empty_parallel_box(selenium, browser_id, lane_name)
     time.sleep(0.5)
-    add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name, ordinal)
+    add_lambda_revision_to_workflow(selenium, browser_id, lambda_name, ordinal)
 
     if task_name:
-        write_task_name_in_task_edition_text_field(
-            selenium, browser_id, oz_page, task_name
-        )
+        write_task_name_in_task_edition_text_field(selenium, browser_id, task_name)
 
     if configuration_parameters:
         for param_name, param in configuration_parameters.items():
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 param["value builder"],
                 param_name,
                 conf_param_option,
@@ -139,7 +128,6 @@ def _create_task_using_previously_created_lambda(
             write_text_into_editor_bracket(
                 selenium,
                 browser_id,
-                oz_page,
                 param["value"],
                 param_name,
                 conf_param_option,
@@ -150,8 +138,6 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 arg["value builder"],
                 arg_name,
                 arg_type,
@@ -160,7 +146,6 @@ def _create_task_using_previously_created_lambda(
                 write_text_into_editor_bracket(
                     selenium,
                     browser_id,
-                    oz_page,
                     arg["value"],
                     arg_name,
                     arg_type,
@@ -171,14 +156,12 @@ def _create_task_using_previously_created_lambda(
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 res["target store"],
                 res_name,
                 res_type,
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, option)
 
 
 @wt(
@@ -187,16 +170,16 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals, task):
+def remove_task_from_lane(selenium, browser_id, lane, task):
     modal = "Remove task"
     option = "Remove"
 
     driver = selenium[browser_id]
-    page = oz_page(driver)["automation"]
+    page = OZLoggedIn(driver)["automation"]
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane.parallel_box.task_list[task].menu_button()
-    popups(driver).menu_popup_with_label.menu[option]()
-    click_modal_button(selenium, browser_id, option, modal, modals)
+    Popups(driver).menu_popup_with_label.menu[option]()
+    click_modal_button(selenium, browser_id, option, modal)
 
 
 @wt(
@@ -206,9 +189,7 @@ def remove_task_from_lane(oz_page, selenium, browser_id, lane, popups, modals, t
         r"(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)"
     )
 )
-def modify_task_results(
-    oz_page, selenium, browser_id, lane, task, popups, config, option
-):
+def modify_task_results(selenium, browser_id, lane, task, config, option):
     conf_param_option = "configuration parameters"
     data = yaml.load(config, yaml.Loader)
     results_conf = data.get("results", False)
@@ -218,17 +199,17 @@ def modify_task_results(
     task_option = "task"
 
     driver = selenium[browser_id]
-    page = oz_page(driver).get_page_and_click("automation")
+    page = OZLoggedIn(driver).get_page_and_click("automation")
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane.parallel_box.task_list[task].menu_button()
-    popups(driver).menu_popup_with_label.menu[button]()
+    Popups(driver).menu_popup_with_label.menu[button]()
     # wait for task form to open
     time.sleep(1)
 
     if lambda_conf:
         revision = from_ordinal_number_to_int(lambda_conf[0]["revision"])
         page.workflows_page.task_form.lambda_revision.click()
-        popups(driver).power_select.choose_item(str(revision))
+        Popups(driver).power_select.choose_item(str(revision))
 
     if results_conf:
         for res in results_conf:
@@ -242,15 +223,13 @@ def modify_task_results(
             element = result.target_store_dropdown[-1]
             driver.execute_script("arguments[0].scrollIntoView();", element)
             result.target_store_dropdown[-1].click()
-            popups(driver).power_select.choose_item(new_res)
+            Popups(driver).power_select.choose_item(new_res)
 
     if configuration_parameters:
         for param_name, param in configuration_parameters.items():
             choose_option_in_dropdown_menu_in_task_page(
                 selenium,
                 browser_id,
-                oz_page,
-                popups,
                 param["value builder"],
                 param_name,
                 conf_param_option,
@@ -258,10 +237,9 @@ def modify_task_results(
             write_text_into_editor_bracket(
                 selenium,
                 browser_id,
-                oz_page,
                 param["value"],
                 param_name,
                 conf_param_option,
             )
 
-    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, task_option)
+    confirm_lambda_creation_or_edition(selenium, browser_id, task_option)

@@ -109,10 +109,7 @@ def create_file_in_op(
     tmp_memory,
     host,
     selenium,
-    op_container,
     result,
-    modals,
-    oz_page,
     request,
 ):
     full_path = f"{space}/{name}"
@@ -125,11 +122,8 @@ def create_file_in_op(
             "file",
             os.path.basename(name),
             tmp_memory,
-            op_container,
             result,
             space,
-            modals,
-            oz_page,
         )
     elif client_lower == "rest":
         create_file_in_op_rest(user, users, host, hosts, full_path, result)
@@ -276,20 +270,15 @@ def create_dir_in_op(
     tmp_memory,
     host,
     selenium,
-    op_container,
     result,
-    modals,
-    oz_page,
 ):
     cwd = "space root"
     full_path = f"{space}/{abs_path}"
     client_lower = client.lower()
     if client_lower == "web gui":
         if "/" in abs_path:
-            go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
-            go_to_path_without_last_elem(
-                selenium, user, tmp_memory, abs_path, op_container
-            )
+            go_to_filebrowser(selenium, user, tmp_memory, space)
+            go_to_path_without_last_elem(selenium, user, tmp_memory, abs_path)
             create_item_in_op_gui(
                 selenium,
                 user,
@@ -297,15 +286,10 @@ def create_dir_in_op(
                 "directory",
                 os.path.basename(abs_path),
                 tmp_memory,
-                op_container,
                 result,
                 space,
-                modals,
-                oz_page,
             )
-            change_cwd_using_breadcrumbs_in_data_tab_in_op(
-                selenium, user, cwd, op_container
-            )
+            change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user, cwd)
         else:
             create_item_in_op_gui(
                 selenium,
@@ -314,11 +298,8 @@ def create_dir_in_op(
                 "directory",
                 os.path.basename(abs_path),
                 tmp_memory,
-                op_container,
                 result,
                 space,
-                modals,
-                oz_page,
             )
     elif client_lower == "rest":
         create_dir_in_op_rest(user, users, host, hosts, full_path, result)
@@ -335,10 +316,10 @@ def create_dir_in_op(
         'named "(?P<item_name>.*)" in "(?P<space>.*)"'
     )
 )
-def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
-    go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
+def go_to_dir(selenium, user, item_name, tmp_memory, space):
+    go_to_filebrowser(selenium, user, tmp_memory, space)
     click_and_press_enter_on_item_in_browser(
-        selenium, user, item_name, tmp_memory, op_container, "file browser"
+        selenium, user, item_name, tmp_memory, "file browser"
     )
 
 
@@ -360,8 +341,6 @@ def see_item_in_op(
     hosts,
     selenium,
     tmp_memory,
-    op_container,
-    oz_page,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -378,10 +357,8 @@ def see_item_in_op(
             path,
             item_name,
             tmp_memory,
-            op_container,
             result,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         see_items_in_op_rest(user, users, host, hosts, name, result, space)
@@ -408,12 +385,8 @@ def remove_empty_dir_in_op(
     name,
     hosts,
     selenium,
-    op_container,
     tmp_memory,
     host,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -423,12 +396,8 @@ def remove_empty_dir_in_op(
             user,
             name,
             tmp_memory,
-            op_container,
             "succeds",
             space,
-            modals,
-            oz_page,
-            popups,
         )
     elif client_lower == "rest":
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
@@ -456,12 +425,8 @@ def remove_empty_dir_and_parents_in_op(
     name,
     hosts,
     selenium,
-    op_container,
     tmp_memory,
     host,
-    modals,
-    oz_page,
-    popups,
 ):
     first_path_elem = get_first_path_element(name)
     client_lower = client.lower()
@@ -471,12 +436,8 @@ def remove_empty_dir_and_parents_in_op(
             user,
             first_path_elem,
             tmp_memory,
-            op_container,
             "succeds",
             space,
-            modals,
-            oz_page,
-            popups,
         )
     elif client_lower == "rest":
         remove_dir_in_op_rest(user, users, host, hosts, f"{space}/{first_path_elem}")
@@ -491,7 +452,7 @@ def remove_empty_dir_and_parents_in_op(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) removes directory "
         r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-        "(?P<host>.*)"
+        r"(?P<host>.*)"
     )
 )
 def remove_dir_in_op(
@@ -502,12 +463,8 @@ def remove_dir_in_op(
     name,
     hosts,
     selenium,
-    op_container,
     tmp_memory,
     host,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -517,12 +474,8 @@ def remove_dir_in_op(
             user,
             name,
             tmp_memory,
-            op_container,
             "succeds",
             space,
-            modals,
-            oz_page,
-            popups,
         )
     elif client_lower == "rest":
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
@@ -550,11 +503,7 @@ def remove_file_in_op(
     hosts,
     tmp_memory,
     selenium,
-    op_container,
     result,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{name}"
     client_lower = client.lower()
@@ -564,12 +513,8 @@ def remove_file_in_op(
             user,
             name,
             tmp_memory,
-            op_container,
             result,
             space,
-            modals,
-            oz_page,
-            popups,
         )
     elif client_lower == "rest":
         remove_file_in_op_rest(user, users, host, hosts, full_path, result)
@@ -621,11 +566,6 @@ def rename_item_in_op(
     tmp_memory,
     host,
     selenium,
-    op_container,
-    cdmi,
-    modals,
-    oz_page,
-    popups,
 ):
     old_path = f"{space}/{old_name}"
     new_path = f"{space}/{new_name}"
@@ -640,13 +580,9 @@ def rename_item_in_op(
             tmp_memory,
             result,
             space,
-            modals,
-            oz_page,
-            op_container,
-            popups,
         )
     elif client_lower == "rest":
-        move_item_in_op_rest(old_path, new_path, result, cdmi, host, hosts, user, users)
+        move_item_in_op_rest(old_path, new_path, result, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host, users)
@@ -672,7 +608,6 @@ def rename_item_in_op_using_token(
     hosts,
     tmp_memory,
     host,
-    cdmi,
 ):
     old_path = f"{space}/{old_name}"
     new_path = f"{space}/{new_name}"
@@ -687,9 +622,7 @@ def rename_item_in_op_using_token(
             host,
             hosts,
             user,
-            users,
             tmp_memory,
-            cdmi,
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -715,9 +648,6 @@ def see_num_of_items_in_op(
     hosts,
     tmp_memory,
     selenium,
-    op_container,
-    oz_page,
-    popups,
 ):
     num = int(num) if num is not None else 1
     client_lower = client.lower()
@@ -726,14 +656,10 @@ def see_num_of_items_in_op(
             selenium,
             user,
             tmp_memory,
-            op_container,
             "",
-            space,
             num,
-            oz_page,
             host,
             hosts,
-            popups,
         )
     elif client_lower == "rest":
         assert_num_of_files_in_path_in_op_rest(num, space, user, users, host, hosts)
@@ -753,11 +679,11 @@ def see_num_of_items_in_op(
         r'"(?P<space>.*)" in (?P<host>.*)'
     )
 )
-def write_to_file_in_op(client, user, text, file_name, space, host, users, hosts, cdmi):
+def write_to_file_in_op(client, user, text, file_name, space, host, users, hosts):
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
-        write_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
+        write_to_file_in_op_rest(user, users, host, hosts, full_path, text)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.write_text(user, text, full_path, oneclient_host, users)
@@ -783,8 +709,6 @@ def read_from_file_in_op(
     users,
     hosts,
     selenium,
-    oz_page,
-    op_container,
     tmp_memory,
     tmpdir,
 ):
@@ -797,8 +721,6 @@ def read_from_file_in_op(
             space,
             selenium,
             user,
-            oz_page,
-            op_container,
             tmp_memory,
             tmpdir,
         )
@@ -820,18 +742,16 @@ def read_from_file_in_op(
     )
 )
 def append_to_file_in_op(
-    client, user, result, text, file_name, space, host, users, hosts, cdmi
+    client, user, result, text, file_name, space, host, users, hosts
 ):
     full_path = f"{space}/{file_name}"
     client_lower = client.lower()
     if client_lower == "rest":
         if result == "succeeds":
-            append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path, text)
+            append_to_file_in_op_rest(user, users, host, hosts, full_path, text)
         else:
             try:
-                append_to_file_in_op_rest(
-                    user, users, host, hosts, cdmi, full_path, text
-                )
+                append_to_file_in_op_rest(user, users, host, hosts, full_path, text)
                 raise AssertionError("The append operation was supposed to fail")
             except (
                 HTTPBadRequest
@@ -875,10 +795,10 @@ def replace_in_file_in_op(client, user, old_text, new_text, file_name, space, us
         "in (?P<host>.*)"
     )
 )
-def move_file_in_op(client, user, result, src_path, dst_path, host, users, cdmi, hosts):
+def move_file_in_op(client, user, result, src_path, dst_path, host, users, hosts):
     client_lower = client.lower()
     if client_lower == "rest":
-        move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user, users)
+        move_item_in_op_rest(src_path, dst_path, result, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         move_item_in_op_oneclient(
@@ -896,12 +816,10 @@ def move_file_in_op(client, user, result, src_path, dst_path, host, users, cdmi,
         r"in (?P<host>.*)"
     )
 )
-def copy_item_in_op(
-    client, user, item_type, src_path, dst_path, host, users, cdmi, hosts
-):
+def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users, hosts):
     client_lower = client.lower()
     if client_lower == "rest":
-        copy_item_in_op_rest(src_path, dst_path, cdmi, host, hosts, user, users)
+        copy_item_in_op_rest(src_path, dst_path, host, hosts, user, users)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         copy_item_in_op_oneclient(
@@ -921,7 +839,6 @@ def copy_item_in_op(
 def create_directory_structure_in_op(
     selenium,
     user,
-    op_container,
     config,
     space,
     tmp_memory,
@@ -929,9 +846,6 @@ def create_directory_structure_in_op(
     hosts,
     host,
     client,
-    modals,
-    oz_page,
-    popups,
     request,
 ):
     client_lower = client.lower()
@@ -939,13 +853,9 @@ def create_directory_structure_in_op(
         create_directory_structure_in_op_gui(
             selenium,
             user,
-            op_container,
             config,
             space,
             tmp_memory,
-            modals,
-            oz_page,
-            popups,
         )
     elif client_lower == "rest":
         create_directory_structure_in_op_rest(
@@ -981,14 +891,13 @@ def assert_time_relation(
     users,
     host,
     hosts,
-    cdmi,
 ):
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     comparator = re.sub(r"( than| to)", "", comparator)
     if client_lower == "rest":
         assert_time_relation_in_op_rest(
-            full_path, time1, time2, comparator, host, hosts, user, users, cdmi
+            full_path, time1, time2, comparator, host, hosts, user, users
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -1015,14 +924,13 @@ def remember_time_for_file(
     users,
     host,
     hosts,
-    cdmi,
     tmp_memory,
 ):
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
     if client_lower == "rest":
         file_time = get_time_for_file_in_op_rest(
-            full_path, user, users, cdmi, host, hosts, time_name
+            full_path, user, users, host, hosts, time_name
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -1053,7 +961,6 @@ def compare_file_time_with_copied_time(
     users,
     host,
     hosts,
-    cdmi,
     tmp_memory,
     comparator,
 ):
@@ -1065,7 +972,6 @@ def compare_file_time_with_copied_time(
             full_path,
             user,
             users,
-            cdmi,
             host,
             hosts,
             time_name1,
@@ -1109,7 +1015,6 @@ def assert_files_time_relation(
     users,
     host,
     hosts,
-    cdmi,
 ):
     client_lower = client.lower()
     full_path = f"{space}/{file_name}"
@@ -1125,7 +1030,6 @@ def assert_files_time_relation(
             hosts,
             user,
             users,
-            cdmi,
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -1153,13 +1057,11 @@ def assert_files_time_relation(
         "(?P<time>[0-9]*) seconds ago in (?P<host>.*)"
     )
 )
-def assert_mtime_not_earlier_than(
-    client, file_path, selenium, user, op_container, time, tmp_memory
-):
+def assert_mtime_not_earlier_than(client, file_path, selenium, user, time, tmp_memory):
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_mtime_not_earlier_than_op_gui(
-            file_path, time, user, tmp_memory, selenium, op_container
+            file_path, time, user, tmp_memory, selenium
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
@@ -1177,8 +1079,6 @@ def assert_directory_structure_is_as_previous_in_op(
     client,
     selenium,
     user,
-    op_container,
-    oz_page,
     tmp_memory,
     tmpdir,
     space,
@@ -1195,11 +1095,9 @@ def assert_directory_structure_is_as_previous_in_op(
             config,
             selenium,
             user,
-            op_container,
             tmp_memory,
             tmpdir,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
@@ -1221,8 +1119,6 @@ def assert_directory_structure_in_op(
     client,
     selenium,
     user,
-    op_container,
-    oz_page,
     tmp_memory,
     tmpdir,
     space,
@@ -1238,11 +1134,9 @@ def assert_directory_structure_in_op(
             config,
             selenium,
             user,
-            op_container,
             tmp_memory,
             tmpdir,
             space,
-            oz_page,
         )
     elif client_lower == "rest":
         assert_space_content_in_op_rest(user, users, hosts, config, space, spaces, host)
@@ -1267,18 +1161,13 @@ def set_metadata_in_op(
     user,
     tab_name,
     val,
-    cdmi,
-    op_container,
     space,
     path,
     host,
     hosts,
     users,
     tmp_memory,
-    modals,
-    oz_page,
     item,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1289,20 +1178,14 @@ def set_metadata_in_op(
             user,
             path,
             tmp_memory,
-            op_container,
             "s",
             space,
             tab_name,
             val,
-            modals,
-            oz_page,
             item,
-            popups,
         )
     elif client_lower == "rest":
-        set_metadata_in_op_rest(
-            user, users, host, hosts, cdmi, full_path, tab_name, val
-        )
+        set_metadata_in_op_rest(user, users, host, hosts, full_path, tab_name, val)
     elif "oneclient" in client_lower:
         if tab_name.lower() == "rdf":
             val = val.replace('"', '\\"')
@@ -1329,8 +1212,6 @@ def assert_metadata_in_op(
     user,
     tab_name,
     val,
-    cdmi,
-    op_container,
     space,
     path,
     host,
@@ -1338,9 +1219,6 @@ def assert_metadata_in_op(
     users,
     tmp_memory,
     item,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1351,20 +1229,14 @@ def assert_metadata_in_op(
             user,
             path,
             tmp_memory,
-            op_container,
             "s",
             space,
             tab_name,
             val,
-            modals,
-            oz_page,
             item,
-            popups,
         )
     elif client_lower == "rest":
-        assert_metadata_in_op_rest(
-            user, users, host, hosts, cdmi, full_path, tab_name, val
-        )
+        assert_metadata_in_op_rest(user, users, host, hosts, full_path, tab_name, val)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         assert_metadata_in_op_oneclient(
@@ -1388,16 +1260,11 @@ def remove_all_metadata_in_op(
     user,
     users,
     space,
-    op_container,
     tmp_memory,
     path,
     host,
     hosts,
-    cdmi,
-    oz_page,
-    modals,
     item,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1406,16 +1273,12 @@ def remove_all_metadata_in_op(
             selenium,
             user,
             space,
-            op_container,
             tmp_memory,
             path,
-            oz_page,
-            modals,
             item,
-            popups,
         )
     elif client_lower == "rest":
-        remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path)
+        remove_all_metadata_in_op_rest(user, users, host, hosts, full_path)
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
         remove_all_metadata_in_op_oneclient(user, users, oneclient_host, full_path)
@@ -1438,18 +1301,13 @@ def assert_no_such_metadata_in_op(
     user,
     users,
     space,
-    op_container,
     tmp_memory,
     path,
     host,
     hosts,
-    cdmi,
     val,
     tab_name,
     item,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -1460,18 +1318,14 @@ def assert_no_such_metadata_in_op(
             user,
             path,
             tmp_memory,
-            op_container,
             space,
             tab_name,
             val,
-            modals,
-            oz_page,
             item,
-            popups,
         )
     elif client_lower == "rest":
         assert_no_such_metadata_in_op_rest(
-            user, users, host, hosts, cdmi, full_path, tab_name, val
+            user, users, host, hosts, full_path, tab_name, val
         )
     elif "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -1495,9 +1349,6 @@ def upload_file_to_op(
     path,
     space,
     tmp_memory,
-    op_container,
-    oz_page,
-    popups,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -1506,10 +1357,7 @@ def upload_file_to_op(
             selenium,
             user,
             space,
-            op_container,
             tmp_memory,
-            oz_page,
-            popups,
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
@@ -1527,18 +1375,13 @@ def upload_local_file_to_op(
     user,
     path,
     tmpdir,
-    op_container,
-    popups,
     space,
-    oz_page,
     tmp_memory,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        go_to_filebrowser(selenium, user, oz_page, op_container, tmp_memory, space)
-        upload_file_to_cwd_in_data_tab(
-            selenium, user, path, tmpdir, op_container, popups
-        )
+        go_to_filebrowser(selenium, user, tmp_memory, space)
+        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)
     else:
         raise NoSuchClientException(f"Client: {client} not found")
 
@@ -1602,7 +1445,5 @@ def open_path_in_space(client, user, path, space, users):
 @wt(
     parsers.parse('using web GUI, {user} sees that "{owner}" is owner of "{file_name}"')
 )
-def check_file_owner_web_gui(
-    selenium, user, owner, file_name, tmp_memory, modals, popups
-):
-    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals, popups)
+def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory):
+    check_file_owner(selenium, user, owner, file_name, tmp_memory)

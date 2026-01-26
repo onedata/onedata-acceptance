@@ -19,6 +19,8 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.utils import Modals, OPLoggedIn
+from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -144,14 +146,12 @@ def assert_item_in_file_browser_is_of_size(browser_id, item_name, size, tmp_memo
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_size_to_be_displayed_in_data_row(
-    selenium, browser_id, op_container, tmp_memory, item_name, size
+    selenium, browser_id, tmp_memory, item_name, size
 ):
     # refresh site after enabling size statistics to see displayed size
     # in data row
     refresh_site(selenium, browser_id)
-    assert_browser_in_tab_in_op(
-        selenium, browser_id, op_container, tmp_memory, "file_browser"
-    )
+    assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file_browser")
     browser = tmp_memory[browser_id]["file_browser"]
     displayed_size = browser.data[item_name].size
     assert (
@@ -390,13 +390,13 @@ def assert_empty_dir_msg_in_file_browser(browser_id, tmp_memory):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_create_new_directory(selenium, browser_id, option, modals):
+def confirm_create_new_directory(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
         button = "Create"
         modal = "Create dir"
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
@@ -405,13 +405,13 @@ def confirm_create_new_directory(selenium, browser_id, option, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_directory(selenium, browser_id, option, modals):
+def confirm_rename_directory(selenium, browser_id, option):
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
         button = "Rename"
         modal = "Rename modal"
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
 
 
 @wt(
@@ -459,26 +459,22 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
         " modal"
     )
 )
-def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
-    assert_tab_in_modal(selenium, browser_id, "Info", modals, "File details")
-    actual = modals(selenium[browser_id]).details_modal.owner
+def check_file_owner_in_file_details_modal(selenium, browser_id, owner):
+    assert_tab_in_modal(selenium, browser_id, "Info", "File details")
+    actual = Modals(selenium[browser_id]).details_modal.owner
     assert actual == owner, f"Expected {owner} as file owner but got {actual}"
 
 
-def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-    selenium, browser_id, number, modals
-):
-    name = modals(selenium[browser_id]).details_modal.hardlinks.tab.text
+def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number):
+    name = Modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip("(").strip(")")
     assert (
         number == actual_num
     ), f"Expected {number}, got {actual_num} in hardlinks tab name"
 
 
-def assert_num_of_hardlinks_entry_in_file_dets_modal(
-    selenium, browser_id, number, modals
-):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     assert len(entries) == int(
         number
     ), f"Expected {number} hardlinks entries, got {len(entries)}"
@@ -490,13 +486,9 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
         'hardlinks in "File details" modal'
     )
 )
-def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, modals):
-    assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-        selenium, browser_id, number, modals
-    )
-    assert_num_of_hardlinks_entry_in_file_dets_modal(
-        selenium, browser_id, number, modals
-    )
+def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number):
+    assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number)
+    assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number)
 
 
 @wt(
@@ -506,8 +498,8 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number, mod
         r'is "(?P<path>.*)" in "File details" modal'
     )
 )
-def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
     assert (
         path == actual_path
@@ -521,8 +513,8 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file, path, mo
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
+def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths):
+    entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
@@ -537,9 +529,9 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths, modal
     )
 )
 def assert_property_in_symlink_dets_modal(
-    selenium, browser_id, link_property, value, modals, clipboard, displays
+    selenium, browser_id, link_property, value, clipboard, displays
 ):
-    modal = modals(selenium[browser_id]).symbolic_link_details
+    modal = Modals(selenium[browser_id]).symbolic_link_details
     actual_value = modal.get_property(link_property, clipboard, displays, browser_id)
     assert (
         actual_value == value
@@ -659,9 +651,9 @@ def write_to_jump_input(browser_id, tmp_memory, prefix):
         "{option} because of insufficient privileges"
     )
 )
-def assert_message_at_alert_modal(browser_id, option, modals, selenium):
+def assert_message_at_alert_modal(browser_id, option, selenium):
     driver = selenium[browser_id]
-    modal = modals(driver).error
+    modal = Modals(driver).error
     messages_dict = {
         "downloaded": (
             "Starting file download failed!\nYou are not authorized "
@@ -695,11 +687,11 @@ def scroll_to_top_in_file_browser(browser_id, tmp_memory):
     )
 )
 def assert_physical_location_path_and_copy_in_file_details(
-    selenium, browser_id, clipboard, displays, modals
+    selenium, browser_id, clipboard, displays
 ):
     button = "physical_location"
     modal = "details modal"
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, modal)
     path = clipboard.paste(display=displays[browser_id])
     err_msg = "there is no physical location path visible in file details"
     assert path is not None, err_msg
@@ -715,15 +707,13 @@ def assert_empty_file_browser(
     selenium,
     browser_id,
     tmp_memory,
-    public_share,
-    op_container,
     expected_msg,
     which_browser,
 ):
-    if which_browser.lower() == "shares file browser":
-        file_browser = public_share(selenium[browser_id]).file_browser
+    if transform(which_browser) == "shares_file_browser":
+        file_browser = public_share(selenium[browser_id]).shares_file_browser
     else:
-        file_browser = op_container(selenium[browser_id]).file_browser
+        file_browser = OPLoggedIn(selenium[browser_id]).file_browser
 
     tmp_memory[browser_id]["file_browser"] = file_browser
 

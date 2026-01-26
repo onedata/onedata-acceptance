@@ -22,6 +22,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
+from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
@@ -30,10 +31,10 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_processing_chart(browser_id, selenium, modals):
+def assert_processing_chart(browser_id, selenium):
     switch_to_iframe(selenium, browser_id)
     time.sleep(1)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     assert modal.chart, "chart with processing stats is not visible"
 
 
@@ -45,10 +46,10 @@ def assert_processing_chart(browser_id, selenium, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
-    browser_id, selenium, modals
+    browser_id, selenium
 ):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
     now = datetime.now()
     ts = datetime.timestamp(now)
@@ -63,9 +64,9 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
         " with processing stats is greater than zero"
     )
 )
-def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals):
+def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
     err_msg = (
         f"Last column {values[0][1]} is {values[0][0]} and"
@@ -81,9 +82,9 @@ def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium, modals
         ' time resolution list in modal "{modal}"'
     )
 )
-def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
+def choose_time_resolution(selenium, browser_id, resolution, modal):
     driver = selenium[browser_id]
-    for option in popups(driver).time_resolutions_list:
+    for option in Popups(driver).time_resolutions_list:
         if option.text == resolution:
             option.click()
             break
@@ -99,9 +100,9 @@ def choose_time_resolution(selenium, browser_id, popups, resolution, modal):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_data_message_processing_chart(browser_id, selenium, modals, message):
+def assert_no_data_message_processing_chart(browser_id, selenium, message):
     switch_to_iframe(selenium, browser_id)
-    actual_message = modals(selenium[browser_id]).task_time_series.no_data_message
+    actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
     err_msg = (
         f'Actual message: "{actual_message}" on chart with processing'
         f' stats is not "{message}" as expected'
@@ -119,10 +120,10 @@ def assert_no_data_message_processing_chart(browser_id, selenium, modals, messag
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id, selenium, modals, option, number, compare_option
+    browser_id, selenium, option, number, compare_option
 ):
     switch_to_iframe(selenium, browser_id)
-    modal = modals(selenium[browser_id]).task_time_series
+    modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_max_value()
     for value in values:
         if option in value[1].lower():
@@ -150,12 +151,12 @@ def click_on_task_audit_log(task):
     task.audit_log()
 
 
-def get_modal_and_logs_for_task(path, task, modals, driver):
+def get_modal_and_logs_for_task(path, task, driver):
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
     time.sleep(1)
-    modal = modals(driver).audit_log
+    modal = Modals(driver).audit_log
     logs = modal.logs_entry
     return modal, logs
 
@@ -179,12 +180,12 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium, browser_id, op_container, modals, store_name):
+def open_store_details_modal(selenium, browser_id, store_name):
     driver = selenium[browser_id]
-    page = get_op_workflow_visualizer_page(op_container, driver)
+    page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
     time.sleep(0.25)
-    return modals(driver).store_details
+    return Modals(driver).store_details
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -276,15 +277,11 @@ def open_url_from_store_content(
     option,
     store_name,
     selenium,
-    modals,
-    op_container,
     clipboard,
     displays,
 ):
 
-    modal = open_store_details_modal(
-        selenium, browser_id, op_container, modals, store_name
-    )
+    modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
     modal.copy_button()
     items = json.loads(clipboard.paste(display=displays[browser_id]))

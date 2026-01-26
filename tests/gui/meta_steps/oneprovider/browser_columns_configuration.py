@@ -10,6 +10,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -25,16 +26,16 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
-    selenium, browser_id, columns, which_browser, tmp_memory, popups
+    selenium, browser_id, columns, which_browser, tmp_memory
 ):
     # This function enables the selected columns and disables the rest.
     option_select = "select"
     option_unselect = "unselect"
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
     columns = list(map(lambda s: s.lower(), parse_seq(columns)))
     for column in columns_menu:
@@ -55,7 +56,7 @@ def select_columns_to_be_visible_in_browser(
     )
 )
 def change_visibility_for_browser_columns(
-    selenium, browser_id, res, columns, which_browser, tmp_memory, popups
+    selenium, browser_id, res, columns, which_browser, tmp_memory
 ):
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
@@ -65,9 +66,9 @@ def change_visibility_for_browser_columns(
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
 
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
     columns = list(map(lambda s: s.lower(), parse_seq(columns)))
@@ -89,16 +90,16 @@ def change_visibility_for_browser_columns(
         r"file browser|archive browser|dataset browser) table"
     )
 )
-def remove_column(selenium, browser_id, name, which_browser, tmp_memory, popups):
+def remove_column(selenium, browser_id, name, which_browser, tmp_memory):
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
 
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_column = popups(driver).configure_columns_menu.columns[name]
+    current_column = Popups(driver).configure_columns_menu.columns[name]
     current_column.hover_to_button_and_click("remove", driver)
 
     # hide columns menu popup
@@ -114,7 +115,7 @@ def remove_column(selenium, browser_id, name, which_browser, tmp_memory, popups)
     )
 )
 def modify_props_of_xattr_column_in_columns_menu(
-    selenium, browser_id, which_browser, tmp_memory, popups, name, elem, new_elem_name
+    selenium, browser_id, which_browser, tmp_memory, name, elem, new_elem_name
 ):
 
     driver = selenium[browser_id]
@@ -122,13 +123,13 @@ def modify_props_of_xattr_column_in_columns_menu(
 
     browser.configure_columns.click()
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_xattr_column = popups(driver).configure_columns_menu.columns[name]
+    current_xattr_column = Popups(driver).configure_columns_menu.columns[name]
 
     current_xattr_column.hover_to_button_and_click("modify", driver)
-    modify_xattr_column = popups(driver).configure_columns_menu.xattr_column_editor
+    modify_xattr_column = Popups(driver).configure_columns_menu.xattr_column_editor
 
     if elem == "label":
         modify_xattr_column.column_label.clear()
@@ -160,7 +161,6 @@ def modify_json_column_in_columns_menu(
     config,
     which_browser,
     tmp_memory,
-    popups,
 ):
     """
     Config is a list of column updates applied sequentially.
@@ -183,13 +183,13 @@ def modify_json_column_in_columns_menu(
 
     browser.configure_columns.click()
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    current_column = popups(driver).configure_columns_menu.columns[col_name]
+    current_column = Popups(driver).configure_columns_menu.columns[col_name]
 
     current_column.hover_to_button_and_click("modify", driver)
-    modify_json_column = popups(driver).configure_columns_menu.json_column_editor
+    modify_json_column = Popups(driver).configure_columns_menu.json_column_editor
 
     config_dict = dict(yaml.load(config, yaml.Loader).items())
 
@@ -207,7 +207,7 @@ def modify_json_column_in_columns_menu(
     elif "key" in config_dict:
         modify_json_column.json_key.click()
         modify_json_column.clear_actual_key(driver)
-        popups(driver).dropdown.options[config_dict["key"]].click()
+        Popups(driver).dropdown.options[config_dict["key"]].click()
 
     modify_json_column.apply_changes.click()
     # hide columns menu popup
@@ -257,16 +257,16 @@ def assert_json_column_content(
     )
 )
 def assert_column_presence(
-    selenium, browser_id, res, name, which_browser, tmp_memory, option, popups
+    selenium, browser_id, res, name, which_browser, tmp_memory, option
 ):
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
     wait_for_item_to_appear(
-        popups(selenium[browser_id]).configure_columns_menu.web_elem
+        Popups(selenium[browser_id]).configure_columns_menu.web_elem
     )
 
-    columns_menu = popups(selenium[browser_id]).configure_columns_menu.columns
+    columns_menu = Popups(selenium[browser_id]).configure_columns_menu.columns
     if name in [col.name for col in columns_menu]:
         if res == "does not see":
             raise AssertionError(

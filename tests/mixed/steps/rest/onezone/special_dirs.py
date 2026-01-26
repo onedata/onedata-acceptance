@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from oneprovider_client.rest import ApiException
 
+from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
@@ -178,7 +179,7 @@ def try_to_remove_user_root_dir_by_path(client, users, user):
         extra_types={"SpecialDir": SpecialDir},
     )
 )
-def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, name):
+def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, name):
     try_to_move_special_dir_by_id(
         client,
         user,
@@ -186,13 +187,12 @@ def try_to_move_special_dir(client, user, users, hosts, host, tmp_memory, cdmi, 
         hosts,
         host,
         tmp_memory[name][user],
-        cdmi,
         err_msg=f"Moved {name.value}, but moving should have failed",
     )
 
 
 def try_to_move_special_dir_by_id(
-    client, user, users, hosts, host, dir_id, cdmi, err_msg=None
+    client, user, users, hosts, host, dir_id, err_msg=None
 ):
     if client.lower() == "rest":
         try:

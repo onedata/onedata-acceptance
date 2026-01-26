@@ -10,10 +10,11 @@ import json
 
 from oneprovider_client import CustomFileMetadataApi
 
+from tests.gui.utils import CDMIClient as cdmi
 from tests.mixed.utils.common import login_to_provider
 
 
-def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
+def assert_metadata_in_op_rest(user, users, host, hosts, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name.lower() == "xattrs":
@@ -37,7 +38,7 @@ def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, v
             ), f'{path} has no {val} {tab_name} metadata but "{metadata}"'
 
 
-def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, val):
+def set_metadata_in_op_rest(user, users, host, hosts, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if tab_name == "xattrs":
         (attr, val) = val.split("=")
@@ -54,14 +55,12 @@ def add_json_metadata_to_file_rest(user, users, hosts, host, expression, file_id
     cfm_api.set_json_metadata(file_id, expression)
 
 
-def remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, path):
+def remove_all_metadata_in_op_rest(user, users, host, hosts, path):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_metadata(path, {})
 
 
-def assert_no_such_metadata_in_op_rest(
-    user, users, host, hosts, cdmi, path, tab_name, val
-):
+def assert_no_such_metadata_in_op_rest(user, users, host, hosts, path, tab_name, val):
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name == "xattrs":

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from datetime import date
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -21,9 +22,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_marketplace_subpage(selenium, browser_id, oz_page):
+def click_button_in_marketplace_subpage(selenium, browser_id):
     driver = selenium[browser_id]
-    oz_page(driver)["data"].space_marketplace_page.advertise_space_button()
+    OZLoggedIn(driver)["data"].space_marketplace_page.advertise_space_button()
 
 
 @wt(
@@ -33,16 +34,16 @@ def click_button_in_marketplace_subpage(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_marketplace_icon_in_space_sidebar(selenium, browser_id, oz_page, space_name):
+def assert_marketplace_icon_in_space_sidebar(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     err_msg = f"Space: {space_name} does not have marketplace indicator visible"
 
-    assert oz_page(driver)["data"].elements_list[space_name].advertised_icon, err_msg
+    assert OZLoggedIn(driver)["data"].elements_list[space_name].advertised_icon, err_msg
 
 
-def get_space_from_marketplace_list(selenium, browser_id, oz_page, space_name):
+def get_space_from_marketplace_list(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)["data"].space_marketplace_page
+    page = OZLoggedIn(driver)["data"].space_marketplace_page
     return page.spaces_marketplace_list[space_name]
 
 
@@ -56,10 +57,10 @@ def get_today_date():
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_in_space_marketplace(
-    selenium, browser_id, oz_page, space_name, element_type, element_data
+    selenium, browser_id, space_name, element_type, element_data
 ):
 
-    space = get_space_from_marketplace_list(selenium, browser_id, oz_page, space_name)
+    space = get_space_from_marketplace_list(selenium, browser_id, space_name)
     element = getattr(space, transform(element_type))
     name_of_element = element_type.capitalize()
     err_msg = (
@@ -75,9 +76,9 @@ def assert_element_in_space_marketplace(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_elements_list_in_space_marketplace(
-    selenium, browser_id, oz_page, space_name, element_type, elements_data_list
+    selenium, browser_id, space_name, element_type, elements_data_list
 ):
-    space = get_space_from_marketplace_list(selenium, browser_id, oz_page, space_name)
+    space = get_space_from_marketplace_list(selenium, browser_id, space_name)
     name_of_element = element_type.capitalize()
     elements_list = getattr(space, transform(element_type + "s_list"))
 

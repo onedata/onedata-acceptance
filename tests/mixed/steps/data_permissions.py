@@ -50,8 +50,6 @@ def grant_acl_privileges_in_op(
     client,
     selenium,
     user,
-    cdmi,
-    op_container,
     space,
     path,
     host,
@@ -62,9 +60,6 @@ def grant_acl_privileges_in_op(
     name,
     groups,
     tmp_memory,
-    popups,
-    modals,
-    oz_page,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -76,12 +71,8 @@ def grant_acl_privileges_in_op(
             path,
             priv,
             name,
-            op_container,
             tmp_memory,
-            popups,
             space,
-            oz_page,
-            modals,
         )
     elif client_lower == "rest":
         priv = _remove_parent_acl_from_string(priv)
@@ -90,7 +81,6 @@ def grant_acl_privileges_in_op(
             users,
             host,
             hosts,
-            cdmi,
             full_path,
             priv,
             item_type,
@@ -126,8 +116,6 @@ def assert_ace_in_op(
     client,
     selenium,
     user,
-    cdmi,
-    op_container,
     space,
     path,
     host,
@@ -139,9 +127,6 @@ def assert_ace_in_op(
     name,
     numerals,
     tmp_memory,
-    modals,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{path}"
     client_lower = client.lower()
@@ -157,11 +142,7 @@ def assert_ace_in_op(
             space,
             path,
             tmp_memory,
-            modals,
             numerals,
-            oz_page,
-            op_container,
-            popups,
         )
     elif client_lower == "rest":
         priv = _remove_parent_acl_from_string(priv)
@@ -170,7 +151,6 @@ def assert_ace_in_op(
             users,
             host,
             hosts,
-            cdmi,
             numerals,
             full_path,
             num,
@@ -212,13 +192,9 @@ def assert_posix_permissions_in_op(
     mode,
     host,
     selenium,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
@@ -229,11 +205,7 @@ def assert_posix_permissions_in_op(
             space,
             item_path,
             mode,
-            oz_page,
-            op_container,
             tmp_memory,
-            modals,
-            popups,
         )
     elif client_lower == "rest":
         assert_posix_permissions_in_op_rest(full_path, mode, user, users, host, hosts)
@@ -262,13 +234,9 @@ def set_posix_permissions_in_op(
     result,
     host,
     selenium,
-    op_container,
     tmp_memory,
-    modals,
     users,
     hosts,
-    oz_page,
-    popups,
 ):
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
@@ -280,11 +248,7 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
-                modals,
-                oz_page,
-                popups,
             )
         else:
             set_posix_permissions_in_op_gui(
@@ -293,11 +257,7 @@ def set_posix_permissions_in_op(
                 space,
                 item_path,
                 mode,
-                op_container,
                 tmp_memory,
-                modals,
-                oz_page,
-                popups,
             )
     elif client_lower == "rest":
         set_posix_permissions_in_op_rest(

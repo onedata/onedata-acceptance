@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.utils import Modals
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -23,10 +24,10 @@ DATASET_BROWSER = "dataset browser"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals, kind):
+def assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind):
     driver = selenium[browser_id]
     protection_kind = f"ancestor_{kind}_protection"
-    toggle = getattr(modals(driver).datasets, protection_kind)
+    toggle = getattr(Modals(driver).datasets, protection_kind)
     assert (
         toggle.is_checked()
     ), f"{kind} write protection toggle is unchecked in ancestor dataset menu"
@@ -38,9 +39,9 @@ def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals, ki
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_dataset_modal(browser_id, selenium, modals):
+def click_on_option_in_dataset_modal(browser_id, selenium):
     driver = selenium[browser_id]
-    modals(driver).datasets.ancestor_option.click()
+    Modals(driver).datasets.ancestor_option.click()
 
 
 @wt(
@@ -50,12 +51,10 @@ def click_on_option_in_dataset_modal(browser_id, selenium, modals):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_checked_on_item_in_ancestor_list(
-    browser_id, selenium, modals, kind, name
-):
+def assert_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, kind, name):
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
-    item = modals(driver).datasets.ancestors[name]
+    item = Modals(driver).datasets.ancestors[name]
     err_msg = f"{kind} write protection toggle is unchecked on {name}"
     assert getattr(item, protection_kind).is_checked(), err_msg
 
@@ -67,12 +66,10 @@ def assert_toggle_checked_on_item_in_ancestor_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_unchecked_on_item_in_ancestor_list(
-    browser_id, selenium, modals, kind, name
-):
+def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium, kind, name):
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
-    item = modals(driver).datasets.ancestors[name]
+    item = Modals(driver).datasets.ancestors[name]
     err_msg = f"{kind} write protection toggle is checked on {name}"
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
@@ -84,10 +81,10 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_protection_toggle(browser_id, selenium, modals, toggle_type, modal_name):
+def click_protection_toggle(browser_id, selenium, toggle_type, modal_name):
     driver = selenium[browser_id]
     toggle = getattr(
-        getattr(modals(driver), transform(modal_name)),
+        getattr(Modals(driver), transform(modal_name)),
         f"{toggle_type}_protection_toggle",
     )
     toggle.check()
@@ -102,13 +99,11 @@ def click_protection_toggle(browser_id, selenium, modals, toggle_type, modal_nam
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def can_not_click_protection_toggle(
-    browser_id, selenium, modals, toggle_type, modal_name
-):
+def can_not_click_protection_toggle(browser_id, selenium, toggle_type, modal_name):
     driver = selenium[browser_id]
     try:
         getattr(
-            getattr(modals(driver), transform(modal_name)),
+            getattr(Modals(driver), transform(modal_name)),
             f"{toggle_type}_protection_toggle",
         ).check()
         raise AssertionError(f"{toggle_type}_protection_toggle is clickable")
@@ -118,14 +113,14 @@ def can_not_click_protection_toggle(
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals, text):
+def see_protected_tag_label_in_dataset_modal(browser_id, selenium, text):
     driver = selenium[browser_id]
     error = f"Text: {text} not found in label "
 
     if "metadata" in text:
-        assert text in modals(driver).datasets.metadata_protected_label, error
+        assert text in Modals(driver).datasets.metadata_protected_label, error
     else:
-        assert text in modals(driver).datasets.data_protected_label, error
+        assert text in Modals(driver).datasets.data_protected_label, error
 
 
 @wt(
@@ -205,9 +200,9 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
         'user of {browser_id} fails to click on "{button}" button in modal "{modal}"'
     )
 )
-def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
+def fail_to_click_button_in_modal(browser_id, button, modal, selenium):
     try:
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        click_modal_button(selenium, browser_id, button, modal)
         raise AssertionError(f'User can click on "{button}" in modal "{modal}"')
     except RuntimeError:
         pass
@@ -221,11 +216,11 @@ def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle_in_ancestor_list(
-    browser_id, selenium, modals, name, modal_name, toggle_type
+    browser_id, selenium, name, modal_name, toggle_type
 ):
     driver = selenium[browser_id]
     toggle = getattr(
-        getattr(modals(driver), transform(modal_name)).ancestors[name],
+        getattr(Modals(driver), transform(modal_name)).ancestors[name],
         f"{toggle_type}_protection_toggle",
     )
     toggle.check()

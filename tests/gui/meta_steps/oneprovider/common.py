@@ -48,13 +48,11 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
     g_click_on_the_given_main_menu_tab(selenium, browser_id_list, tab_name)
 
 
-def navigate_to_tab_in_op_using_gui(
-    selenium, user, oz_page, provider, main_menu_tab, hosts, popups
-):
+def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hosts):
     title = selenium[user].title
 
     if "onezone" in title.lower():
-        g_wt_visit_op(selenium, oz_page, user, provider, hosts, popups)
+        g_wt_visit_op(selenium, user, provider, hosts)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
@@ -73,8 +71,6 @@ def replicate_file_to_provider(
     tmp_memory,
     provider,
     hosts,
-    popups,
-    modals,
     result,
 ):
     option = "Data distribution"
@@ -83,27 +79,27 @@ def replicate_file_to_provider(
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
 
-    replicate_item(selenium, browser_id, provider, hosts, popups)
+    replicate_item(selenium, browser_id, provider, hosts)
 
     if result == "replicates":
-        click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+        click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups, modals):
+def assert_eviction_done(selenium, browser_id, name, tmp_memory):
     option = "Data distribution"
     tab = "Distribution"
     details_modal = "Details modal"
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
     assert_see_history_btn_shown(selenium, browser_id)
-    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+    click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(
@@ -119,44 +115,42 @@ def wt_assert_file_chunks(
     desc,
     tmp_memory,
     hosts,
-    modals,
-    popups,
 ):
     option = "Data distribution"
     details_modal = "Details modal"
     tab = "Distribution"
     close_button = "X"
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
-    _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
-    click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+    _assert_file_chunks(selenium, browser_id, hosts, desc)
+    click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
+def _assert_file_chunks(selenium, browser_id, hosts, desc):
     desc = yaml.load(desc, yaml.Loader)
     for provider, chunks in desc.items():
         if chunks == "entirely empty":
             assert_provider_chunk_in_data_distribution_empty(
-                selenium, browser_id, provider, modals, hosts
+                selenium, browser_id, provider, hosts
             )
         elif chunks == "entirely filled":
             assert_provider_chunk_in_data_distribution_filled(
-                selenium, browser_id, provider, modals, hosts
+                selenium, browser_id, provider, hosts
             )
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(selenium, browser_id, name, tmp_memory, modals):
+def create_directory(selenium, browser_id, name, tmp_memory):
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"
     option = "enter"
     click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
-    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name, modals)
-    confirm_create_new_directory(selenium, browser_id, option, modals)
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name)
+    confirm_create_new_directory(selenium, browser_id, option)
     assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
@@ -175,8 +169,6 @@ def migrate_file_to_provider(
     source,
     target,
     hosts,
-    popups,
-    modals,
     result,
 ):
     option = "Data distribution"
@@ -185,23 +177,19 @@ def migrate_file_to_provider(
     close_button = "X"
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
-    migrate_item(selenium, browser_id, source, target, hosts, popups)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+    migrate_item(selenium, browser_id, source, target, hosts)
 
     if result == "migrates":
-        click_modal_button(selenium, browser_id, close_button, details_modal, modals)
+        click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters submenu'))
-def open_record_of_clusters_submenu(
-    selenium, browser_id, provider_name, oz_page, hosts
-):
+def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
     sidebar = "Clusters"
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(
-        selenium, browser_id, oz_page, provider_name, hosts
-    )
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
+    click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
 
 
 @wt(
@@ -210,10 +198,8 @@ def open_record_of_clusters_submenu(
         '"{tab}" tab for "{filename}" file using context menu'
     )
 )
-def open_modal_on_tab(
-    selenium, browser_id, filename, popups, tmp_memory, tab, modals, modal_name
-):
+def open_modal_on_tab(selenium, browser_id, filename, tmp_memory, tab, modal_name):
     option = "Quality of Service" if tab == "QoS" else tab
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option, popups)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    assert_tab_in_modal(selenium, browser_id, tab, modal_name)

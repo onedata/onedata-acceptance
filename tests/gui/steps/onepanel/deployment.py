@@ -12,6 +12,7 @@ import time
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
@@ -24,14 +25,14 @@ from tests.utils.utils import repeat_failed
         '"(?P<name>.*):(?P<passphrase>.*)"'
     )
 )
-def g_create_admin_in_panels(selenium, browser_id_list, onepanel, passphrase):
+def g_create_admin_in_panels(selenium, browser_id_list, passphrase):
     for browser_id in parse_seq(browser_id_list):
-        g_create_admin_in_panel(selenium, browser_id, onepanel, passphrase)
+        g_create_admin_in_panel(selenium, browser_id, passphrase)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_create_admin_in_panel(selenium, browser_id, onepanel, passphrase):
-    init_page = onepanel(selenium[browser_id]).init_page
+def g_create_admin_in_panel(selenium, browser_id, passphrase):
+    init_page = Onepanel(selenium[browser_id]).init_page
     init_page.create_new_cluster()
     init_page.passphrase = passphrase
     init_page.confirm_passphrase = passphrase
@@ -47,22 +48,22 @@ def g_create_admin_in_panel(selenium, browser_id, onepanel, passphrase):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_host_options_in_deployment_step1(
-    selenium, browser_id, options, host_regexp, onepanel
+    selenium, browser_id, options, host_regexp
 ):
     parsed_options = parse_seq(options)
     wt_check_host_options_list_in_deployment_step1(
-        selenium, browser_id, parsed_options, host_regexp, onepanel
+        selenium, browser_id, parsed_options, host_regexp
     )
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_host_options_list_in_deployment_step1(
-    selenium, browser_id, options, host_regexp, onepanel
+    selenium, browser_id, options, host_regexp
 ):
     options = [transform(option) for option in options]
     # without this, deployment failed randomly when launched locally
     time.sleep(5)
-    for host in onepanel(selenium[browser_id]).content.deployment.step1.hosts:
+    for host in Onepanel(selenium[browser_id]).content.deployment.step1.hosts:
         if re.match(host_regexp, host.name):
             for option in options:
                 getattr(host, option).check()
@@ -79,10 +80,10 @@ def wt_check_host_options_list_in_deployment_step1(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_deployment_step(
-    selenium, browser_id, text: str, input_box, step, onepanel
+    selenium, browser_id, text: str, input_box, step
 ):
     step = getattr(
-        onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
+        Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
     setattr(step, transform(input_box), text)
 
@@ -97,10 +98,10 @@ def wt_type_text_to_in_box_in_deployment_step(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_second_host_to_in_box_in_deployment_step(
-    selenium, browser_id, input_box, step, onepanel
+    selenium, browser_id, input_box, step
 ):
     step = getattr(
-        onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
+        Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
     text = step.hostname_label
     text = text.replace("0", "1") if "0" in text else text.replace("1", "0")
@@ -118,11 +119,11 @@ def wt_type_second_host_to_in_box_in_deployment_step(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_property_to_in_box_in_deployment_step(
-    selenium, browser_id, alias, name_property, input_box, step, onepanel, hosts
+    selenium, browser_id, alias, name_property, input_box, step, hosts
 ):
     text = hosts[alias][name_property]
     step = getattr(
-        onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
+        Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
     setattr(step, transform(input_box), text)
 
@@ -135,9 +136,9 @@ def wt_type_property_to_in_box_in_deployment_step(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel):
+def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step):
     driver = selenium[browser_id]
-    step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
+    step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
     if btn == "Add host":
 
@@ -158,17 +159,15 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step, onepanel
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_try_to_register_prov_using_register_btn(
-    selenium, browser_id, step, onepanel, modals
-):
+def wt_try_to_register_prov_using_register_btn(selenium, browser_id, step):
     driver = selenium[browser_id]
     btn = "Register"
-    step = getattr(onepanel(driver).content.deployment, step.lower().replace(" ", ""))
+    step = getattr(Onepanel(driver).content.deployment, step.lower().replace(" ", ""))
     getattr(step, transform(btn)).click()
 
     # if error modal occurred close it and repeat function execution
     try:
-        error_modal = modals(driver).error
+        error_modal = Modals(driver).error
         error_modal.close.click()
         raise AssertionError("Did not menage to register provider")
     except RuntimeError:
@@ -176,17 +175,17 @@ def wt_try_to_register_prov_using_register_btn(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_next_step_in_deployment(onepanel, driver, modals, next_step_num):
+def wait_for_next_step_in_deployment(driver, next_step_num):
     assert (
-        int(onepanel(driver).content.deployment.num) == next_step_num
-        or modals(driver).error.is_displayed()
+        int(Onepanel(driver).content.deployment.num) == next_step_num
+        or Modals(driver).error.is_displayed()
     )
 
 
 @wt(parsers.parse("user of {browser_id} sees that cluster deployment has started"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
-    _ = modals(selenium[browser_id]).cluster_deployment
+def wt_assert_begin_of_cluster_deployment(selenium, browser_id):
+    _ = Modals(selenium[browser_id]).cluster_deployment
 
 
 @wt(
@@ -195,12 +194,12 @@ def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
         "for cluster deployment to finish"
     )
 )
-def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout, modals):
+def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout):
     driver = selenium[browser_id]
     limit = time.time() + timeout
     while time.time() < limit:
         try:
-            modals(driver).cluster_deployment
+            Modals(driver).cluster_deployment
         except RuntimeError:
             break
         else:
@@ -217,8 +216,8 @@ def wt_await_finish_of_cluster_deployment(selenium, browser_id, timeout, modals)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
+def wt_click_perform_check_in_dns_setup_step(selenium, browser_id):
+    Onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
 
 
 @wt(
@@ -228,8 +227,8 @@ def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed()
+def wt_click_proceed_in_dns_setup_step(selenium, browser_id):
+    Onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed()
 
 
 @wt(
@@ -239,8 +238,8 @@ def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals):
-    modals(selenium[browser_id]).dns_configuration_warning.yes()
+def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id):
+    Modals(selenium[browser_id]).dns_configuration_warning.yes()
 
 
 @wt(
@@ -250,9 +249,9 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
+def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id):
     (
-        onepanel(
+        Onepanel(
             selenium[browser_id]
         ).content.deployment.setup_ip.setup_ip_addresses.click()
     )
@@ -266,9 +265,9 @@ def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
     )
 )
 def wt_type_ip_address_for_hostname_in_deployment_setup_ip(
-    selenium, browser_id, onepanel, hostname, new_ip
+    selenium, browser_id, hostname, new_ip
 ):
-    all_nodes = onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
+    all_nodes = Onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
     nodes = [node for node in all_nodes if node.hostname == hostname]
     for node in nodes:
         node.ip_address = new_ip
@@ -282,9 +281,9 @@ def wt_type_ip_address_for_hostname_in_deployment_setup_ip(
     )
 )
 def wt_assert_ip_address_in_deployment_setup_ip(
-    selenium, browser_id, onepanel, hostname, expected_ip
+    selenium, browser_id, hostname, expected_ip
 ):
-    all_nodes = onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
+    all_nodes = Onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
     nodes = [node for node in all_nodes if node.hostname == hostname]
     for node in nodes:
         assert (
@@ -301,11 +300,11 @@ def wt_assert_ip_address_in_deployment_setup_ip(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=1)
 def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(
-    selenium, host, browser_id, hosts, onepanel, ip_host
+    selenium, host, browser_id, hosts, ip_host
 ):
     hostname = hosts[host]["hostname"]
     expected_ip = hosts[ip_host]["ip"]
-    all_nodes = onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
+    all_nodes = Onepanel(selenium[browser_id]).content.deployment.setup_ip.nodes
     nodes = [node for node in all_nodes if node.hostname == hostname]
     for node in nodes:
         assert (
@@ -319,9 +318,9 @@ def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(
         "web cert step of deployment process in Onepanel"
     )
 )
-def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id, onepanel):
+def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id):
     (
-        onepanel(
+        Onepanel(
             selenium[browser_id]
         ).content.deployment.webcertstep.lets_encrypt_toggle.check()
     )
@@ -333,11 +332,9 @@ def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id, on
         "in web cert step of deployment process in Onepanel"
     )
 )
-def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(
-    selenium, browser_id, onepanel
-):
+def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id):
     (
-        onepanel(
+        Onepanel(
             selenium[browser_id]
         ).content.deployment.webcertstep.lets_encrypt_toggle.uncheck()
     )
@@ -350,14 +347,12 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_storage_type_in_deployment_step5(
-    selenium, browser_id, storage_type, onepanel, popups
-):
-    storage_selector = onepanel(
+def wt_select_storage_type_in_deployment_step5(selenium, browser_id, storage_type):
+    storage_selector = Onepanel(
         selenium[browser_id]
     ).content.deployment.step5.form.storage_selector
     storage_selector.expand()
-    storage_selector_list = popups(selenium[browser_id]).dropdown
+    storage_selector_list = Popups(selenium[browser_id]).dropdown
     storage_selector_list.options[storage_type].click()
 
 
@@ -369,11 +364,9 @@ def wt_select_storage_type_in_deployment_step5(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_storage_option_in_deployment_step5(
-    selenium, browser_id, option, form, onepanel
-):
+def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option, form):
     form = getattr(
-        onepanel(selenium[browser_id]).content.deployment.step5.form,
+        Onepanel(selenium[browser_id]).content.deployment.step5.form,
         transform(form),
     )
     getattr(form, transform(option)).check()
@@ -388,10 +381,10 @@ def wt_enable_storage_option_in_deployment_step5(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_deployment_step5(
-    selenium, browser_id, text, form, onepanel, input_box
+    selenium, browser_id, text, form, input_box
 ):
     form = getattr(
-        onepanel(selenium[browser_id]).content.deployment.step5.form,
+        Onepanel(selenium[browser_id]).content.deployment.step5.form,
         transform(form),
     )
     setattr(form, transform(input_box), text)
@@ -404,8 +397,8 @@ def wt_type_text_to_in_box_in_deployment_step5(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_add_btn_in_storage_add_form(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.step5.form.add()
+def wt_click_on_add_btn_in_storage_add_form(selenium, browser_id):
+    Onepanel(selenium[browser_id]).content.deployment.step5.form.add()
 
 
 @wt(
@@ -416,8 +409,8 @@ def wt_click_on_add_btn_in_storage_add_form(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_expand_storage_item_in_deployment_step5(selenium, browser_id, storage, onepanel):
-    storages = onepanel(selenium[browser_id]).content.deployment.step5.storages
+def wt_expand_storage_item_in_deployment_step5(selenium, browser_id, storage):
+    storages = Onepanel(selenium[browser_id]).content.deployment.step5.storages
     storages[storage].expand()
 
 
@@ -429,10 +422,8 @@ def wt_expand_storage_item_in_deployment_step5(selenium, browser_id, storage, on
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_storage_attr_in_deployment_step5(
-    selenium, browser_id, st, attr, val, onepanel
-):
-    storages = onepanel(selenium[browser_id]).content.deployment.step5.storages
+def wt_assert_storage_attr_in_deployment_step5(selenium, browser_id, st, attr, val):
+    storages = Onepanel(selenium[browser_id]).content.deployment.step5.storages
     displayed_val = getattr(storages[st], transform(attr)).lower()
     assert (
         displayed_val == val.lower()
@@ -446,9 +437,9 @@ def wt_assert_storage_attr_in_deployment_step5(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_registration_token_in_step2(selenium, browser_id, onepanel, tmp_memory):
+def wt_type_registration_token_in_step2(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]["mailbox"]["token"]
-    onepanel(selenium[browser_id]).content.deployment.step2.token = token
+    Onepanel(selenium[browser_id]).content.deployment.step2.token = token
 
 
 @wt(
@@ -458,8 +449,8 @@ def wt_type_registration_token_in_step2(selenium, browser_id, onepanel, tmp_memo
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.step2.proceed()
+def wt_click_proceed_button_in_step2(selenium, browser_id):
+    Onepanel(selenium[browser_id]).content.deployment.step2.proceed()
 
 
 @wt(
@@ -470,8 +461,8 @@ def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_go_to_emergency_onepanel_interface(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.laststep.link()
+def wt_go_to_emergency_onepanel_interface(selenium, browser_id):
+    Onepanel(selenium[browser_id]).content.deployment.laststep.link()
 
 
 @wt(
@@ -495,5 +486,5 @@ def add_prov_with_oz_subdomain_to_etc_host(hosts, provider):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wait_for_emergency_interface_onepanel(browser_id, selenium, login_page):
-    assert login_page(selenium[browser_id]).open_in_onezone.is_displayed()
+def wait_for_emergency_interface_onepanel(browser_id, selenium):
+    assert LoginPage(selenium[browser_id]).open_in_onezone.is_displayed()

@@ -13,6 +13,8 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
 )
+from tests.gui.utils import DataDiscoveryPage as DataDiscovery
+from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -35,12 +37,10 @@ CREATE_INDEX_TOGGLES = {
     parsers.parse('user of {browser_id} clicks "{text}" in harvester indices page menu')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_member_menu_option_in_harvester_indices_page(
-    selenium, browser_id, text, oz_page, popups
-):
+def click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, text):
     driver = selenium[browser_id]
-    oz_page(driver)["discovery"].indices_page.menu_button.click()
-    popups(driver).menu_popup_with_text.menu[text]()
+    OZLoggedIn(driver)["discovery"].indices_page.menu_button.click()
+    Popups(driver).menu_popup_with_text.menu[text]()
 
 
 @wt(
@@ -49,18 +49,16 @@ def click_on_member_menu_option_in_harvester_indices_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_index_name_to_input_field_in_indices_page(
-    selenium, browser_id, oz_page, index_name
-):
+def type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    oz_page(driver)["discovery"].indices_page.name_input = index_name
+    OZLoggedIn(driver)["discovery"].indices_page.name_input = index_name
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_indices_page(selenium, browser_id, oz_page):
+def click_create_button_in_indices_page(selenium, browser_id):
     driver = selenium[browser_id]
-    oz_page(driver)["discovery"].indices_page.create_button()
+    OZLoggedIn(driver)["discovery"].indices_page.create_button()
 
 
 @wt(
@@ -69,11 +67,9 @@ def click_create_button_in_indices_page(selenium, browser_id, oz_page):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_index_has_appeared_in_indices_page(
-    selenium, browser_id, oz_page, index_name
-):
+def assert_index_has_appeared_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    indices_list = oz_page(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
     assert index_name in indices_list, f'index "{index_name}" not found'
 
 
@@ -83,9 +79,9 @@ def assert_index_has_appeared_in_indices_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_index_record_in_indices_page(selenium, browser_id, oz_page, index_name):
+def expand_index_record_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    indices_list = oz_page(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
     indices_list[index_name].click()
 
 
@@ -95,9 +91,9 @@ def expand_index_record_in_indices_page(selenium, browser_id, oz_page, index_nam
         '"{index}" index record in indices page'
     )
 )
-def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page, index):
+def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, index):
     driver = selenium[browser_id]
-    indices_list = oz_page(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
     assert indices_list[
         index
     ].is_used_by_gui_tag_visible(), f"Used by GUI tag is not visible for {index}"
@@ -110,10 +106,10 @@ def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page, index)
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_progress_in_harvesting(selenium, browser_id, oz_page, index_name):
+def assert_progress_in_harvesting(selenium, browser_id, index_name):
     driver = selenium[browser_id]
     value = "100%"
-    indices_list = oz_page(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
     progress_values = indices_list[index_name].progress_values
 
     for progress in progress_values:
@@ -129,10 +125,10 @@ def assert_progress_in_harvesting(selenium, browser_id, oz_page, index_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page, stay_checked):
+def uncheck_toggles_on_create_index_page(selenium, browser_id, stay_checked):
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
-    indices_page = oz_page(driver)["discovery"].indices_page
+    indices_page = OZLoggedIn(driver)["discovery"].indices_page
     for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
         for toggle in toggle_group_types:
             if toggle not in stay_checked:
@@ -150,12 +146,12 @@ def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page, stay_che
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name, popups):
+def change_indices_on_gui_plugin_tab(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    gui_plugin_tab = oz_page(driver)["discovery"].configuration_page.gui_plugin_tab
+    gui_plugin_tab = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     gui_plugin_tab.indices_edit()
     gui_plugin_tab.choose_indices_expand()
-    popups(driver).power_select.choose_item(index_name)
+    Popups(driver).power_select.choose_item(index_name)
     gui_plugin_tab.indices_save()
 
 
@@ -166,9 +162,9 @@ def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name, 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_text_on_data_discovery_page(selenium, browser_id, data_discovery, name):
+def assert_not_text_on_data_discovery_page(selenium, browser_id, name):
     driver = selenium[browser_id]
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     for item in results_list:
         assert name not in item.text, f"{name} in result list"
 
@@ -206,7 +202,6 @@ def text_in_result_list(key, value, results_list):
 def assert_rejection_reason_on_data_discovery_page(
     selenium,
     browser_id,
-    data_discovery,
     field_name,
     field_type,
     clipboard,
@@ -220,7 +215,7 @@ def assert_rejection_reason_on_data_discovery_page(
         f" {field_type} in document with id '{file_id}'. Preview of "
         "field's value"
     )
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     text_in_result_list(key, info, results_list)
 
 
@@ -230,13 +225,11 @@ def assert_rejection_reason_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_id_on_data_discovery_page(
-    selenium, browser_id, data_discovery, clipboard, displays
-):
+def assert_id_on_data_discovery_page(selenium, browser_id, clipboard, displays):
     driver = selenium[browser_id]
     archive_id = f'"{clipboard.paste(display=displays[browser_id])}"'
     key = "archiveId"
-    results_list = data_discovery(driver).results_list
+    results_list = DataDiscovery(driver).results_list
     text_in_result_list(key, archive_id, results_list)
 
 
@@ -248,14 +241,12 @@ def assert_id_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_creation_time_on_data_discovery_page(
-    selenium, browser_id, data_discovery, tmp_memory
-):
+def assert_creation_time_on_data_discovery_page(selenium, browser_id, tmp_memory):
     created_at = tmp_memory["created_at"]
     created_at = datetime.strptime(created_at, "%d %b %Y %H:%M").timestamp()
     driver = selenium[browser_id]
     timestamp = float(
-        data_discovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
+        DataDiscovery(driver).results_list[2].text.split(",")[0].split(": ")[2]
     )
     err_msg = (
         "archive creation time is not compatible with creation time on archives page"
@@ -270,21 +261,17 @@ def assert_creation_time_on_data_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_info_on_data_discovery_page(
-    selenium, browser_id, data_discovery, info, text
-):
+def assert_info_on_data_discovery_page(selenium, browser_id, info, text):
     driver = selenium[browser_id]
     key = set_key(text)
     try:
-        results_list = data_discovery(driver).results_list
+        results_list = DataDiscovery(driver).results_list
         text_in_result_list(key, info, results_list)
     except AssertionError:
         button_name = "Query"
-        click_button_on_data_disc_page(
-            selenium, browser_id, data_discovery, button_name
-        )
+        click_button_on_data_disc_page(selenium, browser_id, button_name)
         time.sleep(1)
-        results_list = data_discovery(driver).results_list
+        results_list = DataDiscovery(driver).results_list
         text_in_result_list(key, info, results_list)
 
 

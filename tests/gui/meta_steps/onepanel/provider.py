@@ -38,6 +38,7 @@ from tests.gui.steps.rest.provider import (
     get_provider_service_nodes_statuses,
     start_stop_provider_service_node,
 )
+from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -46,15 +47,10 @@ from tests.utils.utils import repeat_failed
 def modify_provider_with_given_name_in_op_panel_using_gui(
     selenium,
     user,
-    onepanel,
     provider_name,
     new_provider_name,
     new_domain,
-    _panel_login_page,
-    _users,
-    _hosts,
     browser_id,
-    modals,
 ):
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
@@ -66,25 +62,23 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     notify_text_regexp = ".*[Pp]rovider.*data.*modified.*"
 
     wt_click_on_subitem_for_item_with_name(
-        selenium, user, sidebar, sub_item, provider_name, onepanel
+        selenium, user, sidebar, sub_item, provider_name
     )
 
-    wt_click_on_btn_in_content(selenium, user, button, content, onepanel)
+    wt_click_on_btn_in_content(selenium, user, button, content)
     wt_type_val_to_in_box_in_provider_details_form(
-        selenium, user, new_provider_name, prov_name_attr, onepanel
+        selenium, user, new_provider_name, prov_name_attr
     )
     wt_type_val_to_in_box_in_provider_details_form(
-        selenium, user, new_domain, red_point_attr, onepanel
+        selenium, user, new_domain, red_point_attr
     )
-    wt_save_changes_in_modify_provider_detail_form(selenium, user, onepanel)
+    wt_save_changes_in_modify_provider_detail_form(selenium, user)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-    wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals)
+    wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id)
     wt_assert_value_of_provider_attribute(
-        selenium, user, prov_name_attr, new_provider_name, onepanel
+        selenium, user, prov_name_attr, new_provider_name
     )
-    wt_assert_value_of_provider_attribute(
-        selenium, user, red_point_attr, new_domain, onepanel
-    )
+    wt_assert_value_of_provider_attribute(selenium, user, red_point_attr, new_domain)
 
 
 @wt(
@@ -95,7 +89,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium, browser_id, provider_name, onepanel, popups, hosts
+    selenium, browser_id, provider_name, hosts
 ):
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
@@ -103,28 +97,24 @@ def deregister_provider_in_op_panel_using_gui(
     popup = "Deregister provider"
 
     wt_click_on_subitem_for_item(
-        selenium, browser_id, sidebar, sub_item, provider_name, onepanel, hosts
+        selenium, browser_id, sidebar, sub_item, provider_name, hosts
     )
-    wt_click_on_btn_in_content(
-        selenium, browser_id, "Deregister provider", content, onepanel
-    )
-    wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup, popups)
+    wt_click_on_btn_in_content(selenium, browser_id, "Deregister provider", content)
+    wt_click_on_btn_in_popup(selenium, browser_id, "Yes, deregister", popup)
     notify_visible_with_text(
         selenium, browser_id, "info", ".*[Pp]rovider.*deregistered.*"
     )
 
 
-def register_provider_in_op_using_gui(
-    selenium, user, onepanel, hosts, config, tmp_memory
-):
+def register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory):
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)
 
-    wt_type_registration_token_in_step2(selenium, user, onepanel, tmp_memory)
-    wt_click_proceed_button_in_step2(selenium, user, onepanel)
+    wt_type_registration_token_in_step2(selenium, user, tmp_memory)
+    wt_click_proceed_button_in_step2(selenium, user)
 
     time.sleep(1)
-    deactivate_request_subdomain_toggle(selenium, user, onepanel)
+    deactivate_request_subdomain_toggle(selenium, user)
 
     try:
         provider_name = options["provider name"]["of provider"]
@@ -135,7 +125,6 @@ def register_provider_in_op_using_gui(
             options["provider name"],
             "Provider name",
             step2,
-            onepanel,
         )
     else:
         wt_type_property_to_in_box_in_deployment_step(
@@ -145,14 +134,13 @@ def register_provider_in_op_using_gui(
             "name",
             "Provider name",
             step2,
-            onepanel,
             hosts,
         )
     try:
         provider_name = options["domain"]["of provider"]
     except KeyError:
         wt_type_text_to_in_box_in_deployment_step(
-            selenium, user, options["domain"], "Domain", step2, onepanel
+            selenium, user, options["domain"], "Domain", step2
         )
     else:
         wt_type_property_to_in_box_in_deployment_step(
@@ -162,15 +150,14 @@ def register_provider_in_op_using_gui(
             "hostname",
             "Domain",
             step2,
-            onepanel,
             hosts,
         )
 
     wt_type_text_to_in_box_in_deployment_step(
-        selenium, user, options["admin email"], "Admin email", step2, onepanel
+        selenium, user, options["admin email"], "Admin email", step2
     )
 
-    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2, onepanel)
+    wt_click_on_btn_in_deployment_step(selenium, user, "Register", step2)
 
 
 @given(
@@ -181,17 +168,17 @@ def register_provider_in_op_using_gui(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
-    selenium, browser_id, provider, hosts, onepanel, login_page, users, modals
+    selenium, browser_id, provider, hosts
 ):
     sub_item = "Provider configuration"
     record = 0
     sidebar = "CLUSTERS"
 
     wt_click_on_subitem_for_item_with_name(
-        selenium, browser_id, sidebar, sub_item, record, onepanel
+        selenium, browser_id, sidebar, sub_item, record
     )
 
-    current_provider = onepanel(
+    current_provider = Onepanel(
         selenium[browser_id]
     ).content.provider.details.provider_name
     domain = hosts[provider]["hostname"]
@@ -200,15 +187,10 @@ def change_provider_name_if_name_is_different_than_given(
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium,
             browser_id,
-            onepanel,
             current_provider,
             provider,
             domain,
-            login_page,
-            users,
-            hosts,
             browser_id,
-            modals,
         )
 
 

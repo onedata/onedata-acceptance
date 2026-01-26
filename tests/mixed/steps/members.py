@@ -45,8 +45,6 @@ def fail_to_set_privileges_in_space_in_oz(
     config,
     hosts,
     selenium,
-    onepanel,
-    oz_page,
     space_name,
     users,
     spaces,
@@ -61,8 +59,6 @@ def fail_to_set_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            onepanel,
-            oz_page,
         )
 
     elif client_lower == "rest":
@@ -88,9 +84,7 @@ def assert_privileges_in_space_in_oz(
     user,
     space_name,
     hosts,
-    oz_page,
     member_name,
-    onepanel,
     users,
     member_type,
     config,
@@ -106,8 +100,6 @@ def assert_privileges_in_space_in_oz(
             member_type,
             config,
             selenium,
-            onepanel,
-            oz_page,
         )
     elif client_lower == "rest":
         assert_privileges_in_space_using_rest(
@@ -130,10 +122,6 @@ def fail_to_create_invitation_in_space_in_oz(
     selenium,
     user,
     space_name,
-    oz_page,
-    onepanel,
-    popups,
-    modals,
     users,
     hosts,
     member_name,
@@ -142,9 +130,7 @@ def fail_to_create_invitation_in_space_in_oz(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        fail_to_create_invitation_in_space_using_op_gui(
-            user, space_name, popups, modals, selenium, onepanel, oz_page
-        )
+        fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium)
     elif client_lower == "rest":
         fail_to_create_invitation_in_space_using_rest(
             user, users, hosts, host, spaces, space_name, member_name
@@ -167,8 +153,6 @@ def assert_not_user_in_space_in_oz(
     user,
     member_name,
     space_name,
-    oz_page,
-    onepanel,
     users,
     hosts,
     host,
@@ -176,9 +160,7 @@ def assert_not_user_in_space_in_oz(
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        assert_not_user_in_space_using_op_gui(
-            user, space_name, member_name, selenium, onepanel, oz_page
-        )
+        assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium)
 
     elif client_lower == "rest":
         assert_not_user_in_space_using_rest(
@@ -202,11 +184,7 @@ def add_group_to_space_in_oz(
     selenium,
     user,
     space_name,
-    oz_page,
     group_name,
-    onepanel,
-    popups,
-    modals,
     users,
     hosts,
     host,
@@ -220,11 +198,7 @@ def add_group_to_space_in_oz(
             group_name,
             space_name,
             selenium,
-            oz_page,
-            onepanel,
-            popups,
             where,
-            modals,
         )
     elif client_lower == "rest":
         add_group_to_space_using_rest(
@@ -250,17 +224,13 @@ def assert_group_in_space_in_oz(
     space_name,
     host,
     selenium,
-    oz_page,
-    onepanel,
     users,
     hosts,
     spaces,
 ):
     client_lower = client.lower()
     if client_lower == "web gui":
-        assert_group_in_space_using_op_gui(
-            selenium, user, space_name, oz_page, group_name, onepanel
-        )
+        assert_group_in_space_using_op_gui(selenium, user, space_name, group_name)
     elif client_lower == "rest":
         assert_group_in_space_using_rest(
             user, users, hosts, host, group_name, spaces, space_name

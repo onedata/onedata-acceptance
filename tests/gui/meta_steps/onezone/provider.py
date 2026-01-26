@@ -33,11 +33,9 @@ from tests.utils.bdd_utils import parsers, wt
 def assert_provider_has_name_and_hostname_in_oz_gui(
     selenium,
     user,
-    oz_page,
     provider_name,
     domain_provider,
     hosts,
-    popups,
     with_refresh=False,
     test_domain=False,
 ):
@@ -46,9 +44,9 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
     if with_refresh:
         refresh_site(selenium, user)
 
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     click_on_provider_in_providers_sidebar_with_provider_name(
-        selenium, user, oz_page, provider_name
+        selenium, user, provider_name
     )
 
     if test_domain:
@@ -60,37 +58,33 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
             user,
             domain_provider,
             hosts,
-            popups,
-            oz_page,
             displays,
             clipboard,
         )
     else:
         assert_provider_hostname_matches_known_domain(
-            selenium, user, domain_provider, hosts, popups
+            selenium, user, domain_provider, hosts
         )
 
 
-def assert_there_is_no_provider_in_oz_gui(
-    selenium, user, oz_page, provider_name, hosts
-):
+def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
     option = "Data"
 
     refresh_site(selenium, user)
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, option)
     assert_provider_is_not_in_providers_list_in_data_sidebar(
-        selenium, user, oz_page, provider_name, hosts
+        selenium, user, provider_name, hosts
     )
 
 
 def send_copied_invite_token_in_oz_gui(
-    selenium, user, oz_page, browser_list, tmp_memory, displays, clipboard
+    selenium, user, browser_list, tmp_memory, displays, clipboard
 ):
     item_type = "token"
     button = "add new provider cluster"
 
-    click_button_in_cluster_page(selenium, user, oz_page, button)
-    copy_registration_cluster_token(selenium, user, oz_page)
+    click_button_in_cluster_page(selenium, user, button)
+    copy_registration_cluster_token(selenium, user)
     send_copied_item_to_other_users(
         user, item_type, browser_list, tmp_memory, displays, clipboard
     )
@@ -102,20 +96,18 @@ def send_copied_invite_token_in_oz_gui(
         "provider in oneproviders list in data sidebar"
     )
 )
-def revoke_support_of_provider_in_list(
-    selenium, browser_id, provider, oz_page, popups, modals, hosts
-):
+def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
     driver = selenium[browser_id]
     button = "Cease support"
     notify_type = "info"
     notify_text_regexp = "Ceased.*[Ss]upport.*"
 
     click_on_menu_button_of_provider_on_providers_list(
-        selenium, browser_id, provider, oz_page, hosts
+        selenium, browser_id, provider, hosts
     )
-    click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
-    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals)
-    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
+    click_on_cease_support_in_menu_of_provider_on_providers_list(driver)
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button)
     notify_visible_with_text(selenium, browser_id, notify_type, notify_text_regexp)
 
 

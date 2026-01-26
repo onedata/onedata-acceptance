@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -76,14 +77,10 @@ def create_archive(
     config,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     clipboard,
     displays,
     option,
-    popups,
 ):
     """Create archive according to given config.
 
@@ -109,14 +106,10 @@ def create_archive(
         config,
         item_name,
         space_name,
-        oz_page,
-        op_container,
         tmp_memory,
-        modals,
         clipboard,
         displays,
         option,
-        popups,
     )
 
 
@@ -135,14 +128,10 @@ def create_archive_with_follow_symbolic_link(
     config,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     clipboard,
     displays,
     option,
-    popups,
     follow_symbolic_links,
 ):
     follow_symbolic_links = follow_symbolic_links == "true"
@@ -153,14 +142,10 @@ def create_archive_with_follow_symbolic_link(
         config,
         item_name,
         space_name,
-        oz_page,
-        op_container,
         tmp_memory,
-        modals,
         clipboard,
         displays,
         option,
-        popups,
         follow_symbolic_links,
     )
 
@@ -171,28 +156,22 @@ def _create_archive(
     config,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     clipboard,
     displays,
     option,
-    popups,
     follow_symbolic_links=True,
 ):
     option_in_data_row_menu = "Create archive"
     button_name = "Create"
     option_state = "disabled"
     try:
-        op_container(selenium[browser_id]).dataset_browser.breadcrumbs
+        OPLoggedIn(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:
         click_on_option_of_space_on_left_sidebar_menu(
-            selenium, browser_id, space_name, OPTION_IN_SPACE, oz_page
+            selenium, browser_id, space_name, OPTION_IN_SPACE
         )
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory, DATASET_BROWSER
-        )
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, DATASET_BROWSER)
 
     if "/" in item_name:
         go_to_path_without_last_elem(
@@ -200,7 +179,6 @@ def _create_archive(
             browser_id,
             tmp_memory,
             item_name,
-            op_container,
             DATASET_BROWSER,
         )
         item_name = item_name.split("/")[-1]
@@ -210,7 +188,6 @@ def _create_archive(
             selenium,
             browser_id,
             option_in_data_row_menu,
-            popups,
             DATASET_BROWSER,
         )
         data = yaml.load(config, yaml.Loader)
@@ -224,40 +201,30 @@ def _create_archive(
             follow_symbolic_links = data.get("follow symbolic links", True)
 
         if description:
-            write_description_in_create_archive_modal(
-                selenium, browser_id, modals, description
-            )
+            write_description_in_create_archive_modal(selenium, browser_id, description)
         if layout == "BagIt":
-            click_modal_button(
-                selenium, browser_id, layout, option_in_data_row_menu, modals
-            )
+            click_modal_button(selenium, browser_id, layout, option_in_data_row_menu)
         if create_nested_archives:
             option = "create_nested_archives"
-            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
+            check_toggle_in_create_archive_modal(browser_id, selenium, option)
         if incremental:
             if incremental["enabled"]:
                 option = "incremental"
-                check_toggle_in_create_archive_modal(
-                    browser_id, selenium, modals, option
-                )
+                check_toggle_in_create_archive_modal(browser_id, selenium, option)
         if include_dip:
             option = "include_dip"
-            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
+            check_toggle_in_create_archive_modal(browser_id, selenium, option)
         if not follow_symbolic_links:
             option = "follow_symbolic_links"
-            check_toggle_in_create_archive_modal(browser_id, selenium, modals, option)
-        click_modal_button(
-            selenium, browser_id, button_name, option_in_data_row_menu, modals
-        )
+            check_toggle_in_create_archive_modal(browser_id, selenium, option)
+        click_modal_button(selenium, browser_id, button_name, option_in_data_row_menu)
         client = "web GUI"
         if description:
             copy_archive_id_to_tmp_memory(
                 selenium,
                 browser_id,
-                op_container,
                 client,
                 tmp_memory,
-                popups,
                 clipboard,
                 displays,
                 description,
@@ -269,7 +236,6 @@ def _create_archive(
             selenium,
             browser_id,
             option_in_data_row_menu,
-            popups,
             option_state,
             DATASET_BROWSER,
         )
@@ -279,22 +245,18 @@ def _create_archive(
 def copy_archive_id_to_tmp_memory(
     selenium,
     browser_id,
-    op_container,
     client,
     tmp_memory,
-    popups,
     clipboard,
     displays,
     description,
 ):
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
-        assert_browser_in_tab_in_op(
-            selenium, browser_id, op_container, tmp_memory, ARCHIVE_BROWSER
-        )
-        click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
+        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
+        click_menu_for_archive(browser_id, tmp_memory, description, selenium)
         click_option_in_data_row_menu_in_browser(
-            selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
+            selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
         )
         tmp_memory[description] = clipboard.paste(display=displays[browser_id])
 
@@ -304,8 +266,6 @@ def assert_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
     option,
     description,
@@ -313,10 +273,8 @@ def assert_archive_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -325,8 +283,6 @@ def assert_archive_in_op_gui(
             selenium,
             browser_id,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             item_name,
             OPTION_IN_SPACE,
@@ -338,7 +294,6 @@ def assert_archive_in_op_gui(
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
-            op_container,
             tmp_memory,
             item_browser=ARCHIVE_BROWSER,
         )
@@ -346,7 +301,6 @@ def assert_archive_in_op_gui(
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
-            op_container,
             tmp_memory,
             item_browser=ARCHIVE_FILE_BROWSER,
         )
@@ -368,7 +322,6 @@ def assert_archive_in_op_gui(
             assert_browser_in_tab_in_op(
                 selenium,
                 browser_id,
-                op_container,
                 tmp_memory,
                 item_browser=ARCHIVE_BROWSER,
             )
@@ -380,13 +333,9 @@ def remove_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
-    modals,
     description,
     option,
-    popups,
 ):
     option_in_menu = "Delete archive"
     text = "I understand that data of the archive will be lost"
@@ -395,10 +344,8 @@ def remove_archive_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -406,28 +353,25 @@ def remove_archive_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
-    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
+    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
 
     if option == "succeeds":
         click_option_in_data_row_menu_in_browser(
             selenium,
             browser_id,
             option_in_menu,
-            popups,
             which_browser=ARCHIVE_BROWSER,
         )
-        write_in_confirmation_input(browser_id, modals, text, selenium)
-        click_modal_button(selenium, browser_id, button_name, option_in_menu, modals)
+        write_in_confirmation_input(browser_id, text, selenium)
+        click_modal_button(selenium, browser_id, button_name, option_in_menu)
     elif option == "fails":
         assert_option_state_in_data_row_menu(
             selenium,
             browser_id,
             button_name,
-            popups,
             option_state,
             ARCHIVE_BROWSER,
         )
@@ -436,9 +380,7 @@ def remove_archive_in_op_gui(
 def assert_archive_with_option_in_op_gui(
     browser_id,
     selenium,
-    oz_page,
     space_name,
-    op_container,
     tmp_memory,
     item_name,
     option,
@@ -448,10 +390,8 @@ def assert_archive_with_option_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -459,7 +399,6 @@ def assert_archive_with_option_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
@@ -473,18 +412,14 @@ def assert_number_of_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
     number,
 ):
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -493,8 +428,6 @@ def assert_number_of_archive_in_op_gui(
             selenium,
             browser_id,
             space_name,
-            oz_page,
-            op_container,
             tmp_memory,
             item_name,
             OPTION_IN_SPACE,
@@ -510,8 +443,6 @@ def assert_base_archive_for_archive_in_op_gui(
     selenium,
     item_name,
     space_name,
-    oz_page,
-    op_container,
     tmp_memory,
     description,
     base_description,
@@ -519,10 +450,8 @@ def assert_base_archive_for_archive_in_op_gui(
     go_to_and_assert_browser(
         selenium,
         browser_id,
-        oz_page,
         space_name,
         OPTION_IN_SPACE,
-        op_container,
         tmp_memory,
         item_browser=DATASET_BROWSER,
     )
@@ -530,7 +459,6 @@ def assert_base_archive_for_archive_in_op_gui(
     assert_browser_in_tab_in_op(
         selenium,
         browser_id,
-        op_container,
         tmp_memory,
         item_browser=ARCHIVE_BROWSER,
     )
@@ -548,8 +476,6 @@ def assert_archive_callback_in_op_gui(
     tmp_memory,
     description,
     selenium,
-    popups,
-    modals,
     expected,
     option,
 ):
@@ -557,42 +483,40 @@ def assert_archive_callback_in_op_gui(
     option_in_menu = "Properties"
     info = f"{option} callback URL"
     button_name = "X"
-    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
+    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
     click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
+        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
     )
-    assert_archive_info_in_properties_modal(
-        selenium, browser_id, modals, expected, info
-    )
-    click_modal_button(selenium, browser_id, button_name, modal, modals)
+    assert_archive_info_in_properties_modal(selenium, browser_id, expected, info)
+    click_modal_button(selenium, browser_id, button_name, modal)
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id, description, tmp_memory, popups, selenium, modals, name
+    browser_id, description, tmp_memory, selenium, name
 ):
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
     name_textfield = "target name input"
     button_name = "Recall"
-    click_menu_for_archive(browser_id, tmp_memory, description, popups, selenium)
+    click_menu_for_archive(browser_id, tmp_memory, description, selenium)
     click_option_in_data_row_menu_in_browser(
-        selenium, browser_id, option_in_menu, popups, ARCHIVE_BROWSER
+        selenium, browser_id, option_in_menu, ARCHIVE_BROWSER
     )
     write_name_into_text_field_in_modal(
-        selenium, browser_id, name, modal_name, modals, name_textfield
+        selenium, browser_id, name, modal_name, name_textfield
     )
-    click_modal_button(selenium, browser_id, button_name, modal_name, modals)
+    click_modal_button(selenium, browser_id, button_name, modal_name)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id, item_name, tmp_memory, data, modals, selenium
+    browser_id, item_name, tmp_memory, data, selenium
 ):
     status_type = "recalled"
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
     )
-    recall_modal = modals(selenium[browser_id]).archive_recall_information
+    recall_modal = Modals(selenium[browser_id]).archive_recall_information
 
     for key, expected_value in data.items():
         if key == "time":
@@ -602,13 +526,13 @@ def recalled_archive_details_in_op_gui(
             if "cancelled" in expected_value:
                 cancelled = expected_value[1]
                 assert_recall_duration_in_archive_recall_information_modal(
-                    selenium, browser_id, modals, start, cancelled
+                    selenium, browser_id, start, cancelled
                 )
                 assert_recall_duration_in_archive_recall_information_modal(
-                    selenium, browser_id, modals, cancelled, stop
+                    selenium, browser_id, cancelled, stop
                 )
             assert_recall_duration_in_archive_recall_information_modal(
-                selenium, browser_id, modals, start, stop
+                selenium, browser_id, start, stop
             )
         else:
             value = re.sub(r"\s*", "", getattr(recall_modal, key))
@@ -641,7 +565,7 @@ def recalled_archive_details_in_op_gui(
         "as follow:\n{config}"
     )
 )
-def check_size_stats_for_archive(selenium, modals, browser_id, config):
+def check_size_stats_for_archive(selenium, browser_id, config):
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -654,7 +578,7 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
     size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
         check_size_statistic_in_dir_details(
-            selenium, modals, browser_id, stat_type, expected_value
+            selenium, browser_id, stat_type, expected_value
         )
 
 
@@ -665,7 +589,7 @@ def check_size_stats_for_archive(selenium, modals, browser_id, config):
     )
 )
 def check_size_stats_for_archive_per_provider(
-    selenium, modals, browser_id, hosts, config, provider
+    selenium, browser_id, hosts, config, provider
 ):
     """Check size stats in directory details for specified provider according
     to given config.
@@ -682,7 +606,6 @@ def check_size_stats_for_archive_per_provider(
         check_size_stats_for_provider(
             selenium,
             hosts,
-            modals,
             browser_id,
             stat_type,
             provider,
