@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-storages management in  web GUI.
+storages management in onepanel web GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
