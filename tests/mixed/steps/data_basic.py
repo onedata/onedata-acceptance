@@ -657,8 +657,8 @@ def see_num_of_items_in_op(
             user,
             tmp_memory,
             "",
-            host,
             num,
+            host,
             hosts,
         )
     elif client_lower == "rest":
