@@ -294,7 +294,7 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
             up_args.extend(
                 [
                     "-zi",
-                    ensure_image_resolved(
+                    config_image_spec_to_image(
                         "onezone", test_config["initialVersions"]["onezone"]
                     ),
                 ]
@@ -303,7 +303,7 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
             up_args.extend(
                 [
                     "-pi",
-                    ensure_image_resolved(
+                    config_image_spec_to_image(
                         "oneprovider", test_config["initialVersions"]["oneprovider"]
                     ),
                 ]
@@ -312,7 +312,7 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
             up_args.extend(
                 [
                     "-ci",
-                    ensure_image_resolved(
+                    config_image_spec_to_image(
                         "oneclient", test_config["initialVersions"]["oneclient"]
                     ),
                 ]
@@ -321,7 +321,7 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
     return up_args
 
 
-def ensure_image_resolved(service, version):
+def config_image_spec_to_image(service, version):
     if version == "default":
         return resolve_image(service)
     return f"docker.onedata.org/{service}-dev:{version}"
