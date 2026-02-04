@@ -10,7 +10,7 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import NoReturn, Final
+from typing import Final, NoReturn
 
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
@@ -81,7 +81,9 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 except asyncio.CancelledError:
                     print("Cancelled during backoff sleep, shutting down")
                     break
-                self.backoff = min(self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT)
+                self.backoff = min(
+                    self.backoff * BACKOFF_INCREASE_FACTOR, MAX_BACKOFF_TIMEOUT
+                )
 
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
