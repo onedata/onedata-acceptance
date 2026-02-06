@@ -31,7 +31,7 @@ def create_share_using_rest(
     item_path, provider, user, share_name, hosts, users, shares
 ):
     provider_hostname = hosts[provider]["hostname"]
-    file_id = get_file_id_by_rest(item_path, provider_hostname, user, users)
+    file_id = get_file_id_by_rest(item_path, provider_hostname, users[user].token)
 
     share_details = {"name": share_name, "fileId": file_id}
 

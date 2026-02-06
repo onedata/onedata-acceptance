@@ -6,13 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from functools import cache
 
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
-from tests.utils.bdd_utils import given, parsers
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
     HTTPBadRequest,
     HTTPError,
@@ -453,9 +454,9 @@ def _init_storage_from_config(
 def init_storage(
     owner_credentials, space_name, hosts, provider_hostname, users, directory_tree
 ):
-    # if we make call to fast after deleting users from previous test
-    # provider cache was not refreshed and call will create dir for
-    # now nonexistent user, to avoid this wait some time
+    # if we make call too fast after deleting users from previous test
+    # provider cache may not be refreshed and call will create dir for
+    # currently nonexistent user, to avoid this wait some time
 
     time.sleep(2)
 
@@ -547,7 +548,7 @@ def set_file_metadata(
     metadata_type = metadata.pop("type", "json")
     metadata_type = "xattrs" if metadata_type == "basic" else metadata_type
     user = owner_credentials.username
-    file_id = get_file_id_by_rest(file_path, provider_hostname, user, users)
+    file_id = get_file_id_by_rest(file_path, provider_hostname, users[user].token)
     http_put(
         ip=provider_hostname,
         port=OP_REST_PORT,
@@ -609,14 +610,24 @@ def create_empty_file(path, users, user, provider, hosts):
     )
 
 
-def get_file_id_by_rest(file_path, provider_hostname, user, users):
+@repeat_failed(timeout=WAIT_BACKEND)
+def get_file_id_by_rest(file_path, provider_hostname, token):
     response = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
         path=get_provider_rest_path("lookup-file-id", file_path),
-        headers={"X-Auth-Token": users[user].token},
+        headers={"X-Auth-Token": token},
     ).content
     return json.loads(response)["fileId"]
+
+
+@cache
+def get_file_id_cached(file_path, provider_hostname, token):
+    """
+    Caches file ID lookup to avoid repeated REST calls.
+    Useful also for retrieving IDs of files that may have been deleted.
+    """
+    return get_file_id_by_rest(file_path, provider_hostname, token)
 
 
 @given(
@@ -656,6 +667,13 @@ def create_file_in_nested_directory(
     create_empty_file(nested_path, users, user, provider, hosts)
 
 
+@wt(
+    parsers.parse(
+        "using REST, {user} creates {number} empty files in "
+        '"{path}" named "file_001", "file_002", ..., '
+        '"file_N" supported by "{provider}" provider'
+    )
+)
 @given(
     parsers.parse(
         "using REST, {user} creates {number} empty files in "

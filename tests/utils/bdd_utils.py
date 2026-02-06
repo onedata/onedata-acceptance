@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import inspect
 from functools import wraps
+from typing import get_origin
 
 from pytest_bdd import given as pytest_bdd_given
 from pytest_bdd import parsers, scenario, scenarios
@@ -67,8 +68,13 @@ def sanitize_arguments(fun):
             if ann is not inspect.Parameter.empty:
                 value = ba.arguments[param.name]
                 try:
-                    if not isinstance(value, ann):
-                        ba.arguments[param.name] = ann(value)
+                    origin = get_origin(ann)
+                    if origin is None:
+                        if not isinstance(value, ann):
+                            ba.arguments[param.name] = ann(value)
+                    else:
+                        if not isinstance(value, origin):
+                            ba.arguments[param.name] = origin(value)
                 except Exception as ex:
                     msg = f"Cannot cast '{param.name}' <{value}> to {ann}"
                     raise ValueError(msg) from ex
