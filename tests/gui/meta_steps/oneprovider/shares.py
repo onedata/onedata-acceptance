@@ -34,6 +34,7 @@ from tests.gui.steps.oneprovider.private_shares import (
     write_input_in_form_in_shares_interface,
 )
 from tests.gui.steps.oneprovider.public_shares import (
+    assert_data_in_dublin_core_metadata,
     click_button_in_share,
     open_tab_in_public_share,
 )
@@ -305,3 +306,19 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
             write_input_in_form_in_shares_interface(
                 browser_id, value, "title", selenium
             )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that properties in "Dublin Core Metadata"'
+        " in share's {option} interface are"
+        " like the following:\n{config}"
+    )
+)
+def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config):
+    for _, data in yaml.load(config, yaml.Loader).items():
+        if not isinstance(data, list):
+            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
+        else:
+            for item in data:
+                assert_data_in_dublin_core_metadata(browser_id, item, selenium)
