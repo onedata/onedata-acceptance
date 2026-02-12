@@ -28,34 +28,29 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
-    And user of space_owner_browser opens "Description" tab on share's private interface
-    And user of space_owner_browser clicks "Create description" button in "Description" form on share's private interface
-    And user of space_owner_browser types "Description for another user to check if can see" into description field in "Description" form on share's private interface
-    And user of space_owner_browser clicks "Save" button in "Description" form on share's private interface
+    And user of space_owner_browser adds "Description for another user to check if can see" description for "share_dir1" share on share's private interface
 
-    And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
-    And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
-    And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
-    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
-    And user of space_owner_browser chooses "Dublin Core" in dropdown menu for metadata type on share's private interface
-    And user of space_owner_browser clicks "Proceed" button on share's private interface
+    And user of space_owner_browser opens "Dublin Core" public data type editor in share's private interface
 
-    And user of space_owner_browser writes "My test data" into last title input text field in "Dublin Core Metadata" form on share's private interface
-    And user of space_owner_browser clicks "Add another title" button in "Dublin Core Metadata" form on share's private interface
-    And user of space_owner_browser writes "Another title" into last title input text field in "Dublin Core Metadata" form on share's private interface
-    And user of space_owner_browser writes "Kasia" into last creator input text field in "Dublin Core Metadata" form on share's private interface
-    And user of space_owner_browser writes "This is test" into last description input text field in "Dublin Core Metadata" form on share's private interface
+    And user of space_owner_browser fills the input fields on share's private form with:
+      title: My test data
+      another title: Another title
+      creator: Kasia
+      description: This is test
+    
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
     And user of space_owner_browser sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's private interface
     And user of space_owner_browser sees that creator is "Kasia" in "Dublin Core Metadata" on share's private interface
     And user of space_owner_browser sees that description is "This is test" in "Dublin Core Metadata" on share's private interface
+
     And user of space_owner_browser sees that link on share's private interface is "Public handle link"
     And user of space_owner_browser copies "Public handle link" from share's private interface
     And user of space_owner_browser sends copied URL to user of browser1
 
     Then user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
+
     And user of browser1 sees that titles are ["My test data", "Another title"] in "Dublin Core Metadata" on share's public interface
     And user of browser1 sees that creator is "Kasia" in "Dublin Core Metadata" on share's public interface
     And user of browser1 sees that description is "This is test" in "Dublin Core Metadata" on share's public interface
@@ -88,12 +83,7 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
-    And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
-    And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
-    And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
-    And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
-    And user of space_owner_browser chooses "Europeana Data Model" in dropdown menu for metadata type on share's private interface
-    And user of space_owner_browser clicks "Proceed" button on share's private interface
+    And user of space_owner_browser opens "Europeana Data Model" public data type editor in share's private interface
 
     And user of space_owner_browser adds property "Title" in section in "EDM" form on share's private interface
     And user of space_owner_browser adds property "Creator of the original object" in section in "EDM" form on share's private interface
@@ -146,3 +136,59 @@ Feature: Public share published with mock handle service
 
     And user of space_owner_browser sees there is no warning alert in share's private interface
 
+
+Scenario: User sets DataCite metadata on mock handle service and sees updated XML after modification
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser creates "share_dir1" share of "dir1" directory
+    And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
+
+    And user of space_owner_browser opens "DataCite" public data type editor in share's private interface
+
+    And user of space_owner_browser writes "DataCite title initial" into title input text field in metadata form on share's private interface
+    And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
+    And user of space_owner_browser sees that link on share's private interface is "Public handle link"
+    And user of space_owner_browser copies "Public handle link" from share's private interface
+    And user of space_owner_browser sends copied URL to user of browser1
+
+    And user of browser1 opens received URL
+    And user of browser1 clicks "XML" button on share's public interface
+    And user of browser1 sees that XML data contains ["DataCite title initial", "identifier", "alternateIdentifier"] on share's public interface
+
+    And user of space_owner_browser clicks "Modify" button on share's private interface
+    And user of space_owner_browser writes "DataCite title modified" into title input text field in metadata form on share's private interface
+    And user of space_owner_browser clicks "Save" button on share's private interface
+
+    And user of browser1 refreshes site
+    And user of browser1 clicks "XML" button on share's public interface
+    Then user of browser1 sees that XML data contains ["DataCite title modified", "identifier", "alternateIdentifier"] on share's public interface
+
+
+Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XML after modification
+  When user of space_owner_browser opens file browser for "space1" space
+  And user of space_owner_browser creates "share_dir1" share of "dir1" directory
+  And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
+
+  And user of space_owner_browser opens "Expose as Public Data" tab on share's private interface
+  And user of space_owner_browser clicks "Choose a handle service" button on share's private interface
+  And user of space_owner_browser chooses "Mock Handle Service" in dropdown menu for handle service on share's private interface
+  And user of space_owner_browser clicks "Choose a metadata type" button on share's private interface
+  And user of space_owner_browser chooses "OpenAIRE" in dropdown menu for metadata type on share's private interface
+  And user of space_owner_browser clicks "Proceed" button on share's private interface
+
+  And user of space_owner_browser writes "OpenAIRE title initial" into title input text field in metadata form on share's private interface
+  And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
+  And user of space_owner_browser sees that link on share's private interface is "Public handle link"
+  And user of space_owner_browser copies "Public handle link" from share's private interface
+  And user of space_owner_browser sends copied URL to user of browser1
+
+  And user of browser1 opens received URL
+  And user of browser1 clicks "XML" button on share's public interface
+  And user of browser1 sees that XML data contains ["OpenAIRE title initial", "identifier", "alternateIdentifier"] on share's public interface
+
+  And user of space_owner_browser clicks "Modify" button on share's private interface
+  And user of space_owner_browser writes "OpenAIRE title modified" into title input text field in metadata form on share's private interface
+  And user of space_owner_browser clicks "Save" button on share's private interface
+
+  And user of browser1 refreshes site
+  And user of browser1 clicks "XML" button on share's public interface
+  Then user of browser1 sees that XML data contains ["OpenAIRE title modified", "identifier", "alternateIdentifier"] on share's public interface

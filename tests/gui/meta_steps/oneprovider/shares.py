@@ -4,6 +4,8 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import yaml
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
@@ -22,6 +24,18 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
+)
+from tests.gui.steps.oneprovider.private_shares import (
+    choose_option_for_publish_handle_service_as_open_data,
+    choose_option_for_publish_metadata_as_open_data,
+    click_button_in_description_form,
+    click_button_in_form_in_shares_interface,
+    write_description_in_description_form,
+    write_input_in_form_in_shares_interface,
+)
+from tests.gui.steps.oneprovider.public_shares import (
+    click_button_in_share,
+    open_tab_in_public_share,
 )
 from tests.gui.steps.oneprovider.shares import (
     change_shares_browser_to_file_browser,
@@ -207,8 +221,9 @@ def rename_share_from_single_view(selenium, browser_id, new_name, tmp_memory):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)" operation in'
-        " API section from (file|directory) details modal"
+        r'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)"'
+        r" operation in"
+        r" API section from (file|directory) details modal"
     )
 )
 def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
@@ -220,3 +235,73 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
     modal.api.operations.click()
     Popups(driver).power_select.choose_item(command)
     modal.api.copy_button.click()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) opens "
+        r'"(?P<metadata_type>|Dublin Core|DataCite|OpenAIRE|Europeana Data Model)"'
+        r" public data type editor in share's private interface"
+    )
+)
+def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
+    option = "private"
+
+    tab_name = "Expose as Public Data"
+    open_tab_in_public_share(selenium, browser_id, tab_name)
+
+    button = "Choose a handle service"
+    handle_service = "Mock Handle Service"
+    click_button_in_share(selenium, browser_id, button, option)
+    choose_option_for_publish_handle_service_as_open_data(
+        browser_id, handle_service, selenium
+    )
+
+    button = "Choose a metadata type"
+    click_button_in_share(selenium, browser_id, button, option)
+    choose_option_for_publish_metadata_as_open_data(browser_id, metadata_type, selenium)
+
+    click_button_in_share(selenium, browser_id, "Proceed", option)
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*?) adds "(?P<description>.*?)" description for'
+        r' "(?P<share_name>.*?)" share on '
+        r"share's private interface"
+    )
+)
+def add_description_to_share_on_private_interface(selenium, browser_id, description):
+    tab_name = "Description"
+
+    open_tab_in_public_share(selenium, browser_id, tab_name)
+    click_button_in_description_form(browser_id, selenium, "Create description")
+
+    field_name = "description field"
+    write_description_in_description_form(browser_id, description, field_name, selenium)
+    click_button_in_description_form(browser_id, selenium, "Save")
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} fills the input fields on share's"
+        " private form with:\n{config}"
+    )
+)
+def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
+    option = "private"
+    tab_name = "Expose as Public Data"
+
+    open_tab_in_public_share(selenium, browser_id, tab_name)
+    config = yaml.load(config, yaml.Loader)
+
+    for option, value in config.items():
+        if option.lower() != "another title":
+            write_input_in_form_in_shares_interface(browser_id, value, option, selenium)
+        else:
+            click_button_in_form_in_shares_interface(
+                browser_id, "Add another title", selenium
+            )
+            write_input_in_form_in_shares_interface(
+                browser_id, value, "title", selenium
+            )

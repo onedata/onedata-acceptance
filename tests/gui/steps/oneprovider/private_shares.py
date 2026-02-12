@@ -65,7 +65,7 @@ def write_input_in_form_in_shares_interface(browser_id, text, which_input, selen
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def clicks_button_in_form_in_shares_interface(browser_id, button, selenium):
+def click_button_in_form_in_shares_interface(browser_id, button, selenium):
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.click_add_button(button)
 
