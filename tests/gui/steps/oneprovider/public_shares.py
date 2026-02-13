@@ -244,7 +244,7 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copies_link_in_shares_interface(browser_id, selenium):
+def copy_link_in_shares_interface(browser_id, selenium):
     driver = selenium[browser_id]
     public_share(driver).copy_link()
 

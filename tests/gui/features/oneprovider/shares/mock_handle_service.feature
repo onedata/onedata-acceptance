@@ -32,7 +32,7 @@ Feature: Public share published with mock handle service
 
     And user of space_owner_browser opens "Dublin Core" public data type editor in share's private interface
 
-    And user of space_owner_browser fills the input fields on share's private form with:
+    And user of space_owner_browser fills the input fields of "Dublin Core" form with:
       title: My test data
       another title: Another title
       creator: Kasia
@@ -40,21 +40,19 @@ Feature: Public share published with mock handle service
     
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
-    And user of space_owner_browser sees that properties in "Dublin Core Metadata" in share's private interface are like the following:
+    And user of space_owner_browser sees that properties of "Dublin Core" metadata in share's private interface are like the following:
       title:
         - My test data
         - Another title
       creator: Kasia
       description: This is test
 
-    And user of space_owner_browser sees that link on share's private interface is "Public handle link"
-    And user of space_owner_browser copies "Public handle link" from share's private interface
-    And user of space_owner_browser sends copied URL to user of browser1
-
+    And user of space_owner_browser sends "Public handle link" from share's private interface to user of browser1
     Then user of browser1 opens received URL
+
     And user of browser1 sees that public share is named "share_dir1"
 
-    And user of browser1 sees that properties in "Dublin Core Metadata" in share's public interface are like the following:
+    And user of browser1 sees that properties of "Dublin Core" metadata in share's public interface are like the following:
       title:
         - My test data
         - Another title
@@ -64,9 +62,7 @@ Feature: Public share published with mock handle service
     And user of browser1 clicks "XML" button on share's public interface
     And user of browser1 sees that XML data contains ["My test data", "Another title", "Kasia", "This is test"] on share's public interface
 
-    And user of browser1 opens "Files" tab on share's public interface
-    And user of browser1 sees share's file browser on share's public interface
-    And user of browser1 clicks and presses enter on item named "dir1" in share's file browser
+    And user of browser1 goes to "dir1" path in share's file browser on share's public interface
     And user of browser1 sees item(s) named "file1" in share's file browser
 
     And user of browser1 opens "Description" tab on share's public interface

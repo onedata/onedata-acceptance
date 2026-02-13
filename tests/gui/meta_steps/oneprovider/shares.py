@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.data import go_to_path
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
@@ -26,6 +27,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.oneprovider.private_shares import (
+    assert_link_on_shares_interface,
     choose_option_for_publish_handle_service_as_open_data,
     choose_option_for_publish_metadata_as_open_data,
     click_button_in_description_form,
@@ -35,7 +37,9 @@ from tests.gui.steps.oneprovider.private_shares import (
 )
 from tests.gui.steps.oneprovider.public_shares import (
     assert_data_in_dublin_core_metadata,
+    assert_file_browser_in_public_share,
     click_button_in_share,
+    copy_link_in_shares_interface,
     open_tab_in_public_share,
 )
 from tests.gui.steps.oneprovider.shares import (
@@ -285,8 +289,8 @@ def add_description_to_share_on_private_interface(selenium, browser_id, descript
 
 @wt(
     parsers.parse(
-        "user of {browser_id} fills the input fields on share's"
-        " private form with:\n{config}"
+        'user of {browser_id} fills the input fields of "{metadata_type}" form'
+        " with:\n{config}"
     )
 )
 def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
@@ -310,15 +314,52 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that properties in "Dublin Core Metadata"'
-        " in share's {option} interface are"
+        'user of {browser_id} sees that properties of "{metadata_type}"'
+        " metadata in share's {option} interface are"
         " like the following:\n{config}"
     )
 )
-def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config):
-    for _, data in yaml.load(config, yaml.Loader).items():
-        if not isinstance(data, list):
-            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
-        else:
-            for item in data:
-                assert_data_in_dublin_core_metadata(browser_id, item, selenium)
+def assert_properties_in_dublin_core_metadata_form(
+    selenium, browser_id, metadata_type, config
+):
+    config = yaml.load(config, yaml.Loader)
+    for _, data in config.items():
+        if metadata_type.lower() == "dublin core":
+            if not isinstance(data, list):
+                assert_data_in_dublin_core_metadata(browser_id, data, selenium)
+            else:
+                for item in data:
+                    assert_data_in_dublin_core_metadata(browser_id, item, selenium)
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*?) goes to "(?P<path>.*?)" path'
+        r" in share's file browser on share's public interface"
+    )
+)
+def go_to_given_path_in_shares_file_browser(selenium, browser_id, tmp_memory, path):
+    open_tab_in_public_share(selenium, browser_id, "Files")
+    assert_file_browser_in_public_share(selenium, browser_id, tmp_memory)
+    go_to_path(selenium, browser_id, tmp_memory, path, "shares_file_browser")
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*?) sends "Public handle link"'
+        r" from share's private interface to"
+        r" user of (?P<browser2_id>.*?)"
+    )
+)
+def send_public_handle_link_to_user(
+    selenium, browser_id, browser2_id, tmp_memory, displays, clipboard
+):
+    item_type = "URL"
+    link_type = "Public handle link"
+
+    assert_link_on_shares_interface(browser_id, link_type, selenium)
+    copy_link_in_shares_interface(browser_id, selenium)
+
+    send_copied_item_to_other_users(
+        browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
+    )
