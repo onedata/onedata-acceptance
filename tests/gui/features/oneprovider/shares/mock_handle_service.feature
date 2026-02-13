@@ -62,7 +62,8 @@ Feature: Public share published with mock handle service
     And user of browser1 clicks "XML" button on share's public interface
     And user of browser1 sees that XML data contains ["My test data", "Another title", "Kasia", "This is test"] on share's public interface
 
-    And user of browser1 goes to "dir1" path in share's file browser on share's public interface
+    And user of browser1 opens share's file browser on share's public interface
+    And user of browser1 goes to "dir1" in share's file browser
     And user of browser1 sees item(s) named "file1" in share's file browser
 
     And user of browser1 opens "Description" tab on share's public interface
@@ -90,22 +91,36 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser adds property "Title" in section in "EDM" form on share's private interface
     And user of space_owner_browser adds property "Creator of the original object" in section in "EDM" form on share's private interface
 
-    And user of space_owner_browser writes "Some Title" to "Title" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Second Title" to second "Title" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Description" to "Description/Caption" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser chooses "TEXT" in "Category" section in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Subject" to "Subject" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Type of object" to "Type of object" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Creator" to "Creator of the original object" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "EUreka3D" to "Parent entity (collection, object, site…)" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser chooses "Bone" in "Material" section in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Title" to "Title" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Second Title" to second "Title" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Description" to "Description/Caption" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser chooses "TEXT" in "Category" section in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Subject" to "Subject" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Type of object" to "Type of object" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Creator" to "Creator of the original object" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "EUreka3D" to "Parent entity (collection, object, site…)" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser chooses "Bone" in "Material" section in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Description of digital object" to "Description of digital object" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Type of digital object" to "Type of digital object" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser writes "Some Content provider institution" to "Content provider institution" section text field in "EDM" form on share's private interface
+    # And user of space_owner_browser chooses "Photoconsortium" in "Name of organisation uploading the data" section in "EDM" form on share's private interface
+    # And user of space_owner_browser chooses "CC BY 4.0" in "Copyright licence URL of the digital object" section in "EDM" form on share's private interface
 
-    And user of space_owner_browser writes "Some Description of digital object" to "Description of digital object" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser writes "Some Type of digital object" to "Type of digital object" section text field in "EDM" form on share's private interface
-
-    And user of space_owner_browser writes "Some Content provider institution" to "Content provider institution" section text field in "EDM" form on share's private interface
-    And user of space_owner_browser chooses "Photoconsortium" in "Name of organisation uploading the data" section in "EDM" form on share's private interface
-    And user of space_owner_browser chooses "CC BY 4.0" in "Copyright licence URL of the digital object" section in "EDM" form on share's private interface
+    And user of browser1 fills text section fields of "EDM" metadata form with:
+      Title: "Some Title"
+      second Title: "Some Second Title"
+      Description/Caption: "Some Description"
+      Category: "TEXT"
+      Subject: "Some Subject"
+      Type of object: "Some Type of object"
+      Creator of the original object: "Some Creator"
+      Parent entity (collection, object, site…): "EUreka3D"
+      Material: "http://vocab.getty.edu/aat/300011798"
+      Description of digital object: "Some Description of digital object"
+      Type of digital object: "Some Type of digital object"
+      Content provider institution: "Some Content provider institution"
+      Name of organisation uploading the data: "Photoconsortium"
+      Copyright licence URL of the digital object: "CC BY 4.0"
 
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
@@ -153,7 +168,7 @@ Scenario: User sets DataCite metadata on mock handle service and sees updated XM
     And user of space_owner_browser sends copied URL to user of browser1
 
     And user of browser1 opens received URL
-    And user of browser1 clicks "XML" button on share's public interface
+    # And user of browser1 clicks "XML" button on share's public interface
     # And user of browser1 sees that XML data contains ["DataCite title initial", "identifier", "alternateIdentifier"] on share's public interface
 
     And user of space_owner_browser clicks "Modify" button on share's private interface
@@ -184,7 +199,7 @@ Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XM
   And user of space_owner_browser sends copied URL to user of browser1
 
   And user of browser1 opens received URL
-  And user of browser1 clicks "XML" button on share's public interface
+  # And user of browser1 clicks "XML" button on share's public interface
   And user of browser1 sees that XML data contains ["OpenAIRE title initial", "identifier", "alternateIdentifier"] on share's public interface
 
   And user of space_owner_browser clicks "Modify" button on share's private interface

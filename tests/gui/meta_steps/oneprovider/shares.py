@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.data import go_to_path
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
@@ -30,10 +29,12 @@ from tests.gui.steps.oneprovider.private_shares import (
     assert_link_on_shares_interface,
     choose_option_for_publish_handle_service_as_open_data,
     choose_option_for_publish_metadata_as_open_data,
+    choose_option_in_edm_form_in_shares_interface,
     click_button_in_description_form,
     click_button_in_form_in_shares_interface,
     write_description_in_description_form,
     write_input_in_form_in_shares_interface,
+    write_to_nth_input_in_edm_form_in_shares_interface,
 )
 from tests.gui.steps.oneprovider.public_shares import (
     assert_data_in_dublin_core_metadata,
@@ -289,7 +290,7 @@ def add_description_to_share_on_private_interface(selenium, browser_id, descript
 
 @wt(
     parsers.parse(
-        'user of {browser_id} fills the input fields of "{metadata_type}" form'
+        'user of {browser_id} fills the input fields of "Dublin Core" form'
         " with:\n{config}"
     )
 )
@@ -334,14 +335,13 @@ def assert_properties_in_dublin_core_metadata_form(
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*?) goes to "(?P<path>.*?)" path'
-        r" in share's file browser on share's public interface"
+        r"user of (?P<browser_id>.*?) opens"
+        r" share's file browser on share's public interface"
     )
 )
-def go_to_given_path_in_shares_file_browser(selenium, browser_id, tmp_memory, path):
+def go_to_given_path_in_shares_file_browser(selenium, browser_id, tmp_memory):
     open_tab_in_public_share(selenium, browser_id, "Files")
     assert_file_browser_in_public_share(selenium, browser_id, tmp_memory)
-    go_to_path(selenium, browser_id, tmp_memory, path, "shares_file_browser")
 
 
 @wt(
@@ -363,3 +363,31 @@ def send_public_handle_link_to_user(
     send_copied_item_to_other_users(
         browser_id, item_type, browser2_id, tmp_memory, displays, clipboard
     )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} fills text section fields of "EDM" metadata form'
+        " with:\n{config}"
+    )
+)
+def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
+    config = yaml.load(config, yaml.Loader)
+    for field_name, value in config.items():
+        field_name = field_name.lower()
+        if field_name in [
+            "category",
+            "material",
+        ]:  # these fields cannot have literal before them
+            choose_option_in_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium
+            )
+        else:
+            numeral = "first"
+            if field_name.split(" ")[0] in numerals.keys():
+                numeral = field_name.split(" ")[0]
+                field_name = " ".join(field_name.split(" ")[1:])
+
+            write_to_nth_input_in_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium, numeral, numerals
+            )
