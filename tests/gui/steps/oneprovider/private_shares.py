@@ -153,7 +153,6 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
     idx = numerals[numeral]
-
     for item in form.items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
@@ -230,7 +229,7 @@ def assert_nth_val_edm_form_in_shares_interface(
     for item in items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
-        if item.name == section_name:
+        if item.name.lower() == section_name.lower():
             if idx == 0:
                 item_value = item.value.text
                 err_msg = (

@@ -27,6 +27,8 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.oneprovider.private_shares import (
     assert_link_on_shares_interface,
+    assert_nth_val_edm_form_in_shares_interface,
+    assert_val_edm_form_in_shares_interface,
     choose_option_for_publish_handle_service_as_open_data,
     choose_option_for_publish_metadata_as_open_data,
     choose_option_in_edm_form_in_shares_interface,
@@ -378,6 +380,8 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
         if field_name in [
             "category",
             "material",
+            "name of organisation uploading the data",
+            "copyright licence url of the digital object",
         ]:  # these fields cannot have literal before them
             choose_option_in_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium
@@ -391,3 +395,51 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
             write_to_nth_input_in_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numeral, numerals
             )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees that fields of "EDM" metadata form'
+        " are like the following:\n{config}"
+    )
+)
+def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numerals):
+    config = yaml.load(config, yaml.Loader)
+    for field_name, value in config.items():
+        field_name = field_name.lower()
+        if field_name in [
+            "category",
+            "material",
+            "name of organisation uploading the data",
+            "copyright licence url of the digital object",
+        ]:
+            assert_val_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium, numerals
+            )
+        else:
+            numeral = "first"
+            if field_name.split(" ")[0] in numerals.keys():
+                numeral = field_name.split(" ")[0]
+                field_name = " ".join(field_name.split(" ")[1:])
+
+            assert_nth_val_edm_form_in_shares_interface(
+                browser_id, value, field_name, selenium, numeral, numerals
+            )
+
+
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.*?) renames "(?P<share_name>.*?)"'
+        r' share to "(?P<new_name>.*?)"'
+        r" on share's private interface"
+    )
+)
+def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory):
+    modal_name = "Rename share"
+    button = "Rename"
+
+    click_menu_button_on_shares_page(selenium, browser_id)
+    click_option_in_share_row_menu(selenium, browser_id, "Rename")
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    write_name_into_text_field_in_modal(selenium, browser_id, new_name, modal_name)
+    click_modal_button(selenium, browser_id, button, modal_name)

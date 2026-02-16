@@ -91,22 +91,7 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser adds property "Title" in section in "EDM" form on share's private interface
     And user of space_owner_browser adds property "Creator of the original object" in section in "EDM" form on share's private interface
 
-    # And user of space_owner_browser writes "Some Title" to "Title" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Second Title" to second "Title" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Description" to "Description/Caption" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser chooses "TEXT" in "Category" section in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Subject" to "Subject" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Type of object" to "Type of object" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Creator" to "Creator of the original object" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "EUreka3D" to "Parent entity (collection, object, site…)" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser chooses "Bone" in "Material" section in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Description of digital object" to "Description of digital object" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Type of digital object" to "Type of digital object" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser writes "Some Content provider institution" to "Content provider institution" section text field in "EDM" form on share's private interface
-    # And user of space_owner_browser chooses "Photoconsortium" in "Name of organisation uploading the data" section in "EDM" form on share's private interface
-    # And user of space_owner_browser chooses "CC BY 4.0" in "Copyright licence URL of the digital object" section in "EDM" form on share's private interface
-
-    And user of browser1 fills text section fields of "EDM" metadata form with:
+    And user of space_owner_browser fills text section fields of "EDM" metadata form with:
       Title: "Some Title"
       second Title: "Some Second Title"
       Description/Caption: "Some Description"
@@ -124,33 +109,27 @@ Feature: Public share published with mock handle service
 
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
-    Then user of space_owner_browser sees that "Title" section has value "Some Title" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that second "Title" section has value "Some Second Title" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Description/Caption" section has value "Some Description" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Category" section has value "TEXT" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Subject" section has value "Some Subject" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Type of object" section has value "Some Type of object" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Creator of the original object" section has value "Some Creator" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Parent entity (collection, object, site…)" section has value "EUreka3D" in "EDM" form on share's private interface
-    # After fix TODO: VFS-13113 add checking material name
-    And user of space_owner_browser sees that "Material" section has value "http://vocab.getty.edu/aat/300011798" in "EDM" form on share's private interface
-
-    And user of space_owner_browser sees that "Description of digital object" section has value "Some Description of digital object" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Type of digital object" section has value "Some Type of digital object" in "EDM" form on share's private interface
-
-    And user of space_owner_browser sees that "Content provider institution" section has value "Some Content provider institution" in "EDM" form on share's private interface
-    And user of space_owner_browser sees that "Name of organisation uploading the data" section has value "Photoconsortium" in "EDM" form on share's private interface
-    # After fix TODO: VFS-13113 add checking license name
-    And user of space_owner_browser sees that "Copyright licence URL of the digital object" section has value "http://creativecommons.org/licenses/by/4.0/" in "EDM" form on share's private interface
+    Then user of space_owner_browser sees that fields of "EDM" metadata form are like the following:
+      Title: "Some Title"
+      second Title: "Some Second Title"
+      Description/Caption: "Some Description"
+      Category: "TEXT"
+      Subject: "Some Subject"
+      Type of object: "Some Type of object"
+      Creator of the original object: "Some Creator"
+      Parent entity (collection, object, site…): "EUreka3D"
+      # After fix TODO: VFS-13113 add checking material name
+      Material: "http://vocab.getty.edu/aat/300011798"
+      Description of digital object: "Some Description of digital object"
+      Type of digital object: "Some Type of digital object"
+      Content provider institution: "Some Content provider institution"
+      Name of organisation uploading the data: "Photoconsortium"
+      # After fix TODO: VFS-13113 add checking license name
+      Copyright licence URL of the digital object: "http://creativecommons.org/licenses/by/4.0/" 
 
     And user of space_owner_browser sees warning alert message "The share name (share_dir1) does not match any title specified in the EDM metadata." in share's private interface
 
-    And user of space_owner_browser clicks on menu on share view
-    And user of space_owner_browser clicks "Rename" option in shares actions row menu
-    And user of space_owner_browser sees that "Rename share" modal has appeared
-    And user of space_owner_browser writes "Some Title" into text field in modal "Rename share"
-    And user of space_owner_browser clicks on "Rename" button in modal "Rename share"
-
+    And user of space_owner_browser renames "share_dir1" share to "Some Title" on share's private interface
     And user of space_owner_browser sees there is no warning alert in share's private interface
 
 
