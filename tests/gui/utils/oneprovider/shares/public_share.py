@@ -8,6 +8,7 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
+    WebElement,
     WebElementsSequence,
     WebItem,
 )
@@ -38,6 +39,10 @@ class PublicShareView:
 
     xml = Button(".btn-xml-editor")
     xml_data = Label(".public-data-xml-textarea")
+
+    xml_data_openaire = WebElement(".ace_layer.ace_text-layer")
+    xml_first_line = WebElement(".ace_line_group .ace_line")
+
     description_tab = Button(".nav-link-description")
     expose_as_public_data_tab = Button(".nav-link-publicdata")
     files_tab = Button(".nav-link-files")

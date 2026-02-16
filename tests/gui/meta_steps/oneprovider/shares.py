@@ -4,10 +4,13 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import xml.etree.ElementTree as ET
+
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
     click_modal_button,
@@ -54,7 +57,9 @@ from tests.gui.steps.oneprovider.shares import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils import PrivateShareView as private_share
+from tests.gui.utils import PublicShareView as public_share
+from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -443,3 +448,28 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name, modal_name)
     click_modal_button(selenium, browser_id, button, modal_name)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) sees that XML data contains nodes like:"
+        r"(?P<data>.*?) on share\'s (private|public) interface"
+    )
+)
+def assert_xml_data_in_edm_form_in_shares_interface(
+    selenium, browser_id, data, clipboard, displays
+):
+    driver = selenium[browser_id]
+    var = clipboard.paste(display=displays[browser_id])
+    switch_to_iframe(selenium, browser_id)
+
+    breakpoint()
+
+    driver.execute_script("arguments[0].click();", public_share(driver).xml_first_line)
+
+    form = public_share(driver).xml_data_openaire
+    root = ET.fromstring(form)
+    for elem in parse_seq(data):
+        assert (
+            root.find(elem) != None
+        ), "Node with name: {elem} was not found in XML data"
