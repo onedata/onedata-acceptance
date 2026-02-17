@@ -57,7 +57,6 @@ from tests.gui.steps.oneprovider.shares import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import Modals, Popups
-from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -453,23 +452,26 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that XML data contains nodes like:"
-        r"(?P<data>.*?) on share\'s (private|public) interface"
+        r" (?P<data>.*?) on share\'s (private|public) interface"
     )
 )
-def assert_xml_data_in_edm_form_in_shares_interface(
-    selenium, browser_id, data, clipboard, displays
-):
+def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
     driver = selenium[browser_id]
-    var = clipboard.paste(display=displays[browser_id])
     switch_to_iframe(selenium, browser_id)
 
-    breakpoint()
+    while True:
+        try:
+            _ = public_share(driver).xml_data_openaire
+            break
+        except RuntimeError:
+            pass
 
-    driver.execute_script("arguments[0].click();", public_share(driver).xml_first_line)
+    xml_data = driver.execute_script(
+        "return ace.edit(document.querySelector('.ace_editor')).getValue()"
+    )
+    root = ET.fromstring(xml_data)
 
-    form = public_share(driver).xml_data_openaire
-    root = ET.fromstring(form)
     for elem in parse_seq(data):
         assert (
-            root.find(elem) != None
-        ), "Node with name: {elem} was not found in XML data"
+            root.find(f".//{elem}") is not None
+        ), f"Node with name: {elem} was not found in XML data"

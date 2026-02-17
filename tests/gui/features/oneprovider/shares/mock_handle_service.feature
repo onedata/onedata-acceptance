@@ -162,12 +162,10 @@ Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XM
   And user of space_owner_browser sends "Public handle link" from share's private interface to user of browser1
 
   And user of browser1 opens received URL
-  # And user of browser1 clicks "XML" button on share's public interface
 
   # And user of space_owner_browser clicks "Modify" button on share's private interface
   # And user of space_owner_browser clicks "Save" button on share's private interface
 
-  # And user of browser1 clicks "XML" button on share's public interface
-  Then user of browser1 sees that XML data contains nodes like: ["identifier", "alternateIdentifier"] on share's private interface
+  Then user of browser1 sees that XML data contains nodes like: ["{http://datacite.org/schema/kernel-4}identifier", "{http://datacite.org/schema/kernel-4}alternateIdentifier"] on share's private interface
 
   # Then user of browser1 refreshes site
