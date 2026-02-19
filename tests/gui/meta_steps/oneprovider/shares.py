@@ -10,7 +10,6 @@ import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_icon_in_share_directory_modal,
     click_modal_button,
@@ -59,6 +58,14 @@ from tests.gui.steps.oneprovider.shares import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
+from tests.gui.utils.common.shares import (
+    _check_editor_appeared,
+    _get_xml_editor_data,
+    _is_metadata_field_option_choosable,
+    _register_xml_namespaces_datacite,
+    _register_xml_namespaces_openaire,
+    _replace_xml_editor_data,
+)
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -384,7 +391,7 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
     for field_name, value in config.items():
         field_name = field_name.lower()
 
-        if _is_option_choosable(
+        if _is_metadata_field_option_choosable(
             field_name
         ):  # these fields cannot have literal before them
             if field_name != "material":
@@ -419,15 +426,6 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
             )
 
 
-def _is_option_choosable(field_name):
-    return field_name in [
-        "category",
-        "name of organisation uploading the data",
-        "copyright licence url of the digital object",
-        "material",
-    ]
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} sees that fields of "EDM" metadata form'
@@ -440,7 +438,7 @@ def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numeral
     for field_name, value in config.items():
         field_name = field_name.lower()
 
-        if _is_option_choosable(field_name):
+        if _is_metadata_field_option_choosable(field_name):
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
@@ -490,11 +488,6 @@ def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
         assert (
             root.find(f".//{elem}") is not None
         ), f"Node with name: {elem} was not found in XML data"
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_xml_data_openaire(driver):
-    return public_share(driver).xml_data_ace_editor
 
 
 @wt(
@@ -553,43 +546,3 @@ def assert_xml_node_value(selenium, browser_id, tag, text):
     assert (
         elem.text == text
     ), f"Value of xml node: {elem.text} does not match expected: {text}"
-
-
-def _register_xml_namespaces_openaire():
-    ET.register_namespace("oaire", "http://namespace.openaire.eu/schema/oaire/")
-    ET.register_namespace("datacite", "http://datacite.org/schema/kernel-4")
-    ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
-    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    ET.register_namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    ET.register_namespace("dcterms", "http://purl.org/dc/terms/")
-    ET.register_namespace("vc", "http://www.w3.org/2007/XMLSchema-versioning")
-
-
-def _register_xml_namespaces_datacite():
-    ET.register_namespace("", "http://datacite.org/schema/kernel-4")
-    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
-
-
-def _get_xml_editor_data(selenium, browser_id):
-    return selenium[browser_id].execute_script(
-        "return ace.edit(document.querySelector('.ace_editor')).getValue()"
-    )
-
-
-def _replace_xml_editor_data(selenium, browser_id, new_data):
-    selenium[browser_id].execute_script(
-        """
-        var editor = ace.edit(document.querySelector('.ace_editor'));
-        editor.setValue(arguments[0], -1);
-        """,
-        new_data,
-    )
-
-
-def _check_editor_appeared(selenium, browser_id):
-    driver = selenium[browser_id]
-    try:
-        _ = _get_xml_data_openaire(driver)
-    except RuntimeError:
-        switch_to_iframe(selenium, browser_id)
-        _ = _get_xml_data_openaire(driver)
