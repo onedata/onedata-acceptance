@@ -99,7 +99,9 @@ Feature: Public share published with mock handle service
       Type of object: "Some Type of object"
       Creator of the original object: "Some Creator"
       Parent entity (collection, object, site…): "EUreka3D"
-      Material: "http://vocab.getty.edu/aat/300011798"
+      Material: 
+        group: "Bone"
+        value: "Bone"
       Description of digital object: "Some Description of digital object"
       Type of digital object: "Some Type of digital object"
       Content provider institution: "Some Content provider institution"
@@ -118,7 +120,7 @@ Feature: Public share published with mock handle service
       Creator of the original object: "Some Creator"
       Parent entity (collection, object, site…): "EUreka3D"
       # After fix TODO: VFS-13113 add checking material name
-      Material: "http://vocab.getty.edu/aat/300011798"
+      Material: "https://vocab.getty.edu/aat/300011826"
       Description of digital object: "Some Description of digital object"
       Type of digital object: "Some Type of digital object"
       Content provider institution: "Some Content provider institution"

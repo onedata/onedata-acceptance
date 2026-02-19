@@ -34,6 +34,7 @@ from tests.gui.steps.oneprovider.private_shares import (
     assert_val_edm_form_in_shares_interface,
     choose_option_for_publish_handle_service_as_open_data,
     choose_option_for_publish_metadata_as_open_data,
+    choose_option_group_in_edm_form_in_shares_interface,
     choose_option_in_edm_form_in_shares_interface,
     click_button_in_description_form,
     click_button_in_form_in_shares_interface,
@@ -383,13 +384,21 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
         field_name = field_name.lower()
         if field_name in [
             "category",
-            "material",
             "name of organisation uploading the data",
             "copyright licence url of the digital object",
         ]:  # these fields cannot have literal before them
             choose_option_in_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium
+                browser_id, value, field_name, selenium, expand_dropdown=True
             )
+
+        elif field_name == "material":
+            choose_option_group_in_edm_form_in_shares_interface(
+                browser_id, value["group"], field_name, selenium, expand_dropdown=True
+            )
+            choose_option_in_edm_form_in_shares_interface(
+                browser_id, value["value"], field_name, selenium, expand_dropdown=False
+            )
+
         else:
             numeral = "first"
             if field_name.split(" ")[0] in numerals.keys():
@@ -459,12 +468,7 @@ def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
 
-    while True:
-        try:
-            _ = public_share(driver).xml_data_openaire
-            break
-        except RuntimeError:
-            pass
+    _ = _get_xml_data_openaire(driver)
 
     xml_data = driver.execute_script(
         "return ace.edit(document.querySelector('.ace_editor')).getValue()"
@@ -475,3 +479,8 @@ def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
         assert (
             root.find(f".//{elem}") is not None
         ), f"Node with name: {elem} was not found in XML data"
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_xml_data_openaire(driver):
+    return public_share(driver).xml_data_openaire
