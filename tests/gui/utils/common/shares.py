@@ -1,3 +1,10 @@
+"""Utils mainly for testing public and private shares,
+concerning mainly XML editor and metadata fields."""
+
+__author__ = "Jakub Karczewski"
+__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 import xml.etree.ElementTree as ET
 
 from tests.gui.conftest import WAIT_FRONTEND
