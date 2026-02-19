@@ -8,6 +8,7 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
+    NamedButton,
     WebElement,
     WebElementsSequence,
     WebItem,
@@ -38,9 +39,13 @@ class PublicShareView:
     share_not_found = Label(".text-center .col-xs-12")
 
     xml = Button(".btn-xml-editor")
-    xml_data = Label(".public-data-xml-textarea")
+    xml_data_dublin_core = Label(".public-data-xml-textarea")
 
-    xml_data_openaire = WebElement(".ace_layer.ace_text-layer")
+    modify_button = NamedButton(".modify-metadata-btn", text="Modify")
+    save_button = NamedButton(".metadata-editor-footer .btn-submit", text="Save")
+    cancel_button = NamedButton(".metadata-editor-footer .btn-back", text="Cancel")
+
+    xml_data_ace_editor = WebElement(".ace_layer.ace_text-layer")
     xml_first_line = WebElement(".ace_line_group .ace_line")
 
     description_tab = Button(".nav-link-description")

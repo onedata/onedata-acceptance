@@ -257,6 +257,6 @@ def copy_link_in_shares_interface(browser_id, selenium):
 )
 def assert_xml_data_in_shares(selenium, browser_id, data):
     driver = selenium[browser_id]
-    xml_data = public_share(driver).xml_data
+    xml_data = public_share(driver).xml_data_dublin_core
     for item in parse_seq(data):
         assert item in xml_data, f"{item} not in XML data on share's public interface"

@@ -253,7 +253,7 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) opens "
-        r'"(?P<metadata_type>|Dublin Core|DataCite|OpenAIRE|Europeana Data Model)"'
+        r'"(?P<metadata_type>Dublin Core|DataCite|OpenAIRE|Europeana Data Model)"'
         r" public data type editor in share's private interface"
     )
 )
@@ -380,24 +380,33 @@ def send_public_handle_link_to_user(
 )
 def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
     config = yaml.load(config, yaml.Loader)
+
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if field_name in [
-            "category",
-            "name of organisation uploading the data",
-            "copyright licence url of the digital object",
-        ]:  # these fields cannot have literal before them
-            choose_option_in_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, expand_dropdown=True
-            )
 
-        elif field_name == "material":
-            choose_option_group_in_edm_form_in_shares_interface(
-                browser_id, value["group"], field_name, selenium, expand_dropdown=True
-            )
-            choose_option_in_edm_form_in_shares_interface(
-                browser_id, value["value"], field_name, selenium, expand_dropdown=False
-            )
+        if _is_option_choosable(
+            field_name
+        ):  # these fields cannot have literal before them
+            if field_name != "material":
+                choose_option_in_edm_form_in_shares_interface(
+                    browser_id, value, field_name, selenium, expand_dropdown=True
+                )
+
+            else:  # choosing material involves also choosing options group first
+                choose_option_group_in_edm_form_in_shares_interface(
+                    browser_id,
+                    value["group"],
+                    field_name,
+                    selenium,
+                    expand_dropdown=True,
+                )
+                choose_option_in_edm_form_in_shares_interface(
+                    browser_id,
+                    value["value"],
+                    field_name,
+                    selenium,
+                    expand_dropdown=False,
+                )
 
         else:
             numeral = "first"
@@ -410,6 +419,15 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
             )
 
 
+def _is_option_choosable(field_name):
+    return field_name in [
+        "category",
+        "name of organisation uploading the data",
+        "copyright licence url of the digital object",
+        "material",
+    ]
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} sees that fields of "EDM" metadata form'
@@ -418,14 +436,11 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
 )
 def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numerals):
     config = yaml.load(config, yaml.Loader)
+
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if field_name in [
-            "category",
-            "material",
-            "name of organisation uploading the data",
-            "copyright licence url of the digital object",
-        ]:
+
+        if _is_option_choosable(field_name):
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
@@ -465,14 +480,10 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
     )
 )
 def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
-    driver = selenium[browser_id]
-    switch_to_iframe(selenium, browser_id)
+    _check_editor_appeared(selenium, browser_id)
 
-    _ = _get_xml_data_openaire(driver)
+    xml_data = _get_xml_editor_data(selenium, browser_id)
 
-    xml_data = driver.execute_script(
-        "return ace.edit(document.querySelector('.ace_editor')).getValue()"
-    )
     root = ET.fromstring(xml_data)
 
     for elem in parse_seq(data):
@@ -483,4 +494,102 @@ def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_xml_data_openaire(driver):
-    return public_share(driver).xml_data_openaire
+    return public_share(driver).xml_data_ace_editor
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) modifies"
+        r' "(?P<metadata_type>DataCite|OpenAIRE)" XML'
+        r' element with "(?P<tag>.*?)" tag by changing its text to "(?P<new_text>.*?)"'
+        r" in share's private interface"
+    )
+)
+def modify_xml_data_in_edm_form_in_shares_interface(
+    selenium, browser_id, metadata_type, tag, new_text
+):
+    driver = selenium[browser_id]
+    public_share(driver).modify_button.click()
+
+    _check_editor_appeared(selenium, browser_id)
+
+    xml_data = _get_xml_editor_data(selenium, browser_id)
+
+    if metadata_type.lower() == "openaire":
+        _register_xml_namespaces_openaire()
+    else:
+        _register_xml_namespaces_datacite()
+
+    root = ET.fromstring(xml_data)
+    elem = root.find(f".//{tag}")
+
+    elem.text = new_text
+
+    _replace_xml_editor_data(
+        selenium,
+        browser_id,
+        ET.tostring(root, encoding="utf-8", xml_declaration=True).decode("utf-8"),
+    )
+
+    public_share(driver).save_button.click()
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) sees that"
+        r' xml node with "(?P<tag>.*?)" tag has "(?P<text>.*?)" value'
+        r" in share's private interface"
+    )
+)
+def assert_xml_node_value(selenium, browser_id, tag, text):
+    _check_editor_appeared(selenium, browser_id)
+
+    xml_data = _get_xml_editor_data(selenium, browser_id)
+
+    root = ET.fromstring(xml_data)
+
+    elem = root.find(f".//{tag}")
+
+    assert (
+        elem.text == text
+    ), f"Value of xml node: {elem.text} does not match expected: {text}"
+
+
+def _register_xml_namespaces_openaire():
+    ET.register_namespace("oaire", "http://namespace.openaire.eu/schema/oaire/")
+    ET.register_namespace("datacite", "http://datacite.org/schema/kernel-4")
+    ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
+    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    ET.register_namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    ET.register_namespace("dcterms", "http://purl.org/dc/terms/")
+    ET.register_namespace("vc", "http://www.w3.org/2007/XMLSchema-versioning")
+
+
+def _register_xml_namespaces_datacite():
+    ET.register_namespace("", "http://datacite.org/schema/kernel-4")
+    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+
+
+def _get_xml_editor_data(selenium, browser_id):
+    return selenium[browser_id].execute_script(
+        "return ace.edit(document.querySelector('.ace_editor')).getValue()"
+    )
+
+
+def _replace_xml_editor_data(selenium, browser_id, new_data):
+    selenium[browser_id].execute_script(
+        """
+        var editor = ace.edit(document.querySelector('.ace_editor'));
+        editor.setValue(arguments[0], -1);
+        """,
+        new_data,
+    )
+
+
+def _check_editor_appeared(selenium, browser_id):
+    driver = selenium[browser_id]
+    try:
+        _ = _get_xml_data_openaire(driver)
+    except RuntimeError:
+        switch_to_iframe(selenium, browser_id)
+        _ = _get_xml_data_openaire(driver)
