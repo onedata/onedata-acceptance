@@ -191,7 +191,7 @@ def choose_option_in_edm_form_in_shares_interface(
     if (
         not expand_dropdown
     ):  # only choosing regular items, not groups, will not require expanding dropdown
-        Popups(driver).power_select.choose_item_group(option, require_full_match=False)
+        Popups(driver).power_select.choose_item(option, require_full_match=False)
         return
 
     for item in form.items:
