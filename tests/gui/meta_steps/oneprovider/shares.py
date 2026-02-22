@@ -28,6 +28,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.oneprovider.private_shares import (
+    add_metadata_field_in_dublin_core_form,
     assert_link_on_shares_interface,
     assert_nth_val_edm_form_in_shares_interface,
     assert_val_edm_form_in_shares_interface,
@@ -61,6 +62,7 @@ from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.shares import (
     _check_editor_appeared,
     _get_xml_editor_data,
+    _is_metadata_field_default_in_dublin_core_form,
     _is_metadata_field_option_choosable,
     _register_xml_namespaces_datacite,
     _register_xml_namespaces_openaire,
@@ -266,19 +268,17 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
 )
 def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
     option = "private"
-
     tab_name = "Expose as Public Data"
+    handle_service = "Mock Handle Service"
+
     open_tab_in_public_share(selenium, browser_id, tab_name)
 
-    button = "Choose a handle service"
-    handle_service = "Mock Handle Service"
-    click_button_in_share(selenium, browser_id, button, option)
+    click_button_in_share(selenium, browser_id, "Choose a handle service", option)
     choose_option_for_publish_handle_service_as_open_data(
         browser_id, handle_service, selenium
     )
 
-    button = "Choose a metadata type"
-    click_button_in_share(selenium, browser_id, button, option)
+    click_button_in_share(selenium, browser_id, "Choose a metadata type", option)
     choose_option_for_publish_metadata_as_open_data(browser_id, metadata_type, selenium)
 
     click_button_in_share(selenium, browser_id, "Proceed", option)
@@ -316,15 +316,24 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     config = yaml.load(config, yaml.Loader)
 
     for option, value in config.items():
-        if option.lower() != "another title":
+        option = option.lower()
+
+        if not _is_metadata_field_default_in_dublin_core_form(option):
+            add_metadata_field_in_dublin_core_form(selenium[browser_id], option)
+
+        if not isinstance(value, list):  # single string value
             write_input_in_form_in_shares_interface(browser_id, value, option, selenium)
         else:
-            click_button_in_form_in_shares_interface(
-                browser_id, "Add another title", selenium
-            )
             write_input_in_form_in_shares_interface(
-                browser_id, value, "title", selenium
+                browser_id, value[0], option, selenium
             )
+            for val in value[1:]:
+                click_button_in_form_in_shares_interface(
+                    browser_id, f"Add another {option}", selenium
+                )
+                write_input_in_form_in_shares_interface(
+                    browser_id, val, option, selenium
+                )
 
 
 @wt(

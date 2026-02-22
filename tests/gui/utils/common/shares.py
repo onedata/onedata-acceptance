@@ -65,3 +65,7 @@ def _is_metadata_field_option_choosable(field_name):
         "copyright licence url of the digital object",
         "material",
     ]
+
+
+def _is_metadata_field_default_in_dublin_core_form(field_name):
+    return field_name in ["title", "creator", "description", "date"]

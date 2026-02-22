@@ -213,8 +213,10 @@ def click_button_in_share(selenium, browser_id, button, option):
         getattr(private_share(driver), transform(button))()
 
 
-def check_item_presence_in_dublin_core_metadata(item, data):
+def check_item_presence_in_dublin_core_metadata(driver, item, data):
     for info in data:
+        if info.text == "":
+            driver.execute_script("arguments[0].scrollIntoView();", info)
         if info.text == item:
             break
     else:
@@ -234,7 +236,9 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium):
     dublin_core = public_share(driver).dublin_core_metadata_data
 
     for item in parse_seq(data):
-        check_item_presence_in_dublin_core_metadata(item, dublin_core)
+        check_item_presence_in_dublin_core_metadata(
+            selenium[browser_id], item, dublin_core
+        )
 
 
 @wt(

@@ -54,7 +54,7 @@ def choose_option_for_publish_metadata_as_open_data(browser_id, option, selenium
 def write_input_in_form_in_shares_interface(browser_id, text, which_input, selenium):
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.write_to_last_input(
-        text, which_input
+        selenium[browser_id], text, which_input
     )
 
 
@@ -67,7 +67,9 @@ def write_input_in_form_in_shares_interface(browser_id, text, which_input, selen
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_form_in_shares_interface(browser_id, button, selenium):
     driver = selenium[browser_id]
-    private_share(driver).dublin_core_metadata_form.click_add_button(button)
+    private_share(driver).dublin_core_metadata_form.click_add_button(
+        selenium[browser_id], button
+    )
 
 
 @wt(
@@ -328,3 +330,11 @@ def assert_no_warning_message_in_shares_page(browser_id, selenium):
         raise AssertionError(f"There is visible warning alert: {warning.text}")
     except RuntimeError:
         pass
+
+
+def add_metadata_field_in_dublin_core_form(driver, field_name):
+    share = private_share(driver)
+    share.dublin_core_metadata_form.add_more_elements.click()
+    share.dropdown.options[field_name.title()].click()
+
+    share.dublin_core_metadata_form.click_on_background()
