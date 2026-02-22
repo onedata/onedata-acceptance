@@ -243,9 +243,8 @@ def rename_share_from_single_view(selenium, browser_id, new_name, tmp_memory):
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?)"'
-        r" operation in"
-        r" API section from (file|directory) details modal"
+        'user of (?P<browser_id>.*?) copies command for "(?P<command>.*?) operation in'
+        " API section from (file|directory) details modal"
     )
 )
 def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
