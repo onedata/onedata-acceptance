@@ -195,6 +195,23 @@ def numerals():
 
 
 @fixture(scope="session")
+def num_to_ordinal():
+    return {
+        -1: "last",
+        0: "first",
+        1: "second",
+        2: "third",
+        3: "fourth",
+        4: "fifth",
+        5: "sixth",
+        6: "seventh",
+        7: "eighth",
+        8: "ninth",
+        9: "tenth",
+    }
+
+
+@fixture(scope="session")
 def logdir(request):
     return request.config.option.htmlpath.rstrip("report.html")
 

@@ -29,6 +29,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.oneprovider.private_shares import (
     add_metadata_field_in_dublin_core_form,
+    add_property_to_edm_form_in_shares_interface,
     assert_link_on_shares_interface,
     assert_nth_val_edm_form_in_shares_interface,
     assert_val_edm_form_in_shares_interface,
@@ -63,6 +64,7 @@ from tests.gui.utils.common.shares import (
     _check_editor_appeared,
     _get_xml_editor_data,
     _is_metadata_field_default_in_dublin_core_form,
+    _is_metadata_field_default_in_edm_form,
     _is_metadata_field_option_choosable,
     _register_xml_namespaces_datacite,
     _register_xml_namespaces_openaire,
@@ -393,11 +395,17 @@ def send_public_handle_link_to_user(
         " with:\n{config}"
     )
 )
-def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
+def fill_inputs_in_edm_metadata_form(
+    selenium, browser_id, config, numerals, num_to_ordinal
+):
     config = yaml.load(config, yaml.Loader)
 
     for field_name, value in config.items():
         field_name = field_name.lower()
+        if not _is_metadata_field_default_in_edm_form(field_name):
+            add_property_to_edm_form_in_shares_interface(
+                browser_id, selenium, field_name
+            )
 
         if _is_metadata_field_option_choosable(
             field_name
@@ -424,14 +432,26 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
                 )
 
         else:
-            numeral = "first"
-            if field_name.split(" ")[0] in numerals.keys():
-                numeral = field_name.split(" ")[0]
-                field_name = " ".join(field_name.split(" ")[1:])
-
-            write_to_nth_input_in_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, numeral, numerals
-            )
+            if isinstance(value, list):
+                for i, val in enumerate(value):
+                    if i > 0:
+                        # if it's not the first value for given field,
+                        # we need to click "Add another ..." button before writing value
+                        add_property_to_edm_form_in_shares_interface(
+                            browser_id, selenium, field_name
+                        )
+                    write_to_nth_input_in_edm_form_in_shares_interface(
+                        browser_id,
+                        val,
+                        field_name,
+                        selenium,
+                        num_to_ordinal[i],
+                        numerals,
+                    )
+            else:
+                write_to_nth_input_in_edm_form_in_shares_interface(
+                    browser_id, value, field_name, selenium, "first", numerals
+                )
 
 
 @wt(
@@ -440,25 +460,32 @@ def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
         " are like the following:\n{config}"
     )
 )
-def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numerals):
+def assert_properties_in_edm_metadata_form(
+    selenium, browser_id, config, numerals, num_to_ordinal
+):
     config = yaml.load(config, yaml.Loader)
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-
         if _is_metadata_field_option_choosable(field_name):
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
         else:
-            numeral = "first"
-            if field_name.split(" ")[0] in numerals.keys():
-                numeral = field_name.split(" ")[0]
-                field_name = " ".join(field_name.split(" ")[1:])
-
-            assert_nth_val_edm_form_in_shares_interface(
-                browser_id, value, field_name, selenium, numeral, numerals
-            )
+            if isinstance(value, list):
+                for i, val in enumerate(value):
+                    assert_nth_val_edm_form_in_shares_interface(
+                        browser_id,
+                        val,
+                        field_name,
+                        selenium,
+                        num_to_ordinal[i],
+                        numerals,
+                    )
+            else:
+                assert_nth_val_edm_form_in_shares_interface(
+                    browser_id, value, field_name, selenium, "first", numerals
+                )
 
 
 @wt(

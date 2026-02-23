@@ -109,12 +109,10 @@ Feature: Public share published with mock handle service
 
     And user of space_owner_browser opens "Europeana Data Model" public data type editor in share's private interface
 
-    And user of space_owner_browser adds property "Title" in section in "EDM" form on share's private interface
-    And user of space_owner_browser adds property "Creator of the original object" in section in "EDM" form on share's private interface
-
     And user of space_owner_browser fills text section fields of "EDM" metadata form with:
-      Title: "Some Title"
-      second Title: "Some Second Title"
+      Title: 
+        - "Some Title"
+        - "Some Second Title"
       Description/Caption: "Some Description"
       Category: "TEXT"
       Subject: "Some Subject"
@@ -133,8 +131,9 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
     Then user of space_owner_browser sees that fields of "EDM" metadata form are like the following:
-      Title: "Some Title"
-      second Title: "Some Second Title"
+      Title:
+        - "Some Title"
+        - "Some Second Title"
       Description/Caption: "Some Description"
       Category: "TEXT"
       Subject: "Some Subject"

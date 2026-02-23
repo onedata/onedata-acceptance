@@ -69,3 +69,20 @@ def _is_metadata_field_option_choosable(field_name):
 
 def _is_metadata_field_default_in_dublin_core_form(field_name):
     return field_name in ["title", "creator", "description", "date"]
+
+
+def _is_metadata_field_default_in_edm_form(field_name):
+    return field_name.lower() in [
+        "title",
+        "description/caption",
+        "category",
+        "subject",
+        "type of object",
+        "parent entity (collection, object, site…)",
+        "material",
+        "description of digital object",
+        "type of digital object",
+        "content provider institution",
+        "name of organisation uploading the data",
+        "copyright licence url of the digital object",
+    ]
