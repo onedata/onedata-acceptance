@@ -12,20 +12,38 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.utils.utils import repeat_failed
 
+NAMESPACES_OPENAIRE = {
+    "oaire": "http://namespace.openaire.eu/schema/oaire/",
+    "datacite": "http://datacite.org/schema/kernel-4",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "vc": "http://www.w3.org/2007/XMLSchema-versioning",
+}
+
+NAMESPACES_DATACITE = {
+    "datacite": "http://datacite.org/schema/kernel-4",
+    "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+}
+
 
 def _register_xml_namespaces_openaire():
-    ET.register_namespace("oaire", "http://namespace.openaire.eu/schema/oaire/")
-    ET.register_namespace("datacite", "http://datacite.org/schema/kernel-4")
-    ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
-    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    ET.register_namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    ET.register_namespace("dcterms", "http://purl.org/dc/terms/")
-    ET.register_namespace("vc", "http://www.w3.org/2007/XMLSchema-versioning")
+    for prefix, uri in NAMESPACES_OPENAIRE.items():
+        ET.register_namespace(prefix, uri)
+
+
+def _map_namespace_prefix_to_uri_openaire(prefix):
+    return NAMESPACES_OPENAIRE.get(prefix)
+
+
+def _map_namespace_prefix_to_uri_datacite(prefix):
+    return NAMESPACES_DATACITE.get(prefix)
 
 
 def _register_xml_namespaces_datacite():
-    ET.register_namespace("", "http://datacite.org/schema/kernel-4")
-    ET.register_namespace("xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    for prefix, uri in NAMESPACES_DATACITE.items():
+        ET.register_namespace(prefix, uri)
 
 
 def _get_xml_editor_data(selenium, browser_id):
@@ -59,7 +77,7 @@ def _get_xml_data_openaire(driver):
 
 
 def _is_metadata_field_option_choosable(field_name):
-    return field_name in [
+    return field_name.lower() in [
         "category",
         "name of organisation uploading the data",
         "copyright licence url of the digital object",
@@ -68,7 +86,7 @@ def _is_metadata_field_option_choosable(field_name):
 
 
 def _is_metadata_field_default_in_dublin_core_form(field_name):
-    return field_name in ["title", "creator", "description", "date"]
+    return field_name.lower() in ["title", "creator", "description", "date"]
 
 
 def _is_metadata_field_default_in_edm_form(field_name):
