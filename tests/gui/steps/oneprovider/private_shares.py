@@ -128,7 +128,7 @@ def assert_private_share_named(selenium, browser_id, share_name):
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" to "{which_input}"'
-        ' section text field in "EDM" form on '
+        " section text field in EDM form on "
         "share's private interface"
     )
 )
@@ -144,7 +144,7 @@ def write_input_in_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} writes "{text}" to {numeral} "{which_input}"'
-        ' section text field in "EDM" form on '
+        " section text field in EDM form on "
         "share's private interface"
     )
 )
@@ -173,7 +173,7 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} chooses "{option}" in "{section_name}"'
-        ' section in "EDM" form on '
+        " section in EDM form on "
         "share's private interface"
     )
 )
@@ -224,7 +224,7 @@ def choose_option_in_edm_form_in_shares_interface(
 
 @wt(
     'user of {browser_id} chooses "{option}" item group in "{section_name}"'
-    ' section in "EDM" form on '
+    " section in EDM form on "
     "share's private interface"
 )
 def choose_option_group_in_edm_form_in_shares_interface(
@@ -243,7 +243,7 @@ def choose_option_group_in_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{section_name}" section has value'
-        ' "{expected_value}" in "EDM" form on share\'s private interface'
+        ' "{expected_value}" in EDM form on share\'s private interface'
     )
 )
 def assert_val_edm_form_in_shares_interface(
@@ -258,7 +258,7 @@ def assert_val_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} sees that {numeral} "{section_name}" section has value'
-        ' "{expected_value}" in "EDM" form on share\'s private interface'
+        ' "{expected_value}" in EDM form on share\'s private interface'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -287,7 +287,7 @@ def assert_nth_val_edm_form_in_shares_interface(
 @wt(
     parsers.parse(
         'user of {browser_id} adds property "{item_name}" in'
-        ' section in "EDM" form on '
+        " section in EDM form on "
         "share's private interface"
     )
 )

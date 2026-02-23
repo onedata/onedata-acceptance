@@ -264,7 +264,7 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
     parsers.re(
         r"user of (?P<browser_id>.*?) opens "
         r'"(?P<metadata_type>Dublin Core|DataCite|OpenAIRE|Europeana Data Model)"'
-        r" public data type editor in share's private interface"
+        r" Public Data editor in share's private interface"
     )
 )
 def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
@@ -305,7 +305,7 @@ def add_description_to_share_on_private_interface(selenium, browser_id, descript
 
 @wt(
     parsers.parse(
-        'user of {browser_id} fills the input fields of "Dublin Core" form'
+        "user of {browser_id} fills the input fields of Dublin Core form"
         " with:\n{config}"
     )
 )
@@ -339,7 +339,7 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that properties of "{metadata_type}"'
+        "user of {browser_id} sees that properties of Dublin Core"
         " metadata in share's {option} interface are"
         " like the following:\n{config}"
     )
@@ -391,7 +391,7 @@ def send_public_handle_link_to_user(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} fills text section fields of "EDM" metadata form'
+        "user of {browser_id} fills text section fields of EDM metadata form"
         " with:\n{config}"
     )
 )
@@ -456,7 +456,7 @@ def fill_inputs_in_edm_metadata_form(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that fields of "EDM" metadata form'
+        "user of {browser_id} sees that fields of EDM metadata form"
         " are like the following:\n{config}"
     )
 )
@@ -565,7 +565,7 @@ def modify_xml_data_in_edm_form_in_shares_interface(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that"
-        r' xml node with "(?P<tag>.*?)" tag has "(?P<text>.*?)" value'
+        r' XML node with "(?P<tag>.*?)" tag has "(?P<text>.*?)" value'
         r" in share's private interface"
     )
 )
@@ -580,4 +580,4 @@ def assert_xml_node_value(selenium, browser_id, tag, text):
 
     assert (
         elem.text == text
-    ), f"Value of xml node: {elem.text} does not match expected: {text}"
+    ), f"Value of XML node: {elem.text} does not match expected: {text}"

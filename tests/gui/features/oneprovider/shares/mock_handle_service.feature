@@ -29,9 +29,9 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
     And user of space_owner_browser adds "Description for another user to check if can see" description for "share_dir1" share on share's private interface
-    And user of space_owner_browser opens "Dublin Core" public data type editor in share's private interface
+    And user of space_owner_browser opens "Dublin Core" Public Data editor in share's private interface
 
-    And user of space_owner_browser fills the input fields of "Dublin Core" form with:
+    And user of space_owner_browser fills the input fields of Dublin Core form with:
       title: 
         - My test data
         - Another title
@@ -47,7 +47,7 @@ Feature: Public share published with mock handle service
     
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
-    And user of space_owner_browser sees that properties of "Dublin Core" metadata in share's private interface are like the following:
+    And user of space_owner_browser sees that properties of Dublin Core metadata in share's private interface are like the following:
       title:
         - My test data
         - Another title
@@ -66,7 +66,7 @@ Feature: Public share published with mock handle service
 
     And user of browser1 sees that public share is named "share_dir1"
 
-    And user of browser1 sees that properties of "Dublin Core" metadata in share's public interface are like the following:
+    And user of browser1 sees that properties of Dublin Core metadata in share's public interface are like the following:
       title:
         - My test data
         - Another title
@@ -107,9 +107,9 @@ Feature: Public share published with mock handle service
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
-    And user of space_owner_browser opens "Europeana Data Model" public data type editor in share's private interface
+    And user of space_owner_browser opens "Europeana Data Model" Public Data editor in share's private interface
 
-    And user of space_owner_browser fills text section fields of "EDM" metadata form with:
+    And user of space_owner_browser fills text section fields of EDM metadata form with:
       Title: 
         - "Some Title"
         - "Some Second Title"
@@ -130,7 +130,7 @@ Feature: Public share published with mock handle service
 
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
-    Then user of space_owner_browser sees that fields of "EDM" metadata form are like the following:
+    Then user of space_owner_browser sees that fields of EDM metadata form are like the following:
       Title:
         - "Some Title"
         - "Some Second Title"
@@ -160,19 +160,19 @@ Scenario: User sets DataCite metadata on mock handle service and sees updated XM
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
     And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
-    And user of space_owner_browser opens "DataCite" public data type editor in share's private interface
+    And user of space_owner_browser opens "DataCite" Public Data editor in share's private interface
     And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
     
     And user of space_owner_browser sends "Public handle link" from share's private interface to user of browser1
 
     And user of browser1 opens received URL
     Then user of browser1 sees that XML data contains nodes like: ["{http://datacite.org/schema/kernel-4}identifier", "{http://datacite.org/schema/kernel-4}alternateIdentifier"] on share's private interface
-    And user of browser1 sees that xml node with "{http://datacite.org/schema/kernel-4}title" tag has "share_dir1" value in share's private interface
+    And user of browser1 sees that XML node with "{http://datacite.org/schema/kernel-4}title" tag has "share_dir1" value in share's private interface
 
     And user of space_owner_browser modifies "DataCite" XML element with "{http://datacite.org/schema/kernel-4}title" tag by changing its text to "new_title" in share's private interface
 
     And user of browser1 refreshes site
-    And user of browser1 sees that xml node with "{http://datacite.org/schema/kernel-4}title" tag has "new_title" value in share's private interface
+    And user of browser1 sees that XML node with "{http://datacite.org/schema/kernel-4}title" tag has "new_title" value in share's private interface
 
 
 Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XML after modification
@@ -180,7 +180,7 @@ Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XM
   And user of space_owner_browser creates "share_dir1" share of "dir1" directory
   And user of space_owner_browser clicks on "Show details" link for "share_dir1" share in shares panel
 
-  And user of space_owner_browser opens "OpenAIRE" public data type editor in share's private interface
+  And user of space_owner_browser opens "OpenAIRE" Public Data editor in share's private interface
   And user of space_owner_browser clicks "Expose as Public Data" button on share's private interface
 
   And user of space_owner_browser sends "Public handle link" from share's private interface to user of browser1
@@ -188,9 +188,9 @@ Scenario: User sets OpenAIRE metadata on mock handle service and sees updated XM
   And user of browser1 opens received URL
 
   Then user of browser1 sees that XML data contains nodes like: ["{http://datacite.org/schema/kernel-4}identifier", "{http://datacite.org/schema/kernel-4}alternateIdentifier"] on share's private interface
-  And user of browser1 sees that xml node with "{http://datacite.org/schema/kernel-4}title" tag has "share_dir1" value in share's private interface
+  And user of browser1 sees that XML node with "{http://datacite.org/schema/kernel-4}title" tag has "share_dir1" value in share's private interface
 
   And user of space_owner_browser modifies "OpenAIRE" XML element with "{http://datacite.org/schema/kernel-4}title" tag by changing its text to "new_title" in share's private interface
 
   And user of browser1 refreshes site
-  And user of browser1 sees that xml node with "{http://datacite.org/schema/kernel-4}title" tag has "new_title" value in share's private interface
+  And user of browser1 sees that XML node with "{http://datacite.org/schema/kernel-4}title" tag has "new_title" value in share's private interface
