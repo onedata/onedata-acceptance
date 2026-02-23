@@ -57,6 +57,9 @@ Feature: Public share published with mock handle service
       description:
         - This is test
         - test2
+      publisher:
+        - Some publisher
+        - Another publisher
 
     And user of space_owner_browser sends "Public handle link" from share's private interface to user of browser1
     Then user of browser1 opens received URL
@@ -73,6 +76,9 @@ Feature: Public share published with mock handle service
       description:
         - This is test
         - test2
+      publisher:
+        - Some publisher
+        - Another publisher
 
     And user of browser1 clicks "XML" button on share's public interface
     And user of browser1 sees that XML data contains ["My test data", "Another title", "Kasia", "This is test"] on share's public interface
