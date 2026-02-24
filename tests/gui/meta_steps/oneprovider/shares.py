@@ -60,15 +60,14 @@ from tests.gui.steps.oneprovider.shares import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.common.shares import (
-    _check_editor_appeared,
-    _get_xml_editor_data,
-    _is_metadata_field_default_in_dublin_core_form,
-    _is_metadata_field_default_in_edm_form,
-    _is_metadata_field_option_choosable,
-    _register_xml_namespaces_datacite,
-    _register_xml_namespaces_openaire,
-    _replace_xml_editor_data,
+from tests.gui.utils.common.xml_addons import (
+    check_editor_appeared,
+    get_xml_editor_data,
+    is_metadata_field_default_in_dublin_core_form,
+    is_metadata_field_default_in_edm_form,
+    is_metadata_field_option_choosable,
+    register_namespace_by_metadata_type,
+    replace_xml_editor_data,
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -269,16 +268,12 @@ def copy_command_from_api_in_file_details_modal(selenium, browser_id, command):
 )
 def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
     option = "private"
-    tab_name = "Expose as Public Data"
-    handle_service = "Mock Handle Service"
 
-    open_tab_in_public_share(selenium, browser_id, tab_name)
-
+    open_tab_in_public_share(selenium, browser_id, "Expose as Public Data")
     click_button_in_share(selenium, browser_id, "Choose a handle service", option)
     choose_option_for_publish_handle_service_as_open_data(
-        browser_id, handle_service, selenium
+        browser_id, "Mock Handle Service", selenium
     )
-
     click_button_in_share(selenium, browser_id, "Choose a metadata type", option)
     choose_option_for_publish_metadata_as_open_data(browser_id, metadata_type, selenium)
 
@@ -293,13 +288,11 @@ def open_public_data_metadata_editor(selenium, browser_id, metadata_type):
     )
 )
 def add_description_to_share_on_private_interface(selenium, browser_id, description):
-    tab_name = "Description"
-
-    open_tab_in_public_share(selenium, browser_id, tab_name)
+    open_tab_in_public_share(selenium, browser_id, "Description")
     click_button_in_description_form(browser_id, selenium, "Create description")
-
-    field_name = "description field"
-    write_description_in_description_form(browser_id, description, field_name, selenium)
+    write_description_in_description_form(
+        browser_id, description, "description field", selenium
+    )
     click_button_in_description_form(browser_id, selenium, "Save")
 
 
@@ -319,7 +312,7 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     for option, value in config.items():
         option = option.lower()
 
-        if not _is_metadata_field_default_in_dublin_core_form(option):
+        if not is_metadata_field_default_in_dublin_core_form(option):
             add_metadata_field_in_dublin_core_form(selenium[browser_id], option)
 
         if not isinstance(value, list):  # single string value
@@ -363,7 +356,7 @@ def assert_properties_in_dublin_core_metadata_form(
         r" share's file browser on share's public interface"
     )
 )
-def go_to_given_path_in_shares_file_browser(selenium, browser_id, tmp_memory):
+def open_shares_file_browser(selenium, browser_id, tmp_memory):
     open_tab_in_public_share(selenium, browser_id, "Files")
     assert_file_browser_in_public_share(selenium, browser_id, tmp_memory)
 
@@ -402,12 +395,12 @@ def fill_inputs_in_edm_metadata_form(
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if not _is_metadata_field_default_in_edm_form(field_name):
+        if not is_metadata_field_default_in_edm_form(field_name):
             add_property_to_edm_form_in_shares_interface(
                 browser_id, selenium, field_name
             )
 
-        if _is_metadata_field_option_choosable(
+        if is_metadata_field_option_choosable(
             field_name
         ):  # these fields cannot have literal before them
             if field_name != "material":
@@ -467,7 +460,7 @@ def assert_properties_in_edm_metadata_form(
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if _is_metadata_field_option_choosable(field_name):
+        if is_metadata_field_option_choosable(field_name):
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
@@ -497,13 +490,11 @@ def assert_properties_in_edm_metadata_form(
 )
 def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory):
     modal_name = "Rename share"
-    button = "Rename"
-
     click_menu_button_on_shares_page(selenium, browser_id)
     click_option_in_share_row_menu(selenium, browser_id, "Rename")
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name, modal_name)
-    click_modal_button(selenium, browser_id, button, modal_name)
+    click_modal_button(selenium, browser_id, "Rename", modal_name)
 
 
 @wt(
@@ -513,10 +504,9 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
     )
 )
 def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
-    _check_editor_appeared(selenium, browser_id)
+    check_editor_appeared(selenium, browser_id)
 
-    xml_data = _get_xml_editor_data(selenium, browser_id)
-
+    xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
 
     for elem in parse_seq(data):
@@ -539,26 +529,18 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     driver = selenium[browser_id]
     public_share(driver).modify_button.click()
 
-    _check_editor_appeared(selenium, browser_id)
+    check_editor_appeared(selenium, browser_id)
+    xml_data = get_xml_editor_data(driver)
 
-    xml_data = _get_xml_editor_data(selenium, browser_id)
-
-    if metadata_type.lower() == "openaire":
-        _register_xml_namespaces_openaire()
-    else:
-        _register_xml_namespaces_datacite()
-
+    register_namespace_by_metadata_type(metadata_type)
     root = ET.fromstring(xml_data)
     elem = root.find(f".//{tag}")
-
     elem.text = new_text
 
-    _replace_xml_editor_data(
-        selenium,
-        browser_id,
+    replace_xml_editor_data(
+        driver,
         ET.tostring(root, encoding="utf-8", xml_declaration=True).decode("utf-8"),
     )
-
     public_share(driver).save_button.click()
 
 
@@ -570,12 +552,10 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     )
 )
 def assert_xml_node_value(selenium, browser_id, tag, text):
-    _check_editor_appeared(selenium, browser_id)
+    check_editor_appeared(selenium, browser_id)
 
-    xml_data = _get_xml_editor_data(selenium, browser_id)
-
+    xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
-
     elem = root.find(f".//{tag}")
 
     assert (

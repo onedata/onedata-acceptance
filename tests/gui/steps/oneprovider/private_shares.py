@@ -54,7 +54,7 @@ def choose_option_for_publish_metadata_as_open_data(browser_id, option, selenium
 def write_input_in_form_in_shares_interface(browser_id, text, which_input, selenium):
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.write_to_last_input(
-        selenium[browser_id], text, which_input
+        driver, text, which_input
     )
 
 
@@ -67,9 +67,7 @@ def write_input_in_form_in_shares_interface(browser_id, text, which_input, selen
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_form_in_shares_interface(browser_id, button, selenium):
     driver = selenium[browser_id]
-    private_share(driver).dublin_core_metadata_form.click_add_button(
-        selenium[browser_id], button
-    )
+    private_share(driver).dublin_core_metadata_form.click_add_button(driver, button)
 
 
 @wt(
@@ -183,43 +181,44 @@ def choose_option_in_edm_form_in_shares_interface(
     option,
     section_name,
     selenium,
-    is_item_group=False,
+    is_group=False,
     expand_dropdown=True,
 ):
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
-    section_name = section_name.lower()
 
     if (
         not expand_dropdown
-    ):  # only choosing regular items, not groups, will not require expanding dropdown
+    ):  # only choosing non group items will not require expanding dropdown
         Popups(driver).power_select.choose_item(option, require_full_match=False)
         return
 
     for item in form.items:
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
-        if item.name.lower() == section_name:
-            item_dropdown = item.dropdown
-            try:
-                item_dropdown.click()
-            except (ElementClickInterceptedException, ElementNotInteractableException):
-                driver.execute_script(
-                    "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
-                )
-                item_dropdown.click()
-
-            if is_item_group:
-                Popups(driver).power_select.choose_item_group(
-                    option, require_full_match=False
-                )
-            else:
-                Popups(driver).power_select.choose_item(
-                    option, require_full_match=False
-                )
+        if item.name.lower() == section_name.lower():
+            open_section_dropdown_and_choose(driver, item, option, is_group)
+            # intentionally exit after handling the matching item
             return
 
     raise AssertionError(f"item {section_name} not found")
+
+
+def open_section_dropdown_and_choose(driver, item, option, is_group):
+    item_dropdown = item.dropdown
+    try:
+        item_dropdown.click()
+    except (ElementClickInterceptedException, ElementNotInteractableException):
+        # fallback: scroll to center and try again
+        driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", item_dropdown
+        )
+        item_dropdown.click()
+
+    if is_group:
+        Popups(driver).power_select.choose_group(option, require_full_match=False)
+    else:
+        Popups(driver).power_select.choose_item(option, require_full_match=False)
 
 
 @wt(
@@ -235,7 +234,7 @@ def choose_option_group_in_edm_form_in_shares_interface(
         option,
         section_name,
         selenium,
-        is_item_group=True,
+        is_group=True,
         expand_dropdown=expand_dropdown,
     )
 
@@ -335,6 +334,6 @@ def assert_no_warning_message_in_shares_page(browser_id, selenium):
 def add_metadata_field_in_dublin_core_form(driver, field_name):
     share = private_share(driver)
     share.dublin_core_metadata_form.add_more_elements.click()
-    share.dropdown.options[field_name.title()].click()
+    share.dropdown.options[field_name.capitalize()].click()
 
     share.dublin_core_metadata_form.click_on_background()

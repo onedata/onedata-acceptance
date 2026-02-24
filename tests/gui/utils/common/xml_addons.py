@@ -1,8 +1,8 @@
-"""Utils mainly for testing public and private shares,
-concerning mainly XML editor and metadata fields."""
+"""Helper utilities for validating public and private shares,
+with a primary focus on the XML editor and metadata handling."""
 
 __author__ = "Jakub Karczewski"
-__copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import xml.etree.ElementTree as ET
@@ -28,32 +28,39 @@ NAMESPACES_DATACITE = {
 }
 
 
-def _register_xml_namespaces_openaire():
+def register_xml_namespaces_openaire():
     for prefix, uri in NAMESPACES_OPENAIRE.items():
         ET.register_namespace(prefix, uri)
 
 
-def _map_namespace_prefix_to_uri_openaire(prefix):
+def map_namespace_prefix_to_uri_openaire(prefix):
     return NAMESPACES_OPENAIRE.get(prefix)
 
 
-def _map_namespace_prefix_to_uri_datacite(prefix):
+def map_namespace_prefix_to_uri_datacite(prefix):
     return NAMESPACES_DATACITE.get(prefix)
 
 
-def _register_xml_namespaces_datacite():
+def register_xml_namespaces_datacite():
     for prefix, uri in NAMESPACES_DATACITE.items():
         ET.register_namespace(prefix, uri)
 
 
-def _get_xml_editor_data(selenium, browser_id):
-    return selenium[browser_id].execute_script(
+def register_namespace_by_metadata_type(metadata_type):
+    if metadata_type.lower() == "openaire":
+        register_xml_namespaces_openaire()
+    else:
+        register_xml_namespaces_datacite()
+
+
+def get_xml_editor_data(driver):
+    return driver.execute_script(
         "return ace.edit(document.querySelector('.ace_editor')).getValue()"
     )
 
 
-def _replace_xml_editor_data(selenium, browser_id, new_data):
-    selenium[browser_id].execute_script(
+def replace_xml_editor_data(driver, new_data):
+    driver.execute_script(
         """
         var editor = ace.edit(document.querySelector('.ace_editor'));
         editor.setValue(arguments[0], -1);
@@ -62,21 +69,21 @@ def _replace_xml_editor_data(selenium, browser_id, new_data):
     )
 
 
-def _check_editor_appeared(selenium, browser_id):
+def check_editor_appeared(selenium, browser_id):
     driver = selenium[browser_id]
     try:
-        _ = _get_xml_data_openaire(driver)
+        _ = get_xml_data_openaire(driver)
     except RuntimeError:
         switch_to_iframe(selenium, browser_id)
-        _ = _get_xml_data_openaire(driver)
+        _ = get_xml_data_openaire(driver)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_xml_data_openaire(driver):
+def get_xml_data_openaire(driver):
     return public_share(driver).xml_data_ace_editor
 
 
-def _is_metadata_field_option_choosable(field_name):
+def is_metadata_field_option_choosable(field_name):
     return field_name.lower() in [
         "category",
         "name of organisation uploading the data",
@@ -85,11 +92,11 @@ def _is_metadata_field_option_choosable(field_name):
     ]
 
 
-def _is_metadata_field_default_in_dublin_core_form(field_name):
+def is_metadata_field_default_in_dublin_core_form(field_name):
     return field_name.lower() in ["title", "creator", "description", "date"]
 
 
-def _is_metadata_field_default_in_edm_form(field_name):
+def is_metadata_field_default_in_edm_form(field_name):
     return field_name.lower() in [
         "title",
         "description/caption",

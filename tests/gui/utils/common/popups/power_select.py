@@ -30,7 +30,7 @@ class PowerSelect(PageObject):
     def choose_item(self, property_name, require_full_match=True):
         self._choose_items(property_name, self.items, "", require_full_match)
 
-    def choose_item_group(self, property_name, require_full_match=False):
+    def choose_group(self, property_name, require_full_match=False):
         self._choose_items(
             property_name, self.item_groups, "item group: ", require_full_match
         )

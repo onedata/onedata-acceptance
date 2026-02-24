@@ -63,7 +63,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
 )
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
@@ -258,7 +258,9 @@ def create_item_in_op_gui(
 
     def _open_menu_for_item_in_file_browser():
         if path:
-            go_to_path(selenium, browser_id, tmp_memory, path, "file browser")
+            go_to_path(
+                selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER
+            )
         click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
 
     try:
@@ -578,10 +580,10 @@ def upload_file_to_op_gui(
 ):
     try:
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
-        go_to_path(selenium, browser_id, tmp_memory, path, "file browser")
+        go_to_path(selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
-        go_to_path(selenium, browser_id, tmp_memory, path, "file browser")
+        go_to_path(selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER)
     if res == "succeeds":
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename)
         assert_items_presence_in_browser(selenium, browser_id, filename, tmp_memory)
@@ -882,7 +884,7 @@ def _create_link_in_file_browser(
     time.sleep(0.5)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     if path:
-        go_to_path(selenium, browser_id, tmp_memory, path, "file browser")
+        go_to_path(selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER)
     click_file_browser_button(browser_id, button, "file browser", tmp_memory)
 
 
@@ -911,7 +913,9 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     source_parent_path = "/".join(source_path.split("/")[:-1])
 
     if len(source_parent_path) > 0:
-        go_to_path(selenium, browser_id, tmp_memory, source_path, "file browser")
+        go_to_path(
+            selenium, browser_id, tmp_memory, source_path, WhichBrowser.FILE_BROWSER
+        )
     else:
         source_parent_path = "/"
 
