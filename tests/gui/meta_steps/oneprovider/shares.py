@@ -303,6 +303,16 @@ def add_description_to_share_on_private_interface(selenium, browser_id, descript
     )
 )
 def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
+    """
+    Fill Dublin Core metadata form according to given config.
+    Config format given in yaml is as follows:
+
+            metadata field: value               ---> single value
+            metadata field:
+                - first value
+                - second value                  ---> multiple values
+            ...
+    """
     option = "private"
     tab_name = "Expose as Public Data"
 
@@ -340,6 +350,10 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
 def assert_properties_in_dublin_core_metadata_form(
     selenium, browser_id, metadata_type, config
 ):
+    """
+    Assert Dublin Core metadata values according to given config.
+    Config format given in yaml is in fill_inputs_in_dublin_core_metadata_form function.
+    """
     config = yaml.load(config, yaml.Loader)
     for _, data in config.items():
         if metadata_type.lower() == "dublin core":
@@ -391,6 +405,18 @@ def send_public_handle_link_to_user(
 def fill_inputs_in_edm_metadata_form(
     selenium, browser_id, config, numerals, num_to_ordinal
 ):
+    """
+    Fill EDM metadata form according to given config.
+    Config format given in yaml is as follows:
+
+            metadata field: value               ---> single value
+            metadata field:
+                - first value
+                - second value                  ---> multiple values
+            Material:
+                group: material group
+                value: material value
+    """
     config = yaml.load(config, yaml.Loader)
 
     for field_name, value in config.items():
@@ -456,6 +482,10 @@ def fill_inputs_in_edm_metadata_form(
 def assert_properties_in_edm_metadata_form(
     selenium, browser_id, config, numerals, num_to_ordinal
 ):
+    """
+    Assert EDM metadata values according to given config.
+    Config format given in yaml is in fill_inputs_in_edm_metadata_form function.
+    """
     config = yaml.load(config, yaml.Loader)
 
     for field_name, value in config.items():
