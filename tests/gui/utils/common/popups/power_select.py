@@ -14,17 +14,18 @@ class PowerSelect(PageObject):
     item_groups = WebElementsSequence(".ember-power-select-group")
 
     def _choose_items(self, property_name, items, str_prefix, require_full_match):
-        def predicate(item):
-            if require_full_match and item.text.lower() == property_name.lower():
-                return True
-            if not require_full_match and property_name.lower() in item.text.lower():
-                return True
-            return False
+        prop = property_name.casefold()
+        match_func = (
+            (lambda item: prop == item.text.casefold())
+            if require_full_match
+            else (lambda item: prop in item.text.casefold())
+        )
 
         for item in items:
-            if predicate(item):
+            if match_func(item):
                 item.click()
                 return
+
         raise RuntimeError(f"{str_prefix}{property_name} not found in popup menu")
 
     def choose_item(self, property_name, require_full_match=True):
