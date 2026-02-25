@@ -61,14 +61,14 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
-    check_editor_appeared_openaire,
+    check_ace_editor_appeared,
     get_xml_editor_data,
-    is_metadata_field_default_in_dublin_core_form,
-    is_metadata_field_default_in_edm_form,
-    is_metadata_field_option_choosable,
+    is_metadata_field_option_selectable_edm,
+    is_name_in_initial_form_fields_dublin_core,
+    is_name_in_initial_form_fields_edm,
+    register_namespace_by_metadata_type,
     replace_xml_editor_data,
     resolve_xml_tag_for_et_search,
-    register_namespace_by_metadata_type
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -323,7 +323,7 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     for option, value in config.items():
         option = option.lower()
 
-        if not is_metadata_field_default_in_dublin_core_form(option):
+        if not is_name_in_initial_form_fields_dublin_core(option):
             add_metadata_field_in_dublin_core_form(selenium[browser_id], option)
 
         if not isinstance(value, list):  # single string value
@@ -348,21 +348,18 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
         " like the following:\n{config}"
     )
 )
-def assert_properties_in_dublin_core_metadata_form(
-    selenium, browser_id, metadata_type, config
-):
+def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config):
     """
     Assert Dublin Core metadata values according to given config.
     Config format given in yaml is in fill_inputs_in_dublin_core_metadata_form function.
     """
     config = yaml.load(config, yaml.Loader)
     for _, data in config.items():
-        if metadata_type.lower() == "dublin core":
-            if not isinstance(data, list):
-                assert_data_in_dublin_core_metadata(browser_id, data, selenium)
-            else:
-                for item in data:
-                    assert_data_in_dublin_core_metadata(browser_id, item, selenium)
+        if not isinstance(data, list):
+            assert_data_in_dublin_core_metadata(browser_id, data, selenium)
+        else:
+            for item in data:
+                assert_data_in_dublin_core_metadata(browser_id, item, selenium)
 
 
 @wt(
@@ -422,12 +419,12 @@ def fill_inputs_in_edm_metadata_form(
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if not is_metadata_field_default_in_edm_form(field_name):
+        if not is_name_in_initial_form_fields_edm(field_name):
             add_property_to_edm_form_in_shares_interface(
                 browser_id, selenium, field_name
             )
 
-        if is_metadata_field_option_choosable(
+        if is_metadata_field_option_selectable_edm(
             field_name
         ):  # these fields cannot have literal before them
             if field_name != "material":
@@ -491,7 +488,7 @@ def assert_properties_in_edm_metadata_form(
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if is_metadata_field_option_choosable(field_name):
+        if is_metadata_field_option_selectable_edm(field_name):
             assert_val_edm_form_in_shares_interface(
                 browser_id, value, field_name, selenium, numerals
             )
@@ -538,7 +535,7 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
 def assert_xml_data_in_edm_form_in_shares_interface(
     selenium, browser_id, data, metadata_type
 ):
-    check_editor_appeared_openaire(selenium, browser_id)
+    check_ace_editor_appeared(selenium, browser_id)
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
 
@@ -563,7 +560,7 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     driver = selenium[browser_id]
     public_share(driver).modify_button.click()
 
-    check_editor_appeared_openaire(selenium, browser_id)
+    check_ace_editor_appeared(selenium, browser_id)
     xml_data = get_xml_editor_data(driver)
 
     register_namespace_by_metadata_type(metadata_type)
@@ -590,7 +587,7 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     )
 )
 def assert_xml_node_value(selenium, browser_id, tag, text, metadata_type):
-    check_editor_appeared_openaire(selenium, browser_id)
+    check_ace_editor_appeared(selenium, browser_id)
 
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)

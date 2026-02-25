@@ -27,6 +27,33 @@ NAMESPACES_DATACITE = {
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
 
+INITIAL_FIELDS = {
+    "dublin_core": {"title", "creator", "description", "date"},
+    "edm": {
+        "title",
+        "description/caption",
+        "category",
+        "subject",
+        "type of object",
+        "parent entity (collection, object, site…)",
+        "material",
+        "description of digital object",
+        "type of digital object",
+        "content provider institution",
+        "name of organisation uploading the data",
+        "copyright licence url of the digital object",
+    },
+}
+
+SELECTABLE_FIELDS = {
+    "edm": {
+        "category",
+        "name of organisation uploading the data",
+        "copyright licence url of the digital object",
+        "material",
+    }
+}
+
 
 def register_xml_namespaces_openaire():
     for prefix, uri in NAMESPACES_OPENAIRE.items():
@@ -94,7 +121,7 @@ def replace_xml_editor_data(driver, new_data):
     )
 
 
-def check_editor_appeared_openaire(selenium, browser_id):
+def check_ace_editor_appeared(selenium, browser_id):
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
@@ -108,31 +135,13 @@ def get_xml_data_openaire(driver):
     return public_share(driver).xml_data_ace_editor
 
 
-def is_metadata_field_option_choosable(field_name):
-    return field_name.lower() in [
-        "category",
-        "name of organisation uploading the data",
-        "copyright licence url of the digital object",
-        "material",
-    ]
+def is_metadata_field_option_selectable_edm(field_name):
+    return field_name.lower() in SELECTABLE_FIELDS["edm"]
 
 
-def is_metadata_field_default_in_dublin_core_form(field_name):
-    return field_name.lower() in ["title", "creator", "description", "date"]
+def is_name_in_initial_form_fields_dublin_core(field_name):
+    return field_name.lower() in INITIAL_FIELDS["dublin_core"]
 
 
-def is_metadata_field_default_in_edm_form(field_name):
-    return field_name.lower() in [
-        "title",
-        "description/caption",
-        "category",
-        "subject",
-        "type of object",
-        "parent entity (collection, object, site…)",
-        "material",
-        "description of digital object",
-        "type of digital object",
-        "content provider institution",
-        "name of organisation uploading the data",
-        "copyright licence url of the digital object",
-    ]
+def is_name_in_initial_form_fields_edm(field_name):
+    return field_name.lower() in INITIAL_FIELDS["edm"]
