@@ -23,7 +23,7 @@ NAMESPACES_OPENAIRE = {
 }
 
 NAMESPACES_DATACITE = {
-    "datacite": "http://datacite.org/schema/kernel-4",
+    "": "http://datacite.org/schema/kernel-4",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
 }
 
@@ -31,14 +31,6 @@ NAMESPACES_DATACITE = {
 def register_xml_namespaces_openaire():
     for prefix, uri in NAMESPACES_OPENAIRE.items():
         ET.register_namespace(prefix, uri)
-
-
-def map_namespace_prefix_to_uri_openaire(prefix):
-    return NAMESPACES_OPENAIRE.get(prefix)
-
-
-def map_namespace_prefix_to_uri_datacite(prefix):
-    return NAMESPACES_DATACITE.get(prefix)
 
 
 def register_xml_namespaces_datacite():
@@ -51,6 +43,39 @@ def register_namespace_by_metadata_type(metadata_type):
         register_xml_namespaces_openaire()
     else:
         register_xml_namespaces_datacite()
+
+
+def map_namespace_prefix_to_uri_openaire(prefix):
+    return NAMESPACES_OPENAIRE.get(prefix)
+
+
+def map_namespace_prefix_to_uri_datacite(prefix):
+    if prefix == "datacite":
+        return NAMESPACES_DATACITE.get("")
+    return NAMESPACES_DATACITE.get(prefix)
+
+
+def map_namespace_prefix_to_uri(prefix, metadata_type):
+    prefix = prefix.lower()
+    if metadata_type.lower() == "openaire":
+        return map_namespace_prefix_to_uri_openaire(prefix)
+    return map_namespace_prefix_to_uri_datacite(prefix)
+
+
+def resolve_xml_tag_for_et_search(tag, metadata_type):
+    if tag.startswith("{") or ":" not in tag:
+        # If the tag is already in the format {uri}local_name or
+        # doesn't contain a colon, that is possibly a namespace separator
+        return tag
+
+    prefix, local_name = tag.split(":", 1)
+    uri = map_namespace_prefix_to_uri(prefix, metadata_type)
+
+    # If the prefix is not recognized, treat the tag as a literal
+    # (assume the colon is not indicating a namespace).
+    if uri is None:
+        return tag
+    return f"{{{uri}}}{local_name}"
 
 
 def get_xml_editor_data(driver):
@@ -69,7 +94,7 @@ def replace_xml_editor_data(driver, new_data):
     )
 
 
-def check_editor_appeared(selenium, browser_id):
+def check_editor_appeared_openaire(selenium, browser_id):
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)

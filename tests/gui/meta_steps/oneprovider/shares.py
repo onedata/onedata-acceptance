@@ -61,13 +61,14 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
-    check_editor_appeared,
+    check_editor_appeared_openaire,
     get_xml_editor_data,
     is_metadata_field_default_in_dublin_core_form,
     is_metadata_field_default_in_edm_form,
     is_metadata_field_option_choosable,
-    register_namespace_by_metadata_type,
     replace_xml_editor_data,
+    resolve_xml_tag_for_et_search,
+    register_namespace_by_metadata_type
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -529,19 +530,22 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
 
 @wt(
     parsers.re(
-        r"user of (?P<browser_id>.*?) sees that XML data contains nodes like:"
-        r" (?P<data>.*?) on share\'s (private|public) interface"
+        r'user of (?P<browser_id>.*?) sees that "(?P<metadata_type>DataCite|OpenAIRE)"'
+        r" XML data contains nodes like:"
+        r" (?P<data>.*?) on share's (private|public) interface"
     )
 )
-def assert_xml_data_in_edm_form_in_shares_interface(selenium, browser_id, data):
-    check_editor_appeared(selenium, browser_id)
-
+def assert_xml_data_in_edm_form_in_shares_interface(
+    selenium, browser_id, data, metadata_type
+):
+    check_editor_appeared_openaire(selenium, browser_id)
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
 
     for elem in parse_seq(data):
+        elem_for_search = resolve_xml_tag_for_et_search(elem, metadata_type)
         assert (
-            root.find(f".//{elem}") is not None
+            root.find(f".//{elem_for_search}") is not None
         ), f"Node with name: {elem} was not found in XML data"
 
 
@@ -559,14 +563,17 @@ def modify_xml_data_in_edm_form_in_shares_interface(
     driver = selenium[browser_id]
     public_share(driver).modify_button.click()
 
-    check_editor_appeared(selenium, browser_id)
+    check_editor_appeared_openaire(selenium, browser_id)
     xml_data = get_xml_editor_data(driver)
 
     register_namespace_by_metadata_type(metadata_type)
     root = ET.fromstring(xml_data)
-    elem = root.find(f".//{tag}")
-    elem.text = new_text
+    tag_for_search = resolve_xml_tag_for_et_search(tag, metadata_type)
 
+    elem = root.find(f".//{tag_for_search}")
+    assert elem is not None, f"Node with tag: {tag} was not found in XML data"
+
+    elem.text = new_text
     replace_xml_editor_data(
         driver,
         ET.tostring(root, encoding="utf-8", xml_declaration=True).decode("utf-8"),
@@ -577,16 +584,19 @@ def modify_xml_data_in_edm_form_in_shares_interface(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that"
-        r' XML node with "(?P<tag>.*?)" tag has "(?P<text>.*?)" value'
+        r' "(?P<metadata_type>DataCite|OpenAIRE)" XML node with "(?P<tag>.*?)"'
+        r' tag has "(?P<text>.*?)" value'
         r" in share's private interface"
     )
 )
-def assert_xml_node_value(selenium, browser_id, tag, text):
-    check_editor_appeared(selenium, browser_id)
+def assert_xml_node_value(selenium, browser_id, tag, text, metadata_type):
+    check_editor_appeared_openaire(selenium, browser_id)
 
     xml_data = get_xml_editor_data(selenium[browser_id])
     root = ET.fromstring(xml_data)
-    elem = root.find(f".//{tag}")
+    tag_for_search = resolve_xml_tag_for_et_search(tag, metadata_type)
+    elem = root.find(f".//{tag_for_search}")
+    assert elem is not None, f"Node with tag: {tag} was not found in XML data"
 
     assert (
         elem.text == text
