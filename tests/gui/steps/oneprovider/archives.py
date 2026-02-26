@@ -12,7 +12,7 @@ import time
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -97,15 +97,17 @@ def assert_archive_partial_state_status(item_status, expected_status):
 
 
 @wt(
-    parsers.re(
-        "user of (?P<browser_id>.*?) clicks and presses enter on "
-        'archive with description: "(?P<description>.*?)" on '
-        "archives list in archive browser"
+    parsers.parse(
+        "user of {browser_id} clicks and presses enter on "
+        'archive with description: "{description}" on '
+        "archives list in {which_browser}"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
-    browser = tmp_memory[browser_id]["archive_browser"]
+def click_and_press_enter_on_archive(
+    browser_id, tmp_memory, description, which_browser
+):
+    browser = tmp_memory[browser_id][transform(which_browser)]
     archive = get_archive_with_description(browser, description)
     # clicking on the background of browser to ensure correct
     # working of click_and enter
@@ -221,14 +223,29 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, selenium):
 
 
 @wt(
-    parsers.re(
-        "user of (?P<browser_id>.*?) clicks on menu for archive "
-        'with description: "(?P<description>.*?)" in archive browser'
+    parsers.parse(
+        "user of {browser_id} clicks on menu for archive "
+        'with description: "{description}" in {which_browser:WhichBrowser}',
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
+def wt_click_menu_for_archive(
+    browser_id, tmp_memory, description, selenium, which_browser
+):
+    click_menu_for_archive(
+        browser_id, tmp_memory, description, selenium, which_browser=which_browser
+    )
+
+
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_menu_for_archive(browser_id, tmp_memory, description, selenium):
-    browser = tmp_memory[browser_id]["archive_browser"]
+def click_menu_for_archive(
+    browser_id,
+    tmp_memory,
+    description,
+    selenium,
+    which_browser=WhichBrowser.ARCHIVE_BROWSER,
+):
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     archive = get_archive_with_description(browser, description)
     archive.menu_button()
     if Popups(selenium[browser_id]).archive_row_menu.options[0].name == "":

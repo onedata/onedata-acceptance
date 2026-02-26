@@ -29,6 +29,7 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     assert_progress_of_recall_in_op_rest,
     cancel_archive_for_archive_in_op_rest,
     create_archive_in_op_rest,
+    create_n_archives_in_op_rest,
     recall_archive_for_archive_in_op_rest,
     recalled_archive_details_in_op_rest,
     remove_archive_in_op_rest,
@@ -92,6 +93,38 @@ def create_archive_in_op(
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")
+
+
+@wt(
+    parsers.parse(
+        'using REST, {user} creates {number} archives for dataset "{item_name}" in '
+        'space "{space_name}" in host {host} with following configuration:\n{config}'
+    )
+)
+def wt_create_n_archives_in_op(
+    user,
+    users,
+    hosts,
+    host,
+    space_name,
+    item_name,
+    config,
+    spaces,
+    tmp_memory,
+    number: int,
+):
+    create_n_archives_in_op_rest(
+        user,
+        users,
+        hosts,
+        host,
+        space_name,
+        item_name,
+        config,
+        spaces,
+        tmp_memory,
+        number,
+    )
 
 
 @wt(

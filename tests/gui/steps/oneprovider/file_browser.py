@@ -21,7 +21,7 @@ from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -416,18 +416,19 @@ def confirm_rename_directory(selenium, browser_id, option):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} scrolls to the bottom of file browser "
-        "and sees there are {count} files"
+        "user of {browser_id} scrolls to the bottom of {which_browser:WhichBrowser} "
+        "and sees there are {count} files",
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
-def count_files_while_scrolling(browser_id, count: int, tmp_memory):
+def count_files_while_scrolling(browser_id, count: int, tmp_memory, which_browser):
     """
     In order to stabilize this function, func does not scroll too much at once
     to don`t omit any files
     Function assumes files` names don`t repeat
     """
 
-    browser = tmp_memory[browser_id]["file_browser"]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     detected_files = []
     visible_files = browser.names_of_visible_elems()
     new_files = [f for f in visible_files if f]

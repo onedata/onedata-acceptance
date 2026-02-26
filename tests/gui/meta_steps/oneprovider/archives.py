@@ -17,6 +17,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem,
 )
 from tests.gui.meta_steps.oneprovider.dataset import get_item_name_from_path
+from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     write_name_into_text_field_in_modal,
@@ -53,7 +54,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -297,7 +298,9 @@ def assert_archive_in_op_gui(
             tmp_memory,
             item_browser=ARCHIVE_BROWSER,
         )
-        click_and_press_enter_on_archive(browser_id, tmp_memory, description)
+        click_and_press_enter_on_archive(
+            browser_id, tmp_memory, description, ARCHIVE_BROWSER
+        )
         assert_browser_in_tab_in_op(
             selenium,
             browser_id,
@@ -435,6 +438,29 @@ def assert_number_of_archive_in_op_gui(
         )
     assert_number_of_archives_for_item_in_dataset_browser(
         browser_id, item_name, number, tmp_memory
+    )
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} can see {number} of archives in"
+        " {which_browser:WhichBrowser}",
+        extra_types={"WhichBrowser": WhichBrowser},
+    )
+)
+def assert_number_of_archives_with_scrolling(
+    browser_id,
+    selenium,
+    number: int,
+    tmp_memory,
+    which_browser,
+):
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
+    transform_fun = lambda item: (
+        item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
+    )
+    assert_n_items_in_items_list(
+        browser, selenium, browser_id, number, "items", transform_fun=transform_fun
     )
 
 
