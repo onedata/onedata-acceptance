@@ -84,6 +84,7 @@ stages:
         - Groups basic
         - Hardlinks and Symlinks
         - LUMA
+        - Many archives
         - Nested directories create
         - Nested directories remove
         - Onepanel
@@ -753,6 +754,22 @@ LUMA:
         <<: *run-acceptance-tests
         scripts:
           - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma test_mixed_pkg
+
+Many archives:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CNMA
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_many_archives test_mixed_pkg
 
 Nested directories create:
   <<: *acceptance-mixed-tests-in-chrome-job
