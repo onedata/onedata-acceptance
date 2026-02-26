@@ -189,7 +189,7 @@ def choose_option_in_edm_form_in_shares_interface(
 
     if (
         not expand_dropdown
-    ):  # only choosing non group items will not require expanding dropdown
+    ):  # Only for non-group items, expanding the dropdown may not be necessary
         Popups(driver).power_select.choose_item(option, require_full_match=False)
         return
 
