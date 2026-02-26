@@ -75,6 +75,7 @@ stages:
         - Directories set metadata
         - Directories times
         - File content
+        - File events
         - Files movement
         - Files multi
         - Files remove metadata
@@ -608,6 +609,22 @@ File content:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_file_content test_mixed_pkg
+
+File events:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CFEV
+  tasks:
+    - script: *clear-env
+    - script: *restart-minikube
+    - checkout: *checkout-default-repository
+    - script: *init-submodules
+    - script: *quarantine-hack-pull-surefire
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_file_events ENV_FILE=1oz_2op_deployed test_mixed_pkg
 
 Files movement:
   <<: *acceptance-mixed-tests-in-chrome-job

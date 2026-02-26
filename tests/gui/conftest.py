@@ -5,7 +5,7 @@ Define fixtures used in web GUI acceptance/behavioral tests.
 __author__ = "Jakub Liput, Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-
+# pylint: disable=unused-import
 
 import os
 import re
@@ -17,6 +17,11 @@ from selenium import webdriver
 
 from tests import LOGDIRS
 from tests.conftest import export_logs, get_log_dir_path
+from tests.gui.sse_fixtures import (
+    async_loop_in_thread,
+    monitors,
+    space_files_monitor_factory,
+)
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
