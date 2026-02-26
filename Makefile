@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v10"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -195,3 +195,6 @@ static-analysis:
 	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
 	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
+
+type-check:
+	$(docker_run) mypy $(FILES_TO_FORMAT) --config-file tests/configs/mypy.ini
