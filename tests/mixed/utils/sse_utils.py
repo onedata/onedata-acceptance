@@ -88,7 +88,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
 
-    async def _consume_stream(self, reconnect: bool = False) -> NoReturn:
+    async def _consume_stream(self, reconnect: bool = False) -> None:
         url: str = (
             f"https://{self.oneprovider_authority}/api/v3/oneprovider/spaces/"
             f"{self.space_id}/events/files"
