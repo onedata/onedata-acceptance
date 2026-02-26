@@ -189,8 +189,9 @@ def choose_option_in_edm_form_in_shares_interface(
 
     if (
         requires_group_selection and not is_group
-    ):  # When group selection is enabled, but we are selecting a concrete item
-        # (not a group itself), it can be directly chosen without expanding again.
+    ):  # When group selection is enabled but we are selecting a concrete item
+        # (not the group itself), it can be chosen directly without expanding
+        # the dropdown again.
         Popups(driver).power_select.choose_item(option, require_full_match=False)
         return
 
