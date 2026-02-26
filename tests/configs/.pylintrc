@@ -442,7 +442,8 @@ disable=missing-function-docstring,
         unspecified-encoding,
         fixme,
         global-statement,
-        duplicate-code
+        duplicate-code,
+        unnecessary-lambda-assignment
 
 
 # Enable the message, report, category or checker with the given id(s). You can
