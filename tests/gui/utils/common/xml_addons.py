@@ -55,21 +55,14 @@ SELECTABLE_FIELDS = {
 }
 
 
-def register_xml_namespaces_openaire():
-    for prefix, uri in NAMESPACES_OPENAIRE.items():
-        ET.register_namespace(prefix, uri)
-
-
-def register_xml_namespaces_datacite():
-    for prefix, uri in NAMESPACES_DATACITE.items():
-        ET.register_namespace(prefix, uri)
-
-
 def register_namespace_by_metadata_type(metadata_type):
-    if metadata_type.lower() == "openaire":
-        register_xml_namespaces_openaire()
-    else:
-        register_xml_namespaces_datacite()
+    namespaces = (
+        NAMESPACES_OPENAIRE
+        if metadata_type.lower() == "openaire"
+        else NAMESPACES_DATACITE
+    )
+    for prefix, uri in namespaces.items():
+        ET.register_namespace(prefix, uri)
 
 
 def map_namespace_prefix_to_uri_openaire(prefix):
@@ -139,9 +132,5 @@ def is_metadata_field_option_selectable_edm(field_name):
     return field_name.lower() in SELECTABLE_FIELDS["edm"]
 
 
-def is_name_in_initial_form_fields_dublin_core(field_name):
-    return field_name.lower() in INITIAL_FIELDS["dublin_core"]
-
-
-def is_name_in_initial_form_fields_edm(field_name):
-    return field_name.lower() in INITIAL_FIELDS["edm"]
+def is_name_in_initial_form_fields(field_name, metadata_type):
+    return field_name.lower() in INITIAL_FIELDS[metadata_type.lower()]

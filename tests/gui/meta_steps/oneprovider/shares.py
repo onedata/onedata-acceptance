@@ -64,8 +64,7 @@ from tests.gui.utils.common.xml_addons import (
     check_ace_editor_appeared,
     get_xml_editor_data,
     is_metadata_field_option_selectable_edm,
-    is_name_in_initial_form_fields_dublin_core,
-    is_name_in_initial_form_fields_edm,
+    is_name_in_initial_form_fields,
     register_namespace_by_metadata_type,
     replace_xml_editor_data,
     resolve_xml_tag_for_et_search,
@@ -308,11 +307,13 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     Fill Dublin Core metadata form according to given config.
     Config format given in yaml is as follows:
 
-            metadata field: value               ---> single value
-            metadata field:
-                - first value
-                - second value                  ---> multiple values
-            ...
+        metadata field: value               ---> single value
+        metadata field:
+            - first value
+            - second value                  ---> multiple values
+    ...
+    If multiple values are provided for the same metadata field,
+    additional input fields are added below within the same section.
     """
     option = "private"
     tab_name = "Expose as Public Data"
@@ -323,7 +324,7 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
     for option, value in config.items():
         option = option.lower()
 
-        if not is_name_in_initial_form_fields_dublin_core(option):
+        if not is_name_in_initial_form_fields(option, "dublin_core"):
             add_metadata_field_in_dublin_core_form(selenium[browser_id], option)
 
         if not isinstance(value, list):  # single string value
@@ -351,7 +352,8 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
 def assert_properties_in_dublin_core_metadata_form(selenium, browser_id, config):
     """
     Assert Dublin Core metadata values according to given config.
-    Config format given in yaml is in fill_inputs_in_dublin_core_metadata_form function.
+    Config format given in yaml is the same as in the function:
+    fill_inputs_in_dublin_core_metadata_form.
     """
     config = yaml.load(config, yaml.Loader)
     for _, data in config.items():
@@ -405,21 +407,41 @@ def fill_inputs_in_edm_metadata_form(
 ):
     """
     Fill EDM metadata form according to given config.
-    Config format given in yaml is as follows:
+
+    Config format in YAML:
 
             metadata field: value               ---> single value
+
             metadata field:
                 - first value
                 - second value                  ---> multiple values
+
             Material:
                 group: material group
                 value: material value
+
+    Behaviour:
+    - For fields with a single value, the existing input field is filled.
+
+    - For non-selectable text fields with multiple values, additional
+    input rows are added under the same metadata section.
+
+    - For fields not initially visible in the form, the field is added
+    first and then populated with the given value(s).
+
+    - Some fields are of type "selectable" and require selecting a value
+    from a predefined set of options (e.g. a dropdown), rather than
+    typing a free-text value. These fields accept a single value.
+
+    - The "Material" field is a special selectable field that requires
+    selecting a group first and then choosing the corresponding value
+    within that group.
     """
     config = yaml.load(config, yaml.Loader)
 
     for field_name, value in config.items():
         field_name = field_name.lower()
-        if not is_name_in_initial_form_fields_edm(field_name):
+        if not is_name_in_initial_form_fields(field_name, "edm"):
             add_property_to_edm_form_in_shares_interface(
                 browser_id, selenium, field_name
             )
@@ -429,7 +451,7 @@ def fill_inputs_in_edm_metadata_form(
         ):  # these fields cannot have literal before them
             if field_name != "material":
                 choose_option_in_edm_form_in_shares_interface(
-                    browser_id, value, field_name, selenium, expand_dropdown=True
+                    browser_id, value, field_name, selenium
                 )
 
             else:  # choosing material involves also choosing options group first
@@ -438,14 +460,13 @@ def fill_inputs_in_edm_metadata_form(
                     value["group"],
                     field_name,
                     selenium,
-                    expand_dropdown=True,
                 )
                 choose_option_in_edm_form_in_shares_interface(
                     browser_id,
                     value["value"],
                     field_name,
                     selenium,
-                    expand_dropdown=False,
+                    requires_group_selection=True,
                 )
 
         else:
@@ -482,7 +503,8 @@ def assert_properties_in_edm_metadata_form(
 ):
     """
     Assert EDM metadata values according to given config.
-    Config format given in yaml is in fill_inputs_in_edm_metadata_form function.
+    Config format given in yaml is the same as in the function:
+    fill_inputs_in_edm_metadata_form.
     """
     config = yaml.load(config, yaml.Loader)
 
@@ -527,7 +549,7 @@ def rename_share_on_private_interface(selenium, browser_id, new_name, tmp_memory
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*?) sees that "(?P<metadata_type>DataCite|OpenAIRE)"'
+        r"user of (?P<browser_id>.*?) sees that (?P<metadata_type>DataCite|OpenAIRE)"
         r" XML data contains nodes like:"
         r" (?P<data>.*?) on share's (private|public) interface"
     )
@@ -549,7 +571,7 @@ def assert_xml_data_in_edm_form_in_shares_interface(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) modifies"
-        r' "(?P<metadata_type>DataCite|OpenAIRE)" XML'
+        r" (?P<metadata_type>DataCite|OpenAIRE) XML"
         r' element with "(?P<tag>.*?)" tag by changing its text to "(?P<new_text>.*?)"'
         r" in share's private interface"
     )
@@ -581,7 +603,7 @@ def modify_xml_data_in_edm_form_in_shares_interface(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that"
-        r' "(?P<metadata_type>DataCite|OpenAIRE)" XML node with "(?P<tag>.*?)"'
+        r' (?P<metadata_type>DataCite|OpenAIRE) XML node with "(?P<tag>.*?)"'
         r' tag has "(?P<text>.*?)" value'
         r" in share's private interface"
     )

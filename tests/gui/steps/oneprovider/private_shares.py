@@ -182,14 +182,15 @@ def choose_option_in_edm_form_in_shares_interface(
     section_name,
     selenium,
     is_group=False,
-    expand_dropdown=True,
+    requires_group_selection=False,
 ):
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
 
     if (
-        not expand_dropdown
-    ):  # Only for non-group items, expanding the dropdown may not be necessary
+        requires_group_selection and not is_group
+    ):  # When group selection is enabled, but we are selecting a concrete item
+        # (not a group itself), it can be directly chosen without expanding again.
         Popups(driver).power_select.choose_item(option, require_full_match=False)
         return
 
@@ -197,14 +198,14 @@ def choose_option_in_edm_form_in_shares_interface(
         if item.name == "":
             driver.execute_script("arguments[0].scrollIntoView();", item.web_elem)
         if item.name.lower() == section_name.lower():
-            open_section_dropdown_and_choose(driver, item, option, is_group)
-            # intentionally exit after handling the matching item
+            _open_section_dropdown_and_choose(driver, item, option, is_group)
+            # intentionally return after handling the matching item
             return
 
     raise AssertionError(f"item {section_name} not found")
 
 
-def open_section_dropdown_and_choose(driver, item, option, is_group):
+def _open_section_dropdown_and_choose(driver, item, option, is_group):
     item_dropdown = item.dropdown
     try:
         item_dropdown.click()
@@ -227,7 +228,7 @@ def open_section_dropdown_and_choose(driver, item, option, is_group):
     "share's private interface"
 )
 def choose_option_group_in_edm_form_in_shares_interface(
-    browser_id, option, section_name, selenium, expand_dropdown=True
+    browser_id, option, section_name, selenium
 ):
     choose_option_in_edm_form_in_shares_interface(
         browser_id,
@@ -235,7 +236,7 @@ def choose_option_group_in_edm_form_in_shares_interface(
         section_name,
         selenium,
         is_group=True,
-        expand_dropdown=expand_dropdown,
+        requires_group_selection=True,
     )
 
 
