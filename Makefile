@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v10"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v10-dev"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -199,3 +199,6 @@ static-analysis:
 
 type-check:
 	$(docker_run) mypy $(FILES_TO_TYPE_CHECK) --config-file tests/configs/mypy.ini
+
+# install-types:
+# 	$(docker_run) mypy --install-types --config-file tests/configs/mypy.ini
