@@ -65,21 +65,16 @@ def register_namespace_by_metadata_type(metadata_type):
         ET.register_namespace(prefix, uri)
 
 
-def map_namespace_prefix_to_uri_openaire(prefix):
-    return NAMESPACES_OPENAIRE.get(prefix)
-
-
-def map_namespace_prefix_to_uri_datacite(prefix):
-    if prefix == "datacite":
-        return NAMESPACES_DATACITE.get("")
-    return NAMESPACES_DATACITE.get(prefix)
-
-
 def map_namespace_prefix_to_uri(prefix, metadata_type):
     prefix = prefix.lower()
     if metadata_type.lower() == "openaire":
-        return map_namespace_prefix_to_uri_openaire(prefix)
-    return map_namespace_prefix_to_uri_datacite(prefix)
+        return NAMESPACES_OPENAIRE.get(prefix)
+
+    if prefix == "datacite":
+        # In the NAMESPACES_DATACITE dictionary the default namespace
+        # is stored under an empty string key ("").
+        return NAMESPACES_DATACITE.get("")
+    return NAMESPACES_DATACITE.get(prefix)
 
 
 def resolve_xml_tag_for_et_search(tag, metadata_type):
