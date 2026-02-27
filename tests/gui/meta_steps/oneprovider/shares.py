@@ -70,6 +70,7 @@ from tests.gui.utils.common.xml_addons import (
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -408,9 +409,7 @@ def send_public_handle_link_to_user(
         " with:\n{config}"
     )
 )
-def fill_inputs_in_edm_metadata_form(
-    selenium, browser_id, config, numerals, num_to_ordinal
-):
+def fill_inputs_in_edm_metadata_form(selenium, browser_id, config, numerals):
     """
     Fill EDM metadata form according to given config.
 
@@ -489,7 +488,7 @@ def fill_inputs_in_edm_metadata_form(
                         val,
                         field_name,
                         selenium,
-                        num_to_ordinal[i],
+                        num_to_ordinal(i),
                         numerals,
                     )
             else:
@@ -504,9 +503,7 @@ def fill_inputs_in_edm_metadata_form(
         " are like the following:\n{config}"
     )
 )
-def assert_properties_in_edm_metadata_form(
-    selenium, browser_id, config, numerals, num_to_ordinal
-):
+def assert_properties_in_edm_metadata_form(selenium, browser_id, config, numerals):
     """
     Assert EDM metadata values according to given config.
     Config format given in yaml is the same as in the function:
@@ -528,7 +525,7 @@ def assert_properties_in_edm_metadata_form(
                         val,
                         field_name,
                         selenium,
-                        num_to_ordinal[i],
+                        num_to_ordinal(i),
                         numerals,
                     )
             else:
