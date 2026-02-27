@@ -312,8 +312,14 @@ def fill_inputs_in_dublin_core_metadata_form(selenium, browser_id, config):
             - first value
             - second value                  ---> multiple values
     ...
+
     If multiple values are provided for the same metadata field,
     additional input fields are added below within the same section.
+
+    The behavior is the same as in the function `fill_inputs_in_edm_metadata_form`,
+    except that:
+    - There are currently no selectable fields.
+    - There is no special field like "Material".
     """
     option = "private"
     tab_name = "Expose as Public Data"
