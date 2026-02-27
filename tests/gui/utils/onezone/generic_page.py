@@ -19,7 +19,7 @@ class Element(PageObject):
 
 
 class GenericPageMeta(PageObjectMeta, ABCMeta):
-    pass
+    pass  # this class is needed to avoid metaclass conflict between PageObjectMeta and ABCMeta
 
 
 class GenericPage(PageObject, metaclass=GenericPageMeta):
