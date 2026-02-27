@@ -23,7 +23,7 @@ class Options(PageObject):
 
 class ArchiveRowMenu(PageObject):
     options = WebItemsSequence(
-        ".over-modals .file-actions.dropdown-menu li:not(.separator)", cls=Options
+        "li:not(.separator)", cls=Options
     )
     cancel_archivisation_elem = WebElement(".file-action-cancel")
     edit_description_elem = WebElement(".file-action-editDescription")
