@@ -11,20 +11,30 @@ from tests.gui.utils.core.web_elements import WebElementsSequence
 
 class PowerSelect(PageObject):
     items = WebElementsSequence(".ember-power-select-option")
+    item_groups = WebElementsSequence(".ember-power-select-group")
 
-    def choose_item(self, property_name):
-        for item in self.items:
-            if item.text.lower() == property_name.lower():
+    def _choose_items(self, property_name, items, str_prefix, require_full_match):
+        prop = property_name.casefold()
+        match_func = (
+            (lambda item: prop == item.text.casefold())
+            if require_full_match
+            else (lambda item: prop in item.text.casefold())
+        )
+
+        for item in items:
+            if match_func(item):
                 item.click()
                 return
-        raise RuntimeError(f"{property_name} not found in popup menu")
 
-    def choose_item_including_name(self, property_name):
-        for item in self.items:
-            if property_name.lower() in item.text.lower():
-                item.click()
-                return
-        raise RuntimeError(f"{property_name} not found in popup menu")
+        raise RuntimeError(f"{str_prefix}{property_name} not found in popup menu")
+
+    def choose_item(self, property_name, require_full_match=True):
+        self._choose_items(property_name, self.items, "", require_full_match)
+
+    def choose_group(self, property_name, require_full_match=False):
+        self._choose_items(
+            property_name, self.item_groups, "item group: ", require_full_match
+        )
 
     def choose_item_with_id(self, property_name):
         separator = CONFLICT_NAME_SEPARATOR

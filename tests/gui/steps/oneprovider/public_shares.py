@@ -213,8 +213,10 @@ def click_button_in_share(selenium, browser_id, button, option):
         getattr(private_share(driver), transform(button))()
 
 
-def check_item_presence_in_dublin_core_metadata(item, data):
+def check_item_presence_in_dublin_core_metadata(driver, item, data):
     for info in data:
+        if info.text == "":
+            driver.execute_script("arguments[0].scrollIntoView();", info)
         if info.text == item:
             break
     else:
@@ -234,7 +236,9 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium):
     dublin_core = public_share(driver).dublin_core_metadata_data
 
     for item in parse_seq(data):
-        check_item_presence_in_dublin_core_metadata(item, dublin_core)
+        check_item_presence_in_dublin_core_metadata(
+            selenium[browser_id], item, dublin_core
+        )
 
 
 @wt(
@@ -244,7 +248,7 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copies_link_in_shares_interface(browser_id, selenium):
+def copy_link_in_shares_interface(browser_id, selenium):
     driver = selenium[browser_id]
     public_share(driver).copy_link()
 
@@ -257,6 +261,6 @@ def copies_link_in_shares_interface(browser_id, selenium):
 )
 def assert_xml_data_in_shares(selenium, browser_id, data):
     driver = selenium[browser_id]
-    xml_data = public_share(driver).xml_data
+    xml_data = public_share(driver).xml_data_dublin_core
     for item in parse_seq(data):
         assert item in xml_data, f"{item} not in XML data on share's public interface"
