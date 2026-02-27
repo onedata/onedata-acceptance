@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-_exceptions = {}
+_exceptions: dict[int, type["HTTPError"]] = {}
 
 
 def raise_http_exception(response):

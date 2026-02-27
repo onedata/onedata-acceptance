@@ -65,7 +65,7 @@ def stop_recording(proc):
 
 
 class RecorderManager:
-    ffmpeg_details = {}
+    ffmpeg_details: dict[str, object] = {}
 
     def __init__(self, request):
         self.request = request

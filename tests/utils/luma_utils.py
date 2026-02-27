@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 from collections import namedtuple
-from typing import Any, Dict, List, Union
+from typing import Any, Callable, Dict, List
 
 from tests import PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPConflict
@@ -26,7 +26,7 @@ def add_user_luma_mapping(
 ) -> None:
 
     for storage_details in storages:
-        mapping = {
+        mapping: Dict[str, Dict[str, object]] = {
             "onedataUser": {
                 "mappingScheme": "onedataUser",
                 "onedataUserId": user.user_id,
@@ -140,12 +140,15 @@ def get_providers_ips(hosts: Dict[str, Any]) -> List[str]:
     return providers_ips
 
 
+HttpMethod = Callable[..., Any]  # in this case http_post or http_put
+
+
 def add_mapping(
     admin_user: AdminUser,
     provider_ip: str,
     storage_id: str,
-    mapping: Dict[str, Union[Dict[str, str], int]],
-    method: Union[http_post, http_put],
+    mapping: Dict[str, Dict[str, object]],
+    method: HttpMethod,
     path_suffix: str,
 ) -> None:
 

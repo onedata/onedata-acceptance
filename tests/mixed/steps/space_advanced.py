@@ -43,7 +43,7 @@ def create_n_spaces_with_shares(
     name_prefix = "space"
     host = "oneprovider-1"
     zone_hostname = hosts[zone_host]["hostname"]
-    users_to_add = []
+    users_to_add: list[str] = []
     providers = [{"oneprovider-1": {"storage": "posix", "size": 1000000}}]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
