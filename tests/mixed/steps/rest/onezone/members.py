@@ -134,8 +134,8 @@ def fail_to_set_privileges_using_rest(
 ):
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
-    grant = []
-    revoke = []
+    grant: list[str] = []
+    revoke: list[str] = []
     privileges = yaml.load(config, yaml.Loader)
     translate_privileges(privileges, grant, revoke)
     data = {"grant": grant, "revoke": revoke}
@@ -162,8 +162,8 @@ def assert_privileges_in_space_using_rest(
     user_privileges = space_api.list_user_space_privileges(
         spaces[space_name], users[member_name].user_id
     ).privileges
-    grant = []
-    revoke = []
+    grant: list[str] = []
+    revoke: list[str] = []
     privileges = yaml.load(config, yaml.Loader)
     translate_privileges(privileges, grant, revoke)
     grant.sort()

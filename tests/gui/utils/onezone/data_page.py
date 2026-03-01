@@ -132,10 +132,12 @@ class ProvidersMap(Element):
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
             if name == provider_name:
                 style = prov.get_attribute("style")
-                position = re.search(r"left:\s*(\d+\.*\d*)px", style).group(1)
-                position = float(position)
+                match = re.search(r"left:\s*(\d+\.*\d*)px", style)
+                if match is None:
+                    raise ValueError(f"Cannot parse left position from style: {style}")
+                position = match.group(1)
 
-                return position
+                return float(position)
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 

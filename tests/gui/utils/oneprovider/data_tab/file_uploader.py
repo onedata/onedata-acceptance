@@ -26,9 +26,14 @@ class ProgressBar(PageObject):
     _progress_container = WebElement(".progress-bar")
 
     @property
-    def progress_bar(self):
+    def progress_bar(self) -> str:
         style = self._progress_container.get_attribute("style")
-        return re.search(r"width:\s*(\d+?%)", style).group(1)
+        match = re.search(r"width:\s*(\d+?%)", style)
+
+        if match is None:
+            raise ValueError(f"Cannot parse progress bar width from style: {style}")
+
+        return match.group(1)
 
 
 class FileUploader(PageObject):

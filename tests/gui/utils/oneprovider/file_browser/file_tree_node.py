@@ -12,7 +12,7 @@ class Node:
         self.nodes = []
         self.parent = None
         self.name = name
-        self.path = None
+        self.path: str = ""
         self.content = None
 
     def set_parent(self, parent):

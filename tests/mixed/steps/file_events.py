@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import asyncio
 import time
 from enum import Enum
+from typing import Any, Coroutine
 
 import yaml
 
@@ -237,6 +238,7 @@ def get_file_action_in_observed_directory(
     tmp_memory, async_loop_in_thread, file_action
 ):
     monitor: SpaceFilesMonitorClientImpl = tmp_memory["monitor"]
+    coroutine: Coroutine[Any, Any, Any]
     if file_action == ObservedFileAction.CREATION:
         coroutine = monitor.created_file_ids.get()
     elif file_action == ObservedFileAction.DELETION:

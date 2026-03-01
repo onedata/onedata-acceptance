@@ -11,7 +11,9 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
+from typing import List
 
+import pytest
 from pytest import fixture, hookimpl, skip
 from selenium import webdriver
 
@@ -84,11 +86,11 @@ def pytest_runtest_makereport(item):
 
 
 def pytest_collection_modifyitems(items):
-    first = []
-    second = []
-    second_to_last = []
-    last = []
-    rest = []
+    first: List[pytest.Item] = []
+    second: List[pytest.Item] = []
+    second_to_last: List[pytest.Item] = []
+    last: List[pytest.Item] = []
+    rest: List[pytest.Item] = []
 
     run_first = ("test_cluster_deployment",)
     run_second = ("test_support_space", "test_revoke_space_support")
@@ -257,7 +259,7 @@ def clipboard():
     from collections import namedtuple
     from platform import system as get_system
 
-    cls = namedtuple("Clipboard", ["copy", "paste"])
+    Clipboard = namedtuple("Clipboard", ["copy", "paste"])
 
     def copy(text, display):
         if get_system() == "Darwin":
@@ -276,7 +278,7 @@ def clipboard():
             stdout, _ = p.communicate()
         return stdout.decode("utf-8")
 
-    return cls(copy, paste)
+    return Clipboard(copy, paste)
 
 
 @fixture(scope="session")

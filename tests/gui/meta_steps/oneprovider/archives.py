@@ -550,11 +550,9 @@ def recalled_archive_details_in_op_gui(
                     "and is not lower or equal to expected value: "
                     f"{expected_value} "
                 )
-                value = int(re.sub(characters, "", value).split("/")[0])
-                expected_value = int(
-                    re.sub(characters, "", expected_value).split("<=")[-1]
-                )
-                assert value <= expected_value, err_msg
+                value = re.sub(characters, "", value).split("/")[0]
+                expected_value = re.sub(characters, "", expected_value).split("<=")[-1]
+                assert int(value) <= int(expected_value), err_msg
             else:
                 assert value == expected_value, err_msg
 

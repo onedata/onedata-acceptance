@@ -847,7 +847,8 @@ def assert_file_exists_on_storage(path, container, provider, hosts):
     filename = os.path.basename(path)
     dir_path = os.path.dirname(path)
     cmd = ["sh", "-c", f"ls {dir_path}"]
-    ls_res = sp.check_output(cmd_exec(pod_name, cmd, container=container))
+    ls_res_bytes = sp.check_output(cmd_exec(pod_name, cmd, container=container))
+    ls_res = ls_res_bytes.decode()  # decode bytes to string
     listed_files = [file_name for file_name in ls_res.split("\n") if file_name]
     assert (
         filename in listed_files
@@ -865,8 +866,20 @@ def assert_file_stats_on_storage(path, container, provider, hosts, uid, gid):
     pod_name = hosts[provider]["pod-name"]
     cmd = ["sh", "-c", f"stat {path}"]
     file_stat = sp.check_output(cmd_exec(pod_name, cmd, container=container))
-    stat_uid = re.search(r"Uid:\s*\((\d+).*\)", file_stat).group(1)
-    stat_gid = re.search(r"Gid:\s*\((\d+).*\)", file_stat).group(1)
+    file_stat_str = file_stat.decode("utf-8")
+
+    stat_uid_match = re.search(r"Uid:\s*\((\d+).*\)", file_stat_str)
+    stat_gid_match = re.search(r"Gid:\s*\((\d+).*\)", file_stat_str)
+
+    assert (
+        stat_uid_match is not None
+    ), f"Cannot parse UID from stat output: {file_stat_str}"
+    assert (
+        stat_gid_match is not None
+    ), f"Cannot parse GID from stat output: {file_stat_str}"
+
+    stat_uid = stat_uid_match.group(1)
+    stat_gid = stat_gid_match.group(1)
     assert (
         uid == stat_uid
     ), f"Expected owner's UID of file {path} to be {uid}, but found {stat_uid}"

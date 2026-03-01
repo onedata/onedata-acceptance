@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from functools import partial
+from typing import Any
 
 from tests.upgrade.utils.rest_utils import (
     delete_file_extended_attributes,
@@ -35,7 +36,11 @@ RDF_META = (
     " <si:author>Jan Egil Refsnes</si:author>\n</rdf:Description>\n\n</rdf:RDF>"
 )
 
-XATTRS_META = [{"licence1": "MIT1"}, {"licence2": 2}, {"licence3": "MIT3"}]
+XATTRS_META: list[dict[str, Any]] = [
+    {"licence1": "MIT1"},
+    {"licence2": 2},
+    {"licence3": "MIT3"},
+]
 
 
 def get_tests(tests_controller):
@@ -76,7 +81,7 @@ def verify_metadata(tests_controller):
     res = get_file_extended_attributes(provider_host, token, file_id)
     formatted_res = [{k: v} for k, v in sorted(res.json().items())]
 
-    expected_xattrs_meta = XATTRS_META.copy()
+    expected_xattrs_meta: list[dict[str, Any]] = XATTRS_META.copy()
     if not is_version_lower_than(tests_controller.initial_prov_version, "26.0"):
         expected_xattrs_meta[1] = {"license2": "2"}
 
@@ -85,7 +90,7 @@ def verify_metadata(tests_controller):
     )
 
     for xattr_meta in expected_xattrs_meta:
-        (key,) = (xattr_meta.keys(),)
+        key = next(iter(xattr_meta.keys()))
         res = get_file_extended_attributes(provider_host, token, file_id, attribute=key)
         assert res.json() == xattr_meta, err_msg.format(xattr_meta, res.json())
 

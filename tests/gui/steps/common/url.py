@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Union
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
@@ -31,6 +32,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
         if host == "emergency interface of Onepanel":
             host = "oneprovider-1 provider panel"
         host = host.lower().split()
+        node_number: Union[int, str]
 
         if "node" in host[0]:
             node_number = int(host[0][-1:])
@@ -69,7 +71,10 @@ def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_being_redirected_to_page(page, selenium, browser_id):
     driver = selenium[browser_id]
-    curr_page = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url).group(2)
+    match = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url)
+    if match is None:
+        raise ValueError(f"Cannot parse current URL: {driver.current_url}")
+    curr_page = match.group(2)
     assert (
         curr_page == page
     ), f"currently on {curr_page} page instead of expected {page}"

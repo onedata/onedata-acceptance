@@ -198,4 +198,4 @@ static-analysis:
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
 
 type-check:
-	$(docker_run) mypy $(FILES_TO_TYPE_CHECK) --config-file=tests/configs/.pyproject.toml
+	$(docker_run) mypy $(FILES_TO_TYPE_CHECK) --config-file=tests/configs/.pyproject.toml --check-untyped-defs
