@@ -129,3 +129,19 @@ def get_lambda_dump(lambda_name):
     ) as f:
         data = json.load(f)
     return data
+
+
+def num_to_ordinal(n):
+    return {
+        -1: "last",
+        0: "first",
+        1: "second",
+        2: "third",
+        3: "fourth",
+        4: "fifth",
+        5: "sixth",
+        6: "seventh",
+        7: "eighth",
+        8: "ninth",
+        9: "tenth",
+    }.get(n, f"{n}th")
