@@ -18,7 +18,7 @@ Feature: Storage modification
     And user of browser clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of browser confirms committed changes in modal "Modify Storage"
 
-    And user of browser sees that error modal with text "File read/write test has failed" appeared
+    And user of browser sees that error modal with text "File read/write test failed" appeared
     And user of browser closes "error" modal
 
     And user of browser expands "<storage_name>" record on storages list in storages page in Onepanel
