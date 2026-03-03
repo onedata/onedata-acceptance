@@ -167,6 +167,7 @@ def select_member_from_dropdown(selenium, browser_id, member_name):
 def click_create_token_button_in_create_token_page(selenium, browser_id):
     driver = selenium[browser_id]
     # prevent clicking when there is ongoing animation
+    time.sleep(0.1)
     create_token_button = OZLoggedIn(driver)["tokens"].create_token_page.create_token
     create_token_button.click()
     # ensure clicking at create token succeeded
