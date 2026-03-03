@@ -122,6 +122,15 @@ def wait_for_item_to_appear(item):
     raise RuntimeError(f"item {item} did not appear")
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wait_for_item_to_disappear(item):
+    try:
+        item.is_displayed()
+        raise AssertionError("Element is visible")
+    except StaleElementReferenceException:
+        pass
+
+
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
 def wait_for_file_with_unknown_name_to_download(n_files_before_download, dir_path):
     # wait for a file to download, we don`t know the name of the file

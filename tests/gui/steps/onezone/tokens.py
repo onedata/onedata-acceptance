@@ -11,6 +11,7 @@ import time
 from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -162,10 +163,14 @@ def select_member_from_dropdown(selenium, browser_id, member_name):
         'in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND * 2)
 def click_create_token_button_in_create_token_page(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["tokens"].create_token_page.create_token()
+    # prevent clicking when there is ongoing animation
+    create_token_button = OZLoggedIn(driver)["tokens"].create_token_page.create_token
+    create_token_button.click()
+    # ensure clicking at create token succeeded
+    wait_for_item_to_disappear(create_token_button)
 
 
 @wt(
