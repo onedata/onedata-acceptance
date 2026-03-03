@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from functools import partial
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Button, Label, WebElement, WebItem
+from tests.gui.utils.core.web_elements import Button, Label, WebElement, WebItem, WebItemsSequence
 
 from ..browser import Browser
 from .data_row import DataRow
@@ -19,7 +19,7 @@ class ArchiveColumnHeader(PageObject):
 
 class _ArchiveBrowser(Browser):
     row_cls = DataRow
-    column_header_cls = ArchiveColumnHeader
+    column_headers = WebItemsSequence(".archive-table-head-row .fb-table-secondary-col", cls=ArchiveColumnHeader)
 
     create_archive = Button(".hidden-xs .toolbar-buttons .oneicon-browser-archive-add")
     create_archive_elem = WebElement(
