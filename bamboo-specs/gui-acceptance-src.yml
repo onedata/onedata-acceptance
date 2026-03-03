@@ -62,6 +62,7 @@ stages:
         - _Codetag Tracker
         - _Autoformatter check
         - _Static analysis
+        - _Type_check
         - Atm examples workflows 1
         - Atm examples workflows 2
         - Atm pods
@@ -274,6 +275,18 @@ _Static analysis:
         scripts:
           - make static-analysis
         description: Static analysis
+
+_Type_check:
+  key: TCH
+  other: *common-opts
+  tasks:
+    - checkout: *checkout-default-repository
+    - script:
+        <<: *run-script-working-dir
+        scripts:
+          - make type-check
+        description: Type checker
+
 
 Atm examples workflows 1: &acceptance-tests-in-chrome-job
   key: COAWEX
