@@ -15,10 +15,8 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebItem,
     WebItemsSequence,
 )
-from tests.mixed.onezone_client.models import name
 
 
 class PrivilegeRow(PageObject):

@@ -17,17 +17,14 @@ def config_file(relative_file_path):
     example: using test_utils.config_file('my_file') in my_test.py will return
     'tests/my_test_data/my_file'
     """
-    frame = inspect.currentframe()
-    assert frame is not None
-    caller_frame = frame.f_back
-    assert caller_frame is not None
-
-    module = inspect.getmodule(caller_frame)
-    if module is None or module.__file__ is None:
-        raise RuntimeError("Cannot determine caller module file path")
-
-    base = module.__file__.rstrip(".py")
-    return f"{base}_data/{relative_file_path}"
+    caller = inspect.stack()[1]
+    caller_mod = inspect.getmodule(caller[0])
+    if caller_mod is None:
+        raise RuntimeError("Unable to determine caller module")
+    caller_mod_file_path = caller_mod.__file__
+    if caller_mod_file_path is None:
+        raise RuntimeError(f"Module {caller_mod.__name__} has no __file__ attribute")
+    return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
 
 
 def get_file_name(file_path):

@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from functools import partial
-from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebItem, WebItemsSequence
@@ -40,8 +39,8 @@ class _Breadcrumbs(PageObject):
             ), f"specified path {path} exceeded one displayed in breadcrumbs {self}"
 
             i = None
-            dir1: Any = None
-            dir2: Any = None
+            dir1 = None
+            dir2 = None
             err_msg = "{dir} not found on {idx}th position in {item}"
             if archive:
                 breadcrumbs = [elem for i, elem in enumerate(breadcrumbs) if i != 1]
@@ -65,6 +64,7 @@ class _Breadcrumbs(PageObject):
                     if i == 0:
                         continue
                     assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+                assert dir2 is not None
                 dir2.click()
 
     def go_one_back(self):

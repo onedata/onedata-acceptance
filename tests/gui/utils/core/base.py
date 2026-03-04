@@ -1,10 +1,10 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
+from typing import Any
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.utils.core.web_elements import WebElement
 from tests.gui.utils.generic import click_on_web_elem
 
 __author__ = "Bartosz Walkowicz"
@@ -89,7 +89,7 @@ class PageObject(AbstractPageObject):
 
 class ExpandableMixin:
     __slots__ = ()
-    _toggle: WebElement
+    _toggle: Any  # WebElement, but avoided to prevent circular import
     driver: WebDriver
 
     def is_expanded(self):
