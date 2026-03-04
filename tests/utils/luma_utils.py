@@ -15,6 +15,8 @@ from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.rest_utils import get_panel_rest_path, http_get, http_post, http_put
 from tests.utils.user_utils import AdminUser, User
 
+HttpMethod = Callable[..., Any]  # http_post or http_put
+
 SpaceDetails = namedtuple(
     "SpaceDetails", ["space_id", "provider_ip", "space_name", "storage_id"]
 )
@@ -138,9 +140,6 @@ def get_providers_ips(hosts: Dict[str, Any]) -> List[str]:
         ):
             providers_ips.append(service["ip"])
     return providers_ips
-
-
-HttpMethod = Callable[..., Any]  # in this case http_post or http_put
 
 
 def add_mapping(
