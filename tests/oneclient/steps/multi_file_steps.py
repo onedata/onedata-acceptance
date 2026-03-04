@@ -848,7 +848,7 @@ def assert_file_exists_on_storage(path, container, provider, hosts):
     dir_path = os.path.dirname(path)
     cmd = ["sh", "-c", f"ls {dir_path}"]
     ls_res_bytes = sp.check_output(cmd_exec(pod_name, cmd, container=container))
-    ls_res = ls_res_bytes.decode()  # decode bytes to string
+    ls_res = ls_res_bytes.decode("utf-8")
     listed_files = [file_name for file_name in ls_res.split("\n") if file_name]
     assert (
         filename in listed_files
