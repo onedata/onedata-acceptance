@@ -26,3 +26,4 @@ known_first_party = ["tests", "bamboos"]
 follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false
+check_untyped_defs = true
