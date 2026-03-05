@@ -5,15 +5,16 @@ in oneprovider web GUI.
 __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
+from typing import Any, List, Optional
 
 
 class Node:
-    def __init__(self, name):
-        self.nodes = []
-        self.parent = None
-        self.name = name
+    def __init__(self, name: str):
+        self.nodes: List[Node] = []
+        self.parent: Optional[Node] = None
+        self.name: str = name
         self.path: str = ""
-        self.content = None
+        self.content: Any = None
 
     def set_parent(self, parent):
         self.parent = parent
