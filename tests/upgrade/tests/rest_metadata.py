@@ -90,7 +90,7 @@ def verify_metadata(tests_controller):
     )
 
     for xattr_meta in expected_xattrs_meta:
-        key = next(iter(xattr_meta.keys()))
+        key = list(xattr_meta.keys())[0]
         res = get_file_extended_attributes(provider_host, token, file_id, attribute=key)
         assert res.json() == xattr_meta, err_msg.format(xattr_meta, res.json())
 
