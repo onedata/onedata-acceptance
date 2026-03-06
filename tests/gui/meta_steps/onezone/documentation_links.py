@@ -9,11 +9,16 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.common.by import By
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import title_contains
 from tests.gui.utils import Modals, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+# The docs timeout needs to be higher than the standard WAIT_FRONTEND,
+# because opening the docs page is a resource-consuming operation.
+# Additionally, waiting for the headers to expand or for the desired section
+# to become active also takes some time.
+DEFAULT_DOCS_TIMEOUT = 30
 
 
 @wt(
@@ -22,7 +27,7 @@ from tests.utils.utils import repeat_failed
         " documentation page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND * 4)
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_section_in_docks(selenium, browser_id, link):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
@@ -41,7 +46,7 @@ def assert_active_section_in_docks(selenium, browser_id, link):
         " documentation page"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND * 4)
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_expanded_heading_in_docks(selenium, browser_id, heading):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
@@ -54,7 +59,7 @@ def assert_expanded_heading_in_docks(selenium, browser_id, heading):
     raise AssertionError(f"sidebar link {heading} not found")
 
 
-@repeat_failed(timeout=WAIT_FRONTEND * 6)
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_section_in_api_docks(selenium, browser_id, label):
     driver = selenium[browser_id]
     iframes = driver.find_elements(By.TAG_NAME, "iframe")
