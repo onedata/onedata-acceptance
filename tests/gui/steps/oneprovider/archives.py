@@ -100,14 +100,15 @@ def assert_archive_partial_state_status(item_status, expected_status):
     parsers.parse(
         "user of {browser_id} clicks and presses enter on "
         'archive with description: "{description}" on '
-        "archives list in {which_browser}"
+        "archives list in {which_browser:WhichBrowser}",
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_on_archive(
     browser_id, tmp_memory, description, which_browser
 ):
-    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser = tmp_memory[browser_id][transform(which_browser.value)]
     archive = get_archive_with_description(browser, description)
     # clicking on the background of browser to ensure correct
     # working of click_and enter
