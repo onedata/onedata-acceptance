@@ -104,11 +104,19 @@ def assert_archive_partial_state_status(item_status, expected_status):
         extra_types={"WhichBrowser": WhichBrowser},
     )
 )
+def wt_click_and_press_enter_on_archive(
+    browser_id, tmp_memory, description, which_browser
+):
+    click_and_press_enter_on_archive(
+        browser_id, tmp_memory, description, which_browser.value
+    )
+
+
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_on_archive(
     browser_id, tmp_memory, description, which_browser
 ):
-    browser = tmp_memory[browser_id][transform(which_browser.value)]
+    browser = tmp_memory[browser_id][transform(which_browser)]
     archive = get_archive_with_description(browser, description)
     # clicking on the background of browser to ensure correct
     # working of click_and enter
