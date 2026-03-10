@@ -22,9 +22,7 @@ class Options(PageObject):
 
 
 class ArchiveRowMenu(PageObject):
-    options = WebItemsSequence(
-        "li:not(.separator)", cls=Options
-    )
+    options = WebItemsSequence("li:not(.separator)", cls=Options)
     cancel_archivisation_elem = WebElement(".file-action-cancel")
     edit_description_elem = WebElement(".file-action-editDescription")
     delete_archive_elem = WebElement(".file-action-delete")
