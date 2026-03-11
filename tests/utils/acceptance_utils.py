@@ -40,14 +40,21 @@ def execute_command(cmd, error=None, should_fail=False):
     ) as process:
         output, err = process.communicate()
         proc_returncode = process.returncode
+        err_str = err.decode() if isinstance(err, bytes) else err
+        out_str = output.decode() if isinstance(output, bytes) else output
+
     if (proc_returncode != 0) ^ should_fail:
         raise RuntimeError(
-            f"{error}: {err}; {output}"
+            f"{error}: {err_str}; {out_str}"
             if error
             else (
-                f"Command did not fail: {' '.join(cmd)}, Err: {err}, Output: {output}"
+                f"Command did not fail: {' '.join(cmd)}, Err: {err_str}, Output:"
+                f" {out_str}"
                 if should_fail
-                else f'Error when executing command "{' '.join(cmd)}": {err}; {output}'
+                else (
+                    f'Error when executing command "{" ".join(cmd)}": {err_str};'
+                    f" {out_str}"
+                )
             )
         )
     return output
@@ -129,3 +136,19 @@ def get_lambda_dump(lambda_name):
     ) as f:
         data = json.load(f)
     return data
+
+
+def num_to_ordinal(n):
+    return {
+        -1: "last",
+        0: "first",
+        1: "second",
+        2: "third",
+        3: "fourth",
+        4: "fifth",
+        5: "sixth",
+        6: "seventh",
+        7: "eighth",
+        8: "ninth",
+        9: "tenth",
+    }.get(n, f"{n}th")

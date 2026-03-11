@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import itertools
 import sys
 import time
+from typing import Any
 
 import pytest
 
@@ -128,7 +129,7 @@ def performance(default_config, configs):
 class Report:
     def __init__(self, name):
         self.name = name
-        self.report = {name: {}}
+        self.report: dict[str, Any] = {name: {}}
 
     def add_to_report(self, key, value):
         if isinstance(value, Report):
@@ -290,7 +291,7 @@ def generate_configs(params, description_skeleton):
     {"param_name": [val1, val2, val3]}
     """
     keys = params.keys()
-    configs = {}
+    configs: dict[str, Any] = {}
     combinations = itertools.product(*params.values())
 
     for i, combination in enumerate(combinations):

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import tarfile
 import time
 from datetime import datetime
+from typing import Any
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -557,7 +558,7 @@ def assert_property_in_symlink_dets_modal(
 def assert_contents_downloaded_tar_file(
     browser_id, contents, tmpdir, clipboard, displays, name
 ):
-    configured_dir_contents = {}
+    configured_dir_contents: dict[Any, Any] = {}
     if name == "archive":
         name = f"archive_{clipboard.paste(display=displays[browser_id])}.tar"
         contents = contents.replace("archive", name.split(".", maxsplit=1)[0])

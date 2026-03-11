@@ -625,8 +625,8 @@ def click_icon_in_share_directory_modal(selenium, browser_id, owner_name, icon_n
 )
 @repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text):
-    message = f'Modal does not contain text "{text}"'
     modal_text = Modals(selenium[browser_id]).error.content.lower()
+    message = f'Modal does not contain text "{text}".\nVisible message: "{modal_text}"'
     assert text.lower().replace("\\", "") in modal_text, message
 
 

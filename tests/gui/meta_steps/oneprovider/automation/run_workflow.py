@@ -11,6 +11,7 @@ import time
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -102,10 +103,15 @@ def choose_file_as_initial_workflow_value_for_store(
 def choose_group_as_initial_workflow_value_for_store(
     selenium, browser_id, group_list, store_name
 ):
-
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     open_select_initial_groups_modal(selenium, browser_id, store_name)
+    # Modal can be opened but groups might not be loaded yet
+    _select_groups_from_select_groups_modal(driver, group_list)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _select_groups_from_select_groups_modal(driver, group_list):
     Modals(driver).select_groups.select(group_list)
 
 

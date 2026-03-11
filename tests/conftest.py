@@ -267,6 +267,8 @@ def test_config(request):
 def entities_config(request, env_desc):
     file_name = env_desc.get("entities_config")
     config_dir_path = ENTITIES_CONFIG_DIR.get(get_test_type(request))
+    if config_dir_path is None:
+        raise ValueError(f"No config directory for test type {get_test_type(request)}")
     config_path = os.path.join(config_dir_path, file_name)
     with open(config_path) as config_file:
         return yaml.load(config_file, yaml.Loader)
@@ -513,7 +515,7 @@ _movies = set()
 
 def get_log_dir_path(request, env_description_abs_path=None, logdir_prefix=""):
     test_type = get_test_type(request)
-    logdir_path = LOGDIRS.get(test_type)
+    logdir_path = LOGDIRS[test_type]
 
     if test_type in ["oneclient", "upgrade"]:
         try:
@@ -526,7 +528,9 @@ def get_log_dir_path(request, env_description_abs_path=None, logdir_prefix=""):
         logdir_path = make_logdir(logdir_path, test_path)
     else:
         timestamped_logdirs = os.listdir(logdir_path)
-        latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
+        latest_logdir = max(timestamped_logdirs, key=extract_timestamp, default=None)
+        if latest_logdir is None:
+            raise ValueError("No log directories found")
         logdir_path = os.path.join(logdir_path, latest_logdir)
 
     if logdir_prefix:
@@ -560,8 +564,8 @@ def pytest_runtest_makereport(item, call):
         drivers.pop("request")
     except KeyError:
         pass
-    summary = []
-    extras = []
+    summary: list[str] = []
+    extras: list[str] = []
     xfail = hasattr(report, "wasxfail")
     failure = (report.skipped and xfail) or (report.failed and not xfail)
     when = item.config.getini("selenium_capture_debug").lower()
@@ -768,7 +772,7 @@ def start_test_env(
     elif test_type in ["onedata_fs", "performance", "upgrade"]:
         scenario_path = scenario_abs_path
         patch = env_desc.get("patch")
-        patch_dir_path = PATCHES_DIR.get(get_test_type(request))
+        patch_dir_path = PATCHES_DIR[get_test_type(request)]
         patch_path = os.path.join(patch_dir_path, patch)
 
     result = start_environment(
@@ -840,7 +844,7 @@ def maybe_start_env(
 @pytest.fixture(scope="session")
 def scenario_abs_path(request, env_desc):
     scenario = env_desc.get("scenario")
-    scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
+    scenarios_dir_path = SCENARIO_DIRS[get_test_type(request)]
     return os.path.abspath(os.path.join(scenarios_dir_path, scenario))
 
 

@@ -78,7 +78,7 @@ def client_alias_to_pod_mapping():
 
     i = 1
     for prov_alias in sorted(list(prov_clients_mapping.keys())):
-        client_pods = sorted(prov_clients_mapping.get(prov_alias), key=get_name)
+        client_pods = sorted(prov_clients_mapping[prov_alias], key=get_name)
         for pod in client_pods:
             key = f"oneclient-{i}"
             client_alias_mapping[key] = get_name(pod)

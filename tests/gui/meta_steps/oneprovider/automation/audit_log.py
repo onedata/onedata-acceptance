@@ -11,6 +11,7 @@ import os
 import time
 from ast import literal_eval
 from datetime import date
+from typing import Any, Dict, List
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -859,7 +860,7 @@ def compare_content_of_task_audit_log(
     actual_details = actual_content.get("details", False)
     details = content.get("details", False)
     reason = details.get("reason", False) if details else False
-    item = details.get("item", False) if details else False
+    item: Any = details.get("item", False) if details else False
 
     for label in expected_identical:
         compare_to_expected_if_elem_exist_audit_log(
@@ -1229,10 +1230,10 @@ def assert_no_debug_entry_in_workflow_audit_log(
 ):
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
-        data_file = json.load(f)
+        data_file: List[Dict[str, Any]] = json.load(f)
         err_msg = "workflow audit log contains debug entry"
         assert not any(
-            filter(lambda x: x.get("severity", None) == "debug", data_file)
+            entry.get("severity", "") == "debug" for entry in data_file
         ), err_msg
 
 

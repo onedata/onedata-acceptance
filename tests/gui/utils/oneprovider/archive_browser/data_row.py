@@ -20,8 +20,11 @@ class ArchiveState(PageObject):
     def get_state_name(self):
         return self.state_type.lower()
 
-    def get_files_count(self):
-        return int(re.match(r".*(\d+) file.*", self.state_details).group(1))
+    def get_files_count(self) -> int:
+        match = re.match(r".*(\d+) file.*", self.state_details)
+        if match is None:
+            raise ValueError(f"Cannot parse file count from: {self.state_details}")
+        return int(match.group(1))
 
     def get_size(self):
         return self.state_details.split(",")[-1].strip()

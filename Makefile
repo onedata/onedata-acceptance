@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v11"
 UID := $(shell id -u)
 GID := $(shell id -g)
 
@@ -175,6 +175,7 @@ ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__in
 ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
 FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
+FILES_TO_TYPE_CHECK := $(ALL_FILES) $(ALL_CONFTEST_FILES)
 
 
 format:
@@ -195,3 +196,6 @@ static-analysis:
 	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
 	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
+
+type-check:
+	$(docker_run) mypy $(FILES_TO_TYPE_CHECK) --config-file=tests/configs/.pyproject.toml

@@ -10,7 +10,7 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Final, NoReturn
+from typing import Any, Final
 
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
@@ -88,7 +88,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         # clean up data structures to allow reusing this object after reconnection
         self.clean()
 
-    async def _consume_stream(self, reconnect: bool = False) -> NoReturn:
+    async def _consume_stream(self, reconnect: bool = False) -> None:
         url: str = (
             f"https://{self.oneprovider_authority}/api/v3/oneprovider/spaces/"
             f"{self.space_id}/events/files"
@@ -127,7 +127,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             self.first_event_id = event.last_event_id
 
         try:
-            data: dict = json.loads(data_raw)
+            data: dict[str, Any] = json.loads(data_raw)
         except json.JSONDecodeError:
             print(f"Cannot decode data: {data_raw!r}")
             return
@@ -148,9 +148,9 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         else:
             print(f"Unknown event type={event_type}, data={data}")
 
-    async def _handle_changed_or_created(self, data: dict) -> None:
-        file_id: str = data.get("fileId")
-        parent_file_id: str = data.get("parentFileId")
+    async def _handle_changed_or_created(self, data: dict[str, Any]) -> None:
+        file_id: str = data["fileId"]
+        parent_file_id: str = data["parentFileId"]
         attrs: dict[str, str | int] = data.get("attributes", {})
 
         # If file is deleted ignore
@@ -195,9 +195,9 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
             cached_attrs=cached_attrs,
         )
 
-    async def _handle_deleted(self, data: dict) -> None:
-        file_id: str = data.get("fileId")
-        parent_file_id: str = data.get("parentFileId")
+    async def _handle_deleted(self, data: dict[str, Any]) -> None:
+        file_id: str = data["fileId"]
+        parent_file_id: str = data["parentFileId"]
 
         if file_id in self.deleted_files:
             return

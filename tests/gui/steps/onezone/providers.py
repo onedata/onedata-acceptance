@@ -590,7 +590,8 @@ def wait_for_provider_online(provider, hosts, users):
     user = "admin"
     provider_hostname = hosts[provider]["hostname"]
     start = time.time()
-    exception = ""
+    res: requests.Response | None = None
+    exception: Exception | None = None
 
     while True:
         time.sleep(0.5)

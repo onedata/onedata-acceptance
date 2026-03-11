@@ -17,6 +17,7 @@ import time
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
+from typing import Any
 
 
 def start_recording(
@@ -65,7 +66,7 @@ def stop_recording(proc):
 
 
 class RecorderManager:
-    ffmpeg_details = {}
+    ffmpeg_details: dict[str, Any] = {}
 
     def __init__(self, request):
         self.request = request
