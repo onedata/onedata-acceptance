@@ -40,7 +40,11 @@ def parse_url(url):
 
 
 def go_to_relative_url(selenium, relative_url):
-    new_url = RE_URL.match(selenium.current_url).group("base_url") + relative_url
+    match = RE_URL.match(selenium.current_url)
+    if match is None:
+        raise ValueError(f"Invalid URL: {selenium.current_url}")
+
+    new_url = match.group("base_url") + relative_url
     selenium.get(new_url)
 
 

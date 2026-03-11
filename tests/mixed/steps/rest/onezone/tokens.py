@@ -106,8 +106,8 @@ def _create_token_with_config(
     if caveats:
         parse_token_caveats(caveats, token_config, groups, users, spaces, tmp_memory)
     if privileges:
-        grant = []
-        revoke = []
+        grant: list[str] = []
+        revoke: list[str] = []
         translate_privileges(privileges, grant, revoke)
         grant.sort()
         token_config["privileges"] = grant

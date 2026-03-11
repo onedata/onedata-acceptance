@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 import yaml
 from pytest import skip
@@ -81,7 +82,7 @@ def users_creation(
     host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
 ):
     zone_hostname = hosts[host]["hostname"]
-    users_db = {}
+    users_db: dict[str, Any] = {}
     for user_config in config:
         username, options = _parse_user_info(user_config)
         try:

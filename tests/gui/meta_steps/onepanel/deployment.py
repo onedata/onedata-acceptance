@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import Tuple
 
 import yaml
 
@@ -79,9 +80,17 @@ def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step)
 
 
-def _parse_zone_data(zone_name, zone_domain):
-    zone_from_name = re.match(r"/name of (.+)/", zone_name).group(1)
-    zone_from_domain = re.match(r"/domain of (.+)/", zone_domain).group(1)
+def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
+    match_name = re.match(r"/name of (.+)/", zone_name)
+    if match_name is None:
+        raise ValueError(f"Cannot parse zone name from: {zone_name}")
+    zone_from_name = match_name.group(1)
+
+    match_domain = re.match(r"/domain of (.+)/", zone_domain)
+    if match_domain is None:
+        raise ValueError(f"Cannot parse zone domain from: {zone_domain}")
+    zone_from_domain = match_domain.group(1)
+
     return zone_from_name, zone_from_domain
 
 
@@ -220,9 +229,17 @@ def _setup_step2(selenium, browser_id, hosts, configuration):
     wt_click_on_btn_in_deployment_step(selenium, browser_id, register_button, step)
 
 
-def _parse_provider(provider_name, provider_domain):
-    provider_for_name = re.match(r"/name of (.+)/", provider_name).group(1)
-    provider_for_domain = re.match(r"/domain of (.+)/", provider_domain).group(1)
+def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]:
+    match_name = re.match(r"/name of (.+)/", provider_name)
+    if match_name is None:
+        raise ValueError(f"Cannot parse provider name from: {provider_name}")
+    provider_for_name = match_name.group(1)
+
+    match_domain = re.match(r"/domain of (.+)/", provider_domain)
+    if match_domain is None:
+        raise ValueError(f"Cannot parse provider domain from: {provider_domain}")
+    provider_for_domain = match_domain.group(1)
+
     return provider_for_name, provider_for_domain
 
 

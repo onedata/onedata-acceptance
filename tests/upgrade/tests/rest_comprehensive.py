@@ -308,13 +308,13 @@ def compare_downloaded_dirs_content(path1, path2):
                 os.path.join(path1, file), os.path.join(path2, file)
             )
             comp_report.append(msg)
-    comp_report = "\n".join(comp_report)
+    comp_report_str = "\n".join(comp_report)
     # assert differences in common files
-    assert not comp_res.diff_files, comp_report
+    assert not comp_res.diff_files, comp_report_str
     # assert presence of files existing only in left path
-    assert not comp_res.left_only, comp_report
+    assert not comp_res.left_only, comp_report_str
     # assert presence of files existing only in right path
-    assert not comp_res.right_only, comp_report
+    assert not comp_res.right_only, comp_report_str
     # recursively check common directories
     if any(comp_res.common_dirs):
         for common_dir in comp_res.common_dirs:
@@ -449,10 +449,10 @@ def assert_xmls_equal(e1, e2):
     """
     r1 = ET.fromstring(ET.canonicalize(e1))
     r2 = ET.fromstring(ET.canonicalize(e2))
-    r1 = [el for el in r1]  # pylint: disable=unnecessary-comprehension
-    r2 = [el for el in r2]  # pylint: disable=unnecessary-comprehension
-    r1_sorted = sorted(r1, key=lambda x: (x.tag, x.text, x.attrib))
-    r2_sorted = sorted(r2, key=lambda x: (x.tag, x.text, x.attrib))
+    r1_list = [el for el in r1]  # pylint: disable=unnecessary-comprehension
+    r2_list = [el for el in r2]  # pylint: disable=unnecessary-comprehension
+    r1_sorted = sorted(r1_list, key=lambda x: (x.tag, x.text, x.attrib))
+    r2_sorted = sorted(r2_list, key=lambda x: (x.tag, x.text, x.attrib))
 
     assert len(r1_sorted) == len(r2_sorted), f"Xml: {e1} is not equal to\n{e2}"
     err_msg = f"Xml: {e1} is not equal to\n{e2}\nExpected value: {{}}, but got: {{}}"

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 from datetime import datetime
+from typing import Union
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -73,11 +74,13 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 ):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
-    start_value = None
+    start_value: Union[datetime, int]
     if column_name == "Time":
         start_value = datetime.strptime("1 Dec 9999 1:1:1.1", "%d %b %Y %H:%M:%S.%f")
     elif column_name == "Time taken":
         start_value = 1000000000
+    else:
+        raise ValueError(f"Unknown column: {column_name}")
 
     def condition(last, index=0):
         currents = modal.get_rows_of_column(column_name)[index:]

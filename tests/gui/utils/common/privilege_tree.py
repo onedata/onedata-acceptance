@@ -284,7 +284,7 @@ class PrivilegeTree(PageObject):
         self, selenium, browser_id, group, name, with_scroll=False
     ):
         driver = selenium[browser_id]
-        privilege_row = None
+        privilege_row: PrivilegeGroup | None = None
         # Tolerate loading of privileges table
         privilege_row_try = 0
         while privilege_row is None and privilege_row_try < 10:
@@ -293,6 +293,10 @@ class PrivilegeTree(PageObject):
             except RuntimeError:
                 privilege_row_try += 1
                 time.sleep(1)
+
+        if privilege_row is None:
+            raise RuntimeError(f"Privilege group '{name}' not found after retries")
+
         granted = group["granted"]
         result = True
         if granted == "Partially":

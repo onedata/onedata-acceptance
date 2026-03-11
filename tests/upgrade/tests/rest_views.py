@@ -449,6 +449,7 @@ def create_example_content_in_space(client):
 
 
 def add_example_metadata_to_files_in_space(provider_host, token):
+    xattrs_meta: dict[str, str | int] = {}
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     json_meta = {"coordinates": [5, 10]}
     set_file_json_metadata(provider_host, token, file_id, json_meta)

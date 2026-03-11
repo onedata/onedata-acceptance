@@ -19,7 +19,11 @@ def config_file(relative_file_path):
     """
     caller = inspect.stack()[1]
     caller_mod = inspect.getmodule(caller[0])
+    if caller_mod is None:
+        raise RuntimeError("Unable to determine caller module")
     caller_mod_file_path = caller_mod.__file__
+    if caller_mod_file_path is None:
+        raise RuntimeError(f"Module {caller_mod.__name__} has no __file__ attribute")
     return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
 
 

@@ -650,10 +650,16 @@ def see_released_size_in_cleaning_report(selenium, browser_id, size):
         driver
     ).content.spaces.space.auto_cleaning.cleaning_reports
     for cleaning_report in cleaning_reports:
-        released_size = re.match(
+        match = re.match(
             r"((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)",
             cleaning_report.released_size.text,
-        ).group(1)
+        )
+        if match is None:
+            raise ValueError(
+                f"Cannot parse released size from: {cleaning_report.released_size.text}"
+            )
+        released_size = match.group(1)
+
         if released_size == size:
             return
     err_msg = f"released size: {released_size}  is not expected size: {size}"

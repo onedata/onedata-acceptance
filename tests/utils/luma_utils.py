@@ -8,12 +8,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 from collections import namedtuple
-from typing import Any, Dict, List, Union
+from typing import Any, Callable, Dict, List
 
 from tests import PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.rest_utils import get_panel_rest_path, http_get, http_post, http_put
 from tests.utils.user_utils import AdminUser, User
+
+HttpMethod = Callable[..., Any]  # http_post or http_put
 
 SpaceDetails = namedtuple(
     "SpaceDetails", ["space_id", "provider_ip", "space_name", "storage_id"]
@@ -26,7 +28,7 @@ def add_user_luma_mapping(
 ) -> None:
 
     for storage_details in storages:
-        mapping = {
+        mapping: Dict[str, Dict[str, object]] = {
             "onedataUser": {
                 "mappingScheme": "onedataUser",
                 "onedataUserId": user.user_id,
@@ -144,8 +146,8 @@ def add_mapping(
     admin_user: AdminUser,
     provider_ip: str,
     storage_id: str,
-    mapping: Dict[str, Union[Dict[str, str], int]],
-    method: Union[http_post, http_put],
+    mapping: Dict[str, Dict[str, object]],
+    method: HttpMethod,
     path_suffix: str,
 ) -> None:
 

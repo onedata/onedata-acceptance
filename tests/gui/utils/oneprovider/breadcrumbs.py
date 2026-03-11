@@ -38,7 +38,9 @@ class _Breadcrumbs(PageObject):
                 breadcrumbs
             ), f"specified path {path} exceeded one displayed in breadcrumbs {self}"
 
-            i, dir1, dir2 = None, None, None
+            i = None
+            dir1 = None
+            dir2 = None
             err_msg = "{dir} not found on {idx}th position in {item}"
             if archive:
                 breadcrumbs = [elem for i, elem in enumerate(breadcrumbs) if i != 1]
@@ -62,6 +64,7 @@ class _Breadcrumbs(PageObject):
                     if i == 0:
                         continue
                     assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+                assert dir2 is not None
                 dir2.click()
 
     def go_one_back(self):
