@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import ABC
+from typing import ClassVar, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -24,11 +25,14 @@ from tests.gui.utils.core.web_elements import (
 
 from ..core import scroll_to_css_selector
 from .breadcrumbs import Breadcrumbs
+from .browser_row import BrowserRow
 
 
 class Browser(ABC, PageObject):
-    row_cls = None
-    column_header_cls = None
+    row_cls: ClassVar[Optional[type[BrowserRow]]] = None
+    column_header_cls: ClassVar[Optional[type[PageObject]]] = None
+    data: ClassVar[WebItemsSequence]
+    column_headers: ClassVar[WebItemsSequence]
 
     header = WebElement(".file-browser-head-container")
     browser_msg_header = Label(".content-info-content-container h1")
