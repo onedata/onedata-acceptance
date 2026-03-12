@@ -780,6 +780,23 @@ def click_file_browser_button(browser_id, button, which_browser, tmp_memory):
     getattr(file_browser, f"{transform(button)}_button").click()
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} cannot click "{button}" button from {which_browser}'
+        " menu bar"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def fail_to_click_file_browser_button(browser_id, button, which_browser, tmp_memory):
+    file_browser = tmp_memory[browser_id][transform(which_browser)]
+    button = getattr(file_browser, f"{transform(button)}_button")
+    try:
+        button.click()
+    except RuntimeError:
+        return
+    raise AssertionError(f"{transform(button)}_button is not supposed to be clickable")
+
+
 def network_throttling_download(driver):
     download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
