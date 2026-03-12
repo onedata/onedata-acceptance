@@ -228,3 +228,13 @@ def click_protection_toggle_in_ancestor_list(
         raise AssertionError(
             f'Cannot check {toggle_type} on "{name}" write protection toggle'
         )
+
+
+@wt(parsers.parse("user of {browser_id} clicks on archives tab in datasets modal"))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_tab_in_dataset_modal(selenium, browser_id):
+    driver = selenium[browser_id]
+    archives_tab = Modals(driver).datasets.archives_tab
+    archives_tab.click()
+    # Ensure archives tab is selected
+    assert "active" in archives_tab.get_attribute("class")

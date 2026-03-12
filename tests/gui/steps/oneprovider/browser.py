@@ -405,7 +405,7 @@ def assert_not_status_tag_for_file_in_browser(
 
 
 def _choose_menu(selenium, browser_id, which_browser):
-    if which_browser == "archive browser":
+    if which_browser in ["archive browser", "dataset archive browser"]:
         return Popups(selenium[browser_id]).archive_row_menu
     if which_browser == "dataset browser":
         return Popups(selenium[browser_id]).dataset_row_menu
