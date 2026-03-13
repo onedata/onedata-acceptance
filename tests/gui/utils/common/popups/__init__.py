@@ -98,7 +98,7 @@ class Popups:
         ".left-bottom .file-actions.dropdown-menu", cls=DataRowMenu
     )
     archive_row_menu = WebItem(
-        ".left-top .webui-popover-inner .file-actions.dropdown-menu",
+        ".in.webui-popover .dropdown-menu",
         cls=ArchiveRowMenu,
     )
     workflow_menu = WebItem(".atm-workflow-execution-actions", cls=WorkflowMenu)

@@ -16,13 +16,19 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def assert_n_items_in_items_list(page, selenium, browser_id, number: int, items_names):
+def assert_n_items_in_items_list(
+    page, selenium, browser_id, number: int, items_names, transform_fun=None
+):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
+    if not transform_fun:
+        transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
         new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [el.text.split("\n")[0] for el in new_items]
+        new_items_names = [
+            transform_fun(el) for el in new_items if transform_fun(el) != ""
+        ]
 
         # if there are at least 1 new item keep scrolling
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)

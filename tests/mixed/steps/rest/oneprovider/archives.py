@@ -76,6 +76,23 @@ def create_archive_in_op_rest(
                 raise OPException from err
 
 
+def create_n_archives_in_op_rest(
+    user, users, hosts, host, space_name, item_name, config, spaces, tmp_memory, number
+):
+    config = yaml.load(config, yaml.Loader)
+    translate_config_for_archive(config, tmp_memory)
+    client = login_to_provider(user, users, hosts[host]["hostname"])
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    archive_api = ArchiveApi(client)
+    data = {"datasetId": dataset_id, "config": config}
+
+    for i in range(number):
+        description = f"archive number {i}"
+        data["description"] = description
+        archive_api.create_archive(data)
+
+
 def assert_archive_in_op_rest(
     user,
     users,

@@ -8,8 +8,10 @@ from ..core.web_elements import WebItem
 from .archive_browser import ArchiveBrowser
 from .archive_container import ArchiveContainer
 from .archive_file_browser import ArchiveFileBrowser
+from .archive_recall_browser import ArchiveRecallBrowser
 from .automation import WorkflowExecutionPage
 from .data_tab import DataTab
+from .dataset_archive_browser import DatasetArchiveBrowser
 from .dataset_browser import DatasetBrowser
 from .file_browser import FileBrowser
 from .provider_configuration import ProviderConfiguration
@@ -31,6 +33,8 @@ class OPLoggedIn:
     archive_container = ArchiveContainer(".archive-browser-container")
     provider_configuration = ProviderConfiguration(".provider-config")
     automation_page = WebItem(".content-space-automation", cls=WorkflowExecutionPage)
+    dataset_archive_browser = DatasetArchiveBrowser(".dataset-archives-browser")
+    archive_recall_browser = ArchiveRecallBrowser(".archive-recall-browser")
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
