@@ -19,7 +19,7 @@ from tests.gui.conftest import (
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq, transform, upload_file_path
+from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
     DOWNLOAD_INACTIVITY_PERIOD_SEC,
@@ -771,7 +771,8 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{button}" button from {which_browser} menu bar'
+        'user of {browser_id} clicks "{button}" button from {which_browser} menu bar',
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -783,7 +784,8 @@ def click_file_browser_button(browser_id, button, which_browser, tmp_memory):
 @wt(
     parsers.parse(
         'user of {browser_id} cannot click "{button}" button from {which_browser}'
-        " menu bar"
+        " menu bar",
+        extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
