@@ -771,26 +771,27 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{button}" button from {which_browser} menu bar',
+        'user of {browser_id} clicks "{button}" button from'
+        " {which_browser:WhichBrowser} menu bar",
         extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_file_browser_button(browser_id, button, which_browser, tmp_memory):
-    file_browser = tmp_memory[browser_id][transform(which_browser)]
+    file_browser = tmp_memory[browser_id][transform(which_browser.value)]
     getattr(file_browser, f"{transform(button)}_button").click()
 
 
 @wt(
     parsers.parse(
-        'user of {browser_id} cannot click "{button}" button from {which_browser}'
-        " menu bar",
+        'user of {browser_id} cannot click "{button}" button from'
+        " {which_browser:WhichBrowser} menu bar",
         extra_types={"WhichBrowser": WhichBrowser},
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def fail_to_click_file_browser_button(browser_id, button, which_browser, tmp_memory):
-    file_browser = tmp_memory[browser_id][transform(which_browser)]
+    file_browser = tmp_memory[browser_id][transform(which_browser.value)]
     button = getattr(file_browser, f"{transform(button)}_button")
     try:
         button.click()
