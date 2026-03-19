@@ -778,7 +778,13 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts):
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_file_browser_button(browser_id, button, which_browser, tmp_memory):
-    file_browser = tmp_memory[browser_id][transform(which_browser.value)]
+    # Accept both raw string and WhichBrowser enum (step parser may not be used)
+    which_browser_str = (
+        which_browser.value
+        if isinstance(which_browser, WhichBrowser)
+        else which_browser
+    )
+    file_browser = tmp_memory[browser_id][transform(which_browser_str)]
     getattr(file_browser, f"{transform(button)}_button").click()
 
 
