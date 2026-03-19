@@ -887,11 +887,10 @@ def _create_link_in_file_browser(
     # TODO VFS-12315 remove sleep in acc tests
     time.sleep(0.5)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    browser = WhichBrowser.FILE_BROWSER
     if path:
-        go_to_path(
-            selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER.value
-        )
-    click_file_browser_button(browser_id, button, "file browser", tmp_memory)
+        go_to_path(selenium, browser_id, tmp_memory, path, browser.value)
+    click_file_browser_button(browser_id, button, browser, tmp_memory)
 
 
 @wt(
