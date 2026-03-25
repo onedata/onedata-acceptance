@@ -89,12 +89,17 @@ def join_to_cluster(selenium, browser_id, displays, clipboard):
         "for {user_name} user in {where} page:\n{config}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_privilege_config_in_cluster(selenium, browser_id, where, user_name, config):
+def change_privilege_config_in_cluster(
+    selenium, browser_id, where, user_name, hosts, config
+):
     member_type = "user"
     list_type = "users"
     option = "sets"
+    cluster = "oneprovider-1"
 
+    wt_click_on_subitem_for_item(
+        selenium, browser_id, "CLUSTERS", "Members", cluster, hosts
+    )
     click_element_in_members_list(selenium, browser_id, user_name, where, list_type)
     see_privileges_for_member(selenium, browser_id, where, member_type, user_name)
     try_setting_privileges_in_members_subpage(

@@ -191,6 +191,7 @@ def check_entries_in_archive_audit_log(browser_id, config, selenium):
     _check_entries_in_archive_audit_log(browser_id, config, selenium)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _check_entries_in_archive_audit_log(browser_id, config, selenium):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log

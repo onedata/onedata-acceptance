@@ -453,11 +453,15 @@ def assert_matching_storage(selenium, browser_id, storages, hosts):
 
     scroll_to_css_selector_bottom(driver, css_sel)
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
-
-    actual = [elem.text for elem in Popups(driver).storages_matching_popover.storages]
-    compare_lists(expected, actual)
+    compare_matching_storages(driver, expected)
     # unclick element
     driver.find_element(By.CSS_SELECTOR, css_sel).click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def compare_matching_storages(driver, expected):
+    actual = [elem.text for elem in Popups(driver).storages_matching_popover.storages]
+    compare_lists(expected, actual)
 
 
 def compare_lists(expected, actual):
@@ -465,7 +469,7 @@ def compare_lists(expected, actual):
         expected
     ), "Expected number of providers does not match actual"
     for val in expected:
-        assert val in actual, f"Expected {val} provider not in actual"
+        assert val in actual, f"Expected {val} provider not in actual {actual}"
 
 
 @wt(

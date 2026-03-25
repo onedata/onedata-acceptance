@@ -204,12 +204,12 @@ def open_received_url_without_waiting(selenium, browser_id, tmp_memory):
     driver.get(url)
 
 
-@wt(parsers.parse("user of {browser_id} copies a first resource {item} from URL"))
+@wt(parsers.parse("user of {browser_id} copies a first resource ID from URL"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
+def cp_part_of_url(selenium, browser_id, displays, clipboard):
     driver = selenium[browser_id]
-    item_value = parse_url(driver.current_url).group(item.lower())
-    assert item_value != "empty", f"did not manage to get {item}"
+    item_value = parse_url(driver.current_url).group("id")
+    assert len(item_value) > 10, f"did not manage to get resource ID, got: {item_value}"
     clipboard.copy(
         item_value,
         display=displays[browser_id],
