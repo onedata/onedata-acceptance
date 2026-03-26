@@ -18,8 +18,8 @@
 	path = bamboos
 	url = ../bamboos.git
 	branch = develop
-[submodule "one_env"]
-	path = one_env
+[submodule "one-env"]
+	path = one-env
 	url = ../one-env.git
     branch = develop
 [submodule "automation-examples"]

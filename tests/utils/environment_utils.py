@@ -57,7 +57,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
             maybe_setup_helm()
-            run_onenv_command("init", cwd=None, onenv_path="one_env/onenv")
+            run_onenv_command("init", cwd=None, onenv_path="one-env/onenv")
             run_onenv_command("up", up_args)
             run_onenv_command("wait", wait_args)
             dep_status = get_deployment_status()

@@ -26,7 +26,7 @@ def run_onenv_command(
     fail_with_error=True,
     sudo=False,
     return_output=True,
-    cwd="one_env",
+    cwd="one-env",
     onenv_path="./onenv",
 ):
     if sudo:

@@ -63,7 +63,7 @@ Where:
 To run tests using sources, you need to place sources for `oneclient`, 
 `onepanel`, `oz_worker`, `op-worker`, `cluster-manager` in one of these 
 directories: 
-* [one_env](../../one_env) directory,
+* [one-env](../../one-env) directory,
 * onedata-acceptance repo root dir,
 * your home directory.
 

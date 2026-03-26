@@ -346,8 +346,8 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
         description: Download artifacts
     - script: &run-selenium-tests
         <<: *run-script-working-dir
