@@ -300,8 +300,8 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml            
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml            
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &build-swaggers
         <<: *run-script-working-dir
@@ -338,7 +338,7 @@ Access tokens: &acceptance-mixed-tests-in-chrome-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
-            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
+            cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/mixed/logs
             mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
             mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
         description: Pack logs

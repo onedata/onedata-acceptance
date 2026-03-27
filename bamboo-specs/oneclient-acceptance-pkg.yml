@@ -361,8 +361,8 @@ authorization: &acceptance-oneclient-tests-job
         <<: *run-script-working-dir
         scripts:
           - |-
-            echo one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-            one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            echo one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+            one-env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
     - script: &run-acceptance-tests
         <<: *run-script-working-dir
@@ -394,7 +394,7 @@ authorization: &acceptance-oneclient-tests-job
         scripts:
           - |-
             cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
-            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+            cp onedata-acceptance/one-env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
             mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
             tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
         description: Pack logs

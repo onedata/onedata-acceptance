@@ -114,7 +114,7 @@ def clean_env(image, script_dir, kube_config_path, minikube_config_path,
         rm=True,
         interactive=True,
         name='onenv-clean',
-        workdir=os.path.join(script_dir, 'one_env'),
+        workdir=os.path.join(script_dir, 'one-env'),
         reflect=reflect,
         network='host',
         image=image,
@@ -303,8 +303,8 @@ sys.exit(ret)
     )
 
     if args.update_etc_hosts:
-        call(['./onenv', 'init'], cwd='one_env')
-        call(['./onenv', 'hosts'], cwd='one_env')
+        call(['./onenv', 'init'], cwd='one-env')
+        call(['./onenv', 'hosts'], cwd='one-env')
 
     if args.local:
         cmd = ['python3', '-m', 'pytest', '-rs', '-s', '-v',
