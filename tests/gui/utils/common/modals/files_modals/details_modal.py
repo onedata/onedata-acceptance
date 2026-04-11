@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -59,6 +60,7 @@ class DirStatsRowPerProvider(PageObject):
     content = Label(".contains-value")
     logical_size = Label(".logical-size-value")
     physical_size = Label(".physical-size-value")
+    virtual_size = Label(".virtual-size-value")
     error_cell = Label(".error-cell")
 
 
@@ -66,6 +68,7 @@ class SizeStatistics(PageObject):
     tab = Button(".nav-link-size")
     charts_title = Label(".section-title")
     chart = WebItemsSequence(".one-time-series-chart-plot", cls=Charts)
+    include_virtual_size_toggle = Toggle(".one-way-toggle.clickable")
     dir_stats_row_per_provider = WebItemsSequence(
         ".size-stats-per-provider-row", cls=DirStatsRowPerProvider
     )

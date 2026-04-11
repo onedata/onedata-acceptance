@@ -879,9 +879,20 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 
 
 @wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "Include virtual size" toggle'
+        " on Size stats modal"
+    )
+)
+def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
+    driver = selenium[browser_id]
+    Modals(driver).details_modal.size_statistics.include_virtual_size_toggle.click()
+
+
+@wt(
     parsers.re(
         "user of (?P<browser_id>.*?) sees that "
-        "(?P<elem_type>physical_size|logical_size) for "
+        "(?P<elem_type>physical_size|logical_size|virtual_size) for "
         '(?P<provider>.*?) is "(?P<expected>.*?)"'
     )
 )

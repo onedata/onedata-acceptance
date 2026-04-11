@@ -37,10 +37,13 @@ Feature: Directories size statistics per providers
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
+    And user of browser clicks on "Include virtual size" toggle on Size stats modal
     Then user of browser sees that logical_size for oneprovider-1 is "60 B"
     And user of browser sees that logical_size for oneprovider-2 is "60 B"
     And user of browser sees that physical_size for oneprovider-1 is "60 B"
     And user of browser sees that physical_size for oneprovider-2 is "0 B"
+    And user of browser sees that virtual_size for oneprovider-1 is "60 B"
+    And user of browser sees that virtual_size for oneprovider-2 is "60 B"
     And user of browser sees that oneprovider-1 content is "3 files, 3 directories"
     And user of browser sees that oneprovider-2 content is "3 files, 3 directories"
 
