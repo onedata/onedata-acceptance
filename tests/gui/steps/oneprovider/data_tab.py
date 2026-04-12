@@ -926,8 +926,9 @@ def check_size_stats_for_provider(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that error message for {provider} is "{message}"'
+    parsers.re(
+        r'user of (?P<browser_id>.+?) sees that error message for '
+        r'"?(?P<provider>.+?)"? is "(?P<message>.+?)"'
     )
 )
 @repeat_failed(WAIT_FRONTEND)

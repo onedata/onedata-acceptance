@@ -57,7 +57,7 @@ Feature: Directories size statistics per providers
     And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "0 B"]
     And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
     And user of browser sees that ["oneprovider-1"] content is ["3 files, 3 directories"]
-    And user of browser sees that error message for ["oneprovider-2"] is ["Directory statistics are disabled."]
+    And user of browser sees that error message for "oneprovider-2" is "Directory statistics are disabled."
 
   Scenario: User sees space's size stats per provider after clicking show statistics button and uploading 40 B file to oneprovider-2
     When user of browser clicks "space1" on the spaces list in the sidebar
