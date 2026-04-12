@@ -962,7 +962,7 @@ def check_error_cell_for_provider(selenium, hosts, browser_id, provider, message
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) sees that "?(?P<provider>.+?)"? content is'
+        r'user of (?P<browser_id>.+?) sees that content for "?(?P<provider>.+?)"? is'
         r' "(?P<content>.+?)"'
     )
 )
@@ -980,7 +980,11 @@ def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     ), f"Provider {provider} content is {provider_content} instead of {content}!"
 
 
-@wt(parsers.parse("user of {browser_id} sees that {providers} contents are {contents}"))
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that content for {providers} is {contents}"
+    )
+)
 def check_content_for_providers(selenium, hosts, browser_id, providers, contents):
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
