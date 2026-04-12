@@ -903,31 +903,46 @@ def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that "
         r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
-        r"(?P<providers>.*?) is (?P<expected_sizes>.*?)"
+        r'(?P<provider>.*?) is "(?P<expected>.*?)"'
     )
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(
-    selenium, hosts, browser_id, elem_type, providers, expected_sizes
+    selenium, hosts, browser_id, elem_type, provider, expected
 ):
     driver = selenium[browser_id]
-    for provider, expected in zip(parse_seq(providers), parse_seq(expected_sizes)):
-        provider_name = hosts[provider]["name"]
-        size = getattr(
-            Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
-                provider_name
-            ],
-            transform(elem_type),
-        )
+    provider_name = hosts[provider]["name"]
+    size = getattr(
+        Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
+            provider_name
+        ],
+        transform(elem_type),
+    )
 
-        assert (
-            size == expected
-        ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
+    assert (
+        size == expected
+    ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
 
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) sees that error message for '
+        r"user of (?P<browser_id>.*?) sees that "
+        r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
+        r"(?P<providers>.*?) is (?P<expected_sizes>.*?)"
+    )
+)
+def check_size_stats_for_multiple_providers(
+    selenium, hosts, browser_id, elem_type, providers, expected_sizes
+):
+    for provider, expected in zip(parse_seq(providers), parse_seq(expected_sizes)):
+        check_size_stats_for_provider(
+            selenium, hosts, browser_id, elem_type, provider, expected
+        )
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) sees that error message for "
         r'"?(?P<provider>.+?)"? is "(?P<message>.+?)"'
     )
 )
@@ -958,6 +973,12 @@ def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     assert (
         provider_content == content
     ), f"Provider {provider} content is {provider_content} instead of {content}!"
+
+
+@wt(parsers.parse("user of {browser_id} sees that {providers} content is {contents}"))
+def check_content_for_providers(selenium, hosts, browser_id, providers, contents):
+    for provider, content in zip(parse_seq(providers), parse_seq(contents)):
+        check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
