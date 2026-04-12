@@ -903,7 +903,7 @@ def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that "
         r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
-        r'(?P<provider>.*?) is "(?P<expected>.*?)"'
+        r'"?(?P<provider>.*?)"? is "(?P<expected>.*?)"'
     )
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
@@ -960,7 +960,12 @@ def check_error_cell_for_provider(selenium, hosts, browser_id, provider, message
     ), f"Error message should be '{message}' for provider {provider_name}!"
 
 
-@wt(parsers.parse('user of {browser_id} sees that {provider} content is "{content}"'))
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.+?) sees that "?(?P<provider>.+?)"? content is'
+        r' "(?P<content>.+?)"'
+    )
+)
 @repeat_failed(WAIT_FRONTEND)
 def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     driver = selenium[browser_id]
@@ -977,7 +982,10 @@ def check_content_for_provider(selenium, hosts, browser_id, provider, content):
 
 @wt(parsers.parse("user of {browser_id} sees that {providers} content is {contents}"))
 def check_content_for_providers(selenium, hosts, browser_id, providers, contents):
-    for provider, content in zip(parse_seq(providers), parse_seq(contents)):
+    contents_list = [
+        content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
+    ]  # removing extra quotes
+    for provider, content in zip(parse_seq(providers), contents_list):
         check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 

@@ -53,10 +53,11 @@ Feature: Directories size statistics per providers
     And user of browser clicks on "oneprovider-1" provider on providers page
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
-    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "0 B"]
-    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that ["oneprovider-1"] content is ["3 files, 3 directories"]
+    And user of browser clicks on "Include virtual size" toggle on Size stats modal
+    Then user of browser sees that logical_size for "oneprovider-1" is "60 B"
+    And user of browser sees that physical_size for "oneprovider-1" is "60 B"
+    And user of browser sees that virtual_size for "oneprovider-1" is "60 B"
+    And user of browser sees that "oneprovider-1" content is "3 files, 3 directories"
     And user of browser sees that error message for "oneprovider-2" is "Directory statistics are disabled."
 
   Scenario: User sees space's size stats per provider after clicking show statistics button and uploading 40 B file to oneprovider-2
@@ -71,8 +72,10 @@ Feature: Directories size statistics per providers
     And user of browser uses upload button from file browser menu bar to upload local file "file4" to remote current dir
     And user of browser changes current working directory to space root using breadcrumbs
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
+    And user of browser clicks on "Include virtual size" toggle on Size stats modal
     Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["100 B", "100 B"]
     And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "40 B"]
+    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["100 B", "100 B"]
     And user of browser sees that ["oneprovider-1", "oneprovider-2"] content is ["4 files, 4 directories", "4 files, 4 directories"]
 
 

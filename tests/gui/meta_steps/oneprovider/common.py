@@ -34,6 +34,7 @@ from tests.gui.steps.oneprovider_common import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -86,6 +87,33 @@ def replicate_file_to_provider(
 
     if result == "replicates":
         click_modal_button(selenium, browser_id, close_button, details_modal)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*)"
+        r" sequentially replicates (?P<names>.*)"
+        r" to providers (?P<providers>.*)"
+    )
+)
+def sequentially_replicate_files_to_providers(
+    selenium,
+    browser_id,
+    names,
+    tmp_memory,
+    providers,
+    hosts,
+):
+    for name, provider in zip(parse_seq(names), parse_seq(providers)):
+        replicate_file_to_provider(
+            selenium,
+            browser_id,
+            name,
+            tmp_memory,
+            provider,
+            hosts,
+            result="replicates",
+        )
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))
