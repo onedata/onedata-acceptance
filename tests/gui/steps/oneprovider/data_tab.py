@@ -980,7 +980,7 @@ def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     ), f"Provider {provider} content is {provider_content} instead of {content}!"
 
 
-@wt(parsers.parse("user of {browser_id} sees that {providers} content is {contents}"))
+@wt(parsers.parse("user of {browser_id} sees that {providers} contents are {contents}"))
 def check_content_for_providers(selenium, hosts, browser_id, providers, contents):
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')

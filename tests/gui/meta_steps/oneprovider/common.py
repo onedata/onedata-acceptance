@@ -92,7 +92,7 @@ def replicate_file_to_provider(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*)"
-        r" sequentially replicates (?P<names>.*)"
+        r" replicates (?P<names>.*)"
         r" to providers (?P<providers>.*)"
     )
 )
