@@ -891,27 +891,28 @@ def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        "(?P<elem_type>physical_size|logical_size|virtual_size) for "
-        '(?P<provider>.*?) is "(?P<expected>.*?)"'
+        r"user of (?P<browser_id>.*?) sees that "
+        r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
+        r"(?P<providers>.*?) is (?P<expected_sizes>.*?)"
     )
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(
-    selenium, hosts, browser_id, elem_type, provider, expected
+    selenium, hosts, browser_id, elem_type, providers, expected_sizes
 ):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]["name"]
-    size = getattr(
-        Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
-            provider_name
-        ],
-        transform(elem_type),
-    )
-
-    assert (
-        size == expected
-    ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
+    for provider, expected in zip(parse_seq(providers), parse_seq(expected_sizes)):
+        provider_name = hosts[provider]["name"]
+        size = getattr(
+            Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
+                provider_name
+            ],
+            transform(elem_type),
+        )
+        
+        assert (
+            size == expected
+        ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
 
 
 @wt(
