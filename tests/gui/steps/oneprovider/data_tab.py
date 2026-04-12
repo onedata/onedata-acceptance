@@ -713,6 +713,16 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id):
     OZLoggedIn(driver)["data"].choose_other_provider()
 
 
+@wt(
+    parsers.parse(
+        'user of {browser_id} changes provider to "{provider}" on file browser page'
+    )
+)
+def change_provider_in_file_browser(selenium, browser_id, provider, hosts):
+    click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
+    choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
+
+
 def check_current_provider_in_space(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -909,7 +919,7 @@ def check_size_stats_for_provider(
             ],
             transform(elem_type),
         )
-        
+
         assert (
             size == expected
         ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
