@@ -10,10 +10,11 @@ from functools import partial
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItem
+from tests.gui.utils.core.web_elements import WebItem, Label
 
 
 class _ProviderConfiguration(PageObject):
+    intro_label = Label(".space-settings-info")
     size_statistics = Toggle(".toggle-field-dir-stats-config")
 
     def __str__(self):
