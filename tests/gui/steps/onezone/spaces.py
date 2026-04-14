@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.common.by import By
 
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
@@ -516,9 +517,14 @@ parsers.parse(
 )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_provider_settings(browser_id, option, selenium):
+def open_provider_option(browser_id, option, selenium):
     driver = selenium[browser_id]
+    last_url = driver.current_url
     Popups(driver).space_provider_details.menu[option]()
+    return Wait(driver, WAIT_FRONTEND).until(
+        lambda _: driver.current_url != last_url,
+        message=f"waiting for url to change. Current url: {driver.current_url}",
+    )
     
 @wt(
     parsers.parse(
