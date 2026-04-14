@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from ..core.web_elements import WebItem
+from ..core.web_elements import WebItem, Label
 from .archive_browser import ArchiveBrowser
 from .archive_container import ArchiveContainer
 from .archive_file_browser import ArchiveFileBrowser
@@ -35,6 +35,7 @@ class OPLoggedIn:
     automation_page = WebItem(".content-space-automation", cls=WorkflowExecutionPage)
     dataset_archive_browser = DatasetArchiveBrowser(".dataset-archives-browser")
     archive_recall_browser = ArchiveRecallBrowser(".archive-recall-browser")
+    current_provider = Label(".provider-info-container.active")
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

@@ -539,6 +539,9 @@ def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium,
     label = OPLoggedIn(driver).provider_configuration.intro_label
     is_name_found = label.rstrip(".").endswith(provider_name)
     assert is_name_found, f'provider "{provider}" not found in intro label'
+    header_label = OPLoggedIn(driver).current_provider
+    assert header_label == provider_name, f'provider "{provider}" not found in header label'
+
 
 
 @wt(
@@ -553,7 +556,6 @@ def read_provider_name_on_provider_browse_files_menu(browser_id, provider, selen
     provider_name = hosts[provider]["name"]
     label = OZLoggedIn(driver)["data"].current_provider
     assert label == provider_name, f'provider "{provider}" not found in intro label'
-
 
 @wt(
     parsers.parse(
