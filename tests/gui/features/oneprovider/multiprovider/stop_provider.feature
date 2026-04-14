@@ -28,12 +28,9 @@ Feature: Operations when current provider stops
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
-    Then user of browser sees that logical_size for oneprovider-1 is "5 B"
-    And user of browser sees that logical_size for oneprovider-2 is "5 B"
-    And user of browser sees that physical_size for oneprovider-1 is "5 B"
-    And user of browser sees that physical_size for oneprovider-2 is "0 B"
-    And user of browser sees that oneprovider-1 content is "1 file, 1 directory"
-    And user of browser sees that oneprovider-2 content is "1 file, 1 directory"
+    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["5 B", "5 B"]
+    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["5 B", "0 B"]
+    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["1 file, 1 directory", "1 file, 1 directory"]
     And provider named oneprovider-2 is stopped
     And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
 
