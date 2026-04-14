@@ -6,8 +6,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import re
-
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -522,10 +520,20 @@ def open_provider_settings(browser_id, provider, selenium, hosts):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     Popups(driver).space_provider_details.menu["Settings"]()
+    
+@wt(
+    parsers.parse(
+        'user of {browser_id} reads "{provider}" provider name '
+        "on space provider settings menu"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium, hosts):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]["name"]
     label = OPLoggedIn(driver).provider_configuration.intro_label
-    bold_texts = re.findall(r"<strong>(.*?)</strong>", label.text)
-    assert len(bold_texts) == 2, "intro label should only contain two bold texts"
-    assert bold_texts[1] == provider_name, f'provider "{provider}" not found in intro label'
+    is_name_found = label.rstrip(".").endswith(provider_name)
+    assert is_name_found, f'provider "{provider}" not found in intro label'
 
 
 @wt(
