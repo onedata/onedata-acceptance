@@ -22,7 +22,13 @@ Feature: Onezone behaviour with multiple providers
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser opens "oneprovider-1" provider menu on space providers data
-    And user of browser opens "oneprovider-1" provider settings on space providers
+    And user of browser clicks "Settings" option on space's provider menu
     And user of browser reads "oneprovider-1" provider name on space provider settings menu
-    
-#   Scenario: User opens a popup for a space's provider and goes into provider's file browser
+
+  Scenario: User opens a popup for a space's provider and goes into provider's file browser
+    When user of browser clicks on Data in the main menu
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Providers" of "space1" space in the sidebar
+    And user of browser opens "oneprovider-1" provider menu on space providers data
+    And user of browser clicks "Browse files" option on space's provider menu
+    And user of browser reads "oneprovider-1" provider name on space provider browse files menu

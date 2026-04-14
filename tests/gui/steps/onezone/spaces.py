@@ -510,16 +510,15 @@ def click_toggle_on_providers_subpage(browser_id, toggle, selenium, option):
     )()
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} opens "{provider}" provider settings '
-        "on space providers"
-    )
+parsers.parse(
+    'user of {browser_id} clicks "{option}" option '
+    "on space's provider menu"
+)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_provider_settings(browser_id, provider, selenium, hosts):
+def open_provider_settings(browser_id, option, selenium):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]["name"]
-    Popups(driver).space_provider_details.menu["Settings"]()
+    Popups(driver).space_provider_details.menu[option]()
     
 @wt(
     parsers.parse(
@@ -534,6 +533,20 @@ def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium,
     label = OPLoggedIn(driver).provider_configuration.intro_label
     is_name_found = label.rstrip(".").endswith(provider_name)
     assert is_name_found, f'provider "{provider}" not found in intro label'
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} reads "{provider}" provider name '
+        "on space provider browse files menu"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def read_provider_name_on_provider_browse_files_menu(browser_id, provider, selenium, hosts):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]["name"]
+    label = OZLoggedIn(driver)["data"].current_provider
+    assert label == provider_name, f'provider "{provider}" not found in intro label'
 
 
 @wt(
