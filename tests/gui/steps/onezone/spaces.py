@@ -513,11 +513,14 @@ def click_toggle_on_providers_subpage(browser_id, toggle, selenium, option):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} clicks "{option}" option on space\'s provider menu'
+        'user of {browser_id} opens "{option}" option on space providers menu'
+        " in provider menu in provider section in space"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_provider_option(browser_id, option, selenium):
+def open_prov_option_in_prov_menu_in_prov_section_in_space(
+    browser_id, option, selenium
+):
     driver = selenium[browser_id]
     last_url = driver.current_url
     Popups(driver).space_provider_details.menu[option]()
@@ -529,17 +532,17 @@ def open_provider_option(browser_id, option, selenium):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} reads "{provider}" provider name '
-        "on space provider settings menu"
+        'user of {browser_id} can see "{provider}" is selected in tab in header'
+        " in the settings section in the space provider page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium, hosts):
+def assert_selected_provider_name_on_space_provider_header(
+    browser_id, provider, selenium, hosts
+):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    label = OPLoggedIn(driver).provider_configuration.intro_label
-    assert provider_name in label, f'provider "{provider}" not found in intro label'
-    header_label = OPLoggedIn(driver).current_provider
+    header_label = OZLoggedIn(driver)["data"].providers_page.current_provider
     assert (
         header_label == provider_name
     ), f'provider "{provider}" not found in header label'
@@ -547,18 +550,20 @@ def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium,
 
 @wt(
     parsers.parse(
-        'user of {browser_id} reads "{provider}" provider name '
-        "on space provider browse files menu"
+        'user of {browser_id} can see "{provider}" provider name is displayed '
+        "in the message in the settings section in the space provider page"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def read_provider_name_on_provider_browse_files_menu(
+def assert_provider_name_on_provider_settings_menu(
     browser_id, provider, selenium, hosts
 ):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    label = OZLoggedIn(driver)["data"].current_provider
-    assert label == provider_name, f'provider "{provider}" not found in intro label'
+    label = OPLoggedIn(driver).provider_configuration.settings_message
+    assert (
+        provider_name in label
+    ), f'provider "{provider}" not found in settings message'
 
 
 @wt(

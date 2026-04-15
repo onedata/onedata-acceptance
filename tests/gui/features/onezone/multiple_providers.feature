@@ -17,18 +17,19 @@ Feature: Onezone behaviour with multiple providers
       And user of browser opened Onezone page
       And user of browser logged as space-owner-user to Onezone service
 
-  Scenario: User opens a popup for a space's provider and goes into provider's settings
+  Scenario: User can see correct opened provider tab after opening provider settings in Providers sections of a space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser opens "oneprovider-1" provider menu on space providers data page
-    And user of browser clicks "Settings" option on space's provider menu
-    And user of browser reads "oneprovider-1" provider name on space provider settings menu
+    Then user of browser opens "Settings" option on space providers menu in provider menu in provider section in space
+    And user of browser can see "oneprovider-1" is selected in tab in header in the settings section in the space provider page
+    And user of browser can see "oneprovider-1" provider name is displayed in the message in the settings section in the space provider page
 
-  Scenario: User opens a popup for a space's provider and goes into provider's file browser
+  Scenario: User can see correct opened provider tab after opening provider file browser in Providers sections of a space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser opens "oneprovider-1" provider menu on space providers data page
-    And user of browser clicks "Browse files" option on space's provider menu
-    And user of browser reads "oneprovider-1" provider name on space provider browse files menu
+    Then user of browser opens "Browse files" option on space providers menu in provider menu in provider section in space
+    And user of browser sees current provider named "oneprovider-1" on file browser page

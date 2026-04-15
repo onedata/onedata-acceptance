@@ -14,7 +14,7 @@ from tests.gui.utils.core.web_elements import Label, WebItem
 
 
 class _ProviderConfiguration(PageObject):
-    intro_label = Label(".space-settings-info")
+    settings_message = Label(".space-settings-info")
     size_statistics = Toggle(".toggle-field-dir-stats-config")
 
     def __str__(self):
