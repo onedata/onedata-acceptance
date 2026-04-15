@@ -495,9 +495,10 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id, number):
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} opens "{provider}" provider menu '
-        "on space providers data"
+    parsers.re(
+        r'user of (?P<browser_id>.+) opens "(?P<provider>oneprovider-[0-9]+)"'
+        r" provider menu "
+        r"on space providers data page"
     )
 )
 def click_on_menu_button_of_provider_on_providers_list(

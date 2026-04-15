@@ -134,9 +134,7 @@ class Popups:
     options_selector = WebItem(".webui-popover.in", cls=OptionsSelector)
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
-    space_provider_details = WebItem(
-        ".oneprovider-actions", cls=MenuPopupWithLabel
-    )
+    space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from selenium.webdriver.common.by import By
-
 from selenium.webdriver.support.ui import WebDriverWait as Wait
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
@@ -510,11 +510,11 @@ def click_toggle_on_providers_subpage(browser_id, toggle, selenium, option):
         option,
     )()
 
+
 @wt(
-parsers.parse(
-    'user of {browser_id} clicks "{option}" option '
-    "on space's provider menu"
-)
+    parsers.parse(
+        'user of {browser_id} clicks "{option}" option on space\'s provider menu'
+    )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_provider_option(browser_id, option, selenium):
@@ -525,7 +525,8 @@ def open_provider_option(browser_id, option, selenium):
         lambda _: driver.current_url != last_url,
         message=f"waiting for url to change. Current url: {driver.current_url}",
     )
-    
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} reads "{provider}" provider name '
@@ -537,11 +538,11 @@ def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium,
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     label = OPLoggedIn(driver).provider_configuration.intro_label
-    is_name_found = label.rstrip(".").endswith(provider_name)
-    assert is_name_found, f'provider "{provider}" not found in intro label'
+    assert provider_name in label, f'provider "{provider}" not found in intro label'
     header_label = OPLoggedIn(driver).current_provider
-    assert header_label == provider_name, f'provider "{provider}" not found in header label'
-
+    assert (
+        header_label == provider_name
+    ), f'provider "{provider}" not found in header label'
 
 
 @wt(
@@ -551,11 +552,14 @@ def read_provider_name_on_provider_settings_menu(browser_id, provider, selenium,
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def read_provider_name_on_provider_browse_files_menu(browser_id, provider, selenium, hosts):
+def read_provider_name_on_provider_browse_files_menu(
+    browser_id, provider, selenium, hosts
+):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     label = OZLoggedIn(driver)["data"].current_provider
     assert label == provider_name, f'provider "{provider}" not found in intro label'
+
 
 @wt(
     parsers.parse(

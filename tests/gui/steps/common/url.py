@@ -60,7 +60,23 @@ def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+) opens (?P<hosts_list>.*one.*|.*One.*) page"
+        r"users? of (?P<browser_id_list>.+) opens "
+        r"(?P<host>emergency interface of Onepanel) "
+        r"page"
+    )
+)
+@wt(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+) opens "
+        r"(?P<host>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
+        r"page"
+    )
+)
+@wt(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+) opens "
+        r"(?P<host>(oneprovider-[0-9]+ provider panel|onezone zone panel|onezone)) "
+        r"page"
     )
 )
 def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
