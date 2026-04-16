@@ -524,7 +524,7 @@ def open_prov_option_in_prov_menu_in_prov_section_in_space(
     driver = selenium[browser_id]
     last_url = driver.current_url
     Popups(driver).space_provider_details.menu[option]()
-    return Wait(driver, WAIT_FRONTEND).until(
+    Wait(driver, WAIT_FRONTEND).until(
         lambda _: driver.current_url != last_url,
         message=f"waiting for url to change. Current url: {driver.current_url}",
     )
@@ -542,7 +542,7 @@ def assert_selected_provider_name_on_space_provider_header(
 ):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    header_label = OZLoggedIn(driver)["data"].providers_page.current_provider
+    header_label = OZLoggedIn(driver)["data"].providers_page.current_provider_tab
     assert (
         header_label == provider_name
     ), f'provider "{provider}" not found in header label'
@@ -560,7 +560,7 @@ def assert_provider_name_on_provider_settings_menu(
 ):
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
-    label = OPLoggedIn(driver).provider_configuration.settings_message
+    label = OZLoggedIn(driver)["data"].providers_page.settings_message
     assert (
         provider_name in label
     ), f'provider "{provider}" not found in settings message'

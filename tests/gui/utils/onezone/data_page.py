@@ -195,7 +195,8 @@ class GetSupportPage(PageObject):
 
 
 class SpaceProvidersPage(PageObject):
-    current_provider = Label(".provider-info-container.active")
+    current_provider_tab = Label(".provider-info-container.active")
+    settings_message = Label(".space-settings-info")
     providers_list = WebItemsSequence(
         ".space-providers-list li.one-collapsible-list-item", cls=Provider
     )

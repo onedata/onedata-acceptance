@@ -35,7 +35,6 @@ class OPLoggedIn:
     automation_page = WebItem(".content-space-automation", cls=WorkflowExecutionPage)
     dataset_archive_browser = DatasetArchiveBrowser(".dataset-archives-browser")
     archive_recall_browser = ArchiveRecallBrowser(".archive-recall-browser")
-    current_provider = Label(".provider-info-container.active")
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

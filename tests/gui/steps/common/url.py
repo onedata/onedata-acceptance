@@ -52,30 +52,51 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
             driver.get(f"https://{hosts[alias]['hostname']}")
 
 
-@given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
-@given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
+@given(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+?) opened "
+        r"(?P<hosts_list>emergency interface of Onepanel) "
+        r"page"
+    )
+)
+@given(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+?) opened "
+        r"(?P<hosts_list>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
+        r"page"
+    )
+)
+@given(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+?) opened "
+        r"(?P<hosts_list>(oneprovider-[0-9]+ provider panel|onezone zone"
+        r" panel|onezone|Onezone)) "
+        r"page"
+    )
+)
 def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @wt(
     parsers.re(
-        r"users? of (?P<browser_id_list>.+) opens "
-        r"(?P<host>emergency interface of Onepanel) "
+        r"users? of (?P<browser_id_list>.+?) opens "
+        r"(?P<hosts_list>emergency interface of Onepanel) "
         r"page"
     )
 )
 @wt(
     parsers.re(
-        r"users? of (?P<browser_id_list>.+) opens "
-        r"(?P<host>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
+        r"users? of (?P<browser_id_list>.+?) opens "
+        r"(?P<hosts_list>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
         r"page"
     )
 )
 @wt(
     parsers.re(
-        r"users? of (?P<browser_id_list>.+) opens "
-        r"(?P<host>(oneprovider-[0-9]+ provider panel|onezone zone panel|onezone)) "
+        r"users? of (?P<browser_id_list>.+?) opens "
+        r"(?P<hosts_list>(oneprovider-[0-9]+ provider panel|onezone zone"
+        r" panel|onezone|Onezone)) "
         r"page"
     )
 )

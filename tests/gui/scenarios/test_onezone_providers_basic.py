@@ -72,4 +72,3 @@ def screens():
 scenarios("../features/onezone/providers.feature")
 scenarios("../features/onezone/providers_multibrowser.feature")
 scenarios("../features/onezone/providers_offline.feature")
-scenarios("../features/onezone/multiple_providers.feature")
