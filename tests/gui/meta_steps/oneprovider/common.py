@@ -199,7 +199,13 @@ def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
     )
 )
 def open_modal_on_tab(selenium, browser_id, filename, tmp_memory, tab, modal_name):
-    option = "Quality of Service" if tab == "QoS" else tab
+    if tab == "QoS":
+        option = "Quality of Service"
+    elif tab == "Info":
+        option = "Information"
+    else:
+        option = tab
+
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     assert_tab_in_modal(selenium, browser_id, tab, modal_name)

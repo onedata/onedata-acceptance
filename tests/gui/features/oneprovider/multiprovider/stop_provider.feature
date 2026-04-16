@@ -52,3 +52,22 @@ Feature: Operations when current provider stops
     And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
+
+
+  Scenario: User replicates file to other provider, then stops the provider and sees the error message in the physical location ofield
+    When user of browser opens file browser for "space1" space
+
+    And user of browser goes to "/dir1/file1" in file browser
+    And user of browser replicates "file1" to provider "oneprovider-2"
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
+    And user of browser waits for all transfers to start
+    And user of browser waits for all transfers to finish
+
+    And user of browser opens "File details" modal on "Info" tab for "file1" file using context menu
+
+    And provider named oneprovider-2 is stopped
+    And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
+
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser waits until provider "oneprovider-2" goes online on providers map
