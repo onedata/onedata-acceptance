@@ -161,6 +161,7 @@ def assert_posix_tab_in_panel(selenium, browser_id, modal_name):
         "context menu for {item_name} in file browser"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_context_menu_item(
     selenium, browser_id, item_name, tmp_memory, context_menu_item
 ):
@@ -168,3 +169,39 @@ def click_on_context_menu_item(
         item_name = item_name.replace('"', "")
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, context_menu_item)
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} clicks button showing more physical locations in details"
+        " modal"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def toggle_show_more_physical_locations_in_details_modal(selenium, browser_id):
+    details_modal = Modals(selenium[browser_id]).details_modal
+    physical_locations = details_modal.physical_locations
+    sleep(2)  # wait for animation end
+    physical_locations.show_more_button.click()
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees an error message in physical location section "
+        'for "{provider}" provider in details modal'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_message_in_physical_location_in_details_modal(
+    selenium, browser_id, provider, hosts
+):
+    provider_name = hosts[provider]["name"]
+    details_modal = Modals(selenium[browser_id]).details_modal
+    physical_locations = details_modal.physical_locations.locations
+    wanted_error = "Proxy error: no connection to peer Oneprovider."
+    for provider_location in physical_locations:
+        if provider_location.provider == provider_name:
+            found_error = provider_location.error_message
+            assert (
+                found_error == wanted_error
+            ), f"Error message is different than expected for {provider_name} provider."

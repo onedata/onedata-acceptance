@@ -84,11 +84,31 @@ class NavigationTab(PageObject):
     name = id = Label(".nav-link")
 
 
+class PhysicalLocation(PageObject):
+    provider = Label(".record-name-general")
+    details = Label(".provider-details")
+    info_trigger = Label(".record-info-trigger")
+    clipboard_button = Button(".clipboard-btn")
+    storage_name = Label(".storage-name-cell")
+    file_address = Label(".clipboard-input")
+    error_message = Label(".error-cell")
+
+
+class PhysicalLocations(PageObject):
+    tip = WebElement(".one-label-tip")
+    locations = WebItemsSequence(
+        ".storage-location-per-provider-table", cls=PhysicalLocation
+    )
+    show_more_button = Button(".toggle-expand")
+
+
 class DetailsModal(Modal):
     modal_name = Label(".modal-header h1")
     owner = Label(".file-info-row-owner .property-value")
     x = Button(".close")
-    physical_location = Button(".file-info-row-storage-location .clipboard-btn")
+    physical_locations = WebItem(
+        ".file-info-row-storage-location", cls=PhysicalLocations
+    )
     space_id = Button(".file-info-row-space-id .clipboard-btn")
     file_id = Button(".file-info-row-cdmi-object-id .clipboard-btn")
     size_statistics = WebItem(".modal-content", cls=SizeStatistics)
