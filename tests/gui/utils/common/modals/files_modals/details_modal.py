@@ -84,8 +84,8 @@ class NavigationTab(PageObject):
     name = id = Label(".nav-link")
 
 
-class PhysicalLocation(PageObject):
-    provider = Label(".record-name-general")
+class ProviderRow(PageObject):
+    name = id = Label(".record-name-general")
     details = Label(".provider-details")
     info_trigger = Label(".record-info-trigger")
     clipboard_button = Button(".clipboard-btn")
@@ -97,7 +97,7 @@ class PhysicalLocation(PageObject):
 class PhysicalLocations(PageObject):
     tip = WebElement(".one-label-tip")
     locations = WebItemsSequence(
-        ".storage-location-per-provider-table", cls=PhysicalLocation
+        ".storage-location-per-provider-table", cls=ProviderRow
     )
     show_more_button = Button(".toggle-expand")
 
