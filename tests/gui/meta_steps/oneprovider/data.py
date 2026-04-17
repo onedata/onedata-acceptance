@@ -1092,6 +1092,13 @@ def delete_first_n_files_with_fixed_step(
     assert deleted_files == num_files_to_delete, err_msg
 
 
+def click_copy_icon_for_browser_link(driver, link_type: str):
+    copy_icon = (
+        Modals(driver).details_modal.browser_link.links[link_type].clipboard_icon
+    )
+    copy_icon.click()
+
+
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) copies "(?P<link_type>Show|Download)" browser link'
@@ -1108,11 +1115,10 @@ def copy_show_or_download_link_from_file_details_modal(
     tmp_memory,
 ):
     option = "Information"
-    button = f"{link_type} link"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    click_modal_button(selenium, browser_id, button, modal)
+    click_copy_icon_for_browser_link(selenium[browser_id], link_type)
     close_modal(selenium, browser_id, modal)
