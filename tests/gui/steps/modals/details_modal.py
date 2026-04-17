@@ -161,7 +161,6 @@ def assert_posix_tab_in_panel(selenium, browser_id, modal_name):
         "context menu for {item_name} in file browser"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_context_menu_item(
     selenium, browser_id, item_name, tmp_memory, context_menu_item
 ):
@@ -173,8 +172,8 @@ def click_on_context_menu_item(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} clicks button showing more physical locations in details"
-        " modal"
+        'user of {browser_id} clicks on button "Show more physical locations" in'
+        " details modal"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -198,8 +197,15 @@ def assert_error_message_in_physical_location_in_details_modal(
     provider_name = hosts[provider]["name"]
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations.locations
-    wanted_error = "Proxy error: no connection to peer Oneprovider."
+    expected_error = "Proxy error: no connection to peer Oneprovider."
     found_error = physical_locations[provider_name].error_message
     assert (
-        found_error == wanted_error
+        found_error == expected_error
     ), f"Error message is different than expected for {provider_name} provider."
+
+
+def click_copy_icon_for_browser_link_on_details_modal(driver, link_type: str):
+    copy_icon = (
+        Modals(driver).details_modal.browser_links.links[link_type].clipboard_icon
+    )
+    copy_icon.click()

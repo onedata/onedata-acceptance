@@ -107,7 +107,7 @@ class BrowserLinkRow(PageObject):
     name = id = Label(".file-link-group-addon-inner")
 
 
-class BrowserLink(PageObject):
+class BrowserLinks(PageObject):
     links = WebItemsSequence(".file-link-clipboard-line", cls=BrowserLinkRow)
 
 
@@ -125,7 +125,7 @@ class DetailsModal(Modal):
     navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
 
-    browser_link = WebItem(".file-info-row-gui-url", cls=BrowserLink)
+    browser_links = WebItem(".file-info-row-gui-url", cls=BrowserLinks)
 
     qos = WebItem(".modal-content", cls=QoSTab)
     metadata = WebItem(".modal-content", cls=MetadataTab)
