@@ -199,10 +199,7 @@ def assert_error_message_in_physical_location_in_details_modal(
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations.locations
     wanted_error = "Proxy error: no connection to peer Oneprovider."
-    for provider_location in physical_locations:
-        if provider_location.name == provider_name:
-            found_error = provider_location.error_message
-            assert (
-                found_error == wanted_error
-            ), f"Error message is different than expected for {provider_name} provider."
-            return
+    found_error = physical_locations[provider_name].error_message
+    assert (
+        found_error == wanted_error
+    ), f"Error message is different than expected for {provider_name} provider."

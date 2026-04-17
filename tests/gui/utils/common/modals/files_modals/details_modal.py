@@ -102,6 +102,15 @@ class PhysicalLocations(PageObject):
     show_more_button = Button(".toggle-expand")
 
 
+class BrowserLinkRow(PageObject):
+    clipboard_icon = Button(".copy-btn")
+    name = id = Label(".file-link-group-addon-inner")
+
+
+class BrowserLink(PageObject):
+    links = WebItemsSequence(".file-link-clipboard-line", cls=BrowserLinkRow)
+
+
 class DetailsModal(Modal):
     modal_name = Label(".modal-header h1")
     owner = Label(".file-info-row-owner .property-value")
@@ -116,12 +125,7 @@ class DetailsModal(Modal):
     navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
 
-    show_link = Button(
-        'button[data-clipboard-target*=".show-file-link-clipboard-line-input"]'
-    )
-    download_link = Button(
-        'button[data-clipboard-target*=".download-file-link-clipboard-line-input"]'
-    )
+    browser_link = WebItem(".file-info-row-gui-url", cls=BrowserLink)
 
     qos = WebItem(".modal-content", cls=QoSTab)
     metadata = WebItem(".modal-content", cls=MetadataTab)
