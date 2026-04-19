@@ -889,9 +889,9 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} clicks on "Include virtual size" toggle'
-        " on Size stats modal"
+    parsers.re(
+        r'user of (?P<browser_id>.+?) (checks|unchecks) "Include virtual size" toggle'
+        r' on "Size stats" modal'
     )
 )
 def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
