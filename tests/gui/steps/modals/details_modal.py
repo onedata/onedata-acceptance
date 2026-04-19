@@ -177,10 +177,9 @@ def click_on_context_menu_item(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def toggle_show_more_physical_locations_in_details_modal(selenium, browser_id):
+def click_show_more_physical_locations_in_details_modal(selenium, browser_id):
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations
-    sleep(2)  # wait for animation end
     physical_locations.show_more_button.click()
 
 
