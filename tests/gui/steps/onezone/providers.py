@@ -576,7 +576,7 @@ def wait_until_provider_goes_online(selenium, browser_id, hosts, provider_name, 
                     path=get_provider_rest_path("health"),
                     auth=(user, users[user].password),
                 )
-                print(f"Respone from health check request: {res}")
+                print(f"Response from health check request: {res}")
             except requests.exceptions.ConnectionError as e:
                 print(f"Exception from health check request: {e}")
             raise RuntimeError(
@@ -616,12 +616,14 @@ def wait_for_provider_online(provider, hosts, users):
             )
 
 
-@given(parsers.re("providers? named (?P<provider_list>.*?) (is|are) stopped"))
+@given(parsers.re('provider named "(?P<provider_list>.*?)" is stopped'))
+@given(parsers.re("providers named (?P<provider_list>.*?) are stopped"))
 def given_stop_providers(hosts, provider_list):
     _stop_providers(hosts, provider_list)
 
 
-@wt(parsers.re("providers? named (?P<provider_list>.*?) (is|are) stopped"))
+@wt(parsers.re('provider named "(?P<provider_list>.*?)" is stopped'))
+@wt(parsers.re("providers named (?P<provider_list>.*?) are stopped"))
 def when_stop_providers(hosts, provider_list):
     _stop_providers(hosts, provider_list)
 

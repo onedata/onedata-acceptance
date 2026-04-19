@@ -158,9 +158,9 @@ def click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
-        "(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|"
-        "Clusters) in the main menu"
+        r"user of (?P<browser_id>.*?) clicks on "
+        r'"(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|'
+        r'Clusters)" in the main menu'
     )
 )
 def click_on_option_in_the_sidebar(selenium, browser_id, option):
