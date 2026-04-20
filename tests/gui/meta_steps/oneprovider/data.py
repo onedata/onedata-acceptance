@@ -641,6 +641,8 @@ def go_to_path(
     path,
     which_browser,
 ):
+    if path == ".":
+        return
     if "/" in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -912,8 +914,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
 
     # Both source_path and path_to_place should be absolute,
     # without the space name, and start with slash
-    # At the end of the function, user always goes back to main space
-    # directory (go_to_file_browser is executed)
 
     go_to_filebrowser(selenium, browser_id, tmp_memory, space)
 
@@ -933,10 +933,13 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     relative_path = str(
         Path(path_to_place).relative_to(source_parent_path, walk_up=True)
     )
+
     option = "Create hard link"
     button = "Place hard link"
 
     file_name = source_path.split("/")[-1]
+    if relative_path == ".":
+        relative_path = None
 
     _create_link_in_file_browser(
         selenium,

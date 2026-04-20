@@ -60,15 +60,22 @@ def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hos
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) "
-        '(?P<result>replicates|fails to replicate) "(?P<name>.*)"'
-        ' to provider "(?P<provider>.*)"'
+        r"user of (?P<browser_id>.*) "
+        r'(?P<result>replicates|fails to replicate) "(?P<names>.*)"'
+        r' to provider "(?P<provider>.*)"'
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) "
+        r"(?P<result>replicates|fails to replicate) (?P<names>.*)"
+        r' to provider "(?P<provider>.*)"'
     )
 )
 def replicate_file_to_provider(
     selenium,
     browser_id,
-    name,
+    names,
     tmp_memory,
     provider,
     hosts,
@@ -79,41 +86,14 @@ def replicate_file_to_provider(
     details_modal = "Details modal"
     close_button = "X"
 
-    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+    for name in parse_seq(names):
+        click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
+        click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+        assert_tab_in_modal(selenium, browser_id, tab, details_modal)
 
-    replicate_item(selenium, browser_id, provider, hosts)
-
-    if result == "replicates":
-        click_modal_button(selenium, browser_id, close_button, details_modal)
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*)"
-        r" replicates (?P<names>.*)"
-        r" to providers (?P<providers>.*)"
-    )
-)
-def sequentially_replicate_files_to_providers(
-    selenium,
-    browser_id,
-    names,
-    tmp_memory,
-    providers,
-    hosts,
-):
-    for name, provider in zip(parse_seq(names), parse_seq(providers)):
-        replicate_file_to_provider(
-            selenium,
-            browser_id,
-            name,
-            tmp_memory,
-            provider,
-            hosts,
-            result="replicates",
-        )
+        replicate_item(selenium, browser_id, provider, hosts)
+        if result == "replicates":
+            click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))
