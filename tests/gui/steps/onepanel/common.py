@@ -176,15 +176,19 @@ def click_on_toggle_in_onepanel_view(selenium, browser_id, view_name, toggle):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees that "{toggle}" toggle is checked in {view_name}'
+        'user of {browser_id} sees that "{toggle}" toggle is {option} in {view_name}'
         " view in Onepanel"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_checked_in_onepanel_view(selenium, browser_id, view_name, toggle):
+def assert_toggle_checked_in_onepanel_view(
+    selenium, browser_id, view_name, toggle, option
+):
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
-    assert toggle_elem.is_checked(), f"toggle {toggle} is not checked in {view_name}"
+    assert getattr(
+        toggle_elem, f"is_{option}"
+    )(), f"toggle {toggle} is not {option} in {view_name}"
 
 
 @wt(
@@ -221,17 +225,17 @@ def assert_label_ends_with_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {provider} provider domain is included in"
+        "user of {browser_id} sees that {host} {domain_type} domain is included in"
         ' "{label}" in {view_name} view in Onepanel'
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_label_contains_prov_domain_in_onepanel_view(
-    selenium, browser_id, provider, label, view_name, hosts
+    selenium, browser_id, host, label, view_name, hosts
 ):
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
-    expected_domain = hosts[provider]["hostname"]
+    expected_domain = hosts[host]["hostname"]
     err_msg = f"Expected domain: {expected_domain} is not in {actual_label}"
     assert expected_domain in actual_label, err_msg
 
@@ -251,3 +255,28 @@ def assert_warning_in_dns_names_in_onepanel_view(
     warning = warning.replace("\\", "")
     err_msg = f"Actual warning {actual_warning} does not match expected {warning}"
     assert warning in actual_warning, err_msg
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see {property_name} is "{property_value}" in info'
+        " tile in {view_name} view in Onepanel"
+    )
+)
+def assert_value_in_info_tile_in_overview_onepanel_view(
+    selenium, browser_id, view_name, property_name, property_value, clipboard, displays
+):
+    nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
+    properties = nav.tile_info.properties
+    for _property in properties:
+        if _property.name != property_name:
+            continue
+        if _property.value == "":
+            _property.copy()
+            value = clipboard.paste(display=displays[browser_id])
+        else:
+            value = _property.value
+        assert (
+            value == property_value
+        ), f"Expected {property_name} to be {property_value}, but got {value}"
+        break
