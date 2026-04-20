@@ -41,7 +41,9 @@ from tests.gui.steps.oneprovider.data_tab import (
     change_cwd_using_breadcrumbs_in_data_tab_in_op,
     check_error_in_upload_presenter,
     choose_option_from_selection_menu,
+    choose_provider_in_selected_page,
     click_button_from_file_browser_menu_bar,
+    click_choose_other_oneprovider_on_file_browser,
     click_file_browser_button,
     expand_size_statistics_for_providers,
     has_downloaded_file_content,
@@ -1116,3 +1118,13 @@ def copy_show_or_download_link_from_file_details_modal(
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     click_modal_button(selenium, browser_id, button, modal)
     close_modal(selenium, browser_id, modal)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} changes provider to "{provider}" on file browser page'
+    )
+)
+def change_provider_in_file_browser(selenium, browser_id, provider, hosts):
+    click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
+    choose_provider_in_selected_page(selenium, browser_id, provider, hosts)

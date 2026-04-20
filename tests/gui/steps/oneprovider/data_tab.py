@@ -713,16 +713,6 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id):
     OZLoggedIn(driver)["data"].choose_other_provider()
 
 
-@wt(
-    parsers.parse(
-        'user of {browser_id} changes provider to "{provider}" on file browser page'
-    )
-)
-def change_provider_in_file_browser(selenium, browser_id, provider, hosts):
-    click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
-    choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
-
-
 def check_current_provider_in_space(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -890,13 +880,19 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) (checks|unchecks) "Include virtual size" toggle'
+        r'user of (?P<browser_id>.+?) (?P<res>checks|unchecks) "Include virtual size"'
+        r" toggle"
         r' on "Size stats" modal'
     )
 )
-def toggle_include_virtual_size_in_size_statistics(selenium, browser_id):
+def toggle_include_virtual_size_in_size_statistics(selenium, browser_id, res):
     driver = selenium[browser_id]
-    Modals(driver).details_modal.size_statistics.include_virtual_size_toggle.click()
+    toggle = Modals(driver).details_modal.size_statistics.include_virtual_size_toggle
+    toggle.click()
+
+    condition = toggle.is_checked() if res == "checks" else not toggle.is_checked()
+    err_msg = f'Include virtual size toggle is not {res[:-1]+"ed"}'
+    assert condition, err_msg
 
 
 @wt(
