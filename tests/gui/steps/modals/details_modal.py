@@ -185,22 +185,22 @@ def click_show_more_physical_locations_in_details_modal(selenium, browser_id):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees an error message in physical location section "
-        'for "{provider}" provider in details modal'
+        'user of {browser_id} sees "{expected_error}" as error message in physical'
+        ' location section for "{provider}" provider in details modal'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_message_in_physical_location_in_details_modal(
-    selenium, browser_id, provider, hosts
+    selenium, browser_id, expected_error, provider, hosts
 ):
     provider_name = hosts[provider]["name"]
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations.locations
-    expected_error = "Proxy error: no connection to peer Oneprovider."
     found_error = physical_locations[provider_name].error_message
-    assert (
-        found_error == expected_error
-    ), f"Error message is different than expected for {provider_name} provider."
+    assert found_error == expected_error, (
+        f'Error message "{found_error}" is different than expected for'
+        f" {provider_name} provider"
+    )
 
 
 def click_copy_icon_for_browser_link_on_details_modal(driver, link_type: str):

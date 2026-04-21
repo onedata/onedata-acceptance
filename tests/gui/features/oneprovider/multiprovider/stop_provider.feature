@@ -73,6 +73,6 @@ Feature: Operations when current provider stops
     And user of browser goes to "/dir1" in file browser
     And user of browser opens "File details" modal on "Info" tab for "file1" file using context menu
     And user of browser clicks on button "Show more physical locations" in details modal
-    Then user of browser sees an error message in physical location section for "oneprovider-2" provider in details modal
+    Then user of browser sees "Proxy error: no connection to peer Oneprovider." as error message in physical location section for "oneprovider-2" provider in details modal
 
     And user of browser navigates to "Providers" page and waits until "oneprovider-2" is online
