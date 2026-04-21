@@ -61,18 +61,11 @@ def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hos
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) "
-        r'(?P<result>replicates|fails to replicate) "(?P<names>.*)"'
-        r' to provider "(?P<provider>.*)"'
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) "
         r"(?P<result>replicates|fails to replicate) (?P<names>.*)"
         r' to provider "(?P<provider>.*)"'
     )
 )
-def replicate_file_to_provider(
+def replicate_files_to_provider(
     selenium,
     browser_id,
     names,

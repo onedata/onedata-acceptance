@@ -81,25 +81,28 @@ Feature: Directories size statistics per providers
 
  Scenario: User sees space's size stats per provider after clicking show statistics button and replicating directories from oneprovider-1 to oneprovider-2
     When user of browser opens file browser for "space1" space
-    And user of browser replicates ["dir1", "dir2", "dir3"] to provider "oneprovider-2"
+    And user of browser replicates ["dir1", "dir2", "dir3"] in space "space1" to provider "oneprovider-2" and waits for all transfers to complete
+
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
+
     Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
     And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
     And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
     And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["3 files, 3 directories", "3 files, 3 directories"]
 
 
- Scenario: User sees size stats per provider after clicking show statistics button and replicating directories from oneprovider-1 to oneprovider-2
-    When user of browser creates hardlink of file located in "/dir1/file1" path and places it in "/dir1" path in "space1"
+ Scenario: User sees size stats per provider after replicating directories and creating hardlink
+    When user of browser creates hardlink of file located in "/dir1/file1" path and places it in "/dir3" path in "space1"
+    And user of browser opens file browser for "space1" space
+
+    And user of browser replicates ["dir1", "dir3"] in space "space1" to provider "oneprovider-2" and waits for all transfers to complete
 
     And user of browser opens file browser for "space1" space
-    And user of browser replicates ["dir1"] to provider "oneprovider-2"
-
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
 
-    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["75 B", "75 B"]
-    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "15 B"]
-    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["4 files, 3 directories", "4 files, 3 directories"]
+    Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["75 B", "75 B"]
+    And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "45 B"]
+    And user of browser sees that virtual_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that contents for ["oneprovider-1", "oneprovider-2"] are ["4 files, 3 directories", "4 files, 3 directories"]
