@@ -13,6 +13,7 @@ import requests
 
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -616,16 +617,33 @@ def wait_for_provider_online(provider, hosts, users):
             )
 
 
-@given(parsers.re('provider named "(?P<provider_list>.*?)" is stopped'))
-@given(parsers.re("providers named (?P<provider_list>.*?) are stopped"))
-def given_stop_providers(hosts, provider_list):
+@given(parsers.re(r'user of (?P<browser_id>\w+) assures that provider named "(?P<provider_list>.*?)" is stopped'))
+@given(parsers.re(r"user of (?P<browser_id>\w+) assures that providers named (?P<provider_list>.*?) are stopped"))
+def given_stop_providers(selenium, browser_id, provider_list, hosts, users):
     _stop_providers(hosts, provider_list)
+    # yield
+    for provider in parse_seq(provider_list):
+        click_on_option_in_the_sidebar(
+            selenium, browser_id, "Data"
+        )  # first going to Data page in order for the main menu to expand
+        wait_until_provider_goes_online(selenium, browser_id, hosts, provider, users)
 
 
-@wt(parsers.re('provider named "(?P<provider_list>.*?)" is stopped'))
-@wt(parsers.re("providers named (?P<provider_list>.*?) are stopped"))
-def when_stop_providers(hosts, provider_list):
+# user of browser assures that provider named "oneprovider-2" is stopped
+@wt(parsers.re(r'user of (?P<browser_id>\w+) assures that provider named "(?P<provider_list>.*?)" is stopped'))
+@wt(parsers.re(r"user of (?P<browser_id>\w+) assures that providers named (?P<provider_list>.*?) are stopped"))
+def wt_stop_providers(selenium, browser_id, provider_list, hosts, users):
+    _stop_providers_impl(selenium, browser_id, provider_list, hosts, users)
+
+
+def _stop_providers_impl(selenium, browser_id, provider_list, hosts, users):
     _stop_providers(hosts, provider_list)
+    yield
+    for provider in parse_seq(provider_list):
+        click_on_option_in_the_sidebar(
+            selenium, browser_id, "Data"
+        )  # first going to Data page in order for the main menu to expand
+        wait_until_provider_goes_online(selenium, browser_id, hosts, provider, users)
 
 
 def _stop_providers(hosts, provider_list):

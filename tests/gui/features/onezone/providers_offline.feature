@@ -18,7 +18,7 @@ Feature: Basic management of providers offline in Onezone GUI
 
 
   Scenario: User sees "All your providers are offline" message when no provider is online
-    Given provider named "oneprovider-1" is stopped
+    Given user of browser assures that provider named "oneprovider-1" is stopped
     When user of browser waits until provider "oneprovider-1" goes offline on providers map
 
     And user of browser clicks on Data in the main menu
