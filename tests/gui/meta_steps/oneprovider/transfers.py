@@ -37,13 +37,11 @@ from tests.utils.utils import repeat_failed
         'Oneprovider transfers for "(?P<space>.*)" space'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_transfers_page(selenium, browser_id, provider, space, hosts):
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option)
-
     if provider_name != check_current_provider_in_space(selenium, browser_id):
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts)

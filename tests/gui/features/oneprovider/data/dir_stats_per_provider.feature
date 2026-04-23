@@ -37,10 +37,10 @@ Feature: Directories size statistics per providers
     When user of browser opens file browser for "space1" space
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
-    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "0 B"]
-    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["3 files, 3 directories", "3 files, 3 directories"]
+    Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "0 B"]
+    And user of browser sees that virtual_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that contents for ["oneprovider-1", "oneprovider-2"] are ["3 files, 3 directories", "3 files, 3 directories"]
 
 
   Scenario: User sees space's size stats disabled after unchecking size statistics toggle for oneprovider-2
@@ -73,10 +73,10 @@ Feature: Directories size statistics per providers
     And user of browser changes current working directory to space root using breadcrumbs
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
-    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["100 B", "100 B"]
-    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "40 B"]
-    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["100 B", "100 B"]
-    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["4 files, 4 directories", "4 files, 4 directories"]
+    Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["100 B", "100 B"]
+    And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "40 B"]
+    And user of browser sees that virtual_sizes for ["oneprovider-1", "oneprovider-2"] are ["100 B", "100 B"]
+    And user of browser sees that contents for ["oneprovider-1", "oneprovider-2"] are ["4 files, 4 directories", "4 files, 4 directories"]
 
 
  Scenario: User sees space's size stats per provider after clicking show statistics button and replicating directories from oneprovider-1 to oneprovider-2
@@ -86,10 +86,10 @@ Feature: Directories size statistics per providers
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
 
-    Then user of browser sees that logical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that physical_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that virtual_size for ["oneprovider-1", "oneprovider-2"] is ["60 B", "60 B"]
-    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["3 files, 3 directories", "3 files, 3 directories"]
+    Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that virtual_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
+    And user of browser sees that contents for ["oneprovider-1", "oneprovider-2"] are ["3 files, 3 directories", "3 files, 3 directories"]
 
 
  Scenario: User sees size stats per provider after replicating directories and creating hardlink
