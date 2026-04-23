@@ -25,7 +25,6 @@ from tests.gui.steps.onezone.providers import (
     click_on_cease_support_in_menu_of_provider_on_providers_list,
     click_on_menu_button_of_provider_on_providers_list,
     click_on_provider_in_providers_sidebar_with_provider_name,
-    wait_until_provider_goes_online,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import parsers, wt
@@ -124,18 +123,3 @@ def assert_file_with_content_in_provider_storage(
 ):
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} navigates to "Providers" page and waits until'
-        ' "{provider}" is online'
-    )
-)
-def go_to_providers_page_and_restore_provider(
-    selenium, browser_id, provider, hosts, users
-):
-    click_on_option_in_the_sidebar(
-        selenium, browser_id, "Data"
-    )  # first going to Data page in order for the main menu to expand
-    wait_until_provider_goes_online(selenium, browser_id, hosts, provider, users)

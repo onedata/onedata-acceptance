@@ -36,12 +36,8 @@ Feature: Operations when current provider stops
     And user of browser sees that oneprovider-1 content is "1 file, 1 directory"
     And user of browser sees that oneprovider-2 content is "1 file, 1 directory"
 
-    And user of browser assures that provider named "oneprovider-2" is stopped
+    And provider named "oneprovider-2" is stopped
     And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
-
-    # And user of browser assures that ["oneprovider-1", "oneprovider-2"] providers are online
-
-    # And user of browser navigates to "Providers" page and waits until "oneprovider-2" is online
 
 
   Scenario: User switches to oneprovider-2 after oneprovider-1 has been stopped
@@ -50,16 +46,12 @@ Feature: Operations when current provider stops
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is "space1"
 
-    And user of browser assures that provider named "oneprovider-1" is stopped
+    And provider named "oneprovider-1" is stopped
 
     Then user of browser sees "SELECTED ONEPROVIDER IS CURRENTLY OFFLINE" error on spaces page
     And user of browser clicks on "Choose other Oneprovider" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
-
-    # And user of browser assures that ["oneprovider-1", "oneprovider-2"] providers are online
-
-    # And user of browser navigates to "Providers" page and waits until "oneprovider-1" is online
 
 
   Scenario: User replicates file to another provider, then stops the provider and sees the error message in the physical location field
@@ -71,13 +63,10 @@ Feature: Operations when current provider stops
     And user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
 
-    And user of browser assures that provider named "oneprovider-2" is stopped
+    And provider named "oneprovider-2" is stopped
 
     And user of browser opens file browser for "space1" space
     And user of browser goes to "/dir1" in file browser
     And user of browser opens "File details" modal on "Info" tab for "file1" file using context menu
     And user of browser clicks on button "Show more physical locations" in details modal
     Then user of browser sees "Proxy error: no connection to peer Oneprovider." as error message in physical location section for "oneprovider-2" provider in details modal
-
-    # And user of browser assures that ["oneprovider-1", "oneprovider-2"] providers are online
-    # And user of browser navigates to "Providers" page and waits until "oneprovider-2" is online
