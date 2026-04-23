@@ -37,7 +37,7 @@ Feature: Storage S3 management using onepanel, REST
     And using REST, user creates S3 bucket "bucket2"
     And using REST, user of browser copies item with recently copied path from "test" bucket into "bucket2" bucket
 
-    And user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Storage backends item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 

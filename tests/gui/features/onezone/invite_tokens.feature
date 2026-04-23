@@ -220,7 +220,7 @@ Feature: Management of invite tokens in Onezone GUI, with admin user
           invite type: Invite group to space
           invite target: space1
     And user of browser1 removes "space1" space in Onezone page
-    And user of browser1 clicks on Tokens in the main menu
+    And user of browser1 clicks on "Tokens" in the main menu
     And user of browser1 sees that there is token named "space_token_1" on tokens list
     And user of browser1 clicks on "space_token_1" on token list
     And user of browser1 refreshes site

@@ -64,7 +64,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
 
   Scenario: Data discovery has another GUI after setting it in harvester GUI configuration
     Given user of browser downloads http://get.onedata.org/onezone-gui-plugin-ecrin/onezone-gui-plugin-ecrin-1.1.0.tar.gz as ecrin-plugin.tar.gz to local file system
-    When user of browser clicks on Discovery in the main menu
+    When user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Configuration of "harvester1" harvester in the sidebar
     And user of browser clicks on GUI plugin tab on harvester configuration page
@@ -86,7 +86,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
 
   Scenario: Files of supported spaces are visible in Data discovery page
     Given spaces ["space1", "space2"] belong to "harvester1" harvester of user admin
-    When user of browser clicks on Discovery in the main menu
+    When user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page

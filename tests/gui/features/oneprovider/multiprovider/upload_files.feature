@@ -72,7 +72,7 @@ Feature: Uploading files to multiple providers
     Then user of browser clicks on Uploads in the main menu
     And user of browser clicks on "All uploads" in uploads sidebar
     And user of browser sees that number of uploads is equal 201
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

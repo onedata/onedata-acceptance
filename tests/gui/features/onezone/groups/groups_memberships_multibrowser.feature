@@ -273,7 +273,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
   Scenario: User creates new space and invites group to it but given group fails to control it because of lack in privileges
     When user of browser2 creates space "new_space"
-    And user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks on "Data" in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "new_space" space in the sidebar
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
@@ -285,7 +285,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 clicks "new_space" on the spaces list in the sidebar
     And user of browser1 clicks "Members" of "new_space" space in the sidebar
 
-    And user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks on "Data" in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
     And user of browser2 clicks "Members" of "new_space" space in the sidebar
     And user of browser2 clicks "group6" group in "new_space" space members groups list

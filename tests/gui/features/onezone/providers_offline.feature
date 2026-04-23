@@ -21,7 +21,7 @@ Feature: Basic management of providers offline in Onezone GUI
     When provider named "oneprovider-1" is stopped
     And user of browser waits until provider "oneprovider-1" goes offline on providers map
 
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "Files" of "space1" space in the sidebar
 
     Then user of browser sees alert with title "ALL SUPPORTING ONEPROVIDERS ARE OFFLINE" on Onezone page

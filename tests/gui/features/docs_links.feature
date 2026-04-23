@@ -68,7 +68,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to Tokens documentation in tokens page works correctly
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "documentation" link in "Create new token" view
     And user of browser is redirected to newly opened tab
@@ -77,7 +77,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to Tokens documentation in create custom token section in tokens page works correctly
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
     And user of browser clicks on "Show details" link in "Create new token" view
@@ -88,7 +88,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to Tokens documentation in create custom token section with read only caveat works correctly
-    When user of browser clicks on Tokens in the main menu
+    When user of browser clicks on "Tokens" in the main menu
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
     And user of browser clicks on "Show inactive caveats" label in "Create new token" view
@@ -101,7 +101,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to DNS Config documentation in Oneprovider DNS Config in Clusters page works correctly
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on DNS setup item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
@@ -111,7 +111,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config in Clusters page works correctly
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "onezone" in clusters menu
     And user of browser clicks on DNS setup item in submenu of "onezone" item in CLUSTERS sidebar in Onepanel
     And user of browser clicks on "DNS setup documentation" link in DNS SETUP view in Onepanel
@@ -121,7 +121,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to DNS Config documentation in Onezone DNS Config at subdomain delegation section in Clusters page works correctly
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "onezone" in clusters menu
     And user of browser clicks on DNS setup item in submenu of "onezone" item in CLUSTERS sidebar in Onepanel
     And user of browser clicks on "DNS setup documentation" link at subdomain delegation section in DNS SETUP view in Onepanel
@@ -131,7 +131,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to file popularity documentation in File popularity tab in Clusters page works correctly
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser opens "space1" record on spaces list in Spaces page in Onepanel
@@ -146,7 +146,7 @@ Feature: Onezone links to documentation
 
 
   Scenario: User can see that link to Onedatify documentation in Clusters page works correctly
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on add new provider cluster button in clusters menu
     And user of browser clicks on "Onedatify documentation" link in clusters page
     And user of browser is redirected to newly opened tab
