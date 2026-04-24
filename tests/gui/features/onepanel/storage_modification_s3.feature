@@ -32,7 +32,7 @@ Feature: Storage S3 management using onepanel, REST
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
     And user of browser clicks on "Information" in context menu for "20B-1.txt"
-    And user of browser sees physical location path in file details and copies it into the clipboard
+    And user of browser sees physical location path for provider "oneprovider-1" in file details and copies it into the clipboard
 
     And using REST, user creates S3 bucket "bucket2"
     And using REST, user of browser copies item with recently copied path from "test" bucket into "bucket2" bucket
