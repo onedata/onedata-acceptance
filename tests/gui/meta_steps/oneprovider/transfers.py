@@ -28,7 +28,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import make_fullscreen, repeat_failed
 
 
 @wt(
@@ -99,6 +99,7 @@ def wait_for_all_transfers_to_start_and_finish(
     open_transfers_page(selenium, browser_id, provider, space, hosts)
     wait_for_waiting_transfer_to_start(selenium, browser_id)
     wait_for_ongoing_tranfers_to_finish(selenium, browser_id)
+    make_fullscreen(selenium[browser_id])
 
 
 @wt(
