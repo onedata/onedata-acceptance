@@ -19,7 +19,7 @@ from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import change_screen_size, repeat_failed
+from tests.utils.utils import repeat_failed
 
 
 def _assert_transfer(
@@ -296,12 +296,7 @@ def change_transfer_space(selenium, browser_id, space):
 @wt(parsers.re("user of (?P<browser_id>.*) waits for Transfers page to load"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id):
-    driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
-    try:
-        _ = OPLoggedIn(driver).transfers.providers_table
-    except RuntimeError:
-        change_screen_size(driver, 1366, 1024)
 
     assert OPLoggedIn(selenium[browser_id]).transfers.providers_table.is_displayed()
 

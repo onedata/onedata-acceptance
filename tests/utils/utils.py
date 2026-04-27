@@ -104,11 +104,3 @@ def get_authors(mod):
 
 def get_suite_description(mod):
     return mod.__doc__
-
-
-def change_screen_size(driver, width, height):
-    driver.set_window_size(width, height)
-
-
-def make_fullscreen(driver):
-    driver.maximize_window()

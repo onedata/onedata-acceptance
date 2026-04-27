@@ -27,7 +27,7 @@ from tests.utils.entities_setup import (
     GUI_UPLOAD_CHUNK_SIZE,
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
-from tests.utils.utils import repeat_failed, change_screen_size
+from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -717,11 +717,6 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id):
 def check_current_provider_in_space(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-
-    try:
-        _ = OZLoggedIn(driver)["data"].current_provider
-    except RuntimeError:
-        change_screen_size(driver, 1366, 1024)
 
     current_provider = OZLoggedIn(driver)["data"].current_provider
     return current_provider
