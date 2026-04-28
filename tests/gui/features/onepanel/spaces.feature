@@ -31,7 +31,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of <client> selects GiB radio button in support space form in Onepanel
     And user of <client> clicks on Support space button in support space form in Onepanel
     And user of <client> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of <client> sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of <client> sees that correct space name is displayed in supported space window for space "space1" in Onepanel'
 
     # confirm support of space
     Then user of browser1 clicks "space1" on the spaces list in the sidebar

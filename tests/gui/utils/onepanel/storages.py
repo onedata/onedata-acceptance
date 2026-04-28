@@ -156,15 +156,13 @@ class StorageRecord(PageObject, ExpandableMixin):
     copy_id_button = Button(".copy-btn-icon")
 
     menu_button = Button(".collapsible-toolbar-toggle")
-    _toolbar = WebElement(".one-collapsible-toolbar")
 
     def is_expanded(self):
         return bool(
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self, driver):
-        ActionChains(driver).move_to_element(self._toolbar).perform()
+    def expand_menu(self):
         self.menu_button.click()
 
     def click_toggle(self):

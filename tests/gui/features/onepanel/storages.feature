@@ -47,7 +47,7 @@ Feature: Storage management using onepanel
     And user of <browser> selects GiB radio button in support space form in Onepanel
     And user of <browser> clicks on Support space button in support space form in Onepanel
     And user of <browser> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of <browser> sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of <browser> sees that correct space name is displayed in supported space window for space "space1" in Onepanel
 
     # go to provider
     And user of browser_unified is idle for 4 seconds
@@ -129,7 +129,7 @@ Feature: Storage management using onepanel
             scan interval [s]: 1
 
     And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser_unified sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of browser_unified sees that correct space name is displayed in supported space window for space "space1" in Onepanel
 
     And user of browser_unified opens file browser for "space1" space
 
