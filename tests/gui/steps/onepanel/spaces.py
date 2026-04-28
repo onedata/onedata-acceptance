@@ -156,6 +156,19 @@ def wt_assert_existence_of_space_support_record(selenium, browser_id, space_name
 
 @wt(
     parsers.parse(
+        "user of {browser_id} sees that correct space name is displayed in supported"
+        ' space window for space "{space_name}" in Onepanel'
+    )
+)
+def wt_assert_correct_supported_space_opened(selenium, browser_id, space_name):
+    overview = Onepanel(selenium[browser_id]).content.spaces.space.overview
+    assert (
+        space_name == overview.space_name
+    ), f'opened space "{overview.name}" instead of expected "{space_name}"'
+
+
+@wt(
+    parsers.parse(
         "user of {browser_id} sees that list of supported spaces "
         "is empty in Spaces page in Onepanel"
     )
