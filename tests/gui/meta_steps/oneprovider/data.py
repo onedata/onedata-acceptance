@@ -63,7 +63,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
 )
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
@@ -832,6 +832,75 @@ def create_symlinks_of_file_with_path(
 
 
 @wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) creates (?P<link_type>symbolic|hard) links of"
+        r" (?P<files_paths>\[[^\]]+\]), "
+        r"names them (?P<new_names>\[[^\]]+\]) and places them in"
+        r" (?P<symlinks_paths>\[[^\]]+\]) dirs"
+        r' in "(?P<space>.+?)"'
+    )
+)
+def create_symlinks_of_files_with_rename(
+    selenium,
+    browser_id,
+    link_type,
+    files_paths,
+    symlinks_paths,
+    new_names,
+    tmp_memory,
+    space,
+):
+    # files_paths and symlink_paths are supposed to be absolute
+
+    files_paths_seq, symlinks_paths_seq, new_names_seq = (
+        parse_seq(files_paths),
+        parse_seq(symlinks_paths),
+        parse_seq(new_names),
+    )
+
+    for file_path, symlink_path, new_name in zip(
+        files_paths_seq, symlinks_paths_seq, new_names_seq
+    ):
+        change_cwd_using_breadcrumbs_in_data_tab_in_op(
+            selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
+        )  # start from the main space
+
+        file_parent_path = "/".join(file_path.split("/")[:-1])
+        file_name = file_path.split("/")[-1]
+
+        if len(file_parent_path) == "":
+            file_parent_path = "."
+
+        go_to_path(
+            selenium,
+            browser_id,
+            tmp_memory,
+            file_parent_path,
+            WhichBrowser.FILE_BROWSER.value,
+        )
+
+        relative_path = str(
+            Path(symlink_path).relative_to(file_parent_path, walk_up=True)
+        )
+
+        option = f"Create {link_type} link"
+        button = f"Place {link_type} link"
+
+        _create_link_in_file_browser(
+            selenium,
+            browser_id,
+            file_name,
+            space,
+            tmp_memory,
+            option,
+            button,
+            path=relative_path,
+            go_to_file_browser=False,
+            new_name=new_name,
+        )
+
+
+@wt(
     parsers.parse(
         'user of {browser_id} creates hard link of "{file_name}" '
         'placed in "{path}" directory on {which_browser} in "{space}"'
@@ -874,6 +943,7 @@ def _create_link_in_file_browser(
     button,
     path=None,
     go_to_file_browser=True,
+    new_name=None,
 ):
     if go_to_file_browser:
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
@@ -888,9 +958,15 @@ def _create_link_in_file_browser(
     time.sleep(0.5)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     browser = WhichBrowser.FILE_BROWSER
+
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, browser.value)
     click_file_browser_button(browser_id, button, browser, tmp_memory)
+
+    if new_name:
+        rename_item(
+            selenium, browser_id, file_name, new_name, tmp_memory, "succeeds", space
+        )
 
 
 @wt(
@@ -910,8 +986,6 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
 
     # Both source_path and path_to_place should be absolute,
     # without the space name, and start with slash
-    # At the end of the function, user always goes back to main space
-    # directory (go_to_file_browser is executed)
 
     go_to_filebrowser(selenium, browser_id, tmp_memory, space)
 

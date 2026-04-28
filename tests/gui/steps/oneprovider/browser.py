@@ -30,6 +30,7 @@ def click_and_press_enter_on_item_in_browser(
     which_browser,
 ):
     which_browser = transform(which_browser)
+    # breakpoint()
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]
 
