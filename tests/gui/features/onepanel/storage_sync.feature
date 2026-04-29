@@ -45,7 +45,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: false
 
     # confirm correct import configuration
-      When user of browser1 sees that Import strategy configuration for "space1" is as follow:
+    When user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Max depth: 2
           Detect modifications: false
           Detect deletions: false
