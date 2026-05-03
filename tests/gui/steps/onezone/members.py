@@ -1075,7 +1075,7 @@ def assert_ownership_privileges_warning_appeared_for_user(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} can see {number} {item_type} in Onezone clusters members"
+        "user of {browser_id} sees {number} {item_type} in Onezone clusters members"
         " page"
     )
 )

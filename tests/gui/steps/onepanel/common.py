@@ -259,7 +259,7 @@ def assert_warning_in_dns_names_in_onepanel_view(
 
 @wt(
     parsers.parse(
-        'user of {browser_id} can see {property_name} is "{property_value}" in info'
+        'user of {browser_id} sees {property_name} is "{property_value}" in info'
         " tile in {view_name} view in Onepanel"
     )
 )

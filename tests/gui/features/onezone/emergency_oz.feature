@@ -22,10 +22,10 @@ Feature: Basic management of emergency Onezone panel
     When user of browser clicks on Clusters in the main menu
     And user of browser can see tabs "[Data, Shares, Providers, Groups, Tokens, Discovery, Automation]" are disabled in the main menu
     And user of browser clicks Overview of "onezone" in the sidebar
-    Then user of browser can see Name is "dev-onezone" in info tile in overview view in Onepanel
-    And user of browser can see Type is "Onezone" in info tile in overview view in Onepanel
-    And user of browser can see Domain is "dev-onezone.default.svc.cluster.local" in info tile in overview view in Onepanel
-    And user of browser can see Cluster ID is "onezone" in info tile in overview view in Onepanel
+    Then user of browser sees Name is "dev-onezone" in info tile in overview view in Onepanel
+    And user of browser sees Type is "Onezone" in info tile in overview view in Onepanel
+    And user of browser sees Domain is "dev-onezone.default.svc.cluster.local" in info tile in overview view in Onepanel
+    And user of browser sees Cluster ID is "onezone" in info tile in overview view in Onepanel
 
 
   Scenario: User sees correct information in Nodes in Onezone emergency panel
@@ -48,26 +48,26 @@ Feature: Basic management of emergency Onezone panel
   Scenario: User sees correct information in members in Onezone emergency panel
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks Members of "onezone" in the sidebar
-    Then user of browser can see 0 direct groups in Onezone clusters members page
-    And user of browser can see 1 direct users in Onezone clusters members page
-    And user of browser can see 0 effective groups in Onezone clusters members page
-    And user of browser can see 1 effective users in Onezone clusters members page
+    Then user of browser sees 0 direct groups in Onezone clusters members page
+    And user of browser sees 1 direct users in Onezone clusters members page
+    And user of browser sees 0 effective groups in Onezone clusters members page
+    And user of browser sees 1 effective users in Onezone clusters members page
     And user of browser clicks on "Open in Onezone" in Onezone clusters members page
     And user of browser logs as admin to Onezone service
     And user of browser can see Onezone clusters members page is opened
 
 
-  Scenario: User sees correctly changes emergency passphrase in Onezone emergency panel
+  Scenario: User correctly changes emergency passphrase in Onezone emergency panel
     When user of browser clicks on Clusters in the main menu
     And user of browser clicks Emergency passphrase of "onezone" in the sidebar
-    Then user of browser clicks on Change passphrase button on emergency passphrase page
+    And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "password" to Current passphrase input field on emergency passphrase page
     And user of browser types "new_password" to New passphrase input field on emergency passphrase page
     And user of browser types "new_password" to Retype new passphrase input field on emergency passphrase page
     And user of browser clicks on Change button on emergency passphrase page
     And user of browser logs out from Onezone Emergency panel
 
-    And user of browser clicks Sign in to emergency interface in Onepanel login page
+    Then user of browser clicks Sign in to emergency interface in Onepanel login page
     And user of browser types "new_password" to Passphrase input in Onepanel login form
     And user of browser presses Sign in button in Onepanel login page
     And user of browser sees an info notify with text matching to: Authentication succeeded!
