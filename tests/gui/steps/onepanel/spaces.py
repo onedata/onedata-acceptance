@@ -142,8 +142,8 @@ def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that correct space name is displayed in supported"
-        ' space window for space "{space_name}" in Onepanel'
+        'user of {browser_id} sees that "{space_name}" space name is displayed in the'
+        " supported spaces overview panel in Onepanel"
     )
 )
 def wt_assert_correct_supported_space_opened(selenium, browser_id, space_name):
