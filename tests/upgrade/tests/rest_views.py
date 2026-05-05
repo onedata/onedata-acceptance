@@ -385,7 +385,6 @@ def wait_for_expected_files_in_query_view(
     res = query()
     items = [item[attr_holding_file_id] for item in res]
     prov_version = get_prov_version(provider_host)
-    extra_files_num = -1
     match prov_version:
         case "20.02.19":
             extra_files_num = SPECIAL_DIRS_COUNT_20_02_19
@@ -393,7 +392,7 @@ def wait_for_expected_files_in_query_view(
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_1
         case "21.02.8":
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
-        case "25.0":
+        case _:
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
     exp_files_count = (
         len(expected_files) + extra_files_num if extra_files else len(expected_files)
