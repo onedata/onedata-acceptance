@@ -13,7 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -165,6 +165,24 @@ def click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory):
 )
 def click_on_option_in_the_sidebar(selenium, browser_id, option):
     _click_on_option_in_the_sidebar(selenium, browser_id, option, force=True)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see tabs "{tabs}" are disabled in the main menu'
+    )
+)
+def wt_assert_main_tabs_disabled(selenium, browser_id, tabs):
+    for tab in parse_seq(tabs):
+        assert_main_tab_disabled(selenium, browser_id, tab)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_main_tab_disabled(selenium, browser_id, tab):
+    driver = selenium[browser_id]
+    assert OZLoggedIn(driver).is_panel_disabled(
+        tab.lower()
+    ), f"tab {tab} should be disabled but is not"
 
 
 @wt(

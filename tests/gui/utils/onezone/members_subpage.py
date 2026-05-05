@@ -130,6 +130,12 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement(".alert.forbidden")
     bulk_edit_button = Button(".header-row .btn")
+    open_in_onezone = Button(".manage-via-onezone")
+
+    direct_users_number = Label(".direct-users-number")
+    direct_groups_number = Label(".direct-groups-number")
+    effective_users_number = Label(".effective-users-number")
+    effective_groups_number = Label(".effective-groups-number")
 
     def close_member(self, driver):
         driver.execute_script("window.scrollBy(0,0)")
