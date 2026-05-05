@@ -390,8 +390,6 @@ def wait_for_expected_files_in_query_view(
             extra_files_num = SPECIAL_DIRS_COUNT_20_02_19
         case "21.02.1":
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_1
-        case "21.02.8":
-            extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
         case _:
             extra_files_num = SPECIAL_DIRS_COUNT_21_02_8
     exp_files_count = (
