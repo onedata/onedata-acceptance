@@ -24,7 +24,7 @@ from tests.gui.steps.onepanel.spaces import (
     toggle_in_storage_import_configuration_is_enabled,
     type_value_to_quota_input,
     wait_until_scanning_is_finished_in_storage_import_tab,
-    wt_assert_existence_of_space_support_record,
+    wt_assert_correct_supported_space_opened,
     wt_assert_proper_space_configuration_in_panel,
     wt_click_on_btn_in_space_support_form,
     wt_click_on_support_space_btn_on_condition,
@@ -109,7 +109,7 @@ def result_to_support_space_in_op_panel_using_gui(
     )
     if result == "succeeds":
         notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-        wt_assert_existence_of_space_support_record(selenium, user, space_name)
+        wt_assert_correct_supported_space_opened(selenium, user, space_name)
     else:
         text = "Space supporting failed"
         assert_error_modal_with_text_appeared(selenium, user, text)
