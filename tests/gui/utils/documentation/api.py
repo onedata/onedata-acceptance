@@ -17,7 +17,7 @@ class EndpointInfo:
     def __init__(self, method, name):
         self.method = method
         self.name = name
-        self.label = f"{self.method} {self.name}"
+        self.label = f"{self.method}\n{self.name}"
 
 
 class APISidebar(PageObject):

@@ -60,14 +60,14 @@ FILE_DETAILS_ENDPOINTS = {
         "GET", "List directory files and subdirectories"
     ),
     "Create file in directory": EndpointInfo("POST", "Create file in directory"),
-    "Remove file": EndpointInfo("DEL", "Remove file"),
+    "Remove file": EndpointInfo("DELETE", "Remove file"),
     "Get attributes": EndpointInfo("GET", "Get file attributes"),
     "Get JSON metadata": EndpointInfo("GET", "Get file JSON metadata"),
     "Set JSON metadata": EndpointInfo("PUT", "Set file JSON metadata"),
-    "Remove JSON metadata": EndpointInfo("DEL", "Remove file JSON metadata"),
+    "Remove JSON metadata": EndpointInfo("DELETE", "Remove file JSON metadata"),
     "Get RDF metadata": EndpointInfo("GET", "Get file RDF metadata"),
     "Set RDF metadata": EndpointInfo("PUT", "Set file RDF metadata"),
-    "Remove RDF metadata": EndpointInfo("DEL", "Remove file RDF metadata"),
+    "Remove RDF metadata": EndpointInfo("DELETE", "Remove file RDF metadata"),
     "Get extended attributes (xattrs)": EndpointInfo(
         "GET", "Get file extended attributes"
     ),
@@ -75,7 +75,7 @@ FILE_DETAILS_ENDPOINTS = {
         "PUT", "Set file extended attribute"
     ),
     "Remove extended attributes (xattrs)": EndpointInfo(
-        "DEL", "Remove file extended attributes"
+        "DELETE", "Remove file extended attributes"
     ),
 }
 
@@ -111,6 +111,11 @@ def assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint):
     ), f"expected header: {endpoint}, found header: {found_endpoint}"
 
 
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+def assert_docs_title_contains(selenium, browser_id, text):
+    title_contains(selenium, browser_id, text)
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} sees that all links to REST API documentation works"
@@ -132,10 +137,12 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(selenium, browser_id
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         command_name = FILE_DETAILS_ENDPOINTS[command].name
-        title_contains(selenium, browser_id, f"{command_name} | API Reference")
+        command_label = FILE_DETAILS_ENDPOINTS[command].label
+        assert_docs_title_contains(
+            selenium, browser_id, f"{command_name} | API Reference"
+        )
         assert_user_sees_api_endpoint_name(selenium, browser_id, command_name)
-        # TODO: VFS-13504, uncomment after fix
-        # assert_active_section_in_docs_page(selenium, browser_id, command, "api")
+        assert_active_section_in_docs_page(selenium, browser_id, command_label, "api")
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         switch_to_iframe(selenium, browser_id)
@@ -160,10 +167,12 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
         command_name = SPACE_ENDPOINTS[command].name
-        title_contains(selenium, browser_id, f"{command_name} | API Reference")
+        command_label = SPACE_ENDPOINTS[command].label
+        assert_docs_title_contains(
+            selenium, browser_id, f"{command_name} | API Reference"
+        )
         assert_user_sees_api_endpoint_name(selenium, browser_id, command_name)
-        # TODO: VFS-13504, uncomment after fix
-        # assert_active_section_in_docs_page(selenium, browser_id, command, "api")
+        assert_active_section_in_docs_page(selenium, browser_id, command_label, "api")
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         modal.operations.click()
