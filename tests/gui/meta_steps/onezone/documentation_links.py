@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
+from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.homepage.api import EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -21,62 +22,85 @@ DEFAULT_DOCS_TIMEOUT = 30
 
 
 SPACE_ENDPOINTS = {
-    "Get space details": EndpointInfo("GET", "Get space details"),
-    "List all space privileges": EndpointInfo("GET", "List all space privileges"),
-    "List direct space users": EndpointInfo("GET", "List space users"),
-    "List effective space users": EndpointInfo("GET", "List effective space users"),
+    "Get space details": EndpointInfo("GET", "Get space details", "Space"),
+    "List all space privileges": EndpointInfo(
+        "GET", "List all space privileges", "Space"
+    ),
+    "List direct space users": EndpointInfo("GET", "List space users", "Space"),
+    "List effective space users": EndpointInfo(
+        "GET", "List effective space users", "Space"
+    ),
     "Get effective space user details": EndpointInfo(
-        "GET", "Get effective space user details"
+        "GET", "Get effective space user details", "Space"
     ),
     "List user's direct space privileges": EndpointInfo(
-        "GET", "List user's space privileges"
+        "GET", "List user's space privileges", "Space"
     ),
     "List user's effective space privileges": EndpointInfo(
-        "GET", "List effective user's space privileges"
+        "GET", "List effective user's space privileges", "Space"
     ),
     "Update user's space privileges": EndpointInfo(
-        "PATCH", "Update user's space privileges"
+        "PATCH", "Update user's space privileges", "Space"
     ),
-    "List direct space groups": EndpointInfo("GET", "List space groups"),
-    "List effective space groups": EndpointInfo("GET", "List effective space groups"),
+    "List direct space groups": EndpointInfo("GET", "List space groups", "Space"),
+    "List effective space groups": EndpointInfo(
+        "GET", "List effective space groups", "Space"
+    ),
     "Get effective space group details": EndpointInfo(
-        "GET", "Get effective space group details"
+        "GET", "Get effective space group details", "Space"
     ),
     "List group's direct space privileges": EndpointInfo(
-        "GET", "List group's space privileges"
+        "GET", "List group's space privileges", "Space"
     ),
     "List group's effective space privileges": EndpointInfo(
-        "GET", "List effective group's space privileges"
+        "GET", "List effective group's space privileges", "Space"
     ),
     "Update group's space privileges": EndpointInfo(
-        "PATCH", "Update group privileges to space"
+        "PATCH", "Update group privileges to space", "Space"
     ),
-    "List space shares": EndpointInfo("GET", "List space shares"),
+    "List space shares": EndpointInfo("GET", "List space shares", "Space"),
 }
 
-
 FILE_DETAILS_ENDPOINTS = {
-    "Download directory (tar)": EndpointInfo("GET", "Download file content"),
-    "List directory files and subdirectories": EndpointInfo(
-        "GET", "List directory files and subdirectories"
+    "Download directory (tar)": EndpointInfo(
+        "GET", "Download file content", "Basic File Operations"
     ),
-    "Create file in directory": EndpointInfo("POST", "Create file in directory"),
-    "Remove file": EndpointInfo("DELETE", "Remove file"),
-    "Get attributes": EndpointInfo("GET", "Get file attributes"),
-    "Get JSON metadata": EndpointInfo("GET", "Get file JSON metadata"),
-    "Set JSON metadata": EndpointInfo("PUT", "Set file JSON metadata"),
-    "Remove JSON metadata": EndpointInfo("DELETE", "Remove file JSON metadata"),
-    "Get RDF metadata": EndpointInfo("GET", "Get file RDF metadata"),
-    "Set RDF metadata": EndpointInfo("PUT", "Set file RDF metadata"),
-    "Remove RDF metadata": EndpointInfo("DELETE", "Remove file RDF metadata"),
+    "List directory files and subdirectories": EndpointInfo(
+        "GET", "List directory files and subdirectories", "Basic File Operations"
+    ),
+    "Create file in directory": EndpointInfo(
+        "POST", "Create file in directory", "Basic File Operations"
+    ),
+    "Remove file": EndpointInfo("DELETE", "Remove file", "Basic File Operations"),
+    "Get attributes": EndpointInfo(
+        "GET", "Get file attributes", "Basic File Operations"
+    ),
+    "Get JSON metadata": EndpointInfo(
+        "GET", "Get file JSON metadata", "Custom File Metadata"
+    ),
+    "Set JSON metadata": EndpointInfo(
+        "PUT", "Set file JSON metadata", "Custom File Metadata"
+    ),
+    "Remove JSON metadata": EndpointInfo(
+        "DELETE", "Remove file JSON metadata", "Custom File Metadata"
+    ),
+    "Get RDF metadata": EndpointInfo(
+        "GET", "Get file RDF metadata", "Custom File Metadata"
+    ),
+    "Set RDF metadata": EndpointInfo(
+        "PUT", "Set file RDF metadata", "Custom File Metadata"
+    ),
+    "Remove RDF metadata": EndpointInfo(
+        "DELETE", "Remove file RDF metadata", "Custom File Metadata"
+    ),
     "Get extended attributes (xattrs)": EndpointInfo(
-        "GET", "Get file extended attributes"
+        "GET", "Get file extended attributes", "Custom File Metadata"
     ),
     "Set extended attribute (xattr)": EndpointInfo(
-        "PUT", "Set file extended attribute"
+        "PUT", "Set file extended attribute", "Custom File Metadata"
     ),
     "Remove extended attributes (xattrs)": EndpointInfo(
-        "DELETE", "Remove file extended attributes"
+        "DELETE", "Remove file extended attributes", "Custom File Metadata"
     ),
 }
 
@@ -109,12 +133,28 @@ def assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint):
     found_endpoint = Homepage(driver)["api"].current_endpoint
     assert (
         found_endpoint == endpoint
-    ), f"expected header: {endpoint}, found header: {found_endpoint}"
+    ), f"expected endpoint: {endpoint}, found endpoint: {found_endpoint}"
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_docs_title_contains(selenium, browser_id, text):
     assert_title_contains(selenium, browser_id, text)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) sees that (?P<folders>.*?) sidebar folder(s are|"
+        r' is) expanded on "(?P<page>docs|api)" page in documentation'
+    )
+)
+@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
+def assert_expanded_folders_in_sidebar(selenium, browser_id, folders, page):
+    driver = selenium[browser_id]
+    expected_folders = parse_seq(folders)
+    found_folders = Homepage(driver)[page].sidebar.get_expanded_folders_names()
+    assert (
+        found_folders == expected_folders
+    ), f"expected folders: {expected_folders}, found folders {found_folders}"
 
 
 @wt(
@@ -137,13 +177,15 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(selenium, browser_id
         Popups(driver).power_select.choose_item(f"{command}\nREST")
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
-        command_name = FILE_DETAILS_ENDPOINTS[command].name
-        command_label = FILE_DETAILS_ENDPOINTS[command].label
+        endpoint = FILE_DETAILS_ENDPOINTS[command]
         assert_docs_title_contains(
-            selenium, browser_id, f"{command_name} | API Reference"
+            selenium, browser_id, f"{endpoint.name} | API Reference"
         )
-        assert_user_sees_api_endpoint_name(selenium, browser_id, command_name)
-        assert_active_section_in_docs_page(selenium, browser_id, command_label, "api")
+        assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint.name)
+        assert_active_section_in_docs_page(selenium, browser_id, endpoint.label, "api")
+        assert_expanded_folders_in_sidebar(
+            selenium, browser_id, endpoint.category, "api"
+        )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         switch_to_iframe(selenium, browser_id)
@@ -167,13 +209,15 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
         Popups(driver).power_select.choose_item(f"{command}\nREST")
         modal.rest_api_documentation.click()
         driver.switch_to.window(driver.window_handles[-1])
-        command_name = SPACE_ENDPOINTS[command].name
-        command_label = SPACE_ENDPOINTS[command].label
+        endpoint = SPACE_ENDPOINTS[command]
         assert_docs_title_contains(
-            selenium, browser_id, f"{command_name} | API Reference"
+            selenium, browser_id, f"{endpoint.name} | API Reference"
         )
-        assert_user_sees_api_endpoint_name(selenium, browser_id, command_name)
-        assert_active_section_in_docs_page(selenium, browser_id, command_label, "api")
+        assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint.name)
+        assert_active_section_in_docs_page(selenium, browser_id, endpoint.label, "api")
+        assert_expanded_folders_in_sidebar(
+            selenium, browser_id, endpoint.category, "api"
+        )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         modal.operations.click()
@@ -182,7 +226,7 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
 @wt(
     parsers.parse(
         'user of {browser_id} sees "{page_name}" docs page name in title, header and'
-        " active sidebar section"
+        " active sidebar section in documentation"
     )
 )
 def assert_user_sees_docs_page(selenium, browser_id, page_name):

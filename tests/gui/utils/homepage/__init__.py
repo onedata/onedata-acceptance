@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on Onedata documentation"""
+"""Utils and fixtures to facilitate operations on Onedata homepage"""
 
 __author__ = "Mateusz Zając"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
