@@ -7,8 +7,9 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.steps.common.miscellaneous import switch_to_iframe, title_contains
-from tests.gui.utils import DocsWebsite, EndpointInfo, Modals, Popups
+from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
+from tests.gui.utils import Homepage, Modals, Popups
+from tests.gui.utils.homepage.api import EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -83,7 +84,7 @@ FILE_DETAILS_ENDPOINTS = {
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_section_in_docs_page(selenium, browser_id, link, page):
     driver = selenium[browser_id]
-    active_links = DocsWebsite(driver)[page].sidebar.find_active_rows_names()
+    active_links = Homepage(driver)[page].sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
     ), f"Expected only one active link, but found {len(active_links)}"
@@ -96,7 +97,7 @@ def assert_active_section_in_docs_page(selenium, browser_id, link, page):
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_user_sees_docs_page_header(selenium, browser_id, header):
     driver = selenium[browser_id]
-    found_header = DocsWebsite(driver)["docs"].current_header
+    found_header = Homepage(driver)["docs"].current_header
     assert (
         found_header == header
     ), f"expected header: {header}, found header: {found_header}"
@@ -105,7 +106,7 @@ def assert_user_sees_docs_page_header(selenium, browser_id, header):
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint):
     driver = selenium[browser_id]
-    found_endpoint = DocsWebsite(driver)["api"].current_endpoint
+    found_endpoint = Homepage(driver)["api"].current_endpoint
     assert (
         found_endpoint == endpoint
     ), f"expected header: {endpoint}, found header: {found_endpoint}"
@@ -113,7 +114,7 @@ def assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint):
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_docs_title_contains(selenium, browser_id, text):
-    title_contains(selenium, browser_id, text)
+    assert_title_contains(selenium, browser_id, text)
 
 
 @wt(
@@ -178,8 +179,13 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
         modal.operations.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{page_name}" docs page in documentation'))
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{page_name}" docs page name in title, header and'
+        " active sidebar section"
+    )
+)
 def assert_user_sees_docs_page(selenium, browser_id, page_name):
     assert_user_sees_docs_page_header(selenium, browser_id, page_name)
     assert_active_section_in_docs_page(selenium, browser_id, page_name, "docs")
-    title_contains(selenium, browser_id, f"{page_name} | Onedata Docs")
+    assert_title_contains(selenium, browser_id, f"{page_name} | Onedata Docs")

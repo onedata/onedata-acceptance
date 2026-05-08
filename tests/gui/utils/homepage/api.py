@@ -1,8 +1,10 @@
 """Utils to facilitate operations on "API" page of Onedata documentation"""
 
 __author__ = "Mateusz Zając"
-__copyright__ = "Copyright (C) 2026 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from dataclasses import dataclass
 
 from tests.gui.utils.core.web_elements import (
     ButtonWithTextPageObject,
@@ -13,17 +15,20 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.core.web_objects import PageObject
 
 
+@dataclass
 class EndpointInfo:
-    def __init__(self, method, name):
-        self.method = method
-        self.name = name
-        self.label = f"{self.method}\n{self.name}"
+    method: str
+    name: str
+
+    @property
+    def label(self) -> str:
+        return f"{self.method}\n{self.name}"
 
 
 class APISidebar(PageObject):
     category_rows = WebItemsSequence("a", cls=ButtonWithTextPageObject)
 
-    def find_active_rows_names(self):
+    def get_active_rows_names(self):
         return [row.id for row in self.category_rows if row.is_active()]
 
 

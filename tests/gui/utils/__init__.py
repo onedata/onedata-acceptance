@@ -17,5 +17,4 @@ from .onezone import OZLoggedIn
 from .onezone.data_discovery_page import DataDiscoveryPage
 from .onezone.privacy_policy import PrivacyPolicy
 from .onezone.terms_of_use import TermsOfUse
-from .documentation import DocsWebsite
-from .documentation.api import EndpointInfo
+from .homepage import Homepage

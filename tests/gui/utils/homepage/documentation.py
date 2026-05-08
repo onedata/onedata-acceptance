@@ -1,7 +1,7 @@
 """Utils to facilitate operations on endpoints in "Docs" page of Onedata documentation"""
 
 __author__ = "Mateusz Zając"
-__copyright__ = "Copyright (C) 2026 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import (
@@ -16,7 +16,7 @@ from tests.gui.utils.core.web_objects import PageObject
 class DocsSidebar(PageObject):
     category_rows = WebItemsSequence("a", cls=ButtonWithTextPageObject)
 
-    def find_active_rows_names(self):
+    def get_active_rows_names(self):
         return [row.id for row in self.category_rows if row.is_active()]
 
 

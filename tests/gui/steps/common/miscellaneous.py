@@ -57,7 +57,7 @@ def press_backspace_on_active_element(selenium, browser_id):
     driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
 
 
-def title_contains(selenium, browser_id, text):
+def assert_title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title
     assert text in page_title, f"{page_title} page title should contain {text}"
 
@@ -68,8 +68,8 @@ def title_contains(selenium, browser_id, text):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_frontend_title_contains(selenium, browser_id, text):
-    title_contains(selenium, browser_id, text)
+def wt_assert_title_contains(selenium, browser_id, text):
+    assert_title_contains(selenium, browser_id, text)
 
 
 @wt(

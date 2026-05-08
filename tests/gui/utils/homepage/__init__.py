@@ -1,19 +1,19 @@
 """Utils and fixtures to facilitate operations on Onedata documentation"""
 
 __author__ = "Mateusz Zając"
-__copyright__ = "Copyright (C) 2026 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import WebElementsSequence
-from tests.gui.utils.documentation.api import APIPage
-from tests.gui.utils.documentation.docs import DocsPage
-from tests.gui.utils.documentation.how_it_works import HowItWorksPage
-from tests.gui.utils.documentation.quick_start import QuickStartPage
+from tests.gui.utils.homepage.api import APIPage
+from tests.gui.utils.homepage.documentation import DocsPage
+from tests.gui.utils.homepage.how_it_works import HowItWorksPage
+from tests.gui.utils.homepage.quick_start import QuickStartPage
 
 panels_dict = {"how it works": 0, "quick start": 1, "docs": 2, "api": 3}
 
 
-class DocsWebsite:
+class Homepage:
     _panels = WebElementsSequence(".nav-list .nav-link")
 
     panels = {
