@@ -85,10 +85,6 @@ def pytest_runtest_makereport(item):
     setattr(item, rep.when + "_xvfb_recorder", rep)
 
 
-def pytest_collection_modifyitems(items):
-    pass
-
-
 def pytest_bdd_before_scenario(request, feature, scenario):
     RecorderManager(request).handle_start_recording()
     print("\n=================================================================")
