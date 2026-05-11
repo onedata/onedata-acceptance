@@ -8,7 +8,6 @@ from tests.gui.utils.core.web_objects import PageObject
 
 
 class QuickStartPage(PageObject):
-
     def __getitem__(self, item):
         if hasattr(self, "elements_list"):
             return self.elements_list[item]

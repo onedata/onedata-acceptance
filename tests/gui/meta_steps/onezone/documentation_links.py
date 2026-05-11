@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
 from tests.gui.utils.generic import parse_seq
-from tests.gui.utils.homepage.api import EndpointInfo
+from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -106,34 +106,27 @@ FILE_DETAILS_ENDPOINTS = {
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_active_section_in_docs_page(selenium, browser_id, link, page):
+def assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, link):
     driver = selenium[browser_id]
-    active_links = Homepage(driver)[page].sidebar.get_active_rows_names()
+    # inherits from DocumentationPage
+    page:DocumentationPage = Homepage(driver)[subpage]
+    active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
     ), f"Expected only one active link, but found {len(active_links)}"
     active_link = active_links[0]
     assert (
         active_link == link
-    ), f"Expected active link to be {link}, but found {active_link}"
+    ), f"Expected active link: {link}, but found: {active_link}"
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_user_sees_docs_page_header(selenium, browser_id, header):
+def assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name):
     driver = selenium[browser_id]
-    found_header = Homepage(driver)["docs"].current_header
+    page:DocumentationPage = Homepage(driver)[subpage]
     assert (
-        found_header == header
-    ), f"expected header: {header}, found header: {found_header}"
-
-
-@repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint):
-    driver = selenium[browser_id]
-    found_endpoint = Homepage(driver)["api"].current_endpoint
-    assert (
-        found_endpoint == endpoint
-    ), f"expected endpoint: {endpoint}, found endpoint: {found_endpoint}"
+        page.current_header == name
+    ), f"Expected header: {name}, but found header: {page.current_header}"
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
@@ -144,17 +137,18 @@ def assert_docs_title_contains(selenium, browser_id, text):
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*?) sees that (?P<folders>.*?) sidebar folder(s are|"
-        r' is) expanded on "(?P<page>docs|api)" page in documentation'
+        r' is) expanded on "(?P<subpage>Docs|API)" page in documentation'
     )
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_expanded_folders_in_sidebar(selenium, browser_id, folders, page):
+def assert_expanded_folders_in_sidebar_in_docs_subpage(selenium, browser_id, subpage, folders):
     driver = selenium[browser_id]
-    expected_folders = parse_seq(folders)
-    found_folders = Homepage(driver)[page].sidebar.get_expanded_folders_names()
+    expected_folders = set(parse_seq(folders))
+    page:DocumentationPage = Homepage(driver)[subpage]
+    found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (
         found_folders == expected_folders
-    ), f"expected folders: {expected_folders}, found folders {found_folders}"
+    ), f"Expected folders: {expected_folders}, but found folders {found_folders}"
 
 
 @wt(
@@ -181,10 +175,10 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(selenium, browser_id
         assert_docs_title_contains(
             selenium, browser_id, f"{endpoint.name} | API Reference"
         )
-        assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint.name)
-        assert_active_section_in_docs_page(selenium, browser_id, endpoint.label, "api")
-        assert_expanded_folders_in_sidebar(
-            selenium, browser_id, endpoint.category, "api"
+        assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, "API", endpoint.name)
+        assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, "API", endpoint.label)
+        assert_expanded_folders_in_sidebar_in_docs_subpage(
+            selenium, browser_id, "API", endpoint.category,
         )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -213,10 +207,10 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
         assert_docs_title_contains(
             selenium, browser_id, f"{endpoint.name} | API Reference"
         )
-        assert_user_sees_api_endpoint_name(selenium, browser_id, endpoint.name)
-        assert_active_section_in_docs_page(selenium, browser_id, endpoint.label, "api")
-        assert_expanded_folders_in_sidebar(
-            selenium, browser_id, endpoint.category, "api"
+        assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, "API", endpoint.name)
+        assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, "API", endpoint.label)
+        assert_expanded_folders_in_sidebar_in_docs_subpage(
+            selenium, browser_id, "API", endpoint.category
         )
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -224,12 +218,12 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees "{page_name}" docs page name in title, header and'
-        " active sidebar section in documentation"
+    parsers.re(
+        r'user of (?P<browser_id>.*?) sees "(?P<name>.*?)" name in title, header and'
+        r' active sidebar section in "(?P<subpage>Docs|API)" subpage of documentation'
     )
 )
-def assert_user_sees_docs_page(selenium, browser_id, page_name):
-    assert_user_sees_docs_page_header(selenium, browser_id, page_name)
-    assert_active_section_in_docs_page(selenium, browser_id, page_name, "docs")
-    assert_title_contains(selenium, browser_id, f"{page_name} | Onedata Docs")
+def assert_user_sees_docs_page(selenium, browser_id, subpage, name):
+    assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
+    assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)
+    assert_docs_title_contains(selenium, browser_id, f"{name} | Onedata Docs")
