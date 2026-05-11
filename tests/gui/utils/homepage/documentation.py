@@ -20,10 +20,19 @@ class EndpointInfo:
     method: str
     name: str
     category: str
+    chapter: str
 
     @property
     def label(self) -> str:
         return f"{self.method}\n{self.name}"
+
+    @classmethod
+    def space(cls, method, name):
+        return cls(method, name, "Space", "Onezone REST API")
+
+    @classmethod
+    def file_details(cls, method, name, category):
+        return cls(method, name, category, "Oneprovider REST API")
 
 
 class DocsSidebar(PageObject):
@@ -39,9 +48,17 @@ class DocsSidebar(PageObject):
         return [folder.id.split("\n")[0] for folder in self.expanded_folders]
 
 
+class Chapters(PageObject):
+    tabs = WebItemsSequence(".chapter-tab", cls=ButtonWithTextPageObject)
+
+    def get_active_chapter_tabs_names(self):
+        return [tab.id for tab in self.tabs if tab.is_active()]
+
+
 class DocumentationPage(PageObject):
     current_header = Label(".docs-main-content h1")
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)
+    chapters = WebItem(".docs-tabs-row", cls=Chapters)
 
     def __getitem__(self, item):
         if hasattr(self, "elements_list"):
