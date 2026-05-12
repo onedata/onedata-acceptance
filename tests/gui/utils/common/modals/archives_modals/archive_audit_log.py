@@ -11,8 +11,8 @@ from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
@@ -21,6 +21,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.utils.utils import repeat_failed
 
 
 class FilesLog(BrowserRow):
@@ -57,6 +58,7 @@ class ArchiveAuditLog(Modal):
         except JavascriptException:
             pass
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def get_rows_of_column(self, option):
         # order in dict
         #  0   |  1   |   2   |     3

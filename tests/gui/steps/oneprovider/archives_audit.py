@@ -52,13 +52,14 @@ def assert_number_of_first_non_empty_column_content(
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition2)
     unique_elems = list(set(checked_elems))
-    assert (
-        len(checked_elems) == number
-    ), f"""There is {len(checked_elems)} entries instead of {number} 
-    in archive audit log.\n\n
-    Number of unique entries: {len(unique_elems)}\n\n
-    Entries: {sorted(checked_elems)}\n\n
-    Unique entries: {sorted(unique_elems)}"""
+
+    assert len(checked_elems) == number, (
+        f"There are {len(checked_elems)} entries instead of {number} "
+        "in archive audit log.\n\n"
+        f"Number of unique entries: {len(unique_elems)}\n\n"
+        f"Entries: {sorted(checked_elems)}\n\n"
+        f"Unique entries: {sorted(unique_elems)}"
+    )
 
 
 @wt(
