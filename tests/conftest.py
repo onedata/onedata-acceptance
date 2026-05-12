@@ -555,6 +555,7 @@ def export_logs(request, env_description_abs_path=None, logdir_prefix=""):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+    report.nodeid = report.nodeid.replace(SPECIAL_SEPARATOR, "")
     if call.when != "call":
         return
     request = item.funcargs["request"]
@@ -568,7 +569,6 @@ def pytest_runtest_makereport(item, call):
 
     # report.location
     # report.item
-    report.nodeid = report.nodeid.replace(SPECIAL_SEPARATOR, "")
 
     summary: list[str] = []
     extras: list[str] = []
