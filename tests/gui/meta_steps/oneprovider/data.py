@@ -4,6 +4,7 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import re
 import time
 from pathlib import Path
 
@@ -63,7 +64,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
 )
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
@@ -834,33 +835,24 @@ def create_symlinks_of_file_with_path(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) creates (?P<link_type>symbolic|hard) links of"
-        r" (?P<files_paths>\[[^\]]+\]), "
-        r"names them (?P<new_names>\[[^\]]+\]) and places them in"
-        r" (?P<symlinks_paths>\[[^\]]+\]) dirs"
-        r' in "(?P<space>.+?)"'
+        r' files in space "(?P<space>.+?)" according to following'
+        r" table:\n(?P<config>.*)",
+        flags=re.DOTALL,
     )
 )
 def create_symlinks_of_files_with_rename(
-    selenium,
-    browser_id,
-    link_type,
-    files_paths,
-    symlinks_paths,
-    new_names,
-    tmp_memory,
-    space,
+    selenium, browser_id, link_type, config, space, tmp_memory
 ):
-    # files_paths and symlink_paths are supposed to be absolute
 
-    files_paths_seq, symlinks_paths_seq, new_names_seq = (
-        parse_seq(files_paths),
-        parse_seq(symlinks_paths),
-        parse_seq(new_names),
-    )
+    options = yaml.load(config, yaml.Loader)
 
-    for file_path, symlink_path, new_name in zip(
-        files_paths_seq, symlinks_paths_seq, new_names_seq
-    ):
+    for option in options:
+        # files_path and symlink_path are supposed to be absolute
+        file_path, symlink_path, new_name = (
+            option["source"],
+            option["location"],
+            option["name"],
+        )
         change_cwd_using_breadcrumbs_in_data_tab_in_op(
             selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
         )  # start from the main space

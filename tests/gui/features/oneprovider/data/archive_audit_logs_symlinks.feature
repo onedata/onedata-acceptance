@@ -73,29 +73,51 @@ Feature: Archive audit logs symbolic links
 
   Scenario: User sees log entries correctly describing events for archivisation with disabled "Follow symbolic links" option
     When user of browser opens file browser for "space1" space
-    And user of browser creates symbolic links of ["dir-root-2", "dir-root-1"], names them ["symlink-dir-root-2", "symlink-dir-root-1"] and places them in ["dir-root-1", "dir-root-2"] dirs in "space1"
-    And user of browser creates symbolic links of ["dir-root-1/file1", "dir-root-2/file2"], names them ["symlink-file1", "symlink-file2"] and places them in ["dir-root-1/dir-internal-1", "dir-root-2/dir-internal-2"] dirs in "space1"
+
+    And user of browser creates symbolic links of files in space "space1" according to following table:
+      - name: symlink-dir-root-2
+        source: dir-root-2
+        location: dir-root-1
+
+      - name: symlink-dir-root-1
+        source: dir-root-1
+        location: dir-root-2
+
+      - name: symlink-file1
+        source: dir-root-1/file1
+        location: dir-root-1/dir-internal-1
+
+      - name: symlink-file2
+        source: dir-root-2/file2
+        location: dir-root-2/dir-internal-2
+
     And user of browser changes current working directory to space1 using breadcrumbs
 
-    # create and test archive with option follow symbolic links: false
     And user of browser creates dataset for item "dir-root-1" in "space1"
     And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
+
     And user of browser succeeds to create archive for item "dir-root-1" in "space1" with following configuration:
         description: symlinks archive2
         layout: plain
         follow symbolic links: false
+
     And user of browser waits for "Preserved" state for archive with description "symlinks archive2" in archive browser
     And user of browser clicks on menu for archive with description: "symlinks archive2" in archive browser
+
     And user of browser clicks "Show audit log" option in data row menu in archive browser
+
     Then user of browser sees that entries in archive audit log contain following File and Event data:
         dir-root-1: Directory archivisation finished.
         symlink-dir-root-2: Symbolic link archivisation finished.
         file1: Regular file archivisation finished.
         dir-internal-1: Directory archivisation finished.
         symlink-file1: Symbolic link archivisation finished.
+
     And user of browser sees that exactly 5 items are visible in archive audit log
 
     And user of browser clicks on "X" button in modal "Archive Details"
+
     And user of browser clicks and presses enter on archive with description: "symlinks archive2" on archives list in archive browser
+    And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir-root-1" in archive file browser
