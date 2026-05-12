@@ -261,11 +261,12 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(selenium, browser_id):
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.*?) sees "(?P<name>.*?)" name in title, header and'
-        r' active sidebar link in "(?P<subpage>Docs|API)" subpage in documentation'
+        r"user of (?P<browser_id>.*?) sees that page title, header and"
+        r' active sidebar link contain "(?P<name>.*?)" name in "(?P<subpage>Docs|API)"'
+        r" subpage in documentation"
     )
 )
-def assert_user_sees_docs_page(selenium, browser_id, name, subpage):
+def assert_user_sees_name_in_docs_subpage(selenium, browser_id, name, subpage):
     assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
     assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)
     assert_docs_title_contains(selenium, browser_id, f"{name} | Onedata Docs")
