@@ -563,6 +563,13 @@ def pytest_runtest_makereport(item, call):
         drivers.pop("request")
     except KeyError:
         pass
+    item.name = item.name.replace(SPECIAL_SEPARATOR, "")
+    item._nodeid = item.nodeid.replace(SPECIAL_SEPARATOR, "")
+
+    # report.location
+    # report.item
+    report.nodeid = report.nodeid.replace(SPECIAL_SEPARATOR, "")
+
     summary: list[str] = []
     extras: list[str] = []
     xfail = hasattr(report, "wasxfail")
