@@ -26,6 +26,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     oneprovider-[0-9] provider panel,
     node[0-9] of oneprovider-[0-9] provider panel,
     emergency interface of Onepanel
+    emergency interface of Onezone
     """
     for browser_id, host in zip(parse_seq(browser_id_list), parse_seq(hosts_list)):
         driver = selenium[browser_id]

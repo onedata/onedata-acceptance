@@ -128,7 +128,7 @@ def wt_assert_storage_attr_in_storages_page_op_panel(
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name):
     driver = selenium[browser_id]
-    Onepanel(driver).content.storages.storages[name].expand_menu(driver)
+    Onepanel(driver).content.storages.storages[name].expand_menu()
 
 
 @wt(

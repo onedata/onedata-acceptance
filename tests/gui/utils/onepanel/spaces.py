@@ -208,7 +208,6 @@ class SpaceRecord(PageObject, ExpandableMixin):
     name = id = Label(".item-icon-container + .one-label .item-name")
     toolbar = Button(".collapsible-toolbar-toggle")
 
-    _toolbar = WebElement(".one-collapsible-toolbar")
     _toggle = WebElement(".one-collapsible-list-item-header")
 
     def is_expanded(self):
@@ -216,8 +215,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self, driver):
-        ActionChains(driver).move_to_element(self._toolbar).perform()
+    def expand_menu(self):
         self.toolbar.click()
 
 

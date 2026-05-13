@@ -5,6 +5,7 @@ using web GUI
 import time
 from itertools import zip_longest
 
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -230,6 +231,14 @@ def logout_from_onezone_page(selenium, browser_id):
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
     Popups(driver).user_account_menu.options["Logout"].click()
+
+
+@wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def logout_from_onezone_emergency_panel(selenium, browser_id):
+    driver = selenium[browser_id]
+    button = OZLoggedIn(driver)["profile"].logout.web_elem
+    ActionChains(driver).move_to_element(button).click(button).perform()
 
 
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
