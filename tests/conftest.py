@@ -27,12 +27,7 @@ from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
-from tests.utils.path_utils import (
-    SPECIAL_SEPARATOR,
-    absolute_path_to_env_file,
-    get_file_name,
-    make_logdir,
-)
+from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import AdminUser
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
@@ -205,7 +200,6 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize(
             "env_description_file",
             list(scenarios),
-            ids=[f"{SPECIAL_SEPARATOR}{scenario}" for scenario in scenarios],
             scope="session",
         )
         return
@@ -213,12 +207,7 @@ def pytest_generate_tests(metafunc):
     if not env_file:
         env_file = "1oz_1op_deployed" if test_type == "gui" else "1oz_1op_1oc"
 
-    metafunc.parametrize(
-        "env_description_file",
-        [env_file],
-        ids=[f"{SPECIAL_SEPARATOR}{env_file}"],
-        scope="session",
-    )
+    metafunc.parametrize("env_description_file", [env_file], scope="session")
 
 
 def pytest_configure(config):
@@ -555,7 +544,6 @@ def export_logs(request, env_description_abs_path=None, logdir_prefix=""):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
-    report.nodeid = report.nodeid.replace(SPECIAL_SEPARATOR, "")
     if call.when != "call":
         return
     request = item.funcargs["request"]
@@ -564,11 +552,6 @@ def pytest_runtest_makereport(item, call):
         drivers.pop("request")
     except KeyError:
         pass
-    item.name = item.name.replace(SPECIAL_SEPARATOR, "")
-    item._nodeid = item.nodeid.replace(SPECIAL_SEPARATOR, "")
-
-    # report.location
-    # report.item
 
     summary: list[str] = []
     extras: list[str] = []
