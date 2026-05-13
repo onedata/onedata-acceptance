@@ -10,7 +10,7 @@ from functools import partial
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebItem
+from tests.gui.utils.core.web_elements import WebItem
 
 
 class _ProviderConfiguration(PageObject):
