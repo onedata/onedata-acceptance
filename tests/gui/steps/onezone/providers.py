@@ -582,7 +582,7 @@ def _start_and_wait_for_providers(hosts, provider_list, users):
 
 
 @wt(parsers.re(r'provider named "(?P<provider_list>.*?)" is stopped'))
-@wt(parsers.re(r'providers named (?P<provider_list>.*?) are stopped'))
+@wt(parsers.re(r"providers named (?P<provider_list>.*?) are stopped"))
 def wt_stop_providers(provider_list, hosts, users):
     _stop_providers(hosts, provider_list)
     yield

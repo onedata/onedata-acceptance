@@ -684,8 +684,8 @@ def scroll_to_top_in_file_browser(browser_id, tmp_memory):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} sees physical location path for provider "{provider}" in file '
-        "details and copies it into the clipboard"
+        'user of {browser_id} sees physical location path for provider "{provider}" in'
+        " file details and copies it into the clipboard"
     )
 )
 def assert_physical_location_path_and_copy_in_file_details(
