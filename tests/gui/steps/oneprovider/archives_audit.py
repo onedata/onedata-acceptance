@@ -39,6 +39,7 @@ def assert_number_of_first_non_empty_column_content(
     _scroll_and_check_condition(browser_id, selenium, lambda index: None)
     scroll_to_top_in_archive_audit_log(browser_id, selenium)
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def condition2(index=0):
         for field in fields:
             elems_to_check = modal.get_rows_of_column(field)[index:]
@@ -85,6 +86,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
     else:
         raise ValueError(f"Unknown column: {column_name}")
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
         currents = modal.get_rows_of_column(column_name)[index:]
         for current in currents:
@@ -114,6 +116,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
     modal = Modals(driver).archive_audit_log
     start_value = -1
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
         currents = modal.get_rows_of_column("File")[index:]
         for current in currents:
@@ -141,6 +144,7 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
         "Regular file archivisation finished.",
     ]
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
         visible_events = modal.get_rows_of_column("Event")[index:]
         for event in visible_events:
@@ -159,19 +163,17 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     checked_elems = []
     visible_elems = modal.get_rows_of_column("File")
     new_elems = visible_elems
-    index = 0
+    last_index = 0
     while new_elems:
-        condition(*args, index=index)
-
+        condition(*args, index=last_index)
         modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
         visible_elems = modal.get_rows_of_column("File")
-        index = 0
-        for elem in visible_elems:
+        for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
+                last_index = index
                 break
-            index += 1
-        new_elems = visible_elems[index:]
+        new_elems = visible_elems[last_index:]
     return checked_elems
 
 
