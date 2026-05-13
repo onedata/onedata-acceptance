@@ -68,10 +68,18 @@ class ArchiveAuditLog(Modal):
         all_rows = [f.text.split("\n") for f in rows_data]
         rows = []
         for row in all_rows:
-            if len(row) > 3:
+            if len(row) >= 4:
+                assert (
+                    row[1] != ""
+                ), f"File name is expected to be present in audit log row : {row}"
+
                 # when file`s name repeats, annotation @... is added to
-                # another column
+                # column located next to File column
                 if len(row) == 5:
+                    assert row[2] != "", (
+                        "Duplicate file name hash is supposed to have non empty"
+                        f" annotation in row : {row}"
+                    )
                     row[1] += row[2]
                     row.pop(2)
                 rows.append(row[index])

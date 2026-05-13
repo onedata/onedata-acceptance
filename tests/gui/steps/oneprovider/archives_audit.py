@@ -33,13 +33,10 @@ def assert_number_of_first_non_empty_column_content(
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     fields = parse_seq(fields)
-    # Because files` names repeat, files` names must be first loaded in order to
+
+    # Because files names repeat, files names must be first loaded in order to
     # add annotations to them
-
-    def condition(index=0):
-        _ = index
-
-    _scroll_and_check_condition(browser_id, selenium, condition)
+    _scroll_and_check_condition(browser_id, selenium, lambda index: None)
     scroll_to_top_in_archive_audit_log(browser_id, selenium)
 
     def condition2(index=0):
