@@ -27,7 +27,12 @@ from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
-from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
+from tests.utils.path_utils import (
+    SPECIAL_SEPARATOR,
+    absolute_path_to_env_file,
+    get_file_name,
+    make_logdir,
+)
 from tests.utils.user_utils import AdminUser
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
@@ -183,43 +188,37 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    if metafunc.config.option.test_type:
-        test_type = metafunc.config.option.test_type
+    if not metafunc.config.option.test_type:
+        return
 
-        if test_type in [
-            "gui",
-            "mixed",
-            "onedata_fs",
-            "oneclient",
-            "performance",
-        ]:
-            if test_type == "gui":
-                default_env_file = "1oz_1op_deployed"
-            else:
-                default_env_file = "1oz_1op_1oc"
+    test_type = metafunc.config.option.test_type
+    env_file = metafunc.config.getoption("env_file")
 
-            env_file = metafunc.config.getoption("env_file")
-            if env_file:
-                metafunc.parametrize(
-                    "env_description_file", [env_file], scope="session"
-                )
-            else:
-                metafunc.parametrize(
-                    "env_description_file", [default_env_file], scope="session"
-                )
-        elif test_type in ["upgrade"]:
-            env_file = metafunc.config.getoption("env_file")
-            if env_file:
-                with open(env_file, "r") as f:
-                    test_config = yaml.load(f, yaml.Loader)
-                scenarios = test_config["scenarios"]
-                metafunc.parametrize(
-                    "env_description_file", list(scenarios), scope="session"
-                )
-            else:
-                raise RuntimeError(
-                    "In upgrade tests --env-file option must be provided"
-                )
+    if test_type == "upgrade":
+
+        if not env_file:
+            raise RuntimeError("In upgrade tests --env-file option must be provided")
+
+        with open(env_file, "r") as f:
+            test_config = yaml.load(f, yaml.Loader)
+        scenarios = test_config["scenarios"]
+        metafunc.parametrize(
+            "env_description_file",
+            list(scenarios),
+            ids=[f"{SPECIAL_SEPARATOR}{scenario}" for scenario in scenarios],
+            scope="session",
+        )
+        return
+
+    if not env_file:
+        env_file = "1oz_1op_deployed" if test_type == "gui" else "1oz_1op_1oc"
+
+    metafunc.parametrize(
+        "env_description_file",
+        [env_file],
+        ids=[f"{SPECIAL_SEPARATOR}{env_file}"],
+        scope="session",
+    )
 
 
 def pytest_configure(config):

@@ -142,16 +142,15 @@ def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that space support record for "
-        '"{space_name}" has appeared in Spaces page in Onepanel'
+        'user of {browser_id} sees that "{space_name}" space name is displayed in the'
+        " supported spaces overview panel in Onepanel"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
-def wt_assert_existence_of_space_support_record(selenium, browser_id, space_name):
-    spaces = {
-        space.name for space in Onepanel(selenium[browser_id]).content.spaces.spaces
-    }
-    assert space_name in spaces, f'not found "{space_name}" in spaces in Onepanel'
+def wt_assert_correct_supported_space_opened(selenium, browser_id, space_name):
+    overview = Onepanel(selenium[browser_id]).content.spaces.space.overview
+    assert (
+        space_name == overview.space_name
+    ), f'opened space "{overview.name}" instead of expected "{space_name}"'
 
 
 @wt(
@@ -331,7 +330,7 @@ def wt_copy_space_id_in_spaces_page_in_onepanel(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    Onepanel(driver).content.spaces.spaces[space_name].expand_menu(driver)
+    Onepanel(driver).content.spaces.spaces[space_name].expand_menu()
 
 
 @wt(
