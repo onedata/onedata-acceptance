@@ -19,7 +19,7 @@ Feature: Basic management of emergency Onezone panel
 
 
   Scenario: User sees correct information in overview in Onezone emergency panel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser can see tabs "[Data, Shares, Providers, Groups, Tokens, Discovery, Automation]" are disabled in the main menu
     And user of browser clicks Overview of "onezone" in the sidebar
     Then user of browser sees Name is "dev-onezone" in info tile in overview view in Onepanel
@@ -29,14 +29,14 @@ Feature: Basic management of emergency Onezone panel
 
 
   Scenario: User sees correct information in Nodes in Onezone emergency panel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks Nodes of "onezone" in the sidebar
     Then user of browser sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 
 
   Scenario: User sees correct information in Web certificate in Onezone emergency panel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks Web certificate of "onezone" in the sidebar
     Then user of browser sees that "Use Lets Encrypt" toggle is unchecked in Web certificate view in Onepanel
     And user of browser sees that onezone zone domain is included in "DNS names" in Web certificate view in Onepanel
@@ -46,7 +46,7 @@ Feature: Basic management of emergency Onezone panel
 
 
   Scenario: User sees correct information in members in Onezone emergency panel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks Members of "onezone" in the sidebar
     Then user of browser sees 0 direct groups in Onezone clusters members page
     And user of browser sees 1 direct users in Onezone clusters members page
@@ -58,7 +58,7 @@ Feature: Basic management of emergency Onezone panel
 
 
   Scenario: User correctly changes emergency passphrase in Onezone emergency panel
-    When user of browser clicks on Clusters in the main menu
+    When user of browser clicks on "Clusters" in the main menu
     And user of browser clicks Emergency passphrase of "onezone" in the sidebar
     And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "password" to Current passphrase input field on emergency passphrase page
@@ -73,7 +73,7 @@ Feature: Basic management of emergency Onezone panel
     And user of browser sees an info notify with text matching to: Authentication succeeded!
 
     # set previous password back
-    And user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "Clusters"  in the main menu
     And user of browser clicks Emergency passphrase of "onezone" in the sidebar
     And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "new_password" to Current passphrase input field on emergency passphrase page
@@ -96,7 +96,7 @@ Feature: Basic management of emergency Onezone panel
     And user of browser logs out from Onezone Emergency panel
     And user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser goes to Terms of use page
     Then user of browser sees "test terms of use" on terms of use page
     And user of browser clicks "Back to main page" button on terms of use page
@@ -110,7 +110,7 @@ Feature: Basic management of emergency Onezone panel
     And user of browser logs out from Onezone Emergency panel
     And user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks on privacy policy link in cookies popup
     Then user of browser sees "test privacy policy" on privacy policy page
     And user of browser clicks "I understand" button in cookies popup

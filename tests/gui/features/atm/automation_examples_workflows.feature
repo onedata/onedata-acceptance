@@ -39,7 +39,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/test.py" to current dir
     And user of browser sees that item named "test.py" has appeared in file browser
 
-    And user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -65,7 +65,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/lorem_ipsum.enl" to current dir
     And user of browser sees that item named "lorem_ipsum.enl" has appeared in file browser
 
-    And user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -84,7 +84,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable error message in modal after trying to choose directory as initial value for "detect-file-formats" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -102,7 +102,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/test.py" to current dir
     And user of browser sees that item named "test.py" has appeared in file browser
 
-    And user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -124,7 +124,7 @@ Feature: Automation examples tests
     And user of browser uses upload button from file browser menu bar to upload file "automation/lorem_ipsum.enl" to current dir
     And user of browser sees that item named "lorem_ipsum.enl" has appeared in file browser
 
-    And user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -140,7 +140,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable error message in modal after trying to choose directory as initial value for "detect-file-mime-formats" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "detect-file-mime-formats" workflow from automation-examples repository to "inventory1" inventory
 
@@ -152,7 +152,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable files in file browser after execution of uploaded "download-files" workflow finishes
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks "space1" on the spaces list in the sidebar
@@ -199,7 +199,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using xrootd fetch file
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
 
@@ -241,7 +241,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees uploaded file in file browser after executing uploaded "download-files" workflow using fetch xrootd file
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
 
@@ -287,7 +287,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using incorrect fetch file
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks "space1" on the spaces list in the sidebar
@@ -315,7 +315,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees exception after execution of uploaded "download-files" workflow finishes when using whitespaces fetch file
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "download-files" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks "space1" on the spaces list in the sidebar
@@ -342,7 +342,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable "Active" workflow status before 10s pass in task auditlog after changing sleepDurationSec in echo lambda
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
@@ -372,7 +372,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable exception in task auditlog after changing exceptionProbability in echo lambda
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
@@ -404,7 +404,7 @@ Feature: Automation examples tests
 
 
   Scenario Outline: User checks time series charts and "results" store content after execution of uploaded "<workflow_name>" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "<workflow_name>" workflow from automation-examples repository to "inventory1" inventory
     And user of browser executes 1st revision of "<workflow_name>" workflow in "space1" space with the following initial values:
@@ -442,7 +442,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees desirable information in "results" store after execution of uploaded "demo" workflow finishes
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "demo" workflow from automation-examples repository to "inventory1" inventory
 
@@ -455,7 +455,7 @@ Feature: Automation examples tests
 
 
   Scenario: User downloads audit log of executed workflow and sees that log entries in the downloaded file correspond to those visible in GUI
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser executes 1st revision of "echo", using file as initial value: "dir1/file1" in "space1" space
@@ -468,7 +468,7 @@ Feature: Automation examples tests
 
 
   Scenario: User sees successful execution of uploaded "substitute-placeholders-example" workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "substitute-placeholders-example" workflow from automation-examples repository to "inventory1" inventory
 

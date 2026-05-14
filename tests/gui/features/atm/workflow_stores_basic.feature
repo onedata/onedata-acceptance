@@ -31,7 +31,7 @@ Feature: Workflows stores tests
 
 
   Scenario Outline: User sees <output_store_type> of <output_type> in result store after modifying input store and lambda data type and executing uploaded echo workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
@@ -74,7 +74,7 @@ Feature: Workflows stores tests
 
 
   Scenario: User sees file attributes in result store after modifying lambda and executing uploaded echo workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
 
