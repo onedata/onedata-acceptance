@@ -40,6 +40,7 @@ def check_modal_name(modal_name):
         "file_details": "details_modal",
         "directory_details": "details_modal",
         "share": "share",
+        "external_symbolic_link": "archive_external_symlink",
     }
     for k, v in s.items():
         if k in modal_name:

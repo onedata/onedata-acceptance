@@ -36,7 +36,6 @@ def click_and_press_enter_on_item_in_browser(
     # clicking on the background of browser to ensure correct
     # working of click_and enter
     browser.click_on_background()
-
     # checking if file is located in file browser
     start = time.time()
     while item_name not in browser.data:
