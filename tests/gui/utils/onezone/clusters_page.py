@@ -13,7 +13,9 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.onepanel.emergency_passphrase import EmergencyPassphrase
 from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class TokenPage(PageObject):
@@ -88,4 +90,8 @@ class ClustersPage(GenericPage):
         "button", text="Modify provider details"
     )
     gui_settings_page = WebItem(".content-clusters-gui-settings", cls=GuiSettingsPage)
+    members_page = WebItem(".content-clusters-members", cls=MembersPage)
+    emergency_passphrase_page = WebItem(
+        ".content-cluster-emergency-passphrase", cls=EmergencyPassphrase
+    )
     page_name = Label(".header-row .one-label")

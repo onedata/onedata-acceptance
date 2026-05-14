@@ -74,6 +74,10 @@ class OZLoggedIn:
         panel = self._panels[panels_dict[item]]
         return any(el in panel.get_attribute("class") for el in ["active", "selected"])
 
+    def is_panel_disabled(self, item):
+        panel = self._panels[panels_dict[item]]
+        return "disabled" in panel.get_attribute("class")
+
     def get_panels(self):
         return self._panels
 

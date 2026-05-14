@@ -5,8 +5,20 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label
+from tests.gui.utils.core.web_elements import Button, Label, WebItem, WebItemsSequence
+
+
+class Property(PageObject):
+    name = id = Label(".property-name")
+    value = Label(".property-value")
+    copy = Button(".copy-btn")
+
+
+class TileInfo(PageObject):
+    properties = WebItemsSequence("tr", cls=Property)
 
 
 class ClusterOverviewPage(PageObject):
     cluster_name = Label(".main-content .header-row .one-label")
+
+    tile_info = WebItem(".resource-info-tile", cls=TileInfo)
