@@ -76,7 +76,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 @given(
     parsers.re(
         r"users? of (?P<browser_id_list>.+?) opened "
-        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN} "
+        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
         r"page"
     )
 )
