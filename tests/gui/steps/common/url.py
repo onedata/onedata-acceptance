@@ -19,6 +19,26 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+HOST_PATTERN = (
+    r"(?:"
+    r"oneprovider-[0-9]+ provider panel|"
+    r"onezone zone panel|"
+    r"onezone|"
+    r"Onezone|"
+    r"emergency interface of Onepanel|"
+    r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
+    r")"
+)
+
+HOSTS_LIST_PATTERN = (
+    rf"(?:"
+    rf"{HOST_PATTERN}"
+    rf"|"
+    rf"\[\s*{HOST_PATTERN}(?:\s*,\s*{HOST_PATTERN})*\s*\]"
+    rf")"
+)
+
+
 def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     """hosts_list may contains:
     onezone,
@@ -56,22 +76,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 @given(
     parsers.re(
         r"users? of (?P<browser_id_list>.+?) opened "
-        r"(?P<hosts_list>emergency interface of Onepanel) "
-        r"page"
-    )
-)
-@given(
-    parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opened "
-        r"(?P<hosts_list>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
-        r"page"
-    )
-)
-@given(
-    parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opened "
-        r"(?P<hosts_list>(oneprovider-[0-9]+ provider panel|onezone zone"
-        r" panel|onezone|Onezone)) "
+        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN} "
         r"page"
     )
 )
@@ -82,22 +87,7 @@ def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
 @wt(
     parsers.re(
         r"users? of (?P<browser_id_list>.+?) opens "
-        r"(?P<hosts_list>emergency interface of Onepanel) "
-        r"page"
-    )
-)
-@wt(
-    parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opens "
-        r"(?P<hosts_list>node[0-9]+ of oneprovider-[0-9]+ provider panel) "
-        r"page"
-    )
-)
-@wt(
-    parsers.re(
-        r"users? of (?P<browser_id_list>.+?) opens "
-        r"(?P<hosts_list>(oneprovider-[0-9]+ provider panel|onezone zone"
-        r" panel|onezone|Onezone)) "
+        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
         r"page"
     )
 )
