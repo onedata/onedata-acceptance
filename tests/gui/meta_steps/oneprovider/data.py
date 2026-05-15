@@ -834,7 +834,7 @@ def create_symlinks_of_file_with_path(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.+?) creates (?P<link_type>symbolic|hard) links of"
-        r' files in space "(?P<space>.+?)" according to following'
+        r' files in space "(?P<space>.+?)" according to the following'
         r" table:\n(?P<config>(.|\s)*)",
     )
 )
