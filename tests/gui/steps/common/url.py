@@ -23,6 +23,8 @@ HOST_PATTERN = (
     r"(?:"
     r"oneprovider-[0-9]+ provider panel|"
     r"onezone zone panel|"
+    r"onezone panel|"
+    r"Onezone panel|"
     r"onezone|"
     r"Onezone|"
     r"emergency interface of Onepanel|"
