@@ -639,6 +639,8 @@ def go_to_path(
     path,
     which_browser,
 ):
+    if path == ".":
+        return
     if "/" in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -871,7 +873,7 @@ def create_symlinks_of_files_with_rename(
             selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
         )
 
-        file_parent_path = file_path.parent if file_path.parent != "" else "."
+        file_parent_path = str(file_path.parent) if str(file_path.parent) != "" else "."
         file_name = file_path.name
 
         go_to_path(
