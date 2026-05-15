@@ -29,7 +29,7 @@ Feature: Archive audit logs symbolic links
   Scenario: User sees log entries correctly describing events for archivisation with enabled "Follow symbolic links" option
     When user of browser opens file browser for "space1" space
 
-    And user of browser creates symbolic links of files in space "space1" according to following table:
+    And user of browser creates symbolic links of files in space "space1" according to the following table:
       - name: symlink-dir-root-2
         source: dir-root-2
         location: dir-root-1
@@ -83,7 +83,7 @@ Feature: Archive audit logs symbolic links
   Scenario: User sees log entries correctly describing events for archivisation with disabled "Follow symbolic links" option
     When user of browser opens file browser for "space1" space
 
-    And user of browser creates symbolic links of files in space "space1" according to following table:
+    And user of browser creates symbolic links of files in space "space1" according to the following table:
       - name: symlink-dir-root-2
         source: dir-root-2
         location: dir-root-1
