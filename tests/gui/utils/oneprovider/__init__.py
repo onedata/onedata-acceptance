@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from ..core.web_elements import WebItem
+from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser
 from .archive_container import ArchiveContainer
 from .archive_file_browser import ArchiveFileBrowser
