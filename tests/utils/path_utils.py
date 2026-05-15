@@ -11,8 +11,6 @@ import re
 import sys
 import time
 
-SPECIAL_SEPARATOR = "@@"
-
 
 def config_file(relative_file_path):
     """Returns a path to file located in {test_name}_data directory, where
@@ -122,7 +120,7 @@ def get_first_path_element(path):
     return next(elem for elem in path.split(os.path.sep) if elem)
 
 
-def build_test_dir_name(nodeid: str, max_length: int = 180) -> str:
+def build_test_dir_name(node, max_length: int = 180) -> str:
     """
     Build a filesystem-safe directory name from pytest nodeid
     consisting of: test name + parameters + full name test hash
@@ -130,13 +128,13 @@ def build_test_dir_name(nodeid: str, max_length: int = 180) -> str:
     whole name has max max_length characters.
     """
 
-    test_name = nodeid.split("::")[-1]
-    head, tail = test_name.split(SPECIAL_SEPARATOR, 1)
-    head = head[:-1]
-    tail = tail[:-1]
+    nodeid = node.nodeid
+    original_name = getattr(node, "originalname", None) or node.name
+    all_name = node.name
 
     # remove prefix test from head
-    head = head.removeprefix("test_")
+    head = original_name.removeprefix("test_")
+    tail = all_name[len(original_name) :]
 
     # shorten too long tail
     if len(tail) > max_length * (2 / 3):
