@@ -183,43 +183,31 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    if metafunc.config.option.test_type:
-        test_type = metafunc.config.option.test_type
+    if not metafunc.config.option.test_type:
+        return
 
-        if test_type in [
-            "gui",
-            "mixed",
-            "onedata_fs",
-            "oneclient",
-            "performance",
-        ]:
-            if test_type == "gui":
-                default_env_file = "1oz_1op_deployed"
-            else:
-                default_env_file = "1oz_1op_1oc"
+    test_type = metafunc.config.option.test_type
+    env_file = metafunc.config.getoption("env_file")
 
-            env_file = metafunc.config.getoption("env_file")
-            if env_file:
-                metafunc.parametrize(
-                    "env_description_file", [env_file], scope="session"
-                )
-            else:
-                metafunc.parametrize(
-                    "env_description_file", [default_env_file], scope="session"
-                )
-        elif test_type in ["upgrade"]:
-            env_file = metafunc.config.getoption("env_file")
-            if env_file:
-                with open(env_file, "r") as f:
-                    test_config = yaml.load(f, yaml.Loader)
-                scenarios = test_config["scenarios"]
-                metafunc.parametrize(
-                    "env_description_file", list(scenarios), scope="session"
-                )
-            else:
-                raise RuntimeError(
-                    "In upgrade tests --env-file option must be provided"
-                )
+    if test_type == "upgrade":
+
+        if not env_file:
+            raise RuntimeError("In upgrade tests --env-file option must be provided")
+
+        with open(env_file, "r") as f:
+            test_config = yaml.load(f, yaml.Loader)
+        scenarios = test_config["scenarios"]
+        metafunc.parametrize(
+            "env_description_file",
+            list(scenarios),
+            scope="session",
+        )
+        return
+
+    if not env_file:
+        env_file = "1oz_1op_deployed" if test_type == "gui" else "1oz_1op_1oc"
+
+    metafunc.parametrize("env_description_file", [env_file], scope="session")
 
 
 def pytest_configure(config):
@@ -564,6 +552,7 @@ def pytest_runtest_makereport(item, call):
         drivers.pop("request")
     except KeyError:
         pass
+
     summary: list[str] = []
     extras: list[str] = []
     xfail = hasattr(report, "wasxfail")

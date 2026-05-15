@@ -19,6 +19,28 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+HOST_PATTERN = (
+    r"(?:"
+    r"oneprovider-[0-9]+ provider panel|"
+    r"onezone zone panel|"
+    r"onezone panel|"
+    r"Onezone panel|"
+    r"onezone|"
+    r"Onezone|"
+    r"emergency interface of Onepanel|"
+    r"node[0-9]+ of oneprovider-[0-9]+ provider panel"
+    r")"
+)
+
+HOSTS_LIST_PATTERN = (
+    rf"(?:"
+    rf"{HOST_PATTERN}"
+    rf"|"
+    rf"\[\s*{HOST_PATTERN}(?:\s*,\s*{HOST_PATTERN})*\s*\]"
+    rf")"
+)
+
+
 def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     """hosts_list may contains:
     onezone,
@@ -26,6 +48,7 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     oneprovider-[0-9] provider panel,
     node[0-9] of oneprovider-[0-9] provider panel,
     emergency interface of Onepanel
+    emergency interface of Onezone
     """
     for browser_id, host in zip(parse_seq(browser_id_list), parse_seq(hosts_list)):
         driver = selenium[browser_id]
@@ -52,15 +75,22 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
             driver.get(f"https://{hosts[alias]['hostname']}")
 
 
-@given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
-@given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
+@given(
+    parsers.re(
+        r"users? of (?P<browser_id_list>.+?) opened "
+        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
+        r"page"
+    )
+)
 def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @wt(
     parsers.re(
-        "users? of (?P<browser_id_list>.+) opens (?P<hosts_list>.*one.*|.*One.*) page"
+        r"users? of (?P<browser_id_list>.+?) opens "
+        rf"(?P<hosts_list>{HOSTS_LIST_PATTERN}) "
+        r"page"
     )
 )
 def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):

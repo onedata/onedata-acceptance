@@ -31,7 +31,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
 )
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -1071,3 +1071,40 @@ def assert_ownership_privileges_warning_appeared_for_user(
     error_msg = f'alert with text "{alert_text}" not found'
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees {number} {item_type} in Onezone clusters members"
+        " page"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_items_in_members_onezone(selenium, browser_id, number, item_type):
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver)["clusters"].members_page
+    actual_number = getattr(page, f"{transform(item_type)}_number")
+    assert (
+        actual_number == number
+    ), f"expected {number} but got {actual_number} of {item_type}"
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on "{button_name}" in Onezone {where} members page'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_button_in_members_onezone(selenium, browser_id, button_name, where):
+    driver = selenium[browser_id]
+    page = OZLoggedIn(driver)[where].members_page
+    getattr(page, transform(button_name)).click()
+
+
+@wt(
+    parsers.parse("user of {browser_id} can see Onezone {where} members page is opened")
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_onezone_members_page_opened(selenium, browser_id, where):
+    driver = selenium[browser_id]
+    _ = OZLoggedIn(driver)[where].members_page

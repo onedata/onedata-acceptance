@@ -6,14 +6,14 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -165,6 +165,24 @@ def click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory):
 )
 def click_on_option_in_the_sidebar(selenium, browser_id, option):
     _click_on_option_in_the_sidebar(selenium, browser_id, option, force=True)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see tabs "{tabs}" are disabled in the main menu'
+    )
+)
+def wt_assert_main_tabs_disabled(selenium, browser_id, tabs):
+    for tab in parse_seq(tabs):
+        assert_main_tab_disabled(selenium, browser_id, tab)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_main_tab_disabled(selenium, browser_id, tab):
+    driver = selenium[browser_id]
+    assert OZLoggedIn(driver).is_panel_disabled(
+        tab.lower()
+    ), f"tab {tab} should be disabled but is not"
 
 
 @wt(
@@ -509,6 +527,61 @@ def click_toggle_on_providers_subpage(browser_id, toggle, selenium, option):
         getattr(OPLoggedIn(driver).provider_configuration, transform(toggle)),
         option,
     )()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} opens "{option}" option on space providers menu'
+        " in provider menu in provider section in space"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_prov_option_in_prov_menu_in_prov_section_in_space(
+    browser_id, option, selenium
+):
+    driver = selenium[browser_id]
+    last_url = driver.current_url
+    Popups(driver).space_provider_details.menu[option]()
+    Wait(driver, WAIT_FRONTEND).until(
+        lambda _: driver.current_url != last_url,
+        message=f"waiting for url to change. Current url: {driver.current_url}",
+    )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see "{provider}" is selected in tab in header'
+        " in the settings section in the space provider page"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_selected_provider_name_on_space_provider_header(
+    browser_id, provider, selenium, hosts
+):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]["name"]
+    header_label = OZLoggedIn(driver)["data"].providers_page.current_provider_tab
+    assert (
+        header_label == provider_name
+    ), f'provider "{provider}" not found in header label'
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} can see "{provider}" provider name is displayed '
+        "in the message in the settings section in the space provider page"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_provider_name_on_provider_settings_menu(
+    browser_id, provider, selenium, hosts
+):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]["name"]
+    label = OZLoggedIn(driver)["data"].providers_page.settings_message
+    assert (
+        provider_name in label
+    ), f'provider "{provider}" not found in settings message'
 
 
 @wt(

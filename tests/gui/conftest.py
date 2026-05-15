@@ -27,7 +27,7 @@ from tests.gui.sse_fixtures import (
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
-from tests.utils.path_utils import format_valid_file_name, make_logdir
+from tests.utils.path_utils import build_test_dir_name, make_logdir
 
 SELENIUM_IMPLICIT_WAIT = 0
 
@@ -86,44 +86,9 @@ def pytest_runtest_makereport(item):
 
 
 def pytest_collection_modifyitems(items):
-    first: List[pytest.Item] = []
-    second: List[pytest.Item] = []
-    second_to_last: List[pytest.Item] = []
-    last: List[pytest.Item] = []
-    rest: List[pytest.Item] = []
-
-    run_first = ("test_cluster_deployment",)
-    run_second = ("test_support_space", "test_revoke_space_support")
-    run_second_to_last = ("test_user_changes_provider_name_and_domain",)
-    run_last = ("test_user_deregisters_provider",)
     for item in items:
         item.name = re.sub("{.*}", "", item.name)
         item.name = re.sub("<.*>", "", item.name)
-
-    for item in items:
-        for suite_scenarios, run_suite in (
-            (run_first, first),
-            (run_second, second),
-            (run_second_to_last, second_to_last),
-            (run_last, last),
-        ):
-            found_suite = False
-            for scenario_name in suite_scenarios:
-                if scenario_name in item.nodeid:
-                    run_suite.append(item)
-                    found_suite = True
-                    break
-
-            if found_suite:
-                break
-        else:
-            rest.append(item)
-
-    first.extend(second)
-    first.extend(rest)
-    first.extend(second_to_last)
-    first.extend(last)
-    items[:] = first
 
 
 def pytest_bdd_before_scenario(request, feature, scenario):
@@ -140,8 +105,7 @@ def pytest_bdd_before_step_call(step):
 
 def pytest_bdd_after_scenario(request):
     logdir_path = get_log_dir_path(request)
-    scenario_name = request.node.name
-    lambda_log_dir_name = format_valid_file_name(scenario_name)
+    lambda_log_dir_name = build_test_dir_name(request.node)
     onenv_utils.run_onenv_command(
         "export",
         [

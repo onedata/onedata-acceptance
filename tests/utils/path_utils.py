@@ -4,6 +4,7 @@ __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import hashlib
 import inspect
 import os
 import re
@@ -119,6 +120,42 @@ def get_first_path_element(path):
     return next(elem for elem in path.split(os.path.sep) if elem)
 
 
-def format_valid_file_name(file_name):
-    file_name = file_name[:180]
-    return re.sub(r"[^\w.\-\[\]]", "_", file_name)
+def build_test_dir_name(node, max_length: int = 180) -> str:
+    """
+    Build a filesystem-safe directory name from pytest nodeid
+    consisting of: test name + parameters + full name test hash
+    full name test hash is added to ensure uniqueness test dir names
+    whole name has max max_length characters.
+    """
+
+    nodeid = node.nodeid
+    original_name = getattr(node, "originalname", None) or node.name
+    all_name = node.name
+
+    # remove prefix test from head
+    head = original_name.removeprefix("test_")
+    tail = all_name[len(original_name) :]
+
+    # shorten too long tail
+    if len(tail) > max_length * (2 / 3):
+        tail = tail[: (max_length * 2) // 3]
+
+    hash_digest = hashlib.blake2s(
+        nodeid.encode("utf-8"),
+        digest_size=6,
+    ).hexdigest()[:8]
+
+    head_len = max_length - len(tail) - len(hash_digest) - 2
+    test_dir_name = f"{head[:head_len]}_{tail}_{hash_digest}"
+
+    test_dir_name = re.sub(r"[^a-zA-Z0-9._-]+", "_", test_dir_name)
+    test_dir_name = re.sub(r"_+", "_", test_dir_name)
+
+    if len(test_dir_name) > max_length:
+        print(
+            "Applying extra shortening, because test dir name is still too long:"
+            f" {test_dir_name}"
+        )
+        test_dir_name = test_dir_name[:max_length]
+
+    return test_dir_name
