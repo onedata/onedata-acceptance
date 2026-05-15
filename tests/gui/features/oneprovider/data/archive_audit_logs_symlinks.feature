@@ -33,15 +33,12 @@ Feature: Archive audit logs symbolic links
       - name: symlink-dir-root-2
         source: dir-root-2
         location: dir-root-1
-
       - name: symlink-dir-root-1
         source: dir-root-1
         location: dir-root-2
-
       - name: symlink-file1
         source: dir-root-1/file1
         location: dir-root-1/dir-internal-1
-
       - name: symlink-file2
         source: dir-root-2/file2
         location: dir-root-2/dir-internal-2
@@ -87,15 +84,12 @@ Feature: Archive audit logs symbolic links
       - name: symlink-dir-root-2
         source: dir-root-2
         location: dir-root-1
-
       - name: symlink-dir-root-1
         source: dir-root-1
         location: dir-root-2
-
       - name: symlink-file1
         source: dir-root-1/file1
         location: dir-root-1/dir-internal-1
-
       - name: symlink-file2
         source: dir-root-2/file2
         location: dir-root-2/dir-internal-2

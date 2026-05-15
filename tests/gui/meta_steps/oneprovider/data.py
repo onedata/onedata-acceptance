@@ -4,7 +4,6 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-import re
 import time
 from pathlib import Path
 
@@ -836,32 +835,44 @@ def create_symlinks_of_file_with_path(
     parsers.re(
         r"user of (?P<browser_id>.+?) creates (?P<link_type>symbolic|hard) links of"
         r' files in space "(?P<space>.+?)" according to following'
-        r" table:\n(?P<config>.*)",
-        flags=re.DOTALL,
+        r" table:\n(?P<config>(.|\s)*)",
     )
 )
 def create_symlinks_of_files_with_rename(
     selenium, browser_id, link_type, config, space, tmp_memory
 ):
+    """
+    Symbolic links configuration format:
+      - name: Name of the symbolic link to create
+        source: Absolute path to the existing file or directory the symlink points to
+        location: Absolute path to directory where the symbolic link should be created
 
-    options = yaml.load(config, yaml.Loader)
+    Example:
+      - name: symlink-example
+        source: dir-a/file1
+        location: dir-b
 
-    for option in options:
-        # files_path and symlink_path are supposed to be absolute
+    Result:
+    dir-b/symlink-example -> dir-a/file1
+    """
+
+    config_yaml = yaml.load(config, yaml.Loader)
+
+    for symlink_info in config_yaml:
         file_path, symlink_path, new_name = (
-            option["source"],
-            option["location"],
-            option["name"],
+            Path(symlink_info["source"]),
+            Path(symlink_info["location"]),
+            symlink_info["name"],
         )
+
+        # for each iteration start from the main space in file browser,
+        # because all paths are absolute
         change_cwd_using_breadcrumbs_in_data_tab_in_op(
             selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
-        )  # start from the main space
+        )
 
-        file_parent_path = "/".join(file_path.split("/")[:-1])
-        file_name = file_path.split("/")[-1]
-
-        if len(file_parent_path) == "":
-            file_parent_path = "."
+        file_parent_path = file_path.parent if file_path.parent != "" else "."
+        file_name = file_path.name
 
         go_to_path(
             selenium,
@@ -871,9 +882,7 @@ def create_symlinks_of_files_with_rename(
             WhichBrowser.FILE_BROWSER.value,
         )
 
-        relative_path = str(
-            Path(symlink_path).relative_to(file_parent_path, walk_up=True)
-        )
+        relative_path = str(symlink_path.relative_to(file_parent_path, walk_up=True))
 
         option = f"Create {link_type} link"
         button = f"Place {link_type} link"
