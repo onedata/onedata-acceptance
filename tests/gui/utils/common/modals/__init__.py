@@ -8,7 +8,6 @@ from tests.gui.utils.core.web_elements import WebItem
 
 from .archives_modals.archive_audit_log import ArchiveAuditLog
 from .archives_modals.archive_details import ArchiveDetails
-from .archives_modals.archive_external_symlink import ArchiveExternalSymlink
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.audit_log_entry_details import AuditLogEntryDetails
 from .archives_modals.cancel_archive import CancelArchive
@@ -120,7 +119,6 @@ class Modals:
         ".details-container.visible", cls=AuditLogEntryDetails
     )
     cancel_archive = WebItem(".modal-content", cls=CancelArchive)
-    archive_external_symlink = WebItem(".modal-content", cls=ArchiveExternalSymlink)
 
     # datasets modals
     datasets = WebItem(".modal-dialog", cls=DatasetsModal)
