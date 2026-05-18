@@ -173,6 +173,8 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
             if elem not in checked_elems:
                 last_index = index
                 break
+        else:
+            last_index = len(visible_elems)
         new_elems = visible_elems[last_index:]
     return checked_elems
 
