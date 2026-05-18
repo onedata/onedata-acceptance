@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from pathlib import Path
+from typing import Optional
 
 import yaml
 from selenium.common.exceptions import (
@@ -930,7 +931,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     else:
         source_parent_path = "/"
 
-    relative_path = str(
+    relative_path: Optional[str] = str(
         Path(path_to_place).relative_to(source_parent_path, walk_up=True)
     )
 
