@@ -83,6 +83,7 @@ Feature: Directories size statistics per providers
     When user of browser opens file browser for "space1" space
     And user of browser replicates ["dir1", "dir2", "dir3"] in space "space1" to provider "oneprovider-2" and waits for all transfers to complete
 
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
 
