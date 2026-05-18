@@ -73,7 +73,7 @@ Feature: Basic management of emergency Onezone panel
     And user of browser sees an info notify with text matching to: Authentication succeeded!
 
     # set previous password back
-    And user of browser clicks on "Clusters"  in the main menu
+    And user of browser clicks on "Clusters" in the main menu
     And user of browser clicks Emergency passphrase of "onezone" in the sidebar
     And user of browser clicks on Change passphrase button on emergency passphrase page
     And user of browser types "new_password" to Current passphrase input field on emergency passphrase page
