@@ -34,8 +34,9 @@ Feature: Directories size statistics per providers
 
 
   Scenario: User sees space's size stats per provider after clicking show statistics button
-    When user of browser opens file browser for "space1" space
+    When user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
+
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
     Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "60 B"]
     And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["60 B", "0 B"]
@@ -47,11 +48,14 @@ Feature: Directories size statistics per providers
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser clicks on "oneprovider-2" provider on providers page
+    
     And user of browser unchecks size statistics toggle in selected provider settings on providers page
     And user of browser clicks on "Disable" button in modal "Disable directory statistics"
     And user of browser clicks on "oneprovider-1" provider on providers page
+
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
+
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
     Then user of browser sees that logical_size for "oneprovider-1" is "60 B"
     And user of browser sees that physical_size for "oneprovider-1" is "60 B"
@@ -71,6 +75,7 @@ Feature: Directories size statistics per providers
     And user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "file4" to remote current dir
     And user of browser changes current working directory to space root using breadcrumbs
+
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
     Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["100 B", "100 B"]
@@ -99,7 +104,7 @@ Feature: Directories size statistics per providers
 
     And user of browser replicates ["dir1", "dir3"] in space "space1" to provider "oneprovider-2" and waits for all transfers to complete
 
-    And user of browser opens file browser for "space1" space
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     And user of browser checks "Include virtual size" toggle on "Size stats" modal
 
