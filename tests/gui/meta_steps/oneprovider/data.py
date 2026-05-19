@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from pathlib import Path
+
 import yaml
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -1038,17 +1039,16 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
     selenium, browser_id, tmp_memory, space
 ):
     browser = "file browser"
-    option = "Information"
-    tab_name = "Size stats"
-    modal = "Directory Details"
     path = space
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser=browser)
     is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         selenium, browser_id, path, which_browser=browser
     )
     click_on_breadcrumbs_menu(selenium, browser_id, browser)
-    click_option_in_popup_labeled_menu(selenium, browser_id, option)
-    click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modal)
+    click_option_in_popup_labeled_menu(selenium, browser_id, "Information")
+    click_on_navigation_tab_in_modal(
+        selenium, browser_id, "Size stats", "Directory Details"
+    )
     expand_size_statistics_for_providers(selenium, browser_id)
 
 

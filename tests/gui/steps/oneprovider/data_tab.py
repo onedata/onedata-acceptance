@@ -888,7 +888,9 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 )
 def toggle_include_virtual_size_in_size_statistics(selenium, browser_id, res):
     driver = selenium[browser_id]
-    toggle = Modals(driver).details_modal.size_statistics.include_virtual_size_toggle
+    size_stats_tab = Modals(driver).details_modal.size_statistics
+    size_stats_tab.scroll_to_top()
+    toggle = size_stats_tab.include_virtual_size_toggle
     getattr(toggle, res)()
     condition = toggle.is_checked() if res == "check" else not toggle.is_checked()
     err_msg = f'Include virtual size toggle is not {res + "ed"}'
