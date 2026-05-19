@@ -85,6 +85,12 @@ def pytest_runtest_makereport(item):
     setattr(item, rep.when + "_xvfb_recorder", rep)
 
 
+def pytest_collection_modifyitems(items):
+    for item in items:
+        item.name = re.sub("{.*}", "", item.name)
+        item.name = re.sub("<.*>", "", item.name)
+
+
 def pytest_bdd_before_scenario(request, feature, scenario):
     RecorderManager(request).handle_start_recording()
     print("\n=================================================================")
@@ -99,7 +105,7 @@ def pytest_bdd_before_step_call(step):
 
 def pytest_bdd_after_scenario(request):
     logdir_path = get_log_dir_path(request)
-    lambda_log_dir_name = build_test_dir_name(request.node.nodeid)
+    lambda_log_dir_name = build_test_dir_name(request.node)
     onenv_utils.run_onenv_command(
         "export",
         [
