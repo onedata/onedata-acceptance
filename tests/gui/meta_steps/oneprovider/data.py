@@ -873,7 +873,7 @@ def create_symlinks_of_files_with_rename(
             selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
         )
 
-        file_parent_path = str(file_path.parent) if str(file_path.parent) != "" else "."
+        file_parent_path = str(file_path.parent)
         file_name = file_path.name
 
         go_to_path(
