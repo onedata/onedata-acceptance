@@ -236,6 +236,13 @@ def replicate_item(selenium, browser_id, provider, hosts):
     Popups(driver).data_distribution_popup.menu[menu_option]()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def is_current_item_fully_on_provider(driver, provider_name):
+    data_distribution_modal = Modals(driver).details_modal.data_distribution
+    record = data_distribution_modal.providers[provider_name]
+    return record.percentage_label == "100%"
+
+
 @wt(
     parsers.parse(
         "user of {browser_id} clicks on menu button for "

@@ -882,18 +882,16 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 
 @wt(
     parsers.re(
-        r'user of (?P<browser_id>.+?) (?P<res>checks|unchecks) "Include virtual size"'
-        r" toggle"
-        r' on "Size stats" modal'
+        r'user of (?P<browser_id>.+?) (?P<res>check|uncheck)s "Include virtual size"'
+        r' toggle on "Size stats" modal'
     )
 )
 def toggle_include_virtual_size_in_size_statistics(selenium, browser_id, res):
     driver = selenium[browser_id]
     toggle = Modals(driver).details_modal.size_statistics.include_virtual_size_toggle
-    toggle.click()
-
-    condition = toggle.is_checked() if res == "checks" else not toggle.is_checked()
-    err_msg = f'Include virtual size toggle is not {res[:-1]+"ed"}'
+    getattr(toggle, res)()
+    condition = toggle.is_checked() if res == "check" else not toggle.is_checked()
+    err_msg = f'Include virtual size toggle is not {res + "ed"}'
     assert condition, err_msg
 
 
