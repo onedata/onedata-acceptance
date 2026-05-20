@@ -30,7 +30,7 @@ from .space_marketplace import SpaceMarketplacePage
 
 
 class Space(Element):
-    name = id = Label(".one-label")
+    name = id = Label(".item-name")
     support_size = Label(".status-toolbar-icon:first-of-type")
     supporting_providers_number = Label(".status-toolbar-icon:last-of-type")
     advertised_icon = Icon(".oneicon-cart-checked")
@@ -224,7 +224,7 @@ class DataPage(GenericPage):
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
     spaces_header_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable .item-header", cls=Space
+        ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
     spaces_header_list_web_elems = WebElementsSequence(
         ".sidebar-spaces li.one-list-item.clickable.data-row"
