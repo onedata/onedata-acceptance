@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.common import replicate_files_to_provider
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.browser import (
@@ -36,13 +37,11 @@ from tests.utils.utils import repeat_failed
         'Oneprovider transfers for "(?P<space>.*)" space'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def open_transfers_page(selenium, browser_id, provider, space, hosts):
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space, option)
-
     if provider_name != check_current_provider_in_space(selenium, browser_id):
         click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
         choose_provider_in_selected_page(selenium, browser_id, provider, hosts)
@@ -100,3 +99,22 @@ def wait_for_all_transfers_to_start_and_finish(
     open_transfers_page(selenium, browser_id, provider, space, hosts)
     wait_for_waiting_transfer_to_start(selenium, browser_id)
     wait_for_ongoing_tranfers_to_finish(selenium, browser_id)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+) "
+        r'replicates (?P<names>.*) in space "(?P<space>.+)"'
+        r' to provider "(?P<provider>.+)"'
+        r" and waits for all transfers to complete"
+    )
+)
+def replicate_and_wait_to_complete(
+    selenium, browser_id, names, space, provider, tmp_memory, hosts
+):
+    replicate_files_to_provider(
+        selenium, browser_id, names, tmp_memory, provider, hosts, "replicates"
+    )
+    wait_for_all_transfers_to_start_and_finish(
+        selenium, browser_id, provider, space, hosts
+    )

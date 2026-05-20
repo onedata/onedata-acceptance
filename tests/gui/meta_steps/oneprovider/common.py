@@ -8,6 +8,7 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
+    assert_error_modal_with_text_appeared,
     click_modal_button,
     write_name_into_text_field_in_modal,
     wt_wait_for_modal_to_appear,
@@ -25,6 +26,7 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.file_browser import confirm_create_new_directory
 from tests.gui.steps.oneprovider.transfers import (
     assert_see_history_btn_shown,
+    is_current_item_fully_on_provider,
     migrate_item,
     replicate_item,
 )
@@ -34,6 +36,7 @@ from tests.gui.steps.oneprovider_common import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -57,35 +60,61 @@ def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hos
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
 
+def assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts):
+    try:
+        replicate_item(selenium, browser_id, provider, hosts)
+    except RuntimeError:
+        return
+    raise AssertionError(f"Current item is not supposed to be replicable to {provider}")
+
+
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*) "
-        '(?P<result>replicates|fails to replicate) "(?P<name>.*)"'
-        ' to provider "(?P<provider>.*)"'
+        r"user of (?P<browser_id>.*) "
+        r"(?P<result>replicates|fails to replicate) (?P<names>.*)"
+        r" to each provider: (?P<providers>.*)"
     )
 )
-def replicate_file_to_provider(
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) "
+        r'(?P<result>replicates|fails to replicate) "(?P<names>.*)"'
+        r' to provider "(?P<providers>.*)"'
+    )
+)
+def replicate_files_to_provider(
     selenium,
     browser_id,
-    name,
+    names,
     tmp_memory,
-    provider,
+    providers,
     hosts,
     result,
 ):
-    option = "Data distribution"
-    tab = "Distribution"
-    details_modal = "Details modal"
-    close_button = "X"
+    details_modal_str = "Details modal"
+    for name in parse_seq(names):
+        click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
+        click_option_in_data_row_menu_in_browser(
+            selenium, browser_id, "Data distribution"
+        )
+        assert_tab_in_modal(selenium, browser_id, "Distribution", details_modal_str)
 
-    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    assert_tab_in_modal(selenium, browser_id, tab, details_modal)
+        for provider in parse_seq(providers):
+            if is_current_item_fully_on_provider(
+                selenium[browser_id], hosts[provider]["name"]
+            ):
+                assert_cannot_click_replicate_button(
+                    selenium, browser_id, provider, hosts
+                )
+                continue
+            replicate_item(selenium, browser_id, provider, hosts)
+            if result == "fails to replicate":
+                assert_error_modal_with_text_appeared(
+                    selenium, browser_id, "Starting replication failed!"
+                )
+                click_modal_button(selenium, browser_id, "Close", "Error")
 
-    replicate_item(selenium, browser_id, provider, hosts)
-
-    if result == "replicates":
-        click_modal_button(selenium, browser_id, close_button, details_modal)
+        click_modal_button(selenium, browser_id, "X", details_modal_str)
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))

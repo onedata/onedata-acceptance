@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
-    replicate_file_to_provider,
+    replicate_files_to_provider,
 )
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.meta_steps.oneprovider.transfers import (
@@ -58,7 +58,7 @@ def replicate_file_to_provider_op(
     elif client.lower() == "web gui":
         result = "replicates"
         go_to_filebrowser(selenium, user, tmp_memory, space)
-        replicate_file_to_provider(
+        replicate_files_to_provider(
             selenium, user, path, tmp_memory, provider_to, hosts, result
         )
     else:
