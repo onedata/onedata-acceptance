@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import (
     WAIT_BACKEND,
@@ -19,6 +20,7 @@ from tests.gui.conftest import (
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.common import _Toggle
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
@@ -880,6 +882,16 @@ def expand_size_statistics_for_providers(selenium, browser_id):
     Modals(driver).details_modal.size_statistics.expand_stats_button()
 
 
+def _wait_for_toggle_status(driver, toggle: _Toggle, is_checked=True):
+    return Wait(driver, WAIT_BACKEND).until(
+        lambda _: toggle.is_checked() == is_checked,
+        message=(
+            f"waiting for the {str(toggle)} toggle to be"
+            f" {'checked' if is_checked else 'unchecked'}"
+        ),
+    )
+
+
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.+?) (?P<res>check|uncheck)s "Include virtual size"'
@@ -892,9 +904,7 @@ def toggle_include_virtual_size_in_size_statistics(selenium, browser_id, res):
     size_stats_tab.scroll_to_top()
     toggle = size_stats_tab.include_virtual_size_toggle
     getattr(toggle, res)()
-    condition = toggle.is_checked() if res == "check" else not toggle.is_checked()
-    err_msg = f'Include virtual size toggle is not {res + "ed"}'
-    assert condition, err_msg
+    _wait_for_toggle_status(driver, toggle, (res == "check"))
 
 
 @wt(

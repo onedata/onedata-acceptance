@@ -30,7 +30,7 @@ Feature: Operations when current provider stops
     And user of browser opens size statistics per provider view using breadcrumbs menu in "space1"
     Then user of browser sees that logical_sizes for ["oneprovider-1", "oneprovider-2"] are ["5 B", "5 B"]
     And user of browser sees that physical_sizes for ["oneprovider-1", "oneprovider-2"] are ["5 B", "0 B"]
-    And user of browser sees that content for ["oneprovider-1", "oneprovider-2"] is ["1 file, 1 directory", "1 file, 1 directory"]
+    And user of browser sees that contents for ["oneprovider-1", "oneprovider-2"] are ["1 file, 1 directory", "1 file, 1 directory"]
     And provider named oneprovider-2 is stopped
     And user of browser sees that error message for oneprovider-2 is "Proxy error: no connection to peer Oneprovider."
 
