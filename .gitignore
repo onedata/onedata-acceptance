@@ -44,3 +44,5 @@ warnings.log
 
 # Emacs
 *~
+
+venv/*
