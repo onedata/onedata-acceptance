@@ -231,9 +231,20 @@ def pytest_report_header(config, start_path):
 
 
 def pytest_collection_modifyitems(items):
+    last_items = []
+    normal_items = []
+
     for item in items:
+
         if item.name.split("[")[0] in scenarios_to_rerun:
             item.add_marker(pytest.mark.flaky(reruns=3, reruns_delay=1))
+
+        if item.get_closest_marker("last"):
+            last_items.append(item)
+        else:
+            normal_items.append(item)
+
+    items[:] = normal_items + last_items
 
 
 # =============================================================================
