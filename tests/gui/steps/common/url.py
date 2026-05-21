@@ -18,7 +18,6 @@ from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
-
 HOST_PATTERN = (
     r"(?:"
     r"oneprovider-[0-9]+ provider panel|"
