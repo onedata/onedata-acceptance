@@ -80,7 +80,7 @@ class ArchiveAuditLog(Modal):
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_rows_of_column(self, option):
         params = []
-        for row in self.data_row:                
+        for row in self.data_row:
             if getattr(row, "name") == "":
                 continue
             name_hash = None
