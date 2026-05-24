@@ -839,6 +839,76 @@ def create_symlinks_of_file_with_path(
 
 
 @wt(
+    parsers.re(
+        r"user of (?P<browser_id>.+?) creates (?P<link_type>symbolic|hard) links of"
+        r' files in space "(?P<space>.+?)" according to the following'
+        r" table:\n(?P<config>(.|\s)*)",
+    )
+)
+def create_symlinks_of_files_with_rename(
+    selenium, browser_id, link_type, config, space, tmp_memory
+):
+    """
+    Symbolic links configuration format:
+      - name: Name of the symbolic link to create
+        source: Absolute path to the existing file or directory the symlink points to
+        location: Absolute path to directory where the symbolic link should be created
+
+    Example:
+      - name: symlink-example
+        source: dir-a/file1
+        location: dir-b
+
+    Result:
+    dir-b/symlink-example -> dir-a/file1
+    """
+
+    config_yaml = yaml.load(config, yaml.Loader)
+
+    for symlink_info in config_yaml:
+        file_path, symlink_path, new_name = (
+            Path(symlink_info["source"]),
+            Path(symlink_info["location"]),
+            symlink_info["name"],
+        )
+
+        # for each iteration start from the main space in file browser,
+        # because all paths are absolute
+        change_cwd_using_breadcrumbs_in_data_tab_in_op(
+            selenium, browser_id, space, WhichBrowser.FILE_BROWSER.value
+        )
+
+        file_parent_path = str(file_path.parent)
+        file_name = file_path.name
+
+        go_to_path(
+            selenium,
+            browser_id,
+            tmp_memory,
+            file_parent_path,
+            WhichBrowser.FILE_BROWSER.value,
+        )
+
+        relative_path = str(symlink_path.relative_to(file_parent_path, walk_up=True))
+
+        option = f"Create {link_type} link"
+        button = f"Place {link_type} link"
+
+        _create_link_in_file_browser(
+            selenium,
+            browser_id,
+            file_name,
+            space,
+            tmp_memory,
+            option,
+            button,
+            path=relative_path,
+            go_to_file_browser=False,
+            new_name=new_name,
+        )
+
+
+@wt(
     parsers.parse(
         'user of {browser_id} creates hard link of "{file_name}" '
         'placed in "{path}" directory on {which_browser} in "{space}"'
@@ -881,6 +951,7 @@ def _create_link_in_file_browser(
     button,
     path=None,
     go_to_file_browser=True,
+    new_name=None,
 ):
     if go_to_file_browser:
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
@@ -895,9 +966,15 @@ def _create_link_in_file_browser(
     time.sleep(0.5)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     browser = WhichBrowser.FILE_BROWSER
+
     if path:
         go_to_path(selenium, browser_id, tmp_memory, path, browser.value)
     click_file_browser_button(browser_id, button, browser, tmp_memory)
+
+    if new_name:
+        rename_item(
+            selenium, browser_id, file_name, new_name, tmp_memory, "succeeds", space
+        )
 
 
 @wt(
