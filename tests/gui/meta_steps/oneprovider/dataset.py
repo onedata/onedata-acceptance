@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -32,7 +31,6 @@ from tests.gui.steps.oneprovider.dataset import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 DATA_PROTECTION = "data_protection"
 METADATA_PROTECTION = "metadata_protection"
