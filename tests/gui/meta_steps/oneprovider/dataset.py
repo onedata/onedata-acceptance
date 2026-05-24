@@ -70,7 +70,6 @@ def get_item_name_from_path(
         '"{item_name}" in "{space_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset(
     browser_id,
     tmp_memory,
