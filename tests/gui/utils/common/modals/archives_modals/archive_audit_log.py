@@ -10,6 +10,7 @@ import time
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from typing import Dict, List
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
@@ -78,21 +79,26 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_column(self, option):
-        params = []
+    def get_rows_of_columns(self, options):
+        params_dict:Dict[str, List[str]] = {}
+        options_set = set([self.info_dict[option] for option in options])
+        options_set.add("name")
         for row in self.data_row:
-            if getattr(row, "name") == "":
+            params = [getattr(row, option) for option in options_set]
+            if any(param == "" for param in params):
                 continue
-            name_hash = None
             try:
                 name_hash = row.duplicated_name_hash
             except RuntimeError:
-                pass
-            param = getattr(row, self.info_dict[option])
-            if option == "File" and name_hash:
-                param += name_hash
-            params.append(param)
-        return trim_edges(params)
+                name_hash = None
+                
+            if name_hash:
+                params[options.index("name")] += name_hash
+                
+            for option, param in zip(options, params):
+                params_dict[option] = params_dict.get(option, []) + [param]
+                
+        return params_dict
 
     def __str__(self):
         return "Archive audit log"
