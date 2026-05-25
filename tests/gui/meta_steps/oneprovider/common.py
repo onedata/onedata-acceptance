@@ -2,6 +2,7 @@
 using web GUI
 """
 
+import pytest
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
@@ -61,11 +62,8 @@ def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hos
 
 
 def assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts):
-    try:
+    with pytest.raises(RuntimeError, match="Replicate button is not clickable"):
         replicate_item(selenium, browser_id, provider, hosts)
-    except RuntimeError:
-        return
-    raise AssertionError(f"Current item is not supposed to be replicable to {provider}")
 
 
 @wt(
