@@ -9,6 +9,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
+from selenium.webdriver.support.ui import WebDriverWait as Wait
+
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -20,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence,
 )
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.utils.entities_setup.spaces import WAIT_BACKEND
 
 from .account_management import AccountManagementContentPage
 
@@ -98,6 +101,15 @@ class _Toggle(PageObject):
         except RuntimeError:
             return True
         return False
+
+    def wait_for_status(self, is_checked):
+        Wait(self.driver, WAIT_BACKEND).until(
+            lambda _: self.is_checked() == is_checked,
+            message=(
+                f"waited too long for the {str(self)} toggle to be"
+                f" {'checked' if is_checked else 'unchecked'}"
+            ),
+        )
 
 
 class _DropdownSelector(PageObject, ExpandableMixin):
