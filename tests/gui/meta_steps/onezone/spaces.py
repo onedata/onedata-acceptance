@@ -509,8 +509,9 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
 
         # if there are at least 1 new space keep scrolling
         stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces)
-        seen_spaces.update(new_spaces)
-        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1])
+        currently_seen = [new_space.name for new_space in new_spaces]
+        seen_spaces.update(currently_seen)
+        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
@@ -534,4 +535,4 @@ def assert_opened_space(selenium, browser_id, space_name):
     el = vis_spaces[index]
     err_msg = f"Space {space_name} is not opened."
     assert el.is_displayed(), err_msg
-    assert "active" in el.get_attribute("class"), err_msg
+    assert el.is_active(), err_msg

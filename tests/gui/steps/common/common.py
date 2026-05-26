@@ -26,14 +26,12 @@ def assert_n_items_in_items_list(
         transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
         new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [
-            transform_fun(el) for el in new_items if transform_fun(el) != ""
-        ]
+        new_items_names = [el.name for el in new_items]
 
         # if there are at least 1 new item keep scrolling
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
         seen_items.update(new_items_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
+        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -71,7 +69,12 @@ def _get_page(where, driver):
 def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
     driver = selenium[browser_id]
     page = _get_page(where, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    if where == "spaces":
+        assert_n_items_in_items_list(
+            page, selenium, browser_id, number, items, lambda text: text
+        )
+    else:
+        assert_n_items_in_items_list(page, selenium, browser_id, number, items)
 
 
 def get_last_item_number_in_table(driver):

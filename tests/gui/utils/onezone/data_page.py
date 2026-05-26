@@ -73,12 +73,14 @@ class Space(Element):
 
 
 class SpaceHeader(Element):
-    name = id = Label(".item-name")
-    support_size = Label(".status-toolbar-icon:first-of-type")
-    supporting_providers_number = Label(".status-toolbar-icon:last-of-type")
-    advertised_icon = Icon(".oneicon-cart-checked")
-    home_icon = WebElement(".status-toolbar-icon:first-of-type span")
-    menu_button = Button(".collapsible-toolbar-toggle")
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(
+        ".status-toolbar-icon:last-of-type", scroll=False
+    )
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
+    menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
 
     def click_menu(self):
         self.click()
@@ -288,5 +290,5 @@ class DataPage(GenericPage):
         for header in self.spaces_header_list:
             space_name = getattr(header, "name")
             if space_name:
-                visible_spaces.append(space_name)
+                visible_spaces.append(header)
         return visible_spaces
