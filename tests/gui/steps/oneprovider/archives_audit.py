@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 from datetime import datetime
-from typing import Union
+from typing import Dict, List, Union
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -172,6 +172,20 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
             last_index = len(visible_elems)
         new_elems = visible_elems[last_index:]
     return checked_elems
+
+
+def scroll_and_get_columns(driver, columns):
+    modal = Modals(driver).archive_audit_log
+    checked_names = set()
+
+    stop_scrolling_flag = False
+    while stop_scrolling_flag:
+        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
+        visible_names = visible_elems["File"]
+        checked_names.update(visible_names)
+
+        modal.scroll_by_press_space()
+        stop_scrolling_flag = any(name not in checked_names for name in visible_names)
 
 
 @wt(

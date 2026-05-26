@@ -6,11 +6,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
+from typing import Dict, List
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
-from typing import Dict, List
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
@@ -83,6 +83,7 @@ class ArchiveAuditLog(Modal):
         params_dict: Dict[str, List[str]] = {}
         options_set = set([self.info_dict[option] for option in options])
         options_set.add("name")
+
         for row in self.data_row:
             params = [getattr(row, option) for option in options_set]
             if any(param == "" for param in params):
@@ -95,8 +96,10 @@ class ArchiveAuditLog(Modal):
             if name_hash:
                 params[options.index("name")] += name_hash
 
+            inverse_info_dict = {v: k for (k, v) in self.info_dict.items()}
             for option, param in zip(options, params):
-                params_dict[option] = params_dict.get(option, []) + [param]
+                option_ = inverse_info_dict[option]
+                params_dict[option_] = params_dict.get(option_, []) + [param]
 
         return params_dict
 
