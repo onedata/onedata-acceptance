@@ -80,7 +80,7 @@ class ArchiveAuditLog(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_rows_of_columns(self, options):
-        params_dict:Dict[str, List[str]] = {}
+        params_dict: Dict[str, List[str]] = {}
         options_set = set([self.info_dict[option] for option in options])
         options_set.add("name")
         for row in self.data_row:
@@ -91,13 +91,13 @@ class ArchiveAuditLog(Modal):
                 name_hash = row.duplicated_name_hash
             except RuntimeError:
                 name_hash = None
-                
+
             if name_hash:
                 params[options.index("name")] += name_hash
-                
+
             for option, param in zip(options, params):
                 params_dict[option] = params_dict.get(option, []) + [param]
-                
+
         return params_dict
 
     def __str__(self):
