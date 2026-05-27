@@ -81,7 +81,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns = modal.get_rows_of_columns([column_name])
+        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns([column_name])
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             current_ = None
@@ -112,7 +112,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns = modal.get_rows_of_columns(["file"])
+        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns(["file"])
         currents = rows_of_columns["file"][index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
@@ -141,7 +141,9 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events = modal.get_rows_of_columns(["event"])["event"][index:]
+        visible_events: Dict[str, List[str]] = modal.get_rows_of_columns(["event"])[
+            "event"
+        ][index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -156,7 +158,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns = modal.get_rows_of_columns(["file"])
+    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns(["file"])
     visible_elems = rows_of_columns.get("file", [])
     new_elems = visible_elems
     last_index = 0
