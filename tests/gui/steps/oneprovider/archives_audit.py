@@ -81,7 +81,8 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        currents = modal.get_rows_of_columns([column_name])[index:]
+        rows_of_columns = modal.get_rows_of_columns([column_name])
+        currents = rows_of_columns[column_name][index:]
         for current in currents:
             current_ = None
             if column_name == "time":
@@ -111,7 +112,8 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        currents = modal.get_rows_of_columns(["file"])[index:]
+        rows_of_columns = modal.get_rows_of_columns(["file"])
+        currents = rows_of_columns["file"][index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
             err_msg = f"index {current_} following {last} is not bigger"
@@ -154,14 +156,16 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    visible_elems = modal.get_rows_of_columns(["file"])
+    rows_of_columns = modal.get_rows_of_columns(["file"])
+    visible_elems = rows_of_columns["file"]
     new_elems = visible_elems
     last_index = 0
     while new_elems:
         condition(*args, index=last_index)
         modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
-        visible_elems = modal.get_rows_of_columns(["file"])
+        rows_of_columns = modal.get_rows_of_columns(["file"])
+        visible_elems = rows_of_columns["file"]
         for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
                 last_index = index
@@ -177,13 +181,17 @@ def scroll_and_get_columns(driver, columns):
     checked_names = set()
 
     stop_scrolling_flag = False
-    while stop_scrolling_flag:
+    while not stop_scrolling_flag:
         visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
         visible_names = visible_elems["file"]
-        checked_names.update(visible_names)
 
         modal.scroll_by_press_space()
-        stop_scrolling_flag = any(name not in checked_names for name in visible_names)
+        stop_scrolling_flag = not any(
+            name not in checked_names for name in visible_names
+        )
+        checked_names.update(visible_names)
+        # if stop_scrolling_flag:
+        #     breakpoint()
 
     return list(checked_names)
 

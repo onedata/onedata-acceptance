@@ -62,11 +62,11 @@ class ArchiveAuditLog(Modal):
     def get_rows_of_columns(self, options):
         params_dict: Dict[str, List[str]] = {}
 
-        options_set = set(options)
-        options_set.add("file")
+        temp_options = [option for option in options if option != "file"]
+        temp_options.append("file")
 
         for row in self.data_row:
-            params = [getattr(row, option) for option in options_set]
+            params = [getattr(row, option) for option in temp_options]
             if any(param == "" for param in params):
                 continue
             try:
@@ -75,9 +75,9 @@ class ArchiveAuditLog(Modal):
                 name_hash = None
 
             if name_hash:
-                params[options.index("name")] += name_hash
+                params[temp_options.index("file")] += name_hash
 
-            for option, param in zip(options, params):
+            for option, param in zip(temp_options, params):
                 params_dict[option] = params_dict.get(option, []) + [param]
 
         return params_dict
