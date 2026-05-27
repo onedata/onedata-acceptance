@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from collections import Counter
 from datetime import datetime
 from typing import Dict, List, Union
 
@@ -31,27 +32,23 @@ def assert_number_of_first_non_empty_column_content(
     selenium, fields, browser_id, number: int
 ):
     driver = selenium[browser_id]
-    modal = Modals(driver).archive_audit_log
-    fields = parse_seq(fields)
+    columns_names = [transform(field) for field in parse_seq(fields)]
 
     # Because files names repeat, files names must be first loaded in order to
     # add annotations to them
-    _scroll_and_check_condition(browser_id, selenium, lambda index: None)
+    _ = scroll_and_get_columns(driver, columns_names)
     scroll_to_top_in_archive_audit_log(browser_id, selenium)
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition2(index=0):
-        _ = modal.get_rows_of_columns(fields)[index:]
-
-    checked_elems = _scroll_and_check_condition(browser_id, selenium, condition2)
-    unique_elems = list(set(checked_elems))
+    checked_elems = scroll_and_get_columns(driver, columns_names)
+    elems_counter = Counter(checked_elems)
+    non_unique_elems = [elem for elem in elems_counter if elems_counter[elem] > 1]
 
     assert len(checked_elems) == number, (
         f"There are {len(checked_elems)} entries instead of {number} "
         "in archive audit log.\n\n"
-        f"Number of unique entries: {len(unique_elems)}\n\n"
+        f"Number of non unique entries: {len(non_unique_elems)}\n\n"
         f"Entries: {sorted(checked_elems)}\n\n"
-        f"Unique entries: {sorted(unique_elems)}"
+        f"Non Unique entries: {sorted(non_unique_elems)}"
     )
 
 
@@ -74,9 +71,10 @@ def assert_decreasing_creation_times_in_archives_audit_log(
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value: Union[datetime, int]
-    if column_name == "Time":
+    column_name = transform(column_name)
+    if column_name == "time":
         start_value = datetime.strptime("1 Dec 9999 1:1:1.1", "%d %b %Y %H:%M:%S.%f")
-    elif column_name == "Time taken":
+    elif column_name == "time_taken":
         start_value = 1000000000
     else:
         raise ValueError(f"Unknown column: {column_name}")
@@ -86,11 +84,11 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         currents = modal.get_rows_of_columns([column_name])[index:]
         for current in currents:
             current_ = None
-            if column_name == "Time":
+            if column_name == "time":
                 current_ = datetime.strptime(current + "000", "%d %b %Y %H:%M:%S.%f")
                 err_msg = f"time {current_} following {last} is not smaller"
                 assert current_ <= last, err_msg
-            elif column_name == "Time taken":
+            elif column_name == "time_taken":
                 current_ = parse_time(current)
                 err_msg = f"time {current_} following {last} is not smaller"
                 assert current_ <= last, err_msg
@@ -113,7 +111,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        currents = modal.get_rows_of_columns(["File"])[index:]
+        currents = modal.get_rows_of_columns(["file"])[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
             err_msg = f"index {current_} following {last} is not bigger"
@@ -141,7 +139,7 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events = modal.get_rows_of_columns(["Event"])[index:]
+        visible_events = modal.get_rows_of_columns(["event"])[index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -156,14 +154,14 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    visible_elems = modal.get_rows_of_columns(["File"])
+    visible_elems = modal.get_rows_of_columns(["file"])
     new_elems = visible_elems
     last_index = 0
     while new_elems:
         condition(*args, index=last_index)
         modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
-        visible_elems = modal.get_rows_of_columns(["File"])
+        visible_elems = modal.get_rows_of_columns(["file"])
         for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
                 last_index = index
@@ -181,11 +179,13 @@ def scroll_and_get_columns(driver, columns):
     stop_scrolling_flag = False
     while stop_scrolling_flag:
         visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems["File"]
+        visible_names = visible_elems["file"]
         checked_names.update(visible_names)
 
         modal.scroll_by_press_space()
         stop_scrolling_flag = any(name not in checked_names for name in visible_names)
+
+    return list(checked_names)
 
 
 @wt(
@@ -297,7 +297,7 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
     driver = selenium[browser_id]
-    visible_items = Modals(driver).archive_audit_log.get_rows_of_columns(["File"])
+    visible_items = Modals(driver).archive_audit_log.get_rows_of_columns(["file"])
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "

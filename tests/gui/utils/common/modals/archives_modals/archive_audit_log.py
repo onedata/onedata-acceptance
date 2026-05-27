@@ -18,31 +18,17 @@ from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.utils.utils import repeat_failed
 
 
-def trim_edges(lst):
-    start = 0
-    end = len(lst)
-
-    while start < end and lst[start] == "":
-        start += 1
-
-    while end > start and lst[end - 1] == "":
-        end -= 1
-
-    return lst[start:end]
-
-
 class FilesLog(BrowserRow):
-    name = id = Label(".file-name", scroll=False)
+    file = id = Label(".file-name", scroll=False)
     event = Label(".message-text", scroll=False)
     clickable_field = WebElement(".file-name", scroll=False)
-    date = Label(".timestamp-cell", scroll=False)
+    time = Label(".timestamp-cell", scroll=False)
     duplicated_name_hash = Label(".log-filename-duplicate-hash", scroll=False)
     time_taken = Label(".time-taken-text", scroll=False)
 
@@ -54,12 +40,6 @@ class FilesLog(BrowserRow):
 class ArchiveAuditLog(Modal):
     archive_name = Label(".file-base-name")
     data_row = WebItemsSequence(".table-entry.data-row", cls=FilesLog)
-    info_dict = {
-        "Time": "date",
-        "File": "name",
-        "Event": "event",
-        "Time taken": "time_taken",
-    }
 
     x = Button(".close")
 
@@ -81,8 +61,9 @@ class ArchiveAuditLog(Modal):
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_rows_of_columns(self, options):
         params_dict: Dict[str, List[str]] = {}
-        options_set = set([self.info_dict[option] for option in options])
-        options_set.add("name")
+
+        options_set = set(options)
+        options_set.add("file")
 
         for row in self.data_row:
             params = [getattr(row, option) for option in options_set]
@@ -96,10 +77,8 @@ class ArchiveAuditLog(Modal):
             if name_hash:
                 params[options.index("name")] += name_hash
 
-            inverse_info_dict = {v: k for (k, v) in self.info_dict.items()}
             for option, param in zip(options, params):
-                option_ = inverse_info_dict[option]
-                params_dict[option_] = params_dict.get(option_, []) + [param]
+                params_dict[option] = params_dict.get(option, []) + [param]
 
         return params_dict
 
