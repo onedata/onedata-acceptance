@@ -141,7 +141,7 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events = modal.get_rows_of_columns(["event"])[index:]
+        visible_events = modal.get_rows_of_columns(["event"])["event"][index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -157,7 +157,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     modal = Modals(driver).archive_audit_log
     checked_elems = []
     rows_of_columns = modal.get_rows_of_columns(["file"])
-    visible_elems = rows_of_columns["file"]
+    visible_elems = rows_of_columns.get("file", [])
     new_elems = visible_elems
     last_index = 0
     while new_elems:
@@ -179,19 +179,17 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
 def scroll_and_get_columns(driver, columns):
     modal = Modals(driver).archive_audit_log
     checked_names = set()
-
+    columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems["file"]
+        visible_names = visible_elems.get("file", [])
 
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(
             name not in checked_names for name in visible_names
         )
         checked_names.update(visible_names)
-        # if stop_scrolling_flag:
-        #     breakpoint()
 
     return list(checked_names)
 
@@ -257,8 +255,8 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
         try:
             new_rows_names = []
             for row in modal.data_row:
-                if row.name:
-                    new_rows_names.append(row.name)
+                if row.file:
+                    new_rows_names.append(row.file)
 
         except StaleElementReferenceException:
             pass
@@ -283,7 +281,7 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
                 # To work around this, the page is scrolled down one more time.
             return
 
-        # if there are at least 1 new row keep scrolling
+        # if there is at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
         modal.scroll_by_press_space()
@@ -305,7 +303,9 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
     driver = selenium[browser_id]
-    visible_items = Modals(driver).archive_audit_log.get_rows_of_columns(["file"])
+    visible_items: List[str] = (
+        Modals(driver).archive_audit_log.get_rows_of_columns(["file"]).get("file", [])
+    )
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "
@@ -486,7 +486,7 @@ def assert_unique_hashes_and_number_of_logs(
     logs = Modals(driver).archive_audit_log.data_row
     hashes = []
     for log in logs:
-        if log.name == file_name:
+        if log.file == file_name:
             log_hash = log.duplicated_name_hash
             assert (
                 log_hash not in hashes
