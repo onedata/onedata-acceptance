@@ -45,6 +45,7 @@ from tests.gui.steps.oneprovider.browser import (
 )
 from tests.gui.steps.oneprovider.data_tab import (
     assert_browser_in_tab_in_op,
+    check_content_for_provider,
     check_size_statistic_in_dir_details,
     check_size_stats_for_provider,
 )
@@ -627,11 +628,16 @@ def check_size_stats_for_archive_per_provider(
 
     size_statistics = yaml.load(config, yaml.Loader)
     for stat_type, expected_value in size_statistics.items():
-        check_size_stats_for_provider(
-            selenium,
-            hosts,
-            browser_id,
-            stat_type,
-            provider,
-            expected_value,
-        )
+        if stat_type != "content":
+            check_size_stats_for_provider(
+                selenium,
+                hosts,
+                browser_id,
+                stat_type,
+                provider,
+                expected_value,
+            )
+        else:
+            check_content_for_provider(
+                selenium, hosts, browser_id, provider, expected_value
+            )

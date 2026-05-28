@@ -18,7 +18,7 @@ Feature: Onezone behaviour with multiple providers supporting one space
       And user of browser logged as space-owner-user to Onezone service
 
   Scenario: User can see correct opened provider tab after opening provider settings in Providers sections of a space
-    When user of browser clicks on Data in the main menu
+    When user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser opens "oneprovider-1" provider menu on space providers data page
@@ -27,7 +27,7 @@ Feature: Onezone behaviour with multiple providers supporting one space
     And user of browser can see "oneprovider-1" provider name is displayed in the message in the settings section in the space provider page
 
   Scenario: User can see correct opened provider tab after opening provider file browser in Providers sections of a space
-    When user of browser clicks on Data in the main menu
+    When user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser opens "oneprovider-1" provider menu on space providers data page

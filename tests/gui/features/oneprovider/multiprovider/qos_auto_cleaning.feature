@@ -46,7 +46,7 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
     And user of browser_unified uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
 
     # set qos requirement
-    And user of browser_unified clicks on Data in the main menu
+    And user of browser_unified clicks on "Data" in the main menu
     And user of browser_unified creates 2 replicas of "anyStorage" QoS requirement for "large_file.txt" in space "space1"
     And user of browser_unified replicates "20B-0.txt" to provider "oneprovider-2"
     And user of browser_emergency is idle for 8 seconds

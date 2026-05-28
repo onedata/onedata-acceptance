@@ -65,7 +65,7 @@ Feature: Workflows execution privileges
               Schedule workflow executions: False
               Manage workflow executions: False
 
-    And user of browser1 clicks on Data in the main menu
+    And user of browser1 clicks on "Data" in the main menu
     And user of browser1 clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser1 clicks "Run workflow" in the automation tab bar
     And user of browser1 chooses to run 1st revision of "Initialize Eureka3D project" workflow

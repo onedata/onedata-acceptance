@@ -18,7 +18,10 @@ from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_labeled_menu
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modals.details_modal import click_on_navigation_tab_in_modal
+from tests.gui.steps.modals.details_modal import (
+    click_copy_icon_for_browser_link_on_details_modal,
+    click_on_navigation_tab_in_modal,
+)
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     close_modal,
@@ -41,7 +44,9 @@ from tests.gui.steps.oneprovider.data_tab import (
     change_cwd_using_breadcrumbs_in_data_tab_in_op,
     check_error_in_upload_presenter,
     choose_option_from_selection_menu,
+    choose_provider_in_selected_page,
     click_button_from_file_browser_menu_bar,
+    click_choose_other_oneprovider_on_file_browser,
     click_file_browser_button,
     expand_size_statistics_for_providers,
     has_downloaded_file_content,
@@ -1008,6 +1013,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     relative_path = str(
         Path(path_to_place).relative_to(source_parent_path, walk_up=True)
     )
+
     option = "Create hard link"
     button = "Place hard link"
 
@@ -1021,7 +1027,7 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
         tmp_memory,
         option,
         button,
-        relative_path,
+        relative_path if relative_path != "." else None,
         False,
     )
 
@@ -1113,17 +1119,16 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
     selenium, browser_id, tmp_memory, space
 ):
     browser = "file browser"
-    option = "Information"
-    tab_name = "Size stats"
-    modal = "Directory Details"
     path = space
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser=browser)
     is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         selenium, browser_id, path, which_browser=browser
     )
     click_on_breadcrumbs_menu(selenium, browser_id, browser)
-    click_option_in_popup_labeled_menu(selenium, browser_id, option)
-    click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modal)
+    click_option_in_popup_labeled_menu(selenium, browser_id, "Information")
+    click_on_navigation_tab_in_modal(
+        selenium, browser_id, "Size stats", "Directory Details"
+    )
     expand_size_statistics_for_providers(selenium, browser_id)
 
 
@@ -1185,11 +1190,20 @@ def copy_show_or_download_link_from_file_details_modal(
     tmp_memory,
 ):
     option = "Information"
-    button = f"{link_type} link"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    click_modal_button(selenium, browser_id, button, modal)
+    click_copy_icon_for_browser_link_on_details_modal(selenium[browser_id], link_type)
     close_modal(selenium, browser_id, modal)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} changes provider to "{provider}" on file browser page'
+    )
+)
+def change_provider_in_file_browser(selenium, browser_id, provider, hosts):
+    click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
+    choose_provider_in_selected_page(selenium, browser_id, provider, hosts)

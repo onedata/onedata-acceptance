@@ -38,7 +38,7 @@ Feature: Uploading files to multiple providers
     # upload different file to different provider
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
 
-    Then user of browser clicks on Uploads in the main menu
+    Then user of browser clicks on "Uploads" in the main menu
 
     # check all uploads number
     And user of browser clicks on "All uploads" in uploads sidebar
@@ -69,10 +69,10 @@ Feature: Uploading files to multiple providers
     And user of browser waits for file uploads to finish
 
     # Go to uploads and see that there is only 200 files
-    Then user of browser clicks on Uploads in the main menu
+    Then user of browser clicks on "Uploads" in the main menu
     And user of browser clicks on "All uploads" in uploads sidebar
     And user of browser sees that number of uploads is equal 201
-    And user of browser clicks on Data in the main menu
+    And user of browser clicks on "Data" in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

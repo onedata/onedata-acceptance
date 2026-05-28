@@ -57,29 +57,40 @@ def wt(name, converters=None):
 def sanitize_arguments(fun):
     sig = inspect.signature(fun)
     parameters = sig.parameters
+    is_gen = inspect.isgeneratorfunction(fun)
 
-    @wraps(fun)
-    def wrapper(*args, **kwargs):
+    def _cast_arguments(args, kwargs):
         ba = sig.bind(*args, **kwargs)
         ba.apply_defaults()
 
         for param in parameters.values():
             ann = param.annotation
-            if ann is not inspect.Parameter.empty:
+            if ann is not inspect.Parameter.empty and param.name in ba.arguments:
                 value = ba.arguments[param.name]
                 try:
                     origin = get_origin(ann)
-                    if origin is None:
-                        if not isinstance(value, ann):
-                            ba.arguments[param.name] = ann(value)
-                    else:
-                        if not isinstance(value, origin):
-                            ba.arguments[param.name] = origin(value)
+                    target_type = ann if origin is None else origin
+                    if not isinstance(value, target_type):
+                        ba.arguments[param.name] = target_type(value)
                 except Exception as ex:
                     msg = f"Cannot cast '{param.name}' <{value}> to {ann}"
                     raise ValueError(msg) from ex
 
-        return fun(*ba.args, **ba.kwargs)
+        return ba
+
+    if is_gen:
+
+        @wraps(fun)
+        def wrapper(*args, **kwargs):
+            ba = _cast_arguments(args, kwargs)
+            yield from fun(*ba.args, **ba.kwargs)
+
+    else:
+
+        @wraps(fun)
+        def wrapper(*args, **kwargs):
+            ba = _cast_arguments(args, kwargs)
+            return fun(*ba.args, **ba.kwargs)
 
     return wrapper
 

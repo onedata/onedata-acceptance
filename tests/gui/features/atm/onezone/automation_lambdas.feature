@@ -21,7 +21,7 @@ Feature: Basic lambdas management
 
 
   Scenario: User sees new lambda after creating it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
@@ -31,7 +31,7 @@ Feature: Basic lambdas management
 
 
   Scenario: User sees new lambda revision after creating it
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
@@ -45,7 +45,7 @@ Feature: Basic lambdas management
 
 
   Scenario: User sees new lambda revision after using redesign as new revision
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
@@ -59,7 +59,7 @@ Feature: Basic lambdas management
 
 
   Scenario: A new lambda is not created after uploading the same workflow again
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
     And user of browser sees there are 7 lambdas in lambdas list in inventory lambdas subpage

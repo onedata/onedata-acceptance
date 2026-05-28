@@ -168,3 +168,43 @@ def click_on_context_menu_item(
         item_name = item_name.replace('"', "")
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, context_menu_item)
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} clicks on button "Show more physical locations" in'
+        " details modal"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_show_more_physical_locations_in_details_modal(selenium, browser_id):
+    details_modal = Modals(selenium[browser_id]).details_modal
+    physical_locations = details_modal.physical_locations
+    physical_locations.show_more_button.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} sees "{expected_error}" as error message in physical'
+        ' location section for "{provider}" provider in details modal'
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_message_in_physical_location_in_details_modal(
+    selenium, browser_id, expected_error, provider, hosts
+):
+    provider_name = hosts[provider]["name"]
+    details_modal = Modals(selenium[browser_id]).details_modal
+    physical_locations = details_modal.physical_locations.locations
+    found_error = physical_locations[provider_name].error_message
+    assert found_error == expected_error, (
+        f'Error message "{found_error}" is different than expected for'
+        f" {provider_name} provider"
+    )
+
+
+def click_copy_icon_for_browser_link_on_details_modal(driver, link_type: str):
+    copy_icon = (
+        Modals(driver).details_modal.browser_links.links[link_type].clipboard_icon
+    )
+    copy_icon.click()

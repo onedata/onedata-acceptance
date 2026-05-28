@@ -39,7 +39,7 @@ Feature: Management of inventories members
 
 
   Scenario: User invites group to inventory using token
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
 
     # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory3" members subpage
@@ -54,7 +54,7 @@ Feature: Management of inventories members
 
 
   Scenario: User joins an inventory with group invitation token and sees renamed inventory
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
 
     # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
@@ -76,7 +76,7 @@ Feature: Management of inventories members
 
 
   Scenario: User fails to see inventory without view inventory privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory2" members subpage
 
     # Space-owner-user changes privileges for user1
@@ -93,7 +93,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully renames inventory with modify inventory privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to rename inventory
@@ -118,7 +118,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully removes inventory with remove inventory privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # Space-owner-user changes privileges for user1
@@ -137,7 +137,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully views privileges with view privileges privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # Space-owner-user changes privileges for user1
@@ -155,7 +155,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully sets privileges with set privileges privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # Space-owner-user changes privileges for user1
@@ -187,7 +187,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully generates invitation token for user with add user privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to generate an ivnitation token
@@ -211,7 +211,7 @@ Feature: Management of inventories members
 
 
   Scenario: User fails to join to the inventory because the inventory was deleted
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
     And user of space_owner_browser copies invitation token from modal
@@ -226,7 +226,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully removes user from inventory with remove user privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory2" members subpage
 
     # User1 fails to remove user
@@ -250,7 +250,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully generates invitation token for group to join inventory with add group privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to generate an ivnitation token
@@ -272,7 +272,7 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully removes group from inventory with remove group privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on "Automation" in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to remove group
@@ -299,7 +299,7 @@ Feature: Management of inventories members
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to add new revision
-    And user of browser1 clicks on Automation in the main menu
+    And user of browser1 clicks on "Automation" in the main menu
     And user of browser1 opens inventory "inventory1" lambdas subpage
     And user of browser1 clicks on "Create new revision" in "Lambda1"
     And user of browser1 writes "Lambda2" into lambda name text field
@@ -329,7 +329,7 @@ Feature: Management of inventories members
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to edit workflow name
-    And user of browser1 clicks on Automation in the main menu
+    And user of browser1 clicks on "Automation" in the main menu
     And user of browser1 opens inventory "inventory1" workflows subpage
     And user of browser1 clicks on "Change details" button in workflow "echo" menu in workflows subpage
     And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow

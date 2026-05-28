@@ -4,8 +4,10 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -55,21 +57,23 @@ class Charts(PageObject):
 
 
 class DirStatsRowPerProvider(PageObject):
-    name = id = Label(".header", parent_name="given provider")
-    content = Label(".contains-value")
-    logical_size = Label(".logical-size-value")
-    physical_size = Label(".physical-size-value")
-    error_cell = Label(".error-cell")
+    name = id = Label(".header", parent_name="given provider", scroll=False)
+    content = Label(".contains-value", scroll=False)
+    logical_size = Label(".logical-size-value", scroll=False)
+    physical_size = Label(".physical-size-value", scroll=False)
+    virtual_size = Label(".virtual-size-value", scroll=False)
+    error_cell = Label(".error-cell", scroll=False)
 
 
 class SizeStatistics(PageObject):
     tab = Button(".nav-link-size")
     charts_title = Label(".section-title")
     chart = WebItemsSequence(".one-time-series-chart-plot", cls=Charts)
+    include_virtual_size_toggle = Toggle(".one-way-toggle.clickable", scroll=False)
     dir_stats_row_per_provider = WebItemsSequence(
         ".size-stats-per-provider-row", cls=DirStatsRowPerProvider
     )
-    expand_stats_button = Button(".toggle-expand")
+    expand_stats_button = Button(".toggle-expand", scroll=False)
     logical_size = Label(".property-logical-size .property-value")
     total_physical_size = Label(".property-physical-size .property-value")
     contain_counter = Label(".property-contains .property-value")
@@ -79,16 +83,56 @@ class SizeStatistics(PageObject):
             self.chart[0].chart, 100, 100
         ).click().perform()
 
+    def scroll_to_top(self):
+        try:
+            self.driver.execute_script(
+                "document.querySelector('.perfect-scrollbar-element').scrollTo(0, 0)"
+            )
+        except JavascriptException as e:
+            raise AssertionError(
+                "Error executing script, failed to scroll to top of Size Statistics Tab"
+                " in Details Modal"
+            ) from e
+
 
 class NavigationTab(PageObject):
     name = id = Label(".nav-link")
+
+
+class ProviderRow(PageObject):
+    name = id = Label(".record-name-general")
+    details = Label(".provider-details")
+    info_trigger = Label(".record-info-trigger")
+    clipboard_button = Button(".clipboard-btn")
+    storage_name = Label(".storage-name-cell")
+    file_address = Label(".clipboard-input")
+    error_message = Label(".error-cell")
+
+
+class PhysicalLocations(PageObject):
+    tip = WebElement(".one-label-tip")
+    locations = WebItemsSequence(
+        ".storage-location-per-provider-table", cls=ProviderRow
+    )
+    show_more_button = Button(".toggle-expand")
+
+
+class BrowserLinkRow(PageObject):
+    clipboard_icon = Button(".copy-btn")
+    name = id = Label(".file-link-group-addon-inner")
+
+
+class BrowserLinks(PageObject):
+    links = WebItemsSequence(".file-link-clipboard-line", cls=BrowserLinkRow)
 
 
 class DetailsModal(Modal):
     modal_name = Label(".modal-header h1")
     owner = Label(".file-info-row-owner .property-value")
     x = Button(".close")
-    physical_location = Button(".file-info-row-storage-location .clipboard-btn")
+    physical_locations = WebItem(
+        ".file-info-row-storage-location", cls=PhysicalLocations
+    )
     space_id = Button(".file-info-row-space-id .clipboard-btn")
     file_id = Button(".file-info-row-cdmi-object-id .clipboard-btn")
     size_statistics = WebItem(".modal-content", cls=SizeStatistics)
@@ -96,12 +140,7 @@ class DetailsModal(Modal):
     navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
 
-    show_link = Button(
-        'button[data-clipboard-target*=".show-file-link-clipboard-line-input"]'
-    )
-    download_link = Button(
-        'button[data-clipboard-target*=".download-file-link-clipboard-line-input"]'
-    )
+    browser_links = WebItem(".file-info-row-gui-url", cls=BrowserLinks)
 
     qos = WebItem(".modal-content", cls=QoSTab)
     metadata = WebItem(".modal-content", cls=MetadataTab)

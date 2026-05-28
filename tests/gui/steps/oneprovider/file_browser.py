@@ -684,16 +684,17 @@ def scroll_to_top_in_file_browser(browser_id, tmp_memory):
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees physical location path in file "
-        "details and copies it into the clipboard"
+        'user of {browser_id} sees physical location path for provider "{provider}" in'
+        " file details and copies it into the clipboard"
     )
 )
 def assert_physical_location_path_and_copy_in_file_details(
-    selenium, browser_id, clipboard, displays
+    selenium, browser_id, provider, clipboard, displays, hosts
 ):
-    button = "physical_location"
-    modal = "details modal"
-    click_modal_button(selenium, browser_id, button, modal)
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]["name"]
+    physical_locations = Modals(driver).details_modal.physical_locations
+    physical_locations.locations[provider_name].clipboard_button.click()
     path = clipboard.paste(display=displays[browser_id])
     err_msg = "there is no physical location path visible in file details"
     assert path is not None, err_msg
