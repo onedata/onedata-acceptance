@@ -24,7 +24,7 @@ Feature: Basic cluster members management utilities using onepanel
               View privileges: False
 
     # fail to view privileges
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks "admin" user in "oneprovider-1" cluster members users list
@@ -41,7 +41,7 @@ Feature: Basic cluster members management utilities using onepanel
               Set privileges: False
 
     # fail to uncheck privileges
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks "user1" user in "oneprovider-1" cluster members users list
@@ -62,7 +62,7 @@ Feature: Basic cluster members management utilities using onepanel
               Remove cluster: False
 
     # fail to remove cluster
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Provider configuration item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks on deregister provider button in clusters page
@@ -80,7 +80,7 @@ Feature: Basic cluster members management utilities using onepanel
             privilege subtypes:
               Remove user: False
     # fail to remove user
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard removes "admin" user from "oneprovider-1" cluster members
@@ -96,7 +96,7 @@ Feature: Basic cluster members management utilities using onepanel
             privilege subtypes:
               Add user: False
     # fail to add user
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks on "Invite user using token" button in users list menu in "oneprovider-1" cluster members view
@@ -159,7 +159,7 @@ Feature: Basic cluster members management utilities using onepanel
               Modify cluster: False
 
     # fail to modify cluster
-    And user of browser_standard clicks on Clusters in the main menu
+    And user of browser_standard clicks on "Clusters" in the main menu
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Provider configuration item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard is idle for 60 seconds
@@ -189,7 +189,7 @@ Feature: Basic cluster members management utilities using onepanel
 
   Scenario: User successfully adds group to cluster
     When user of browser_standard does not see "oneprovider-1" in clusters menu
-    And user of browser_admin clicks on Clusters in the main menu
+    And user of browser_admin clicks on "Clusters" in the main menu
     And user of browser_admin clicks on "oneprovider-1" in clusters menu
     And user of browser_admin adds "group2" group to "oneprovider-1" cluster
     Then user of browser_admin sees "group2" group on "oneprovider-1" cluster members list
@@ -198,7 +198,7 @@ Feature: Basic cluster members management utilities using onepanel
 
   Scenario: User successfully removes group from cluster
     When user of browser_standard does not see "oneprovider-1" in clusters menu
-    And user of browser_admin clicks on Clusters in the main menu
+    And user of browser_admin clicks on "Clusters" in the main menu
     And user of browser_admin clicks on "oneprovider-1" in clusters menu
     And user of browser_admin adds "group2" group to "oneprovider-1" cluster
     And user of browser_admin removes "group2" group from "oneprovider-1" cluster members

@@ -26,7 +26,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario: User joins group using invitation token
-    When user of space_owner_browser clicks on Groups in the main menu
+    When user of space_owner_browser clicks on "Groups" in the main menu
     And user of space_owner_browser clicks "group1" on the groups list in the sidebar
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of space_owner_browser copies invitation token from modal
@@ -44,7 +44,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario: User fails to join group he already belongs to
-    When user of space_owner_browser clicks on Groups in the main menu
+    When user of space_owner_browser clicks on "Groups" in the main menu
     And user of space_owner_browser clicks "group1" on the groups list in the sidebar
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of space_owner_browser copies invitation token from modal
@@ -55,7 +55,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario: User fails to join to the group because the group was deleted
-    When user of space_owner_browser clicks on Groups in the main menu
+    When user of space_owner_browser clicks on "Groups" in the main menu
     And user of space_owner_browser clicks "group1" on the groups list in the sidebar
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of space_owner_browser copies invitation token from modal
@@ -69,7 +69,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario: User fails to view group they do not belong to
-    When user of space_owner_browser clicks on Groups in the main menu
+    When user of space_owner_browser clicks on "Groups" in the main menu
     And user of space_owner_browser opens group "group1" main subpage
     And user of space_owner_browser copies a first resource ID from URL
     And user of space_owner_browser sends copied ID to user of browser1

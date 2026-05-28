@@ -21,7 +21,7 @@ Feature: Basic management of harvester memberships privileges with spaces in One
     And user of browser2 sees that "harvester20" has appeared on the harvesters list in the sidebar
 
     # fail to add space
-    And user of browser2 clicks on Discovery in the main menu
+    And user of browser2 clicks on "Discovery" in the main menu
     And user of browser2 adds "space1" space to "harvester20" harvester using available spaces dropdown
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"

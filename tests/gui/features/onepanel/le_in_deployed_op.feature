@@ -6,7 +6,7 @@ Feature: Enabling Let`s Encrypt and subdomain delegation in deployed zone and pr
     And user of [browser1] opened [Onezone] page
     And user of [browser1] logged as [admin] to [Onezone] service
 
-    When user of browser1 clicks on Clusters in the main menu
+    When user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "onezone" in clusters menu
     And user of browser1 clicks on DNS setup item in submenu of "onezone" item in CLUSTERS sidebar in Onepanel
     And user of browser1 checks "Use built-in DNS server" toggle in DNS SETUP view in Onepanel

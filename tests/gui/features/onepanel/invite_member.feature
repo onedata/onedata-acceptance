@@ -11,14 +11,14 @@ Feature: Inviting member to cluster
     When user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 clicks on "Invite user using token" button on cluster members page
     And user of browser2 clicks on "Copy" button on cluster members page
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 does not see "oneprovider-1" in clusters menu
-    And user of browser1 clicks on Tokens in the main menu
+    And user of browser1 clicks on "Tokens" in the main menu
     And user of browser1 clicks on "Consume token" button in tokens sidebar
     And user of browser1 pastes copied token into token text field
     And user of browser1 clicks on Confirm button on consume token page
     And user of browser2 refreshes site
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 sees "oneprovider-1" in clusters menu
     Then user of browser2 sees that number of direct users is equal 2 on cluster members page
 

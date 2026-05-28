@@ -43,7 +43,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser copies invitation token from modal
     And user of browser closes "Invite using token" modal
 
-    And user of browser clicks on Tokens in the main menu
+    And user of browser clicks on "Tokens" in the main menu
     And user of browser clicks on "Consume token" button in tokens sidebar
     And user of browser pastes copied token into token text field
     And user of browser chooses "group1" group from dropdown on tokens page
@@ -53,7 +53,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User generates group invitation token
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser clicks "group1" on the groups list in the sidebar
     And user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser sees that area with group invitation token has appeared
@@ -62,7 +62,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User generates user invitation token
-    When user of browser clicks on Groups in the main menu
+    When user of browser clicks on "Groups" in the main menu
     And user of browser clicks "group1" on the groups list in the sidebar
     And user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser sees that area with user invitation token has appeared

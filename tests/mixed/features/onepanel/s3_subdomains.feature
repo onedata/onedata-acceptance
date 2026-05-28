@@ -13,7 +13,7 @@ Feature: Checks of S3 subdomain in web certificate GUI
   Scenario: User can see a certificate warning after using web certificate that does not include subdomain for OneS3
     When user1 replaces web cert for one not including OneS3 domain in "oneprovider-1" provider
     And user1 restarts oneprovider oneprovider-krakow
-    And user of browser clicks on Clusters in the main menu
+    And user of browser clicks on "Clusters" in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Web certificate item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 

@@ -48,7 +48,7 @@ Feature: Public harvester site
 
 
   Scenario: Not signed in user sees public data discovery page when harvester is configured as public
-    When user of browser_onedata clicks on Discovery in the main menu
+    When user of browser_onedata clicks on "Discovery" in the main menu
     And user of browser_onedata clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_onedata clicks Configuration of "harvester1" harvester in the sidebar
 
@@ -172,7 +172,7 @@ Feature: Public harvester site
 
   Scenario: Public harvester site has another GUI after setting it in original harvester configuration
     Given user of browser_onedata downloads http://get.onedata.org/onezone-gui-plugin-ecrin/onezone-gui-plugin-ecrin-1.1.0.tar.gz as ecrin-plugin.tar.gz to local file system
-    When user of browser_onedata clicks on Discovery in the main menu
+    When user of browser_onedata clicks on "Discovery" in the main menu
     And user of browser_onedata clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_onedata clicks Configuration of "harvester1" harvester in the sidebar
     And user of browser_onedata clicks on GUI plugin tab on harvester configuration page

@@ -713,9 +713,11 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id):
     OZLoggedIn(driver)["data"].choose_other_provider()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def check_current_provider_in_space(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
+
     current_provider = OZLoggedIn(driver)["data"].current_provider
     return current_provider
 
@@ -880,32 +882,58 @@ def expand_size_statistics_for_providers(selenium, browser_id):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) sees that "
-        "(?P<elem_type>physical_size|logical_size) for "
-        '(?P<provider>.*?) is "(?P<expected>.*?)"'
+        r'user of (?P<browser_id>.+?) (?P<res>check|uncheck)s "Include virtual size"'
+        r' toggle on "Size stats" modal'
+    )
+)
+def toggle_include_virtual_size_in_size_statistics(selenium, browser_id, res):
+    driver = selenium[browser_id]
+    size_stats_tab = Modals(driver).details_modal.size_statistics
+    size_stats_tab.scroll_to_top()
+    toggle = size_stats_tab.include_virtual_size_toggle
+    getattr(toggle, res)()
+    is_checked = res == "check"
+    toggle.wait_for_status(is_checked)
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) sees that "
+        r"(?P<elem_type>physical_size|logical_size|virtual_size)s for "
+        r"(?P<providers>.*?) are (?P<expected_sizes>.*?)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*?) sees that "
+        r"(?P<elem_type>physical_size|logical_size|virtual_size) for "
+        r'"(?P<providers>.*?)" is "(?P<expected_sizes>.*?)"'
     )
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_stats_for_provider(
-    selenium, hosts, browser_id, elem_type, provider, expected
+    selenium, hosts, browser_id, elem_type, providers, expected_sizes
 ):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]["name"]
-    size = getattr(
-        Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
-            provider_name
-        ],
-        transform(elem_type),
-    )
+    for provider, expected_size in zip(parse_seq(providers), parse_seq(expected_sizes)):
+        provider_name = hosts[provider]["name"]
+        size = getattr(
+            Modals(driver).details_modal.size_statistics.dir_stats_row_per_provider[
+                provider_name
+            ],
+            transform(elem_type),
+        )
 
-    assert (
-        size == expected
-    ), f"{elem_type} is {size} instead of {expected} for provider {provider_name}!"
+        assert size == expected_size, (
+            f"{elem_type} is {size} instead of {expected_size} for provider"
+            f" {provider_name}!"
+        )
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} sees that error message for {provider} is "{message}"'
+    parsers.re(
+        r"user of (?P<browser_id>.+?) sees that error message for "
+        r'"?(?P<provider>.+?)"? is "(?P<message>.+?)"'
     )
 )
 @repeat_failed(WAIT_FRONTEND)
@@ -922,7 +950,12 @@ def check_error_cell_for_provider(selenium, hosts, browser_id, provider, message
     ), f"Error message should be '{message}' for provider {provider_name}!"
 
 
-@wt(parsers.parse('user of {browser_id} sees that {provider} content is "{content}"'))
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.+?) sees that content for "(?P<provider>.+?)" is'
+        r' "(?P<content>.+?)"'
+    )
+)
 @repeat_failed(WAIT_FRONTEND)
 def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     driver = selenium[browser_id]
@@ -935,6 +968,19 @@ def check_content_for_provider(selenium, hosts, browser_id, provider, content):
     assert (
         provider_content == content
     ), f"Provider {provider} content is {provider_content} instead of {content}!"
+
+
+@wt(
+    parsers.parse(
+        "user of {browser_id} sees that contents for {providers} are {contents}"
+    )
+)
+def check_content_for_providers(selenium, hosts, browser_id, providers, contents):
+    contents_list = [
+        content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
+    ]  # removing extra quotes
+    for provider, content in zip(parse_seq(providers), contents_list):
+        check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)

@@ -46,7 +46,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     # consume invite token
-    And user of browser2 clicks on Tokens in the main menu
+    And user of browser2 clicks on "Tokens" in the main menu
     And user of browser2 clicks on "Consume token" button in tokens sidebar
     And user of browser2 pastes received token into token text field
     And user of browser2 chooses "group1" group from dropdown on tokens page
@@ -82,7 +82,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     # fail to consume invite token
-    And user of browser2 clicks on Tokens in the main menu
+    And user of browser2 clicks on "Tokens" in the main menu
     And user of browser2 clicks on "Consume token" button in tokens sidebar
 
     And user of browser2 pastes received token into token text field
@@ -255,7 +255,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
                 consumer name: oneprovider-1
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-2" in clusters menu
     Then user of browser1 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
           storage: posix

@@ -85,7 +85,7 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
 
   Scenario: Metadata keys are harvested when default index is set in GUI plugin
-    When user of browser clicks on Discovery in the main menu
+    When user of browser clicks on "Discovery" in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Indices of "harvester1" harvester in the sidebar
     And user of browser sees "Used by GUI" tag on "generic-index" index record in indices page

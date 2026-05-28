@@ -66,7 +66,7 @@ def assert_file_is_uploaded(selenium, browser_id, file_name, option):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on (?P<option>Uploads) in the main menu"
+        'user of (?P<browser_id>.*?) clicks on "(?P<option>Uploads)" in the main menu'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)

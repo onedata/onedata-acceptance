@@ -23,7 +23,7 @@ from tests.utils.utils import repeat_failed
         r" has (?P<number>.*?) archives?"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_archives_for_item_in_dataset_browser(
     browser_id, name, number, tmp_memory
 ):
