@@ -59,15 +59,17 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(self, options):
-        params_dict: Dict[str, List[str]] = {}
+    def get_rows_of_columns(self, columns=None):
+        if columns is None:
+            columns = []
+        temp_columns = [column for column in columns if column != "file"]
+        temp_columns.append("file")
 
-        temp_options = [option for option in options if option != "file"]
-        temp_options.append("file")
+        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
-            params = [getattr(row, option) for option in temp_options]
-            if any(param == "" for param in params):
+            values_in_row = [getattr(row, column) for column in temp_columns]
+            if any(param == "" for param in values_in_row):
                 continue
             try:
                 name_hash = row.duplicated_name_hash
@@ -75,12 +77,12 @@ class ArchiveAuditLog(Modal):
                 name_hash = None
 
             if name_hash:
-                params[temp_options.index("file")] += name_hash
+                values_in_row[temp_columns.index("file")] += name_hash
 
-            for option, param in zip(temp_options, params):
-                params_dict[option] = params_dict.get(option, []) + [param]
+            for column, param in zip(temp_columns, values_in_row):
+                column_values[column].append(param)
 
-        return params_dict
+        return column_values
 
     def __str__(self):
         return "Archive audit log"

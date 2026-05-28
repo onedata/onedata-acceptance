@@ -19,6 +19,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.common.miscellaneous import scroll_and_get_columns
 
 
 @wt(
@@ -36,10 +37,11 @@ def assert_number_of_first_non_empty_column_content(
 
     # Because files names repeat, files names must be first loaded in order to
     # add annotations to them
-    _ = scroll_and_get_columns(driver, columns_names)
+    modal = Modals(driver).archive_audit_log
+    _ = scroll_and_get_columns(modal, columns_names)
     scroll_to_top_in_archive_audit_log(browser_id, selenium)
 
-    checked_elems = scroll_and_get_columns(driver, columns_names)
+    checked_elems = scroll_and_get_columns(modal, columns_names)
     elems_counter = Counter(checked_elems)
     non_unique_elems = [elem for elem in elems_counter if elems_counter[elem] > 1]
 
@@ -112,7 +114,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns(["file"])
+        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
         currents = rows_of_columns["file"][index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
@@ -158,15 +160,15 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns(["file"])
-    visible_elems = rows_of_columns.get("file", [])
+    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
+    visible_elems = rows_of_columns["file"]
     new_elems = visible_elems
     last_index = 0
     while new_elems:
         condition(*args, index=last_index)
         modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
-        rows_of_columns = modal.get_rows_of_columns(["file"])
+        rows_of_columns = modal.get_rows_of_columns()
         visible_elems = rows_of_columns["file"]
         for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
@@ -176,24 +178,6 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
             last_index = len(visible_elems)
         new_elems = visible_elems[last_index:]
     return checked_elems
-
-
-def scroll_and_get_columns(driver, columns):
-    modal = Modals(driver).archive_audit_log
-    checked_names = set()
-    columns = [transform(column) for column in columns]
-    stop_scrolling_flag = False
-    while not stop_scrolling_flag:
-        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems.get("file", [])
-
-        modal.scroll_by_press_space()
-        stop_scrolling_flag = not any(
-            name not in checked_names for name in visible_names
-        )
-        checked_names.update(visible_names)
-
-    return list(checked_names)
 
 
 @wt(
@@ -305,9 +289,9 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
     driver = selenium[browser_id]
-    visible_items: List[str] = (
-        Modals(driver).archive_audit_log.get_rows_of_columns(["file"]).get("file", [])
-    )
+    visible_items: List[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
+        "file"
+    ]
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "

@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import subprocess
+from typing import Dict, List
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -187,3 +188,21 @@ def assert_curl_result_with_config(browser_id, tmp_memory, config):
 def _camel_transform(phrase: str):
     output = phrase.title().replace(" ", "")
     return output[0].lower() + output[1:]
+
+
+def scroll_and_get_columns(modal, columns):
+    # The modal has to be a class that implements get_rows_of_columns
+    checked_names = set()
+    columns = [transform(column) for column in columns]
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
+        visible_names = visible_elems["file"]
+
+        modal.scroll_by_press_space()
+        stop_scrolling_flag = not any(
+            name not in checked_names for name in visible_names
+        )
+        checked_names.update(visible_names)
+
+    return list(checked_names)
