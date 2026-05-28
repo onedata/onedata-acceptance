@@ -12,6 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -149,3 +150,19 @@ def assert_logs_order_with_optional_logs(
         if severity[expected_log] == "Optional":
             if idx < n and expected_log == logs_actual[idx]:
                 idx += 1
+
+
+def scroll_and_get_columns(modal, columns):
+    # The modal has to be a class that implements get_rows_of_columns
+    checked_names = set()
+    columns = [transform(column) for column in columns]
+    stop_scrolling_flag = False
+    while not stop_scrolling_flag:
+        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
+        visible_names = visible_elems["file"]
+        modal.scroll_by_press_space()
+        stop_scrolling_flag = not any(
+            name not in checked_names for name in visible_names
+        )
+        checked_names.update(visible_names)
+    return list(checked_names)
