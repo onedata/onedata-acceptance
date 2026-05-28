@@ -60,7 +60,7 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "child_group1" group in "inventory1" automation members groups list
     And user of browser sees following privileges of "child_group1" group in automation members subpage:
@@ -89,7 +89,7 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
     And user of browser sees following privileges of "parent_group1" group in automation members subpage:
@@ -112,7 +112,7 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
     And user of browser sees following privileges of "parent_group1" group in automation members subpage:
@@ -135,7 +135,7 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
     And user of browser sees following privileges of "parent_group1" group in automation members subpage:

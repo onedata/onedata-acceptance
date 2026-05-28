@@ -18,7 +18,10 @@ from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_labeled_menu
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modals.details_modal import click_on_navigation_tab_in_modal
+from tests.gui.steps.modals.details_modal import (
+    click_copy_icon_for_browser_link_on_details_modal,
+    click_on_navigation_tab_in_modal,
+)
 from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared,
     close_modal,
@@ -1187,13 +1190,12 @@ def copy_show_or_download_link_from_file_details_modal(
     tmp_memory,
 ):
     option = "Information"
-    button = f"{link_type} link"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory
     )
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
-    click_modal_button(selenium, browser_id, button, modal)
+    click_copy_icon_for_browser_link_on_details_modal(selenium[browser_id], link_type)
     close_modal(selenium, browser_id, modal)
 
 

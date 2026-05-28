@@ -20,7 +20,7 @@ Feature: Basic management of harvester memberships privileges with groups in One
     And user of browser2 sees that "harvester18" has appeared on the harvesters list in the sidebar
 
     # fail to add group to harvester
-    And user of browser2 clicks on Discovery in the main menu
+    And user of browser2 clicks on "Discovery" in the main menu
     And user of browser2 clicks "harvester18" on the harvesters list in the sidebar
     And user of browser2 adds "group1" group to "harvester18" harvester using available groups dropdown
     And user of browser2 sees that error popup has appeared

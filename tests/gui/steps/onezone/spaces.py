@@ -147,7 +147,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id, space_
     ), f'space "{space_name}" not found'
 
 
-@wt(parsers.re("user of (?P<browser_id>.*?) clicks on Automation in the main menu"))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "Automation" in the main menu'))
 def click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory):
     option = "Automation"
     page = _click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -158,9 +158,9 @@ def click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory):
 
 @wt(
     parsers.re(
-        "user of (?P<browser_id>.*?) clicks on "
-        "(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|"
-        "Clusters) in the main menu"
+        r"user of (?P<browser_id>.*?) clicks on "
+        r'"(?P<option>Data|Shares|Providers|Groups|Tokens|Discovery|'
+        r'Clusters)" in the main menu'
     )
 )
 def click_on_option_in_the_sidebar(selenium, browser_id, option):

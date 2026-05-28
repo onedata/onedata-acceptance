@@ -31,7 +31,7 @@ Feature: Workflows stores tests
 
 
   Scenario: User sees results for task, workflow and in result store after modifying task by adding result mapping in uploaded workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "calculate-checksums-rest" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "calculate-checksums-rest" in workflows list in inventory workflows subpage
@@ -50,7 +50,7 @@ Feature: Workflows stores tests
 
 
   Scenario Outline: User sees expected results in result store after modifying input store type to <storage_type> and executing uploaded counting checksums workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "calculate-checksums-rest" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "calculate-checksums-rest" in workflows list in inventory workflows subpage
@@ -73,7 +73,7 @@ Feature: Workflows stores tests
   Scenario: User sees list of datasets in result store after modifying input store data type to Dataset and executing uploaded echo workflow
     When user of browser creates dataset for item "file1" in "space1"
     And user of browser creates dataset for item "dir1/file2" in "space1"
-    And user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage
@@ -90,7 +90,7 @@ Feature: Workflows stores tests
 
 
   Scenario: User sees file in result store after modifying input store and lambda data type to file and executing uploaded echo workflow
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on 1st revision of "echo" in workflows list in inventory workflows subpage

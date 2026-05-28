@@ -20,7 +20,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sends copied token to user of <client>
 
     # support space
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser is idle for 1 second
     And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -59,7 +59,7 @@ Feature: Basic spaces management utilities using onepanel
 #    And user of browser1 sees that length of providers list of "space1" equals "1"
 #
 #    # unsupport space
-#    And user of browser1 clicks on Clusters in the main menu
+#    And user of browser1 clicks on "Clusters" in the main menu
 #    And user of browser1 clicks on "oneprovider-1" in clusters menu
 #    And user of browser is idle for 1 second
 #    And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -97,7 +97,7 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sees that length of providers list of "space1" equals "1"
 
     # unsupport space
-    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "Clusters" in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser is idle for 1 second
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel

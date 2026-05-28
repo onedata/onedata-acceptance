@@ -99,11 +99,40 @@ class NavigationTab(PageObject):
     name = id = Label(".nav-link")
 
 
+class ProviderRow(PageObject):
+    name = id = Label(".record-name-general")
+    details = Label(".provider-details")
+    info_trigger = Label(".record-info-trigger")
+    clipboard_button = Button(".clipboard-btn")
+    storage_name = Label(".storage-name-cell")
+    file_address = Label(".clipboard-input")
+    error_message = Label(".error-cell")
+
+
+class PhysicalLocations(PageObject):
+    tip = WebElement(".one-label-tip")
+    locations = WebItemsSequence(
+        ".storage-location-per-provider-table", cls=ProviderRow
+    )
+    show_more_button = Button(".toggle-expand")
+
+
+class BrowserLinkRow(PageObject):
+    clipboard_icon = Button(".copy-btn")
+    name = id = Label(".file-link-group-addon-inner")
+
+
+class BrowserLinks(PageObject):
+    links = WebItemsSequence(".file-link-clipboard-line", cls=BrowserLinkRow)
+
+
 class DetailsModal(Modal):
     modal_name = Label(".modal-header h1")
     owner = Label(".file-info-row-owner .property-value")
     x = Button(".close")
-    physical_location = Button(".file-info-row-storage-location .clipboard-btn")
+    physical_locations = WebItem(
+        ".file-info-row-storage-location", cls=PhysicalLocations
+    )
     space_id = Button(".file-info-row-space-id .clipboard-btn")
     file_id = Button(".file-info-row-cdmi-object-id .clipboard-btn")
     size_statistics = WebItem(".modal-content", cls=SizeStatistics)
@@ -111,12 +140,7 @@ class DetailsModal(Modal):
     navigation = WebItemsSequence(".nav-tabs-file-info .tab-bar-li", cls=NavigationTab)
     active_tab = Label(".nav-link.active")
 
-    show_link = Button(
-        'button[data-clipboard-target*=".show-file-link-clipboard-line-input"]'
-    )
-    download_link = Button(
-        'button[data-clipboard-target*=".download-file-link-clipboard-line-input"]'
-    )
+    browser_links = WebItem(".file-info-row-gui-url", cls=BrowserLinks)
 
     qos = WebItem(".modal-content", cls=QoSTab)
     metadata = WebItem(".modal-content", cls=MetadataTab)

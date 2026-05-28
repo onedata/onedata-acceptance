@@ -301,7 +301,7 @@ Feature: Bagit uploader tests
 
 
   Scenario: User sees successful execution of uploaded "BagIt Uploader" workflow and input file bagit_archive_unpack.tar
-    When user of browser clicks on Automation in the main menu
+    When user of browser clicks on "Automation" in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uploads "bagit-uploader" workflow from automation-examples repository to "inventory1" inventory
 
