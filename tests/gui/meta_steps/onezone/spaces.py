@@ -504,11 +504,12 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
         currently_seen_names = [new_space.name for new_space in new_spaces]
 
         if space_name in currently_seen_names:
+            space = [space for space in new_spaces if space.name == space_name][0]
             driver.execute_script(
                 "arguments[0].scrollIntoView();",
-                new_spaces[space_name].clickable_field,
+                space.clickable_field,
             )
-            new_spaces[space_name].click()
+            space.click()
             return
 
         stop_scrolling_flag = not any(
@@ -525,6 +526,11 @@ def _get_visible_spaces_list(page):
     return page.get_visible_spaces_list()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _get_visible_elements_list(page):
+    return page.get_visible_elems()
+
+
 @wt(
     parsers.parse(
         'user of {browser_id} can see that opened space is "{space_name}" on the spaces'
@@ -535,9 +541,8 @@ def _get_visible_spaces_list(page):
 def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
-    vis_spaces = _get_visible_spaces_list(page)
-    index = vis_spaces.index(space_name)
-    el = vis_spaces[index]
+    vis_spaces = _get_visible_elements_list(page)
+    space = [space for space in vis_spaces if space.name == space_name][0]
     err_msg = f"Space {space_name} is not opened."
-    assert el.is_displayed(), err_msg
-    assert el.is_active(), err_msg
+    assert space.is_displayed(), err_msg
+    assert space.is_active(), err_msg

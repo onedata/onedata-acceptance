@@ -81,6 +81,7 @@ class SpaceHeader(Element):
     advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
     home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
     menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
+    clickable_field = WebElement(".item-name", scroll=False)
 
     def click_menu(self):
         self.click()
@@ -292,3 +293,11 @@ class DataPage(GenericPage):
             if space_name:
                 visible_spaces.append(header)
         return visible_spaces
+
+    def get_visible_elems(self):
+        visible_elems = []
+        for element in self.elements_list:
+            space_name = getattr(element, "name")
+            if space_name:
+                visible_elems.append(element)
+        return visible_elems
