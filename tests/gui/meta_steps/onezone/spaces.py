@@ -501,17 +501,17 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         new_spaces = _get_visible_spaces_list(page)
-        new_spaces_names = [el.text.split("\n")[0] for el in new_spaces]
 
-        if space_name in new_spaces_names:
-            index = new_spaces_names.index(space_name)
+        if space_name in new_spaces:
+            index = new_spaces.index(space_name)
             new_spaces[index].click()
             return
 
         # if there are at least 1 new space keep scrolling
-        stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces_names)
-        seen_spaces.update(new_spaces_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1])
+        stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces)
+        currently_seen = [new_space.name for new_space in new_spaces]
+        seen_spaces.update(currently_seen)
+        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
@@ -531,9 +531,8 @@ def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     vis_spaces = _get_visible_spaces_list(page)
-    vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
-    index = vis_spaces_names.index(space_name)
+    index = vis_spaces.index(space_name)
     el = vis_spaces[index]
     err_msg = f"Space {space_name} is not opened."
     assert el.is_displayed(), err_msg
-    assert "active" in el.get_attribute("class"), err_msg
+    assert el.is_active(), err_msg

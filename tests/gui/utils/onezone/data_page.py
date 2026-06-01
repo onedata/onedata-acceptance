@@ -72,6 +72,24 @@ class Space(Element):
         return "active" in self.web_elem.get_attribute("class")
 
 
+class SpaceHeader(Element):
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(
+        ".status-toolbar-icon:last-of-type", scroll=False
+    )
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
+    menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
+
+    def click_menu(self):
+        self.click()
+        self.menu_button.click()
+
+    def is_active(self):
+        return "active" in self.web_elem.get_attribute("class")
+
+
 class Provider(Element):
     id = name = Label(".one-label")
     support = Label(".outer-text")
@@ -224,10 +242,9 @@ class DataPage(GenericPage):
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
     spaces_header_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
-    )
-    spaces_header_list_web_elems = WebElementsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.data-row"
+        ".sidebar-spaces li.one-list-item.clickable.resource-item"
+        " .item-header:not(.truncate)",
+        cls=SpaceHeader,
     )
 
     elements_list = WebItemsSequence(
@@ -269,4 +286,9 @@ class DataPage(GenericPage):
         raise RuntimeError(f"{name} space not found")
 
     def get_visible_spaces_list(self):
-        return [el for el in self.spaces_header_list_web_elems if el.text != ""]
+        visible_spaces = []
+        for header in self.spaces_header_list:
+            space_name = getattr(header, "name")
+            if space_name:
+                visible_spaces.append(header)
+        return visible_spaces
