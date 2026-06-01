@@ -490,8 +490,8 @@ def copy_command_from_rest_api_modal(selenium, browser_id, command):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space on the spaces list in the'
-        " sidebar"
+        'user of {browser_id} opens "{space_name}" space using scroll on the spaces'
+        " list in the sidebar"
     )
 )
 def open_space_in_spaces_list(selenium, browser_id, space_name):
@@ -501,17 +501,22 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         new_spaces = _get_visible_spaces_list(page)
+        currently_seen_names = [new_space.name for new_space in new_spaces]
 
-        if space_name in new_spaces:
-            index = new_spaces.index(space_name)
-            new_spaces[index].click()
+        if space_name in currently_seen_names:
+            driver.execute_script(
+                "arguments[0].scrollIntoView();",
+                new_spaces[space_name].clickable_field,
+            )
+            new_spaces[space_name].click()
             return
 
-        # if there are at least 1 new space keep scrolling
-        stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces)
-        currently_seen = [new_space.name for new_space in new_spaces]
-        seen_spaces.update(currently_seen)
+        stop_scrolling_flag = not any(
+            el not in seen_spaces for el in currently_seen_names
+        )
+        seen_spaces.update(currently_seen_names)
         driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
+
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
