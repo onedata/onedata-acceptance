@@ -18,7 +18,7 @@ from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_names, transform_fun=None
+    page, selenium, browser_id, number: int, items_type: str, transform_fun=None
 ):
     driver = selenium[browser_id]
     seen_items = set()
@@ -26,7 +26,7 @@ def assert_n_items_in_items_list(
     if not transform_fun:
         transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_names)
+        new_items = _get_visible_items_list(page, items_type)
         new_items_names = [el.name for el in new_items]
 
         # if there are at least 1 new item keep scrolling
@@ -42,8 +42,9 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_names):
-    return getattr(page, f"get_visible_{items_names}_list")()
+def _get_visible_items_list(page, items_type):
+    # Items type can be "spaces", "shares" or "groups"
+    return getattr(page, f"get_visible_{items_type}_list")()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -61,21 +62,31 @@ def _get_page(where, driver):
     raise AssertionError(f"page {where} not found")
 
 
+ITEMS_TYPES_REG = r"spaces|shares|groups"
+
+
 @wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} list in"
-        " the sidebar"
+    parsers.re(
+        r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
+        rf" (?P<items_type>{ITEMS_TYPES_REG}) on the (?P<list_type>{ITEMS_TYPES_REG})"
+        r" list in the sidebar"
     )
 )
-def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
+def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items_type: str):
     driver = selenium[browser_id]
-    page = _get_page(where, driver)
-    if where == "spaces":
+    page = _get_page(items_type, driver)
+    if items_type == "spaces":
+        items_type = "space_headers"
         assert_n_items_in_items_list(
-            page, selenium, browser_id, number, items, lambda text: text
+            page,
+            selenium,
+            browser_id,
+            number,
+            items_type,
+            transform_fun=lambda text: text,
         )
     else:
-        assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+        assert_n_items_in_items_list(page, selenium, browser_id, number, items_type)
 
 
 def get_last_item_number_in_table(driver):

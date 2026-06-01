@@ -30,11 +30,13 @@ from .space_marketplace import SpaceMarketplacePage
 
 
 class Space(Element):
-    name = id = Label(".item-name")
-    support_size = Label(".status-toolbar-icon:first-of-type")
-    supporting_providers_number = Label(".status-toolbar-icon:last-of-type")
-    advertised_icon = Icon(".oneicon-cart-checked")
-    home_icon = WebElement(".status-toolbar-icon:first-of-type span")
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(
+        ".status-toolbar-icon:last-of-type", scroll=False
+    )
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
@@ -286,7 +288,7 @@ class DataPage(GenericPage):
                     return
         raise RuntimeError(f"{name} space not found")
 
-    def get_visible_spaces_list(self):
+    def get_visible_space_headers_list(self):
         visible_spaces = []
         for header in self.spaces_header_list:
             space_name = getattr(header, "name")
@@ -294,7 +296,7 @@ class DataPage(GenericPage):
                 visible_spaces.append(header)
         return visible_spaces
 
-    def get_visible_elems(self):
+    def get_visible_spaces_list(self):
         visible_elems = []
         for element in self.elements_list:
             space_name = getattr(element, "name")
