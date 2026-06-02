@@ -62,14 +62,13 @@ class ArchiveAuditLog(Modal):
     def get_rows_of_columns(self, columns=None):
         if columns is None:
             columns = []
-        temp_columns = [column for column in columns if column != "file"]
-        temp_columns.append("file")
+        temp_columns = list(set(columns) | {"file"})
 
         column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
             values_in_row = [getattr(row, column) for column in temp_columns]
-            if any(param == "" for param in values_in_row):
+            if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
             try:
                 name_hash = row.duplicated_name_hash
