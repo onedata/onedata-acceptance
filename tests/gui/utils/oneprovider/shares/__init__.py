@@ -20,9 +20,9 @@ from ..file_browser import FileBrowser
 
 
 class SharesOptions(PageObject):
-    name = id = Label(".item-name")
-    menu_button = Button(".menu-toggle-frame")
-    icon = WebElement(".one-icon-tag-icon")
+    name = id = Label(".item-name", scroll=False)
+    menu_button = Button(".menu-toggle-frame", scroll=False)
+    icon = WebElement(".one-icon-tag-icon", scroll=False)
 
     def points_to_del_dir(self):
         return "oneicon-x" in self.icon.get_attribute("class")
@@ -33,9 +33,6 @@ class SharesContentPage(PageObject):
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")
     shares_browser = WebItemsSequence(
         ".one-collapsible-list .list-header-row", cls=SharesOptions
-    )
-    shares_list_web_elems = WebElementsSequence(
-        ".one-collapsible-list .share-list-item .list-header-row"
     )
     path = Breadcrumbs(".share-header-path")
     url = Input(".clipboard-input.form-control")
@@ -53,4 +50,8 @@ class SharesContentPage(PageObject):
     link_type_selector = Button(".share-link-type-selector-trigger")
 
     def get_visible_shares_list(self):
-        return [el for el in self.shares_list_web_elems if el.text != ""]
+        visible_shares = []
+        for el in self.shares_browser:
+            if getattr(el, "name"):
+                visible_shares.append(el)
+        return visible_shares

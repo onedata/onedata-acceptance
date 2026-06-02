@@ -18,13 +18,11 @@ from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_type: str, transform_fun=None
+    page, selenium, browser_id, number: int, items_type: str
 ):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
-    if not transform_fun:
-        transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
         new_items = _get_visible_items_list(page, items_type)
         new_items_names = [el.name for el in new_items]
@@ -33,6 +31,7 @@ def assert_n_items_in_items_list(
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
         seen_items.update(new_items_names)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -83,7 +82,6 @@ def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items_typ
             browser_id,
             number,
             items_type,
-            transform_fun=lambda text: text,
         )
     else:
         assert_n_items_in_items_list(page, selenium, browser_id, number, items_type)

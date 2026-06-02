@@ -457,12 +457,7 @@ def assert_number_of_archives_with_scrolling(
     which_browser,
 ):
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    transform_fun = lambda item: (
-        item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
-    )
-    assert_n_items_in_items_list(
-        browser, selenium, browser_id, number, "items", transform_fun=transform_fun
-    )
+    assert_n_items_in_items_list(browser, selenium, browser_id, number, "items")
 
 
 def assert_base_archive_for_archive_in_op_gui(
