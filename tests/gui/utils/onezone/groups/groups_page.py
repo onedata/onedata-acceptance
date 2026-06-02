@@ -50,7 +50,7 @@ class MenuItem(PageObject):
 
 
 class GroupsPage(GenericPage):
-    groups_list = WebItemsSequence(
+    elements_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
     )
     groups_headers_list = WebItemsSequence(
@@ -85,7 +85,7 @@ class GroupsPage(GenericPage):
 
     def get_visible_groups_list(self):
         visible_groups = []
-        for element in self.groups_list:
+        for element in self.elements_list:
             group_name = getattr(element, "name")
             if group_name:
                 visible_groups.append(element)

@@ -6,7 +6,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
@@ -22,12 +21,9 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
-    click_on_confirmation_button_to_rename_group,
-    click_on_group_menu_button,
     confirm_name_input_on_main_groups_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
-    input_new_group_name_into_rename_group_inpux_box,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -39,30 +35,73 @@ from tests.gui.steps.onezone.members import (
     remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
+from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.onezone import OZLoggedIn
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_confirmation_button_to_rename_group(group):
+    group.edit_box.confirm()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_new_group_name_into_rename_group_inpux_box(group, text):
+    group.edit_box.value = text
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_group_by_name_from_main_page(driver, group_name):
+    page = OZLoggedIn(driver).get_page_and_click("groups")
+    return page.elements_list[group_name]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_menu(driver, group, option):
+    group.menu()
+    Popups(driver).menu_popup_with_text.menu[option]()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_group_menu_button(selenium, browser_id, option, group):
+    driver = selenium[browser_id]
+    group = get_group_by_name_from_main_page(driver, group)
+    group.click()
+    click_on_option_in_group_menu(driver, group, option)
+    return group
+
+
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) renames group "(?P<group>.*)" '
-        'to "(?P<new_group>.*)" using '
+        "user of (?P<browser_id>.*) clicks on "
+        '"(?P<option>Rename|Leave|Remove)" '
+        'button in group "(?P<group>.*)" menu in the sidebar'
+    )
+)
+def wt_click_on_group_menu_button(selenium, browser_id, option, group):
+    click_on_group_menu_button(selenium, browser_id, option, group)
+
+
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
+        'to "(?P<new_group_name>.*)" using '
         "(?P<confirm_type>.*) to confirm"
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(selenium, browser_id, group, new_group, confirm_type):
+def rename_group(selenium, browser_id, group_name, new_group_name, confirm_type):
     option = "Rename"
-    text = new_group
+    text = new_group_name
 
-    click_on_group_menu_button(selenium, browser_id, option, group)
-    input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text)
+    group = click_on_group_menu_button(selenium, browser_id, option, group_name)
+    input_new_group_name_into_rename_group_inpux_box(group, text)
     if confirm_type == "button":
-        click_on_confirmation_button_to_rename_group(selenium, browser_id)
+        click_on_confirmation_button_to_rename_group(group)
     else:
         press_enter_on_active_element(selenium, browser_id)
-        selenium[browser_id].switch_to.active_element.send_keys(Keys.RETURN)
 
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))

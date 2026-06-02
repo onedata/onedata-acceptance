@@ -14,9 +14,8 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario Outline: User renames group
-    When user of browser clicks on "Rename" button in group "group1" menu in the sidebar
-    And user of browser writes "group2" into rename group text field
-    And user of browser confirms group rename using <confirmation_method>
+    When user of browser renames group "group1" to "group2" using <confirmation_method> to confirm
+    Then user of browser sees group "group2" on groups list
     Then user of browser sees group "group2" on groups list
     And user of browser does not see group "group1" on groups list
 
