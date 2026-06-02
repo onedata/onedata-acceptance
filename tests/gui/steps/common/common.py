@@ -76,15 +76,9 @@ def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items_typ
     page = _get_page(items_type, driver)
     if items_type == "spaces":
         items_type = "space_headers"
-        assert_n_items_in_items_list(
-            page,
-            selenium,
-            browser_id,
-            number,
-            items_type,
-        )
-    else:
-        assert_n_items_in_items_list(page, selenium, browser_id, number, items_type)
+    elif items_type == "groups":
+        items_type = "group_headers"
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type)
 
 
 def get_last_item_number_in_table(driver):

@@ -11,7 +11,6 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     NamedButton,
-    WebElementsSequence,
     WebItem,
     WebItemsSequence,
 )
@@ -23,10 +22,16 @@ from .hierarchy_subpage import GroupHierarchyPage
 
 
 class Group(Element):
-    menu = Button(".collapsible-toolbar-toggle")
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     hierarchy = NamedButton(".one-list-level-2 .item-header", text="Hierarchy")
     edit_box = WebItem(".name-editor", cls=EditBox)
+
+
+class GroupHeader(Element):
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
 
 
 class GroupDetailsPage(PageObject):
@@ -45,11 +50,11 @@ class MenuItem(PageObject):
 
 
 class GroupsPage(GenericPage):
-    elements_list = WebItemsSequence(
+    groups_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
     )
-    groups_list_web_elems = WebElementsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable"
+    groups_headers_list = WebItemsSequence(
+        ".sidebar-groups .one-list>.one-list-item.clickable", cls=GroupHeader
     )
 
     create_group = Button(".create-group-btn")
@@ -70,5 +75,18 @@ class GroupsPage(GenericPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
+    def get_visible_group_headers_list(self):
+        visible_group_headers = []
+        for header in self.groups_headers_list:
+            group_name = getattr(header, "name")
+            if group_name:
+                visible_group_headers.append(header)
+        return visible_group_headers
+
     def get_visible_groups_list(self):
-        return [el for el in self.groups_list_web_elems if el.text != ""]
+        visible_groups = []
+        for element in self.groups_list:
+            group_name = getattr(element, "name")
+            if group_name:
+                visible_groups.append(element)
+        return visible_groups

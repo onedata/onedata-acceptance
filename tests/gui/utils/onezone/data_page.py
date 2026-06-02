@@ -289,17 +289,17 @@ class DataPage(GenericPage):
         raise RuntimeError(f"{name} space not found")
 
     def get_visible_space_headers_list(self):
-        visible_spaces = []
+        visible_space_headers = []
         for header in self.spaces_header_list:
             space_name = getattr(header, "name")
             if space_name:
-                visible_spaces.append(header)
-        return visible_spaces
+                visible_space_headers.append(header)
+        return visible_space_headers
 
     def get_visible_spaces_list(self):
-        visible_elems = []
+        visible_spaces = []
         for element in self.elements_list:
             space_name = getattr(element, "name")
             if space_name:
-                visible_elems.append(element)
-        return visible_elems
+                visible_spaces.append(element)
+        return visible_spaces
