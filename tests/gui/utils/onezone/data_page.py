@@ -89,9 +89,6 @@ class SpaceHeader(Element):
         self.click()
         self.menu_button.click()
 
-    def is_active(self):
-        return "active" in self.web_elem.get_attribute("class")
-
 
 class Provider(Element):
     id = name = Label(".one-label")
