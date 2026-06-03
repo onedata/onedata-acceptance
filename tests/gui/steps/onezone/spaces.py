@@ -45,7 +45,7 @@ def click_on_space_in_menu_list(driver, name, force=True):
     if force:
         page.spaces_header_list[name]()
     else:
-        if not page.spaces_header_list[name].is_active():
+        if not page.elements_list[name].is_active():
             page.spaces_header_list[name].click()
     return page
 

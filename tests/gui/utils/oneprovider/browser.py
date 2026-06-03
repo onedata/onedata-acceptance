@@ -6,8 +6,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from abc import ABC
-from typing import ClassVar, Optional
+from abc import ABC, abstractmethod
+from typing import ClassVar, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -19,7 +19,6 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
 
@@ -44,11 +43,6 @@ class Browser(ABC, PageObject):
     error_msg = Label(".error-dir-text")
     _empty_dir_icon = WebElement(".empty-dir-image")
 
-    _data = WebElementsSequence(".data-row.fb-table-row")
-    items_list_web_elems = WebElementsSequence(
-        ".data-row.fb-table-row .fb-table-col-files"
-    )
-
     _bottom = WebElement(".table-bottom-spacing")
 
     parent = ""
@@ -64,13 +58,9 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def names_of_visible_elems(self):
-        files = self.items_list_web_elems
-        names = [f.text.split("\n")[0] for f in files]
-        return names
-
-    def get_visible_items_list(self):
-        return [el for el in self.items_list_web_elems if el.text != ""]
+    @abstractmethod
+    def names_of_visible_elems(self) -> List[str]:
+        pass
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from contextlib import contextmanager
 from functools import partial
 from platform import system as get_system
+from typing import List
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -49,11 +50,8 @@ class _FileBrowser(Browser):
     def __str__(self):
         return f"file browser in {self.parent}"
 
-    def names_of_visible_elems(self):
-        files = self._data
-        # make sure row is fully loaded in gui
-        names = [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
-        return names
+    def names_of_visible_elems(self) -> List[str]:
+        return [f.name for f in self.data if getattr(f, "name")]
 
     @contextmanager
     def select_files(self):

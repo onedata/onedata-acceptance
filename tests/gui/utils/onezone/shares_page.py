@@ -22,8 +22,6 @@ class SharesPage(GenericPage):
     )
 
     def get_visible_shares_list(self) -> List[SharesSidebarRecord]:
-        visible_shares = []
-        for el in self.shares_sidebar_list:
-            if getattr(el, "name"):
-                visible_shares.append(el)
-        return visible_shares
+        return [
+            record for record in self.shares_sidebar_list if getattr(record, "name")
+        ]

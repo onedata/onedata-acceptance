@@ -49,9 +49,5 @@ class SharesContentPage(PageObject):
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
 
-    def get_visible_shares_list(self):
-        visible_shares = []
-        for el in self.shares_browser:
-            if getattr(el, "name"):
-                visible_shares.append(el)
-        return visible_shares
+    def get_visible_shares_list(self) -> list[SharesOptions]:
+        return [el for el in self.shares_browser if getattr(el, "name")]

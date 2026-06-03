@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import List
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -75,18 +77,10 @@ class GroupsPage(GenericPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
-    def get_visible_group_headers_list(self):
-        visible_group_headers = []
-        for header in self.groups_headers_list:
-            group_name = getattr(header, "name")
-            if group_name:
-                visible_group_headers.append(header)
-        return visible_group_headers
+    def get_visible_group_headers_list(self) -> List[GroupHeader]:
+        return [
+            header for header in self.groups_headers_list if getattr(header, "name")
+        ]
 
-    def get_visible_groups_list(self):
-        visible_groups = []
-        for element in self.elements_list:
-            group_name = getattr(element, "name")
-            if group_name:
-                visible_groups.append(element)
-        return visible_groups
+    def get_visible_groups_list(self) -> List[Group]:
+        return [element for element in self.elements_list if getattr(element, "name")]
