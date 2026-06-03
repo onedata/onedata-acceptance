@@ -457,7 +457,9 @@ def assert_number_of_archives_with_scrolling(
     which_browser,
 ):
     browser = tmp_memory[browser_id][transform(which_browser.value)]
-    assert_n_items_in_items_list(browser, selenium, browser_id, number, "items")
+    assert_n_items_in_items_list(
+        browser, selenium, browser_id, number, "items", "description"
+    )
 
 
 def assert_base_archive_for_archive_in_op_gui(

@@ -6,8 +6,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from abc import ABC, abstractmethod
-from typing import ClassVar, List, Optional
+from abc import ABC
+from typing import Any, ClassVar, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -58,9 +58,11 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    @abstractmethod
-    def names_of_visible_elems(self) -> List[str]:
-        pass
+    def get_visible_items_list(self, id_param="name") -> List[Any]:
+        return [row for row in self.data if getattr(row, id_param)]
+
+    def ids_of_visible_elems(self, id_param="name") -> List[str]:
+        return [getattr(row, id_param) for row in self.data if getattr(row, id_param)]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 

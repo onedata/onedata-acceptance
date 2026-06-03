@@ -18,18 +18,17 @@ from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_type: str
+    page, selenium, browser_id, number: int, items_type: str, id_param: str
 ):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_type)
-        new_items_names = [el.name for el in new_items]
+        new_items = _get_visible_items_list(page, items_type, id_param)
+        new_items_ids = [getattr(el, id_param) for el in new_items]
 
-        # if there are at least 1 new item keep scrolling
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
-        seen_items.update(new_items_names)
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_ids)
+        seen_items.update(new_items_ids)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
 
     assert len(seen_items) == number, (
@@ -41,9 +40,9 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_type):
+def _get_visible_items_list(page, items_type, id_param):
     # Items type can be "spaces", "shares" or "groups"
-    return getattr(page, f"get_visible_{items_type}_list")()
+    return getattr(page, f"get_visible_{items_type}_list")(id_param)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -78,7 +77,7 @@ def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items_typ
         items_type = "space_headers"
     elif items_type == "groups":
         items_type = "group_headers"
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
 def get_last_item_number_in_table(driver):

@@ -21,7 +21,7 @@ class SharesPage(GenericPage):
         ".sidebar-shares .one-list-item", cls=SharesSidebarRecord
     )
 
-    def get_visible_shares_list(self) -> List[SharesSidebarRecord]:
+    def get_visible_shares_list(self, id_param="name") -> List[SharesSidebarRecord]:
         return [
-            record for record in self.shares_sidebar_list if getattr(record, "name")
+            record for record in self.shares_sidebar_list if getattr(record, id_param)
         ]

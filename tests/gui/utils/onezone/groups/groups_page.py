@@ -77,10 +77,10 @@ class GroupsPage(GenericPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
-    def get_visible_group_headers_list(self) -> List[GroupHeader]:
+    def get_visible_group_headers_list(self, id_param="name") -> List[GroupHeader]:
         return [
-            header for header in self.groups_headers_list if getattr(header, "name")
+            header for header in self.groups_headers_list if getattr(header, id_param)
         ]
 
-    def get_visible_groups_list(self) -> List[Group]:
-        return [element for element in self.elements_list if getattr(element, "name")]
+    def get_visible_groups_list(self, id_param="name") -> List[Group]:
+        return [element for element in self.elements_list if getattr(element, id_param)]

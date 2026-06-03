@@ -21,7 +21,7 @@ class BrowserRow(PageObject):
     name = id = Label(".file-name-inner", scroll=False)
     clickable_field = WebElement(".file-name", scroll=False)
     menu_button = Button(".file-row-actions-trigger", scroll=False)
-    description = Label(".secondary-description")
+    description = Label(".secondary-description", scroll=False)
     _status_tag = WebElement(".file-status-tag")
     _icon = WebElement(".file-icon")
     _icon_tag = WebElement(".one-icon-tag")

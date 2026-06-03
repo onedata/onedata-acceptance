@@ -322,7 +322,7 @@ def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int):
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     page = get_shares_page(driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items, "name")
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
