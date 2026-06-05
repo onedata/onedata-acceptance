@@ -10,8 +10,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 from datetime import datetime
+from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -190,11 +192,9 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium):
     # table containing error logs
     modal.move_to_error_logs_table(driver)
 
-    def condition(index=0):
-        # just pass
-        _ = index
-
-    detected_entries = _scroll_and_check_condition(browser_id, selenium, condition)
+    detected_entries = scroll_and_get_columns(
+        modal, ["source_file"], id_param="source_file"
+    )
     err_msg = (
         f"number of entries is {len(detected_entries)} is not equal to "
         f"number of items failed {number_of_items_failed}"
@@ -214,23 +214,17 @@ def assert_entries_with_file_names_in_archive_recall(browser_id, file_name, sele
     # contain '(' or ')' characters
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    file_name_p = file_name.split(".")[0]
-    file_name_s = file_name.split(".")[1]
+    file_name_p, file_name_s = file_name.rsplit(".", 1)
     # if we want to scroll cursor need to be somewhere on the
     # table containing error logs
     modal.move_to_error_logs_table(driver)
 
     def condition(index=0):
-        entries = modal.error_file_row
-        new_entries_names = [
-            entry.text.split("\n")[1]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
+        new_entries_names: List[str] = modal.get_param_of_visible_rows("source_file")[
+            index:
         ]
-        new_entries_names = new_entries_names[index:]
         for entry_name in new_entries_names:
-            file_name_p_ = entry_name.split(".")[0]
-            file_name_s_ = entry_name.split(".")[1]
+            file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
             err_msg = (
                 f"file name {entry_name} does not match name or name "
@@ -256,12 +250,8 @@ def assert_entries_with_error_messages_in_archive_recall(browser_id, message, se
     modal.move_to_error_logs_table(driver)
 
     def condition(index=0):
-        entries = modal.error_file_row
-        new_entries_mes = [
-            entry.text.split("\n")[2]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
-        ]
+        new_entries_mes: List[str] = modal.get_param_of_visible_rows("error_message")
+
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
             err_msg = (
@@ -276,12 +266,7 @@ def assert_entries_with_error_messages_in_archive_recall(browser_id, message, se
 def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    entries = modal.error_file_row
-    new_entries = [
-        entry.text.split("\n")[1]
-        for entry in entries
-        if len(entry.text.split("\n")) > 1
-    ]
+    new_entries: List[str] = modal.get_param_of_visible_rows("source_file")
     detected_entries = []
     detected_entries.extend(new_entries)
     index = 0
@@ -289,12 +274,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
         condition(*args, index=index)
 
         modal.scroll_by_press_space()
-        entries = modal.error_file_row
-        new_entries = [
-            entry.text.split("\n")[1]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
-        ]
+        new_entries: List[str] = modal.get_param_of_visible_rows("source_file")
         index = 0
         for entry in new_entries:
             if entry not in detected_entries:

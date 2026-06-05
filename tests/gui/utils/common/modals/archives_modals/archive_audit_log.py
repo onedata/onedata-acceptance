@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -59,29 +59,29 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(self, columns=None):
-        if columns is None:
-            columns = []
-        temp_columns = list(set(columns) | {"file"})
+    def get_rows_of_columns(self, columns: List[str] = None) -> Dict[str, List[str]]:
 
-        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
+        temp_columns = list(set(columns or []) | {"file"})
+        column_values = {column: [] for column in temp_columns}
 
         for row in self.data_row:
             values_in_row = [getattr(row, column) for column in temp_columns]
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
-            try:
-                name_hash = row.duplicated_name_hash
-            except RuntimeError:
-                name_hash = None
 
-            if name_hash:
-                values_in_row[temp_columns.index("file")] += name_hash
+            values_in_row[temp_columns.index("file")] += getattr(
+                row, "duplicated_name_hash"
+            )
 
             for column, param in zip(temp_columns, values_in_row):
                 column_values[column].append(param)
 
         return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_param_of_visible_rows(self, param) -> List[str]:
+        column_values = self.get_rows_of_columns([param])
+        return column_values[param]
 
     def __str__(self):
         return "Archive audit log"

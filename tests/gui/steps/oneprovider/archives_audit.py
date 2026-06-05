@@ -82,7 +82,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns([column_name])
+        rows_of_columns = modal.get_rows_of_columns([column_name])
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             current_ = None
@@ -113,8 +113,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
-        currents = rows_of_columns["file"][index:]
+        currents = modal.get_param_of_visible_rows("file")[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
             err_msg = f"index {current_} following {last} is not bigger"
@@ -142,9 +141,9 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events: Dict[str, List[str]] = modal.get_rows_of_columns(["event"])[
-            "event"
-        ][index:]
+        visible_events: Dict[str, List[str]] = modal.get_param_of_visible_rows("event")[
+            index:
+        ]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -159,10 +158,10 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
-    visible_elems = rows_of_columns["file"]
+    visible_elems = modal.get_param_of_visible_rows("file")
     new_elems = visible_elems
     last_index = 0
+
     while new_elems:
         condition(*args, index=last_index)
         checked_elems.extend(new_elems)
@@ -170,8 +169,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
             "arguments[0].scrollIntoView();",
             modal.data_row[new_elems[-1]].clickable_field,
         )
-        rows_of_columns = modal.get_rows_of_columns()
-        visible_elems = rows_of_columns["file"]
+        visible_elems = modal.get_param_of_visible_rows("file")
         for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
                 last_index = index
@@ -240,7 +238,7 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
     seen_rows = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_rows_names = modal.get_rows_of_columns()["file"]
+        new_rows_names = modal.get_param_of_visible_rows("file")
 
         if file_name in new_rows_names:
             driver.execute_script(
@@ -275,9 +273,9 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
     driver = selenium[browser_id]
-    visible_items: List[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
-        "file"
-    ]
+    visible_items: List[str] = Modals(
+        driver
+    ).archive_audit_log.get_param_of_visible_rows("file")
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "
