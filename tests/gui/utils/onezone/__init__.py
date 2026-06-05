@@ -6,6 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
 from .automation_page import AutomationPage
@@ -19,20 +21,10 @@ from .shares_page import SharesPage
 from .tokens_page import TokensPage
 from .uploads_page import UploadsPage
 
-panels_dict = {
-    "data": 0,
-    "shares": 1,
-    "providers": 2,
-    "groups": 3,
-    "tokens": 4,
-    "discovery": 5,
-    "automation": 6,
-    "clusters": 7,
-}
-
 
 class OZLoggedIn:
     _atlas = WebElement(".onezone-atlas")
+    _sidebar_menu = WebElement(".main-menu-content")
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
     _profile = WebElement(".app-layout")
 
@@ -42,7 +34,7 @@ class OZLoggedIn:
 
     profile_username = Label(".main-menu-column .user-account-button-username")
 
-    panels = {
+    panels_classes = {
         "data": DataPage,
         "shares": SharesPage,
         "providers": ProvidersPage,
@@ -65,21 +57,25 @@ class OZLoggedIn:
     def get_page_and_click(self, item):
         return get_page(self, item)
 
+    def is_panel_expanded(self):
+        return self._panels[0].text == "DATA"
+
+    def get_panel_by_name(self, name):
+        if not self.is_panel_expanded():
+            ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
+        return [p for p in self._panels if p.text.lower() == name.lower()][0]
+
     def is_panel_clicked(self, item):
-        for idx, panel in enumerate(self._panels):
-            if idx != panels_dict[item] and (
-                "selected" in panel.get_attribute("class")
-            ):
-                return False
-        panel = self._panels[panels_dict[item]]
+        panel = self.get_panel_by_name(item)
         return any(el in panel.get_attribute("class") for el in ["active", "selected"])
 
     def is_panel_disabled(self, item):
-        panel = self._panels[panels_dict[item]]
+        panel = self.get_panel_by_name(item)
         return "disabled" in panel.get_attribute("class")
 
-    def get_panels(self):
-        return self._panels
+    def click_on_sidebar_menu_panel(self, name):
+        panel = self.get_panel_by_name(name)
+        panel.click()
 
     def get_profile(self):
         return self._profile
@@ -87,13 +83,10 @@ class OZLoggedIn:
 
 def get_page(oz_page, item, click=True):
     item = item.lower()
-    cls = oz_page.panels.get(item, None)
+    cls = oz_page.panels_classes.get(item, None)
     if cls:
-        item = item.replace("_", " ").lower()
-        panel = oz_page.get_panels()[panels_dict[item]]
         if click:
-            panel.click()
-            # wait till panel will open
+            oz_page.click_on_sidebar_menu_panel(item)
             wait_for_panel_to_expand(oz_page)
         return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
     if item == "profile":
@@ -105,7 +98,7 @@ def get_page(oz_page, item, click=True):
 
 def wait_for_panel_to_expand(oz_page):
     for _ in range(20):
-        if oz_page.get_panels()[0].text == "DATA":
+        if oz_page.is_panel_expanded():
             return
         time.sleep(0.1)
     raise RuntimeError("did not manage to expand main panel")
