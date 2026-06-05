@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -110,7 +110,8 @@ FILE_DETAILS_ENDPOINTS = {
 def assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, link):
     driver = selenium[browser_id]
     # inherits from DocumentationPage
-    page: DocumentationPage = Homepage(driver)[subpage]
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
@@ -130,7 +131,8 @@ def assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, li
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_chapter_tab_in_docs_subpage(selenium, browser_id, subpage, chapter):
     driver = selenium[browser_id]
-    page: DocumentationPage = Homepage(driver)[subpage]
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     active_tabs = page.chapters.get_active_chapter_tabs_names()
     assert (
         len(active_tabs) == 1
@@ -146,7 +148,8 @@ def assert_user_sees_name_in_header_in_docs_subpage(
     selenium, browser_id, subpage, name
 ):
     driver = selenium[browser_id]
-    page: DocumentationPage = Homepage(driver)[subpage]
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     assert (
         page.current_header == name
     ), f"Expected header: {name}, but found header: {page.current_header}"
@@ -169,7 +172,8 @@ def assert_expanded_folders_in_sidebar_in_docs_subpage(
 ):
     driver = selenium[browser_id]
     expected_folders = set(parse_seq(folders))
-    page: DocumentationPage = Homepage(driver)[subpage]
+    subpage = transform(subpage)
+    page: DocumentationPage = getattr(Homepage(driver), subpage)
     found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (
         found_folders == expected_folders

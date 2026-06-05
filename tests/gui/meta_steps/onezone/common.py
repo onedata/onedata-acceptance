@@ -89,7 +89,7 @@ def login_using_gui(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def visit_op(selenium, browser_id, provider_name):
     driver = selenium[browser_id]
-    providers_panel = OZLoggedIn(driver).get_page_and_click("providers")
+    providers_panel = OZLoggedIn(driver).open_page_and_click("providers")
     time.sleep(0.5)
     providers_panel[provider_name]()
     click_visit_provider(driver)
@@ -229,7 +229,7 @@ def search_for_members(driver, records, member_name, parent_name, fun):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_page(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].profile()
+    OZLoggedIn(driver).profile.profile()
     Popups(driver).user_account_menu.options["Logout"].click()
 
 
@@ -237,7 +237,7 @@ def logout_from_onezone_page(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def logout_from_onezone_emergency_panel(selenium, browser_id):
     driver = selenium[browser_id]
-    button = OZLoggedIn(driver)["profile"].logout.web_elem
+    button = OZLoggedIn(driver).profile.logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
 
 
@@ -245,7 +245,7 @@ def logout_from_onezone_emergency_panel(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_username(selenium, browser_id, username, new_username, users):
     driver = selenium[browser_id]
-    profile = OZLoggedIn(driver)["profile"]
+    profile = OZLoggedIn(driver).profile
     profile.profile()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_username()
@@ -259,7 +259,7 @@ def change_username(selenium, browser_id, username, new_username, users):
 def change_password(selenium, browser_id, new_password, username, users):
     driver = selenium[browser_id]
     cur_passwd = users[username].password
-    profile = OZLoggedIn(driver)["profile"]
+    profile = OZLoggedIn(driver).profile
     profile.profile()
     Popups(driver).user_account_menu.options["Manage account"].click()
     profile.rename_password()

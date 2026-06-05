@@ -21,7 +21,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].profile()
+    OZLoggedIn(driver).profile.profile()
 
 
 @wt(
@@ -41,7 +41,7 @@ def click_on_option_in_account_settings_in_oz(selenium, browser_id, option):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_user_menu_button_in_oz(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].show_user_account_menu_toolbar.click()
+    OZLoggedIn(driver).profile.show_user_account_menu_toolbar.click()
 
 
 @wt(
@@ -83,7 +83,7 @@ def click_delete_account_button_in_oz(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name):
     driver = selenium[browser_id]
-    displayed_user_name = OZLoggedIn(driver)["profile"].user_name
+    displayed_user_name = OZLoggedIn(driver).profile.user_name
     err_msg = (
         f"expected {expected_user_name} as user name, but instead "
         f"displayed is {displayed_user_name} in USER NAME oz panel"
@@ -105,6 +105,6 @@ def wt_assert_user_alias_in_sidebar(selenium, browser_id, username):
         name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)
     except AssertionError:
-        OZLoggedIn(driver)["profile"].profile()
+        OZLoggedIn(driver).profile.profile()
         name = OZLoggedIn(driver).profile_username
         assert name == username, err_msg.format(username, name)

@@ -26,8 +26,8 @@ def type_space_name_on_rename_space_input_on_overview_page(
     selenium, browser_id, space_name
 ):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.rename()
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.value = space_name
+    OZLoggedIn(driver).data.overview_page.info_tile.rename()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.value = space_name
 
 
 @wt(
@@ -36,14 +36,14 @@ def type_space_name_on_rename_space_input_on_overview_page(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_space_by_click_on_confirmation_button_on_overview_page(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.confirm()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.confirm()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.cancel()
+    OZLoggedIn(driver).data.overview_page.info_tile.edit_name_box.cancel()
 
 
 @wt(
@@ -69,7 +69,7 @@ def confirm_rename_the_space(selenium, browser_id, option):
 )
 def assert_number_of_shares_on_overview_page(browser_id, selenium, number: int):
     driver = selenium[browser_id]
-    shares_count = int(OZLoggedIn(driver)["data"].overview_page.info_tile.shares_count)
+    shares_count = int(OZLoggedIn(driver).data.overview_page.info_tile.shares_count)
     assert (
         number == shares_count
     ), f"number of shares equals {shares_count}, not {{number}} as expected"
@@ -80,14 +80,14 @@ def assert_number_of_shares_on_overview_page(browser_id, selenium, number: int):
 def assert_name_label_of_space_on_overview_page(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     assert (
-        OZLoggedIn(driver)["data"].overview_page.space_name == space_name
+        OZLoggedIn(driver).data.overview_page.space_name == space_name
     ), f'space "{space_name}" not found on overview page'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_mes_at_field_in_space_details_in_overview(selenium, browser_id, text, field):
     driver = selenium[browser_id]
-    details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
+    details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     field = transform(field)
     visible_mes = getattr(details_tile, field)
     err_msg = f"user sees {visible_mes} instead of {text} at {field}"
@@ -98,7 +98,7 @@ def assert_mes_at_field_in_space_details_in_overview(selenium, browser_id, text,
 def assert_tags_in_space_details_in_overview(selenium, browser_id, tags_to_check):
     tags = "tags"
     driver = selenium[browser_id]
-    details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
+    details_tile = OZLoggedIn(driver).data.overview_page.space_details_tile
     visible_mes = getattr(details_tile, tags)
     visible_tags = [t.text.split("\n")[0] for t in visible_mes]
     err_msg = f"user sees tags: {visible_tags} instead of {tags_to_check}"
@@ -119,7 +119,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
     browser_id, option, selenium
 ):
     driver = selenium[browser_id]
-    marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
+    marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
     advertise_info = marketplace_tile.advertise_info
     if option == "is":
         err_msg = f"space should be advertised but visible info is {advertise_info}"
@@ -138,7 +138,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_link_in_space_marketplace_in_overview(browser_id, link, selenium):
     driver = selenium[browser_id]
-    marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
+    marketplace_tile = OZLoggedIn(driver).data.overview_page.marketplace_tile
     link = getattr(marketplace_tile, transform(link))
     link.click()
 

@@ -39,7 +39,7 @@ CREATE_INDEX_TOGGLES = {
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, text):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.menu_button.click()
+    OZLoggedIn(driver).discovery.indices_page.menu_button.click()
     Popups(driver).menu_popup_with_text.menu[text]()
 
 
@@ -51,14 +51,14 @@ def click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id, 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_index_name_to_input_field_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.name_input = index_name
+    OZLoggedIn(driver).discovery.indices_page.name_input = index_name
 
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_button_in_indices_page(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["discovery"].indices_page.create_button()
+    OZLoggedIn(driver).discovery.indices_page.create_button()
 
 
 @wt(
@@ -69,7 +69,7 @@ def click_create_button_in_indices_page(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_index_has_appeared_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     assert index_name in indices_list, f'index "{index_name}" not found'
 
 
@@ -81,7 +81,7 @@ def assert_index_has_appeared_in_indices_page(selenium, browser_id, index_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_index_record_in_indices_page(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     indices_list[index_name].click()
 
 
@@ -93,7 +93,7 @@ def expand_index_record_in_indices_page(selenium, browser_id, index_name):
 )
 def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, index):
     driver = selenium[browser_id]
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     assert indices_list[
         index
     ].is_used_by_gui_tag_visible(), f"Used by GUI tag is not visible for {index}"
@@ -109,7 +109,7 @@ def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, index):
 def assert_progress_in_harvesting(selenium, browser_id, index_name):
     driver = selenium[browser_id]
     value = "100%"
-    indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
+    indices_list = OZLoggedIn(driver).discovery.indices_page.indices_list
     progress_values = indices_list[index_name].progress_values
 
     for progress in progress_values:
@@ -128,7 +128,7 @@ def assert_progress_in_harvesting(selenium, browser_id, index_name):
 def uncheck_toggles_on_create_index_page(selenium, browser_id, stay_checked):
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
-    indices_page = OZLoggedIn(driver)["discovery"].indices_page
+    indices_page = OZLoggedIn(driver).discovery.indices_page
     for toggles_group, toggle_group_types in CREATE_INDEX_TOGGLES.items():
         for toggle in toggle_group_types:
             if toggle not in stay_checked:
@@ -148,7 +148,7 @@ def uncheck_toggles_on_create_index_page(selenium, browser_id, stay_checked):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_indices_on_gui_plugin_tab(selenium, browser_id, index_name):
     driver = selenium[browser_id]
-    gui_plugin_tab = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
+    gui_plugin_tab = OZLoggedIn(driver).discovery.configuration_page.gui_plugin_tab
     gui_plugin_tab.indices_edit()
     gui_plugin_tab.choose_indices_expand()
     Popups(driver).power_select.choose_item(index_name)

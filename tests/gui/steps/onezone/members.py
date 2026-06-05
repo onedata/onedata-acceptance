@@ -51,7 +51,8 @@ def _find_members_page(driver, where):
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
-    return OZLoggedIn(driver)[tab_name].members_page
+    tab = getattr(OZLoggedIn(driver), tab_name)
+    return tab.members_page
 
 
 def _change_membership_to_name(membership_type, subject_type):
@@ -96,7 +97,8 @@ def assert_element_is_member_of_parent_in_memberships(
 ):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def fun(_record, member_index):
         if member_type != "user":
@@ -132,7 +134,8 @@ def assert_element_is_not_member_of_parent_in_memberships(
 ):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def fun(_record, member_index):
         if member_type != "user":
@@ -160,7 +163,8 @@ def assert_element_is_not_member_of_parent_in_memberships(
 def assert_count_membership_rows(selenium, browser_id, number, where):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
     count_records = len(records)
 
     assert count_records == int(
@@ -222,7 +226,7 @@ def assert_members_number_in_space_members_tile(
     selenium, browser_id, number: int, membership_type, subject_type
 ):
     driver = selenium[browser_id]
-    members_tile = OZLoggedIn(driver)["data"].overview_page.members_tile
+    members_tile = OZLoggedIn(driver).data.overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
 
@@ -243,7 +247,8 @@ def assert_members_number_in_space_members_tile(
 def click_relation_menu_button(selenium, browser_id, member_name, name, where):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
-    records = OZLoggedIn(driver)[where].members_page.memberships
+    tab = getattr(OZLoggedIn(driver), where)
+    records = tab.members_page.memberships
 
     def click_on_menu(record, member_index):
         record.relations[member_index].click_relation_menu_button(driver)
@@ -311,7 +316,7 @@ def click_element_in_members_list(selenium, browser_id, member_name, where, list
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group, member):
-    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
+    page = OZLoggedIn(selenium[browser_id]).open_page_and_click("groups")
     page.elements_list[group]()
     page.elements_list[group].members()
     getattr(page.main_page.members, member).generate_token()
@@ -369,7 +374,7 @@ def copy_token_from_modal(selenium, browser_id):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_groups_child(selenium, browser_id, option, child, parent):
-    page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
+    page = OZLoggedIn(selenium[browser_id]).open_page_and_click("groups")
     page.elements_list[parent]()
     page.elements_list[parent].members()
 
@@ -442,7 +447,7 @@ def check_user_in_space_members_list(
     selenium, browser_id, option, username, space_name
 ):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     page.spaces_header_list[space_name]()
     page.elements_list[space_name].members()
     try:
@@ -476,7 +481,7 @@ def remove_member_from_parent(
 ):
     driver = selenium[browser_id]
     if where != "cluster":
-        main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
+        main_page = OZLoggedIn(selenium[browser_id]).open_page_and_click(
             _change_to_tab_name(where)
         )
         main_page.elements_list[name]()
@@ -515,7 +520,7 @@ def remove_member_from_parent(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_option_on_members_page(selenium, browser_id, option, username):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].members_page
+    page = OZLoggedIn(driver).data.members_page
     page.users.items[username].click_member_menu_button(driver)
     Popups(driver).menu_popup_with_text.menu[option]()
 
@@ -532,7 +537,7 @@ def assert_options_for_user_are_enabled_or_disabled(
     selenium, browser_id, options, username, state
 ):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].members_page
+    page = OZLoggedIn(driver).data.members_page
     page.users.items[username].click_member_menu_button(driver)
 
     for option in parse_seq(options):
@@ -590,7 +595,7 @@ def assert_user_not_in_cluster_members_page(selenium, browser_id, member_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_invitation_token(selenium, browser_id, group, who, tmp_memory):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page_and_click("groups")
+    page = OZLoggedIn(driver).open_page_and_click("groups")
     page.elements_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
@@ -612,7 +617,7 @@ def copy_invitation_token(selenium, browser_id, group, who, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_invitation_token(selenium, browser_id, group, who, tmp_memory):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"]
+    page = OZLoggedIn(driver).groups
     page.elements_list[group]()
     page.main_page.menu_button()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
@@ -936,7 +941,7 @@ def check_element_in_members_subpage(
     selenium, browser_id, option, member_name, member_type, list_type
 ):
     driver = selenium[browser_id]
-    member_list = getattr(OZLoggedIn(driver)["discovery"].members_page, list_type).items
+    member_list = getattr(OZLoggedIn(driver).discovery.members_page, list_type).items
     if option == "sees":
         try:
             err_msg = f"{member_name} {member_type} not found"
@@ -1028,7 +1033,7 @@ def assert_privilege_config_for_user(
 )
 def click_on_bulk_checkbox(browser_id, member_type, selenium):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"].members_page
+    page = OZLoggedIn(driver).groups.members_page
     members_list = getattr(page, member_type)
     members_list.header.checkbox.click()
 
@@ -1042,7 +1047,7 @@ def click_on_bulk_checkbox(browser_id, member_type, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_checkbox(selenium, browser_id, member_name, member_type):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["groups"].members_page
+    page = OZLoggedIn(driver).groups.members_page
 
     getattr(page, member_type).items[member_name].header.checkbox.click()
 
@@ -1051,7 +1056,7 @@ def click_member_checkbox(selenium, browser_id, member_name, member_type):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_bulk_edit(browser_id, selenium):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["groups"].members_page.bulk_edit_button.click()
+    OZLoggedIn(driver).groups.members_page.bulk_edit_button.click()
 
 
 @wt(
@@ -1067,7 +1072,7 @@ def assert_ownership_privileges_warning_appeared_for_user(
     selenium, browser_id, username, alert_text
 ):
     driver = selenium[browser_id]
-    members_list = OZLoggedIn(driver)["data"].members_page.users
+    members_list = OZLoggedIn(driver).data.members_page.users
     error_msg = f'alert with text "{alert_text}" not found'
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
@@ -1082,7 +1087,7 @@ def assert_ownership_privileges_warning_appeared_for_user(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_items_in_members_onezone(selenium, browser_id, number, item_type):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["clusters"].members_page
+    page = OZLoggedIn(driver).clusters.members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
     assert (
         actual_number == number
@@ -1097,7 +1102,7 @@ def assert_number_items_in_members_onezone(selenium, browser_id, number, item_ty
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_button_in_members_onezone(selenium, browser_id, button_name, where):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)[where].members_page
+    page = getattr(OZLoggedIn(driver), where).members_page
     getattr(page, transform(button_name)).click()
 
 
@@ -1107,4 +1112,4 @@ def click_on_button_in_members_onezone(selenium, browser_id, button_name, where)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_onezone_members_page_opened(selenium, browser_id, where):
     driver = selenium[browser_id]
-    _ = OZLoggedIn(driver)[where].members_page
+    _ = getattr(OZLoggedIn(driver), where).members_page

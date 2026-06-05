@@ -14,8 +14,8 @@ class Homepage:
     _panels = WebElementsSequence(".nav-list .nav-link")
 
     panels_classes = {
-        "how it works": HowItWorksPage,
-        "quick Start": QuickStartPage,
+        "how_it_works": HowItWorksPage,
+        "quick_start": QuickStartPage,
         "api": APIPage,
         "docs": DocsPage,
     }
@@ -26,22 +26,34 @@ class Homepage:
     def __str__(self):
         return "Onedata Docs page"
 
-    def __getitem__(self, item):
-        return get_page(self, item, False)
-
-    def get_page_and_click(self, item):
-        return get_page(self, item)
+    def open_page_and_click(self, item):
+        return self.open_page(item, True)
 
     def get_panel_by_name(self, name):
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
+    def open_page(self, item, click=False):
+        item = item.lower()
+        cls = self.panels_classes.get(item, None)
+        if cls:
+            panel = self.get_panel_by_name(item)
+            if click:
+                panel.click()
+            return cls(self.web_elem, self.web_elem, parent=self)
+        raise RuntimeError(f'no "{item}" on {self} found')
 
-def get_page(docs_page, item, click=True):
-    item = item.lower()
-    cls = docs_page.panels_classes.get(item, None)
-    if cls:
-        panel = docs_page.get_panel_by_name(item)
-        if click:
-            panel.click()
-        return cls(docs_page.web_elem, docs_page.web_elem, parent=docs_page)
-    raise RuntimeError(f'no "{item}" on {docs_page} found')
+    @property
+    def how_it_works(self):
+        return self.open_page("how_it_works")
+
+    @property
+    def quick_start(self):
+        return self.open_page("quick_start")
+
+    @property
+    def api(self):
+        return self.open_page("api")
+
+    @property
+    def docs(self):
+        return self.open_page("docs")

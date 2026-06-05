@@ -28,7 +28,7 @@ class OZLoggedIn:
     _panels = WebElementsSequence(".main-menu-content li.main-menu-item")
     _profile = WebElement(".app-layout")
 
-    uploads = WebElement(".main-menu-column .main-menu-upload-item")
+    uploads_button = WebElement(".main-menu-column .main-menu-upload-item")
 
     provider_alert_message = Label(".content-info-content-container .text-center")
 
@@ -51,11 +51,8 @@ class OZLoggedIn:
     def __str__(self):
         return "Onezone page"
 
-    def __getitem__(self, item):
-        return get_page(self, item, False)
-
-    def get_page_and_click(self, item):
-        return get_page(self, item)
+    def open_page_and_click(self, item):
+        return self.open_page(item, True)
 
     def is_panel_expanded(self):
         return self._panels[0].text == "DATA"
@@ -80,25 +77,63 @@ class OZLoggedIn:
     def get_profile(self):
         return self._profile
 
+    def wait_for_panel_to_expand(self):
+        for _ in range(20):
+            if self.is_panel_expanded():
+                return
+            time.sleep(0.1)
+        raise RuntimeError("did not manage to expand main panel")
 
-def get_page(oz_page, item, click=True):
-    item = item.lower()
-    cls = oz_page.panels_classes.get(item, None)
-    if cls:
-        if click:
-            oz_page.click_on_sidebar_menu_panel(item)
-            wait_for_panel_to_expand(oz_page)
-        return cls(oz_page.web_elem, oz_page.web_elem, parent=oz_page)
-    if item == "profile":
-        return ManageAccountPage(oz_page.web_elem, oz_page.get_profile(), oz_page)
-    if item == "uploads":
-        return UploadsPage(oz_page.web_elem, oz_page.web_elem, oz_page)
-    raise RuntimeError(f'no "{item}" on {oz_page} found')
+    def open_page(self, item, click=False):
+        item = item.lower()
+        cls = self.panels_classes.get(item, None)
+        if cls:
+            if click:
+                self.click_on_sidebar_menu_panel(item)
+                self.wait_for_panel_to_expand()
+            return cls(self.web_elem, self.web_elem, parent=self)
+        if item == "profile":
+            return ManageAccountPage(self.web_elem, self.get_profile(), self)
+        if item == "uploads":
+            return UploadsPage(self.web_elem, self.web_elem, self)
+        raise RuntimeError(f'no "{item}" on {self} found')
 
+    @property
+    def data(self):
+        return self.open_page("data")
 
-def wait_for_panel_to_expand(oz_page):
-    for _ in range(20):
-        if oz_page.is_panel_expanded():
-            return
-        time.sleep(0.1)
-    raise RuntimeError("did not manage to expand main panel")
+    @property
+    def shares(self):
+        return self.open_page("shares")
+
+    @property
+    def providers(self):
+        return self.open_page("providers")
+
+    @property
+    def groups(self):
+        return self.open_page("groups")
+
+    @property
+    def tokens(self):
+        return self.open_page("tokens")
+
+    @property
+    def discovery(self):
+        return self.open_page("discovery")
+
+    @property
+    def automation(self):
+        return self.open_page("automation")
+
+    @property
+    def clusters(self):
+        return self.open_page("clusters")
+
+    @property
+    def profile(self):
+        return self.open_page("profile")
+
+    @property
+    def uploads(self):
+        return self.open_page("uploads")

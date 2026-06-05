@@ -175,7 +175,7 @@ def remove_task_from_lane(selenium, browser_id, lane, task):
     option = "Remove"
 
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"]
+    page = OZLoggedIn(driver).automation
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[option]()
@@ -199,7 +199,7 @@ def modify_task_results(selenium, browser_id, lane, task, config, option):
     task_option = "task"
 
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver).get_page_and_click("automation")
+    page = OZLoggedIn(driver).open_page_and_click("automation")
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane]
     lane.parallel_box.task_list[task].menu_button()
     Popups(driver).menu_popup_with_label.menu[button]()

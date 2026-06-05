@@ -61,7 +61,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _paste_token_into_text_field(selenium, browser_id, token):
-    page = OZLoggedIn(selenium[browser_id])["tokens"]
+    page = OZLoggedIn(selenium[browser_id]).tokens
     page.input_name = token
 
 
@@ -658,11 +658,11 @@ def remove_all_tokens(selenium, browser_id):
     modal = "Remove token"
 
     driver = selenium[browser_id]
-    tokens = OZLoggedIn(driver).get_page_and_click("tokens").sidebar.tokens
+    tokens = OZLoggedIn(driver).open_page_and_click("tokens").sidebar.tokens
     if len(tokens):
         tokens[0].click()
 
-        for token in OZLoggedIn(driver)["tokens"].sidebar.tokens:
+        for token in OZLoggedIn(driver).tokens.sidebar.tokens:
             token.menu_button.click()
             click_option_for_token_row_menu(driver, btn)
             click_modal_button(selenium, browser_id, button, modal)

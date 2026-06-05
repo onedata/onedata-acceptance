@@ -37,9 +37,9 @@ def click_on_confirm_cancel_upload(selenium, browser_id):
 def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, number: int):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    uploaded_files_list = OZLoggedIn(driver)[
-        "uploads"
-    ].uploaded_content_page.uploaded_items_list
+    uploaded_files_list = OZLoggedIn(
+        driver
+    ).uploads.uploaded_content_page.uploaded_items_list
     assert number == len(
         uploaded_files_list
     ), f"number of files uploaded {len(uploaded_files_list)} is not equal {number}"
@@ -55,7 +55,7 @@ def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, number: 
 def assert_file_is_uploaded(selenium, browser_id, file_name, option):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    item_list = OZLoggedIn(driver)["uploads"].uploaded_content_page.uploaded_items_list
+    item_list = OZLoggedIn(driver).uploads.uploaded_content_page.uploaded_items_list
     if option == "is":
         assert file_name in item_list, "searched file name not in files uploaded list"
     else:
@@ -73,14 +73,14 @@ def assert_file_is_uploaded(selenium, browser_id, file_name, option):
 def click_on_uploads_in_the_sidebar(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    OZLoggedIn(driver).uploads.click()
+    OZLoggedIn(driver).uploads_button.click()
 
 
 def click_on_provider_in_uploads_sidebar_with_provider_name(
     selenium, browser_id, provider
 ):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["uploads"].elements_list[provider].click()
+    OZLoggedIn(driver).uploads.elements_list[provider].click()
 
 
 @wt(
@@ -100,4 +100,4 @@ def click_on_provider_in_uploads_sidebar(selenium, browser_id, provider_name, ho
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_all_uploads_in_uploads_sidebar_with_provider_name(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["uploads"].elements_list["All uploads"].click()
+    OZLoggedIn(driver).uploads.elements_list["All uploads"].click()

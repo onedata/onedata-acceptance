@@ -195,7 +195,7 @@ def change_parameter_type_in_lambda_form(
 ):
     driver = selenium[browser_id]
     param_type = param_type.lower()
-    page = OZLoggedIn(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver).automation.lambdas_page.form
     subpage = getattr(page, transform(option))
 
     ordinal = "1st" if not ordinal else ordinal
@@ -235,7 +235,7 @@ def add_parameter_into_lambda_form(
     selenium, browser_id, option, name, param_type, ordinal
 ):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver).automation.lambdas_page.form
 
     subpage = getattr(page, transform(option))
     subpage.add_button()
@@ -261,7 +261,7 @@ def add_parameter_into_lambda_form(
 )
 def modify_parameter_in_lambda_form(selenium, browser_id, ordinal, config):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"].lambdas_page.form
+    page = OZLoggedIn(driver).automation.lambdas_page.form
     data = yaml.load(config, yaml.Loader)
     subpage = page.argument
     ordinal = "1st" if not ordinal else ordinal
@@ -355,7 +355,7 @@ def download_and_remove_lambda_dump_from_inventory(
     page_name = "lambda"
     modal = "Unlink lambda"
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["automation"]
+    page = OZLoggedIn(driver).automation
 
     click_option_in_revision_menu_button(
         selenium,

@@ -55,11 +55,11 @@ def wait_for_checking_toggle(toggle, toggle_name=""):
 
 def _get_page(where, driver):
     if where == "shares":
-        return OZLoggedIn(driver)["shares"]
+        return OZLoggedIn(driver).shares
     if where == "groups":
-        return OZLoggedIn(driver)["groups"]
+        return OZLoggedIn(driver).groups
     if where == "spaces":
-        return OZLoggedIn(driver)["data"]
+        return OZLoggedIn(driver).data
     raise AssertionError(f"page {where} not found")
 
 

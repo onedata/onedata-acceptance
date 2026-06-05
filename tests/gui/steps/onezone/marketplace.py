@@ -24,7 +24,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_marketplace_subpage(selenium, browser_id):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].space_marketplace_page.advertise_space_button()
+    OZLoggedIn(driver).data.space_marketplace_page.advertise_space_button()
 
 
 @wt(
@@ -38,12 +38,12 @@ def assert_marketplace_icon_in_space_sidebar(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     err_msg = f"Space: {space_name} does not have marketplace indicator visible"
 
-    assert OZLoggedIn(driver)["data"].elements_list[space_name].advertised_icon, err_msg
+    assert OZLoggedIn(driver).data.elements_list[space_name].advertised_icon, err_msg
 
 
 def get_space_from_marketplace_list(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"].space_marketplace_page
+    page = OZLoggedIn(driver).data.space_marketplace_page
     return page.spaces_marketplace_list[space_name]
 
 

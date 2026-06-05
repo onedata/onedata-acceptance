@@ -124,7 +124,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list):
 
     if space_list == "all":
         space_list = [
-            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
+            elem.name for elem in OZLoggedIn(selenium[user]).data.spaces_header_list
         ]
     else:
         space_list = parse_seq(space_list)
@@ -496,7 +496,7 @@ def copy_command_from_rest_api_modal(selenium, browser_id, command):
 )
 def open_space_in_spaces_list(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
@@ -529,7 +529,7 @@ def _get_visible_spaces_list(page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    page = OZLoggedIn(driver)["data"]
+    page = OZLoggedIn(driver).data
     vis_spaces = _get_visible_spaces_list(page)
     vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
     index = vis_spaces_names.index(space_name)

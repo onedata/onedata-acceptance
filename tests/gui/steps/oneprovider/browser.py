@@ -469,7 +469,7 @@ def click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory)
     else:
         driver.switch_to.default_content()
         header = f"{transform(which)}_header"
-        getattr(getattr(OZLoggedIn(driver)["data"], header), transform(state))()
+        getattr(getattr(OZLoggedIn(driver).data, header), transform(state))()
     # if we make call to fast after changing view mode
     # we do not see items in this mode, to avoid this wait some time
     time.sleep(0.5)
