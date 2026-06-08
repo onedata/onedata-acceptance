@@ -318,3 +318,12 @@ class FileAttr(Enum):
     SYMLINK_VALUE = "symlinkValue"
     TYPE = "type"
     XATTR_KEY = "xattr.key"
+
+
+class ListElement(Enum):
+    SHARES = "shares"
+    SHARES_SIDEBAR = "shares sidebar"
+    GROUPS = "groups"
+    GROUPS_HEADERS = "groups headers"
+    SPACES = "spaces"
+    SPACES_HEADERS = "spaces headers"

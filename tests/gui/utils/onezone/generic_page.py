@@ -7,8 +7,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABCMeta
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
+from tests.utils.utils import repeat_failed
 
 
 class Element(PageObject):
@@ -30,3 +32,10 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
         if hasattr(self, "elements_list"):
             return self.elements_list[item]
         raise ValueError("there is not elements_list member in class instance")
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    @staticmethod
+    def get_visible_elements_list(
+        elements_list: list[Element], main_field="name"
+    ) -> list[Element]:
+        return [element for element in elements_list if getattr(element, main_field)]

@@ -31,7 +31,7 @@ class SharesOptions(PageObject):
 class SharesContentPage(PageObject):
     no_shares_msg = Label(".content-info-content-container")
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")
-    shares_browser = WebItemsSequence(
+    shares_list = WebItemsSequence(
         ".one-collapsible-list .list-header-row", cls=SharesOptions
     )
     path = Breadcrumbs(".share-header-path")
@@ -48,6 +48,3 @@ class SharesContentPage(PageObject):
     switch_editor_markdown = Button(".btn-switch-editor-mode")
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
-
-    def get_visible_shares_list(self, main_field="name") -> list[SharesOptions]:
-        return [el for el in self.shares_browser if getattr(el, main_field)]

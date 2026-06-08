@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import List
-
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -52,7 +50,7 @@ class MenuItem(PageObject):
 
 
 class GroupsPage(GenericPage):
-    elements_list = WebItemsSequence(
+    groups_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
     )
     groups_headers_list = WebItemsSequence(
@@ -76,13 +74,3 @@ class GroupsPage(GenericPage):
     members_page = WebItem(".main-content", cls=MembersPage)
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
-
-    def get_visible_group_headers_list(self, main_field="name") -> List[GroupHeader]:
-        return [
-            header for header in self.groups_headers_list if getattr(header, main_field)
-        ]
-
-    def get_visible_groups_list(self, main_field="name") -> List[Group]:
-        return [
-            element for element in self.elements_list if getattr(element, main_field)
-        ]

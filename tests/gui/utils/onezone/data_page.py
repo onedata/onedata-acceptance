@@ -241,13 +241,13 @@ class DataPage(GenericPage):
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
-    spaces_header_list = WebItemsSequence(
+    spaces_headers_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item"
         " .item-header:not(.truncate)",
         cls=SpaceHeader,
     )
 
-    elements_list = WebItemsSequence(
+    spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
 
@@ -278,19 +278,9 @@ class DataPage(GenericPage):
     error_header = Label(".content-info-content-container h1")
 
     def choose_space(self, name):
-        for space in self.elements_list:
+        for space in self.spaces_list:
             if space.name in (name, ""):
                 space.click()
                 if space.name == name:
                     return
         raise RuntimeError(f"{name} space not found")
-
-    def get_visible_space_headers_list(self, main_field="name") -> list[SpaceHeader]:
-        return [
-            header for header in self.spaces_header_list if getattr(header, main_field)
-        ]
-
-    def get_visible_spaces_list(self, main_field="name") -> list[Space]:
-        return [
-            element for element in self.elements_list if getattr(element, main_field)
-        ]

@@ -10,6 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -58,7 +59,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ListElement, parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -500,7 +501,9 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_spaces = _get_visible_space_headers_list(page)
+        new_spaces = get_visible_items_list(
+            page, items_type=ListElement.SPACES_HEADERS, main_field="name"
+        )
         currently_seen_names = [new_space.name for new_space in new_spaces]
 
         if space_name in currently_seen_names:
@@ -521,16 +524,6 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
     raise AssertionError(f"did not manage to open space {space_name}")
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_space_headers_list(page):
-    return page.get_visible_space_headers_list()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_spaces_list(page):
-    return page.get_visible_spaces_list()
-
-
 @wt(
     parsers.parse(
         'user of {browser_id} can see that opened space is "{space_name}" on the spaces'
@@ -541,7 +534,9 @@ def _get_visible_spaces_list(page):
 def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
-    vis_spaces = _get_visible_spaces_list(page)
+    vis_spaces = get_visible_items_list(
+        page, items_type=ListElement.SPACES, main_field="name"
+    )
     space = [space for space in vis_spaces if space.name == space_name][0]
     err_msg = f"Space {space_name} is not opened."
     assert space.is_displayed(), err_msg

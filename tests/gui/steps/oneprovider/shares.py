@@ -144,7 +144,7 @@ def no_shares_message(selenium, browser_id):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id, share_name):
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name not in shares_browser, f"Share {share_name} in shares browser"
 
 
@@ -155,7 +155,7 @@ def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id, shar
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_in_shares_browser_in_shares_page(selenium, browser_id, share_name):
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
 
 
@@ -168,7 +168,7 @@ def assert_share_in_shares_browser_in_shares_page(selenium, browser_id, share_na
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_point_to_del_dir_on_list(selenium, browser_id, share_name):
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
     share = shares_browser[share_name]
     assert (
@@ -183,7 +183,7 @@ def assert_share_point_to_del_dir_on_list(selenium, browser_id, share_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name):
-    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     browser[item_name].menu_button.click()
 
 
@@ -195,7 +195,7 @@ def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_in_shares_browser(selenium, browser_id, share_name):
-    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     browser[share_name].click()
 
 

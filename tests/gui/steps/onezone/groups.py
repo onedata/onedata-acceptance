@@ -7,10 +7,11 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ListElement, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -230,6 +231,10 @@ def assert_user_sees_group_page(selenium, browser_id, group_name):
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_group_in_groups_page(browser_id, selenium, group_name):
     driver = selenium[browser_id]
-    group_headers = OZLoggedIn(driver)["groups"].get_visible_group_headers_list()
+
+    group_headers = get_visible_items_list(
+        OZLoggedIn(driver)["groups"], ListElement.GROUPS_HEADERS, "name"
+    )
+
     header = [header for header in group_headers if header.name == group_name]
     assert header, f"There is no group {group_name} in groups list."

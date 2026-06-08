@@ -12,19 +12,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_type: str, main_field: str
+    page, selenium, browser_id, number: int, items_type: ListElement, main_field: str
 ):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_type, main_field)
+        new_items = get_visible_items_list(page, items_type, main_field)
         new_items_ids = [getattr(el, main_field) for el in new_items]
 
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_ids)
@@ -40,9 +41,10 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_type, main_field):
-    # Items type can be "spaces", "shares" or "groups"
-    return getattr(page, f"get_visible_{items_type}_list")(main_field)
+def get_visible_items_list(page, items_type: ListElement, main_field):
+    items_type_str = transform(items_type.value)
+    elements_list = getattr(page, f"{items_type_str}_list")
+    return GenericPage.get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -67,16 +69,22 @@ ITEMS_TYPES_REG = r"spaces|shares|groups"
     parsers.re(
         r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
         rf" (?P<items_type>{ITEMS_TYPES_REG}) on the (?P<list_type>{ITEMS_TYPES_REG})"
-        r" list in the sidebar"
+        r" list in the sidebar",
+        extra_types={"items_type": ListElement, "list_type": ListElement},
     )
 )
-def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items_type: str):
+def wt_assert_n_items_in_items_list(
+    selenium, browser_id, number: int, items_type: ListElement
+):
     driver = selenium[browser_id]
-    page = _get_page(items_type, driver)
-    if items_type == "spaces":
-        items_type = "space_headers"
-    elif items_type == "groups":
-        items_type = "group_headers"
+    page = _get_page(items_type.value, driver)
+
+    # TODO refactor .feature files to contain headers in names
+    # if items_type == ListElement.SPACES:
+    #     items_type = ListElement.SPACES_HEADERS
+    # elif items_type == ListElement.GROUPS:
+    #     items_type = ListElement.GROUPS_HEADERS
+
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 

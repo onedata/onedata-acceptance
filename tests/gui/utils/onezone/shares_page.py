@@ -4,7 +4,6 @@ __author__ = "Jakub Pilch"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import List
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
@@ -20,8 +19,3 @@ class SharesPage(GenericPage):
     shares_sidebar_list = WebItemsSequence(
         ".sidebar-shares .one-list-item", cls=SharesSidebarRecord
     )
-
-    def get_visible_shares_list(self, main_field="name") -> List[SharesSidebarRecord]:
-        return [
-            record for record in self.shares_sidebar_list if getattr(record, main_field)
-        ]
