@@ -43,10 +43,10 @@ def click_on_space_in_menu_list(driver, name, force=True):
     # function assumes data page is active
     page = OZLoggedIn(driver)["data"]
     if force:
-        page.spaces_header_list[name]()
+        page.spaces_headers_list[name]()
     else:
-        if not page.elements_list[name].is_active():
-            page.spaces_header_list[name].click()
+        if not page.spaces_list[name].is_active():
+            page.spaces_headers_list[name].click()
     return page
 
 
@@ -120,8 +120,8 @@ def assert_no_provider_for_space(
     selenium, browser_id, provider_name, space_name, hosts
 ):
     page = OZLoggedIn(selenium[browser_id])["data"]
-    page.spaces_header_list[space_name]()
-    page.elements_list[space_name].providers()
+    page.spaces_headers_list[space_name]()
+    page.spaces_list[space_name].providers()
     provider = hosts[provider_name]["name"]
     try:
         page.providers_page.providers_list[provider]
@@ -143,7 +143,7 @@ def assert_no_provider_for_space(
 def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     assert (
-        space_name in OZLoggedIn(driver)["data"].elements_list
+        space_name in OZLoggedIn(driver)["data"].spaces_list
     ), f'space "{space_name}" not found'
 
 
@@ -225,7 +225,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, na
     if option == "spaces":
         _choose_space_from_menu_list(driver, name)
     else:
-        OZLoggedIn(driver).get_page_and_click(option).elements_list[name].click()
+        OZLoggedIn(driver).get_page_and_click(option).spaces_list[name].click()
 
 
 @wt(
@@ -236,7 +236,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, na
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_space_menu(selenium, browser_id, space_name, button):
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["data"].spaces_header_list[space_name].click_menu()
+    OZLoggedIn(driver)["data"].spaces_headers_list[space_name].click_menu()
     Popups(driver).menu_popup_with_text.menu[button]()
 
 
@@ -295,7 +295,7 @@ def check_remove_space_button(selenium, browser_id):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name):
     driver = selenium[browser_id]
-    spaces = OZLoggedIn(driver)["data"].elements_list
+    spaces = OZLoggedIn(driver)["data"].spaces_list
     assert space_name not in spaces, f'space "{space_name}" found'
 
 
@@ -311,7 +311,7 @@ def assert_number_of_supporting_providers_of_space(
 ):
     driver = selenium[browser_id]
     supporting_providers_number = int(
-        OZLoggedIn(driver)["data"].elements_list[space_name].supporting_providers_number
+        OZLoggedIn(driver)["data"].spaces_list[space_name].supporting_providers_number
     )
     assert (
         number == supporting_providers_number
@@ -323,7 +323,7 @@ def assert_number_of_supporting_providers_of_space(
 def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number, space_name):
     driver = selenium[browser_id]
     assert (
-        number == OZLoggedIn(driver)["data"].elements_list[space_name].support_size
+        number == OZLoggedIn(driver)["data"].spaces_list[space_name].support_size
     ), f'size of space "{space_name}" is not equal {number}'
 
 
@@ -393,7 +393,7 @@ def _click_on_option_of_space_on_left_sidebar_menu(
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     page = click_on_space_in_menu_list(driver, space_name, force=force)
-    getattr(page.elements_list[space_name], submenu_option).click()
+    getattr(page.spaces_list[space_name], submenu_option).click()
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
@@ -421,7 +421,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
 ):
     driver = selenium[browser_id]
     element_list = _parse_tabs_list(element_list)
-    space = OZLoggedIn(driver)["data"].elements_list[space_name]
+    space = OZLoggedIn(driver)["data"].spaces_list[space_name]
     error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
         element_list
@@ -595,7 +595,7 @@ def assert_length_of_providers_list(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
     number_of_providers = int(
-        OZLoggedIn(driver)["data"].elements_list[space_name].supporting_providers_number
+        OZLoggedIn(driver)["data"].spaces_list[space_name].supporting_providers_number
     )
     assert len(providers_list) == number_of_providers, (
         "length of providers list is not equal to number of "
@@ -738,8 +738,8 @@ def generate_and_send_support_token(
     tmp_memory,
 ):
     page = OZLoggedIn(selenium[browser_id1])["data"]
-    page.spaces_header_list[space_name]()
-    page.elements_list[space_name].providers()
+    page.spaces_headers_list[space_name]()
+    page.spaces_list[space_name].providers()
     page.providers_page.add_support()
     copy_token(selenium, browser_id1)
     item = clipboard.paste(display=displays[browser_id1])
@@ -780,7 +780,7 @@ def assert_opened_space_name(selenium, browser_id, space):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     msg = f"{space} space view is not opened"
-    assert OZLoggedIn(driver)["data"].elements_list[space].is_active(), msg
+    assert OZLoggedIn(driver)["data"].spaces_list[space].is_active(), msg
 
 
 @wt(
@@ -792,8 +792,8 @@ def assert_opened_space_name(selenium, browser_id, space):
 @repeat_failed(WAIT_BACKEND * 3)
 def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name):
     page = OZLoggedIn(selenium[browser_id])["data"]
-    page.spaces_header_list[space_name]()
-    space = page.elements_list[space_name]
+    page.spaces_headers_list[space_name]()
+    space = page.spaces_list[space_name]
     tabs = SPACE_TABS if tabs_list == "all" else _parse_tabs_list(tabs_list)
 
     for tab in tabs:
@@ -809,8 +809,8 @@ def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name):
 @repeat_failed(WAIT_BACKEND * 2)
 def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name):
     page = OZLoggedIn(selenium[browser_id])["data"]
-    page.spaces_header_list[space_name]()
-    space = page.elements_list[space_name]
+    page.spaces_headers_list[space_name]()
+    space = page.spaces_list[space_name]
 
     for tab in _parse_tabs_list(tabs_list):
         assert space.is_element_disabled(tab), f"Tab {tab} is not disabled for {space}"

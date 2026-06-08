@@ -38,7 +38,7 @@ def assert_marketplace_icon_in_space_sidebar(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     err_msg = f"Space: {space_name} does not have marketplace indicator visible"
 
-    assert OZLoggedIn(driver)["data"].elements_list[space_name].advertised_icon, err_msg
+    assert OZLoggedIn(driver)["data"].spaces_list[space_name].advertised_icon, err_msg
 
 
 def get_space_from_marketplace_list(selenium, browser_id, space_name):

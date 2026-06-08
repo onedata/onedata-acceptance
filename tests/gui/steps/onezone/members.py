@@ -312,8 +312,8 @@ def click_element_in_members_list(selenium, browser_id, member_name, where, list
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group, member):
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[group]()
-    page.elements_list[group].members()
+    page.groups_list[group]()
+    page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
 
 
@@ -370,8 +370,8 @@ def copy_token_from_modal(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_groups_child(selenium, browser_id, option, child, parent):
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[parent]()
-    page.elements_list[parent].members()
+    page.groups_list[parent]()
+    page.groups_list[parent].members()
 
     try:
         page.members_page.groups.items[child]
@@ -443,8 +443,8 @@ def check_user_in_space_members_list(
 ):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
-    page.spaces_header_list[space_name]()
-    page.elements_list[space_name].members()
+    page.spaces_headers_list[space_name]()
+    page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
     except RuntimeError:
@@ -479,8 +479,8 @@ def remove_member_from_parent(
         main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
             _change_to_tab_name(where)
         )
-        main_page.elements_list[name]()
-        main_page.elements_list[name].members()
+        main_page.groups_list[name]()
+        main_page.groups_list[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"
     (
@@ -591,7 +591,7 @@ def assert_user_not_in_cluster_members_page(selenium, browser_id, member_name):
 def copy_invitation_token(selenium, browser_id, group, who, tmp_memory):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("groups")
-    page.elements_list[group]()
+    page.groups_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
     button = f"Invite {who} using token"
@@ -613,7 +613,7 @@ def copy_invitation_token(selenium, browser_id, group, who, tmp_memory):
 def get_invitation_token(selenium, browser_id, group, who, tmp_memory):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["groups"]
-    page.elements_list[group]()
+    page.groups_list[group]()
     page.main_page.menu_button()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
     token = page.members_page.token.token

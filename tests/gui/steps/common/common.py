@@ -65,22 +65,23 @@ def _get_page(where, driver):
     raise AssertionError(f"page {where} not found")
 
 
-ITEMS_TYPES_REG = r"spaces|shares|groups"
-
-
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
-        rf" (?P<items_type>{ITEMS_TYPES_REG}) on the (?P<list_type>{ITEMS_TYPES_REG})"
+        r" (?P<items_type>.*) on the (?P<list_type>.*)"
         r" list in the sidebar",
-        extra_types={"items_type": ListElement, "list_type": ListElement},
-    )
+    ),
+    converters={
+        "number": int,
+        "items_type": ListElement,
+        "list_type": ListElement,
+    },
 )
 def wt_assert_n_items_in_items_list(
-    selenium, browser_id, number: int, items_type: ListElement
+    selenium, browser_id, number: int, items_type: ListElement, list_type: ListElement
 ):
     driver = selenium[browser_id]
-    page = _get_page(items_type.value, driver)
+    page = _get_page(list_type.value, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 

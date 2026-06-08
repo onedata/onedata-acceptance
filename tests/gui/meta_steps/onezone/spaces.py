@@ -125,7 +125,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list):
 
     if space_list == "all":
         space_list = [
-            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
+            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_headers_list
         ]
     else:
         space_list = parse_seq(space_list)
