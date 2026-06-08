@@ -62,7 +62,9 @@ class Browser(ABC, PageObject):
         return [row for row in self.data if getattr(row, main_field)]
 
     def ids_of_visible_elems(self, main_field="name") -> List[str]:
-        return [getattr(row, main_field) for row in self.data if getattr(row, main_field)]
+        return [
+            getattr(row, main_field) for row in self.data if getattr(row, main_field)
+        ]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 

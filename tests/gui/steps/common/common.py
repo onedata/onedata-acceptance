@@ -158,12 +158,12 @@ def assert_logs_order_with_optional_logs(
 
 
 def scroll_and_get_columns(modal, columns, main_column="file"):
-    # The modal has to be a class that implements get_rows_of_columns
+    # The modal has to be a class that implements get_visible_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        visible_elems = modal.get_rows_of_columns(columns)
+        visible_elems = modal.get_visible_rows_of_columns(columns)
         visible_names = visible_elems[main_column]
 
         modal.scroll_by_press_space()

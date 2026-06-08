@@ -83,4 +83,6 @@ class GroupsPage(GenericPage):
         ]
 
     def get_visible_groups_list(self, main_field="name") -> List[Group]:
-        return [element for element in self.elements_list if getattr(element, main_field)]
+        return [
+            element for element in self.elements_list if getattr(element, main_field)
+        ]

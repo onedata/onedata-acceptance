@@ -220,9 +220,9 @@ def assert_entries_with_file_names_in_archive_recall(browser_id, file_name, sele
     modal.move_to_error_logs_table(driver)
 
     def condition(index=0):
-        new_entries_names: List[str] = modal.get_param_of_visible_rows("source_file")[
-            index:
-        ]
+        new_entries_names: List[str] = modal.get_visible_rows_of_single_column(
+            "source_file"
+        )[index:]
         for entry_name in new_entries_names:
             file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
@@ -250,7 +250,9 @@ def assert_entries_with_error_messages_in_archive_recall(browser_id, message, se
     modal.move_to_error_logs_table(driver)
 
     def condition(index=0):
-        new_entries_mes: List[str] = modal.get_param_of_visible_rows("error_message")
+        new_entries_mes: List[str] = modal.get_visible_rows_of_single_column(
+            "error_message"
+        )
 
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
@@ -266,7 +268,7 @@ def assert_entries_with_error_messages_in_archive_recall(browser_id, message, se
 def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    new_entries: List[str] = modal.get_param_of_visible_rows("source_file")
+    new_entries: List[str] = modal.get_visible_rows_of_single_column("source_file")
     detected_entries = []
     detected_entries.extend(new_entries)
     index = 0
@@ -274,7 +276,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
         condition(*args, index=index)
 
         modal.scroll_by_press_space()
-        new_entries: List[str] = modal.get_param_of_visible_rows("source_file")
+        new_entries: List[str] = modal.get_visible_rows_of_single_column("source_file")
         index = 0
         for entry in new_entries:
             if entry not in detected_entries:

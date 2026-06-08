@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import List
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -286,10 +285,12 @@ class DataPage(GenericPage):
                     return
         raise RuntimeError(f"{name} space not found")
 
-    def get_visible_space_headers_list(self, main_field="name") -> List[SpaceHeader]:
+    def get_visible_space_headers_list(self, main_field="name") -> list[SpaceHeader]:
         return [
             header for header in self.spaces_header_list if getattr(header, main_field)
         ]
 
-    def get_visible_spaces_list(self, main_field="name") -> List[Space]:
-        return [element for element in self.elements_list if getattr(element, main_field)]
+    def get_visible_spaces_list(self, main_field="name") -> list[Space]:
+        return [
+            element for element in self.elements_list if getattr(element, main_field)
+        ]
