@@ -65,7 +65,7 @@ def click_on_option_in_group_menu(driver, group, option):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_menu_button(selenium, browser_id, option, group):
+def click_and_get_group_menu_button(selenium, browser_id, option, group):
     driver = selenium[browser_id]
     group = get_group_by_name_from_main_page(driver, group)
     group.click()
@@ -80,8 +80,8 @@ def click_on_group_menu_button(selenium, browser_id, option, group):
         'button in group "(?P<group>.*)" menu in the sidebar'
     )
 )
-def wt_click_on_group_menu_button(selenium, browser_id, option, group):
-    click_on_group_menu_button(selenium, browser_id, option, group)
+def wt_click_and_get_group_menu_button(selenium, browser_id, option, group):
+    _ = click_and_get_group_menu_button(selenium, browser_id, option, group)
 
 
 @wt(
@@ -96,7 +96,7 @@ def rename_group(selenium, browser_id, group_name, new_group_name, confirm_type)
     option = "Rename"
     text = new_group_name
 
-    group = click_on_group_menu_button(selenium, browser_id, option, group_name)
+    group = click_and_get_group_menu_button(selenium, browser_id, option, group_name)
     input_new_group_name_into_rename_group_inpux_box(group, text)
     if confirm_type == "button":
         click_on_confirmation_button_to_rename_group(group)
@@ -110,7 +110,7 @@ def leave_group(selenium, browser_id, group):
     option = "Leave"
     modal = "LEAVE GROUP"
 
-    click_on_group_menu_button(selenium, browser_id, option, group)
+    _ = click_and_get_group_menu_button(selenium, browser_id, option, group)
     click_modal_button(selenium, browser_id, option, modal)
 
 
@@ -136,7 +136,7 @@ def remove_group(selenium, browser_id, group_list):
     modal = "REMOVE GROUP"
 
     for group in parse_seq(group_list):
-        click_on_group_menu_button(selenium, browser_id, option, group)
+        _ = click_and_get_group_menu_button(selenium, browser_id, option, group)
         click_modal_button(selenium, browser_id, option, modal)
 
 

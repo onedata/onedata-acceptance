@@ -10,6 +10,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import OPLoggedIn, Popups
+from tests.gui.utils.generic import ListElement
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -318,11 +319,12 @@ def save_description_changes(selenium, browser_id):
     )
 )
 def wt_assert_n_shares_in_shares_view(selenium, browser_id, number: int):
-    items = "shares"
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     page = get_shares_page(driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items, "name")
+    assert_n_items_in_items_list(
+        page, selenium, browser_id, number, ListElement.SHARES, "name"
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

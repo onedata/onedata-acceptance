@@ -4,7 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -13,6 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -41,7 +42,9 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_visible_items_list(page, items_type: ListElement, main_field):
+def get_visible_items_list(
+    page: Union[GenericPage, Browser], items_type: ListElement, main_field
+):
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     return GenericPage.get_visible_elements_list(elements_list, main_field)
@@ -78,13 +81,6 @@ def wt_assert_n_items_in_items_list(
 ):
     driver = selenium[browser_id]
     page = _get_page(items_type.value, driver)
-
-    # TODO refactor .feature files to contain headers in names
-    # if items_type == ListElement.SPACES:
-    #     items_type = ListElement.SPACES_HEADERS
-    # elif items_type == ListElement.GROUPS:
-    #     items_type = ListElement.GROUPS_HEADERS
-
     assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 

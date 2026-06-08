@@ -327,3 +327,4 @@ class ListElement(Enum):
     GROUPS_HEADERS = "groups headers"
     SPACES = "spaces"
     SPACES_HEADERS = "spaces headers"
+    FILES = "files"

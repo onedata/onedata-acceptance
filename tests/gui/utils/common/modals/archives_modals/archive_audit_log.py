@@ -64,7 +64,7 @@ class ArchiveAuditLog(Modal):
     ) -> Dict[str, List[str]]:
 
         temp_columns = list(set((columns or []) + ["file"]))
-        column_values = {column: [] for column in temp_columns}
+        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
             values_in_row = [getattr(row, column) for column in temp_columns]

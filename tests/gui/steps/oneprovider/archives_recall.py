@@ -276,7 +276,7 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
         condition(*args, index=index)
 
         modal.scroll_by_press_space()
-        new_entries: List[str] = modal.get_visible_rows_of_single_column("source_file")
+        new_entries = modal.get_visible_rows_of_single_column("source_file")
         index = 0
         for entry in new_entries:
             if entry not in detected_entries:

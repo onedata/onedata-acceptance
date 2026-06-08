@@ -7,12 +7,13 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import ABC
-from typing import Any, ClassVar, List, Optional
+from typing import ClassVar, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -21,6 +22,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
 from .breadcrumbs import Breadcrumbs
@@ -58,10 +60,14 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def get_visible_items_list(self, main_field="name") -> List[Any]:
-        return [row for row in self.data if getattr(row, main_field)]
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    @staticmethod
+    def get_visible_files_list(
+        elements_list: List[BrowserRow], main_field="name"
+    ) -> List[BrowserRow]:
+        return [row for row in elements_list if getattr(row, main_field)]
 
-    def ids_of_visible_elems(self, main_field="name") -> List[str]:
+    def get_main_field_of_visible_files(self, main_field="name") -> List[str]:
         return [
             getattr(row, main_field) for row in self.data if getattr(row, main_field)
         ]

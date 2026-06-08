@@ -92,7 +92,7 @@ class ArchiveRecallInformation(Modal):
     ) -> Dict[str, List[str]]:
 
         temp_columns = list(set((column_names or []) + ["source_file"]))
-        column_values = {column: [] for column in temp_columns}
+        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
         for row in self.error_file_rows:
             values_in_row = [getattr(row, column) for column in temp_columns]
             if any(value_in_row == "" for value_in_row in values_in_row):
