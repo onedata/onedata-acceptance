@@ -4,6 +4,8 @@ __author__ = "Jakub Liput"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Input, NamedButton
@@ -14,5 +16,5 @@ class Share(Modal):
     create = NamedButton("button", text="Create")
     expose_as_a_public_data_record = Toggle(".one-checkbox-base.one-checkbox")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Share / Publish modal"

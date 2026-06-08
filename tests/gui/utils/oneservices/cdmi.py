@@ -1,6 +1,7 @@
 """Utils for managing REST API for CDMI service"""
 
 import json
+from typing import Any
 
 from tests import OP_REST_PORT
 from tests.utils.rest_utils import http_get, http_put
@@ -14,15 +15,15 @@ CONTAINER_TYPE = "container"
 OBJECT_TYPE = "object"
 
 
-def get_item_type(item_path):
+def get_item_type(item_path: Any) -> Any:
     return "container" if item_path.split("/")[-1].startswith("dir") else "object"
 
 
-def get_content_type(item_type):
+def get_content_type(item_type: Any) -> Any:
     return f"application/cdmi-{item_type}"
 
 
-def parse_path(path, item_type, add_cdmi_prefix=False):
+def parse_path(path: Any, item_type: Any, add_cdmi_prefix: Any = False) -> Any:
     if item_type == "container" and path[-1] != "/":
         parsed_path = f"{path}/"
     else:
@@ -38,14 +39,20 @@ def parse_path(path, item_type, add_cdmi_prefix=False):
 
 
 class CDMIClient:
-    def __init__(self, provider_ip, auth, cdmi_version="1.1.1", port=OP_REST_PORT):
+    def __init__(
+        self,
+        provider_ip: Any,
+        auth: Any,
+        cdmi_version: Any = "1.1.1",
+        port: Any = OP_REST_PORT,
+    ) -> None:
         self.ip = provider_ip
         # We use token header to authenticate
         self.auth_header = {"X-Auth-Token": auth}
         self.cdmi_version = cdmi_version
         self.port = port
 
-    def create_file(self, path, text=""):
+    def create_file(self, path: Any, text: Any = "") -> Any:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {
@@ -63,7 +70,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def write_to_file(self, path, text, offset=0):
+    def write_to_file(self, path: Any, text: Any, offset: Any = 0) -> Any:
         start = offset
         end = start + len(text) - 1
         item_type = get_item_type(path)
@@ -82,7 +89,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def read_from_file(self, path, read_range=None):
+    def read_from_file(self, path: Any, read_range: Any = None) -> Any:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {}
@@ -97,7 +104,7 @@ class CDMIClient:
             default_headers=False,
         ).content
 
-    def read_metadata(self, path, metadata=""):
+    def read_metadata(self, path: Any, metadata: Any = "") -> Any:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         parsed_path = f"{parsed_path}?metadata:{metadata}"
@@ -111,7 +118,7 @@ class CDMIClient:
             default_headers=False,
         ).json()
 
-    def write_metadata(self, path, metadata):
+    def write_metadata(self, path: Any, metadata: Any) -> Any:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
 
@@ -130,7 +137,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def move_item(self, src_path, dst_path):
+    def move_item(self, src_path: Any, dst_path: Any) -> Any:
         item_type = get_item_type(src_path)
         parsed_src_path = parse_path(src_path, item_type)
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)
@@ -149,7 +156,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def move_item_by_id(self, src_id, dst_path):
+    def move_item_by_id(self, src_id: Any, dst_path: Any) -> Any:
         item_type = "container"
         parsed_src_path = f"/cdmi/cdmi_objectid/{src_id}"
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)
@@ -168,7 +175,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def copy_item(self, src_path, dst_path):
+    def copy_item(self, src_path: Any, dst_path: Any) -> Any:
         item_type = get_item_type(src_path)
         parsed_src_path = parse_path(src_path, item_type)
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)

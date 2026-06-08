@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 import pytest
 
 from tests.conftest import export_logs
@@ -16,15 +18,15 @@ from tests.utils.environment_utils import clean_env
 
 @pytest.fixture()
 def tests_controller(
-    test_config,
-    hosts,
-    clients,
-    request,
-    users,
-    env_desc,
-    scenario_abs_path,
-    env_description_abs_path,
-):
+    test_config: Any,
+    hosts: Any,
+    clients: Any,
+    request: Any,
+    users: Any,
+    env_desc: Any,
+    scenario_abs_path: Any,
+    env_description_abs_path: Any,
+) -> Any:
     return UpgradeTestsController(
         test_config,
         hosts,
@@ -38,7 +40,7 @@ def tests_controller(
 
 
 @pytest.fixture(autouse=True, scope="module")
-def finalize(request, env_description_abs_path):
+def finalize(request: Any, env_description_abs_path: Any) -> Any:
     yield
     export_logs(request, env_description_abs_path, "after_upgrade")
     clean_env()

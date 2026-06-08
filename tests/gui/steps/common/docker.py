@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os.path
 import subprocess
+from typing import Any
 
 import yaml
 
@@ -23,7 +24,7 @@ MOUNT_POINT = "/volumes/posix"
         "there is following users configuration in storage's mount point:\n{config}"
     )
 )
-def docker_configure_users(config, hosts):
+def docker_configure_users(config: Any, hosts: Any) -> Any:
     """
     unix_group_name:
       GID: gid
@@ -35,7 +36,7 @@ def docker_configure_users(config, hosts):
     _docker_configure_users(config, hosts)
 
 
-def _docker_configure_users(config, hosts):
+def _docker_configure_users(config: Any, hosts: Any) -> Any:
     groups_cfg = yaml.load(config, yaml.Loader)
     for group, group_cfg in groups_cfg.items():
         gid = group_cfg["GID"]
@@ -59,7 +60,7 @@ def _docker_configure_users(config, hosts):
                     raise e
 
 
-def docker_create_group(group_name, gid, hosts):
+def docker_create_group(group_name: Any, gid: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -72,7 +73,9 @@ def docker_create_group(group_name, gid, hosts):
     subprocess.check_call(cmd)
 
 
-def docker_create_user_with_group(user_name, uid, group_name, hosts):
+def docker_create_user_with_group(
+    user_name: Any, uid: Any, group_name: Any, hosts: Any
+) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -87,7 +90,9 @@ def docker_create_user_with_group(user_name, uid, group_name, hosts):
     subprocess.check_call(cmd)
 
 
-def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
+def _docker_cp(
+    tmpdir: Any, browser_id: Any, src_path: Any, hosts: Any, dst_path: Any = None
+) -> Any:
     src_path = os.path.join(str(tmpdir), browser_id, src_path)
     if dst_path:
         cmd = [
@@ -111,7 +116,7 @@ def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
     subprocess.check_call(cmd)
 
 
-def _docker_rm(path, hosts):
+def _docker_rm(path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -123,7 +128,7 @@ def _docker_rm(path, hosts):
     subprocess.check_call(cmd)
 
 
-def _docker_mv(path, new_path, hosts):
+def _docker_mv(path: Any, new_path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -135,7 +140,7 @@ def _docker_mv(path, new_path, hosts):
     subprocess.check_call(cmd)
 
 
-def _docker_cat(path, hosts):
+def _docker_cat(path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -147,7 +152,7 @@ def _docker_cat(path, hosts):
     return output
 
 
-def _docker_ls(path, hosts):
+def _docker_ls(path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -160,7 +165,7 @@ def _docker_ls(path, hosts):
     return output
 
 
-def _docker_mkdir(path, hosts):
+def _docker_mkdir(path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -172,7 +177,7 @@ def _docker_mkdir(path, hosts):
     subprocess.check_call(cmd)
 
 
-def _docker_append_text_to_file(text, path, hosts):
+def _docker_append_text_to_file(text: Any, path: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -189,7 +194,7 @@ def _docker_append_text_to_file(text, path, hosts):
         "user {user} sets {ownership} as {file} owner on provider's storage mount point"
     )
 )
-def docker_set_file_uid(hosts, file, ownership):
+def docker_set_file_uid(hosts: Any, file: Any, ownership: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -202,7 +207,7 @@ def docker_set_file_uid(hosts, file, ownership):
 
 
 @given(parsers.parse('ownership "{ownership}" is granted for storage\'s mount point'))
-def docker_set_mount_point_ownership(ownership, hosts):
+def docker_set_mount_point_ownership(ownership: Any, hosts: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -219,7 +224,9 @@ def docker_set_mount_point_ownership(ownership, hosts):
         "user of {browser_id} copies {src_path} to provider's storage mount point"
     )
 )
-def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts):
+def wt_cp_files_to_storage_mount_point(
+    browser_id: Any, src_path: Any, tmpdir: Any, hosts: Any
+) -> Any:
     _docker_cp(tmpdir, browser_id, src_path, hosts)
 
 
@@ -230,8 +237,8 @@ def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts):
     )
 )
 def wt_cp_files_to_dir_in_storage_mount_point(
-    browser_id, src_path, tmpdir, hosts, dst_path
-):
+    browser_id: Any, src_path: Any, tmpdir: Any, hosts: Any, dst_path: Any
+) -> Any:
     _docker_cp(tmpdir, browser_id, src_path, hosts, os.path.join(MOUNT_POINT, dst_path))
 
 
@@ -242,8 +249,8 @@ def wt_cp_files_to_dir_in_storage_mount_point(
     )
 )
 def wt_cp_files_to_space_root_dir(
-    browser_id, src_path, space, tmpdir, tmp_memory, hosts
-):
+    browser_id: Any, src_path: Any, space: Any, tmpdir: Any, tmp_memory: Any, hosts: Any
+) -> Any:
     _docker_cp(
         tmpdir,
         browser_id,
@@ -260,8 +267,14 @@ def wt_cp_files_to_space_root_dir(
     )
 )
 def wt_cp_files_to_dst_path_in_space(
-    browser_id, src_path, dst_path, space, tmpdir, tmp_memory, hosts
-):
+    browser_id: Any,
+    src_path: Any,
+    dst_path: Any,
+    space: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    hosts: Any,
+) -> Any:
     _docker_cp(
         tmpdir,
         browser_id,
@@ -274,7 +287,7 @@ def wt_cp_files_to_dst_path_in_space(
 @wt(
     parsers.parse('user of {browser_id} copies "{space}" space directory to {dst_path}')
 )
-def wt_cp_space_to_dst_path(dst_path, space, hosts, spaces):
+def wt_cp_space_to_dst_path(dst_path: Any, space: Any, hosts: Any, spaces: Any) -> Any:
     cmd = [
         "docker",
         "exec",
@@ -292,7 +305,9 @@ def wt_cp_space_to_dst_path(dst_path, space, hosts, spaces):
         "user of {browser_id} copies {src_path} to {dst_path} directory on docker"
     )
 )
-def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
+def wt_cp_files_to_dst_path(
+    browser_id: Any, src_path: Any, dst_path: Any, tmpdir: Any, hosts: Any
+) -> Any:
     _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path)
 
 
@@ -301,12 +316,12 @@ def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
         "user of {browser_id} removes {src_path} from provider's storage mount point"
     )
 )
-def wt_rm_files_to_storage_mount_point(src_path, hosts):
+def wt_rm_files_to_storage_mount_point(src_path: Any, hosts: Any) -> Any:
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
 @given(parsers.parse("there is no {elems} in provider's storage mount point"))
-def g_rm_many_files_from_storage_mount_point(elems, hosts):
+def g_rm_many_files_from_storage_mount_point(elems: Any, hosts: Any) -> Any:
     for elem in parse_seq(elems):
         _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
 
@@ -317,7 +332,9 @@ def g_rm_many_files_from_storage_mount_point(elems, hosts):
         "in provider's storage mount point"
     )
 )
-def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
+def wt_append_text_to_files_in_storage_mount_point(
+    path: Any, text: Any, hosts: Any
+) -> Any:
     _docker_append_text_to_file(text, os.path.join(MOUNT_POINT, path), hosts)
 
 
@@ -327,21 +344,23 @@ def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
         'from the root directory of "{space}" space'
     )
 )
-def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
+def wt_rm_files_to_space_root_dir(
+    src_path: Any, space: Any, tmp_memory: Any, hosts: Any
+) -> Any:
     _docker_rm(os.path.join(MOUNT_POINT, tmp_memory["spaces"][space], src_path), hosts)
 
 
 @wt(parsers.parse("using docker, {user} renames {src_path} path to {new_src_path}"))
-def wt_mv_file(src_path, new_src_path, hosts):
+def wt_mv_file(src_path: Any, new_src_path: Any, hosts: Any) -> Any:
     _docker_mv(src_path, new_src_path, hosts)
 
 
 @wt(parsers.parse("user creates directory (mkdir) {path} on oneprovider-1 docker"))
-def wt_mkdir(path, hosts):
+def wt_mkdir(path: Any, hosts: Any) -> Any:
     _docker_mkdir(path, hosts)
 
 
-def wt_assert_file_in_path_with_content(path, content, hosts):
+def wt_assert_file_in_path_with_content(path: Any, content: Any, hosts: Any) -> Any:
     if path[0] == "/":
         path = path[1::]
     output = _docker_cat(os.path.join(MOUNT_POINT, path), hosts)
@@ -350,7 +369,7 @@ def wt_assert_file_in_path_with_content(path, content, hosts):
     assert output == content, err_msg
 
 
-def docker_ls(path, hosts):
+def docker_ls(path: Any, hosts: Any) -> Any:
     files = (
         _docker_ls(os.path.join(MOUNT_POINT, path), hosts).decode("utf-8").split("\n")
     )

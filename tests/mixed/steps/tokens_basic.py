@@ -4,6 +4,8 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
@@ -37,19 +39,19 @@ from tests.utils.utils import repeat_failed
     )
 )
 def create_token(
-    client,
-    user,
-    config,
-    selenium,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    tokens,
-    spaces,
-    clipboard,
-    displays,
-):
+    client: Any,
+    user: Any,
+    config: Any,
+    selenium: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    tokens: Any,
+    spaces: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_token_with_config(
@@ -78,16 +80,16 @@ def create_token(
     )
 )
 def assert_token(
-    client,
-    user,
-    config,
-    selenium,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    config: Any,
+    selenium: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    spaces: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_token_configuration_gui(
@@ -109,7 +111,14 @@ def assert_token(
 
 
 @wt(parsers.parse("if {client} is web gui, {user} copies created token"))
-def copy_token_if_gui(selenium, client, user, displays, clipboard, tmp_memory):
+def copy_token_if_gui(
+    selenium: Any,
+    client: Any,
+    user: Any,
+    displays: Any,
+    clipboard: Any,
+    tmp_memory: Any,
+) -> Any:
     if client.lower() == "web gui":
         copy_token_gui(selenium, user, displays, clipboard, tmp_memory)
 
@@ -121,15 +130,15 @@ def copy_token_if_gui(selenium, client, user, displays, clipboard, tmp_memory):
     )
 )
 def copy_named_token_if_gui(
-    selenium,
-    client,
-    user,
-    displays,
-    clipboard,
-    tmp_memory,
-    tokens,
-    token_name,
-):
+    selenium: Any,
+    client: Any,
+    user: Any,
+    displays: Any,
+    clipboard: Any,
+    tmp_memory: Any,
+    tokens: Any,
+    token_name: Any,
+) -> Any:
     if client == "web gui":
         click_copy_button_in_token_view(selenium, user)
         token = clipboard.paste(display=displays[user])
@@ -138,14 +147,24 @@ def copy_named_token_if_gui(
 
 
 @wt(parsers.parse("using web gui, {user} copies created token"))
-def copy_token_gui(selenium, user, displays, clipboard, tmp_memory):
+def copy_token_gui(
+    selenium: Any, user: Any, displays: Any, clipboard: Any, tmp_memory: Any
+) -> Any:
     click_copy_button_in_token_view(selenium, user)
     tmp_memory[user]["token"] = clipboard.paste(display=displays[user])
 
 
 @wt(parsers.parse('using {client}, {user} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def revoke_token_in_oz(client, user, token_name, users, hosts, tokens, selenium):
+def revoke_token_in_oz(
+    client: Any,
+    user: Any,
+    token_name: Any,
+    users: Any,
+    hosts: Any,
+    tokens: Any,
+    selenium: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         zone_name = "onezone"
@@ -162,7 +181,15 @@ def revoke_token_in_oz(client, user, token_name, users, hosts, tokens, selenium)
         "space_name} with received token"
     )
 )
-def join_space_with_token(selenium, user, tmp_memory, client, users, hosts, space_name):
+def join_space_with_token(
+    selenium: Any,
+    user: Any,
+    tmp_memory: Any,
+    client: Any,
+    users: Any,
+    hosts: Any,
+    space_name: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         consume_received_token(selenium, user, tmp_memory)

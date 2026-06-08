@@ -9,26 +9,31 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import os
+from typing import Any
 
 from tests.gui.utils.generic import upload_workflow_path
 
 
 class ExampleWorkflowExecutionInitialStoreContent:
 
-    def __init__(self, resolve_file_id, upload_file, resolve_group_id=None):
+    def __init__(
+        self, resolve_file_id: Any, upload_file: Any, resolve_group_id: Any = None
+    ) -> None:
         self.resolve_file_id = resolve_file_id
         self.upload_file = upload_file
         self.resolve_group_id = resolve_group_id
 
     @staticmethod
-    def gather_input_files(workflow):
+    def gather_input_files(workflow: Any) -> Any:
         return [
             f
             for f in os.listdir(upload_workflow_path(workflow))
             if f != workflow + ".json"
         ]
 
-    def bagit_uploader(self, input_file=None, dest_dir="space1/dir1"):
+    def bagit_uploader(
+        self, input_file: Any = None, dest_dir: Any = "space1/dir1"
+    ) -> Any:
         input_files = (
             self.gather_input_files("bagit-uploader") if not input_file else input_file
         )
@@ -45,7 +50,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def detect_file_formats(self, input_file=None, space="space1"):
+    def detect_file_formats(self, input_file: Any = None, space: Any = "space1") -> Any:
         input_files = (
             self.gather_input_files("detect-file-formats")
             if not input_file
@@ -60,7 +65,9 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def detect_file_mime_formats(self, input_file=None, space="space1"):
+    def detect_file_mime_formats(
+        self, input_file: Any = None, space: Any = "space1"
+    ) -> Any:
         input_files = (
             self.gather_input_files("detect-file-mime-formats")
             if not input_file
@@ -75,7 +82,9 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def download_files(self, input_file=None, destination="space1/dir1"):
+    def download_files(
+        self, input_file: Any = None, destination: Any = "space1/dir1"
+    ) -> Any:
         input_files = (
             self.gather_input_files("download-files") if not input_file else input_file
         )
@@ -91,30 +100,30 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def calculate_checksums_mounted(self, input_file="space1/file1"):
+    def calculate_checksums_mounted(self, input_file: Any = "space1/file1") -> Any:
         return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def calculate_checksums_rest(self, input_file="space1/file1"):
+    def calculate_checksums_rest(self, input_file: Any = "space1/file1") -> Any:
         return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def demo(self, input_file="space1/dir1"):
+    def demo(self, input_file: Any = "space1/dir1") -> Any:
         return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def echo(self, input_file="space1/file1"):
+    def echo(self, input_file: Any = "space1/file1") -> Any:
         return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
     def initialize_eureka3D_project(  # pylint: disable=invalid-name
         self,
-        parent_directory="space1/dir1",
-        project_name="hello",
-        group="group1",
-    ):
+        parent_directory: Any = "space1/dir1",
+        project_name: Any = "hello",
+        group: Any = "group1",
+    ) -> Any:
         return [
             {
                 "Parent directory": {"fileId": self.resolve_file_id(parent_directory)},
@@ -123,10 +132,10 @@ class ExampleWorkflowExecutionInitialStoreContent:
             }
         ], []
 
-    def substitute_placeholders_example(self, name="Tom"):
+    def substitute_placeholders_example(self, name: Any = "Tom") -> Any:
         return [{"input-store": {"name": name}}], []
 
-    def annotate_images(self, input_file=None, space="space1"):
+    def annotate_images(self, input_file: Any = None, space: Any = "space1") -> Any:
         input_files = (
             self.gather_input_files("annotate-images") if not input_file else input_file
         )

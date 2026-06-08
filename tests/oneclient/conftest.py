@@ -6,6 +6,8 @@ __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import pytest
 
 from tests.conftest import export_logs
@@ -24,33 +26,33 @@ from tests.utils.luma_utils import (
 
 
 @pytest.fixture(autouse=True)
-def skip_by_env(skip_by_env):
+def skip_by_env(skip_by_env: Any) -> Any:
     """Autouse fixture defined in tests.conftest"""
 
 
 @pytest.fixture(autouse=True)
-def xfail_by_env(xfail_by_env):
+def xfail_by_env(xfail_by_env: Any) -> Any:
     """Autouse fixture defined in tests.conftest"""
 
 
 @pytest.fixture(autouse=True, scope="module")
-def run_around_suite(request, env_description_abs_path):
+def run_around_suite(request: Any, env_description_abs_path: Any) -> Any:
     yield
     export_logs(request, env_description_abs_path)
 
 
 @pytest.fixture(autouse=True)
 def run_around_testcase(
-    entities_config,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-    rm_users,
-):
+    entities_config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    storages: Any,
+    spaces: Any,
+    rm_users: Any,
+) -> Any:
     unmount_all_clients_and_purge_spaces(users)
     setup_entities(
         entities_config,
@@ -68,16 +70,16 @@ def run_around_testcase(
 
 
 def setup_entities(
-    config,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-    rm_users,
-):
+    config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    storages: Any,
+    spaces: Any,
+    rm_users: Any,
+) -> Any:
     setup_users(
         "onezone",
         config.get("users"),
@@ -104,7 +106,9 @@ def setup_entities(
     setup_luma(config.get("users"), users, admin_credentials, hosts)
 
 
-def setup_luma(users_config, users, admin_credentials, hosts):
+def setup_luma(
+    users_config: Any, users: Any, admin_credentials: Any, hosts: Any
+) -> Any:
     spaces = get_all_spaces_details(admin_credentials, hosts)
     local_feed_luma_storages = get_local_feed_luma_storages(admin_credentials, hosts)
 
@@ -115,7 +119,7 @@ def setup_luma(users_config, users, admin_credentials, hosts):
     add_spaces_luma_mapping(admin_credentials, local_feed_luma_storages, spaces)
 
 
-def unmount_all_clients_and_purge_spaces(users):
+def unmount_all_clients_and_purge_spaces(users: Any) -> Any:
     for user in users.values():
         for client in user.clients.values():
             purge_spaces(client)
@@ -123,11 +127,11 @@ def unmount_all_clients_and_purge_spaces(users):
         user.clients.clear()
 
 
-def purge_spaces(client):
+def purge_spaces(client: Any) -> Any:
     purge_all_spaces(client)
 
 
-def pytest_bdd_before_scenario(request, feature, scenario):
+def pytest_bdd_before_scenario(request: Any, feature: Any, scenario: Any) -> Any:
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
     print(f"- from feature '{feature.name}'")
@@ -135,16 +139,27 @@ def pytest_bdd_before_scenario(request, feature, scenario):
 
 
 def pytest_bdd_before_step_call(
-    request, feature, scenario, step, step_func, step_func_args
-):
+    request: Any,
+    feature: Any,
+    scenario: Any,
+    step: Any,
+    step_func: Any,
+    step_func_args: Any,
+) -> Any:
     print(f"-- Executing step: '{step}'")
 
 
 def pytest_bdd_step_error(
-    request, feature, scenario, step, step_func, step_func_args, exception
-):
+    request: Any,
+    feature: Any,
+    scenario: Any,
+    step: Any,
+    step_func: Any,
+    step_func_args: Any,
+    exception: Any,
+) -> Any:
     print("--- STEP FAILED\n")
 
 
-def pytest_bdd_after_scenario(request, feature, scenario):
+def pytest_bdd_after_scenario(request: Any, feature: Any, scenario: Any) -> Any:
     print("=================================================================\n")

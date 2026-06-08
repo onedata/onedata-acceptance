@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
@@ -28,11 +30,11 @@ class Group(PageObject):
     child_relation_menu_button = WebElement(".line-to-child .actions-trigger")
     parent_relation_menu_button = WebElement(".line-to-parent .actions-trigger")
 
-    def click_group_menu_button(self, driver):
+    def click_group_menu_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self.group).perform()
         self.group_menu_button.click()
 
-    def click_relation_menu_button(self, driver, relation):
+    def click_relation_menu_button(self, driver: Any, relation: Any) -> Any:
         line_to = f"line_to_{relation}"
         relation = f"{relation}_relation_menu_button"
 

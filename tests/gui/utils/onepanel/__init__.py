@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.common.common import BaseContent, OnePage
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement, WebItem
@@ -28,7 +30,7 @@ class Sidebar(PageObject):
     title = Label(".col-title")
     clusters = WebItem(".one-sidebar", cls=ClustersSidebar)
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"{self.title} sidebar in {self.parent}"
 
 
@@ -56,7 +58,7 @@ class Onepanel(OnePage):
     discard_button = Button(".modal-content .btn-toolbar button")
 
     @property
-    def sidebar(self):
+    def sidebar(self) -> Any:
         sidebar = self._sub_sidebar
         if "ps-active-x" not in sidebar.get_attribute("class"):
             sidebar = self._main_sidebar

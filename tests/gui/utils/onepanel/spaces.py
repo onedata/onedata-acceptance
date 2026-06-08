@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -46,7 +47,7 @@ class StorageImportConfiguration(PageObject):
     continuous_scan = Toggle(".toggle-field-generic-continuousScan")
     scan_interval = Input(".field-continuous-scanInterval")
 
-    def is_toggle_checked(self, toggle):
+    def is_toggle_checked(self, toggle: Any) -> Any:
         toggle = getattr(self, toggle)
         return toggle.is_checked()
 
@@ -75,13 +76,13 @@ class SpaceInfo(PageObject):
     size = Input(".size-number-input")
 
     @property
-    def import_strategy(self):
+    def import_strategy(self) -> Any:
         values = DEFAULT_IMPORT_STRATEGY_CONFIG.copy()
         values.update(self._get_labels(self._storage_import))
         return values
 
     @staticmethod
-    def _get_labels(elem):
+    def _get_labels(elem: Any) -> Any:
         items = elem.find_elements(By.CSS_SELECTOR, "strong, .one-label")
         items.pop(0)  # pop redundant "Storage import:" label
         return {
@@ -116,23 +117,23 @@ class SyncChart(PageObject):
         ".storage-import-chart-operations g.ct-series-2 line"
     )
 
-    def start_scan_is_green(self):
+    def start_scan_is_green(self) -> Any:
         return "btn-success" in self.start_scan.web_elem.get_attribute("class")
 
     @property
-    def inserted(self):
+    def inserted(self) -> Any:
         return self._get_chart_bar_values(self._inserted)
 
     @property
-    def updated(self):
+    def updated(self) -> Any:
         return self._get_chart_bar_values(self._updated)
 
     @property
-    def deleted(self):
+    def deleted(self) -> Any:
         return self._get_chart_bar_values(self._deleted)
 
     @staticmethod
-    def _get_chart_bar_values(bars):
+    def _get_chart_bar_values(bars: Any) -> Any:
         return sum(int(data.get_attribute("ct:value")) for data in bars)
 
 
@@ -188,11 +189,11 @@ class AutoCleaning(PageObject):
 
     cleaning_reports = WebItemsSequence("tbody tr.data-item-base", cls=CleaningReport)
 
-    def click_rename_soft_quota_button(self, driver):
+    def click_rename_soft_quota_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self._soft_quota).perform()
         self.soft_quota.edit_button()
 
-    def click_rename_hard_quota_button(self, driver):
+    def click_rename_hard_quota_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self._hard_quota).perform()
         self.hard_quota.edit_button()
 
@@ -210,12 +211,12 @@ class SpaceRecord(PageObject, ExpandableMixin):
 
     _toggle = WebElement(".one-collapsible-list-item-header")
 
-    def is_expanded(self):
+    def is_expanded(self) -> Any:
         return bool(
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self):
+    def expand_menu(self) -> Any:
         self.toolbar.click()
 
 

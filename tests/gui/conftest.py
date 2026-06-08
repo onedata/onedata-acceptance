@@ -11,7 +11,7 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import List
+from typing import Any, List
 
 import pytest
 from pytest import fixture, hookimpl, skip
@@ -59,7 +59,7 @@ WAIT_NORMAL_DOWNLOAD = 10
 # =============================================================================
 
 
-def pytest_configure(config):
+def pytest_configure(config: Any) -> Any:
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
     htmlpath = config.option.htmlpath
     if htmlpath is None:
@@ -68,7 +68,7 @@ def pytest_configure(config):
         config.option.htmlpath = os.path.join(_logdir, "report.html")
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Any) -> Any:
     selenium_group = parser.getgroup("selenium", "selenium")
     selenium_group.addoption("--xvfb", action="store_true", help="run Xvfb for tests")
     selenium_group.addoption(
@@ -79,19 +79,19 @@ def pytest_addoption(parser):
 
 
 @hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item):
+def pytest_runtest_makereport(item: Any) -> Any:
     outcome = yield
     rep = outcome.get_result()
     setattr(item, rep.when + "_xvfb_recorder", rep)
 
 
-def pytest_collection_modifyitems(items):
+def pytest_collection_modifyitems(items: Any) -> Any:
     for item in items:
         item.name = re.sub("{.*}", "", item.name)
         item.name = re.sub("<.*>", "", item.name)
 
 
-def pytest_bdd_before_scenario(request, feature, scenario):
+def pytest_bdd_before_scenario(request: Any, feature: Any, scenario: Any) -> Any:
     RecorderManager(request).handle_start_recording()
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
@@ -99,11 +99,11 @@ def pytest_bdd_before_scenario(request, feature, scenario):
     print("-----------------------------------------------------------------")
 
 
-def pytest_bdd_before_step_call(step):
+def pytest_bdd_before_step_call(step: Any) -> Any:
     print(f"-- Executing step: {format_step_name(step)}")
 
 
-def pytest_bdd_after_scenario(request):
+def pytest_bdd_after_scenario(request: Any) -> Any:
     logdir_path = get_log_dir_path(request)
     lambda_log_dir_name = build_test_dir_name(request.node)
     onenv_utils.run_onenv_command(
@@ -125,12 +125,12 @@ def pytest_bdd_after_scenario(request):
     print("=================================================================")
 
 
-def pytest_bdd_step_error(step, exception):
+def pytest_bdd_step_error(step: Any, exception: Any) -> Any:
     print(f"--- STEP FAILED on {step}")
     print(f"--- Exception: {exception}\n")
 
 
-def format_step_name(step_name):
+def format_step_name(step_name: Any) -> Any:
     step_name = step_name.name.split("\n")
     if len(step_name) > 1:
         return step_name[0] + " (...)"
@@ -143,13 +143,13 @@ def format_step_name(step_name):
 
 
 @fixture(autouse=True, scope="module")
-def finalize(request):
+def finalize(request: Any) -> Any:
     yield
     export_logs(request)
 
 
 @fixture(scope="session")
-def numerals():
+def numerals() -> Any:
     return {
         "first": 0,
         "second": 1,
@@ -166,43 +166,43 @@ def numerals():
 
 
 @fixture(scope="session")
-def logdir(request):
+def logdir(request: Any) -> Any:
     return request.config.option.htmlpath.rstrip("report.html")
 
 
 @fixture(scope="session")
-def driver_type(request):
+def driver_type(request: Any) -> Any:
     return request.config.getoption("--driver")
 
 
 @fixture(scope="session")
-def test_type(request):
+def test_type(request: Any) -> Any:
     return request.config.getoption("--test-type")
 
 
 @fixture(scope="session")
-def oz_page():
+def oz_page() -> Any:
     from tests.gui.utils import OZLoggedIn
 
     return OZLoggedIn
 
 
 @fixture(scope="session")
-def popups():
+def popups() -> Any:
     from tests.gui.utils import Popups
 
     return Popups
 
 
 @fixture(scope="session")
-def data_discovery():
+def data_discovery() -> Any:
     from tests.gui.utils import DataDiscoveryPage
 
     return DataDiscoveryPage
 
 
 @fixture
-def tmp_memory():
+def tmp_memory() -> Any:
     """Dict to use when one wants to store sth between steps.
 
     Because of use of multiple browsers, the correct format would be:
@@ -212,20 +212,20 @@ def tmp_memory():
 
 
 @fixture
-def displays():
+def displays() -> Any:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 
 
 @fixture(scope="session")
-def clipboard():
+def clipboard() -> Any:
     """utility simulating os clipboard"""
     from collections import namedtuple
     from platform import system as get_system
 
     Clipboard = namedtuple("Clipboard", ["copy", "paste"])
 
-    def copy(text, display):
+    def copy(text: Any, display: Any) -> Any:
         if get_system() == "Darwin":
             cmd = ["pbcopy"]
         else:
@@ -233,7 +233,7 @@ def clipboard():
         with sp.Popen(cmd, stdin=sp.PIPE, close_fds=True) as p:
             p.communicate(input=text.encode("utf-8"))
 
-    def paste(display):
+    def paste(display: Any) -> Any:
         if get_system() == "Darwin":
             cmd = ["pbpaste"]
         else:
@@ -246,12 +246,12 @@ def clipboard():
 
 
 @fixture(scope="session")
-def base_url(hosts, maybe_start_env):
+def base_url(hosts: Any, maybe_start_env: Any) -> Any:
     return f'https://{hosts["onezone"]["hostname"]}'
 
 
 @fixture(scope="function", autouse=True)
-def _skip_sensitive(request, sensitive_url):
+def _skip_sensitive(request: Any, sensitive_url: Any) -> Any:
     """Invert the default sensitivity behaviour: consider the test as destructive
     only if it has marker "destructive".
     """
@@ -266,7 +266,7 @@ def _skip_sensitive(request, sensitive_url):
 
 
 @fixture
-def capabilities(request, capabilities, tmpdir):
+def capabilities(request: Any, capabilities: Any, tmpdir: Any) -> Any:
     """Add --no-sandbox argument for Chrome headless
     Should be the same as adding
     capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}
@@ -332,27 +332,27 @@ def capabilities(request, capabilities, tmpdir):
 
 
 @fixture(scope="session")
-def screen_width():
+def screen_width() -> Any:
     return 1366
 
 
 @fixture(scope="session")
-def screen_height():
+def screen_height() -> Any:
     return 1024
 
 
 @fixture(scope="session")
-def screen_depth():
+def screen_depth() -> Any:
     return 24
 
 
 @fixture(scope="session")
-def screens():
+def screens() -> Any:
     return [0]
 
 
 @fixture(scope="session")
-def movie_dir(request):
+def movie_dir(request: Any) -> Any:
     log_dir = os.path.dirname(request.config.option.htmlpath)
     movie_subdir = os.path.join(log_dir, "movies")
     if not os.path.exists(movie_subdir):
@@ -361,7 +361,9 @@ def movie_dir(request):
 
 
 @fixture(scope="module")
-def xvfb(request, screens, screen_width, screen_height, screen_depth):
+def xvfb(
+    request: Any, screens: Any, screen_width: Any, screen_height: Any, screen_depth: Any
+) -> Any:
     if request.config.getoption("--xvfb"):
         display = xvfb_utils.find_free_display()
         xvfb_proc = xvfb_utils.start_session(
@@ -376,7 +378,7 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
 
 
 @fixture(scope="session")
-def should_record():
+def should_record() -> Any:
     return True
 
 
@@ -386,6 +388,6 @@ def should_record():
 
 
 @fixture(name="run_unmock")
-def run_around_testcase(hosts):
+def run_around_testcase(hosts: Any) -> Any:
     yield
     unmock_archive_verification("oneprovider-krakow", hosts)

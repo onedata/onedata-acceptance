@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import ABC
-from typing import ClassVar, Optional
+from typing import Any, ClassVar, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -53,7 +53,7 @@ class Browser(ABC, PageObject):
 
     parent = ""
 
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
         if cls.row_cls is not None:
             cls.data = WebItemsSequence(".data-row.fb-table-row", cls=cls.row_cls)
@@ -64,32 +64,32 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def names_of_visible_elems(self):
+    def names_of_visible_elems(self) -> Any:
         files = self.items_list_web_elems
         names = [f.text.split("\n")[0] for f in files]
         return names
 
-    def get_visible_items_list(self):
+    def get_visible_items_list(self) -> Any:
         return [el for el in self.items_list_web_elems if el.text != ""]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 
-    def click_header(self):
+    def click_header(self) -> Any:
         action = ActionChains(self.driver)
         action.click(self.header).perform()
 
-    def click_on_background(self):
+    def click_on_background(self) -> Any:
         ActionChains(self.driver).move_to_element_with_offset(
             self.header, 0, 0
         ).click().perform()
 
     # SCROLLING FUNCTIONS
 
-    def scroll_one_file_down(self):
+    def scroll_one_file_down(self) -> Any:
         action = ActionChains(self.driver)
         action.key_down(Keys.DOWN).key_down(Keys.DOWN).perform()
 
-    def scroll_to_top(self):
+    def scroll_to_top(self) -> Any:
         try:
             self.driver.execute_script(
                 "document.querySelector('.perfect-scrollbar-element."
@@ -98,16 +98,16 @@ class Browser(ABC, PageObject):
         except JavascriptException:
             pass
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(self) -> Any:
         self.driver.execute_script(
             "arguments[0].scrollTo(arguments[1]);", self.web_elem, self._bottom
         )
 
-    def scroll_to_number_file(self, driver, number, browser):
+    def scroll_to_number_file(self, driver: Any, number: Any, browser: Any) -> Any:
         selector = browser.get_css_selector() + " " + f".data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
 
-    def scroll_visible_fragment(self):
+    def scroll_visible_fragment(self) -> Any:
         self.driver.execute_script(
             "arguments[0].scrollTo(arguments[1]);",
             self.web_elem,
@@ -116,18 +116,18 @@ class Browser(ABC, PageObject):
 
     # OTHER UTILITIES FUNCTIONS
 
-    def move_to_elem(self, driver, elem):
+    def move_to_elem(self, driver: Any, elem: Any) -> Any:
         element = getattr(self, elem + "_elem")
         ActionChains(driver).move_to_element(element).perform()
 
-    def is_empty(self):
+    def is_empty(self) -> Any:
         try:
             self._empty_dir_icon
         except RuntimeError:
             return False
         return True
 
-    def get_css_selector(self):
+    def get_css_selector(self) -> Any:
         css_selector = self.web_elem.get_attribute("class")
         css_selector = css_selector.replace(" ", ".")
         css_selector = "." + css_selector

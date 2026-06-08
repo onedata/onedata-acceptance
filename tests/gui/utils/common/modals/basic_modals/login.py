@@ -4,6 +4,8 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.web_elements import Input
 
 from ..modal import Modal
@@ -13,5 +15,5 @@ class LoginFormModal(Modal):
     username = Input("input#login-form-username-input")
     password = Input("input#login-form-password-input")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Login modal"

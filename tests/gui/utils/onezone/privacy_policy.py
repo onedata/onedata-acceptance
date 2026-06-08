@@ -4,6 +4,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.web_elements import Button, WebElement
 
 
@@ -11,9 +13,9 @@ class PrivacyPolicy:
     message = WebElement(".wysiwyg-content")
     back_to_main_page = Button(".back-to-main-page")
 
-    def __init__(self, driver):
+    def __init__(self, driver: Any) -> None:
         self.driver = driver
         self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Privacy Policy"

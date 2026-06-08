@@ -10,12 +10,13 @@ import re
 import subprocess as sp
 import traceback
 from time import sleep, time
+from typing import Any
 
 import pytest
 from decorator import decorator  # pylint: disable=import-error
 
 
-def check_call_with_logging(cmd):
+def check_call_with_logging(cmd: Any) -> Any:
     try:
         sp.check_call(cmd)
     except sp.CalledProcessError as e:
@@ -23,29 +24,29 @@ def check_call_with_logging(cmd):
         raise e
 
 
-def log_exception():
+def log_exception() -> Any:
     extracted_stack = traceback.format_exc(10)
     logging.error(extracted_stack)
 
 
-def assert_generic(expression, should_fail, *args, **kwargs):
+def assert_generic(expression: Any, should_fail: Any, *args: Any, **kwargs: Any) -> Any:
     if should_fail:
         assert_false(expression, *args, **kwargs)
     else:
         assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
 
 
-def assert_(expression, *args, **kwargs):
+def assert_(expression: Any, *args: Any, **kwargs: Any) -> Any:
     assert_result = expression(*args, **kwargs)
     assert assert_result
 
 
-def assert_false(expression, *args, **kwargs):
+def assert_false(expression: Any, *args: Any, **kwargs: Any) -> Any:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
 
-def get_fun_name(fun):
+def get_fun_name(fun: Any) -> Any:
     if "method" in fun:
         return fun.split("method ")[1].split(" ")[0]
     if "function" in fun:
@@ -53,12 +54,17 @@ def get_fun_name(fun):
     return None
 
 
-def assert_expected_failure(fun, *args, **kwargs):
+def assert_expected_failure(fun: Any, *args: Any, **kwargs: Any) -> Any:
     with pytest.raises(OSError):
         fun(*args, **kwargs)
 
 
-def repeat_failed(attempts=10, timeout=None, interval=0.1, exceptions=(Exception,)):
+def repeat_failed(
+    attempts: Any = 10,
+    timeout: Any = None,
+    interval: Any = 0.1,
+    exceptions: Any = (Exception,),
+) -> Any:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
 
@@ -75,7 +81,7 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1, exceptions=(Exception
     """
 
     @decorator
-    def wrapper(fun, *args, **kwargs):
+    def wrapper(fun: Any, *args: Any, **kwargs: Any) -> Any:
         now = time()
         limit, i = (now + timeout, now) if timeout else (attempts, 0)
 
@@ -93,14 +99,14 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1, exceptions=(Exception
     return wrapper
 
 
-def get_copyright(mod):
+def get_copyright(mod: Any) -> Any:
     return mod.__copyright__ if hasattr(mod, "__copyright__") else ""
 
 
-def get_authors(mod):
+def get_authors(mod: Any) -> Any:
     author = mod.__author__ if hasattr(mod, "__author__") else ""
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod):
+def get_suite_description(mod: Any) -> Any:
     return mod.__doc__

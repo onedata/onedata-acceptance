@@ -12,6 +12,7 @@ from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
 from time import sleep
+from typing import Any
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -35,11 +36,11 @@ RE_URL = re.compile(
 )
 
 
-def parse_url(url):
+def parse_url(url: Any) -> Any:
     return RE_URL.match(url)
 
 
-def go_to_relative_url(selenium, relative_url):
+def go_to_relative_url(selenium: Any, relative_url: Any) -> Any:
     match = RE_URL.match(selenium.current_url)
     if match is None:
         raise ValueError(f"Invalid URL: {selenium.current_url}")
@@ -48,7 +49,9 @@ def go_to_relative_url(selenium, relative_url):
     selenium.get(new_url)
 
 
-def parse_seq(seq, pattern=None, separator=None, default=str):
+def parse_seq(
+    seq: Any, pattern: Any = None, separator: Any = None, default: Any = str
+) -> Any:
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -59,7 +62,7 @@ def parse_seq(seq, pattern=None, separator=None, default=str):
     ]
 
 
-def upload_file_path(file_name):
+def upload_file_path(file_name: Any) -> Any:
     """Resolve an absolute path for file with name file_name stored
     in upload_files dir
     """
@@ -70,7 +73,7 @@ def upload_file_path(file_name):
     )
 
 
-def upload_workflow_path(workflow_name=None):
+def upload_workflow_path(workflow_name: Any = None) -> Any:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -96,7 +99,7 @@ def upload_workflow_path(workflow_name=None):
     )
 
 
-def upload_lambda_path(lambda_name):
+def upload_lambda_path(lambda_name: Any) -> Any:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -122,7 +125,7 @@ def upload_lambda_path(lambda_name):
     )
 
 
-def strip_path(path_string, separator="/"):
+def strip_path(path_string: Any, separator: Any = "/") -> Any:
     """Strips string from whitespaces inside file path. Useful for file
      paths rendered
     in DOM which contains `\\n` characters in `innerText`.
@@ -133,7 +136,7 @@ def strip_path(path_string, separator="/"):
 
 
 @contextmanager
-def implicit_wait(driver, timeout, prev_timeout):
+def implicit_wait(driver: Any, timeout: Any, prev_timeout: Any) -> Any:
     driver.implicitly_wait(timeout)
     try:
         yield
@@ -141,14 +144,16 @@ def implicit_wait(driver, timeout, prev_timeout):
         driver.implicitly_wait(prev_timeout)
 
 
-def iter_ahead(iterable):
+def iter_ahead(iterable: Any) -> Any:
     read_ahead = iter(iterable)
     next(read_ahead, None)
     for item, next_item in zip(iterable, read_ahead):
         yield item, next_item
 
 
-def find_web_elem(web_elem_root, css_sel, err_msg, scroll=True):
+def find_web_elem(
+    web_elem_root: Any, css_sel: Any, err_msg: Any, scroll: Any = True
+) -> Any:
     try:
         if scroll:
             _scroll_to_css_sel(web_elem_root, css_sel)
@@ -160,7 +165,9 @@ def find_web_elem(web_elem_root, css_sel, err_msg, scroll=True):
     return item
 
 
-def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg, scroll=True):
+def find_web_elem_with_text(
+    web_elem_root: Any, css_sel: Any, text: Any, err_msg: Any, scroll: Any = True
+) -> Any:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
     if scroll:
         _scroll_to_css_sel(web_elem_root, css_sel)
@@ -170,7 +177,9 @@ def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg, scroll=True):
     raise RuntimeError(f'Css element with "{text}" text not found. {err_msg}')
 
 
-def click_on_web_elem(driver, web_elem, err_msg, delay=True):
+def click_on_web_elem(
+    driver: Any, web_elem: Any, err_msg: Any, delay: Any = True
+) -> Any:
     disabled = "disabled" in web_elem.get_attribute("class")
     # scroll to make the element visible
     if not web_elem.is_displayed():
@@ -192,7 +201,7 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
         raise RuntimeError(err_msg)
 
 
-def _scroll_to_css_sel(web_elem_root, css_sel):
+def _scroll_to_css_sel(web_elem_root: Any, css_sel: Any) -> Any:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
@@ -203,7 +212,7 @@ def _scroll_to_css_sel(web_elem_root, css_sel):
 
 
 @contextmanager
-def suppress(*exceptions):
+def suppress(*exceptions: Any) -> Any:
     try:
         yield
     except exceptions:
@@ -211,18 +220,18 @@ def suppress(*exceptions):
 
 
 @contextmanager
-def rm_css_cls(driver, web_elem, css_cls):
+def rm_css_cls(driver: Any, web_elem: Any, css_cls: Any) -> Any:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq, idx):
+def nth(seq: Any, idx: Any) -> Any:
     return next(islice(seq, idx, None), None)
 
 
 @contextmanager
-def redirect_display(new_display):
+def redirect_display(new_display: Any) -> Any:
     """Replace DISPLAY environment variable with new value"""
     old_display = os.environ.get("DISPLAY", "DUMMY_DISPLAY")
     os.environ["DISPLAY"] = new_display
@@ -235,11 +244,11 @@ def redirect_display(new_display):
             del os.environ["DISPLAY"]
 
 
-def transform(val, strip_char=None):
+def transform(val: Any, strip_char: Any = None) -> Any:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
-def sort_json_keys(obj):
+def sort_json_keys(obj: Any) -> Any:
     if isinstance(obj, dict):
         items = list(obj.items())
         items.sort(reverse=True)
@@ -250,7 +259,7 @@ def sort_json_keys(obj):
     return obj  # number or string
 
 
-def sort_json_from_string(value: str):
+def sort_json_from_string(value: str) -> Any:
     value = json.loads(value)
     value = sort_json_keys(value)
     return value

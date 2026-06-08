@@ -4,6 +4,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 from oneprovider_client import TransferApi
 
@@ -17,15 +19,15 @@ from tests.utils.utils import repeat_failed
 
 
 def create_transfer_rest(
-    user,
-    users,
-    host,
-    hosts,
-    transfer_type,
-    path,
-    replicating_provider=None,
-    evicting_provider=None,
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    transfer_type: Any,
+    path: Any,
+    replicating_provider: Any = None,
+    evicting_provider: Any = None,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     file_id = _lookup_file_id(path, client)
@@ -40,7 +42,9 @@ def create_transfer_rest(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_recent_transfer_status_rest(user, users, host, hosts, space_id):
+def get_recent_transfer_status_rest(
+    user: Any, users: Any, host: Any, hosts: Any, space_id: Any
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     tid = transfer_api.get_all_transfers(space_id, state="ended").transfers[0]
@@ -55,8 +59,8 @@ def get_recent_transfer_status_rest(user, users, host, hosts, space_id):
 
 
 def assert_recent_transfer_details_rest(
-    user, users, host, hosts, space, spaces, config
-):
+    user: Any, users: Any, host: Any, hosts: Any, space: Any, spaces: Any, config: Any
+) -> Any:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )
@@ -85,7 +89,9 @@ def assert_recent_transfer_details_rest(
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space):
+def assert_recent_transfer_finished_rest(
+    user: Any, users: Any, host: Any, hosts: Any, spaces: Any, space: Any
+) -> Any:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )

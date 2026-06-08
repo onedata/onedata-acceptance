@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import datetime
 from functools import partial
+from typing import Any
 
 import pytest
 import yaml
@@ -35,26 +36,28 @@ from tests.utils.http_exceptions import HTTPError
 from tests.utils.rest_utils import get_provider_rest_path, http_post
 
 
-def _lookup_file_id(path, user_client_op):
+def _lookup_file_id(path: Any, user_client_op: Any) -> Any:
     resolve_file_path_api = FilePathResolutionApi(user_client_op)
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
     return file_id
 
 
-def _read_file(path, user, users, provider, hosts):
+def _read_file(path: Any, user: Any, users: Any, provider: Any, hosts: Any) -> Any:
     cli = login_to_cdmi(user, users, hosts[provider]["hostname"])
     dao = DataObjectApi(cli)
     return dao.read_data_object(path)
 
 
-def _list_files(path, user, users, provider, hosts):
+def _list_files(path: Any, user: Any, users: Any, provider: Any, hosts: Any) -> Any:
     user_client_op = login_to_provider(user, users, hosts[provider]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
     return [file.name for file in file_api.list_children(file_id).children]
 
 
-def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
+def assert_file_content_in_op_rest(
+    path: Any, text: Any, user: Any, users: Any, provider: Any, hosts: Any
+) -> Any:
     file_content = _read_file(path, user, users, provider, hosts)
     assert_msg = (
         f"Expected file named {path} content to be {text} but found {file_content}"
@@ -63,8 +66,14 @@ def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
 
 
 def assert_space_content_in_op_rest(
-    user, users, hosts, config, space_name, _spaces, host
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    config: Any,
+    space_name: Any,
+    _spaces: Any,
+    host: Any,
+) -> Any:
     cwd = "/" + space_name
     ls_fun = partial(_list_files, user=user, users=users, provider=host, hosts=hosts)
     assert_file_content_fun = partial(
@@ -80,7 +89,9 @@ def assert_space_content_in_op_rest(
     check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
-def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host, hosts):
+def assert_num_of_files_in_path_in_op_rest(
+    num: Any, path: Any, user: Any, users: Any, host: Any, hosts: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
@@ -91,7 +102,9 @@ def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host, hosts):
     assert num == len(children), assert_msg
 
 
-def create_dir_in_op_rest(user, users, host, hosts, path, result):
+def create_dir_in_op_rest(
+    user: Any, users: Any, host: Any, hosts: Any, path: Any, result: Any
+) -> Any:
     client = login_to_cdmi(user, users, hosts[host]["hostname"])
 
     c_api = ContainerApi(client)
@@ -102,7 +115,9 @@ def create_dir_in_op_rest(user, users, host, hosts, path, result):
         c_api.create_container(path)
 
 
-def remove_dir_in_op_rest(user, users, host, hosts, path):
+def remove_dir_in_op_rest(
+    user: Any, users: Any, host: Any, hosts: Any, path: Any
+) -> Any:
     client = login_to_cdmi(user, users, hosts[host]["hostname"])
 
     c_api = ContainerApi(client)
@@ -110,15 +125,15 @@ def remove_dir_in_op_rest(user, users, host, hosts, path):
 
 
 def create_file_in_op_rest(
-    user,
-    users,
-    host,
-    hosts,
-    path,
-    result,
-    access_token=None,
-    identity_token=None,
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    path: Any,
+    result: Any,
+    access_token: Any = None,
+    identity_token: Any = None,
+) -> Any:
     client = login_to_cdmi(
         user,
         users,
@@ -135,7 +150,9 @@ def create_file_in_op_rest(
         do_api.create_data_object(path, "")
 
 
-def remove_file_in_op_rest(user, users, host, hosts, path, result):
+def remove_file_in_op_rest(
+    user: Any, users: Any, host: Any, hosts: Any, path: Any, result: Any
+) -> Any:
     client = login_to_cdmi(user, users, hosts[host]["hostname"])
 
     do_api = DataObjectApi(client)
@@ -147,8 +164,14 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
 
 
 def remove_file_using_token_in_op_rest(
-    user, users, host, hosts, path, result, tmp_memory
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    path: Any,
+    result: Any,
+    tmp_memory: Any,
+) -> Any:
     access_token = tmp_memory[user]["mailbox"].get("token", None)
     client = login_to_cdmi(
         user, users, hosts[host]["hostname"], access_token=access_token
@@ -161,7 +184,15 @@ def remove_file_using_token_in_op_rest(
         do_api.delete_data_object(path)
 
 
-def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
+def see_items_in_op_rest(
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    path_list: Any,
+    result: Any,
+    space: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(client)
     for path in parse_seq(path_list):
@@ -170,8 +201,15 @@ def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
 
 
 def see_item_in_op_rest_using_token(
-    user, name, space, host, tmp_memory, users, hosts, result
-):
+    user: Any,
+    name: Any,
+    space: Any,
+    host: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+    result: Any,
+) -> Any:
     path = f"{space}/{name}"
     access_token = tmp_memory[user]["mailbox"].get("token", None)
     client = login_to_provider(
@@ -181,12 +219,14 @@ def see_item_in_op_rest_using_token(
     check_if_item_exists_or_not_exists(result, path, client, file_api)
 
 
-def check_if_item_id_in_items(path, client, file_api):
+def check_if_item_id_in_items(path: Any, client: Any, file_api: Any) -> Any:
     file_id = _lookup_file_id(path, client)
     file_api.list_children(file_id)
 
 
-def check_if_item_exists_or_not_exists(result, path, client, file_api):
+def check_if_item_exists_or_not_exists(
+    result: Any, path: Any, client: Any, file_api: Any
+) -> Any:
     if result == "fails":
         with pytest.raises(OPException):
             check_if_item_id_in_items(path, client, file_api)
@@ -195,8 +235,8 @@ def check_if_item_exists_or_not_exists(result, path, client, file_api):
 
 
 def create_directory_structure_in_op_rest(
-    user, users, hosts, host, config, space, request
-):
+    user: Any, users: Any, hosts: Any, host: Any, config: Any, space: Any, request: Any
+) -> Any:
     items = yaml.load(config, yaml.Loader)
     cwd = space
     create_content(
@@ -205,8 +245,16 @@ def create_directory_structure_in_op_rest(
 
 
 def create_item_in_op_rest(
-    user, users, cwd, name, content, create_item_fun, host, hosts, request
-):
+    user: Any,
+    users: Any,
+    cwd: Any,
+    name: Any,
+    content: Any,
+    create_item_fun: Any,
+    host: Any,
+    hosts: Any,
+    request: Any,
+) -> Any:
     if name.startswith("dir"):
         create_dir_in_op_rest(user, users, host, hosts, f"{cwd}/{name}", "")
     else:
@@ -218,16 +266,33 @@ def create_item_in_op_rest(
 
 
 def assert_ace_in_op_rest(
-    user, users, host, hosts, numerals, path, num, priv, item_type, name
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    numerals: Any,
+    path: Any,
+    num: Any,
+    priv: Any,
+    item_type: Any,
+    name: Any,
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     ace = client.read_metadata(path)["metadata"]["cdmi_acl"][numerals[num]]
     assert_ace(priv, item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_rest(
-    user, users, host, hosts, path, priv, item_type, name, groups
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    path: Any,
+    priv: Any,
+    item_type: Any,
+    name: Any,
+    groups: Any,
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     try:
         acl = client.read_metadata(path)["metadata"]["cdmi_acl"]
@@ -237,12 +302,16 @@ def grant_acl_privileges_in_op_rest(
     client.write_metadata(path, {"cdmi_acl": acl})
 
 
-def write_to_file_in_op_rest(user, users, host, hosts, path, text, offset=0):
+def write_to_file_in_op_rest(
+    user: Any, users: Any, host: Any, hosts: Any, path: Any, text: Any, offset: Any = 0
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_to_file(path, text, offset)
 
 
-def append_to_file_in_op_rest(user, users, host, hosts, path, text):
+def append_to_file_in_op_rest(
+    user: Any, users: Any, host: Any, hosts: Any, path: Any, text: Any
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     try:
@@ -253,7 +322,15 @@ def append_to_file_in_op_rest(user, users, host, hosts, path, text):
         client.write_to_file(path, text, file_size)
 
 
-def move_item_in_op_rest(src_path, dst_path, result, host, hosts, user, users):
+def move_item_in_op_rest(
+    src_path: Any,
+    dst_path: Any,
+    result: Any,
+    host: Any,
+    hosts: Any,
+    user: Any,
+    users: Any,
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if result == "fails":
         with pytest.raises(HTTPError):
@@ -263,8 +340,14 @@ def move_item_in_op_rest(src_path, dst_path, result, host, hosts, user, users):
 
 
 def move_item_in_op_rest_using_token(
-    src_path, dst_path, result, host, hosts, user, tmp_memory
-):
+    src_path: Any,
+    dst_path: Any,
+    result: Any,
+    host: Any,
+    hosts: Any,
+    user: Any,
+    tmp_memory: Any,
+) -> Any:
     access_token = tmp_memory[user]["mailbox"].get("token", None)
     client = cdmi(hosts[host]["hostname"], access_token)
     if result == "fails":
@@ -274,12 +357,16 @@ def move_item_in_op_rest_using_token(
         client.move_item(src_path, dst_path)
 
 
-def copy_item_in_op_rest(src_path, dst_path, host, hosts, user, users):
+def copy_item_in_op_rest(
+    src_path: Any, dst_path: Any, host: Any, hosts: Any, user: Any, users: Any
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.copy_item(src_path, dst_path)
 
 
-def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
+def assert_posix_permissions_in_op_rest(
+    path: Any, perms: Any, user: Any, users: Any, host: Any, hosts: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
@@ -294,7 +381,9 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     ), f"Expected file POSIX permissions for {path} to be {perms} but got {file_perms}"
 
 
-def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts, result):
+def set_posix_permissions_in_op_rest(
+    path: Any, perm: Any, user: Any, users: Any, host: Any, hosts: Any, result: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
@@ -306,7 +395,9 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts, resul
         file_api.set_attr(file_id, attribute={"mode": perm})
 
 
-def get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name):
+def get_time_for_file_in_op_rest(
+    path: Any, user: Any, users: Any, host: Any, hosts: Any, time_name: Any
+) -> Any:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     attr = time_attr(time_name, "cdmi")
@@ -321,16 +412,16 @@ def get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name):
 
 
 def compare_file_time_with_copied_time_in_op_rest(
-    path,
-    user,
-    users,
-    host,
-    hosts,
-    time_name1,
-    time2,
-    comparator,
-    time_name2,
-):
+    path: Any,
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    time_name1: Any,
+    time2: Any,
+    comparator: Any,
+    time_name2: Any,
+) -> Any:
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time_name1)
     err_msg = (
         f"Time comparison failed. \nTime1: {time_name1} = {time1} \n"
@@ -340,16 +431,16 @@ def compare_file_time_with_copied_time_in_op_rest(
 
 
 def assert_files_time_relation_in_op_rest(
-    path,
-    path2,
-    time1_name,
-    time2_name,
-    comparator,
-    host,
-    hosts,
-    user,
-    users,
-):
+    path: Any,
+    path2: Any,
+    time1_name: Any,
+    time2_name: Any,
+    comparator: Any,
+    host: Any,
+    hosts: Any,
+    user: Any,
+    users: Any,
+) -> Any:
     time1 = get_time_for_file_in_op_rest(path, user, users, host, hosts, time1_name)
     time2 = get_time_for_file_in_op_rest(path2, user, users, host, hosts, time2_name)
 
@@ -362,8 +453,15 @@ def assert_files_time_relation_in_op_rest(
 
 
 def assert_time_relation_in_op_rest(
-    path, time1_name, time2_name, comparator, host, hosts, user, users
-):
+    path: Any,
+    time1_name: Any,
+    time2_name: Any,
+    comparator: Any,
+    host: Any,
+    hosts: Any,
+    user: Any,
+    users: Any,
+) -> Any:
     assert_files_time_relation_in_op_rest(
         path,
         path,
@@ -377,7 +475,15 @@ def assert_time_relation_in_op_rest(
     )
 
 
-def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
+def upload_file_rest(
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    path: Any,
+    file_name: Any,
+    parent_id: Any,
+) -> Any:
     if path == "":
         data = None
     else:
@@ -397,45 +503,59 @@ def upload_file_rest(users, user, hosts, host, path, file_name, parent_id):
     )
 
 
-def get_space_details_rest(users, user, hosts, host, space_id):
+def get_space_details_rest(
+    users: Any, user: Any, hosts: Any, host: Any, space_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_op)
     space_details = space_api.get_space(space_id)
     return space_details
 
 
-def get_share_details_rest(users, user, hosts, host, share_id):
+def get_share_details_rest(
+    users: Any, user: Any, hosts: Any, host: Any, share_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     share_api = ShareApi(user_client_op)
     share_details = share_api.get_share(share_id)
     return share_details
 
 
-def create_share_rest(users, user, hosts, host, file_id, name):
+def create_share_rest(
+    users: Any, user: Any, hosts: Any, host: Any, file_id: Any, name: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     share_api = ShareApi(user_client_op)
     share_id = share_api.create_share(data={"name": name, "rootFileId": file_id})
     return share_id
 
 
-def remove_file_by_id_rest(users, user, hosts, host, file_id):
+def remove_file_by_id_rest(
+    users: Any, user: Any, hosts: Any, host: Any, file_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_api.remove_file(file_id)
 
 
-def create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, name):
+def create_empty_file_in_dir_rest(
+    users: Any, user: Any, hosts: Any, host: Any, dir_id: Any, name: Any
+) -> Any:
     upload_file_rest(users, user, hosts, host, "", name, dir_id)
 
 
-def get_file_hardlinks_rest(users, user, hosts, host, file_id):
+def get_file_hardlinks_rest(
+    users: Any, user: Any, hosts: Any, host: Any, file_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     list_hardlinks = file_api.get_file_hardlinks(file_id)
     return list_hardlinks
 
 
-def get_file_symlink_value_rest(users, user, hosts, host, file_id):
+def get_file_symlink_value_rest(
+    users: Any, user: Any, hosts: Any, host: Any, file_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     symlink_val = file_api.get_symlink_value(file_id)
@@ -443,8 +563,8 @@ def get_file_symlink_value_rest(users, user, hosts, host, file_id):
 
 
 def check_for_hardlink_between_files_rest(
-    users, user, hosts, host, hardlink_id, file_id
-):
+    users: Any, user: Any, hosts: Any, host: Any, hardlink_id: Any, file_id: Any
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     try:
@@ -456,7 +576,15 @@ def check_for_hardlink_between_files_rest(
         return False
 
 
-def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id, name):
+def create_hardlink_rest(
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    destination_dir_id: Any,
+    target_id: Any,
+    name: Any,
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_api.create_file(
@@ -475,8 +603,14 @@ def create_hardlink_rest(users, user, hosts, host, destination_dir_id, target_id
 
 
 def create_symlink_rest(
-    users, user, hosts, host, destination_dir_id, target_path, name
-):
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    destination_dir_id: Any,
+    target_path: Any,
+    name: Any,
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_api = BasicFileOperationsApi(user_client_op)
     file_api.create_file(

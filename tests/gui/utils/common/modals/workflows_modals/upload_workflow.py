@@ -4,6 +4,8 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, NamedButton
 
@@ -14,5 +16,5 @@ class UploadWorkflow(Modal):
     persist_as_new_workflow = Button(".option-create .one-way-radio-control")
     merge_into_existing_workflow = Button(".option-merge .one-way-radio-control")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Upload workflow modal"

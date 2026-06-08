@@ -6,6 +6,8 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.web_elements import Button, NamedButton
 
 from ..modal import Modal
@@ -19,5 +21,5 @@ class CeaseSupportForSpaceModal(Modal):
     # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
     space_delete_link = Button(".info-condensed .clickable")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Cease support for space modal"

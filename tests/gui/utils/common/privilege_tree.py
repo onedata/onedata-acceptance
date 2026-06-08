@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
@@ -26,16 +27,16 @@ class PrivilegeRow(PageObject):
     effective_granted = WebElement(".effective .one-icon")
     effective_revoke = WebElement(".effective .priv-revoke")
 
-    def expand(self):
+    def expand(self) -> Any:
         self.web_elem.click()
 
-    def activate(self):
+    def activate(self) -> Any:
         self.toggle.check()
 
-    def deactivate(self):
+    def deactivate(self) -> Any:
         self.toggle.uncheck()
 
-    def assert_privilege_granted(self, granted):
+    def assert_privilege_granted(self, granted: Any) -> Any:
         if granted == "Partially":
             msg = f"{self.name} should be partially granted but is not"
             assert self.toggle.is_partial_checked(), msg
@@ -46,7 +47,7 @@ class PrivilegeRow(PageObject):
             msg = f"{self.name} should not be granted but it is"
             assert self.toggle.is_unchecked(), msg
 
-    def assert_effective_privilege_granted(self, granted):
+    def assert_effective_privilege_granted(self, granted: Any) -> Any:
         if granted:
             msg = f"{self.name} should be granted but is not"
             assert "oneicon-checked" in self.effective_granted.get_attribute(
@@ -56,7 +57,7 @@ class PrivilegeRow(PageObject):
             msg = f"{self.name} should not be granted but it is"
             assert self.effective_revoke, msg
 
-    def set_privilege(self, driver, granted, with_scroll=False):
+    def set_privilege(self, driver: Any, granted: Any, with_scroll: Any = False) -> Any:
         if with_scroll:
             if (self.toggle.is_checked() and not granted) or (
                 not self.toggle.is_checked() and granted
@@ -89,7 +90,7 @@ class PrivilegeGroup(PageObject):
 
     sub_privileges = WebItemsSequence(".privilege-row", cls=PrivilegeRow)
 
-    def expand(self, driver):
+    def expand(self, driver: Any) -> Any:
         if not self.is_expanded():
             expander_id = self._expander.get_attribute("id")
             try:
@@ -100,10 +101,10 @@ class PrivilegeGroup(PageObject):
             except ElementNotInteractableException:
                 self.expander.click()
 
-    def is_expanded(self):
+    def is_expanded(self) -> Any:
         return "oneicon-arrow-up" in self._expander.get_attribute("class")
 
-    def collapse(self, driver):
+    def collapse(self, driver: Any) -> Any:
         if self.is_expanded():
             try:
                 driver.execute_script(
@@ -115,19 +116,19 @@ class PrivilegeGroup(PageObject):
             except ElementNotInteractableException:
                 self.expander.click()
 
-    def minimalize(self):
+    def minimalize(self) -> Any:
         self.expander.click()
 
-    def activate(self):
+    def activate(self) -> Any:
         self.toggle.check()
 
-    def deactivate(self):
+    def deactivate(self) -> Any:
         self.toggle.uncheck()
 
-    def get_sub_privilege_row(self, name):
+    def get_sub_privilege_row(self, name: Any) -> Any:
         return self.sub_privileges[name]
 
-    def assert_privilege_granted(self, granted):
+    def assert_privilege_granted(self, granted: Any) -> Any:
         if granted == "Partially":
             msg = f"{self.name} should be partially granted but is not"
             assert self.toggle.is_partial_checked(), msg
@@ -138,7 +139,7 @@ class PrivilegeGroup(PageObject):
             msg = f"{self.name} should not be granted but it is"
             assert self.toggle.is_unchecked(), msg
 
-    def assert_effective_privilege_granted(self, granted):
+    def assert_effective_privilege_granted(self, granted: Any) -> Any:
         granted_count = int(self.effective_priv.split("/")[0])
         all_count = int(self.effective_priv.split("/")[1])
         if granted == "Partially":
@@ -151,7 +152,7 @@ class PrivilegeGroup(PageObject):
             msg = f"{self.name} should not be granted but it is"
             assert granted_count == 0, msg
 
-    def set_privilege(self, driver, granted, with_scroll=False):
+    def set_privilege(self, driver: Any, granted: Any, with_scroll: Any = False) -> Any:
         count = 2 if self.toggle.is_partial_checked() and not granted else 1
         if with_scroll:
             if (
@@ -183,12 +184,16 @@ class PrivilegeTree(PageObject):
     privileges = WebItemsSequence(".privilege-row ", cls=PrivilegeRow)
     spinner = WebElement(".spin-spinner-block")
 
-    def get_privilege_row(self, name):
+    def get_privilege_row(self, name: Any) -> Any:
         return self.privileges[name]
 
     def assert_privileges(
-        self, selenium, browser_id, privileges, is_direct_privileges=True
-    ):
+        self,
+        selenium: Any,
+        browser_id: Any,
+        privileges: Any,
+        is_direct_privileges: Any = True,
+    ) -> Any:
         """Assert privileges according to given config.
         For this method only dict should be passed!
 
@@ -212,8 +217,8 @@ class PrivilegeTree(PageObject):
         self._assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
 
     def _assert_privileges(
-        self, selenium, browser_id, privileges, is_direct_privileges
-    ):
+        self, selenium: Any, browser_id: Any, privileges: Any, is_direct_privileges: Any
+    ) -> Any:
         for privilege_name, privilege_group in privileges.items():
             self._assert_privilege_group(
                 selenium,
@@ -224,8 +229,13 @@ class PrivilegeTree(PageObject):
             )
 
     def _assert_privilege_group(
-        self, selenium, browser_id, group, name, is_direct_privileges
-    ):
+        self,
+        selenium: Any,
+        browser_id: Any,
+        group: Any,
+        name: Any,
+        is_direct_privileges: Any,
+    ) -> Any:
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group["granted"]
@@ -245,7 +255,9 @@ class PrivilegeTree(PageObject):
         else:
             privilege_row.assert_effective_privilege_granted(granted)
 
-    def set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
+    def set_privileges(
+        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+    ) -> Any:
         """Set privileges according to given config.
         For this method only dict should be passed!
 
@@ -268,7 +280,9 @@ class PrivilegeTree(PageObject):
         """
         return self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
-    def _set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
+    def _set_privileges(
+        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+    ) -> Any:
         result = True
         for privilege_name, privilege_group in privileges.items():
             result = result and self._set_privilege_group(
@@ -281,8 +295,13 @@ class PrivilegeTree(PageObject):
         return result
 
     def _set_privilege_group(
-        self, selenium, browser_id, group, name, with_scroll=False
-    ):
+        self,
+        selenium: Any,
+        browser_id: Any,
+        group: Any,
+        name: Any,
+        with_scroll: Any = False,
+    ) -> Any:
         driver = selenium[browser_id]
         privilege_row: PrivilegeGroup | None = None
         # Tolerate loading of privileges table
@@ -314,15 +333,15 @@ class PrivilegeTree(PageObject):
             )
         return result
 
-    def set_all_true(self):
+    def set_all_true(self) -> Any:
         for priv_group in self.privilege_groups:
             priv_group.activate()
 
-    def set_all_false(self):
+    def set_all_false(self) -> Any:
         for priv_group in self.privilege_groups:
             priv_group.deactivate()
 
-    def wait_for_load_privileges(self):
+    def wait_for_load_privileges(self) -> Any:
         for _ in range(50):
             try:
                 self.spinner  # pylint: disable=pointless-statement

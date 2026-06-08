@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Input,
@@ -32,10 +34,10 @@ class ClusterRecord(ButtonWithTextPageObject):
     submenu = WebItemsSequence("ul.one-list-level-2 li", cls=ButtonWithTextPageObject)
     status_icon = WebElement(".sidebar-item-icon")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"{self.name} item in {self.parent}"
 
-    def is_not_working(self):
+    def is_not_working(self) -> Any:
         return "error" in self.status_icon.get_attribute("class")
 
 
@@ -46,9 +48,9 @@ class ClustersSidebar(PageObject):
         cls=ClusterRecord,
     )
 
-    def scroll_to_bottom(self, driver):
+    def scroll_to_bottom(self, driver: Any) -> Any:
         driver.execute_script("var s = $('#col-sidebar'); s.scrollTo(s.height())")
 
-    def get_all_items(self, driver):
+    def get_all_items(self, driver: Any) -> Any:
         self.scroll_to_bottom(driver)
         return self.items

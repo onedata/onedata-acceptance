@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from onezone_client import SpaceApi, UserApi
 
 from tests.mixed.steps.oneclient.data_basic import (
@@ -28,8 +30,16 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def create_space_with_alias_in_oz(
-    client, user, space_name, alias, host, hosts, users, spaces, space_aliases
-):
+    client: Any,
+    user: Any,
+    space_name: Any,
+    alias: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    spaces: Any,
+    space_aliases: Any,
+) -> Any:
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(user, users, hosts, host, [space_name], spaces)
         space_aliases[alias] = {"name": space_name, "sid": spaces[space_name]}
@@ -46,8 +56,16 @@ def create_space_with_alias_in_oz(
     )
 )
 def request_space_support_using_rest_for_space_with_alias(
-    client, user, users, alias, host, hosts, tmp_memory, supporting_user, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    alias: Any,
+    host: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    supporting_user: Any,
+    space_aliases: Any,
+) -> Any:
     if client.lower() == "rest":
         user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
         space_api = SpaceApi(user_client)
@@ -65,8 +83,14 @@ def request_space_support_using_rest_for_space_with_alias(
     )
 )
 def create_file_in_op_in_space_with_alias(
-    client, user, users, file_name, alias, request, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    file_name: Any,
+    alias: Any,
+    request: Any,
+    space_aliases: Any,
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         result = "succeds"
@@ -89,8 +113,14 @@ def create_file_in_op_in_space_with_alias(
     )
 )
 def write_to_file_in_op_in_space_with_alias(
-    client, user, users, file_name, alias, content, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    file_name: Any,
+    alias: Any,
+    content: Any,
+    space_aliases: Any,
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -112,8 +142,14 @@ def write_to_file_in_op_in_space_with_alias(
     )
 )
 def read_from_file_in_op_in_space_with_alias(
-    client, user, users, file_name, alias, content, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    file_name: Any,
+    alias: Any,
+    content: Any,
+    space_aliases: Any,
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -134,8 +170,14 @@ def read_from_file_in_op_in_space_with_alias(
     )
 )
 def remove_space_with_alias_in_oz(
-    client, user, users, host, hosts, alias, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    alias: Any,
+    space_aliases: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
@@ -152,8 +194,15 @@ def remove_space_with_alias_in_oz(
     )
 )
 def rename_space_with_alias_in_oz(
-    client, user, users, host, hosts, alias, new_space_name, space_aliases
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    alias: Any,
+    new_space_name: Any,
+    space_aliases: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
@@ -166,7 +215,9 @@ def rename_space_with_alias_in_oz(
         raise NoSuchClientException(f"Client: {client} not found")
 
 
-def create_path_for_item_in_space_with_alias(space_aliases, alias, file_name):
+def create_path_for_item_in_space_with_alias(
+    space_aliases: Any, alias: Any, file_name: Any
+) -> Any:
     if check_whether_space_names_repeats_for_alias(alias, space_aliases):
         return (
             f"{space_aliases[alias]["name"]}@{space_aliases[alias]["sid"]}/{file_name}"
@@ -174,7 +225,7 @@ def create_path_for_item_in_space_with_alias(space_aliases, alias, file_name):
     return f"{space_aliases[alias]["name"]}/{file_name}"
 
 
-def check_whether_space_names_repeats_for_alias(alias, space_aliases):
+def check_whether_space_names_repeats_for_alias(alias: Any, space_aliases: Any) -> Any:
     space_name = space_aliases[alias]["name"]
     for k, v in space_aliases.items():
         if k != alias and v["name"] == space_name:

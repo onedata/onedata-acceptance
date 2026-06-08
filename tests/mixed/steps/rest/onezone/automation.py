@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 from functools import partial
+from typing import Any
 
 import yaml
 from oneprovider_client.rest import ApiException
@@ -48,8 +49,15 @@ BAGIT_ARCHIVES = {
     )
 )
 def upload_workflow_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory: Any,
+    inventories: Any,
+    workflow_name: Any,
+    workflows: Any,
+) -> Any:
     dump_path = upload_workflow_path(workflow_name + ".json")
     upload_workflow_rest(
         hosts,
@@ -72,8 +80,15 @@ def upload_workflow_from_automation_examples_rest(
     )
 )
 def upload_workflow_from_upload_files_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflow_name, workflows
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory: Any,
+    inventories: Any,
+    workflow_name: Any,
+    workflows: Any,
+) -> Any:
     dump_path = upload_file_path(f"automation/workflow/{workflow_name}.json")
     upload_workflow_rest(
         hosts,
@@ -96,8 +111,15 @@ def upload_workflow_from_upload_files_rest(
     )
 )
 def wt_upload_bagit_uploader_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory: Any,
+    inventories: Any,
+    workflows: Any,
+    tmp_memory: Any,
+) -> Any:
     workflow_type = "bagit-uploader"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
@@ -120,8 +142,15 @@ def wt_upload_bagit_uploader_from_automation_examples_rest(
     )
 )
 def wt_upload_non_bagit_workflows_from_automation_examples_rest(
-    hosts, zone_name, users, user, inventory, inventories, workflows, tmp_memory
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory: Any,
+    inventories: Any,
+    workflows: Any,
+    tmp_memory: Any,
+) -> Any:
     workflow_type = "non bagit"
     upload_part_of_the_workflows_from_automation_examples_rest(
         hosts,
@@ -137,16 +166,16 @@ def wt_upload_non_bagit_workflows_from_automation_examples_rest(
 
 
 def upload_part_of_the_workflows_from_automation_examples_rest(
-    hosts,
-    zone_name,
-    users,
-    user,
-    inventory,
-    inventories,
-    workflows,
-    tmp_memory,
-    workflow_type,
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory: Any,
+    inventories: Any,
+    workflows: Any,
+    tmp_memory: Any,
+    workflow_type: Any,
+) -> Any:
     tmp_memory["workflows_with_input_files"] = []
     tmp_memory["workflows_without_input_files"] = []
     for f in os.listdir(upload_workflow_path()):
@@ -175,16 +204,16 @@ def upload_part_of_the_workflows_from_automation_examples_rest(
 
 
 def upload_workflow_rest(
-    hosts,
-    zone_name,
-    users,
-    user,
-    inventory_name,
-    inventories,
-    workflow_name,
-    path,
-    workflows,
-):
+    hosts: Any,
+    zone_name: Any,
+    users: Any,
+    user: Any,
+    inventory_name: Any,
+    inventories: Any,
+    workflow_name: Any,
+    path: Any,
+    workflows: Any,
+) -> Any:
     zone_hostname = hosts[zone_name]["hostname"]
     owner = users[user]
 
@@ -202,8 +231,13 @@ def upload_workflow_rest(
 
 
 def _upload_workflow_rest(
-    zone_hostname, owner, inventory_id, workflow_name, workflow_dump, workflows
-):
+    zone_hostname: Any,
+    owner: Any,
+    inventory_id: Any,
+    workflow_name: Any,
+    workflow_dump: Any,
+    workflows: Any,
+) -> Any:
     workflow_schema_details = json.dumps(
         {
             "atmInventoryId": inventory_id,
@@ -223,7 +257,7 @@ def _upload_workflow_rest(
     workflows[workflow_name] = workflow_location.split("/")[-1]
 
 
-def get_store_schema_id_of_workflow(store_name, workflow_name):
+def get_store_schema_id_of_workflow(store_name: Any, workflow_name: Any) -> Any:
     data = get_workflow_dump(workflow_name)
     stores = data["revision"]["atmWorkflowSchemaRevision"]["_data"]["stores"]
     for store in stores:
@@ -234,7 +268,7 @@ def get_store_schema_id_of_workflow(store_name, workflow_name):
     )
 
 
-def get_revision_num_of_workflow(workflow_name):
+def get_revision_num_of_workflow(workflow_name: Any) -> Any:
     data = get_workflow_dump(workflow_name)
     return data["revision"]["originalRevisionNumber"]
 
@@ -247,17 +281,17 @@ def get_revision_num_of_workflow(workflow_name):
     )
 )
 def wt_execute_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflow_name,
-    workflows,
-    workflow_executions,
-    config,
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space: Any,
+    workflow_name: Any,
+    workflows: Any,
+    workflow_executions: Any,
+    config: Any,
+) -> Any:
     """
     Expected format of config
     store: {arg: val}
@@ -301,7 +335,14 @@ def wt_execute_workflow_rest(
         'using REST, {user} pauses execution of "{workflow_name}" workflow in {host}'
     )
 )
-def pause_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def pause_workflow_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -314,7 +355,14 @@ def pause_workflow_rest(user, users, hosts, host, workflow_name, workflow_execut
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def resume_workflow_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -327,7 +375,14 @@ def resume_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def cancel_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def cancel_workflow_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -340,7 +395,14 @@ def cancel_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def delete_workflow_rest(user, users, hosts, host, workflow_name, workflow_executions):
+def delete_workflow_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -355,8 +417,13 @@ def delete_workflow_rest(user, users, hosts, host, workflow_name, workflow_execu
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_resume_workflow_rest(
-    user, users, hosts, host, workflow_name, workflow_executions
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     try:
         resume_workflow_rest(
             user, users, hosts, host, workflow_name, workflow_executions
@@ -376,8 +443,13 @@ def fail_to_resume_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def force_continue_workflow_rest(
-    user, users, hosts, host, workflow_name, workflow_executions
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -393,15 +465,15 @@ def force_continue_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rerun_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    workflow_name,
-    workflow_executions,
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
     lane_id: int,
     lane_run: int,
-):
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -418,15 +490,15 @@ def rerun_workflow_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def retry_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    workflow_name,
-    workflow_executions,
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
     lane_id: int,
     lane_run: int,
-):
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
@@ -441,17 +513,17 @@ def retry_workflow_rest(
     )
 )
 def wt_execute_non_bagit_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space: Any,
+    workflows: Any,
+    groups: Any,
+    workflow_executions: Any,
+    tmp_memory: Any,
+) -> Any:
     archive_types = None
     execute_part_of_the_workflows(
         user,
@@ -476,18 +548,18 @@ def wt_execute_non_bagit_part_of_the_workflows(
     )
 )
 def wt_execute_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-    archive_types,
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space: Any,
+    workflows: Any,
+    groups: Any,
+    workflow_executions: Any,
+    tmp_memory: Any,
+    archive_types: Any,
+) -> Any:
     execute_part_of_the_workflows(
         user,
         users,
@@ -504,18 +576,18 @@ def wt_execute_part_of_the_workflows(
 
 
 def execute_part_of_the_workflows(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space,
-    workflows,
-    groups,
-    workflow_executions,
-    tmp_memory,
-    archive_types,
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space: Any,
+    workflows: Any,
+    groups: Any,
+    workflow_executions: Any,
+    tmp_memory: Any,
+    archive_types: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
         partial(_lookup_file_id, user_client_op=client),
@@ -561,7 +633,9 @@ def execute_part_of_the_workflows(
             )
 
 
-def check_to_run_workflow(workflow_name, file_name, archive_types):
+def check_to_run_workflow(
+    workflow_name: Any, file_name: Any, archive_types: Any
+) -> Any:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
     return (
@@ -570,18 +644,18 @@ def check_to_run_workflow(workflow_name, file_name, archive_types):
 
 
 def execute_workflow_rest(
-    user,
-    users,
-    hosts,
-    host,
-    spaces,
-    space_name,
-    workflow_name,
-    stores_content,
-    workflows,
-    rev_number=1,
-    loglevel="info",
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    workflow_name: Any,
+    stores_content: Any,
+    workflows: Any,
+    rev_number: Any = 1,
+    loglevel: Any = "info",
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     workflow_execution_api = WorkflowExecutionApi(client)
     data = {
@@ -597,7 +671,7 @@ def execute_workflow_rest(
     return wid
 
 
-def get_group_id(groups, group):
+def get_group_id(groups: Any, group: Any) -> Any:
     return groups[group]
 
 
@@ -609,8 +683,14 @@ def get_group_id(groups, group):
 )
 @repeat_failed(interval=4, timeout=620)
 def wait_for_workflow_executions(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    workflow_executions: Any,
+) -> Any:
     assert_all_workflow_execution_finished(
         user, users, host, hosts, space, spaces, workflow_executions
     )
@@ -624,16 +704,28 @@ def wait_for_workflow_executions(
 )
 @repeat_failed(interval=10, timeout=60 * 60 * 4)
 def wait_for_workflow_executions_extended_time(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    workflow_executions: Any,
+) -> Any:
     assert_all_workflow_execution_finished(
         user, users, host, hosts, space, spaces, workflow_executions
     )
 
 
 def assert_all_workflow_execution_finished(
-    user, users, host, hosts, space, spaces, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    workflow_executions: Any,
+) -> Any:
     assert_empty_workflow_phase(
         user, users, host, hosts, space, spaces, workflow_executions, "waiting"
     )
@@ -643,8 +735,15 @@ def assert_all_workflow_execution_finished(
 
 
 def assert_empty_workflow_phase(
-    user, users, host, hosts, space, spaces, workflow_executions, phase
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    workflow_executions: Any,
+    phase: Any,
+) -> Any:
     executions = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase=phase
     )
@@ -668,8 +767,15 @@ def assert_empty_workflow_phase(
     )
 )
 def assert_num_workflow_executions_in_phase(
-    user, users, host, hosts, space, spaces, phase, num: int
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    phase: Any,
+    num: int,
+) -> Any:
     executions = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase=phase
     )
@@ -686,8 +792,8 @@ def assert_num_workflow_executions_in_phase(
     )
 )
 def assert_successful_workflow_executions(
-    user, users, host, hosts, workflow_executions
-):
+    user: Any, users: Any, host: Any, hosts: Any, workflow_executions: Any
+) -> Any:
     err_msgs = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
@@ -713,8 +819,14 @@ def assert_successful_workflow_executions(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_num_workflow_executions_in_status(
-    user, users, host, hosts, status, num: int, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    status: Any,
+    num: int,
+    workflow_executions: Any,
+) -> Any:
     executions = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
@@ -730,8 +842,15 @@ def assert_num_workflow_executions_in_status(
 
 
 def list_workflow_executions(
-    user, users, host, hosts, space, spaces, phase="ongoing", limit=50
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    phase: Any = "ongoing",
+    limit: Any = 50,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     workflow_execution_api = WorkflowExecutionApi(client)
     response = workflow_execution_api.list_workflow_executions(
@@ -747,8 +866,15 @@ def list_workflow_executions(
     )
 )
 def assert_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions, inventories, config
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+    inventories: Any,
+    config: Any,
+) -> Any:
     data = yaml.load(config, yaml.Loader)
 
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
@@ -772,8 +898,13 @@ def assert_workflow_execution_details(
     )
 )
 def compare_stores_id_after_retry_from_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     details = get_workflow_execution_details(user, users, host, hosts, wid)
     # first run
@@ -795,8 +926,13 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     )
 )
 def fail_to_get_workflow_execution_details(
-    user, users, host, hosts, workflow_name, workflow_executions
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    workflow_name: Any,
+    workflow_executions: Any,
+) -> Any:
     try:
         wid = get_workflow_execution_id(workflow_name, workflow_executions)
         _ = get_workflow_execution_details(user, users, host, hosts, wid)
@@ -809,7 +945,7 @@ def fail_to_get_workflow_execution_details(
         raise
 
 
-def get_workflow_execution_id(workflow_name, workflow_executions):
+def get_workflow_execution_id(workflow_name: Any, workflow_executions: Any) -> Any:
     return [
         wid
         for wid in workflow_executions.keys()
@@ -818,8 +954,13 @@ def get_workflow_execution_id(workflow_name, workflow_executions):
 
 
 def get_workflow_execution_details(
-    user, users, host, hosts, workflow_execution_id, details=None
-):
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    workflow_execution_id: Any,
+    details: Any = None,
+) -> Any:
     provider_hostname = hosts[host]["hostname"]
     # calling using swagger api does not work, because
     # 'originRunNumber' can be of value None

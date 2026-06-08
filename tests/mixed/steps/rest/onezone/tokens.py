@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import base64
 import time
+from typing import Any
 
 import yaml
 from onezone_client import TokenApi
@@ -17,8 +18,15 @@ from tests.mixed.utils.common import login_to_oz
 
 
 def create_token_with_config_rest(
-    user, config, users, tokens, hosts, tmp_memory, groups, spaces
-):
+    user: Any,
+    config: Any,
+    users: Any,
+    tokens: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    groups: Any,
+    spaces: Any,
+) -> Any:
     """Create token according to given config.
 
     Config format given in yaml is as follows:
@@ -78,8 +86,16 @@ translation_dict = {
 
 
 def _create_token_with_config(
-    user, config, users, hosts, tmp_memory, tokens, groups, spaces, zone_name
-):
+    user: Any,
+    config: Any,
+    users: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    tokens: Any,
+    groups: Any,
+    spaces: Any,
+    zone_name: Any,
+) -> Any:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
     token_type = data["type"]
@@ -121,7 +137,14 @@ def _create_token_with_config(
     tokens[name] = {"token_id": token_id, "token": token}
 
 
-def parse_token_caveats(caveats, token_config, groups, users, spaces, tmp_memory):
+def parse_token_caveats(
+    caveats: Any,
+    token_config: Any,
+    groups: Any,
+    users: Any,
+    spaces: Any,
+    tmp_memory: Any,
+) -> Any:
     token_config["caveats"] = []
     expiration = caveats.get("expiration", False)
     region = caveats.get("region", False)
@@ -159,7 +182,7 @@ def parse_token_caveats(caveats, token_config, groups, users, spaces, tmp_memory
         set_object_id_caveat(token_config, object_id)
 
 
-def set_expiration_caveat(token_config, expiration, tmp_memory):
+def set_expiration_caveat(token_config: Any, expiration: Any, tmp_memory: Any) -> Any:
     time_to = int(time.time()) + expiration["after"] * 60
     token_config["caveats"].append({"type": "time", "validUntil": time_to})
     tmp_memory["expire_time"] = time.strftime(
@@ -167,7 +190,7 @@ def set_expiration_caveat(token_config, expiration, tmp_memory):
     )
 
 
-def set_geo_caveat(token_config, caveat, geo_type):
+def set_geo_caveat(token_config: Any, caveat: Any, geo_type: Any) -> Any:
     regions = caveat.get(f"{geo_type} codes", [])
     if caveat.get("allow", False):
         token_config["caveats"].append(
@@ -179,18 +202,18 @@ def set_geo_caveat(token_config, caveat, geo_type):
         )
 
 
-def set_address_caveat(token_config, caveat, address_type):
+def set_address_caveat(token_config: Any, caveat: Any, address_type: Any) -> Any:
     token_config["caveats"].append({"type": address_type.lower(), "whitelist": caveat})
 
 
-def set_consumer_caveat(token_config, caveat, groups, users):
+def set_consumer_caveat(token_config: Any, caveat: Any, groups: Any, users: Any) -> Any:
     consumer_list = []
     for consumer in caveat:
         consumer_list.append(set_consumer_in_consumer_caveat(consumer, groups, users))
     token_config["caveats"].append({"type": "consumer", "whitelist": consumer_list})
 
 
-def set_consumer_in_consumer_caveat(consumer, groups, users):
+def set_consumer_in_consumer_caveat(consumer: Any, groups: Any, users: Any) -> Any:
     cons_type = consumer.get("type", "user")
     cons_name = consumer.get("consumer name")
     if cons_type == "user":
@@ -202,7 +225,7 @@ def set_consumer_in_consumer_caveat(consumer, groups, users):
     return value
 
 
-def set_service_caveat(token_config, given_service):
+def set_service_caveat(token_config: Any, given_service: Any) -> Any:
     services_list = []
     service = given_service.get("Service", False)
     op_service = given_service.get("Service Onepanel", False)
@@ -226,22 +249,22 @@ def set_service_caveat(token_config, given_service):
     token_config["caveats"].append({"type": "service", "whitelist": services_list})
 
 
-def set_interface_caveat(token_config, service):
+def set_interface_caveat(token_config: Any, service: Any) -> Any:
     token_config["caveats"].append({"type": "interface", "interface": service.lower()})
 
 
-def set_readonly_caveat(token_config):
+def set_readonly_caveat(token_config: Any) -> Any:
     token_config["caveats"].append({"type": "data.readonly"})
 
 
-def set_path_caveat(token_config, paths, spaces):
+def set_path_caveat(token_config: Any, paths: Any, spaces: Any) -> Any:
     whitelist = []
     for path in paths:
         whitelist.append(decode_path(path, spaces))
     token_config["caveats"].append({"type": "data.path", "whitelist": whitelist})
 
 
-def decode_path(path, spaces):
+def decode_path(path: Any, spaces: Any) -> Any:
     space = spaces[path["space"]]
     path = path["path"]
     path = "" if path == "/" else path
@@ -250,12 +273,14 @@ def decode_path(path, spaces):
     return encoded.decode("ascii")
 
 
-def set_object_id_caveat(token_config, object_ids):
+def set_object_id_caveat(token_config: Any, object_ids: Any) -> Any:
     whitelist = list(object_ids)
     token_config["caveats"].append({"type": "data.objectid", "whitelist": whitelist})
 
 
-def revoke_token_rest(user, users, hosts, zone_name, tokens, token_name):
+def revoke_token_rest(
+    user: Any, users: Any, hosts: Any, zone_name: Any, tokens: Any, token_name: Any
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     token_api = TokenApi(user_client)
 
@@ -269,8 +294,15 @@ def revoke_token_rest(user, users, hosts, zone_name, tokens, token_name):
 
 
 def assert_token_with_config_rest(
-    user, config, users, hosts, tmp_memory, groups, spaces, zone_name="onezone"
-):
+    user: Any,
+    config: Any,
+    users: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    groups: Any,
+    spaces: Any,
+    zone_name: Any = "onezone",
+) -> Any:
     data = yaml.load(config, yaml.Loader)
 
     name = data["name"]
@@ -292,13 +324,13 @@ def assert_token_with_config_rest(
         assert_token_privileges(privileges, response)
 
 
-def assert_token_type(token_type, token):
+def assert_token_type(token_type: Any, token: Any) -> Any:
     assert (
         getattr(token.type, f"{token_type}_token") is not None
     ), f"token is not {token_type}"
 
 
-def assert_invite_type(invite_type, token):
+def assert_invite_type(invite_type: Any, token: Any) -> Any:
     actual = token.type.invite_token.invite_type
     expected = translation_dict[invite_type]["type"]
     assert (
@@ -306,13 +338,15 @@ def assert_invite_type(invite_type, token):
     ), f"Invite token invite type {actual} is not as expected {expected}"
 
 
-def get_caveat(caveat_name, caveats):
+def get_caveat(caveat_name: Any, caveats: Any) -> Any:
     caveat = [cav for cav in caveats if cav["type"] == caveat_name][0]
     assert len(caveat), f"Caveat {caveat_name} not in token configuration"
     return caveat
 
 
-def assert_token_caveats(caveats, token, groups, users, spaces, tmp_memory):
+def assert_token_caveats(
+    caveats: Any, token: Any, groups: Any, users: Any, spaces: Any, tmp_memory: Any
+) -> Any:
     expiration = caveats.get("expiration", False)
     region = caveats.get("region", False)
     country = caveats.get("country", False)
@@ -353,7 +387,9 @@ def assert_token_caveats(caveats, token, groups, users, spaces, tmp_memory):
         assert_object_id_caveat(get_caveat("data.objectid", token.caveats), object_id)
 
 
-def assert_expiration_caveat(token_caveat, expiration, tmp_memory):
+def assert_expiration_caveat(
+    token_caveat: Any, expiration: Any, tmp_memory: Any
+) -> Any:
     if expiration["set"]:
         exp_time = tmp_memory["expire_time"]
         if "/" in exp_time:
@@ -364,7 +400,7 @@ def assert_expiration_caveat(token_caveat, expiration, tmp_memory):
         ), f"Wrong expiration time caveat: exp: {exp_time}, given: {token_caveat}"
 
 
-def assert_geo_caveat(token_caveat, expected_caveat, geo_type):
+def assert_geo_caveat(token_caveat: Any, expected_caveat: Any, geo_type: Any) -> Any:
     regions = expected_caveat.get(f"{geo_type} codes", [])
     if expected_caveat.get("allow", False):
         assert (
@@ -382,7 +418,9 @@ def assert_geo_caveat(token_caveat, expected_caveat, geo_type):
         assert region in token_list, f"{geo_type} {region} not in token caveat"
 
 
-def assert_address_caveat(token_caveat, expected_caveat, address_type):
+def assert_address_caveat(
+    token_caveat: Any, expected_caveat: Any, address_type: Any
+) -> Any:
     assert len(token_caveat["whitelist"]) == len(expected_caveat), (
         f"Expected {address_type} caveat list {expected_caveat} is "
         "not as long as actual token_caveat whitelist "
@@ -394,7 +432,9 @@ def assert_address_caveat(token_caveat, expected_caveat, address_type):
         ), f"{address}  {address_type} address not in token caveat"
 
 
-def assert_consumer_caveat(token_caveat, expected_caveat, groups, users):
+def assert_consumer_caveat(
+    token_caveat: Any, expected_caveat: Any, groups: Any, users: Any
+) -> Any:
     token_list = token_caveat["whitelist"]
     assert len(token_list) == len(expected_caveat), (
         f"Expected consumer caveat list {expected_caveat} is "
@@ -405,12 +445,14 @@ def assert_consumer_caveat(token_caveat, expected_caveat, groups, users):
         assert_consumer_in_consumer_caveat(consumer, token_list, groups, users)
 
 
-def assert_consumer_in_consumer_caveat(consumer, token_list, groups, users):
+def assert_consumer_in_consumer_caveat(
+    consumer: Any, token_list: Any, groups: Any, users: Any
+) -> Any:
     value = set_consumer_in_consumer_caveat(consumer, groups, users)
     assert value in token_list, f"{consumer} not in consumer token caveat"
 
 
-def assert_service_caveat(token_caveat, expected_caveat):
+def assert_service_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
     services_list = []
     token_list = token_caveat["whitelist"]
     services = [service for service in expected_caveat if "Onepanel" not in service]
@@ -438,13 +480,13 @@ def assert_service_caveat(token_caveat, expected_caveat):
         assert service in token_list, f"Expected service {service} not in {token_list}"
 
 
-def assert_interface_caveat(token_caveat, expected_caveat):
+def assert_interface_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
     assert (
         token_caveat["interface"] == expected_caveat.lower()
     ), f"Interface {expected_caveat} not set in token caveat"
 
 
-def assert_path_caveat(token_caveat, expected_caveat, spaces):
+def assert_path_caveat(token_caveat: Any, expected_caveat: Any, spaces: Any) -> Any:
     token_list = token_caveat["whitelist"]
     whitelist = []
     for path in expected_caveat:
@@ -458,7 +500,7 @@ def assert_path_caveat(token_caveat, expected_caveat, spaces):
     ), f"Expected {whitelist} and actual {token_list} paths lists have different length"
 
 
-def assert_object_id_caveat(token_caveat, expected_caveat):
+def assert_object_id_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
     token_list = token_caveat["whitelist"]
     assert len(token_list) == len(expected_caveat), (
         f"Expected objectID caveat list {expected_caveat} is "
@@ -481,7 +523,7 @@ privileges_translation = {
 }
 
 
-def assert_token_privileges(privileges, response):
+def assert_token_privileges(privileges: Any, response: Any) -> Any:
     actual_privs = response.metadata.privileges
     expected_privs = []
     for priv_group, priv_group_items in privileges.items():

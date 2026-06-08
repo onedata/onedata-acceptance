@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 # pylint: disable=cell-var-from-loop, deprecated-method
 
+from typing import Any
+
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, then
 from tests.utils.utils import assert_
@@ -17,7 +19,15 @@ from tests.utils.utils import assert_
         "using (?P<tokens>.*) by (?P<user_names>.*)"
     )
 )
-def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_desc):
+def multi_mount(
+    user_names: Any,
+    client_ids: Any,
+    client_hosts: Any,
+    tokens: Any,
+    hosts: Any,
+    users: Any,
+    env_desc: Any,
+) -> Any:
     params = zip(
         list_parser(user_names),
         list_parser(client_ids),
@@ -35,7 +45,7 @@ def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_
         r"(?P<spaces>.*) are mounted for (?P<user_name>\w+) on (?P<client_nodes>.*)"
     )
 )
-def check_spaces(spaces, user_name, client_nodes, users):
+def check_spaces(spaces: Any, user_name: Any, client_nodes: Any, users: Any) -> Any:
     spaces = list_parser(spaces)
     user_name = str(user_name)
     client_nodes = list_parser(client_nodes)
@@ -45,7 +55,7 @@ def check_spaces(spaces, user_name, client_nodes, users):
         client = user.clients.get(client_node)
         spaces_in_client = client.list_spaces()
 
-        def condition():
+        def condition() -> Any:
             for space in spaces:
                 assert space in spaces_in_client, (
                     f"Space {spaces} not found in spaces list"

@@ -2,6 +2,8 @@
 columns menu popup.
 """
 
+from typing import Any
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -26,15 +28,15 @@ class ColumnOption(PageObject):
     modify_column_icon = Button(".modify-column .oneicon-browser-rename")
     remove_column_icon = Button(".remove-column .oneicon-close")
 
-    def select(self):
+    def select(self) -> Any:
         if "unselected" in self.checkbox.get_attribute("class"):
             self.checkbox.click()
 
-    def unselect(self):
+    def unselect(self) -> Any:
         if "checked" in self.checkbox.get_attribute("class"):
             self.checkbox.click()
 
-    def hover_to_button_and_click(self, button_type: str, driver):
+    def hover_to_button_and_click(self, button_type: str, driver: Any) -> Any:
         btn = getattr(self, f"{button_type}_column_icon")
         ActionChains(driver).move_to_element(btn.web_elem).click(btn.web_elem).perform()
 
@@ -44,7 +46,7 @@ class XattrColumnEditor(PageObject):
         ".autocomplete-dropdown-field-trigger .ember-power-select-search-input"
     )
 
-    def clear_actual_key(self):
+    def clear_actual_key(self) -> Any:
         self.enter_an_xattr_key.send_keys(Keys.CONTROL, "a")
         self.enter_an_xattr_key.send_keys(Keys.BACKSPACE)
 
@@ -69,7 +71,7 @@ class JsonColumnEditor(PageObject):
     create = NamedButton(".edit-column-btn", text="Create")
     apply_changes = NamedButton(".edit-column-btn", text="Apply")
 
-    def clear_actual_key(self, driver):
+    def clear_actual_key(self, driver: Any) -> Any:
         ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(
             Keys.CONTROL
         ).key_down(Keys.BACKSPACE).perform()

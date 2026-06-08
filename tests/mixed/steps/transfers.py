@@ -4,6 +4,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
     replicate_files_to_provider,
@@ -33,16 +35,16 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def replicate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: Any,
+    user: Any,
+    path: Any,
+    space: Any,
+    provider_to: Any,
+    users: Any,
+    hosts: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     transfer_type = "replication"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -72,17 +74,17 @@ def replicate_file_to_provider_op(
     )
 )
 def migrate_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_to,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: Any,
+    user: Any,
+    path: Any,
+    space: Any,
+    provider_to: Any,
+    provider_from: Any,
+    users: Any,
+    hosts: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     transfer_type = "migration"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -120,16 +122,16 @@ def migrate_file_to_provider_op(
     )
 )
 def evict_file_to_provider_op(
-    client,
-    user,
-    path,
-    space,
-    provider_from,
-    users,
-    hosts,
-    selenium,
-    tmp_memory,
-):
+    client: Any,
+    user: Any,
+    path: Any,
+    space: Any,
+    provider_from: Any,
+    users: Any,
+    hosts: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     transfer_type = "eviction"
     if client.lower() == "rest":
         path = space + "/" + path
@@ -156,17 +158,17 @@ def evict_file_to_provider_op(
     )
 )
 def assert_details_of_recent_transfer_op(
-    client,
-    user,
-    users,
-    host,
-    hosts,
-    spaces,
-    item_type,
-    space,
-    config,
-    selenium,
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    spaces: Any,
+    item_type: Any,
+    space: Any,
+    config: Any,
+    selenium: Any,
+) -> Any:
     if client.lower() == "rest":
         assert_recent_transfer_details_rest(
             user, users, host, hosts, space, spaces, config
@@ -185,8 +187,15 @@ def assert_details_of_recent_transfer_op(
     )
 )
 def wait_for_recent_transfer_to_finish_op(
-    client, user, users, host, hosts, space, spaces, selenium
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    host: Any,
+    hosts: Any,
+    space: Any,
+    spaces: Any,
+    selenium: Any,
+) -> Any:
     if client.lower() == "rest":
         assert_recent_transfer_finished_rest(user, users, host, hosts, spaces, space)
     elif client.lower() == "web gui":
@@ -203,16 +212,16 @@ def wait_for_recent_transfer_to_finish_op(
     )
 )
 def upload_file_to_provider_browser(
-    selenium,
-    client,
-    user,
-    path,
-    provider,
-    space,
-    tmp_memory,
-    hosts,
-    tmpdir,
-):
+    selenium: Any,
+    client: Any,
+    user: Any,
+    path: Any,
+    provider: Any,
+    space: Any,
+    tmp_memory: Any,
+    hosts: Any,
+    tmpdir: Any,
+) -> Any:
     if client.lower() == "web gui":
         wt_visit_file_browser(selenium, provider, space, user, tmp_memory, hosts)
         upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir)

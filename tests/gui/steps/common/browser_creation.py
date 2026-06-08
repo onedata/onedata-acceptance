@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import time
 from itertools import cycle
+from typing import Any
 
 from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
@@ -23,18 +24,18 @@ from tests.utils.bdd_utils import parsers
 @given(parsers.parse("user opened {browser_id_list} window"))
 @given(parsers.parse("users opened {browser_id_list} browsers' windows"))
 def create_instances_of_webdriver(
-    selenium,
-    driver,
-    browser_id_list,
-    tmpdir,
-    tmp_memory,
-    driver_type,
-    xvfb,
-    screen_width,
-    screen_height,
-    displays,
-    capabilities,
-):
+    selenium: Any,
+    driver: Any,
+    browser_id_list: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    driver_type: Any,
+    xvfb: Any,
+    screen_width: Any,
+    screen_height: Any,
+    displays: Any,
+    capabilities: Any,
+) -> Any:
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
         if browser_id in selenium:
@@ -82,7 +83,7 @@ def create_instances_of_webdriver(
 
 # TODO: VFS-2205 configure different window sizes for responsiveness
 #  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
-def _config_driver(driver, window_width, window_height):
+def _config_driver(driver: Any, window_width: Any, window_height: Any) -> Any:
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
 
     # perform attempts to change window size
@@ -99,7 +100,7 @@ def _config_driver(driver, window_width, window_height):
     driver.set_page_load_timeout(60)
 
 
-def assert_driver_working_properly(driver):
+def assert_driver_working_properly(driver: Any) -> Any:
     try:
         _ = driver.get_screenshot_as_base64()
     except (WebDriverException, HTTPError) as e:

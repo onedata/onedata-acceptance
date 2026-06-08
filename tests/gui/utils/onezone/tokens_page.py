@@ -4,6 +4,8 @@ __author__ = "Michal Stanisz, Natalia Organek"
 __copyright__ = "Copyright (C) 2018-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from selenium.webdriver.common.by import By
 
 from tests.gui.utils.common.common import Toggle
@@ -29,13 +31,13 @@ class TokenRow(PageObject):
     menu_button = Button(".token-menu-trigger")
     icon = WebElement(".one-icon")
 
-    def is_type_of(self, exp_type):
+    def is_type_of(self, exp_type: Any) -> Any:
         return exp_type in self.icon.get_attribute("class")
 
-    def is_revoked(self):
+    def is_revoked(self) -> Any:
         return "inactive" in self.web_elem.get_attribute("class")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Tokens row"
 
 
@@ -70,13 +72,13 @@ class TokensSidebar(PageObject):
     confirm = Button(".save-icon")
     discard = Button(".cancel-icon")
 
-    def click_create_new_token(self, driver):
+    def click_create_new_token(self, driver: Any) -> Any:
         driver.execute_script(
             "arguments[0].click();",
             self.web_elem.find_element(By.CSS_SELECTOR, ".create-token-link-trigger"),
         )
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Tokens sidebar"
 
 
@@ -125,32 +127,32 @@ class CreateNewTokenPage(PageObject):
         ".data-access-caveat-warning-details .documentation-link"
     )
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Create new token page"
 
-    def expand_invite_type_dropdown(self):
+    def expand_invite_type_dropdown(self) -> Any:
         self.invite_type.click()
 
-    def expand_invite_target_dropdown(self):
+    def expand_invite_target_dropdown(self) -> Any:
         self.invite_target.click()
 
-    def expand_caveats(self):
+    def expand_caveats(self) -> Any:
         if "show" in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
 
-    def caveats_expanded(self):
+    def caveats_expanded(self) -> Any:
         return "hide" in self.show_inactive_caveats.web_elem.text.lower()
 
-    def hide_caveats(self):
+    def hide_caveats(self) -> Any:
         if "hide" in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(self) -> Any:
         self.driver.execute_script(
             "arguments[0].scrollTo(arguments[1]);", self.web_elem, self.footer
         )
 
-    def get_caveat(self, name):
+    def get_caveat(self, name: Any) -> Any:
         self.scroll_to_bottom()
         return getattr(self, f"{name}_caveat")
 
@@ -180,11 +182,11 @@ class TokensPage(GenericPage):
     onezone_rest_access_template = WebElement(".template-onezoneRest")
     alert = Label(".alert")
 
-    def expand_dropdown(self):
+    def expand_dropdown(self) -> Any:
         self._toggle.click()
 
-    def is_token_revoked(self):
+    def is_token_revoked(self) -> Any:
         return self.revoke_toggle.is_checked()
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Tokens page"

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 import yaml
 
@@ -35,14 +36,14 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    lane_name,
-    lambda_name,
-    ordinal,
-    which,
-):
+    browser_id: Any,
+    config: Any,
+    selenium: Any,
+    lane_name: Any,
+    lambda_name: Any,
+    ordinal: Any,
+    which: Any,
+) -> Any:
     """Create task using lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -84,14 +85,14 @@ def create_task_using_previously_created_lambda(
 
 
 def _create_task_using_previously_created_lambda(
-    browser_id,
-    config,
-    selenium,
-    lane_name,
-    lambda_name,
-    ordinal,
-    which,
-):
+    browser_id: Any,
+    config: Any,
+    selenium: Any,
+    lane_name: Any,
+    lambda_name: Any,
+    ordinal: Any,
+    which: Any,
+) -> Any:
     arg_type = "argument"
     res_type = "result"
     conf_param_option = "configuration parameters"
@@ -170,7 +171,7 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(selenium, browser_id, lane, task):
+def remove_task_from_lane(selenium: Any, browser_id: Any, lane: Any, task: Any) -> Any:
     modal = "Remove task"
     option = "Remove"
 
@@ -189,7 +190,9 @@ def remove_task_from_lane(selenium, browser_id, lane, task):
         r"(?P<option>adding|changing) following:\n(?P<config>(.|\s)*)"
     )
 )
-def modify_task_results(selenium, browser_id, lane, task, config, option):
+def modify_task_results(
+    selenium: Any, browser_id: Any, lane: Any, task: Any, config: Any, option: Any
+) -> Any:
     conf_param_option = "configuration parameters"
     data = yaml.load(config, yaml.Loader)
     results_conf = data.get("results", False)

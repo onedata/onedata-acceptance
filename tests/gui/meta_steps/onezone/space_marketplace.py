@@ -6,6 +6,8 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 
 from tests.gui.steps.onezone.marketplace import (
@@ -23,7 +25,7 @@ from tests.utils.bdd_utils import parsers, wt
 @wt(
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
-def configure_space_manually(browser_id, config, selenium):
+def configure_space_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -58,7 +60,9 @@ def configure_space_manually(browser_id, config, selenium):
         "saving as follows:\n{config}"
     )
 )
-def configure_space_manually_without_saving(browser_id, config, selenium):
+def configure_space_manually_without_saving(
+    browser_id: Any, config: Any, selenium: Any
+) -> Any:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as in the previous function:
@@ -66,7 +70,9 @@ def configure_space_manually_without_saving(browser_id, config, selenium):
     _configure_space_manually(browser_id, config, selenium, with_save=False)
 
 
-def _configure_space_manually(browser_id, config, selenium, with_save=True):
+def _configure_space_manually(
+    browser_id: Any, config: Any, selenium: Any, with_save: Any = True
+) -> Any:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -122,7 +128,9 @@ def _configure_space_manually(browser_id, config, selenium, with_save=True):
         "subpage with following parameters:\n{config}"
     )
 )
-def assert_space_in_marketplace_with_config(browser_id, selenium, config):
+def assert_space_in_marketplace_with_config(
+    browser_id: Any, selenium: Any, config: Any
+) -> Any:
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:
@@ -152,7 +160,9 @@ def assert_space_in_marketplace_with_config(browser_id, selenium, config):
     _assert_space_in_marketplace_with_config(browser_id, config, selenium)
 
 
-def _assert_space_in_marketplace_with_config(browser_id, config, selenium):
+def _assert_space_in_marketplace_with_config(
+    browser_id: Any, config: Any, selenium: Any
+) -> Any:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"

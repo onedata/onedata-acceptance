@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from datetime import datetime
+from typing import Any
 
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait as Wait
@@ -31,7 +32,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_processing_chart(browser_id, selenium):
+def assert_processing_chart(browser_id: Any, selenium: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
     time.sleep(1)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -46,8 +47,8 @@ def assert_processing_chart(browser_id, selenium):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
-    browser_id, selenium
-):
+    browser_id: Any, selenium: Any
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
@@ -64,7 +65,9 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
         " with processing stats is greater than zero"
     )
 )
-def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium):
+def assert_value_of_last_column_is_bigger_than_zero(
+    browser_id: Any, selenium: Any
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
@@ -82,7 +85,9 @@ def assert_value_of_last_column_is_bigger_than_zero(browser_id, selenium):
         ' time resolution list in modal "{modal}"'
     )
 )
-def choose_time_resolution(selenium, browser_id, resolution, modal):
+def choose_time_resolution(
+    selenium: Any, browser_id: Any, resolution: Any, modal: Any
+) -> Any:
     driver = selenium[browser_id]
     for option in Popups(driver).time_resolutions_list:
         if option.text == resolution:
@@ -100,7 +105,9 @@ def choose_time_resolution(selenium, browser_id, resolution, modal):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_data_message_processing_chart(browser_id, selenium, message):
+def assert_no_data_message_processing_chart(
+    browser_id: Any, selenium: Any, message: Any
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
     err_msg = (
@@ -120,8 +127,8 @@ def assert_no_data_message_processing_chart(browser_id, selenium, message):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id, selenium, option, number, compare_option
-):
+    browser_id: Any, selenium: Any, option: Any, number: Any, compare_option: Any
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_max_value()
@@ -145,13 +152,13 @@ def assert_number_of_proceeded_files(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_task_audit_log(task):
+def click_on_task_audit_log(task: Any) -> Any:
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
     task.audit_log()
 
 
-def get_modal_and_logs_for_task(path, task, driver):
+def get_modal_and_logs_for_task(path: Any, task: Any, driver: Any) -> Any:
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
@@ -161,7 +168,7 @@ def get_modal_and_logs_for_task(path, task, driver):
     return modal, logs
 
 
-def close_modal_and_task(modal, task):
+def close_modal_and_task(modal: Any, task: Any) -> Any:
     modal.x()
     task.drag_handle.click()
     # wait for task to close
@@ -170,8 +177,8 @@ def close_modal_and_task(modal, task):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_audit_log_json_and_write_to_file(
-    log, modal, clipboard, displays, browser_id, path
-):
+    log: Any, modal: Any, clipboard: Any, displays: Any, browser_id: Any, path: Any
+) -> Any:
     log.click()
     modal.copy_json()
     audit_log = clipboard.paste(display=displays[browser_id])
@@ -180,7 +187,7 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium, browser_id, store_name):
+def open_store_details_modal(selenium: Any, browser_id: Any, store_name: Any) -> Any:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
@@ -189,7 +196,9 @@ def open_store_details_modal(selenium, browser_id, store_name):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_datasets_in_store_details_modal(item_list, modal, store_name):
+def compare_datasets_in_store_details_modal(
+    item_list: Any, modal: Any, store_name: Any
+) -> Any:
     item_list = parse_seq(item_list)
     actual_items = [elem.name for elem in modal.store_content_list]
     for item in item_list:
@@ -198,7 +207,7 @@ def compare_datasets_in_store_details_modal(item_list, modal, store_name):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_booleans_in_store_details_modal(item_list, modal):
+def compare_booleans_in_store_details_modal(item_list: Any, modal: Any) -> Any:
     actual = [elem.value for elem in modal.store_content_list]
     err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
     assert actual.count("true") == item_list.count(True) and actual.count(
@@ -207,7 +216,9 @@ def compare_booleans_in_store_details_modal(item_list, modal):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_string_in_store_details_modal(item, modal, variable_type, store_name):
+def compare_string_in_store_details_modal(
+    item: Any, modal: Any, variable_type: Any, store_name: Any
+) -> Any:
     actual = modal.raw_view.replace('"', "")
     err_msg = (
         f"expected {variable_type} {item} does not contain"
@@ -217,7 +228,7 @@ def compare_string_in_store_details_modal(item, modal, variable_type, store_name
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_array_in_store_details_modal(modal, item_list):
+def compare_array_in_store_details_modal(modal: Any, item_list: Any) -> Any:
     item_list = json.loads(item_list)
     expected_num = str(len(item_list))
     actual_num = modal.array_view.header.replace(")", "").split(" (")[1]
@@ -237,7 +248,7 @@ def compare_array_in_store_details_modal(modal, item_list):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def open_raw_view_for_elem(store_content_list, index, modal):
+def open_raw_view_for_elem(store_content_list: Any, index: Any, modal: Any) -> Any:
     for _ in range(10):
         store_content_list[index].click()
         try:
@@ -253,7 +264,14 @@ def open_raw_view_for_elem(store_content_list, index, modal):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_store_content(modal, store_type, index, clipboard, displays, browser_id):
+def get_store_content(
+    modal: Any,
+    store_type: Any,
+    index: Any,
+    clipboard: Any,
+    displays: Any,
+    browser_id: Any,
+) -> Any:
     store_content_type = "store_content_" + store_type
     store_content_list = getattr(modal, store_content_type)
     try:
@@ -273,13 +291,13 @@ def get_store_content(modal, store_type, index, clipboard, displays, browser_id)
     )
 )
 def open_url_from_store_content(
-    browser_id,
-    option,
-    store_name,
-    selenium,
-    clipboard,
-    displays,
-):
+    browser_id: Any,
+    option: Any,
+    store_name: Any,
+    selenium: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
 
     modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
@@ -297,8 +315,8 @@ def open_url_from_store_content(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_elements_in_store_details_modal(
-    selenium, browser_id, number, store_name
-):
+    selenium: Any, browser_id: Any, number: Any, store_name: Any
+) -> Any:
     driver = selenium[browser_id]
     scroll_to_bottom_of_the_table(driver)
     actual_number = get_last_item_number_in_table(driver)

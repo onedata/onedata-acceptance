@@ -8,7 +8,7 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import requests
 import urllib3
@@ -44,7 +44,14 @@ ONE_ENV_CONTAINER_NAME = "one-env"
 ENV_READY_TIMEOUT_SECONDS = 300
 
 
-def start_environment(scenario_path, request, hosts, patch_path, users, test_config):
+def start_environment(
+    scenario_path: Any,
+    request: Any,
+    hosts: Any,
+    patch_path: Any,
+    users: Any,
+    test_config: Any,
+) -> Any:
     attempts = 0
     local = request.config.getoption("--local")
     up_args = parse_up_args(request, test_config)
@@ -94,7 +101,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     return "ok"
 
 
-def maybe_setup_helm():
+def maybe_setup_helm() -> Any:
     is_helm_v2 = False
     try:
         helm_version_proc = sp.run(["helm", "version"], stdout=sp.PIPE, check=False)
@@ -110,7 +117,7 @@ def maybe_setup_helm():
         init_helm()
 
 
-def update_etc_hosts():
+def update_etc_hosts() -> Any:
     """
     The 'onenv hosts' command updates entries in /etc/hosts file present in
     one-env container. This file is a docker volume mounted from host machine.
@@ -134,7 +141,7 @@ def update_etc_hosts():
     sp.call(["sudo", "cp", tmp_hosts_path, etc_hosts_path])
 
 
-def configure_os(scenario_path: str, dep_status) -> None:
+def configure_os(scenario_path: str, dep_status: Any) -> None:
     """
     Function responsible for creating system users and groups in containers for
     Onezone / Oneprovider / Oneclient.
@@ -167,7 +174,7 @@ def configure_os(scenario_path: str, dep_status) -> None:
                 create_groups_in_pod(pod_name, os_config.get("groups"))
 
 
-def setup_hosts_cfg(hosts, request):
+def setup_hosts_cfg(hosts: Any, request: Any) -> Any:
     pods_cfg = get_pods_config()
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg["service-type"]
@@ -186,7 +193,7 @@ def setup_hosts_cfg(hosts, request):
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
-def setup_users(patch_cfg, users, zone_hostname):
+def setup_users(patch_cfg: Any, users: Any, zone_hostname: Any) -> Any:
     for user_cfg in patch_cfg.get("users"):
         user_name = user_cfg.get("name")
         password = user_cfg.get("password")
@@ -202,7 +209,7 @@ def setup_users(patch_cfg, users, zone_hostname):
                 new_user.keycloak_name = f"keycloak-{keycloak_suffix}"
 
 
-def add_luma_mappings(patch_cfg, users, hosts):
+def add_luma_mappings(patch_cfg: Any, users: Any, hosts: Any) -> Any:
     admin_user = users["admin"]
 
     spaces = get_all_spaces_details(admin_user, hosts)
@@ -216,11 +223,11 @@ def add_luma_mappings(patch_cfg, users, hosts):
     add_spaces_luma_mapping(admin_user, local_feed_luma_storages, spaces)
 
 
-def get_deployment_status():
+def get_deployment_status() -> Any:
     return yaml.load(run_onenv_command("status"), yaml.Loader)
 
 
-def check_deployment(deployment_status):
+def check_deployment(deployment_status: Any) -> Any:
     env_ready = deployment_status.get("ready")
 
     if not env_ready:
@@ -229,7 +236,7 @@ def check_deployment(deployment_status):
         )
 
 
-def parse_patch_args(request, patch_path):
+def parse_patch_args(request: Any, patch_path: Any) -> Any:
     patch_args = []
     local_charts_path = request.config.getoption("--local-charts-path")
 
@@ -240,7 +247,7 @@ def parse_patch_args(request, patch_path):
     return patch_args
 
 
-def parse_wait_args(request):
+def parse_wait_args(request: Any) -> Any:
     wait_args = []
 
     timeout = request.config.getoption("--timeout")
@@ -249,7 +256,9 @@ def parse_wait_args(request):
     return wait_args
 
 
-def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
+def parse_up_args(
+    request: Any, test_config: Any
+) -> Any:  # pylint: disable=too-many-branches
     up_args = []
 
     oz_image = request.config.getoption("--oz-image")
@@ -321,7 +330,7 @@ def parse_up_args(request, test_config):  # pylint: disable=too-many-branches
     return up_args
 
 
-def config_image_spec_to_image(service, version):
+def config_image_spec_to_image(service: Any, version: Any) -> Any:
     if version == "default":
         return resolve_image(service)
     return f"docker.onedata.org/{service}-dev:{version}"
@@ -384,7 +393,7 @@ def create_groups_in_pod(pod_name: str, groups: Dict[str, List[str]]) -> None:
                 run_kubectl_command("exec", command)
 
 
-def get_pods_config():
+def get_pods_config() -> Any:
     pods_json = get_pods_with_kubectl()["items"]
     pods = {}
     for pod in pods_json:
@@ -420,13 +429,15 @@ def get_pods_config():
     return pods
 
 
-def get_pods_with_kubectl():
+def get_pods_with_kubectl() -> Any:
     cmd = ["pods", "-o", "json"]
     output = run_kubectl_command("get", cmd, verbose=False)
     return json.loads(output)
 
 
-def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts):
+def parse_oz_op_cfg(
+    pod_name: Any, pod_cfg: Any, service_type: Any, add_test_domain: Any, hosts: Any
+) -> Any:
     alias = service_name_to_alias_mapping(pod_name)
     name, hostname, ip, container_id = (
         pod_cfg.get("name"),
@@ -448,7 +459,7 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts):
         add_etc_hosts_entries(ip, f"{hostname}.test")
 
 
-def parse_client_cfg(pod_name, pod_cfg, hosts):
+def parse_client_cfg(pod_name: Any, pod_cfg: Any, hosts: Any) -> Any:
     ip, container_id, provider_host = (
         pod_cfg.get("ip"),
         pod_cfg.get("container-id"),
@@ -464,7 +475,7 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
     }
 
 
-def parse_elasticsearch_cfg(pod_cfg, hosts):
+def parse_elasticsearch_cfg(pod_cfg: Any, hosts: Any) -> Any:
     ip, container_id, name, hostname = (
         pod_cfg.get("ip"),
         pod_cfg.get("container-id"),
@@ -479,7 +490,7 @@ def parse_elasticsearch_cfg(pod_cfg, hosts):
     }
 
 
-def add_etc_hosts_entries(service_ip, service_host):
+def add_etc_hosts_entries(service_ip: Any, service_host: Any) -> Any:
     sp.call(
         f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
         shell=True,
@@ -487,8 +498,12 @@ def add_etc_hosts_entries(service_ip, service_host):
 
 
 def run_kubectl_command(
-    command, args=None, fail_with_error=True, return_output=True, verbose=True
-):
+    command: Any,
+    args: Any = None,
+    fail_with_error: Any = True,
+    return_output: Any = True,
+    verbose: Any = True,
+) -> Any:
     cmd = ["kubectl", command]
     if args:
         cmd.extend(args)
@@ -500,11 +515,11 @@ def run_kubectl_command(
     )
 
 
-def clean_env():
+def clean_env() -> Any:
     run_onenv_command("clean", ["-a", "-s", "-d", "-v"])
 
 
-def verify_env_ready(admin_user, hosts):
+def verify_env_ready(admin_user: Any, hosts: Any) -> Any:
     zone_hostname = hosts["onezone"]["hostname"]
     ready = False
     start = time.time()
@@ -528,7 +543,7 @@ def verify_env_ready(admin_user, hosts):
             pass
 
 
-def get_providers_list(admin_user, zone_hostname):
+def get_providers_list(admin_user: Any, zone_hostname: Any) -> Any:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -538,7 +553,7 @@ def get_providers_list(admin_user, zone_hostname):
     return json.loads(response.content)["providers"]
 
 
-def is_provider_online(admin_user, zone_hostname, provider):
+def is_provider_online(admin_user: Any, zone_hostname: Any, provider: Any) -> Any:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -549,7 +564,7 @@ def is_provider_online(admin_user, zone_hostname, provider):
 
 
 @repeat_failed(timeout=60 * 4)
-def wait_for_pod_running_phase(pod_name):
+def wait_for_pod_running_phase(pod_name: Any) -> Any:
     out = run_kubectl_command(
         "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
     )
@@ -558,7 +573,7 @@ def wait_for_pod_running_phase(pod_name):
 
 
 @repeat_failed(timeout=60 * 4)
-def wait_for_pod_to_stop(pod_name):
+def wait_for_pod_to_stop(pod_name: Any) -> Any:
     try:
         _ = run_kubectl_command("get", ["pod", pod_name], verbose=False)
         raise AssertionError(f"pod: {pod_name} is still visible")

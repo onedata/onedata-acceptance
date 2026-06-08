@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
+from typing import Any
 
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import run_kubectl_command, verify_env_ready
@@ -13,7 +14,7 @@ from tests.utils.onenv_utils import run_onenv_command, service_name_to_alias_map
 
 
 @wt(parsers.re(r"(?P<user>\w+) restarts oneprovider (?P<name>.*)"))
-def restart_provider(name, users, hosts):
+def restart_provider(name: Any, users: Any, hosts: Any) -> Any:
     run_onenv_command("exec", [name, "--", "op_worker", "stop"])
     verify_env_ready(users["admin"], hosts)
 
@@ -26,7 +27,7 @@ def restart_provider(name, users, hosts):
         "(?P<stop_time>.*) seconds"
     )
 )
-def restart_network(name, stop_time, hosts):
+def restart_network(name: Any, stop_time: Any, hosts: Any) -> Any:
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
@@ -50,7 +51,7 @@ def restart_network(name, stop_time, hosts):
 
 
 @wt(parsers.re(r"(?P<user>\w+) stops network on oneprovider (?P<name>.*)"))
-def stop_network(name, hosts):
+def stop_network(name: Any, hosts: Any) -> Any:
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
@@ -71,7 +72,7 @@ def stop_network(name, hosts):
 
 
 @wt(parsers.re(r"(?P<user>\w+) starts network on oneprovider (?P<name>.*)"))
-def start_network(name, hosts):
+def start_network(name: Any, hosts: Any) -> Any:
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
@@ -95,8 +96,8 @@ def start_network(name, hosts):
 # only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re("user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))
 def mock_archive_verification(
-    name, hosts, run_unmock
-):  # pylint: disable=unused-argument
+    name: Any, hosts: Any, run_unmock: Any
+) -> Any:  # pylint: disable=unused-argument
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
@@ -121,7 +122,7 @@ def mock_archive_verification(
 # NOTE: because of underlying escript implementation this step currently works
 # only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re("Archive verification is unmocked on (?P<name>.*) Oneprovider"))
-def unmock_archive_verification(name, hosts):
+def unmock_archive_verification(name: Any, hosts: Any) -> Any:
     pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(

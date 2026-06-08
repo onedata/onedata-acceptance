@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND
@@ -23,7 +24,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id, button_name):
+def click_button_on_discovery_on_left_sidebar_menu(
+    selenium: Any, browser_id: Any, button_name: Any
+) -> Any:
     driver = selenium[browser_id]
     button = transform(button_name) + "_button"
     getattr(OZLoggedIn(driver)["discovery"], button).click()
@@ -31,7 +34,7 @@ def click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id, button_
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_discovery_page(selenium, browser_id):
+def click_create_button_in_discovery_page(selenium: Any, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].create_button()
 
@@ -44,7 +47,9 @@ def click_create_button_in_discovery_page(selenium, browser_id):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, list_type):
+def check_element_exists_on_sidebar_list(
+    selenium: Any, browser_id: Any, name: Any, option: Any, list_type: Any
+) -> Any:
     driver = selenium[browser_id]
     list_type = "discovery" if list_type == "harvesters" else list_type
     if option.startswith("appeared"):
@@ -66,7 +71,9 @@ def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, lis
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_harvester_menu(selenium, browser_id, option, name):
+def click_on_option_in_harvester_menu(
+    selenium: Any, browser_id: Any, option: Any, name: Any
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["discovery"]
     page.elements_list[name]()
     page.elements_list[name].menu_button()
@@ -77,7 +84,9 @@ def click_on_option_in_harvester_menu(selenium, browser_id, option, name):
     parsers.parse('user of {browser_id} types "{text}" to rename harvester input field')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_rename_input_field_in_discovery_page(selenium, browser_id, text):
+def type_text_to_rename_input_field_in_discovery_page(
+    selenium: Any, browser_id: Any, text: Any
+) -> Any:
     driver = selenium[browser_id]
     input_field = OZLoggedIn(driver)["discovery"].rename_input
     _enter_text(input_field, text)
@@ -85,7 +94,7 @@ def type_text_to_rename_input_field_in_discovery_page(selenium, browser_id, text
 
 @wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_harvester_rename_using_button(selenium, browser_id):
+def confirm_harvester_rename_using_button(selenium: Any, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].rename_button()
 
@@ -98,8 +107,8 @@ def confirm_harvester_rename_using_button(selenium, browser_id):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_harvester_on_left_sidebar_menu(
-    selenium, browser_id, harvester_name, option
-):
+    selenium: Any, browser_id: Any, harvester_name: Any, option: Any
+) -> Any:
     driver = selenium[browser_id]
     getattr(
         OZLoggedIn(driver)["discovery"].elements_list[harvester_name],
@@ -107,7 +116,9 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
     ).click()
 
 
-def click_option_in_discovery_page_menu(selenium, browser_id, button_name):
+def click_option_in_discovery_page_menu(
+    selenium: Any, browser_id: Any, button_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"]
     page.menu_button()
@@ -123,8 +134,8 @@ def click_option_in_discovery_page_menu(selenium, browser_id, button_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_on_discovery_page(
-    selenium, browser_id, alert_text
-):
+    selenium: Any, browser_id: Any, alert_text: Any
+) -> Any:
     driver = selenium[browser_id]
     forbidden_alert = OZLoggedIn(driver)["discovery"].forbidden_alert.text
 
@@ -138,7 +149,9 @@ def see_insufficient_permissions_alert_on_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_input_field_in_discovery_page(selenium, browser_id, text, input_name):
+def type_text_to_input_field_in_discovery_page(
+    selenium: Any, browser_id: Any, text: Any, input_name: Any
+) -> Any:
     driver = selenium[browser_id]
     input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
     _enter_text(input_field, text)
@@ -153,8 +166,8 @@ def type_text_to_input_field_in_discovery_page(selenium, browser_id, text, input
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_endpoint_to_input_field_in_discovery_page(
-    selenium, browser_id, input_name, hosts
-):
+    selenium: Any, browser_id: Any, input_name: Any, hosts: Any
+) -> Any:
     driver = selenium[browser_id]
     input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
     text = f"{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}"
@@ -167,7 +180,9 @@ def type_endpoint_to_input_field_in_discovery_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_harvester_spaces_page(selenium, browser_id, button_name):
+def click_button_in_harvester_spaces_page(
+    selenium: Any, browser_id: Any, button_name: Any
+) -> Any:
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
     getattr(OZLoggedIn(driver)["discovery"], button_name).click()
@@ -181,8 +196,8 @@ def click_button_in_harvester_spaces_page(selenium, browser_id, button_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(
-    selenium, browser_id, element_name
-):
+    selenium: Any, browser_id: Any, element_name: Any
+) -> Any:
     driver = selenium[browser_id]
     modal_name = "add_one_of_elements"
     for _ in range(10):
@@ -203,7 +218,9 @@ def choose_element_from_dropdown_in_add_element_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_space_has_appeared_in_discovery_page(selenium, browser_id, space_name):
+def assert_space_has_appeared_in_discovery_page(
+    selenium: Any, browser_id: Any, space_name: Any
+) -> Any:
     driver = selenium[browser_id]
     assert (
         space_name in OZLoggedIn(driver)["discovery"].spaces_list
@@ -211,8 +228,8 @@ def assert_space_has_appeared_in_discovery_page(selenium, browser_id, space_name
 
 
 def click_remove_space_option_in_menu_in_discover_spaces_page(
-    selenium, browser_id, space_name
-):
+    selenium: Any, browser_id: Any, space_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"]
     page.spaces_list[space_name].click_menu()

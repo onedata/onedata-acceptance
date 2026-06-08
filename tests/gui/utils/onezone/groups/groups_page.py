@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -40,7 +42,7 @@ class GroupDetailsPage(PageObject):
 class MenuItem(PageObject):
     name = id = Label("a.clickable")
 
-    def __call__(self):
+    def __call__(self) -> Any:
         self.click()
 
 
@@ -70,5 +72,5 @@ class GroupsPage(GenericPage):
 
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
-    def get_visible_groups_list(self):
+    def get_visible_groups_list(self) -> Any:
         return [el for el in self.groups_list_web_elems if el.text != ""]

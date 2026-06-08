@@ -4,6 +4,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 from oneprovider_client.rest import ApiException as OPException
 
@@ -13,14 +15,24 @@ from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.utils.common import login_to_provider
 
 
-def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, option):
+def create_dataset_in_op_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    item_name: Any,
+    option: Any,
+) -> Any:
     path = f"{space_name}/{item_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_id = _lookup_file_id(path, client)
     create_dataset_in_op_by_id_rest(user, users, hosts, host, file_id, option)
 
 
-def create_dataset_in_op_by_id_rest(user, users, hosts, host, file_id, option):
+def create_dataset_in_op_by_id_rest(
+    user: Any, users: Any, hosts: Any, host: Any, file_id: Any, option: Any
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     data = {"rootFileId": f"{file_id}"}
@@ -30,7 +42,9 @@ def create_dataset_in_op_by_id_rest(user, users, hosts, host, file_id, option):
     dataset_api.establish_dataset(data)
 
 
-def fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name):
+def fail_to_create_dataset_in_op_rest(
+    user: Any, users: Any, hosts: Any, host: Any, space_name: Any, item_name: Any
+) -> Any:
     try:
         option = ""
         create_dataset_in_op_rest(
@@ -45,8 +59,15 @@ def fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name, item
 
 
 def assert_top_level_dataset_in_space_in_op_rest(
-    user, users, hosts, host, space_name, item_name, spaces, option
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    item_name: Any,
+    spaces: Any,
+    option: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     space_id = f"{spaces[space_name]}"
@@ -65,7 +86,13 @@ def assert_top_level_dataset_in_space_in_op_rest(
                 raise AssertionError(f"Dataset for item {item_name} found")
 
 
-def get_dataset_id(item_name, spaces, space_name, dataset_api, state="attached"):
+def get_dataset_id(
+    item_name: Any,
+    spaces: Any,
+    space_name: Any,
+    dataset_api: Any,
+    state: Any = "attached",
+) -> Any:
     space_id = f"{spaces[space_name]}"
     datasets = dataset_api.list_space_top_datasets(space_id, state)
     if "/" in item_name:
@@ -81,7 +108,7 @@ def get_dataset_id(item_name, spaces, space_name, dataset_api, state="attached")
     raise AssertionError("dataset id not found")
 
 
-def get_dataset_child_id(path_list, dataset_id, dataset_api):
+def get_dataset_child_id(path_list: Any, dataset_id: Any, dataset_api: Any) -> Any:
     for item in path_list[1:]:
         dataset_children = dataset_api.list_dataset_children(dataset_id)
         for dataset in dataset_children.datasets:
@@ -92,7 +119,15 @@ def get_dataset_child_id(path_list, dataset_id, dataset_api):
     raise AssertionError("dataset child id not found")
 
 
-def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, spaces):
+def remove_dataset_in_op_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    item_name: Any,
+    spaces: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -100,8 +135,15 @@ def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, s
 
 
 def assert_write_protection_flag_for_dataset_op_rest(
-    user, users, hosts, host, space_name, item_name, spaces, option
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    item_name: Any,
+    spaces: Any,
+    option: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -112,8 +154,14 @@ def assert_write_protection_flag_for_dataset_op_rest(
 
 
 def check_dataset_structure_in_op_rest(
-    user, users, hosts, host, spaces, space_name, config
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    config: Any,
+) -> Any:
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
     subtree = yaml.load(config, yaml.Loader)
@@ -135,8 +183,8 @@ def check_dataset_structure_in_op_rest(
 
 
 def check_structure_of_dataset_children_in_op_rest(
-    dataset_api, dataset_id, excepted_datasets_subtree
-):
+    dataset_api: Any, dataset_id: Any, excepted_datasets_subtree: Any
+) -> Any:
     for child in excepted_datasets_subtree:
         try:
             [(excepted_child_name, excepted_child_subtree)] = child.items()
@@ -157,8 +205,14 @@ def check_structure_of_dataset_children_in_op_rest(
 
 
 def check_effective_protection_flags_for_file_in_op_rest(
-    user, users, hosts, host, item_name, option, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    option: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     if space_name not in item_name:
@@ -171,8 +225,15 @@ def check_effective_protection_flags_for_file_in_op_rest(
 
 
 def set_protection_flags_for_dataset_in_op_rest(
-    user, users, hosts, host, item_name, option, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    option: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     data = {"setProtectionFlags": get_flags(option)}
     dataset_api = DatasetApi(client)
@@ -181,8 +242,15 @@ def set_protection_flags_for_dataset_in_op_rest(
 
 
 def check_effective_protection_flags_for_dataset_in_op_rest(
-    user, users, hosts, host, item_name, option, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    option: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -192,7 +260,15 @@ def check_effective_protection_flags_for_dataset_in_op_rest(
         assert flag in dataset_info.effective_protection_flags, err_msg
 
 
-def detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space_name):
+def detach_dataset_in_op_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     data = {"state": "detached"}
     dataset_api = DatasetApi(client)
@@ -201,8 +277,14 @@ def detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces, space
 
 
 def assert_dataset_detached_in_op_rest(
-    user, users, hosts, host, item_name, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     space_id = f"{spaces[space_name]}"
@@ -218,8 +300,14 @@ def assert_dataset_detached_in_op_rest(
 
 
 def reattach_dataset_in_op_rest(
-    user, users, hosts, host, item_name, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    item_name: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     data = {"state": "attached"}
     dataset_api = DatasetApi(client)

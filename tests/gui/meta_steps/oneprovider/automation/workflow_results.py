@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
+from typing import Any
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -41,13 +42,13 @@ from tests.utils.utils import repeat_failed
 
 
 def get_store_details_json(
-    driver,
-    browser_id,
-    clipboard,
-    displays,
-    store_name,
-    store_type,
-):
+    driver: Any,
+    browser_id: Any,
+    clipboard: Any,
+    displays: Any,
+    store_name: Any,
+    store_type: Any,
+) -> Any:
     page = get_op_workflow_visualizer_page(driver)
     store_details = json.loads(
         open_modal_and_get_store_content(
@@ -65,15 +66,15 @@ def get_store_details_json(
 
 
 def open_modal_and_get_store_content(
-    browser_id,
-    driver,
-    page,
-    clipboard,
-    displays,
-    store_name,
-    store_type,
-    index=0,
-):
+    browser_id: Any,
+    driver: Any,
+    page: Any,
+    clipboard: Any,
+    displays: Any,
+    store_name: Any,
+    store_type: Any,
+    index: Any = 0,
+) -> Any:
     page.stores_list[store_name].click()
     modal = Modals(driver).store_details
     store_value = get_store_content(
@@ -91,14 +92,14 @@ def open_modal_and_get_store_content(
     )
 )
 def compare_store_contents(
-    selenium,
-    browser_id,
-    store1,
-    store2,
-    clipboard,
-    displays,
-    option,
-):
+    selenium: Any,
+    browser_id: Any,
+    store1: Any,
+    store2: Any,
+    clipboard: Any,
+    displays: Any,
+    option: Any,
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
 
@@ -141,13 +142,13 @@ def compare_store_contents(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
-    browser_id,
-    tmp_memory,
-    file_name,
-    tmpdir,
-    checksum_list,
-    selenium,
-):
+    browser_id: Any,
+    tmp_memory: Any,
+    file_name: Any,
+    tmpdir: Any,
+    checksum_list: Any,
+    selenium: Any,
+) -> Any:
 
     click_and_press_enter_on_item_in_browser(
         selenium, browser_id, file_name, tmp_memory, "file browser"
@@ -169,7 +170,7 @@ def count_checksums_for_file(
     tmp_memory["checksums_" + file_name] = results
 
 
-def checksums_counted_in_workflow(metadata_modal):
+def checksums_counted_in_workflow(metadata_modal: Any) -> Any:
     result = {}
     # wait for modal to load
     time.sleep(0.5)
@@ -186,8 +187,8 @@ def checksums_counted_in_workflow(metadata_modal):
     )
 )
 def assert_checksums_are_the_same(
-    browser_id, checksum_list, file_name, tmp_memory, selenium
-):
+    browser_id: Any, checksum_list: Any, file_name: Any, tmp_memory: Any, selenium: Any
+) -> Any:
 
     status_type = "Metadata"
     modal_name = "Details modal"
@@ -222,13 +223,13 @@ def assert_checksums_are_the_same(
     )
 )
 def count_checksums_and_compare_them(
-    browser_id,
-    tmp_memory,
-    file_name,
-    tmpdir,
-    checksum_list,
-    selenium,
-):
+    browser_id: Any,
+    tmp_memory: Any,
+    file_name: Any,
+    tmpdir: Any,
+    checksum_list: Any,
+    selenium: Any,
+) -> Any:
     count_checksums_for_file(
         browser_id,
         tmp_memory,
@@ -250,8 +251,14 @@ def count_checksums_and_compare_them(
     )
 )
 def assert_status_of_task_is_one_of_two(
-    selenium, browser_id, lane, task, ordinal, status1, status2
-):
+    selenium: Any,
+    browser_id: Any,
+    lane: Any,
+    task: Any,
+    ordinal: Any,
+    status1: Any,
+    status2: Any,
+) -> Any:
     click = "clicks on"
     close = "closes"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
@@ -273,7 +280,14 @@ def assert_status_of_task_is_one_of_two(
         '"{expected_status}"'
     )
 )
-def assert_status_of_task(selenium, browser_id, lane, task, ordinal, expected_status):
+def assert_status_of_task(
+    selenium: Any,
+    browser_id: Any,
+    lane: Any,
+    task: Any,
+    ordinal: Any,
+    expected_status: Any,
+) -> Any:
 
     click = "clicks on"
     close = "closes"
@@ -293,8 +307,8 @@ def assert_status_of_task(selenium, browser_id, lane, task, ordinal, expected_st
     )
 )
 def open_link_and_assert_processing_stats_chart(
-    selenium, browser_id, lane, task, ordinal, link
-):
+    selenium: Any, browser_id: Any, lane: Any, task: Any, ordinal: Any, link: Any
+) -> Any:
     click = "clicks on"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)

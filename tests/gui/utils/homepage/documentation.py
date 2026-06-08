@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from dataclasses import dataclass
+from typing import Any
 
 from tests.gui.utils.core.web_elements import (
     ButtonWithTextPageObject,
@@ -27,11 +28,11 @@ class EndpointInfo:
         return f"{self.method}\n{self.name}"
 
     @classmethod
-    def space(cls, method, name):
+    def space(cls, method: Any, name: Any) -> Any:
         return cls(method, name, "Space", "Onezone REST API")
 
     @classmethod
-    def file_details(cls, method, name, category):
+    def file_details(cls, method: Any, name: Any, category: Any) -> Any:
         return cls(method, name, category, "Oneprovider REST API")
 
 
@@ -41,17 +42,17 @@ class DocsSidebar(PageObject):
         ".sidebar-folder.expanded", cls=ButtonWithTextPageObject
     )
 
-    def get_active_rows_names(self):
+    def get_active_rows_names(self) -> Any:
         return [row.id for row in self.category_rows if row.is_active()]
 
-    def get_expanded_folders_names(self):
+    def get_expanded_folders_names(self) -> Any:
         return [folder.id.split("\n")[0] for folder in self.expanded_folders]
 
 
 class Chapters(PageObject):
     tabs = WebItemsSequence(".chapter-tab", cls=ButtonWithTextPageObject)
 
-    def get_active_chapter_tabs_names(self):
+    def get_active_chapter_tabs_names(self) -> Any:
         return [tab.id for tab in self.tabs if tab.is_active()]
 
 
@@ -60,7 +61,7 @@ class DocumentationPage(PageObject):
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Any) -> Any:
         if hasattr(self, "elements_list"):
             return self.elements_list[item]
         raise ValueError("there is not elements_list member in class instance")

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Any
 
 import yaml
 from onepanel_client import (
@@ -25,15 +26,15 @@ from tests.utils.utils import repeat_failed
 
 
 def revoke_space_support_in_op_panel_using_rest(
-    user,
-    users,
-    provider_host,
-    hosts,
-    space_name,
-    admin_credentials,
-    onepanel_credentials,
-    zone_host="onezone",
-):
+    user: Any,
+    users: Any,
+    provider_host: Any,
+    hosts: Any,
+    space_name: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    zone_host: Any = "onezone",
+) -> Any:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -49,8 +50,8 @@ def revoke_space_support_in_op_panel_using_rest(
 
 
 def support_space_in_op_panel_using_rest(
-    user, provider_host, hosts, users, tmp_memory, config
-):
+    user: Any, provider_host: Any, hosts: Any, users: Any, tmp_memory: Any, config: Any
+) -> Any:
     user_client = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -101,15 +102,15 @@ def support_space_in_op_panel_using_rest(
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(
-    user,
-    users,
-    provider_host,
-    hosts,
-    conf,
-    space_name,
-    onepanel_credentials,
-    admin_credentials,
-):
+    user: Any,
+    users: Any,
+    provider_host: Any,
+    hosts: Any,
+    conf: Any,
+    space_name: Any,
+    onepanel_credentials: Any,
+    admin_credentials: Any,
+) -> Any:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )
@@ -155,16 +156,16 @@ def configure_sync_parameters_for_space_in_op_panel_rest(
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_proper_space_configuration_in_op_panel_rest(
-    space_name,
-    user,
-    users,
-    provider_host,
-    hosts,
-    conf,
-    onepanel_credentials,
-    admin_credentials,
-    zone_host="onezone",
-):
+    space_name: Any,
+    user: Any,
+    users: Any,
+    provider_host: Any,
+    hosts: Any,
+    conf: Any,
+    onepanel_credentials: Any,
+    admin_credentials: Any,
+    zone_host: Any = "onezone",
+) -> Any:
     user_client_op = login_to_panel(
         user, users[user].password, hosts[provider_host]["hostname"]
     )

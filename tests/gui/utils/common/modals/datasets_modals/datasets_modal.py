@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -40,5 +42,5 @@ class DatasetsModal(Modal):
     metadata_protected_label = Label(".metadata-protected-tag")
     archives_tab = WebElement(".nav-item-archives")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Datasets modal"

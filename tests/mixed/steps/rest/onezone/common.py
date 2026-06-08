@@ -7,10 +7,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from onezone_client import GroupApi, ProviderApi, SpaceApi, UserApi
 
 
-def get_provider_with_name(client, provider_name):
+def get_provider_with_name(client: Any, provider_name: Any) -> Any:
     provider_api = ProviderApi(client)
     providers = provider_api.oz_providers_list().providers
 
@@ -21,7 +23,7 @@ def get_provider_with_name(client, provider_name):
     return None
 
 
-def get_user_space_with_name(client, space_name):
+def get_user_space_with_name(client: Any, space_name: Any) -> Any:
     user_api = UserApi(client)
     user_spaces = user_api.list_user_spaces().spaces
     for sid in user_spaces:
@@ -31,7 +33,7 @@ def get_user_space_with_name(client, space_name):
     return None
 
 
-def get_space_with_name(client, space_name):
+def get_space_with_name(client: Any, space_name: Any) -> Any:
     space_api = SpaceApi(client)
     spaces = space_api.list_spaces().spaces
     for sid in spaces:
@@ -41,7 +43,7 @@ def get_space_with_name(client, space_name):
     return None
 
 
-def get_group(group_name, user_client):
+def get_group(group_name: Any, user_client: Any) -> Any:
     group_api = GroupApi(user_client)
     groups = UserApi(user_client).list_user_groups().groups
     for group in groups:

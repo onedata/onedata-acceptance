@@ -4,6 +4,8 @@ __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
@@ -33,13 +35,13 @@ from tests.utils.utils import repeat_failed
 
 
 def _add_qos_requirement_in_modal(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    expression,
-    replicas_number,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    expression: Any,
+    replicas_number: Any,
+) -> Any:
     qos_option = "Quality of Service"
     panel = "qos"
     add_button = "Add Requirement"
@@ -74,13 +76,13 @@ def _add_qos_requirement_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    expression,
-    space_name,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    expression: Any,
+    space_name: Any,
+) -> Any:
     replicas_number = 1
 
     go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
@@ -103,14 +105,14 @@ def add_qos_requirement_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal_with_replicas(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    expression,
-    space_name,
-    replicas_number,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    expression: Any,
+    space_name: Any,
+    replicas_number: Any,
+) -> Any:
     go_to_filebrowser(selenium, browser_id, tmp_memory, space_name)
     _add_qos_requirement_in_modal(
         selenium,
@@ -130,13 +132,13 @@ def add_qos_requirement_in_modal_with_replicas(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_id_qos_requirement_in_modal(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     expression = "storageId=" + clipboard.paste(display=displays[browser_id])
     replicas_number = 1
 
@@ -158,13 +160,13 @@ def add_id_qos_requirement_in_modal(
     )
 )
 def add_no_id_qos_requirement_in_modal(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     expression = r"anyStorage \ storageId=" + clipboard.paste(
         display=displays[browser_id]
     )
@@ -181,13 +183,13 @@ def add_no_id_qos_requirement_in_modal(
 
 
 def assert_qos_file_status_in_op_gui(
-    user,
-    file_name,
-    space_name,
-    tmp_memory,
-    selenium,
-    option,
-):
+    user: Any,
+    file_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    option: Any,
+) -> Any:
     option_of_space = "Files"
     status_type = "QoS"
     click_on_option_of_space_on_left_sidebar_menu(
@@ -203,12 +205,12 @@ def assert_qos_file_status_in_op_gui(
 
 
 def delete_qos_requirement_in_op_gui(
-    selenium,
-    user,
-    space_name,
-    file_name,
-    tmp_memory,
-):
+    selenium: Any,
+    user: Any,
+    space_name: Any,
+    file_name: Any,
+    tmp_memory: Any,
+) -> Any:
     option1 = "Files"
     status_type = "QoS"
     button = "X"

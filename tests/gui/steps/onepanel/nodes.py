@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from typing import Any
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Onepanel
@@ -24,8 +25,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(
-    selenium, browser_id, options, host_regexp
-):
+    selenium: Any, browser_id: Any, options: Any, host_regexp: Any
+) -> Any:
     options = [transform(option) for option in parse_seq(options)]
     err_msg = f"{{}} not enabled for {host_regexp} in Nodes page in Onepanel"
     for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
@@ -44,8 +45,8 @@ def wt_assert_options_enabled_for_host_in_nodes(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_cannot_be_changed_for_host_in_nodes(
-    selenium, browser_id, options, host_regexp
-):
+    selenium: Any, browser_id: Any, options: Any, host_regexp: Any
+) -> Any:
     options = [transform(option) for option in parse_seq(options)]
     err_msg = (
         f"{{}} can be changed for {host_regexp} in Nodes page in Onepanel, "

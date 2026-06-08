@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 
@@ -24,8 +26,13 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def send_copied_item_to_other_users(
-    browser_id, item_type, browser_list, tmp_memory, displays, clipboard
-):
+    browser_id: Any,
+    item_type: Any,
+    browser_list: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     item = clipboard.paste(display=displays[browser_id])
     for browser in parse_seq(browser_list):
         tmp_memory[browser]["mailbox"][item_type.lower()] = item
@@ -33,8 +40,8 @@ def send_copied_item_to_other_users(
 
 @wt(parsers.parse("user of {browser_id} sees that copied token matches displayed one"))
 def assert_copied_token_match_displayed_one(
-    browser_id, tmp_memory, displays, clipboard
-):
+    browser_id: Any, tmp_memory: Any, displays: Any, clipboard: Any
+) -> Any:
     displayed_token = tmp_memory[browser_id]["token"]
     copied_token = clipboard.paste(display=displays[browser_id])
     err_msg = (
@@ -49,8 +56,8 @@ def assert_copied_token_match_displayed_one(
     )
 )
 def assert_copied_token_does_not_match_displayed_one(
-    browser_id, tmp_memory, displays, clipboard
-):
+    browser_id: Any, tmp_memory: Any, displays: Any, clipboard: Any
+) -> Any:
     displayed_token = tmp_memory[browser_id]["token"]
     copied_token = clipboard.paste(display=displays[browser_id])
     err_msg = (

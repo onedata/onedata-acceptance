@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 import time
+from typing import Any
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -18,9 +19,9 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _wait_for_op_session_to_start(selenium, browser_id_list):
+def _wait_for_op_session_to_start(selenium: Any, browser_id_list: Any) -> Any:
     @repeat_failed(timeout=WAIT_BACKEND)
-    def _assert_correct_url(d):
+    def _assert_correct_url(d: Any) -> Any:
         try:
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
@@ -42,7 +43,7 @@ def _wait_for_op_session_to_start(selenium, browser_id_list):
         "users? of (?P<browser_id_list>.*?) seen that Oneprovider session has started"
     )
 )
-def g_wait_for_op_session_to_start(selenium, browser_id_list):
+def g_wait_for_op_session_to_start(selenium: Any, browser_id_list: Any) -> Any:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -51,7 +52,7 @@ def g_wait_for_op_session_to_start(selenium, browser_id_list):
         "users? of (?P<browser_id_list>.*?) sees that Oneprovider session has started"
     )
 )
-def wt_wait_for_op_session_to_start(selenium, browser_id_list):
+def wt_wait_for_op_session_to_start(selenium: Any, browser_id_list: Any) -> Any:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -62,7 +63,9 @@ def wt_wait_for_op_session_to_start(selenium, browser_id_list):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, hosts):
+def wt_assert_provider_name_prov_in_op(
+    selenium: Any, browser_id: Any, val: Any, hosts: Any
+) -> Any:
     val = hosts[val]["name"]
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
@@ -78,7 +81,7 @@ def wt_assert_provider_name_prov_in_op(selenium, browser_id, val, hosts):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(selenium, browser_id, val):
+def wt_assert_provider_name_in_op(selenium: Any, browser_id: Any, val: Any) -> Any:
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
         f"displayed {displayed_name} provider name in Oneprovider GUI instead"
@@ -89,7 +92,7 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val):
 @given(
     parsers.parse("possible exception messages appearing for workflow files:\n{config}")
 )
-def load_exceptions_for_input_files(tmp_memory, config):
+def load_exceptions_for_input_files(tmp_memory: Any, config: Any) -> Any:
     """
     Configuration is as follows
     - file_name:
@@ -103,7 +106,7 @@ def load_exceptions_for_input_files(tmp_memory, config):
     _load_exceptions_for_input_files(tmp_memory, config)
 
 
-def _load_exceptions_for_input_files(tmp_memory, config):
+def _load_exceptions_for_input_files(tmp_memory: Any, config: Any) -> Any:
     data = yaml.load(config, yaml.Loader)
     for el in data:
         file = list(el.keys())[0]
@@ -111,7 +114,7 @@ def _load_exceptions_for_input_files(tmp_memory, config):
         tmp_memory["exceptions"][file] = exceptions
 
 
-def wait_for_item_to_appear(item):
+def wait_for_item_to_appear(item: Any) -> Any:
     for _ in range(50):
         try:
             if item.is_displayed():
@@ -123,7 +126,7 @@ def wait_for_item_to_appear(item):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_item_to_disappear(item):
+def wait_for_item_to_disappear(item: Any) -> Any:
     try:
         item.is_displayed()
         raise AssertionError("Element is visible")
@@ -132,7 +135,9 @@ def wait_for_item_to_disappear(item):
 
 
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
-def wait_for_file_with_unknown_name_to_download(n_files_before_download, dir_path):
+def wait_for_file_with_unknown_name_to_download(
+    n_files_before_download: Any, dir_path: Any
+) -> Any:
     # wait for a file to download, we don`t know the name of the file
     # so there is a way we can check that file was downloaded
     n_files_after_download = len(os.listdir(dir_path))
@@ -141,6 +146,6 @@ def wait_for_file_with_unknown_name_to_download(n_files_before_download, dir_pat
     assert_file_download_finished(file_name)
 
 
-def assert_file_download_finished(file_name):
+def assert_file_download_finished(file_name: Any) -> Any:
     _, ext = os.path.splitext(file_name)
     assert ext != ".crdownload", f"Downloading file {file_name} did not finish"

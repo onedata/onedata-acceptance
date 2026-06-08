@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 import os
+from typing import Any
 
 import rpyc  # pylint: disable=import-error
 
@@ -30,34 +31,40 @@ CORRECT_TOKEN = "token"
 
 
 class User:  # pylint: disable=too-many-instance-attributes
-    def __init__(self, zone_hostname, username, password=None, user_id=None):
+    def __init__(
+        self,
+        zone_hostname: Any,
+        username: Any,
+        password: Any = None,
+        user_id: Any = None,
+    ) -> None:
         self.username = username
         self.password = password
         self._user_id = user_id
         self._token = None
-        self.idps = []
+        self.idps: list[Any] = []
         self.keycloak_name = ""
         self.zone_hostname = zone_hostname
 
         self.last_operation_failed = False
-        self.clients = {}
-        self._rpyc_connections = {}
+        self.clients: dict[Any, Any] = {}
+        self._rpyc_connections: dict[Any, Any] = {}
 
     @property
-    def token(self):
+    def token(self) -> Any:
         if self._token:
             return self._token
         self._token = self._create_token()
         return self._token
 
     @property
-    def user_id(self):
+    def user_id(self) -> Any:
         if self._user_id:
             return self._user_id
         self._user_id = self._retrieve_onedata_id()
         return self._user_id
 
-    def get_rpyc_connection(self, client_host_dict):
+    def get_rpyc_connection(self, client_host_dict: Any) -> Any:
         client_host = client_host_dict["pod-name"]
         if self._rpyc_connections.get(client_host, None):
             return self._rpyc_connections[client_host]
@@ -66,21 +73,21 @@ class User:  # pylint: disable=too-many-instance-attributes
         )
         return self._rpyc_connections[client_host]
 
-    def mark_last_operation_failed(self):
+    def mark_last_operation_failed(self) -> Any:
         self.last_operation_failed = True
 
-    def mark_last_operation_succeeded(self):
+    def mark_last_operation_succeeded(self) -> Any:
         self.last_operation_failed = False
 
     def mount_client(
         self,
-        client_host_alias,
-        client_id,
-        hosts,
-        env_desc,
-        token=CORRECT_TOKEN,
-        opts=None,
-    ):
+        client_host_alias: Any,
+        client_id: Any,
+        hosts: Any,
+        env_desc: Any,
+        token: Any = CORRECT_TOKEN,
+        opts: Any = None,
+    ) -> Any:
         rpyc_connection = self.get_rpyc_connection(hosts[client_host_alias])
         client_conf = get_client_conf(client_id, client_host_alias, env_desc)
 
@@ -103,7 +110,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         return None
 
     @repeat_failed(attempts=5)
-    def _create_token(self):
+    def _create_token(self) -> Any:
         if "keycloak" in self.idps:
             token_dispenser_pod = match_pods("token-dispenser")[0]
             token_dispenser_ip = get_ip(token_dispenser_pod)
@@ -125,7 +132,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         return json.loads(response.content)["token"]
 
     @repeat_failed(attempts=5)
-    def _retrieve_onedata_id(self):
+    def _retrieve_onedata_id(self) -> Any:
         response = http_get(
             ip=self.zone_hostname,
             port=OZ_REST_PORT,
@@ -134,7 +141,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         )
         return json.loads(response.content)["userId"]
 
-    def _create_rpyc_connection(self, client_host_dict):
+    def _create_rpyc_connection(self, client_host_dict: Any) -> Any:
         client_host = client_host_dict["pod-name"]
         client_host_ip = client_host_dict["ip"]
         cointainer_id = client_host_dict["container-id"]
@@ -165,29 +172,29 @@ class User:  # pylint: disable=too-many-instance-attributes
         return rpyc_connection
 
     @repeat_failed(attempts=10, interval=1, exceptions=ConnectionRefusedError)
-    def _connect_to_rpyc(self, ip, port):
+    def _connect_to_rpyc(self, ip: Any, port: Any) -> Any:
         return rpyc.classic.connect(ip, port=port)
 
 
 class AdminUser(User):
-    def __init__(self, zone_hostname, username, password):
+    def __init__(self, zone_hostname: Any, username: Any, password: Any) -> None:
         User.__init__(
             self, zone_hostname=zone_hostname, username=username, password=password
         )
 
 
-def create_required_dirs(pod):
+def create_required_dirs(pod: Any) -> Any:
     create_dir(pod, ONECLIENT_MOUNT_DIR)
     create_dir(pod, RPYC_LOGS_DIR)
     create_dir(pod, ONECLIENT_LOGS_DIR)
 
 
-def create_dir(pod, log_dir_path):
+def create_dir(pod: Any, log_dir_path: Any) -> Any:
     cmd = [pod, "--", "mkdir", "-p", "-m 777", log_dir_path]
     run_onenv_command("exec", cmd)
 
 
-def gen_port_number(username):
+def gen_port_number(username: Any) -> Any:
     return (
         int(hashlib.sha1(username.encode("utf-8")).hexdigest(), 16) % 10000
         + RPYC_DEFAULT_PORT

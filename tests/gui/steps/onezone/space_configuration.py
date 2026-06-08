@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
@@ -21,7 +23,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_advertise_in_marketplace_toggle(selenium, browser_id, checked):
+def assert_advertise_in_marketplace_toggle(
+    selenium: Any, browser_id: Any, checked: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
 
@@ -42,7 +46,9 @@ def assert_advertise_in_marketplace_toggle(selenium, browser_id, checked):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def advertise_space_on_space_configuration_page(browser_id, selenium, option):
+def advertise_space_on_space_configuration_page(
+    browser_id: Any, selenium: Any, option: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     getattr(page.advertise_toggle, option)()
@@ -55,7 +61,7 @@ def advertise_space_on_space_configuration_page(browser_id, selenium, option):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_space_configuration_page(browser_id, selenium):
+def click_button_on_space_configuration_page(browser_id: Any, selenium: Any) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.marketplace_link.click()
@@ -68,7 +74,9 @@ def click_button_on_space_configuration_page(browser_id, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_contact_email_address(browser_id, selenium, email_address):
+def assert_contact_email_address(
+    browser_id: Any, selenium: Any, email_address: Any
+) -> Any:
     driver = selenium[browser_id]
     contact_email = OZLoggedIn(driver)["data"].configuration_page.contact_email
     err_msg = (
@@ -81,8 +89,12 @@ def assert_contact_email_address(browser_id, selenium, email_address):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_space_data_in_configuration_tab(
-    selenium, browser_id, data_type, data_name, with_save=True
-):
+    selenium: Any,
+    browser_id: Any,
+    data_type: Any,
+    data_name: Any,
+    with_save: Any = True,
+) -> Any:
     driver = selenium[browser_id]
     data_type = transform(data_type)
     page = getattr(OZLoggedIn(driver)["data"].configuration_page, data_type)
@@ -98,12 +110,16 @@ def set_space_data_in_configuration_tab(
         '"{description}" in space configuration subpage'
     )
 )
-def set_description_of_a_space_(selenium, browser_id, description):
+def set_description_of_a_space_(
+    selenium: Any, browser_id: Any, description: Any
+) -> Any:
     set_description_of_a_space(selenium, browser_id, description)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_description_of_a_space(selenium, browser_id, description, with_save=True):
+def set_description_of_a_space(
+    selenium: Any, browser_id: Any, description: Any, with_save: Any = True
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.editor_description_mode.click()
@@ -115,8 +131,8 @@ def set_description_of_a_space(selenium, browser_id, description, with_save=True
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_tags_in_space_configuration_tab(
-    selenium, browser_id, tag_type, tags, with_save=True
-):
+    selenium: Any, browser_id: Any, tag_type: Any, tags: Any, with_save: Any = True
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.space_tags_editor.click()
@@ -137,7 +153,9 @@ def add_tags_in_space_configuration_tab(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_header_info_in_space_configuration(selenium, browser_id, label_info):
+def check_header_info_in_space_configuration(
+    selenium: Any, browser_id: Any, label_info: Any
+) -> Any:
     driver = selenium[browser_id]
     header_label_message = OZLoggedIn(driver)[
         "data"
@@ -155,8 +173,8 @@ def check_header_info_in_space_configuration(selenium, browser_id, label_info):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_message_after_hovering_over_toggle(
-    selenium, browser_id, message_type, toggle_name
-):
+    selenium: Any, browser_id: Any, message_type: Any, toggle_name: Any
+) -> Any:
     messages_dict = {
         "Insufficient privileges": (
             "Insufficient privileges "
@@ -184,7 +202,7 @@ def check_message_after_hovering_over_toggle(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_org_name_in_space_conf(selenium, browser_id, org_name):
+def change_org_name_in_space_conf(selenium: Any, browser_id: Any, org_name: Any) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.organization_name.click()

@@ -4,6 +4,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 from onezone_client.rest import ApiException
 
@@ -105,7 +107,7 @@ DEFAULT_GRANT = [
 ]
 
 
-def translate_privileges(privileges, grant, revoke):
+def translate_privileges(privileges: Any, grant: Any, revoke: Any) -> Any:
     for privileges_group, privileges_group_items in privileges.items():
         if privileges_group_items["granted"] == "Partially":
             items = privileges_group_items["privilege subtypes"].items()
@@ -130,8 +132,15 @@ def translate_privileges(privileges, grant, revoke):
 
 
 def fail_to_set_privileges_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name, config
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    member_name: Any,
+    config: Any,
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     grant: list[str] = []
@@ -154,8 +163,15 @@ def fail_to_set_privileges_using_rest(
 
 
 def assert_privileges_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name, config
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    member_name: Any,
+    config: Any,
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
 
@@ -174,8 +190,14 @@ def assert_privileges_in_space_using_rest(
 
 
 def fail_to_create_invitation_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    member_name: Any,
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     try:
@@ -190,8 +212,14 @@ def fail_to_create_invitation_in_space_using_rest(
 
 
 def assert_group_in_space_using_rest(
-    user, users, hosts, host, group_name, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    group_name: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz).group_id
@@ -201,8 +229,14 @@ def assert_group_in_space_using_rest(
 
 
 def add_users_to_space_in_oz_using_rest(
-    user_list, users, zone_name, hosts, space_name, spaces, user
-):
+    user_list: Any,
+    users: Any,
+    zone_name: Any,
+    hosts: Any,
+    space_name: Any,
+    spaces: Any,
+    user: Any,
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -211,8 +245,14 @@ def add_users_to_space_in_oz_using_rest(
 
 
 def add_group_to_space_using_rest(
-    user, users, hosts, host, group_name, spaces, space_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    group_name: Any,
+    spaces: Any,
+    space_name: Any,
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz)
@@ -220,8 +260,14 @@ def add_group_to_space_using_rest(
 
 
 def delete_users_from_space_in_oz_using_rest(
-    user_list, users, zone_name, hosts, space_name, spaces, user
-):
+    user_list: Any,
+    users: Any,
+    zone_name: Any,
+    hosts: Any,
+    space_name: Any,
+    spaces: Any,
+    user: Any,
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -230,8 +276,15 @@ def delete_users_from_space_in_oz_using_rest(
 
 
 def invite_other_users_to_space_using_rest(
-    user, users, zone_name, hosts, space_name, spaces, tmp_memory, receiver
-):
+    user: Any,
+    users: Any,
+    zone_name: Any,
+    hosts: Any,
+    space_name: Any,
+    spaces: Any,
+    tmp_memory: Any,
+    receiver: Any,
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
     token = space_api.create_space_user_invite_token(spaces[space_name])
@@ -239,8 +292,14 @@ def invite_other_users_to_space_using_rest(
 
 
 def assert_user_is_member_of_space_rest(
-    space_name, spaces, user, users, user_list, zone_name, hosts
-):
+    space_name: Any,
+    spaces: Any,
+    user: Any,
+    users: Any,
+    user_list: Any,
+    zone_name: Any,
+    hosts: Any,
+) -> Any:
     space_users = get_users_id_list(user, users, hosts, zone_name, spaces, space_name)
 
     for username in parse_seq(user_list):
@@ -250,15 +309,23 @@ def assert_user_is_member_of_space_rest(
 
 
 def assert_not_user_in_space_using_rest(
-    user, users, hosts, host, spaces, space_name, member_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+    space_name: Any,
+    member_name: Any,
+) -> Any:
     users_id_list = get_users_id_list(user, users, hosts, host, spaces, space_name)
     assert (
         users[member_name].user_id not in users_id_list
     ), f"user {member_name} is in space {space_name}"
 
 
-def get_users_id_list(user, users, hosts, host, spaces, space_name):
+def get_users_id_list(
+    user: Any, users: Any, hosts: Any, host: Any, spaces: Any, space_name: Any
+) -> Any:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     return space_api.list_space_users(spaces[space_name]).users

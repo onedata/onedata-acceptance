@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -40,5 +42,5 @@ class AuditLogEntryDetails(Modal):
     archive_name = WebElement(".path-item.path-label")
     close = Button(".close-details")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Audit log entry details"

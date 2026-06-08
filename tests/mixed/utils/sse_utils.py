@@ -35,7 +35,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         observed_dirs: list[str],
         observed_attrs: list[str],
         verify_ssl: bool = True,
-    ):
+    ) -> None:
         self.oneprovider_authority = oneprovider_authority.rstrip("/")
         self.space_id = space_id
         self.access_token = access_token
@@ -249,7 +249,7 @@ class SpaceFilesMonitorClientImpl(SpaceFilesMonitorClient):
         observed_dirs: list[str],
         observed_attrs: list[str],
         verify_ssl: bool = True,
-    ):
+    ) -> None:
         super().__init__(
             oneprovider_authority,
             space_id,

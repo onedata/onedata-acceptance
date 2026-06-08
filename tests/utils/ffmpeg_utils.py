@@ -21,8 +21,13 @@ from typing import Any
 
 
 def start_recording(
-    movie_dir, movie_name, displays, screen_width, screen_height, mosaic_filter=True
-):
+    movie_dir: Any,
+    movie_name: Any,
+    displays: Any,
+    screen_width: Any,
+    screen_height: Any,
+    mosaic_filter: Any = True,
+) -> Any:
     if not os.path.exists(movie_dir):
         os.makedirs(movie_dir)
 
@@ -56,7 +61,7 @@ def start_recording(
     return proc, paths
 
 
-def stop_recording(proc):
+def stop_recording(proc: Any) -> Any:
     proc.terminate()
     try:
         proc.wait(timeout=10)  # Wait for process to exit
@@ -68,10 +73,10 @@ def stop_recording(proc):
 class RecorderManager:
     ffmpeg_details: dict[str, Any] = {}
 
-    def __init__(self, request):
+    def __init__(self, request: Any) -> None:
         self.request = request
 
-    def handle_start_recording(self):
+    def handle_start_recording(self) -> Any:
         should_record = self.request.getfixturevalue("should_record")
 
         recording = self.request.config.getoption("--xvfb-recording")
@@ -104,7 +109,7 @@ class RecorderManager:
             self.ffmpeg_details["movies"] = movies
             self.request.node._movies = movies  # pylint: disable=protected-access
 
-    def handle_stop_recording(self, status):
+    def handle_stop_recording(self, status: Any) -> Any:
         recording = self.request.config.getoption("--xvfb-recording")
         if "proc" in self.ffmpeg_details:
             stop_recording(self.ffmpeg_details["proc"])
@@ -129,7 +134,7 @@ class RecorderManager:
 
 
 @contextmanager
-def _suppress(exception, errnos):
+def _suppress(exception: Any, errnos: Any) -> Any:
     try:
         yield
     except exception as e:
@@ -138,8 +143,14 @@ def _suppress(exception, errnos):
 
 
 def _create_ffmpeg_cmd(
-    displays, width, height, dir_path, file_name, mosaic_filter, qp=1
-):
+    displays: Any,
+    width: Any,
+    height: Any,
+    dir_path: Any,
+    file_name: Any,
+    mosaic_filter: Any,
+    qp: Any = 1,
+) -> Any:
     cmd = ["ffmpeg"]
 
     wh = f"{width}x{height}"
@@ -183,7 +194,7 @@ def _create_ffmpeg_cmd(
     return cmd, paths
 
 
-def _create_mosaic_filter(displays, width, height):
+def _create_mosaic_filter(displays: Any, width: Any, height: Any) -> Any:
     filter_fmt = "nullsrc=size={width}x{height} [{base}]; {stream};{overlay}"
     available_screens = _gen_offsets(len(displays), width, height)
     full_width, full_height = next(available_screens)
@@ -198,7 +209,7 @@ def _create_mosaic_filter(displays, width, height):
     )
 
 
-def _overlay_streams(tags, offsets):
+def _overlay_streams(tags: Any, offsets: Any) -> Any:
     overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y} [{new_base}]"
     last_overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y}"
     base_fmt = "base{num}"
@@ -219,7 +230,7 @@ def _overlay_streams(tags, offsets):
     )
 
 
-def _tag_streams(input_streams_num):
+def _tag_streams(input_streams_num: Any) -> Any:
     tags = [f"v{num}" for num in range(input_streams_num)]
     fmt = "[{stream}:v] setpts=PTS-STARTPTS [{tag}]"
     tagged_streams = ";".join(
@@ -228,7 +239,7 @@ def _tag_streams(input_streams_num):
     return tagged_streams, tags
 
 
-def _gen_offsets(screen_num, width, height):
+def _gen_offsets(screen_num: Any, width: Any, height: Any) -> Any:
     a = b = int(round(sqrt(screen_num)))
     if a * b < screen_num:
         a += 1

@@ -1,5 +1,7 @@
 """Utils and fixtures to facilitate operations on deregister provider popup."""
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
@@ -12,5 +14,5 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 class DeregisterProvider(PageObject):
     buttons = WebItemsSequence("button", cls=ButtonWithTextPageObject)
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Deregister provider popup"

@@ -6,6 +6,8 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -31,14 +33,14 @@ from tests.utils.bdd_utils import parsers, wt
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(
-    selenium,
-    user,
-    provider_name,
-    domain_provider,
-    hosts,
-    with_refresh=False,
-    test_domain=False,
-):
+    selenium: Any,
+    user: Any,
+    provider_name: Any,
+    domain_provider: Any,
+    hosts: Any,
+    with_refresh: Any = False,
+    test_domain: Any = False,
+) -> Any:
     option = "Data"
 
     if with_refresh:
@@ -67,7 +69,9 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
         )
 
 
-def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
+def assert_there_is_no_provider_in_oz_gui(
+    selenium: Any, user: Any, provider_name: Any, hosts: Any
+) -> Any:
     option = "Data"
 
     refresh_site(selenium, user)
@@ -78,8 +82,13 @@ def assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts):
 
 
 def send_copied_invite_token_in_oz_gui(
-    selenium, user, browser_list, tmp_memory, displays, clipboard
-):
+    selenium: Any,
+    user: Any,
+    browser_list: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     item_type = "token"
     button = "add new provider cluster"
 
@@ -96,7 +105,9 @@ def send_copied_invite_token_in_oz_gui(
         "provider in oneproviders list in data sidebar"
     )
 )
-def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
+def revoke_support_of_provider_in_list(
+    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+) -> Any:
     driver = selenium[browser_id]
     button = "Cease support"
     notify_type = "info"
@@ -119,7 +130,7 @@ def revoke_support_of_provider_in_list(selenium, browser_id, provider, hosts):
     )
 )
 def assert_file_with_content_in_provider_storage(
-    browser_id, clipboard, displays, content, hosts
-):
+    browser_id: Any, clipboard: Any, displays: Any, content: Any, hosts: Any
+) -> Any:
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)

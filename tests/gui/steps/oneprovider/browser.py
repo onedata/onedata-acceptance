@@ -8,6 +8,7 @@ import json
 import re
 import time
 from datetime import datetime
+from typing import Any
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
@@ -23,12 +24,12 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_and_press_enter_on_item_in_browser(
-    selenium,
-    browser_id,
-    item_name,
-    tmp_memory,
-    which_browser,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]
@@ -53,8 +54,8 @@ def click_and_press_enter_on_item_in_browser(
     )
 )
 def wt_click_and_press_enter_on_item_in_browser(
-    selenium, browser_id, item_name, tmp_memory, which_browser
-):
+    selenium: Any, browser_id: Any, item_name: Any, tmp_memory: Any, which_browser: Any
+) -> Any:
     click_and_press_enter_on_item_in_browser(
         selenium,
         browser_id,
@@ -65,7 +66,9 @@ def wt_click_and_press_enter_on_item_in_browser(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_and_enter_with_check(driver, browser, which_browser, item_name):
+def click_and_enter_with_check(
+    driver: Any, browser: Any, which_browser: Any, item_name: Any
+) -> Any:
     # this function does not check correctly if parent and children directory
     # have the same name
     browser.data[item_name].click_and_enter()
@@ -79,7 +82,7 @@ def click_and_enter_with_check(driver, browser, which_browser, item_name):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def check_if_breadcrumbs_on_share_page(driver, which_browser):
+def check_if_breadcrumbs_on_share_page(driver: Any, which_browser: Any) -> Any:
     try:
         breadcrumbs = OPLoggedIn(driver).shares_page.breadcrumbs.pwd()
     except RuntimeError:
@@ -97,8 +100,8 @@ def check_if_breadcrumbs_on_share_page(driver, which_browser):
     )
 )
 def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-    selenium, browser_id, path, which_browser
-):
+    selenium: Any, browser_id: Any, path: Any, which_browser: Any
+) -> Any:
     is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         selenium, browser_id, path, which_browser=which_browser
     )
@@ -106,8 +109,8 @@ def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-    selenium, browser_id, path, which_browser="file browser"
-):
+    selenium: Any, browser_id: Any, path: Any, which_browser: Any = "file browser"
+) -> Any:
     driver = selenium[browser_id]
     breadcrumbs = getattr(
         OPLoggedIn(driver), transform(which_browser)
@@ -125,12 +128,16 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
         "user of {browser_id} clicks on menu on breadcrumbs in {which_browser}"
     )
 )
-def wt_click_on_breadcrumbs_menu(selenium, browser_id, which_browser):
+def wt_click_on_breadcrumbs_menu(
+    selenium: Any, browser_id: Any, which_browser: Any
+) -> Any:
     click_on_breadcrumbs_menu(selenium, browser_id, which_browser=which_browser)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_breadcrumbs_menu(selenium, browser_id, which_browser="file browser"):
+def click_on_breadcrumbs_menu(
+    selenium: Any, browser_id: Any, which_browser: Any = "file browser"
+) -> Any:
     driver = selenium[browser_id]
     breadcrumbs = getattr(OPLoggedIn(driver), transform(which_browser)).breadcrumbs
     breadcrumbs.menu_button()
@@ -138,15 +145,15 @@ def click_on_breadcrumbs_menu(selenium, browser_id, which_browser="file browser"
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_items_list_from_browser(
-    selenium, browser_id, tmp_memory, which_browser="file browser"
-):
+    selenium: Any, browser_id: Any, tmp_memory: Any, which_browser: Any = "file browser"
+) -> Any:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = {f.name for f in browser.data if f.name}
     driver = selenium[browser_id]
     if len(data) != len(browser.data):
 
-        def condition(data_):
+        def condition(data_: Any) -> Any:
             return len(data_) != len(browser.data)
 
         data = _gather_data_from_browser(driver, browser, condition)
@@ -155,7 +162,7 @@ def _get_items_list_from_browser(
     return data
 
 
-def _gather_data_from_browser(driver, browser, condition):
+def _gather_data_from_browser(driver: Any, browser: Any, condition: Any) -> Any:
     data = {f.name: f for f in browser.data if f.name}
     while condition(data):
         browser.scroll_to_number_file(driver, len(data), browser)
@@ -187,8 +194,8 @@ def _gather_data_from_browser(driver, browser, condition):
     )
 )
 def wt_assert_items_presence_in_browser(
-    selenium, browser_id, item_list, tmp_memory, which_browser
-):
+    selenium: Any, browser_id: Any, item_list: Any, tmp_memory: Any, which_browser: Any
+) -> Any:
     assert_items_presence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
     )
@@ -196,8 +203,12 @@ def wt_assert_items_presence_in_browser(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_presence_in_browser(
-    selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
-):
+    selenium: Any,
+    browser_id: Any,
+    item_list: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
     if not isinstance(item_list, list):
         item_list = parse_seq(item_list)
@@ -207,8 +218,12 @@ def assert_items_presence_in_browser(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_only_expected_items_presence_in_browser(
-    selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
-):
+    selenium: Any,
+    browser_id: Any,
+    item_list: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
 
     assert len(item_list) == len(data), (
@@ -223,8 +238,12 @@ def assert_only_expected_items_presence_in_browser(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_if_item_is_dir_in_browser(
-    selenium, browser_id, item_name, tmp_memory, which_browser="file browser"
-):
+    selenium: Any,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = [f.name for f in browser.data if f.name]
@@ -262,8 +281,8 @@ def check_if_item_is_dir_in_browser(
     )
 )
 def wt_assert_items_absence_in_browser(
-    selenium, browser_id, item_list, tmp_memory, which_browser
-):
+    selenium: Any, browser_id: Any, item_list: Any, tmp_memory: Any, which_browser: Any
+) -> Any:
     assert_items_absence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser=which_browser
     )
@@ -271,8 +290,12 @@ def wt_assert_items_absence_in_browser(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_absence_in_browser(
-    selenium, browser_id, item_list, tmp_memory, which_browser="file browser"
-):
+    selenium: Any,
+    browser_id: Any,
+    item_list: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
     for item_name in parse_seq(item_list):
         assert (
@@ -287,8 +310,8 @@ def assert_items_absence_in_browser(
     )
 )
 def assert_num_of_files_are_displayed_in_browser_(
-    browser_id, num, tmp_memory, which_browser
-):
+    browser_id: Any, num: Any, tmp_memory: Any, which_browser: Any
+) -> Any:
     assert_num_of_files_are_displayed_in_browser(
         browser_id, num, tmp_memory, which_browser=which_browser
     )
@@ -296,8 +319,8 @@ def assert_num_of_files_are_displayed_in_browser_(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_num_of_files_are_displayed_in_browser(
-    browser_id, num, tmp_memory, which_browser="file_browser"
-):
+    browser_id: Any, num: Any, tmp_memory: Any, which_browser: Any = "file_browser"
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = "displayed number of files {} does not match expected {}"
     files_num = browser.data.count()
@@ -312,8 +335,12 @@ def assert_num_of_files_are_displayed_in_browser(
     )
 )
 def wt_assert_status_tag_for_file_in_browser(
-    browser_id, status_type, item_name, tmp_memory, which_browser
-):
+    browser_id: Any,
+    status_type: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     assert_status_tag_for_file_in_browser(
         browser_id,
         status_type,
@@ -325,8 +352,12 @@ def wt_assert_status_tag_for_file_in_browser(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_tag_for_file_in_browser(
-    browser_id, status_type, item_name, tmp_memory, which_browser="file browser"
-):
+    browser_id: Any,
+    status_type: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = f"{status_type} tag for {item_name} in {which_browser} not visible"
     assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
@@ -340,8 +371,13 @@ def assert_status_tag_for_file_in_browser(
     )
 )
 def wt_assert_status_tag_text_for_file_in_browser(
-    browser_id, status_type, text, item_name, tmp_memory, which_browser
-):
+    browser_id: Any,
+    status_type: Any,
+    text: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     assert_status_tag_text_for_file_in_browser(
         browser_id,
         status_type,
@@ -354,13 +390,13 @@ def wt_assert_status_tag_text_for_file_in_browser(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_tag_text_for_file_in_browser(
-    browser_id,
-    status_type,
-    text,
-    item_name,
-    tmp_memory,
-    which_browser="file browser",
-):
+    browser_id: Any,
+    status_type: Any,
+    text: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     assert_status_tag_for_file_in_browser(
         browser_id, status_type, item_name, tmp_memory, which_browser
     )
@@ -380,8 +416,12 @@ def assert_status_tag_text_for_file_in_browser(
     )
 )
 def wt_assert_not_status_tag_for_file_in_browser(
-    browser_id, status_type, item_name, tmp_memory, which_browser
-):
+    browser_id: Any,
+    status_type: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     assert_not_status_tag_for_file_in_browser(
         browser_id,
         status_type,
@@ -393,8 +433,12 @@ def wt_assert_not_status_tag_for_file_in_browser(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_status_tag_for_file_in_browser(
-    browser_id, status_type, item_name, tmp_memory, which_browser="file browser"
-):
+    browser_id: Any,
+    status_type: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = (
         f"{status_type} tag for {item_name} in {which_browser} visible, "
@@ -403,7 +447,7 @@ def assert_not_status_tag_for_file_in_browser(
     assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-def _choose_menu(selenium, browser_id, which_browser):
+def _choose_menu(selenium: Any, browser_id: Any, which_browser: Any) -> Any:
     if which_browser in ["archive browser", "dataset archive browser"]:
         return Popups(selenium[browser_id]).archive_row_menu
     if which_browser == "dataset browser":
@@ -415,8 +459,8 @@ def _choose_menu(selenium, browser_id, which_browser):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(
-    selenium, browser_id, option, which_browser="file browser"
-):
+    selenium: Any, browser_id: Any, option: Any, which_browser: Any = "file browser"
+) -> Any:
     menu = _choose_menu(selenium, browser_id, which_browser)
     menu.choose_option(option)
 
@@ -428,8 +472,8 @@ def click_option_in_data_row_menu_in_browser(
     )
 )
 def wt_click_option_in_data_row_menu_in_browser(
-    selenium, browser_id, option, which_browser
-):
+    selenium: Any, browser_id: Any, option: Any, which_browser: Any
+) -> Any:
     click_option_in_data_row_menu_in_browser(
         selenium, browser_id, option, which_browser=which_browser
     )
@@ -443,8 +487,8 @@ def wt_click_option_in_data_row_menu_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_state_in_data_row_menu(
-    selenium, browser_id, option, option_state, which_browser
-):
+    selenium: Any, browser_id: Any, option: Any, option_state: Any, which_browser: Any
+) -> Any:
     err_msg = (
         f"{option} option is not {option_state} in opened item menu in file browser"
     )
@@ -460,7 +504,9 @@ def assert_option_state_in_data_row_menu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory):
+def click_on_state_view_mode_tab(
+    browser_id: Any, selenium: Any, state: Any, which: Any, tmp_memory: Any
+) -> Any:
     driver = selenium[browser_id]
     if which == "archive file":
         which_browser = which + " browser"
@@ -482,7 +528,9 @@ def click_on_state_view_mode_tab(browser_id, selenium, state, which, tmp_memory)
         r"(?P<type>dataset|directory|file) in (?P<which_browser>.*)"
     )
 )
-def wt_click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_browser):
+def wt_click_menu_for_elem_in_browser(
+    browser_id: Any, item_name: Any, tmp_memory: Any, which_browser: Any
+) -> Any:
     click_menu_for_elem_in_browser(
         browser_id, item_name, tmp_memory, which_browser=which_browser
     )
@@ -490,8 +538,11 @@ def wt_click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory, which_b
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_browser(
-    browser_id, item_name, tmp_memory, which_browser="file browser"
-):
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.data[item_name].menu_button()
 
@@ -511,8 +562,8 @@ def click_menu_for_elem_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tag_for_elem_in_browser(
-    browser_id, item_name, tmp_memory, tag, which_browser
-):
+    browser_id: Any, item_name: Any, tmp_memory: Any, tag: Any, which_browser: Any
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     getattr(browser.data[item_name], transform(tag)).click()
 
@@ -533,8 +584,13 @@ def click_tag_for_elem_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_value_in_column_for_item(
-    browser_id, item_name, value, option, which_browser, selenium
-):
+    browser_id: Any,
+    item_name: Any,
+    value: Any,
+    option: Any,
+    which_browser: Any,
+    selenium: Any,
+) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
@@ -565,8 +621,14 @@ def assert_value_in_column_for_item(
     )
 )
 def assert_value_in_xattr_or_json_column_for_item(
-    browser_id, item_name, res, value, option, which_browser, selenium
-):
+    browser_id: Any,
+    item_name: Any,
+    res: Any,
+    value: Any,
+    option: Any,
+    which_browser: Any,
+    selenium: Any,
+) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], option)
@@ -595,7 +657,9 @@ def assert_value_in_xattr_or_json_column_for_item(
         r"in (?P<which_browser>archive file browser|file browser)"
     )
 )
-def assert_no_column_for_item(browser_id, item_name, option, which_browser, selenium):
+def assert_no_column_for_item(
+    browser_id: Any, item_name: Any, option: Any, which_browser: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
 
@@ -618,13 +682,13 @@ def assert_no_column_for_item(browser_id, item_name, option, which_browser, sele
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def save_value_in_column_for_item(
-    browser_id,
-    item_name,
-    option,
-    which_browser,
-    selenium,
-    tmp_memory,
-):
+    browser_id: Any,
+    item_name: Any,
+    option: Any,
+    which_browser: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     value = getattr(browser.data[item_name], transform(option))
@@ -640,13 +704,13 @@ def save_value_in_column_for_item(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_value_in_column_for_item(
-    browser_id,
-    item_name,
-    option,
-    which_browser,
-    selenium,
-    tmp_memory,
-):
+    browser_id: Any,
+    item_name: Any,
+    option: Any,
+    which_browser: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))
     new_value = getattr(browser.data[item_name], transform(option))
@@ -665,7 +729,9 @@ def compare_value_in_column_for_item(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_visible_columns_in_browser(browser_id, tmp_memory, columns, which_browser):
+def assert_visible_columns_in_browser(
+    browser_id: Any, tmp_memory: Any, columns: Any, which_browser: Any
+) -> Any:
     columns = parse_seq(columns)
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser_columns = browser.column_headers
@@ -686,7 +752,9 @@ def assert_visible_columns_in_browser(browser_id, tmp_memory, columns, which_bro
         'user of {browser_id} does not see button "{button}" in {which_browser}'
     )
 )
-def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_browser):
+def assert_button_not_visible_in_browser(
+    browser_id: Any, tmp_memory: Any, button: Any, which_browser: Any
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser)]
     try:
         getattr(browser, transform(button) + "_button")
@@ -697,8 +765,8 @@ def assert_button_not_visible_in_browser(browser_id, tmp_memory, button, which_b
 
 @wt(parsers.parse('user of {browser_id} clicks on "navigate to root directory" button'))
 def navigate_to_root_from_error_page(
-    browser_id,
-    tmp_memory,
-):
+    browser_id: Any,
+    tmp_memory: Any,
+) -> Any:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.navigate_root_btn.click()

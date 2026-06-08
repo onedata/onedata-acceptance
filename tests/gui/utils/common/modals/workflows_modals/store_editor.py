@@ -6,6 +6,8 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.web_elements import Button, Input, WebElement
 
 from ...common import Toggle
@@ -22,5 +24,5 @@ class StoreEditor(Modal):
     data_type_remove = Button(".dataSpec-field .remove-trigger")
     user_input = Toggle(".needsUserInput-field .form-control")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Store editor modal"

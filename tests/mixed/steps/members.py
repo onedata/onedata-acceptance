@@ -6,6 +6,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import (
     assert_group_in_space_using_op_gui,
@@ -38,18 +40,18 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_set_privileges_in_space_in_oz(
-    client,
-    user,
-    member_name,
-    member_type,
-    config,
-    hosts,
-    selenium,
-    space_name,
-    users,
-    spaces,
-    host,
-):
+    client: Any,
+    user: Any,
+    member_name: Any,
+    member_type: Any,
+    config: Any,
+    hosts: Any,
+    selenium: Any,
+    space_name: Any,
+    users: Any,
+    spaces: Any,
+    host: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_set_privileges_using_op_gui(
@@ -79,18 +81,18 @@ def fail_to_set_privileges_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_privileges_in_space_in_oz(
-    client,
-    selenium,
-    user,
-    space_name,
-    hosts,
-    member_name,
-    users,
-    member_type,
-    config,
-    spaces,
-    host,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space_name: Any,
+    hosts: Any,
+    member_name: Any,
+    users: Any,
+    member_type: Any,
+    config: Any,
+    spaces: Any,
+    host: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_privileges_in_space_using_op_gui(
@@ -118,16 +120,16 @@ def assert_privileges_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_create_invitation_in_space_in_oz(
-    client,
-    selenium,
-    user,
-    space_name,
-    users,
-    hosts,
-    member_name,
-    spaces,
-    host,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space_name: Any,
+    users: Any,
+    hosts: Any,
+    member_name: Any,
+    spaces: Any,
+    host: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium)
@@ -148,16 +150,16 @@ def fail_to_create_invitation_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_user_in_space_in_oz(
-    client,
-    selenium,
-    user,
-    member_name,
-    space_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    member_name: Any,
+    space_name: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium)
@@ -180,16 +182,16 @@ def assert_not_user_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_in_oz(
-    client,
-    selenium,
-    user,
-    space_name,
-    group_name,
-    users,
-    hosts,
-    host,
-    spaces,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space_name: Any,
+    group_name: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    spaces: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         where = "space"
@@ -218,16 +220,16 @@ def add_group_to_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_in_space_in_oz(
-    client,
-    user,
-    group_name,
-    space_name,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    group_name: Any,
+    space_name: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_group_in_space_using_op_gui(selenium, user, space_name, group_name)

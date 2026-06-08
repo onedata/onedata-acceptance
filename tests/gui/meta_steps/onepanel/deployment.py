@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Tuple
+from typing import Any, Tuple
 
 import yaml
 
@@ -39,7 +39,9 @@ from tests.utils.bdd_utils import parsers, wt
         "configuration:\n{config}"
     )
 )
-def setup_step1(selenium, browser_id, host_regexp, config, hosts):
+def setup_step1(
+    selenium: Any, browser_id: Any, host_regexp: Any, config: Any, hosts: Any
+) -> Any:
     """
     config:
 
@@ -54,7 +56,9 @@ def setup_step1(selenium, browser_id, host_regexp, config, hosts):
     _setup_step1(selenium, browser_id, host_regexp, config, hosts)
 
 
-def _setup_step1(selenium, browser_id, host_regexp, configuration, hosts):
+def _setup_step1(
+    selenium: Any, browser_id: Any, host_regexp: Any, configuration: Any, hosts: Any
+) -> Any:
     config = yaml.load(configuration, yaml.Loader)
     options = config.get("options", [])
     step = "step 1"
@@ -95,8 +99,8 @@ def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
 
 
 def _setup_onezone_in_step1(
-    selenium, browser_id, zone_for_name, zone_for_domain, hosts
-):
+    selenium: Any, browser_id: Any, zone_for_name: Any, zone_for_domain: Any, hosts: Any
+) -> Any:
     step = "step 1"
 
     name_property = "name"
@@ -129,7 +133,7 @@ def _setup_onezone_in_step1(
         "setup DNS step and proceeds"
     )
 )
-def setup_dns(selenium, browser_id):
+def setup_dns(selenium: Any, browser_id: Any) -> Any:
     wt_click_perform_check_in_dns_setup_step(selenium, browser_id)
     wt_click_proceed_in_dns_setup_step(selenium, browser_id)
     wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id)
@@ -143,15 +147,15 @@ def setup_dns(selenium, browser_id):
     )
 )
 def enable_provider_cluster_registration_for_user(
-    selenium,
-    browser_id,
-    user_login,
-    browser_id2,
-    users,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    browser_id: Any,
+    user_login: Any,
+    browser_id2: Any,
+    users: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     last_step_btn = "Manage cluster via onezone"
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
@@ -174,7 +178,7 @@ def enable_provider_cluster_registration_for_user(
         "{config}"
     )
 )
-def setup_step2(selenium, browser_id, hosts, config):
+def setup_step2(selenium: Any, browser_id: Any, hosts: Any, config: Any) -> Any:
     """
     provider: provider_name
     request a subdomain: True/False
@@ -184,7 +188,7 @@ def setup_step2(selenium, browser_id, hosts, config):
     time.sleep(5)
 
 
-def _setup_step2(selenium, browser_id, hosts, configuration):
+def _setup_step2(selenium: Any, browser_id: Any, hosts: Any, configuration: Any) -> Any:
     config = yaml.load(configuration, yaml.Loader)
     provider_for_name, provider_for_domain = _parse_provider(
         config["name"], config["domain"]
@@ -249,7 +253,7 @@ def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]
         "process in Onepanel with following config:\n{config}"
     )
 )
-def add_storage_in_step5(selenium, browser_id, config):
+def add_storage_in_step5(selenium: Any, browser_id: Any, config: Any) -> Any:
     """
     storage type: type of storage
     storage name: name of storage
@@ -257,7 +261,7 @@ def add_storage_in_step5(selenium, browser_id, config):
     _add_storage_in_step5(selenium, browser_id, config)
 
 
-def _add_storage_in_step5(selenium, browser_id, configuration):
+def _add_storage_in_step5(selenium: Any, browser_id: Any, configuration: Any) -> Any:
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]

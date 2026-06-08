@@ -6,6 +6,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -50,21 +52,21 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    config,
-    spaces,
-    clipboard,
-    displays,
-    option,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    config: Any,
+    spaces: Any,
+    clipboard: Any,
+    displays: Any,
+    option: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_archive(
@@ -102,17 +104,17 @@ def create_archive_in_op(
     )
 )
 def wt_create_n_archives_in_op(
-    user,
-    users,
-    hosts,
-    host,
-    space_name,
-    item_name,
-    config,
-    spaces,
-    tmp_memory,
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    item_name: Any,
+    config: Any,
+    spaces: Any,
+    tmp_memory: Any,
     number: int,
-):
+) -> Any:
     create_n_archives_in_op_rest(
         user,
         users,
@@ -137,19 +139,19 @@ def wt_create_n_archives_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    spaces,
-    option,
-    description,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    option: Any,
+    description: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_in_op_gui(
@@ -188,18 +190,18 @@ def assert_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    description,
-    option,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    description: Any,
+    option: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         remove_archive_in_op_gui(
@@ -229,18 +231,18 @@ def remove_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_with_option_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    option,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    description,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    option: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+    description: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_with_option_in_op_gui(
@@ -269,18 +271,18 @@ def assert_archive_with_option_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    spaces,
-    number,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    number: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_number_of_archive_in_op_gui(
@@ -310,18 +312,18 @@ def assert_number_of_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_base_archive_for_archive_in_op(
-    client,
-    user,
-    item_name,
-    space_name,
-    host,
-    description,
-    base_description,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: Any,
+    user: Any,
+    item_name: Any,
+    space_name: Any,
+    host: Any,
+    description: Any,
+    base_description: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_base_archive_for_archive_in_op_gui(
@@ -351,17 +353,17 @@ def assert_base_archive_for_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_callback(
-    user,
-    users,
-    hosts,
-    host,
-    tmp_memory,
-    description,
-    option,
-    expected_callback,
-    client,
-    selenium,
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    tmp_memory: Any,
+    description: Any,
+    option: Any,
+    expected_callback: Any,
+    client: Any,
+    selenium: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_archive_callback_in_op_gui(
@@ -396,18 +398,18 @@ def assert_archive_callback(
     )
 )
 def recall_archive_for_archive_in_op(
-    client,
-    user,
-    description,
-    target_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    description: Any,
+    target_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
 
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -439,18 +441,18 @@ def recall_archive_for_archive_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recall_archive_details_in_op(
-    client,
-    user,
-    config,
-    name,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    host,
-    space_name,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    config: Any,
+    name: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    spaces: Any,
+) -> Any:
 
     client_lower = client.lower()
     data = yaml.load(config, yaml.Loader)
@@ -474,8 +476,15 @@ def recall_archive_details_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_progress_of_recall_in_op(
-    user, name, client, space_name, host, hosts, users, config
-):
+    user: Any,
+    name: Any,
+    client: Any,
+    space_name: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    config: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         assert_progress_of_recall_in_op_rest(
@@ -495,8 +504,14 @@ def assert_progress_of_recall_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cancel_archive_for_archive_in_op(
-    client, user, users, hosts, host, space_name, target_name
-):
+    client: Any,
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    target_name: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         cancel_archive_for_archive_in_op_rest(

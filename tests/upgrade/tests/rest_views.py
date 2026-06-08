@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from functools import partial
+from typing import Any
 
 import yaml
 
@@ -28,7 +29,7 @@ from tests.utils.http_exceptions import HTTPError
 from tests.utils.utils import repeat_failed
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: Any) -> Any:
     return [
         UpgradeTest(
             "rest views test",
@@ -126,7 +127,7 @@ RESULTS = {}
 
 
 # pylint: disable=too-many-statements
-def setup_views(tests_controller):
+def setup_views(tests_controller: Any) -> Any:
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -214,7 +215,7 @@ def setup_views(tests_controller):
     )
 
 
-def verify_views(tests_controller):
+def verify_views(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -249,7 +250,7 @@ def verify_views(tests_controller):
     )
 
 
-def setup_views_multiprovider(tests_controller):
+def setup_views_multiprovider(tests_controller: Any) -> Any:
     multi_provider_suite = "oneprovider-2" in tests_controller.hosts
     if not multi_provider_suite:
         return
@@ -294,7 +295,7 @@ def setup_views_multiprovider(tests_controller):
         RESULTS[VIEW_SINGLEPROVIDER] = e.response.json()["error"]["id"]
 
 
-def verify_views_multiprovider(tests_controller):
+def verify_views_multiprovider(tests_controller: Any) -> Any:
     multi_provider_suite = "oneprovider-2" in tests_controller.hosts
     if not multi_provider_suite:
         return
@@ -317,7 +318,7 @@ def verify_views_multiprovider(tests_controller):
         )
 
 
-def setup_subscribe_changes(tests_controller):
+def setup_subscribe_changes(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -338,7 +339,7 @@ def setup_subscribe_changes(tests_controller):
     RESULTS["file_changes"] = record
 
 
-def verify_subscribe_changes(tests_controller):
+def verify_subscribe_changes(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -358,19 +359,19 @@ def verify_subscribe_changes(tests_controller):
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert(expected, actual):
+def _assert(expected: Any, actual: Any) -> Any:
     err_msg = f"Expected value: {expected},\nbut got: {actual}"
     assert actual == expected, err_msg
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert_json_included(json_to_be_included, other_json):
+def _assert_json_included(json_to_be_included: Any, other_json: Any) -> Any:
     for item in json_to_be_included:
         assert item in other_json, f"There is no {item} included in second json."
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def _assert_json_equal(expected, actual):
+def _assert_json_equal(expected: Any, actual: Any) -> Any:
     err_msg = "Json`s are not equal, there is no:\n{}\nin:\n{}"
     for item in expected:
         assert item in actual, err_msg.format(item, actual)
@@ -380,8 +381,13 @@ def _assert_json_equal(expected, actual):
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def wait_for_expected_files_in_query_view(
-    query, provider_host, token, expected_files, attr_holding_file_id, extra_files=False
-):
+    query: Any,
+    provider_host: Any,
+    token: Any,
+    expected_files: Any,
+    attr_holding_file_id: Any,
+    extra_files: Any = False,
+) -> Any:
     res = query()
     items = [item[attr_holding_file_id] for item in res]
     prov_version = get_prov_version(provider_host)
@@ -403,7 +409,9 @@ def wait_for_expected_files_in_query_view(
 
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
-def wait_for_expected_result_in_reduce_query_view(query, expected_result):
+def wait_for_expected_result_in_reduce_query_view(
+    query: Any, expected_result: Any
+) -> Any:
     res = query()
     assert (
         res[0]["value"] == expected_result
@@ -413,8 +421,8 @@ def wait_for_expected_result_in_reduce_query_view(query, expected_result):
 
 @repeat_failed(timeout=DEFAULT_REST_QUERY_TIMEOUT)
 def get_record_for_file_in_file_changes(
-    provider_host, token, space_id, data, file_name
-):
+    provider_host: Any, token: Any, space_id: Any, data: Any, file_name: Any
+) -> Any:
     res = subscribe_to_file_changes(provider_host, token, space_id, data)
     file_id = lookup_file_id(f"{SPACE_NAME}/{file_name}", provider_host, token)
     items = res.text.split("\r\n")
@@ -426,7 +434,7 @@ def get_record_for_file_in_file_changes(
     return record
 
 
-def create_example_content_in_space(client):
+def create_example_content_in_space(client: Any) -> Any:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, "file_json")
     client.create_file(file_path)
@@ -445,7 +453,7 @@ def create_example_content_in_space(client):
     client.write("abc123", file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host, token):
+def add_example_metadata_to_files_in_space(provider_host: Any, token: Any) -> Any:
     xattrs_meta: dict[str, str | int] = {}
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
     json_meta = {"coordinates": [5, 10]}

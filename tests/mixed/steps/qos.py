@@ -6,6 +6,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.qos import (
     add_qos_requirement_in_modal,
@@ -31,17 +33,17 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_requirement_in_op(
-    client,
-    user,
-    selenium,
-    file_name,
-    tmp_memory,
-    expression,
-    space_name,
-    users,
-    hosts,
-    host,
-):
+    client: Any,
+    user: Any,
+    selenium: Any,
+    file_name: Any,
+    tmp_memory: Any,
+    expression: Any,
+    space_name: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         add_qos_requirement_in_modal(
@@ -69,17 +71,17 @@ def create_qos_requirement_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_file_status_in_op(
-    client,
-    user,
-    file_name,
-    space_name,
-    host,
-    tmp_memory,
-    selenium,
-    users,
-    hosts,
-    option,
-):
+    client: Any,
+    user: Any,
+    file_name: Any,
+    space_name: Any,
+    host: Any,
+    tmp_memory: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    option: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_qos_file_status_in_op_gui(
@@ -107,16 +109,16 @@ def assert_qos_file_status_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_qos_requirement_in_op(
-    client,
-    selenium,
-    user,
-    space_name,
-    file_name,
-    tmp_memory,
-    users,
-    hosts,
-    host,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space_name: Any,
+    file_name: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         delete_qos_requirement_in_op_gui(

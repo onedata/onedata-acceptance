@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import os
 import time
+from typing import Any
 
 import yaml
 from selenium.common.exceptions import ElementNotInteractableException
@@ -45,7 +46,7 @@ ALL_LAMBDA_NAMES = []
         "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
-def create_lambda_manually(browser_id, config, selenium):
+def create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -82,7 +83,7 @@ def create_lambda_manually(browser_id, config, selenium):
     _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(browser_id, config, selenium):
+def _create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -116,7 +117,7 @@ def _create_lambda_manually(browser_id, config, selenium):
         selenium, browser_id, mount_space_option, mount_space_toggle
     )
 
-    def ordinal(n):
+    def ordinal(n: Any) -> Any:
         return f"{n}{'tsnrhtdd'[(n // 10 % 10 != 1) * (n % 10 < 4) * n % 10:: 4]}"
 
     if configuration_parameters:
@@ -163,13 +164,13 @@ def _create_lambda_manually(browser_id, config, selenium):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(
-    selenium,
-    browser_id,
-    lambda_name,
-    docker_image,
-    inventory,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    lambda_name: Any,
+    docker_image: Any,
+    inventory: Any,
+    tmp_memory: Any,
+) -> Any:
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "lambdas", tmp_memory)
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new lambda")
@@ -191,8 +192,8 @@ def create_lambda_using_gui(
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium, browser_id, option, param_type, ordinal
-):
+    selenium: Any, browser_id: Any, option: Any, param_type: Any, ordinal: Any
+) -> Any:
     driver = selenium[browser_id]
     param_type = param_type.lower()
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
@@ -232,8 +233,13 @@ def change_parameter_type_in_lambda_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
-    selenium, browser_id, option, name, param_type, ordinal
-):
+    selenium: Any,
+    browser_id: Any,
+    option: Any,
+    name: Any,
+    param_type: Any,
+    ordinal: Any,
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
 
@@ -259,7 +265,9 @@ def add_parameter_into_lambda_form(
         r'"(?P<name>.*)" by:\n(?P<config>(.|\s)*)'
     )
 )
-def modify_parameter_in_lambda_form(selenium, browser_id, ordinal, config):
+def modify_parameter_in_lambda_form(
+    selenium: Any, browser_id: Any, ordinal: Any, config: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
     data = yaml.load(config, yaml.Loader)
@@ -294,8 +302,8 @@ def modify_parameter_in_lambda_form(selenium, browser_id, ordinal, config):
     )
 )
 def upload_all_lambda_dumps_from_automation_examples(
-    selenium, browser_id, inventory, tmp_memory
-):
+    selenium: Any, browser_id: Any, inventory: Any, tmp_memory: Any
+) -> Any:
     global ALL_LAMBDA_NAMES
     ALL_LAMBDA_NAMES = [
         f
@@ -313,8 +321,8 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium, browser_id, inventory, lambda_name, tmp_memory
-):
+    selenium: Any, browser_id: Any, inventory: Any, lambda_name: Any, tmp_memory: Any
+) -> Any:
     subpage = "lambdas"
     modal = "Upload workflow"
     button = "Apply"
@@ -332,8 +340,8 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium, browser_id, tmp_memory
-):
+    selenium: Any, browser_id: Any, tmp_memory: Any
+) -> Any:
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
             "atmLambdaRevision"
@@ -347,8 +355,8 @@ def download_and_remove_all_lambda_dumps_from_inventory(
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium, browser_id, tmp_memory, lamda_name
-):
+    selenium: Any, browser_id: Any, tmp_memory: Any, lamda_name: Any
+) -> Any:
     option = "Download (json)"
     option_unlink = "Unlink"
     number = 0
@@ -378,7 +386,9 @@ def download_and_remove_lambda_dump_from_inventory(
         "dump has the same content as previously uploaded dump"
     )
 )
-def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, tmpdir):
+def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(
+    browser_id: Any, tmpdir: Any
+) -> Any:
     for lamda_name in ALL_LAMBDA_NAMES:
         assert_downloaded_and_uploaded_lambda_dumps_the_same(
             browser_id, lamda_name, tmpdir
@@ -386,8 +396,8 @@ def assert_all_downloaded_and_uploaded_lambda_dumps_the_same(browser_id, tmpdir)
 
 
 def assert_downloaded_and_uploaded_lambda_dumps_the_same(
-    browser_id, lambda_name, tmpdir
-):
+    browser_id: Any, lambda_name: Any, tmpdir: Any
+) -> Any:
     uploaded_dump = get_lambda_dump(lambda_name)
     dump_lambda_name = uploaded_dump["revision"]["atmLambdaRevision"]["_data"]["name"]
     has_downloaded_workflow_file_content(browser_id, tmpdir, dump_lambda_name + ".json")

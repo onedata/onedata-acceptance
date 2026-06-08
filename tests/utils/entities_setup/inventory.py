@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 import yaml
 
@@ -19,8 +20,14 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post, http_put
     )
 )
 def inventories_creation(
-    config, admin_credentials, hosts, users, groups, zone_name, inventories
-):
+    config: Any,
+    admin_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    zone_name: Any,
+    inventories: Any,
+) -> Any:
     """Create and configure inventories according to given config.
 
     Config format given in yaml is as follows:
@@ -61,8 +68,14 @@ def inventories_creation(
 
 
 def _inventories_creation(
-    config, hosts, users, zone_name, admin_credentials, groups, inventories
-):
+    config: Any,
+    hosts: Any,
+    users: Any,
+    zone_name: Any,
+    admin_credentials: Any,
+    groups: Any,
+    inventories: Any,
+) -> Any:
     zone_hostname = hosts[zone_name]["hostname"]
     config = yaml.load(config, yaml.Loader)
 
@@ -102,7 +115,7 @@ def _inventories_creation(
             )
 
 
-def _create_inventory(zone_hostname, owner, inventory_name):
+def _create_inventory(zone_hostname: Any, owner: Any, inventory_name: Any) -> Any:
     inventory_properties = json.dumps({"name": inventory_name})
 
     response = http_post(
@@ -117,8 +130,12 @@ def _create_inventory(zone_hostname, owner, inventory_name):
 
 
 def _add_user_to_inventory(
-    zone_hostname, admin_credentials, inventory_id, user_id, privileges
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    inventory_id: Any,
+    user_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:
@@ -134,8 +151,12 @@ def _add_user_to_inventory(
 
 
 def _add_group_to_inventory(
-    zone_hostname, admin_credentials, inventory_id, group_id, privileges
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    inventory_id: Any,
+    group_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:

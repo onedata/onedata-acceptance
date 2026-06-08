@@ -11,6 +11,7 @@ import json
 import os
 import subprocess
 import time
+from typing import Any
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -26,15 +27,15 @@ TIME_ATTR_MAPPING = {
 }
 
 
-def list_parser(arg):
+def list_parser(arg: Any) -> Any:
     return [el.strip() for el in arg.strip("[]").split(",") if el != ""]
 
 
-def make_arg_list(arg):
+def make_arg_list(arg: Any) -> Any:
     return "[" + arg + "]"
 
 
-def execute_command(cmd, error=None, should_fail=False):
+def execute_command(cmd: Any, error: Any = None, should_fail: Any = False) -> Any:
     with subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     ) as process:
@@ -66,7 +67,7 @@ def execute_command(cmd, error=None, should_fail=False):
         r"(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
-def wait_given_time_if_web_gui(client, seconds):
+def wait_given_time_if_web_gui(client: Any, seconds: Any) -> Any:
     if client == "web GUI":
         wait_given_time(seconds)
 
@@ -82,25 +83,25 @@ def wait_given_time_if_web_gui(client, seconds):
         r"(?P<user>.+?) is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
-def wait_given_time(seconds):
+def wait_given_time(seconds: Any) -> Any:
     time.sleep(float(seconds))
 
 
 @wt(parsers.parse("last operation by {user} succeeds"))
-def success(user, users):
+def success(user: Any, users: Any) -> Any:
     assert not users[user].last_operation_failed
 
 
 @wt(parsers.parse("last operation by {user} fails"))
-def failure(user, users):
+def failure(user: Any, users: Any) -> Any:
     assert users[user].last_operation_failed
 
 
-def time_attr(parameter, prefix="st"):
+def time_attr(parameter: Any, prefix: Any = "st") -> Any:
     return f"{prefix}_{TIME_ATTR_MAPPING[parameter]}"
 
 
-def compare(val1, val2, comparator):
+def compare(val1: Any, val2: Any, comparator: Any) -> Any:
     if comparator == "equal":
         return val1 == val2
     if comparator == "not equal":
@@ -116,7 +117,7 @@ def compare(val1, val2, comparator):
     raise ValueError("Wrong argument comparator to function compare")
 
 
-def get_workflow_dump(workflow_name):
+def get_workflow_dump(workflow_name: Any) -> Any:
     if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
         path = upload_workflow_path(f"{workflow_name}.json")
     elif os.path.isfile(upload_workflow_path(f"{workflow_name}/{workflow_name}.json")):
@@ -130,7 +131,7 @@ def get_workflow_dump(workflow_name):
     return data
 
 
-def get_lambda_dump(lambda_name):
+def get_lambda_dump(lambda_name: Any) -> Any:
     with open(
         upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
     ) as f:
@@ -138,7 +139,7 @@ def get_lambda_dump(lambda_name):
     return data
 
 
-def num_to_ordinal(n):
+def num_to_ordinal(n: Any) -> Any:
     return {
         -1: "last",
         0: "first",

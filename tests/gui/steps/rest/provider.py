@@ -4,6 +4,7 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 import json
+from typing import Any
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.utils.generic import OnedataService
@@ -17,7 +18,7 @@ from tests.utils.rest_utils import (
 )
 
 
-def get_provider_id(provider, hosts, users):
+def get_provider_id(provider: Any, hosts: Any, users: Any) -> Any:
     user = "admin"
     provider_hostname = hosts[provider]["hostname"]
     provider_conf = http_get(
@@ -34,7 +35,7 @@ def get_provider_id(provider, hosts, users):
         "using REST, user {user} sees that status of OneS3 of {provider} is ok"
     )
 )
-def assert_provider_ones3_status_ok(provider, hosts):
+def assert_provider_ones3_status_ok(provider: Any, hosts: Any) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     status = http_get(
         ip=provider_hostname,
@@ -46,8 +47,12 @@ def assert_provider_ones3_status_ok(provider, hosts):
 
 
 def add_provider_service_node(
-    hosts, provider, onepanel_credentials, data, service: OnedataService
-):
+    hosts: Any,
+    provider: Any,
+    onepanel_credentials: Any,
+    data: Any,
+    service: OnedataService,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -64,8 +69,8 @@ def add_provider_service_node(
 
 
 def get_provider_service_nodes_statuses(
-    hosts, provider, onepanel_credentials, service: OnedataService
-):
+    hosts: Any, provider: Any, onepanel_credentials: Any, service: OnedataService
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -80,8 +85,13 @@ def get_provider_service_nodes_statuses(
 
 
 def start_stop_provider_service_node(
-    hosts, host, provider, onepanel_credentials, service: OnedataService, start=True
-):
+    hosts: Any,
+    host: Any,
+    provider: Any,
+    onepanel_credentials: Any,
+    service: OnedataService,
+    start: Any = True,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

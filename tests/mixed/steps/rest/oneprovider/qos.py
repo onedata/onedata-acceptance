@@ -4,14 +4,22 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.mixed.oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.utils.common import login_to_provider
 
 
 def create_qos_requirement_in_op_rest(
-    user, users, hosts, host, expression, space_name, file_name
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    expression: Any,
+    space_name: Any,
+    file_name: Any,
+) -> Any:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     file_id = _lookup_file_id(path, client)
@@ -21,8 +29,8 @@ def create_qos_requirement_in_op_rest(
 
 
 def create_qos_requirement_in_op_by_id_rest(
-    user, users, hosts, host, expression, file_id
-):
+    user: Any, users: Any, hosts: Any, host: Any, expression: Any, file_id: Any
+) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qos_api = QoSApi(client)
     data = {"fileId": file_id, "expression": expression}
@@ -30,8 +38,14 @@ def create_qos_requirement_in_op_by_id_rest(
 
 
 def assert_qos_file_status_in_op_rest(
-    user, users, hosts, host, space_name, file_name, option
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+    space_name: Any,
+    file_name: Any,
+    option: Any,
+) -> Any:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qo_s_api = QoSApi(client)
@@ -47,7 +61,9 @@ def assert_qos_file_status_in_op_rest(
         )
 
 
-def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name, file_name):
+def delete_qos_requirement_in_op_rest(
+    user: Any, users: Any, hosts: Any, host: Any, space_name: Any, file_name: Any
+) -> Any:
     path = f"{space_name}/{file_name}"
     client = login_to_provider(user, users, hosts[host]["hostname"])
     qo_s_api = QoSApi(client)

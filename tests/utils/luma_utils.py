@@ -176,9 +176,9 @@ def add_mapping(
         pass
 
 
-def gen_uid(username):
+def gen_uid(username: Any) -> Any:
     return int(hashlib.sha1(username.encode("utf-8")).hexdigest(), 16) % 50000 + 10000
 
 
-def gen_gid(group_name):
+def gen_gid(group_name: Any) -> Any:
     return int(hashlib.sha1(group_name.encode("utf-8")).hexdigest(), 16) % 50000 + 10000

@@ -2,14 +2,21 @@
 using REST API.
 """
 
+from typing import Any
+
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
 def modify_provider_in_op_panel_using_rest(
-    user, users, provider_host, hosts, new_provider_name, new_domain
-):
+    user: Any,
+    users: Any,
+    provider_host: Any,
+    hosts: Any,
+    new_provider_name: Any,
+    new_domain: Any,
+) -> Any:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -23,7 +30,9 @@ def modify_provider_in_op_panel_using_rest(
     # provider_api.modify_provider(provider_mod_rq)
 
 
-def deregister_provider_in_op_panel_using_rest(user, users, provider_host, hosts):
+def deregister_provider_in_op_panel_using_rest(
+    user: Any, users: Any, provider_host: Any, hosts: Any
+) -> Any:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -33,7 +42,9 @@ def deregister_provider_in_op_panel_using_rest(user, users, provider_host, hosts
     # provider_api.remove_provider()
 
 
-def register_provider_in_op_using_rest(user, users, hosts, config):
+def register_provider_in_op_using_rest(
+    user: Any, users: Any, hosts: Any, config: Any
+) -> Any:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # options = yaml.load(config, yaml.Loader)

@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.groups import (
@@ -54,7 +55,15 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def create_groups(client, user, group_list, host, hosts, users, selenium):
+def create_groups(
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         create_groups_using_rest(user, users, hosts, group_list, host)
@@ -71,7 +80,9 @@ def create_groups(client, user, group_list, host, hosts, users, selenium):
         '"(?P<host>.*)" Onezone service'
     )
 )
-def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
+def create_groups_with_token(
+    user: Any, group_name: Any, host: Any, tmp_memory: Any, hosts: Any
+) -> Any:
     group_type = "team"
     zone_hostname = hosts[host]["hostname"]
     token = tmp_memory[user]["mailbox"].get("token", None)
@@ -93,7 +104,9 @@ def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
         r" service"
     )
 )
-def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
+def fail_to_create_group_with_token(
+    user: Any, group_name: Any, host: Any, tmp_memory: Any, hosts: Any
+) -> Any:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
         raise AssertionError(
@@ -111,7 +124,15 @@ def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
         ' "(?P<host>.*)" Onezone service'
     )
 )
-def assert_groups(client, user, group_list, host, hosts, users, selenium):
+def assert_groups(
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         see_groups_using_rest(user, users, hosts, group_list, host)
@@ -129,15 +150,15 @@ def assert_groups(client, user, group_list, host, hosts, users, selenium):
     )
 )
 def rename_groups(
-    client,
-    user,
-    group_list,
-    new_names,
-    host,
-    hosts,
-    users,
-    selenium,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    new_names: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
@@ -154,7 +175,15 @@ def rename_groups(
         "Onezone service"
     )
 )
-def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium):
+def fail_to_see_groups(
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
@@ -170,7 +199,15 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users, selenium):
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def remove_groups(client, user, group_list, host, hosts, users, selenium):
+def remove_groups(
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         remove_groups_using_rest(user, users, hosts, group_list, host)
@@ -186,7 +223,15 @@ def remove_groups(client, user, group_list, host, hosts, users, selenium):
         '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'
     )
 )
-def leave_groups(client, user, group_list, host, hosts, users, selenium):
+def leave_groups(
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
         leave_groups_using_rest(user, users, hosts, group_list, host)
@@ -204,18 +249,18 @@ def leave_groups(client, user, group_list, host, hosts, users, selenium):
     )
 )
 def add_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    tmp_memory,
-    parent,
-    displays,
-    clipboard,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    parent: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
 
     if client.lower() == "rest":
         add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -241,16 +286,16 @@ def add_subgroups(
     )
 )
 def remove_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    tmp_memory,
-    parent,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    parent: Any,
+) -> Any:
 
     if client.lower() == "rest":
         remove_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -274,15 +319,15 @@ def remove_subgroups(
     )
 )
 def assert_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    parent,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    parent: Any,
+) -> Any:
 
     if client.lower() == "rest":
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
@@ -300,15 +345,15 @@ def assert_subgroups(
     )
 )
 def fail_to_see_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    parent,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    parent: Any,
+) -> Any:
 
     if client.lower() == "rest":
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
@@ -326,18 +371,18 @@ def fail_to_see_subgroups(
     )
 )
 def invite_to_group(
-    client,
-    user1,
-    user2,
-    group,
-    host,
-    hosts,
-    users,
-    selenium,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    client: Any,
+    user1: Any,
+    user2: Any,
+    group: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
 
     if client.lower() == "rest":
         create_group_token_using_rest(
@@ -363,7 +408,15 @@ def invite_to_group(
         'was invited to in "(?P<host>.*)" Onezone service'
     )
 )
-def join_group(client, user, host, hosts, users, selenium, tmp_memory):
+def join_group(
+    client: Any,
+    user: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
 
     if client.lower() == "rest":
         join_group_using_rest(user, tmp_memory, hosts, users, host)
@@ -381,15 +434,15 @@ def join_group(client, user, host, hosts, users, selenium, tmp_memory):
     )
 )
 def fail_to_rename_groups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    new_names,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    new_names: Any,
+) -> Any:
 
     if client.lower() == "rest":
         fail_to_rename_groups_using_rest(
@@ -408,13 +461,13 @@ def fail_to_rename_groups(
     )
 )
 def fail_to_remove_groups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+) -> Any:
 
     if client.lower() == "rest":
         fail_to_remove_groups_using_rest(user, users, hosts, group_list, host)
@@ -435,18 +488,18 @@ def fail_to_remove_groups(
     )
 )
 def fail_to_add_subgroups(
-    client,
-    user,
-    group_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    parent,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    client: Any,
+    user: Any,
+    group_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    parent: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
 
     if client.lower() == "rest":
         fail_to_add_subgroups_using_rest(user, users, hosts, group_list, parent, host)

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from contextlib import contextmanager
 from functools import partial
 from platform import system as get_system
+from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -46,17 +47,17 @@ class _FileBrowser(Browser):
 
     _upload_input = WebElement(".fb-upload-trigger input")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"file browser in {self.parent}"
 
-    def names_of_visible_elems(self):
+    def names_of_visible_elems(self) -> Any:
         files = self._data
         # make sure row is fully loaded in gui
         names = [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
         return names
 
     @contextmanager
-    def select_files(self):
+    def select_files(self) -> Any:
         ctrl_or_cmd_key = (
             Keys.COMMAND if get_system() == "Darwin" else Keys.LEFT_CONTROL
         )
@@ -73,7 +74,7 @@ class _FileBrowser(Browser):
 
         action.perform()
 
-    def upload_files(self, files):
+    def upload_files(self, files: Any) -> Any:
         """This interaction is very hacky, because uploading files with Selenium
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.

@@ -2,6 +2,8 @@
 using web GUI
 """
 
+from typing import Any
+
 import pytest
 import yaml
 
@@ -48,11 +50,13 @@ from tests.utils.utils import repeat_failed
         "(users? of )?(?P<browser_id_list>.*)"
     )
 )
-def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
+def go_to_tab_in_provider(browser_id_list: Any, tab_name: Any, selenium: Any) -> Any:
     g_click_on_the_given_main_menu_tab(selenium, browser_id_list, tab_name)
 
 
-def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hosts):
+def navigate_to_tab_in_op_using_gui(
+    selenium: Any, user: Any, provider: Any, main_menu_tab: Any, hosts: Any
+) -> Any:
     title = selenium[user].title
 
     if "onezone" in title.lower():
@@ -61,7 +65,9 @@ def navigate_to_tab_in_op_using_gui(selenium, user, provider, main_menu_tab, hos
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
 
-def assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts):
+def assert_cannot_click_replicate_button(
+    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+) -> Any:
     with pytest.raises(RuntimeError, match="Replicate button is not clickable"):
         replicate_item(selenium, browser_id, provider, hosts)
 
@@ -81,14 +87,14 @@ def assert_cannot_click_replicate_button(selenium, browser_id, provider, hosts):
     )
 )
 def replicate_files_to_provider(
-    selenium,
-    browser_id,
-    names,
-    tmp_memory,
-    providers,
-    hosts,
-    result,
-):
+    selenium: Any,
+    browser_id: Any,
+    names: Any,
+    tmp_memory: Any,
+    providers: Any,
+    hosts: Any,
+    result: Any,
+) -> Any:
     details_modal_str = "Details modal"
     for name in parse_seq(names):
         click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
@@ -116,7 +122,9 @@ def replicate_files_to_provider(
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction to finish'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory):
+def assert_eviction_done(
+    selenium: Any, browser_id: Any, name: Any, tmp_memory: Any
+) -> Any:
     option = "Data distribution"
     tab = "Distribution"
     details_modal = "Details modal"
@@ -136,13 +144,13 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory):
     )
 )
 def wt_assert_file_chunks(
-    selenium,
-    browser_id,
-    file_name,
-    desc,
-    tmp_memory,
-    hosts,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    desc: Any,
+    tmp_memory: Any,
+    hosts: Any,
+) -> Any:
     option = "Data distribution"
     details_modal = "Details modal"
     tab = "Distribution"
@@ -155,7 +163,7 @@ def wt_assert_file_chunks(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _assert_file_chunks(selenium, browser_id, hosts, desc):
+def _assert_file_chunks(selenium: Any, browser_id: Any, hosts: Any, desc: Any) -> Any:
     desc = yaml.load(desc, yaml.Loader)
     for provider, chunks in desc.items():
         if chunks == "entirely empty":
@@ -169,7 +177,7 @@ def _assert_file_chunks(selenium, browser_id, hosts, desc):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(selenium, browser_id, name, tmp_memory):
+def create_directory(selenium: Any, browser_id: Any, name: Any, tmp_memory: Any) -> Any:
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"
@@ -189,15 +197,15 @@ def create_directory(selenium, browser_id, name, tmp_memory):
     )
 )
 def migrate_file_to_provider(
-    selenium,
-    browser_id,
-    name,
-    tmp_memory,
-    source,
-    target,
-    hosts,
-    result,
-):
+    selenium: Any,
+    browser_id: Any,
+    name: Any,
+    tmp_memory: Any,
+    source: Any,
+    target: Any,
+    hosts: Any,
+    result: Any,
+) -> Any:
     option = "Data distribution"
     tab = "Distribution"
     details_modal = "Details modal"
@@ -213,7 +221,9 @@ def migrate_file_to_provider(
 
 
 @wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters submenu'))
-def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
+def open_record_of_clusters_submenu(
+    selenium: Any, browser_id: Any, provider_name: Any, hosts: Any
+) -> Any:
     sidebar = "Clusters"
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar)
     click_on_record_in_clusters_menu(selenium, browser_id, provider_name, hosts)
@@ -225,7 +235,14 @@ def open_record_of_clusters_submenu(selenium, browser_id, provider_name, hosts):
         '"{tab}" tab for "{filename}" file using context menu'
     )
 )
-def open_modal_on_tab(selenium, browser_id, filename, tmp_memory, tab, modal_name):
+def open_modal_on_tab(
+    selenium: Any,
+    browser_id: Any,
+    filename: Any,
+    tmp_memory: Any,
+    tab: Any,
+    modal_name: Any,
+) -> Any:
     if tab == "QoS":
         option = "Quality of Service"
     elif tab == "Info":

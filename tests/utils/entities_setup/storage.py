@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 import yaml
 
@@ -21,7 +22,9 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post
         'initial "{name}" storage configuration in "{host}" Onezone service:\n{config}'
     )
 )
-def create_storage(hosts, host, config, onepanel_credentials, name):
+def create_storage(
+    hosts: Any, host: Any, config: Any, onepanel_credentials: Any, name: Any
+) -> Any:
     """Create storage according to given config.
 
     Config format depends on storage type. For example config format for
@@ -52,7 +55,9 @@ def create_storage(hosts, host, config, onepanel_credentials, name):
     _create_storage(hosts, host, config, onepanel_credentials, name)
 
 
-def _create_storage(hosts, host, config, onepanel_credentials, name):
+def _create_storage(
+    hosts: Any, host: Any, config: Any, onepanel_credentials: Any, name: Any
+) -> Any:
     options = yaml.load(config, yaml.Loader)
 
     _remove_storage_in_op_panel_using_rest(name, host, hosts, onepanel_credentials)

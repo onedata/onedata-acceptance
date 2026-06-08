@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from pathlib import Path
+from typing import Any
 
 import yaml
 from selenium.common.exceptions import (
@@ -75,8 +76,8 @@ from tests.utils.utils import repeat_failed
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
-    selenium, browser_id, path, space, tmp_memory
-):
+    selenium: Any, browser_id: Any, path: Any, space: Any, tmp_memory: Any
+) -> Any:
     item_name, _ = get_item_name_and_containing_dir_path(path)
 
     try:
@@ -99,14 +100,14 @@ def _click_menu_for_elem_somewhere_in_file_browser(
     )
 )
 def rename_item(
-    selenium,
-    browser_id,
-    path,
-    new_path,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    new_path: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     option = "Rename"
     modal_header = "Rename"
     modal_name = "Rename modal"
@@ -138,13 +139,13 @@ def rename_item(
     )
 )
 def remove_item_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     option = "Delete"
     button = "Yes"
     modal = "Delete modal"
@@ -169,13 +170,13 @@ def remove_item_in_op_gui(
 
 
 def remove_dir_and_parents_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     item_name = _select_item(selenium, browser_id, tmp_memory, path)
     remove_item_in_op_gui(
         selenium,
@@ -201,14 +202,14 @@ def remove_dir_and_parents_in_op_gui(
     )
 )
 def see_items_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    subfiles,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    subfiles: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     selenium[browser_id].refresh()
 
     try:
@@ -244,15 +245,15 @@ def see_items_in_op_gui(
     )
 )
 def create_item_in_op_gui(
-    selenium,
-    browser_id,
-    path,
-    item_type,
-    name,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    item_type: Any,
+    name: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     # change None to empty string if path not given
     path = path.lstrip("/") if path else ""
     button = f"New {item_type}"
@@ -261,7 +262,7 @@ def create_item_in_op_gui(
     text = "Creating directory failed"
     option = "enter"
 
-    def _open_menu_for_item_in_file_browser():
+    def _open_menu_for_item_in_file_browser() -> Any:
         if path:
             go_to_path(
                 selenium, browser_id, tmp_memory, path, WhichBrowser.FILE_BROWSER.value
@@ -284,7 +285,9 @@ def create_item_in_op_gui(
 
 
 @wt(parsers.parse('user of {browser_id} creates dir "{dir_name}" in current dir'))
-def create_dir_in_current_dir(selenium, browser_id, tmp_memory, dir_name):
+def create_dir_in_current_dir(
+    selenium: Any, browser_id: Any, tmp_memory: Any, dir_name: Any
+) -> Any:
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"
@@ -308,8 +311,8 @@ def create_dir_in_current_dir(selenium, browser_id, tmp_memory, dir_name):
     )
 )
 def check_metadata_for_file_in_directory(
-    selenium, browser_id, directory, config, tmp_memory
-):
+    selenium: Any, browser_id: Any, directory: Any, config: Any, tmp_memory: Any
+) -> Any:
     which_browser = "file_browser"
     metadata = yaml.load(config, yaml.Loader)
 
@@ -339,13 +342,13 @@ def check_metadata_for_file_in_directory(
 
 
 def go_to_and_assert_browser(
-    selenium,
-    browser_id,
-    space_name,
-    option_in_space,
-    tmp_memory,
-    item_browser="file browser",
-):
+    selenium: Any,
+    browser_id: Any,
+    space_name: Any,
+    option_in_space: Any,
+    tmp_memory: Any,
+    item_browser: Any = "file browser",
+) -> Any:
     option = "Data"
     element = "spaces"
     _click_on_option_in_the_sidebar(selenium, browser_id, option, force=False)
@@ -364,14 +367,14 @@ def go_to_and_assert_browser(
 
 
 def assert_space_content_in_op_gui(
-    config,
-    selenium,
-    user,
-    tmp_memory,
-    tmpdir,
-    space_name,
-    which_browser="file browser",
-):
+    config: Any,
+    selenium: Any,
+    user: Any,
+    tmp_memory: Any,
+    tmpdir: Any,
+    space_name: Any,
+    which_browser: Any = "file browser",
+) -> Any:
     try:
         assert_browser_in_tab_in_op(
             selenium, user, tmp_memory, item_browser=which_browser
@@ -400,14 +403,14 @@ def assert_space_content_in_op_gui(
 
 
 def see_num_of_items_in_path_in_op_gui(
-    selenium,
-    user,
-    tmp_memory,
-    path,
-    num,
-    provider,
-    hosts,
-):
+    selenium: Any,
+    user: Any,
+    tmp_memory: Any,
+    path: Any,
+    num: Any,
+    provider: Any,
+    hosts: Any,
+) -> Any:
     tab_name = "data"
 
     try:
@@ -421,14 +424,14 @@ def see_num_of_items_in_path_in_op_gui(
 
 
 def assert_file_content_in_op_gui(
-    text,
-    path,
-    space,
-    selenium,
-    user,
-    tmp_memory,
-    tmpdir,
-):
+    text: Any,
+    path: Any,
+    space: Any,
+    selenium: Any,
+    user: Any,
+    tmp_memory: Any,
+    tmpdir: Any,
+) -> Any:
     cwd = "space root"
     try:
         assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
@@ -451,7 +454,9 @@ def assert_file_content_in_op_gui(
         r"(?P<config>(.|\s)*)"
     )
 )
-def g_create_directory_structure(user, config, space, host, users, hosts):
+def g_create_directory_structure(
+    user: Any, config: Any, space: Any, host: Any, users: Any, hosts: Any
+) -> Any:
     owner = users[user]
     items = yaml.load(config, yaml.Loader)
     provider_hostname = hosts[host]["hostname"]
@@ -460,12 +465,12 @@ def g_create_directory_structure(user, config, space, host, users, hosts):
 
 
 def create_directory_structure_in_op_gui(
-    selenium,
-    user,
-    config,
-    space,
-    tmp_memory,
-):
+    selenium: Any,
+    user: Any,
+    config: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
     items = yaml.load(config, yaml.Loader)
     cwd = ""
 
@@ -480,14 +485,14 @@ def create_directory_structure_in_op_gui(
 
 
 def _create_item(
-    selenium,
-    browser_id,
-    name,
-    content,
-    cwd,
-    space,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    name: Any,
+    content: Any,
+    cwd: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
     path = "space root"
     item_type = "directory" if name.startswith("dir") else "file"
     if item_type == "directory":
@@ -526,13 +531,13 @@ def _create_item(
 
 
 def _create_content(
-    selenium,
-    browser_id,
-    content,
-    cwd,
-    space,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    content: Any,
+    cwd: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -562,7 +567,9 @@ def _create_content(
         'root directory of "(?P<space>.*)" using (?P<provider>.*) GUI'
     )
 )
-def successfully_upload_file_to_op_gui(path, selenium, browser_id, space, tmp_memory):
+def successfully_upload_file_to_op_gui(
+    path: Any, selenium: Any, browser_id: Any, space: Any, tmp_memory: Any
+) -> Any:
     go_to_filebrowser(selenium, browser_id, tmp_memory, space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path)
     assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
@@ -575,14 +582,14 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space, tmp_me
     )
 )
 def upload_file_to_op_gui(
-    path,
-    selenium,
-    browser_id,
-    space,
-    res,
-    filename,
-    tmp_memory,
-):
+    path: Any,
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    res: Any,
+    filename: Any,
+    tmp_memory: Any,
+) -> Any:
     try:
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
         go_to_path(
@@ -602,7 +609,9 @@ def upload_file_to_op_gui(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_mtime_not_earlier_than_op_gui(path, mtime, browser_id, tmp_memory, selenium):
+def assert_mtime_not_earlier_than_op_gui(
+    path: Any, mtime: Any, browser_id: Any, tmp_memory: Any, selenium: Any
+) -> Any:
     assert_nonempty_file_browser_in_files_tab_in_op(
         selenium,
         browser_id,
@@ -613,7 +622,7 @@ def assert_mtime_not_earlier_than_op_gui(path, mtime, browser_id, tmp_memory, se
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, mtime, tmp_memory)
 
 
-def _select_item(selenium, browser_id, tmp_memory, path):
+def _select_item(selenium: Any, browser_id: Any, tmp_memory: Any, path: Any) -> Any:
     item_name, path = get_item_name_and_containing_dir_path(path)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path)
     select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
@@ -626,7 +635,9 @@ def _select_item(selenium, browser_id, tmp_memory, path):
         r" (?P<which_browser>.*)"
     )
 )
-def go_to_path_(selenium, browser_id, tmp_memory, path, which_browser):
+def go_to_path_(
+    selenium: Any, browser_id: Any, tmp_memory: Any, path: Any, which_browser: Any
+) -> Any:
     go_to_path(
         selenium,
         browser_id,
@@ -638,12 +649,12 @@ def go_to_path_(selenium, browser_id, tmp_memory, path, which_browser):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_path(
-    selenium,
-    browser_id,
-    tmp_memory,
-    path,
-    which_browser,
-):
+    selenium: Any,
+    browser_id: Any,
+    tmp_memory: Any,
+    path: Any,
+    which_browser: Any,
+) -> Any:
     if path == ".":
         return
     if "/" in path:
@@ -670,12 +681,12 @@ def go_to_path(
 
 
 def go_to_path_without_last_elem(
-    selenium,
-    browser_id,
-    tmp_memory,
-    path,
-    item_browser="file browser",
-):
+    selenium: Any,
+    browser_id: Any,
+    tmp_memory: Any,
+    path: Any,
+    item_browser: Any = "file browser",
+) -> Any:
     if "/" in path:
         _, path_list = get_item_name_and_containing_dir_path(path)
 
@@ -689,7 +700,7 @@ def go_to_path_without_last_elem(
             )
 
 
-def get_item_name_and_containing_dir_path(path):
+def get_item_name_and_containing_dir_path(path: Any) -> Any:
     path_list = path.strip('"').split("/")
     item_name = path_list.pop()
     return item_name, path_list
@@ -701,7 +712,9 @@ def get_item_name_and_containing_dir_path(path):
         r' "(?P<space>.*)" space'
     )
 )
-def go_to_filebrowser(selenium, browser_id, tmp_memory, space):
+def go_to_filebrowser(
+    selenium: Any, browser_id: Any, tmp_memory: Any, space: Any
+) -> Any:
     option_in_menu = "Data"
     option_in_space_submenu = "Files"
 
@@ -717,14 +730,14 @@ def go_to_filebrowser(selenium, browser_id, tmp_memory, space):
 
 
 def open_modal_for_file_browser_item(
-    selenium,
-    browser_id,
-    modal_name,
-    path,
-    tmp_memory,
-    option,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    modal_name: Any,
+    path: Any,
+    tmp_memory: Any,
+    option: Any,
+    space: Any,
+) -> Any:
     _click_menu_for_elem_somewhere_in_file_browser(
         selenium, browser_id, path, space, tmp_memory
     )
@@ -732,7 +745,9 @@ def open_modal_for_file_browser_item(
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
-def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory):
+def check_file_owner(
+    selenium: Any, browser_id: Any, owner: Any, file_name: Any, tmp_memory: Any
+) -> Any:
     option = "Information"
     modal_name = "File details"
 
@@ -750,12 +765,12 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory):
     )
 )
 def create_hardlinks_of_file(
-    selenium,
-    browser_id,
-    file_name,
-    space,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
 
     # This function works only with the files in main space.
     # If a user is already in a different place, before creating hardlink
@@ -783,12 +798,12 @@ def create_hardlinks_of_file(
     )
 )
 def create_symlinks_of_file(
-    selenium,
-    browser_id,
-    file_name,
-    space,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
 
     # Note: this function works similarly to the function above
 
@@ -813,13 +828,13 @@ def create_symlinks_of_file(
     )
 )
 def create_symlinks_of_file_with_path(
-    selenium,
-    browser_id,
-    file_name,
-    space,
-    tmp_memory,
-    path,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    space: Any,
+    tmp_memory: Any,
+    path: Any,
+) -> Any:
     # Note: this function works similarly to the function below
 
     option = "Create symbolic link"
@@ -846,8 +861,13 @@ def create_symlinks_of_file_with_path(
     )
 )
 def create_symlinks_of_files_with_rename(
-    selenium, browser_id, link_type, config, space, tmp_memory
-):
+    selenium: Any,
+    browser_id: Any,
+    link_type: Any,
+    config: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
     """
     Symbolic links configuration format:
       - name: Name of the symbolic link to create
@@ -915,13 +935,13 @@ def create_symlinks_of_files_with_rename(
     )
 )
 def create_hardlinks_of_file_with_path(
-    selenium,
-    browser_id,
-    file_name,
-    space,
-    tmp_memory,
-    path,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    space: Any,
+    tmp_memory: Any,
+    path: Any,
+) -> Any:
     # This function creates a hardlink from a file in a currently opened directory
     # and pastes it in a given relative path
 
@@ -942,17 +962,17 @@ def create_hardlinks_of_file_with_path(
 
 
 def _create_link_in_file_browser(
-    selenium,
-    browser_id,
-    file_name,
-    space,
-    tmp_memory,
-    option,
-    button,
-    path=None,
-    go_to_file_browser=True,
-    new_name=None,
-):
+    selenium: Any,
+    browser_id: Any,
+    file_name: Any,
+    space: Any,
+    tmp_memory: Any,
+    option: Any,
+    button: Any,
+    path: Any = None,
+    go_to_file_browser: Any = True,
+    new_name: Any = None,
+) -> Any:
     if go_to_file_browser:
         go_to_filebrowser(selenium, browser_id, tmp_memory, space)
     _click_menu_for_elem_somewhere_in_file_browser(
@@ -984,13 +1004,13 @@ def _create_link_in_file_browser(
     )
 )
 def create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
-    selenium,
-    browser_id,
-    space,
-    tmp_memory,
-    source_path,
-    path_to_place,
-):
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    tmp_memory: Any,
+    source_path: Any,
+    path_to_place: Any,
+) -> Any:
 
     # Both source_path and path_to_place should be absolute,
     # without the space name, and start with slash
@@ -1040,13 +1060,13 @@ def create_hardlink_of_file_located_outside_current_location_and_place_it_in_pat
     )
 )
 def copy_object_id_to_tmp_memory(
-    tmp_memory,
-    selenium,
-    user,
-    name,
-    space,
-    modal,
-):
+    tmp_memory: Any,
+    selenium: Any,
+    user: Any,
+    name: Any,
+    space: Any,
+    modal: Any,
+) -> Any:
     option = "Information"
     button = "File ID"
     if modal == "Directory Details":
@@ -1071,8 +1091,13 @@ def copy_object_id_to_tmp_memory(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_and_press_enter_with_content_check(
-    browser_id, item_name, content, tmpdir, tmp_memory, which_browser
-):
+    browser_id: Any,
+    item_name: Any,
+    content: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     browser.data[item_name].click_and_enter()
@@ -1080,14 +1105,14 @@ def click_and_press_enter_with_content_check(
 
 
 def get_file_id_from_details_modal(
-    selenium,
-    browser_id,
-    space_name,
-    tmp_memory,
-    file_name,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    file_name: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     option_in_space = "Files"
     option_in_menu = "Information"
 
@@ -1116,8 +1141,8 @@ def get_file_id_from_details_modal(
     )
 )
 def go_to_size_statistics_per_provider_by_breadcrumbs(
-    selenium, browser_id, tmp_memory, space
-):
+    selenium: Any, browser_id: Any, tmp_memory: Any, space: Any
+) -> Any:
     browser = "file browser"
     path = space
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, item_browser=browser)
@@ -1132,7 +1157,9 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
     expand_size_statistics_for_providers(selenium, browser_id)
 
 
-def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium):
+def delete_first_n_files(
+    browser_id: Any, num_files_to_delete: Any, tmp_memory: Any, selenium: Any
+) -> Any:
     option_to_select = "Delete"
     modal = "Delete modal"
     modal_option = "Yes"
@@ -1154,8 +1181,8 @@ def delete_first_n_files(browser_id, num_files_to_delete, tmp_memory, selenium):
     )
 )
 def delete_first_n_files_with_fixed_step(
-    browser_id, num_files_to_delete: int, tmp_memory, selenium
-):
+    browser_id: Any, num_files_to_delete: int, tmp_memory: Any, selenium: Any
+) -> Any:
     deleted_files = 0
     fixed_step = 5
     while deleted_files + fixed_step <= num_files_to_delete:
@@ -1182,13 +1209,13 @@ def delete_first_n_files_with_fixed_step(
     )
 )
 def copy_show_or_download_link_from_file_details_modal(
-    browser_id,
+    browser_id: Any,
     link_type: str,
-    path,
-    space,
-    selenium,
-    tmp_memory,
-):
+    path: Any,
+    space: Any,
+    selenium: Any,
+    tmp_memory: Any,
+) -> Any:
     option = "Information"
     modal = "File details"
     _click_menu_for_elem_somewhere_in_file_browser(
@@ -1204,6 +1231,8 @@ def copy_show_or_download_link_from_file_details_modal(
         'user of {browser_id} changes provider to "{provider}" on file browser page'
     )
 )
-def change_provider_in_file_browser(selenium, browser_id, provider, hosts):
+def change_provider_in_file_browser(
+    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+) -> Any:
     click_choose_other_oneprovider_on_file_browser(selenium, browser_id)
     choose_provider_in_selected_page(selenium, browser_id, provider, hosts)

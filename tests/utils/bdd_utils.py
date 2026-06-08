@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import inspect
 from functools import wraps
-from typing import get_origin
+from typing import Any, get_origin
 
 from pytest_bdd import given as pytest_bdd_given
 from pytest_bdd import parsers, scenario, scenarios
@@ -26,8 +26,12 @@ __all__ = [
 
 
 def given(
-    name, fixture=None, converters=None, scope="function", target_fixture=None
-):  # pylint: disable=unused-argument
+    name: Any,
+    fixture: Any = None,
+    converters: Any = None,
+    scope: Any = "function",
+    target_fixture: Any = None,
+) -> Any:  # pylint: disable=unused-argument
     wrappers = [
         sanitize_arguments,
         pytest_bdd_given(name, converters, target_fixture, stacklevel=2),
@@ -35,17 +39,17 @@ def given(
     return _create_decorator(given, wrappers)
 
 
-def when(name, converters=None):
+def when(name: Any, converters: Any = None) -> Any:
     wrappers = [sanitize_arguments, pytest_bdd_when(name, converters, stacklevel=2)]
     return _create_decorator(when, wrappers)
 
 
-def then(name, converters=None):
+def then(name: Any, converters: Any = None) -> Any:
     wrappers = [sanitize_arguments, pytest_bdd_then(name, converters, stacklevel=2)]
     return _create_decorator(then, wrappers)
 
 
-def wt(name, converters=None):
+def wt(name: Any, converters: Any = None) -> Any:
     wrappers = [
         sanitize_arguments,
         pytest_bdd_when(name, converters, stacklevel=2),
@@ -54,12 +58,12 @@ def wt(name, converters=None):
     return _create_decorator(wt, wrappers)
 
 
-def sanitize_arguments(fun):
+def sanitize_arguments(fun: Any) -> Any:
     sig = inspect.signature(fun)
     parameters = sig.parameters
     is_gen = inspect.isgeneratorfunction(fun)
 
-    def _cast_arguments(args, kwargs):
+    def _cast_arguments(args: Any, kwargs: Any) -> Any:
         ba = sig.bind(*args, **kwargs)
         ba.apply_defaults()
 
@@ -81,24 +85,24 @@ def sanitize_arguments(fun):
     if is_gen:
 
         @wraps(fun)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             ba = _cast_arguments(args, kwargs)
             yield from fun(*ba.args, **ba.kwargs)
 
     else:
 
         @wraps(fun)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             ba = _cast_arguments(args, kwargs)
             return fun(*ba.args, **ba.kwargs)
 
     return wrapper
 
 
-def _create_decorator(wrapped, wrappers):
+def _create_decorator(wrapped: Any, wrappers: Any) -> Any:
 
     @wraps(wrapped)
-    def decorator(original_fun):
+    def decorator(original_fun: Any) -> Any:
         fun = original_fun
         for wrapper in wrappers:
             fun = wrapper(fun)

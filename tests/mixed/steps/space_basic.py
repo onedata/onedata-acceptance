@@ -6,6 +6,8 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from onezone_client import UserApi
 
 from tests.gui.meta_steps.onezone.provider import (
@@ -62,17 +64,17 @@ from tests.utils.utils import repeat_failed
     )
 )
 def create_spaces_in_oz(
-    client,
-    user,
-    space_list,
-    host,
-    hosts,
-    users,
-    selenium,
-    spaces,
-    clipboard,
-    displays,
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    selenium: Any,
+    spaces: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
 
     if client.lower() == "rest":
         create_spaces_in_oz_using_rest(
@@ -100,15 +102,15 @@ def create_spaces_in_oz(
     )
 )
 def leave_spaces_in_oz(
-    client,
-    user,
-    space_list,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -128,16 +130,16 @@ def leave_spaces_in_oz(
     )
 )
 def rename_spaces_in_oz(
-    client,
-    user,
-    space_list,
-    new_names_list,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    new_names_list: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -165,7 +167,15 @@ def rename_spaces_in_oz(
         "service"
     )
 )
-def remove_spaces_in_oz(client, user, space_list, host, users, hosts, spaces):
+def remove_spaces_in_oz(
+    client: Any,
+    user: Any,
+    space_list: Any,
+    host: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -182,8 +192,15 @@ def remove_spaces_in_oz(client, user, space_list, host, users, hosts, spaces):
     )
 )
 def delete_users_from_space_in_oz(
-    client, user_list, space_name, host, users, hosts, spaces, user
-):
+    client: Any,
+    user_list: Any,
+    space_name: Any,
+    host: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    user: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -202,8 +219,15 @@ def delete_users_from_space_in_oz(
     )
 )
 def add_users_to_space_in_oz(
-    client, user_list, space_name, host, users, hosts, spaces, user
-):
+    client: Any,
+    user_list: Any,
+    space_name: Any,
+    host: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    user: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -222,17 +246,17 @@ def add_users_to_space_in_oz(
     )
 )
 def remove_provider_support_for_space_in_oz(
-    client,
-    user,
-    provider_name,
-    space_name,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-    admin_credentials,
-):
+    client: Any,
+    user: Any,
+    provider_name: Any,
+    space_name: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    admin_credentials: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -263,19 +287,19 @@ def remove_provider_support_for_space_in_oz(
     )
 )
 def invite_other_users_to_space(
-    client,
-    user,
-    user_list,
-    space_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-    spaces,
-    displays,
-    clipboard,
-):
+    client: Any,
+    user: Any,
+    user_list: Any,
+    space_name: Any,
+    host: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -306,15 +330,15 @@ def invite_other_users_to_space(
     )
 )
 def join_space_in_oz(
-    client,
-    user_list,
-    item_name,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: Any,
+    user_list: Any,
+    item_name: Any,
+    host: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -336,8 +360,14 @@ def join_space_in_oz(
     )
 )
 def assert_there_are_spaces_in_oz(
-    client, user, space_list, selenium, users, hosts, host
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    host: Any,
+) -> Any:
 
     if client.lower() == "web gui":
 
@@ -357,15 +387,15 @@ def assert_there_are_spaces_in_oz(
     )
 )
 def assert_there_are_no_spaces_in_oz(
-    client,
-    user,
-    space_list,
-    host,
-    selenium,
-    users,
-    spaces,
-    hosts,
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    spaces: Any,
+    hosts: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -387,16 +417,16 @@ def assert_there_are_no_spaces_in_oz(
     )
 )
 def assert_spaces_have_been_renamed_in_oz(
-    client,
-    user,
-    space_list,
-    new_names_list,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-):
+    client: Any,
+    user: Any,
+    space_list: Any,
+    new_names_list: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -421,17 +451,17 @@ def assert_spaces_have_been_renamed_in_oz(
     )
 )
 def assert_there_is_no_provider_for_space_in_oz(
-    client,
-    user,
-    providers_list,
-    space_name,
-    host,
-    selenium,
-    users,
-    hosts,
-    spaces,
-    admin_credentials,
-):
+    client: Any,
+    user: Any,
+    providers_list: Any,
+    space_name: Any,
+    host: Any,
+    selenium: Any,
+    users: Any,
+    hosts: Any,
+    spaces: Any,
+    admin_credentials: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -460,16 +490,16 @@ def assert_there_is_no_provider_for_space_in_oz(
     )
 )
 def assert_user_is_member_of_space(
-    client,
-    user,
-    user_list,
-    space_name,
-    host,
-    spaces,
-    users,
-    hosts,
-    selenium,
-):
+    client: Any,
+    user: Any,
+    user_list: Any,
+    space_name: Any,
+    host: Any,
+    spaces: Any,
+    users: Any,
+    hosts: Any,
+    selenium: Any,
+) -> Any:
 
     if client.lower() == "rest":
 
@@ -492,15 +522,15 @@ def assert_user_is_member_of_space(
     )
 )
 def assert_provider_has_given_name_and_known_hostname_in_oz(
-    client,
-    user,
-    provider_name,
-    provider,
-    host,
-    users,
-    hosts,
-    selenium,
-):
+    client: Any,
+    user: Any,
+    provider_name: Any,
+    provider: Any,
+    host: Any,
+    users: Any,
+    hosts: Any,
+    selenium: Any,
+) -> Any:
 
     provider_name = hosts[provider_name]["name"]
 
@@ -523,7 +553,9 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(
         'using {client}, {user} sees spaces "{expected_spaces}" in mount point'
     )
 )
-def assert_spaces_in_mount_point(client, user, users, expected_spaces):
+def assert_spaces_in_mount_point(
+    client: Any, user: Any, users: Any, expected_spaces: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -539,7 +571,9 @@ def assert_spaces_in_mount_point(client, user, users, expected_spaces):
     )
 )
 @repeat_failed(timeout=60)
-def assert_spaces_in_mount_point_with_waiting(client, user, users, expected_spaces):
+def assert_spaces_in_mount_point_with_waiting(
+    client: Any, user: Any, users: Any, expected_spaces: Any
+) -> Any:
     assert_spaces_in_mount_point(client, user, users, expected_spaces)
 
 
@@ -550,8 +584,8 @@ def assert_spaces_in_mount_point_with_waiting(client, user, users, expected_spac
     )
 )
 def assert_spaces_with_ids_in_mount_point(
-    client, user, users, expected_spaces, zone_name, hosts
-):
+    client: Any, user: Any, users: Any, expected_spaces: Any, zone_name: Any, hosts: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -582,8 +616,8 @@ def assert_spaces_with_ids_in_mount_point(
 )
 @repeat_failed(timeout=60)
 def assert_spaces_with_ids_in_mount_point_with_waiting(
-    client, user, users, expected_spaces, zone_name, hosts
-):
+    client: Any, user: Any, users: Any, expected_spaces: Any, zone_name: Any, hosts: Any
+) -> Any:
     assert_spaces_with_ids_in_mount_point(
         client, user, users, expected_spaces, zone_name, hosts
     )

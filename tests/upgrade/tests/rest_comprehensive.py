@@ -11,6 +11,7 @@ import os
 import shutil
 import tarfile
 from functools import partial
+from typing import Any
 from xml.etree import ElementTree as ET
 
 from tests.upgrade.utils.rest_utils import (
@@ -32,7 +33,7 @@ from tests.upgrade.utils.upgrade_utils import (
 from tests.utils.utils import repeat_failed
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: Any) -> Any:
     return [
         UpgradeTest(
             "rest shares and handles test",
@@ -54,7 +55,7 @@ def get_tests(tests_controller):
     ]
 
 
-def unpack_tarball_from_payload(raw_bytes, target_path):
+def unpack_tarball_from_payload(raw_bytes: Any, target_path: Any) -> Any:
     if os.path.exists(target_path):
         shutil.rmtree(target_path)
     tar_bytes = io.BytesIO(raw_bytes)
@@ -68,7 +69,7 @@ ARCHIVE_NAME_TO_ID = {}
 RESULTS = {}
 
 
-def setup_shares_handles(tests_controller):
+def setup_shares_handles(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -112,7 +113,7 @@ def setup_shares_handles(tests_controller):
     )
 
 
-def verify_shares_handles(tests_controller):
+def verify_shares_handles(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -148,7 +149,7 @@ def verify_shares_handles(tests_controller):
     assert share_details["rootFileType"] == "DIR"
 
 
-def setup_datasets_and_archives(tests_controller):
+def setup_datasets_and_archives(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -190,7 +191,7 @@ def setup_datasets_and_archives(tests_controller):
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_s")
 
 
-def verify_datasets_and_archives(tests_controller):
+def verify_datasets_and_archives(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -211,7 +212,7 @@ def verify_datasets_and_archives(tests_controller):
     compare_downloaded_dirs_content("downloaded_archive_s", "downloaded_archive_v")
 
 
-def setup_all_functionalities(tests_controller):
+def setup_all_functionalities(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -262,7 +263,7 @@ def setup_all_functionalities(tests_controller):
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_s")
 
 
-def verify_all_functionalities(tests_controller):
+def verify_all_functionalities(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -294,7 +295,7 @@ def verify_all_functionalities(tests_controller):
     compare_downloaded_dirs_content(path1, path2)
 
 
-def compare_downloaded_dirs_content(path1, path2):
+def compare_downloaded_dirs_content(path1: Any, path2: Any) -> Any:
     comp_res = filecmp.dircmp(path1, path2)
     comp_report = [
         f"Differences in common files: {comp_res.diff_files}",
@@ -323,7 +324,7 @@ def compare_downloaded_dirs_content(path1, path2):
             )
 
 
-def get_files_content(path1, path2):
+def get_files_content(path1: Any, path2: Any) -> Any:
     # Return without exception
     if not os.path.isfile(path1):
         return f"{path1} is not a file!"
@@ -341,12 +342,12 @@ def get_files_content(path1, path2):
 
 
 @repeat_failed(timeout=30)
-def wait_for_handle_registration(provider_host, token, share_id):
+def wait_for_handle_registration(provider_host: Any, token: Any, share_id: Any) -> Any:
     res = get_share_info(provider_host, token, share_id)
     assert res["handleId"] is not None
 
 
-def create_dir_with_example_content(client, space_name: str, dir_name: str):
+def create_dir_with_example_content(client: Any, space_name: str, dir_name: str) -> Any:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.mkdir(dir_path)
@@ -358,7 +359,9 @@ def create_dir_with_example_content(client, space_name: str, dir_name: str):
     client.write("abc3", os.path.join(dir_path, "file3"))
 
 
-def create_additional_content_in_dir(client, space_name: str, dir_name: str):
+def create_additional_content_in_dir(
+    client: Any, space_name: str, dir_name: str
+) -> Any:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.create_file(os.path.join(dir_path, "file4"))
@@ -370,7 +373,9 @@ def create_additional_content_in_dir(client, space_name: str, dir_name: str):
 
 
 @repeat_failed(timeout=60)
-def wait_for_synced_file_content(provider_host, path, token, expected_content):
+def wait_for_synced_file_content(
+    provider_host: Any, path: Any, token: Any, expected_content: Any
+) -> Any:
     file_id = lookup_file_id(path, provider_host, token)
     actual_content = str(
         download_file_content(provider_host, token, file_id), encoding="utf-8"
@@ -381,13 +386,15 @@ def wait_for_synced_file_content(provider_host, path, token, expected_content):
 
 
 @repeat_failed(timeout=60)
-def wait_for_preserved_archive_state(provider_host, token, archive_id):
+def wait_for_preserved_archive_state(
+    provider_host: Any, token: Any, archive_id: Any
+) -> Any:
     archive_state = get_archive_information(provider_host, token, archive_id)["state"]
     err_msg = f"archive {archive_id} is not in preserved state but in {archive_state}"
     assert archive_state == "preserved", err_msg
 
 
-def compare_share_details(details_s, details_v):
+def compare_share_details(details_s: Any, details_v: Any) -> Any:
     # that parameter differs on various provider versions
     _ = details_s.pop("fileType") if "fileType" in details_s else None
     _ = details_v.pop("fileType") if "fileType" in details_v else None
@@ -400,7 +407,9 @@ def compare_share_details(details_s, details_v):
     assert details_s == details_v, err_msg
 
 
-def compare_handle_details(details_s, details_v, tests_controller):
+def compare_handle_details(
+    details_s: Any, details_v: Any, tests_controller: Any
+) -> Any:
     # update xml metadata by publicHandle identifier
     if is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         public_handle = details_s["publicHandle"]
@@ -443,7 +452,7 @@ def compare_handle_details(details_s, details_v, tests_controller):
     assert details_s == details_v, err_msg
 
 
-def assert_xmls_equal(e1, e2):
+def assert_xmls_equal(e1: Any, e2: Any) -> Any:
     """
     Normalize and compare 2 xmls in string format ignoring order
     """

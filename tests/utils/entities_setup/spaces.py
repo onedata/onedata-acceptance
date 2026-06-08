@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from functools import cache
+from typing import Any
 
 import yaml
 
@@ -38,16 +39,16 @@ from tests.utils.utils import repeat_failed
     )
 )
 def create_and_configure_spaces_step(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: Any,
+    zone_host: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    storages: Any,
+    spaces: Any,
+) -> Any:
     create_and_configure_spaces(
         yaml.load(config, yaml.Loader),
         zone_host,
@@ -62,16 +63,16 @@ def create_and_configure_spaces_step(
 
 
 def create_and_configure_spaces(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: Any,
+    zone_host: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    storages: Any,
+    spaces: Any,
+) -> Any:
     """Create and configure spaces according to given config.
 
     Config format given in yaml is as follows:
@@ -163,16 +164,16 @@ def create_and_configure_spaces(
     )
 )
 def add_spaces_configuration(
-    config,
-    zone_host,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users,
-    groups,
-    storages,
-    spaces,
-):
+    config: Any,
+    zone_host: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    groups: Any,
+    storages: Any,
+    spaces: Any,
+) -> Any:
     _create_and_configure_spaces(
         yaml.load(config, yaml.Loader),
         zone_host,
@@ -187,16 +188,16 @@ def add_spaces_configuration(
 
 
 def _create_and_configure_spaces(
-    config,
-    zone_name,
-    admin_credentials,
-    onepanel_credentials,
-    hosts,
-    users_db,
-    groups_db,
-    storages_db,
-    spaces_db,
-):
+    config: Any,
+    zone_name: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users_db: Any,
+    groups_db: Any,
+    storages_db: Any,
+    spaces_db: Any,
+) -> Any:
     zone_hostname = hosts[zone_name]["hostname"]
 
     for space_name, description in config.items():
@@ -231,7 +232,9 @@ def _create_and_configure_spaces(
         )
 
 
-def _create_space(zone_hostname, owner_username, owner_password, space_name):
+def _create_space(
+    zone_hostname: Any, owner_username: Any, owner_password: Any, space_name: Any
+) -> Any:
     space_properties = {"name": space_name}
     response = http_post(
         ip=zone_hostname,
@@ -244,8 +247,12 @@ def _create_space(zone_hostname, owner_username, owner_password, space_name):
 
 
 def _add_users_to_space(
-    zone_hostname, admin_credentials, space_id, users_db, users_to_add
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    space_id: Any,
+    users_db: Any,
+    users_to_add: Any,
+) -> Any:
     for user in users_to_add:
         try:
             [(user, options)] = user.items()
@@ -265,8 +272,13 @@ def _add_users_to_space(
 
 
 def _add_user_to_space(
-    zone_hostname, admin_username, admin_password, space_id, user_id, privileges
-):
+    zone_hostname: Any,
+    admin_username: Any,
+    admin_password: Any,
+    space_id: Any,
+    user_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
     else:
@@ -282,8 +294,12 @@ def _add_user_to_space(
 
 
 def _add_groups_to_space(
-    zone_hostname, admin_credentials, space_id, groups_db, groups_to_add
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    space_id: Any,
+    groups_db: Any,
+    groups_to_add: Any,
+) -> Any:
     for group in groups_to_add:
         try:
             [(group, options)] = group.items()
@@ -303,8 +319,13 @@ def _add_groups_to_space(
 
 
 def _add_group_to_space(
-    zone_hostname, admin_username, admin_password, space_id, group_id, privileges
-):
+    zone_hostname: Any,
+    admin_username: Any,
+    admin_password: Any,
+    space_id: Any,
+    group_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"operation": "set", "privileges": privileges})
     else:
@@ -320,16 +341,16 @@ def _add_group_to_space(
 
 
 def _get_support(
-    zone_hostname,
-    onepanel_credentials,
-    owner_credentials,
-    space_id,
-    storages_db,
-    hosts,
-    providers,
-    members,
-    users,
-):
+    zone_hostname: Any,
+    onepanel_credentials: Any,
+    owner_credentials: Any,
+    space_id: Any,
+    storages_db: Any,
+    hosts: Any,
+    providers: Any,
+    members: Any,
+    users: Any,
+) -> Any:
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
@@ -375,7 +396,9 @@ def _get_support(
 
 
 @repeat_failed(attempts=30, interval=0.5, exceptions=(AssertionError, HTTPError))
-def wait_for_space_support(space_id, provider_hostname, members, users):
+def wait_for_space_support(
+    space_id: Any, provider_hostname: Any, members: Any, users: Any
+) -> Any:
     for user in members:
         response = http_get(
             ip=provider_hostname,
@@ -392,8 +415,11 @@ def wait_for_space_support(space_id, provider_hostname, members, users):
 
 @repeat_failed(attempts=10, interval=5)
 def wait_for_storage_details(
-    provider_hostname, storage_id, onepanel_username, onepanel_password
-):
+    provider_hostname: Any,
+    storage_id: Any,
+    onepanel_username: Any,
+    onepanel_password: Any,
+) -> Any:
     storage_details = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -404,7 +430,9 @@ def wait_for_storage_details(
 
 
 @repeat_failed(attempts=10, interval=5)
-def wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password):
+def wait_for_storages_id(
+    provider_hostname: Any, onepanel_username: Any, onepanel_password: Any
+) -> Any:
     storages_id = http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -415,8 +443,11 @@ def wait_for_storages_id(provider_hostname, onepanel_username, onepanel_password
 
 
 def _get_storage_id(
-    provider_hostname, onepanel_username, onepanel_password, storage_name
-):
+    provider_hostname: Any,
+    onepanel_username: Any,
+    onepanel_password: Any,
+    storage_name: Any,
+) -> Any:
     storages_id = wait_for_storages_id(
         provider_hostname, onepanel_username, onepanel_password
     )
@@ -437,8 +468,8 @@ def _get_storage_id(
 
 
 def _init_storage_from_config(
-    owner_credentials, space_name, hosts, users, storage_conf
-):
+    owner_credentials: Any, space_name: Any, hosts: Any, users: Any, storage_conf: Any
+) -> Any:
     if not storage_conf:
         return
 
@@ -452,8 +483,13 @@ def _init_storage_from_config(
 
 
 def init_storage(
-    owner_credentials, space_name, hosts, provider_hostname, users, directory_tree
-):
+    owner_credentials: Any,
+    space_name: Any,
+    hosts: Any,
+    provider_hostname: Any,
+    users: Any,
+    directory_tree: Any,
+) -> Any:
     # if we make call too fast after deleting users from previous test
     # provider cache may not be refreshed and call will create dir for
     # currently nonexistent user, to avoid this wait some time
@@ -461,12 +497,12 @@ def init_storage(
     time.sleep(2)
 
     def create_cdmi_object(
-        path,
-        data=None,
-        repeats=10,
-        auth=None,
-        headers=None,
-    ):
+        path: Any,
+        data: Any = None,
+        repeats: Any = 10,
+        auth: Any = None,
+        headers: Any = None,
+    ) -> Any:
         if headers is None:
             headers = {"X-Auth-Token": owner_credentials.token}
         response = None
@@ -500,14 +536,14 @@ def init_storage(
 
 
 def _mkdirs(
-    create_cdmi_obj,
-    cwd,
-    hosts,
-    owner_credentials,
-    provider_hostname,
-    users,
-    dir_content=None,
-):
+    create_cdmi_obj: Any,
+    cwd: Any,
+    hosts: Any,
+    owner_credentials: Any,
+    provider_hostname: Any,
+    users: Any,
+    dir_content: Any = None,
+) -> Any:
     if not dir_content:
         return
 
@@ -543,8 +579,12 @@ def _mkdirs(
 
 
 def set_file_metadata(
-    file_path, owner_credentials, provider_hostname, users, metadata=None
-):
+    file_path: Any,
+    owner_credentials: Any,
+    provider_hostname: Any,
+    users: Any,
+    metadata: Any = None,
+) -> Any:
     metadata_type = metadata.pop("type", "json")
     metadata_type = "xattrs" if metadata_type == "basic" else metadata_type
     user = owner_credentials.username
@@ -559,14 +599,14 @@ def set_file_metadata(
 
 
 def _mkfile(
-    create_cdmi_obj,
-    file_path,
-    hosts,
-    owner_credentials,
-    provider_hostname,
-    users,
-    file_content=None,
-):
+    create_cdmi_obj: Any,
+    file_path: Any,
+    hosts: Any,
+    owner_credentials: Any,
+    provider_hostname: Any,
+    users: Any,
+    file_content: Any = None,
+) -> Any:
     if file_content:
         try:
             provider = file_content.get("provider", None)
@@ -599,7 +639,9 @@ def _mkfile(
         create_cdmi_obj(file_path)
 
 
-def create_empty_file(path, users, user, provider, hosts):
+def create_empty_file(
+    path: Any, users: Any, user: Any, provider: Any, hosts: Any
+) -> Any:
     http_put(
         ip=hosts[provider]["hostname"],
         port=OP_REST_PORT,
@@ -611,7 +653,7 @@ def create_empty_file(path, users, user, provider, hosts):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_file_id_by_rest(file_path, provider_hostname, token):
+def get_file_id_by_rest(file_path: Any, provider_hostname: Any, token: Any) -> Any:
     response = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
@@ -622,7 +664,7 @@ def get_file_id_by_rest(file_path, provider_hostname, token):
 
 
 @cache
-def get_file_id_cached(file_path, provider_hostname, token):
+def get_file_id_cached(file_path: Any, provider_hostname: Any, token: Any) -> Any:
     """
     Caches file ID lookup to avoid repeated REST calls.
     Useful also for retrieving IDs of files that may have been deleted.
@@ -637,7 +679,9 @@ def get_file_id_cached(file_path, provider_hostname, token):
         'supported by "{provider}" provider'
     )
 )
-def create_nested_directory(user, path, provider, number: int, name, users, hosts):
+def create_nested_directory(
+    user: Any, path: Any, provider: Any, number: int, name: Any, users: Any, hosts: Any
+) -> Any:
     names_list = name.split("/")
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
@@ -655,8 +699,15 @@ def create_nested_directory(user, path, provider, number: int, name, users, host
     )
 )
 def create_file_in_nested_directory(
-    user, path, provider, number: int, dir_name, file_name, users, hosts
-):
+    user: Any,
+    path: Any,
+    provider: Any,
+    number: int,
+    dir_name: Any,
+    file_name: Any,
+    users: Any,
+    hosts: Any,
+) -> Any:
     names_list = dir_name.split("/")
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
@@ -681,7 +732,9 @@ def create_file_in_nested_directory(
         '"file_N" supported by "{provider}" provider'
     )
 )
-def create_files_names_alphabetically(number, path, users, user, provider, hosts):
+def create_files_names_alphabetically(
+    number: Any, path: Any, users: Any, user: Any, provider: Any, hosts: Any
+) -> Any:
     for i in range(int(number)):
         num = str(i + 1).rjust(3, "0")
         file_path = f"{path}/file_{num}"
@@ -696,15 +749,17 @@ def create_files_names_alphabetically(number, path, users, user, provider, hosts
     )
 )
 def create_files_names_alphabetically_with_dir_list(
-    user, number, dir_list, provider, users, hosts
-):
+    user: Any, number: Any, dir_list: Any, provider: Any, users: Any, hosts: Any
+) -> Any:
     for dir_path in parse_seq(dir_list):
         create_files_names_alphabetically(
             number, dir_path, users, user, provider, hosts
         )
 
 
-def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
+def _get_users_space_id_list(
+    zone_hostname: Any, owner_username: Any, owner_password: Any
+) -> Any:
 
     resp = http_get(
         ip=zone_hostname,
@@ -716,7 +771,9 @@ def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
     return spaces_id_list
 
 
-def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
+def _rm_all_spaces_for_user(
+    zone_hostname: Any, owner_username: Any, owner_password: Any
+) -> Any:
     spaces_id_list = _get_users_space_id_list(
         zone_hostname, owner_username, owner_password
     )
@@ -733,7 +790,7 @@ def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
             pass
 
 
-def _rm_all_spaces_for_users_list(zone_hostname, users_db):
+def _rm_all_spaces_for_users_list(zone_hostname: Any, users_db: Any) -> Any:
     for user_credentials in users_db.values():
         _rm_all_spaces_for_user(
             zone_hostname, user_credentials.username, user_credentials.password
@@ -742,13 +799,17 @@ def _rm_all_spaces_for_users_list(zone_hostname, users_db):
 
 @given(parsers.parse('there are no spaces of {user} in "{zone_host}" Onezone service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_remove_all_space_supports_using_rest(hosts, users, user, zone_host):
+def g_remove_all_space_supports_using_rest(
+    hosts: Any, users: Any, user: Any, zone_host: Any
+) -> Any:
     zone_hostname = hosts[zone_host]["hostname"]
     user = users[user]
     _rm_all_spaces_for_user(zone_hostname, user.username, user.password)
 
 
-def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
+def force_start_storage_scan(
+    space_id: Any, provider: Any, hosts: Any, onepanel_credentials: Any
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -763,7 +824,9 @@ def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_storage_scan_to_finish(space_id, provider, hosts, onepanel_credentials):
+def wait_for_storage_scan_to_finish(
+    space_id: Any, provider: Any, hosts: Any, onepanel_credentials: Any
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

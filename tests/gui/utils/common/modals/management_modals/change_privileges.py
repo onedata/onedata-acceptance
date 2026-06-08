@@ -6,6 +6,8 @@ __author__ = "Emilia Kwolek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_elements import Button, WebItem
@@ -16,5 +18,5 @@ class ChangePrivilegesModal(Modal):
     cancel_button = Button(".cancel")
     save_button = Button(".proceed")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Change privileges in bulk menu"

@@ -4,6 +4,8 @@ __author__ = "Mateusz Zając"
 __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.web_elements import WebElementsSequence
 from tests.gui.utils.homepage.documentation import APIPage, DocsPage
 from tests.gui.utils.homepage.how_it_works import HowItWorksPage
@@ -20,23 +22,23 @@ class Homepage:
         "docs": DocsPage,
     }
 
-    def __init__(self, driver):
+    def __init__(self, driver: Any) -> None:
         self.web_elem = driver
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Onedata Docs page"
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Any) -> Any:
         return get_page(self, item, False)
 
-    def get_page_and_click(self, item):
+    def get_page_and_click(self, item: Any) -> Any:
         return get_page(self, item)
 
-    def get_panel_by_name(self, name):
+    def get_panel_by_name(self, name: Any) -> Any:
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
 
-def get_page(docs_page, item, click=True):
+def get_page(docs_page: Any, item: Any, click: Any = True) -> Any:
     item = item.lower()
     cls = docs_page.panels_classes.get(item, None)
     if cls:

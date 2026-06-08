@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.utils.acceptance_utils import make_arg_list
 from tests.utils.bdd_utils import given, parsers, wt
 
@@ -14,11 +16,11 @@ from . import multi_auth_steps
 @given(
     parsers.re(r"oneclient mounted using (?P<token>(token|bad token)) by (?P<user>\w+)")
 )
-def default_mount(user, token, hosts, users, env_desc):
+def default_mount(user: Any, token: Any, hosts: Any, users: Any, env_desc: Any) -> Any:
     users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
 
 
 @wt(parsers.re(r"(?P<spaces>.*) is mounted for (?P<user>\w+)"))
 @wt(parsers.re(r"(?P<spaces>.*) are mounted for (?P<user>\w+)"))
-def check_spaces(spaces, user, users):
+def check_spaces(spaces: Any, user: Any, users: Any) -> Any:
     multi_auth_steps.check_spaces(spaces, user, make_arg_list("client1"), users)

@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import Icon, Label, WebElement, WebItemsSequence
 
@@ -15,13 +17,13 @@ class SpaceRecord(PageObject):
     name = id = Label(".item-label", parent_name="given space record")
     _icon = Icon(".item-icon .one-icon")
 
-    def select(self):
+    def select(self) -> Any:
         self.web_elem.click()
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"{self.name} in {self.parent}"
 
-    def is_home(self):
+    def is_home(self) -> Any:
         return "oneicon-space-home" in self._icon.get_attribute("class")
 
 
@@ -31,5 +33,5 @@ class SpaceSelector(PageObject, ExpandableMixin):
     _icon = WebElement(".item-icon .one-icon")
     _toggle = WebElement("a.dropdown-toggle")
 
-    def is_selected_space_home(self):
+    def is_selected_space_home(self) -> Any:
         return "oneicon-space-home" in self._icon.get_attribute("class")

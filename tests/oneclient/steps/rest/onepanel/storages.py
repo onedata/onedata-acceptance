@@ -10,6 +10,7 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 import os
 import sys
+from typing import Any
 
 sys.path.insert(
     0,
@@ -25,14 +26,14 @@ from tests.mixed.utils.common import login_to_panel
 
 
 def modify_storage_parameters(
-    user,
-    provider,
-    storage_id,
-    storage_name,
-    params,
-    onepanel_host,
-    onepanel_credentials,
-):
+    user: Any,
+    provider: Any,
+    storage_id: Any,
+    storage_name: Any,
+    params: Any,
+    onepanel_host: Any,
+    onepanel_credentials: Any,
+) -> Any:
     user_client = login_to_panel(
         onepanel_credentials.username,
         onepanel_credentials.password,

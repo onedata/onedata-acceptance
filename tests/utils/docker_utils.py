@@ -6,11 +6,19 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import subprocess
+from typing import Any
 
 from environment import docker  # pylint: disable=import-error
 
 
-def run_cmd(username, client, cmd, detach=False, output=False, error=False):
+def run_cmd(
+    username: Any,
+    client: Any,
+    cmd: Any,
+    detach: Any = False,
+    output: Any = False,
+    error: Any = False,
+) -> Any:
     """Run command in docker
     :param username: command will be run as given user
     :param client: instance of utils.client_utils.Client class
@@ -43,5 +51,5 @@ def run_cmd(username, client, cmd, detach=False, output=False, error=False):
     )
 
 
-def docker_ip(container):
+def docker_ip(container: Any) -> Any:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]

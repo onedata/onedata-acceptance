@@ -6,6 +6,8 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
@@ -13,7 +15,7 @@ from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
-def get_run_indicators_for_lane(selenium, browser_id, lane_name):
+def get_run_indicators_for_lane(selenium: Any, browser_id: Any, lane_name: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
@@ -27,7 +29,9 @@ def get_run_indicators_for_lane(selenium, browser_id, lane_name):
         '"{lane_name}" lane'
     )
 )
-def assert_run_indicator_for_lane(selenium, browser_id, lane_name, number):
+def assert_run_indicator_for_lane(
+    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+) -> Any:
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     err_msg = (
         f'Run indicator with "{number}" does not appeared on run bar '
@@ -44,8 +48,8 @@ def assert_run_indicator_for_lane(selenium, browser_id, lane_name, number):
     )
 )
 def assert_certain_indicator_is_only_one_in_lane(
-    selenium, browser_id, lane_name, number
-):
+    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+) -> Any:
     assert_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     err_msg = (
@@ -61,7 +65,9 @@ def assert_certain_indicator_is_only_one_in_lane(
         ' number on run bar for "{lane_name}" lane'
     )
 )
-def click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number):
+def click_on_run_indicator_for_lane(
+    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
@@ -76,12 +82,12 @@ def click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number):
     )
 )
 def assert_origin_run_number_for_run_in_lane(
-    selenium,
-    browser_id,
-    lane_name,
-    run_number,
-    expected_origin_number,
-):
+    selenium: Any,
+    browser_id: Any,
+    lane_name: Any,
+    run_number: Any,
+    expected_origin_number: Any,
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
@@ -103,8 +109,8 @@ def assert_origin_run_number_for_run_in_lane(
     )
 )
 def assert_status_for_run_in_popup(
-    selenium, browser_id, option, value, lane_name, number
-):
+    selenium: Any, browser_id: Any, option: Any, value: Any, lane_name: Any, number: Any
+) -> Any:
     click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     info = Popups(selenium[browser_id]).run_info
     info_dict_list = {

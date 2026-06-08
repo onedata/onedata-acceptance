@@ -32,8 +32,14 @@ from tests.utils.utils import repeat_failed
     parsers.parse('initial users configuration in "{host}" Onezone service:\n{config}')
 )
 def users_creation_with_cleanup_step(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: Any,
+    config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    rm_users: Any,
+) -> Any:
     users_db, zone_hostname = users_creation_with_cleanup(
         host,
         yaml.load(config, yaml.Loader),
@@ -57,8 +63,14 @@ def users_creation_with_cleanup_step(
     )
 )
 def users_creation_step(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: Any,
+    config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    rm_users: Any,
+) -> Any:
     return users_creation(
         host,
         yaml.load(config, yaml.Loader),
@@ -71,16 +83,28 @@ def users_creation_step(
 
 
 def users_creation_with_cleanup(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: Any,
+    config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    rm_users: Any,
+) -> Any:
     return users_creation(
         host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
     )
 
 
 def users_creation(
-    host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users
-):
+    host: Any,
+    config: Any,
+    admin_credentials: Any,
+    onepanel_credentials: Any,
+    hosts: Any,
+    users: Any,
+    rm_users: Any,
+) -> Any:
     zone_hostname = hosts[host]["hostname"]
     users_db: dict[str, Any] = {}
     for user_config in config:
@@ -103,7 +127,7 @@ def users_creation(
     return users_db, zone_hostname
 
 
-def _parse_user_info(user_config):
+def _parse_user_info(user_config: Any) -> Any:
     try:
         [(username, options)] = user_config.items()
     except AttributeError:
@@ -112,8 +136,12 @@ def _parse_user_info(user_config):
 
 
 def _create_new_user(
-    zone_hostname, onepanel_credentials, username, password, user_conf_details
-):
+    zone_hostname: Any,
+    onepanel_credentials: Any,
+    username: Any,
+    password: Any,
+    user_conf_details: Any,
+) -> Any:
     http_post(
         ip=zone_hostname,
         port=PANEL_REST_PORT,
@@ -141,8 +169,13 @@ def _create_new_user(
 
 
 def _create_user(
-    zone_hostname, onepanel_credentials, admin_credentials, username, options, rm_users
-):
+    zone_hostname: Any,
+    onepanel_credentials: Any,
+    admin_credentials: Any,
+    username: Any,
+    options: Any,
+    rm_users: Any,
+) -> Any:
     password = options.get("password", "password")
     user_conf_details = {"username": username, "password": password, "groups": []}
 
@@ -168,7 +201,9 @@ def _create_user(
     return None
 
 
-def _configure_user(zone_hostname, admin_credentials, user_cred, options):
+def _configure_user(
+    zone_hostname: Any, admin_credentials: Any, user_cred: Any, options: Any
+) -> Any:
     full_name = options.get("fullName", user_cred.username.replace("_", " "))
     http_patch(
         ip=zone_hostname,
@@ -187,8 +222,11 @@ def _configure_user(zone_hostname, admin_credentials, user_cred, options):
 
 
 def _add_user_to_zone_cluster(
-    zone_hostname, admin_credentials, user_credentials, cluster_privileges
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    user_credentials: Any,
+    cluster_privileges: Any,
+) -> Any:
     username, password = user_credentials.username, user_credentials.password
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
@@ -228,8 +266,11 @@ def _add_user_to_zone_cluster(
 
 
 def _cleanup_users(
-    zone_hostname, admin_credentials, users_db, ignore_http_exceptions=False
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    users_db: Any,
+    ignore_http_exceptions: Any = False,
+) -> Any:
     for user_credentials in users_db.values():
         _rm_user(
             zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions
@@ -237,8 +278,11 @@ def _cleanup_users(
 
 
 def _rm_user(
-    zone_hostname, admin_credentials, user_credentials, ignore_http_exceptions=False
-):
+    zone_hostname: Any,
+    admin_credentials: Any,
+    user_credentials: Any,
+    ignore_http_exceptions: Any = False,
+) -> Any:
     try:
         _rm_zone_user(zone_hostname, admin_credentials, user_credentials.user_id)
     except HTTPNotFound:
@@ -249,7 +293,7 @@ def _rm_user(
 
 
 @repeat_failed(attempts=5)
-def _rm_zone_user(zone_hostname, admin_credentials, user_id):
+def _rm_zone_user(zone_hostname: Any, admin_credentials: Any, user_id: Any) -> Any:
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
 
@@ -263,8 +307,8 @@ def _rm_zone_user(zone_hostname, admin_credentials, user_id):
 
 
 def _remove_remnant_user(
-    username, zone_hostname, onepanel_credentials, admin_credentials
-):
+    username: Any, zone_hostname: Any, onepanel_credentials: Any, admin_credentials: Any
+) -> Any:
     users_list = http_get(
         ip=zone_hostname,
         port=PANEL_REST_PORT,
@@ -283,7 +327,9 @@ def _remove_remnant_user(
             _rm_zone_user(zone_hostname, admin_credentials, user_id)
 
 
-def _remove_user_spaces(zone_hostname, admin_credentials, owner_id):
+def _remove_user_spaces(
+    zone_hostname: Any, admin_credentials: Any, owner_id: Any
+) -> Any:
     spaces_list = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,

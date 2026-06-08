@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 import yaml
 
@@ -60,21 +61,25 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _paste_token_into_text_field(selenium, browser_id, token):
+def _paste_token_into_text_field(selenium: Any, browser_id: Any, token: Any) -> Any:
     page = OZLoggedIn(selenium[browser_id])["tokens"]
     page.input_name = token
 
 
 @wt(parsers.parse("user of {browser_id} pastes copied token into token text field"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def paste_copied_token_into_text_field(selenium, browser_id, clipboard, displays):
+def paste_copied_token_into_text_field(
+    selenium: Any, browser_id: Any, clipboard: Any, displays: Any
+) -> Any:
     token = clipboard.paste(display=displays[browser_id])
     _paste_token_into_text_field(selenium, browser_id, token)
 
 
 @wt(parsers.parse("user of {browser_id} pastes received token into token text field"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def paste_received_token_into_text_field(selenium, browser_id, tmp_memory):
+def paste_received_token_into_text_field(
+    selenium: Any, browser_id: Any, tmp_memory: Any
+) -> Any:
     token = tmp_memory[browser_id]["mailbox"]["token"]
     _paste_token_into_text_field(selenium, browser_id, token)
 
@@ -93,7 +98,7 @@ def paste_received_token_into_text_field(selenium, browser_id, tmp_memory):
         "received token"
     )
 )
-def consume_received_token(selenium, browser_id, tmp_memory):
+def consume_received_token(selenium: Any, browser_id: Any, tmp_memory: Any) -> Any:
     # step doesn`t check whether token consumption was successful
     option = "Tokens"
     button = "Consume token"
@@ -108,7 +113,9 @@ def consume_received_token(selenium, browser_id, tmp_memory):
 @wt(parsers.parse("user of {browser_id} joins group using copied token"))
 @wt(parsers.parse("user of {browser_id} joins to harvester in Onezone page"))
 @wt(parsers.parse("user of {browser_id} joins inventory using copied token"))
-def consume_token_from_copied_token(selenium, browser_id, clipboard, displays):
+def consume_token_from_copied_token(
+    selenium: Any, browser_id: Any, clipboard: Any, displays: Any
+) -> Any:
     option = "Tokens"
     button = "Consume token"
 
@@ -131,7 +138,9 @@ def consume_token_from_copied_token(selenium, browser_id, clipboard, displays):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays):
+def add_element_with_copied_token(
+    selenium: Any, browser_id: Any, elem_name: Any, clipboard: Any, displays: Any
+) -> Any:
     option = "Tokens"
     button = "Consume token"
 
@@ -149,13 +158,13 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, di
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token_for_elem(
-    selenium,
-    browser_id,
-    elem_name,
-    result,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    elem_name: Any,
+    result: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result)
 
@@ -167,7 +176,9 @@ def result_to_consume_token_for_elem(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_alert_while_consuming_token(selenium, browser_id, clipboard, displays, text):
+def assert_alert_while_consuming_token(
+    selenium: Any, browser_id: Any, clipboard: Any, displays: Any, text: Any
+) -> Any:
     option = "Tokens"
     button = "Consume token"
 
@@ -182,12 +193,14 @@ def assert_alert_while_consuming_token(selenium, browser_id, clipboard, displays
         "user of (?P<browser_id>.*?) (?P<result>succeeds|fails) to consume token"
     )
 )
-def result_to_consume_token(selenium, browser_id, result, clipboard, displays):
+def result_to_consume_token(
+    selenium: Any, browser_id: Any, result: Any, clipboard: Any, displays: Any
+) -> Any:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result)
 
 
-def _result_to_consume_token(selenium, browser_id, result):
+def _result_to_consume_token(selenium: Any, browser_id: Any, result: Any) -> Any:
     if result == "succeeds":
         notify_type = "success"
         text_regexp = ".*joined.*"
@@ -202,7 +215,9 @@ def _result_to_consume_token(selenium, browser_id, result):
         click_modal_button(selenium, browser_id, button, modal)
 
 
-def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
+def _create_token_of_type(
+    selenium: Any, browser_id: Any, token_type: Any, iteration: Any = None
+) -> Any:
     button = "Create new token"
     token_name = f"{token_type}_token"
     if iteration:
@@ -225,7 +240,9 @@ def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def create_number_of_typed_token(selenium, browser_id, number: int, token_type):
+def create_number_of_typed_token(
+    selenium: Any, browser_id: Any, number: int, token_type: Any
+) -> Any:
     for i in range(number):
         _create_token_of_type(selenium, browser_id, token_type, i)
 
@@ -237,14 +254,14 @@ def create_number_of_typed_token(selenium, browser_id, number: int, token_type):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_token_with_config(
-    selenium,
-    browser_id,
-    config,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    config: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+) -> Any:
     """Create invite token according to given config.
 
     Config format given in yaml is as follows:
@@ -303,14 +320,14 @@ def create_token_with_config(
 
 
 def _create_token_with_config(
-    selenium,
-    browser_id,
-    config,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    config: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+) -> Any:
     option = "Tokens"
     button = "Create new token"
     click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -353,14 +370,14 @@ def _create_token_with_config(
 
 
 def _set_tokens_caveats(
-    selenium,
-    browser_id,
-    caveats,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    caveats: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+) -> Any:
     expiration_caveat = caveats.get("expiration")
     region_caveats = caveats.get("region", False)
     country_caveats = caveats.get("country", False)
@@ -426,15 +443,15 @@ def _set_tokens_caveats(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration(
-    selenium,
-    browser_id,
-    config,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    spaces,
-):
+    selenium: Any,
+    browser_id: Any,
+    config: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    spaces: Any,
+) -> Any:
     """Assert token is corresponding to given config.
 
     Config format given in yaml is as follows:
@@ -494,15 +511,15 @@ def assert_token_configuration(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration_gui(
-    selenium,
-    browser_id,
-    config,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    spaces,
-):
+    selenium: Any,
+    browser_id: Any,
+    config: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    spaces: Any,
+) -> Any:
     token_name = yaml.load(config, yaml.Loader)["name"]
     click_on_token_on_tokens_list(selenium, browser_id, token_name)
     _assert_token_configuration(
@@ -518,16 +535,16 @@ def assert_token_configuration_gui(
 
 
 def _assert_token_configuration(
-    selenium,
-    browser_id,
-    config,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    spaces,
-    creation=False,
-):
+    selenium: Any,
+    browser_id: Any,
+    config: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    spaces: Any,
+    creation: Any = False,
+) -> Any:
     data = yaml.load(config, yaml.Loader)
     token_name = data.get("name", False)
     revoked = data.get("revoked", False)
@@ -570,15 +587,15 @@ def _assert_token_configuration(
 
 
 def assert_token_caveats(
-    selenium,
-    browser_id,
-    caveats,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    creation,
-):
+    selenium: Any,
+    browser_id: Any,
+    caveats: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    creation: Any,
+) -> Any:
     expiration_caveat = caveats.get("expiration", False)
     region_caveats = caveats.get("region", False)
     country_caveats = caveats.get("country", False)
@@ -628,7 +645,7 @@ def assert_token_caveats(
 
 @wt(parsers.parse('user of {browser_id} revokes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_token(selenium, browser_id, token_name):
+def revoke_token(selenium: Any, browser_id: Any, token_name: Any) -> Any:
     option = "Modify"
     action = "revoke"
 
@@ -641,7 +658,7 @@ def revoke_token(selenium, browser_id, token_name):
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_token(selenium, browser_id, token_name):
+def remove_token(selenium: Any, browser_id: Any, token_name: Any) -> Any:
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -652,7 +669,7 @@ def remove_token(selenium, browser_id, token_name):
 
 @wt(parsers.parse("user of {browser_id} removes all tokens"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_all_tokens(selenium, browser_id):
+def remove_all_tokens(selenium: Any, browser_id: Any) -> Any:
     btn = "remove"
     button = "Remove"
     modal = "Remove token"
@@ -675,15 +692,15 @@ def remove_all_tokens(selenium, browser_id):
     )
 )
 def create_and_check_token(
-    browser_id,
-    config,
-    selenium,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    spaces,
-):
+    browser_id: Any,
+    config: Any,
+    selenium: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    spaces: Any,
+) -> Any:
     _create_token_with_config(
         selenium,
         browser_id,
@@ -706,7 +723,9 @@ def create_and_check_token(
     )
 
 
-def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name):
+def choose_and_revoke_token_in_oz_gui(
+    selenium: Any, browser_id: Any, token_name: Any
+) -> Any:
     option = "Tokens"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -719,7 +738,9 @@ def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name):
         "basic {template} template"
     )
 )
-def create_token_with_basic_template(selenium, browser_id, name, template):
+def create_token_with_basic_template(
+    selenium: Any, browser_id: Any, name: Any, template: Any
+) -> Any:
     button = "Create new token"
 
     click_on_button_in_tokens_sidebar(selenium, browser_id, button)
@@ -735,15 +756,15 @@ def create_token_with_basic_template(selenium, browser_id, name, template):
     )
 )
 def create_token_with_copied_object_id(
-    displays,
-    clipboard,
-    user,
-    selenium,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-):
+    displays: Any,
+    clipboard: Any,
+    user: Any,
+    selenium: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+) -> Any:
     option = "Tokens"
     object_id = clipboard.paste(display=displays[user])
     config = (
@@ -762,14 +783,14 @@ def create_token_with_copied_object_id(
 
 
 def _copy_object_id(
-    displays,
-    clipboard,
-    user,
-    selenium,
-    tmp_memory,
-    name,
-    space,
-):
+    displays: Any,
+    clipboard: Any,
+    user: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    name: Any,
+    space: Any,
+) -> Any:
     option = "Information"
     button = "File ID"
     modal = "File details"
@@ -792,17 +813,17 @@ def _copy_object_id(
     )
 )
 def create_token_with_object_id(
-    displays,
-    clipboard,
-    user,
-    selenium,
-    users,
-    groups,
-    hosts,
-    tmp_memory,
-    name,
-    space,
-):
+    displays: Any,
+    clipboard: Any,
+    user: Any,
+    selenium: Any,
+    users: Any,
+    groups: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    name: Any,
+    space: Any,
+) -> Any:
 
     option = "Tokens"
 
@@ -837,8 +858,13 @@ def create_token_with_object_id(
 
 @wt(parsers.parse('user of {browser_id} copies token "{token_name}" from tokens page'))
 def copy_token_and_store_value(
-    selenium, browser_id, token_name, clipboard, displays, tmp_memory
-):
+    selenium: Any,
+    browser_id: Any,
+    token_name: Any,
+    clipboard: Any,
+    displays: Any,
+    tmp_memory: Any,
+) -> Any:
     option = "Tokens"
     click_on_option_in_the_sidebar(selenium, browser_id, option)
     click_on_token_containing_name(selenium, browser_id, token_name)

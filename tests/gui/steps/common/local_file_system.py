@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
+from typing import Any
 
 import requests
 import yaml
@@ -23,7 +24,7 @@ PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
 
 @given(parsers.parse("directory tree structure on local file system:\n{structure}"))
-def create_dir_tree_structure_on_local_fs(structure, tmpdir):
+def create_dir_tree_structure_on_local_fs(structure: Any, tmpdir: Any) -> Any:
     """Create directory tree structure on local storage.
 
     Directory tree structure format given in yaml is as follow:
@@ -56,7 +57,7 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
         _mkdirs(home_dir, home_dir_content)
 
 
-def _mkdirs(cwd, dir_content=None):
+def _mkdirs(cwd: Any, dir_content: Any = None) -> Any:
     if not dir_content:
         return
 
@@ -82,7 +83,7 @@ def _mkdirs(cwd, dir_content=None):
             _mkfile(cwd.join(f"file{i}.txt"))
 
 
-def specify_size(size_string):
+def specify_size(size_string: Any) -> Any:
     try:
         return int(size_string)
     except ValueError:
@@ -96,7 +97,7 @@ def specify_size(size_string):
         return int(size) * unit_dict[unit]
 
 
-def _mkfile(file_, file_content=None):
+def _mkfile(file_: Any, file_content: Any = None) -> Any:
     if not file_content:
         file_content = "1" * 10
 
@@ -109,7 +110,9 @@ def _mkfile(file_, file_content=None):
         "user of {browser_id} downloads {file_url} as {file_name} to local file system"
     )
 )
-def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
+def download_file_to_local_file_system(
+    browser_id: Any, file_url: Any, file_name: Any, tmpdir: Any
+) -> Any:
     home_dir = tmpdir.join(browser_id)
     os.makedirs(home_dir, exist_ok=True)
 
@@ -126,8 +129,8 @@ def download_file_to_local_file_system(browser_id, file_url, file_name, tmpdir):
     )
 )
 def create_file_on_local_file_system(
-    browser_id, file_name, item_size, directory_name, tmpdir
-):
+    browser_id: Any, file_name: Any, item_size: Any, directory_name: Any, tmpdir: Any
+) -> Any:
     home_dir = tmpdir.join(browser_id)
     path = home_dir + directory_name
     size = specify_size(item_size)
@@ -138,7 +141,7 @@ def create_file_on_local_file_system(
 
 @wt(parsers.parse('user of {browser_id} removes "{path}" from local file system'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def remove_file_from_local_file_system(browser_id, path, tmpdir):
+def remove_file_from_local_file_system(browser_id: Any, path: Any, tmpdir: Any) -> Any:
     home_dir = tmpdir.join(browser_id)
 
     cmd = ["rm", home_dir + path]

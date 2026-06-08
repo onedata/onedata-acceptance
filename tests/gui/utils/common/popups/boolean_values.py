@@ -4,6 +4,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
@@ -15,5 +17,5 @@ class Options(PageObject):
 class BooleanValues(PageObject):
     options = WebItemsSequence(".option-container", cls=Options)
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Boolean values"

@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from collections import Counter
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -30,8 +30,8 @@ from tests.utils.utils import repeat_failed
     )
 )
 def assert_number_of_first_non_empty_column_content(
-    selenium, fields, browser_id, number: int
-):
+    selenium: Any, fields: Any, browser_id: Any, number: int
+) -> Any:
     driver = selenium[browser_id]
     columns_names = [transform(field) for field in parse_seq(fields)]
 
@@ -68,8 +68,8 @@ def assert_number_of_first_non_empty_column_content(
     )
 )
 def assert_decreasing_creation_times_in_archives_audit_log(
-    browser_id, column_name, selenium
-):
+    browser_id: Any, column_name: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value: Union[datetime, int]
@@ -82,7 +82,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         raise ValueError(f"Unknown column: {column_name}")
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition(last, index=0):
+    def condition(last: Any, index: Any = 0) -> Any:
         rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns([column_name])
         currents = rows_of_columns[column_name][index:]
         for current in currents:
@@ -107,13 +107,13 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         "in archive audit log"
     )
 )
-def assert_ascending_file_or_dir_names(browser_id, selenium):
+def assert_ascending_file_or_dir_names(browser_id: Any, selenium: Any) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value = -1
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition(last, index=0):
+    def condition(last: Any, index: Any = 0) -> Any:
         rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
         currents = rows_of_columns["file"][index:]
         for current in currents:
@@ -132,7 +132,9 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
         "or symbolic links in archive audit log"
     )
 )
-def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium):
+def assert_n_logs_about_archivisation_finished(
+    browser_id: Any, number: int, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     expected_events = [
@@ -142,7 +144,7 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
     ]
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition(index=0):
+    def condition(index: Any = 0) -> Any:
         visible_events: Dict[str, List[str]] = modal.get_rows_of_columns(["event"])[
             "event"
         ][index:]
@@ -156,7 +158,9 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
     ), f"there are {len(checked_elems)} items instead of {number} in archive audit log"
 
 
-def _scroll_and_check_condition(browser_id, selenium, condition, *args):
+def _scroll_and_check_condition(
+    browser_id: Any, selenium: Any, condition: Any, *args: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
@@ -186,7 +190,9 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
         "contain following File and Event data:\n{config}"
     )
 )
-def check_entries_in_archive_audit_log(browser_id, config, selenium):
+def check_entries_in_archive_audit_log(
+    browser_id: Any, config: Any, selenium: Any
+) -> Any:
     """
     There are only checked visible entries (without scrolling)
     There can be more entries than given (no error)
@@ -200,7 +206,9 @@ def check_entries_in_archive_audit_log(browser_id, config, selenium):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _check_entries_in_archive_audit_log(browser_id, config, selenium):
+def _check_entries_in_archive_audit_log(
+    browser_id: Any, config: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     visible_logs = modal.data_row
@@ -216,7 +224,9 @@ def _check_entries_in_archive_audit_log(browser_id, config, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_item_in_archive_audit_log(browser_id, item_name, selenium):
+def click_on_item_in_archive_audit_log(
+    browser_id: Any, item_name: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log.data_row[item_name]
     modal.click()
@@ -229,8 +239,8 @@ def click_on_item_in_archive_audit_log(browser_id, item_name, selenium):
     )
 )
 def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
-    browser_id, file_name, selenium
-):
+    browser_id: Any, file_name: Any, selenium: Any
+) -> Any:
 
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
@@ -276,7 +286,7 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
-def click_on_top_item_in_archive_audit_log(browser_id, selenium):
+def click_on_top_item_in_archive_audit_log(browser_id: Any, selenium: Any) -> Any:
     click_on_item_in_archive_audit_log(browser_id, 0, selenium)
 
 
@@ -287,7 +297,9 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
+def assert_number_of_items_in_archive_audit_log(
+    browser_id: Any, number: int, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     visible_items: List[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
         "file"
@@ -307,8 +319,8 @@ def assert_number_of_items_in_archive_audit_log(browser_id, number: int, seleniu
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_message_at_field_in_archive_audit_log(
-    browser_id, field_name, message, selenium
-):
+    browser_id: Any, field_name: Any, message: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     visible_message = getattr(modal, transform(field_name))
@@ -324,7 +336,7 @@ def assert_message_at_field_in_archive_audit_log(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_details_for_archived_item(browser_id, config, selenium):
+def check_details_for_archived_item(browser_id: Any, config: Any, selenium: Any) -> Any:
     """
     Config format given in yaml:
     Possible fields, each of them is optional
@@ -354,7 +366,9 @@ def check_details_for_archived_item(browser_id, config, selenium):
     _check_details_for_archived_item(browser_id, config, selenium)
 
 
-def _check_details_for_archived_item(browser_id, config, selenium):
+def _check_details_for_archived_item(
+    browser_id: Any, config: Any, selenium: Any
+) -> Any:
     data = yaml.load(config, yaml.Loader)
 
     for field in data.keys():
@@ -378,8 +392,8 @@ def _check_details_for_archived_item(browser_id, config, selenium):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pattern_at_field_in_archive_audit_log(
-    browser_id, mes_type, field_name, selenium
-):
+    browser_id: Any, mes_type: Any, field_name: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     visible_message = getattr(modal, field_name)
@@ -399,7 +413,7 @@ def assert_pattern_at_field_in_archive_audit_log(
     assert pattern.fullmatch(visible_message), err_msg
 
 
-def parse_time(str_time):
+def parse_time(str_time: Any) -> Any:
     n = len(str_time)
     if str_time[n - 2 : n] == "ms":
         return int(str_time[: n - 2])
@@ -415,7 +429,9 @@ def parse_time(str_time):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_field_in_details_archive_audit_log(browser_id, field_name, selenium):
+def click_on_field_in_details_archive_audit_log(
+    browser_id: Any, field_name: Any, selenium: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log_entry_details
     elem_to_click = getattr(modal, transform(field_name))
@@ -424,7 +440,7 @@ def click_on_field_in_details_archive_audit_log(browser_id, field_name, selenium
 
 @wt(parsers.parse("user of {browser_id} scrolls to top in archive audit log"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_audit_log(browser_id, selenium):
+def scroll_to_top_in_archive_audit_log(browser_id: Any, selenium: Any) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     modal.scroll_to_top()
@@ -437,7 +453,9 @@ def scroll_to_top_in_archive_audit_log(browser_id, selenium):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archived_file_path_and_archive_name(browser_id, selenium, path):
+def assert_archived_file_path_and_archive_name(
+    browser_id: Any, selenium: Any, path: Any
+) -> Any:
     driver = selenium[browser_id]
     modal_details = Modals(driver).audit_log_entry_details
 
@@ -466,8 +484,8 @@ def assert_archived_file_path_and_archive_name(browser_id, selenium, path):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_unique_hashes_and_number_of_logs(
-    browser_id, selenium, file_name, number: int
-):
+    browser_id: Any, selenium: Any, file_name: Any, number: int
+) -> Any:
     driver = selenium[browser_id]
     logs = Modals(driver).archive_audit_log.data_row
     hashes = []

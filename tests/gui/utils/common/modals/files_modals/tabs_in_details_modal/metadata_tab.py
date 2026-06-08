@@ -4,6 +4,8 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from decorator import contextmanager
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -31,10 +33,10 @@ class XattrMetadataEntry(PageObject):
     remove = Button(".remove-param")
     edit_existing_key = Button(".edit-icon.clickable")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "metadata basic entry"
 
-    def press_backspace_to_delete_selected(self):
+    def press_backspace_to_delete_selected(self) -> Any:
         action = ActionChains(self.driver)
         action.key_down(Keys.BACKSPACE).perform()
 
@@ -51,7 +53,7 @@ class XattrsMetadataPanel(PageObject):
     )
     description = WebElement(".metadata-description")
 
-    def click_on_background_in_xattrs_panel(self):
+    def click_on_background_in_xattrs_panel(self) -> Any:
         ActionChains(self.driver).move_to_element_with_offset(
             self.description, 0, 0
         ).click().perform()
@@ -63,14 +65,14 @@ class AceEditorMetadataPanel(PageObject):
     area = WebElement(".ace_content")
 
     @contextmanager
-    def select_lines(self):
+    def select_lines(self) -> Any:
         action = ActionChains(self.driver)
         action.backspace_down = lambda: action.key_down(Keys.BACKSPACE)
         yield action
         action.perform()
 
     # TODO VFS-12496 remove metadata_type from clear_editor function
-    def clear_editor(self, metadata_type):
+    def clear_editor(self, metadata_type: Any) -> Any:
         script = (
             f"ace.edit(document.querySelector('.file-metadata-{metadata_type} "
             ".ember-ace > .ace_editor')).setValue('')"
@@ -90,7 +92,7 @@ class NavigationTab(PageObject):
     name = id = Label(".tab-name")
     status = WebElement(".tab-state")
 
-    def is_empty(self):
+    def is_empty(self) -> Any:
         return "inactive" in self.status.get_attribute("class")
 
 
@@ -108,5 +110,5 @@ class MetadataTab(Modal):
     editor_disabled = Label(".editor-disabled-lock-text")
     question_icon = Button(".oneicon-sign-question-rounded")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Metadata tab"

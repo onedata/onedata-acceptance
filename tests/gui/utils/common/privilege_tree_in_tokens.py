@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
@@ -24,16 +25,16 @@ class PrivilegeRow(PageObject):
     toggle = Toggle(".one-way-toggle")
     _checkbox = WebElement(".one-checkbox-base")
 
-    def expand(self):
+    def expand(self) -> Any:
         self.web_elem.click()
 
-    def activate(self):
+    def activate(self) -> Any:
         self.toggle.check()
 
-    def deactivate(self):
+    def deactivate(self) -> Any:
         self.toggle.uncheck()
 
-    def assert_privilege_granted(self, granted):
+    def assert_privilege_granted(self, granted: Any) -> Any:
         if granted == "Partially":
             msg = f"{self.name} should be partially granted but is not"
             assert self.toggle.is_partial_checked(), msg
@@ -44,7 +45,7 @@ class PrivilegeRow(PageObject):
             msg = f"{self.name} should not be granted but it is"
             assert self.toggle.is_unchecked(), msg
 
-    def set_privilege(self, driver, granted, with_scroll=False):
+    def set_privilege(self, driver: Any, granted: Any, with_scroll: Any = False) -> Any:
         if with_scroll:
             if (self.toggle.is_checked() and not granted) or (
                 not self.toggle.is_checked() and granted
@@ -72,14 +73,14 @@ class PrivilegeGroup(PageObject):
 
     sub_privileges = WebItemsSequence(".one-tree-item-content", cls=PrivilegeRow)
 
-    def expand(self):
+    def expand(self) -> Any:
         if not self.is_expanded():
             self.expander.click()
 
-    def is_expanded(self):
+    def is_expanded(self) -> Any:
         return "expanded" in self.web_elem.get_attribute("class")
 
-    def collapse(self, driver):
+    def collapse(self, driver: Any) -> Any:
         if self.is_expanded():
             try:
                 driver.execute_script(
@@ -91,19 +92,19 @@ class PrivilegeGroup(PageObject):
             except RuntimeError:
                 self.expander.click()
 
-    def minimalize(self):
+    def minimalize(self) -> Any:
         self.expander.click()
 
-    def activate(self):
+    def activate(self) -> Any:
         self.toggle.check()
 
-    def deactivate(self):
+    def deactivate(self) -> Any:
         self.toggle.uncheck()
 
-    def get_sub_privilege_row(self, name):
+    def get_sub_privilege_row(self, name: Any) -> Any:
         return self.sub_privileges[name]
 
-    def assert_privilege_granted(self, granted):
+    def assert_privilege_granted(self, granted: Any) -> Any:
         if granted == "Partially":
             msg = f"{self.name} should be partially granted but is not"
             assert self.toggle.is_partial_checked(), msg
@@ -119,10 +120,10 @@ class PrivilegeTree(PageObject):
     privilege_groups = WebItemsSequence(".has-checkbox-group", cls=PrivilegeGroup)
     privileges = WebItemsSequence(".one-tree-item-content", cls=PrivilegeRow)
 
-    def get_privilege_row(self, name):
+    def get_privilege_row(self, name: Any) -> Any:
         return self.privileges[name]
 
-    def assert_privileges(self, selenium, browser_id, privileges):
+    def assert_privileges(self, selenium: Any, browser_id: Any, privileges: Any) -> Any:
         """Assert privileges according to given config.
         For this method only dict should be passed!
 
@@ -145,13 +146,17 @@ class PrivilegeTree(PageObject):
         """
         self._assert_privileges(selenium, browser_id, privileges)
 
-    def _assert_privileges(self, selenium, browser_id, privileges):
+    def _assert_privileges(
+        self, selenium: Any, browser_id: Any, privileges: Any
+    ) -> Any:
         for privilege_name, privilege_group in privileges.items():
             self._assert_privilege_group(
                 selenium, browser_id, privilege_group, privilege_name
             )
 
-    def _assert_privilege_group(self, selenium, browser_id, group, name):
+    def _assert_privilege_group(
+        self, selenium: Any, browser_id: Any, group: Any, name: Any
+    ) -> Any:
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group["granted"]
@@ -165,7 +170,9 @@ class PrivilegeTree(PageObject):
             privilege_row.collapse(driver)
         privilege_row.assert_privilege_granted(granted)
 
-    def set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
+    def set_privileges(
+        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+    ) -> Any:
         """Set privileges according to given config.
         For this method only dict should be passed!
 
@@ -188,7 +195,9 @@ class PrivilegeTree(PageObject):
         """
         self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
-    def _set_privileges(self, selenium, browser_id, privileges, with_scroll=False):
+    def _set_privileges(
+        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+    ) -> Any:
         for privilege_name, privilege_group in privileges.items():
             self._set_privilege_group(
                 selenium,
@@ -199,8 +208,13 @@ class PrivilegeTree(PageObject):
             )
 
     def _set_privilege_group(
-        self, selenium, browser_id, group, name, with_scroll=False
-    ):
+        self,
+        selenium: Any,
+        browser_id: Any,
+        group: Any,
+        name: Any,
+        with_scroll: Any = False,
+    ) -> Any:
         driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group["granted"]
@@ -214,6 +228,6 @@ class PrivilegeTree(PageObject):
         else:
             privilege_row.get_sub_privilege_row(name).set_privilege(driver, granted)
 
-    def set_all_true(self):
+    def set_all_true(self) -> Any:
         for priv_group in self.privilege_groups:
             priv_group.activate()

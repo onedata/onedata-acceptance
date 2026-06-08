@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
+from typing import Any
 
 import yaml
 
@@ -63,7 +64,9 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_workflow_using_gui(selenium, browser_id, workflow_name):
+def create_workflow_using_gui(
+    selenium: Any, browser_id: Any, workflow_name: Any
+) -> Any:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
         selenium, browser_id, workflow_name
@@ -79,13 +82,13 @@ def create_workflow_using_gui(selenium, browser_id, workflow_name):
     )
 )
 def upload_and_assert_workflow_to_inventory_using_gui(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    file_name,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    inventory: Any,
+    workflow: Any,
+    file_name: Any,
+    tmp_memory: Any,
+) -> Any:
     driver = selenium[browser_id]
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
@@ -104,8 +107,8 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
+    selenium: Any, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+) -> Any:
     upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -118,8 +121,8 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium, browser_id, inventory, workflow, tmp_memory
-):
+    selenium: Any, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+) -> Any:
     _upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -132,13 +135,13 @@ def upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples_with_given_method(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method,
-):
+    selenium: Any,
+    browser_id: Any,
+    inventory: Any,
+    workflow: Any,
+    tmp_memory: Any,
+    method: Any,
+) -> Any:
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
@@ -150,13 +153,13 @@ def upload_workflow_from_automation_examples_with_given_method(
 
 
 def _upload_workflow_from_automation_examples(
-    selenium,
-    browser_id,
-    inventory,
-    workflow,
-    tmp_memory,
-    method=None,
-):
+    selenium: Any,
+    browser_id: Any,
+    inventory: Any,
+    workflow: Any,
+    tmp_memory: Any,
+    method: Any = None,
+) -> Any:
     subpage = "workflows"
     modal = "Upload workflow"
     button = "Apply"
@@ -178,7 +181,7 @@ def _upload_workflow_from_automation_examples(
     assert_workflow_exists(selenium, browser_id, visible_workflow_name, "sees")
 
 
-def change_workflow_dump_name_to_visible_name(workflow_name):
+def change_workflow_dump_name_to_visible_name(workflow_name: Any) -> Any:
     data = get_workflow_dump(workflow_name)
     return data["name"]
 
@@ -191,13 +194,13 @@ def change_workflow_dump_name_to_visible_name(workflow_name):
     )
 )
 def execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
+    browser_id: Any,
+    selenium: Any,
+    space: Any,
+    ordinal: Any,
+    workflow: Any,
+    config: Any,
+) -> Any:
     """Adjust configuration of input values for stores according to given config.
 
     Config format given in yaml is as follows:
@@ -225,13 +228,13 @@ def execute_workflow_with_input_config(
 
 
 def _execute_workflow_with_input_config(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    config,
-):
+    browser_id: Any,
+    selenium: Any,
+    space: Any,
+    ordinal: Any,
+    workflow: Any,
+    config: Any,
+) -> Any:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -304,14 +307,14 @@ def _execute_workflow_with_input_config(
     )
 )
 def execute_workflow_and_wait(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: Any,
+    selenium: Any,
+    space: Any,
+    ordinal: Any,
+    workflow: Any,
+    item_list: Any,
+    data_type: Any,
+) -> Any:
 
     execute_workflow(
         browser_id,
@@ -336,14 +339,14 @@ def execute_workflow_and_wait(
     )
 )
 def execute_workflow(
-    browser_id,
-    selenium,
-    space,
-    ordinal,
-    workflow,
-    item_list,
-    data_type,
-):
+    browser_id: Any,
+    selenium: Any,
+    space: Any,
+    ordinal: Any,
+    workflow: Any,
+    item_list: Any,
+    data_type: Any,
+) -> Any:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -402,13 +405,13 @@ def execute_workflow(
     )
 )
 def modify_data_type_in_store(
-    selenium,
-    browser_id,
-    store_name,
-    value,
-    menu,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    store_name: Any,
+    value: Any,
+    menu: Any,
+    tmp_memory: Any,
+) -> Any:
     driver = selenium[browser_id]
     dropdown_menu = f"{menu} dropdown menu"
     button = "OK"

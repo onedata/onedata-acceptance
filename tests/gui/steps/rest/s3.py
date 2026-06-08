@@ -8,6 +8,7 @@ import hashlib
 import hmac
 import subprocess as sp
 from datetime import datetime
+from typing import Any
 
 import requests
 from requests.exceptions import HTTPError
@@ -23,7 +24,7 @@ SECRET_KEY = "verySecretKey"
 
 
 @given(parsers.parse("S3 host entry is added to /etc/hosts"))
-def add_s3_host_entry():
+def add_s3_host_entry() -> Any:
     # temporary solution when s3 host entry will be added by onenv remove this function
     ip = sp.check_output(
         "kubectl get pods -o wide | grep dev-volume-s3-krakow |"
@@ -36,7 +37,7 @@ def add_s3_host_entry():
 
 
 @wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
-def create_s3_bucket_rest(bucket_name):
+def create_s3_bucket_rest(bucket_name: Any) -> Any:
     try:
         create_bucket(bucket_name)
     except HTTPError as e:
@@ -54,18 +55,20 @@ def create_s3_bucket_rest(bucket_name):
         '"{dst_bucket}" bucket'
     )
 )
-def copy_item_s3_bucket(browser_id, dst_bucket, src_bucket, clipboard, displays):
+def copy_item_s3_bucket(
+    browser_id: Any, dst_bucket: Any, src_bucket: Any, clipboard: Any, displays: Any
+) -> Any:
     path = clipboard.paste(display=displays[browser_id])
     copy_item_between_buckets(
         dst_bucket, f"{src_bucket}{path}/999999", f"{path[1::]}/999999"
     )
 
 
-def sign(key, msg):
+def sign(key: Any, msg: Any) -> Any:
     return hmac.new(key, msg.encode("utf-8"), hashlib.sha256).digest()
 
 
-def get_signature_key(key, date_stamp):
+def get_signature_key(key: Any, date_stamp: Any) -> Any:
     k_date = sign(("AWS4" + key).encode("utf-8"), date_stamp)
     k_region = sign(k_date, "eu-central-1")
     k_service = sign(k_region, "s3")
@@ -74,8 +77,13 @@ def get_signature_key(key, date_stamp):
 
 
 def create_canonical_request(
-    method, uri, query_string, headers, signed_headers, payload_hash
-):
+    method: Any,
+    uri: Any,
+    query_string: Any,
+    headers: Any,
+    signed_headers: Any,
+    payload_hash: Any,
+) -> Any:
     canonical_headers = "".join(f"{k}:{v}\n" for k, v in sorted(headers.items()))
     return (
         f"{method}\n"
@@ -87,7 +95,9 @@ def create_canonical_request(
     )
 
 
-def create_string_to_sign(date_stamp, credential_scope, hashed_canonical_request):
+def create_string_to_sign(
+    date_stamp: Any, credential_scope: Any, hashed_canonical_request: Any
+) -> Any:
     return (
         "AWS4-HMAC-SHA256\n"
         f"{date_stamp}\n"
@@ -97,8 +107,8 @@ def create_string_to_sign(date_stamp, credential_scope, hashed_canonical_request
 
 
 def create_authorization_header(
-    access_key, credential_scope, signed_headers, signature
-):
+    access_key: Any, credential_scope: Any, signed_headers: Any, signature: Any
+) -> Any:
     return (
         f"AWS4-HMAC-SHA256 Credential={access_key}/{credential_scope}, "
         f"SignedHeaders={signed_headers}, Signature={signature}"
@@ -106,13 +116,13 @@ def create_authorization_header(
 
 
 def s3_authorization(
-    headers,
-    canonical_uri,
-    canonical_querystring,
-    payload_hash,
-    date_stamp,
-    amz_date,
-):
+    headers: Any,
+    canonical_uri: Any,
+    canonical_querystring: Any,
+    payload_hash: Any,
+    date_stamp: Any,
+    amz_date: Any,
+) -> Any:
     signed_headers = ";".join(headers.keys())
     canonical_request = create_canonical_request(
         "PUT",
@@ -140,7 +150,7 @@ def s3_authorization(
     return authorization_header
 
 
-def create_bucket(bucket_name):
+def create_bucket(bucket_name: Any) -> Any:
     amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     date_stamp = datetime.utcnow().strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
@@ -169,7 +179,7 @@ def create_bucket(bucket_name):
     response.raise_for_status()
 
 
-def copy_item_between_buckets(dst_bucket, src, dst):
+def copy_item_between_buckets(dst_bucket: Any, src: Any, dst: Any) -> Any:
     amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     date_stamp = datetime.utcnow().strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
@@ -199,7 +209,7 @@ def copy_item_between_buckets(dst_bucket, src, dst):
     response.raise_for_status()
 
 
-def add_etc_hosts_entries(service_ip, service_host):
+def add_etc_hosts_entries(service_ip: Any, service_host: Any) -> Any:
     sp.run(
         f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
         shell=True,

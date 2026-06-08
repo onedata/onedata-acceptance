@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from functools import partial
+from typing import Any
 
 from tests.gui.utils.generic import FileAttr
 from tests.upgrade.utils.rest_utils import (
@@ -51,7 +52,7 @@ SYMLINK_NAME = "file_attrs_symlink"
 DIR_NAME = "dir_stats"
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: Any) -> Any:
     return [
         UpgradeTest(
             "rest file attrs test",
@@ -61,7 +62,7 @@ def get_tests(tests_controller):
     ]
 
 
-def setup_metadata(tests_controller):
+def setup_metadata(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
@@ -99,7 +100,7 @@ def setup_metadata(tests_controller):
         )
 
 
-def verify_metadata(tests_controller):
+def verify_metadata(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -133,7 +134,7 @@ def verify_metadata(tests_controller):
         )
 
 
-def create_example_content_in_space(client, tests_controller):
+def create_example_content_in_space(client: Any, tests_controller: Any) -> Any:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, REG_NAME)
     client.create_file(file_path)
@@ -148,7 +149,7 @@ def create_example_content_in_space(client, tests_controller):
     client.mkdir(dir_path)
 
 
-def compare_attrs(old_attrs, new_attrs, tests_controller):
+def compare_attrs(old_attrs: Any, new_attrs: Any, tests_controller: Any) -> Any:
     for attr in old_attrs:
         err_msg = (
             f"Attr: {attr} is different after upgrade. Attrs before"
@@ -166,12 +167,14 @@ def compare_attrs(old_attrs, new_attrs, tests_controller):
 
 
 @repeat_failed(timeout=TIMEOUT_FOR_UPDATING_FILE_ATTRS)
-def _wait_for_file_size_attr(provider_host, token, file_id, ex_size):
+def _wait_for_file_size_attr(
+    provider_host: Any, token: Any, file_id: Any, ex_size: Any
+) -> Any:
     res = get_file_attributes(provider_host, token, file_id, ["size"])
     assert res["size"] == ex_size
 
 
-def format_attr_val(attr, old_attrs):
+def format_attr_val(attr: Any, old_attrs: Any) -> Any:
     if attr == "type":
         return old_attrs[attr].upper()
     if attr == "mode":

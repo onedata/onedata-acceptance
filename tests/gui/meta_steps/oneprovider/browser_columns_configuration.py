@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2025 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 import yaml
 
@@ -26,8 +27,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
-    selenium, browser_id, columns, which_browser, tmp_memory
-):
+    selenium: Any, browser_id: Any, columns: Any, which_browser: Any, tmp_memory: Any
+) -> Any:
     # This function enables the selected columns and disables the rest.
     option_select = "select"
     option_unselect = "unselect"
@@ -56,8 +57,13 @@ def select_columns_to_be_visible_in_browser(
     )
 )
 def change_visibility_for_browser_columns(
-    selenium, browser_id, res, columns, which_browser, tmp_memory
-):
+    selenium: Any,
+    browser_id: Any,
+    res: Any,
+    columns: Any,
+    which_browser: Any,
+    tmp_memory: Any,
+) -> Any:
     # This function updates only the specified columns (enable/disable).
     # All other columns remain unchanged.
 
@@ -90,7 +96,9 @@ def change_visibility_for_browser_columns(
         r"file browser|archive browser|dataset browser) table"
     )
 )
-def remove_column(selenium, browser_id, name, which_browser, tmp_memory):
+def remove_column(
+    selenium: Any, browser_id: Any, name: Any, which_browser: Any, tmp_memory: Any
+) -> Any:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()
@@ -115,8 +123,14 @@ def remove_column(selenium, browser_id, name, which_browser, tmp_memory):
     )
 )
 def modify_props_of_xattr_column_in_columns_menu(
-    selenium, browser_id, which_browser, tmp_memory, name, elem, new_elem_name
-):
+    selenium: Any,
+    browser_id: Any,
+    which_browser: Any,
+    tmp_memory: Any,
+    name: Any,
+    elem: Any,
+    new_elem_name: Any,
+) -> Any:
 
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -155,13 +169,13 @@ def modify_props_of_xattr_column_in_columns_menu(
     )
 )
 def modify_json_column_in_columns_menu(
-    selenium,
-    browser_id,
-    col_name,
-    config,
-    which_browser,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    col_name: Any,
+    config: Any,
+    which_browser: Any,
+    tmp_memory: Any,
+) -> Any:
     """
     Config is a list of column updates applied sequentially.
 
@@ -223,15 +237,15 @@ def modify_json_column_in_columns_menu(
     )
 )
 def assert_json_column_content(
-    selenium,
-    browser_id,
-    tmp_memory,
-    which_browser,
-    item_name,
-    value,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    tmp_memory: Any,
+    which_browser: Any,
+    item_name: Any,
+    value: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
 
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -257,8 +271,14 @@ def assert_json_column_content(
     )
 )
 def assert_column_presence(
-    selenium, browser_id, res, name, which_browser, tmp_memory, option
-):
+    selenium: Any,
+    browser_id: Any,
+    res: Any,
+    name: Any,
+    which_browser: Any,
+    tmp_memory: Any,
+    option: Any,
+) -> Any:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.configure_columns.click()

@@ -1,5 +1,7 @@
 """Utils and fixtures to facilitate operations on user account menu popup."""
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
@@ -12,5 +14,5 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 class UserAccountPopup(PageObject):
     options = WebItemsSequence("ul.dropdown-menu li", cls=ButtonWithTextPageObject)
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "User account popup"

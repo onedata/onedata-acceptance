@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
@@ -18,7 +20,9 @@ from tests.utils.utils import repeat_failed
         'user of {browser_id} selects "{space_name}" from spaces sidebar list'
     )
 )
-def select_space_from_sidebar_list(selenium, browser_id, space_name):
+def select_space_from_sidebar_list(
+    selenium: Any, browser_id: Any, space_name: Any
+) -> Any:
     OPLoggedIn(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
 
 
@@ -29,7 +33,9 @@ def select_space_from_sidebar_list(selenium, browser_id, space_name):
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_settings_icon_for_space(selenium, browser_id, space_name):
+def click_settings_icon_for_space(
+    selenium: Any, browser_id: Any, space_name: Any
+) -> Any:
     (
         OPLoggedIn(selenium[browser_id])
         .spaces.sidebar.spaces[space_name]
@@ -45,8 +51,8 @@ def click_settings_icon_for_space(selenium, browser_id, space_name):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_space_settings_dropdown(
-    selenium, browser_id, option_name, space_name
-):
+    selenium: Any, browser_id: Any, option_name: Any, space_name: Any
+) -> Any:
     (
         OPLoggedIn(selenium[browser_id])
         .spaces.sidebar.spaces[space_name]
@@ -63,7 +69,9 @@ def click_on_item_in_space_settings_dropdown(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
-def assert_item_appeared_in_spaces_perm_table(selenium, browser_id, name, caption):
+def assert_item_appeared_in_spaces_perm_table(
+    selenium: Any, browser_id: Any, name: Any, caption: Any
+) -> Any:
     driver = selenium[browser_id]
     items = getattr(OPLoggedIn(driver).spaces.permission_table, caption.lower())
     items_names = {item.name for item in items}

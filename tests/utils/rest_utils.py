@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from itertools import chain
+from typing import Any
 
 import requests
 import urllib3
@@ -26,39 +27,39 @@ from .http_exceptions import HTTPServiceUnavailable, raise_http_exception
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def get_zone_rest_path(*args):
+def get_zone_rest_path(*args: Any) -> Any:
     return "/".join(chain([OZ_REST_PATH_PREFIX], args))
 
 
-def get_panel_rest_path(*args):
+def get_panel_rest_path(*args: Any) -> Any:
     return "/".join(chain([PANEL_REST_PATH_PREFIX], args))
 
 
-def get_provider_rest_path(*args):
+def get_provider_rest_path(*args: Any) -> Any:
     return "/".join(chain([PROVIDER_REST_PATH_PREFIX], args))
 
 
-def get_luma_rest_path(*args):
+def get_luma_rest_path(*args: Any) -> Any:
     return "/".join(chain([LUMA_REST_PATH_PREFIX], args))
 
 
-def get_token_dispenser_rest_path(*args):
+def get_token_dispenser_rest_path(*args: Any) -> Any:
     return "/".join(chain([TOKEN_DISPENSER_PATH_PREFIX], args))
 
 
 def http_get(
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    data=None,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    default_headers=True,
-    params=None,
-):
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    data: Any = None,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+) -> Any:
     return http_request(
         requests.get,
         ip,
@@ -76,18 +77,18 @@ def http_get(
 
 
 def http_put(
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    data=None,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    default_headers=True,
-    params=None,
-):
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    data: Any = None,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+) -> Any:
     return http_request(
         requests.put,
         ip,
@@ -105,19 +106,19 @@ def http_put(
 
 
 def http_post(
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    data=None,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    default_headers=True,
-    params=None,
-    stream=False,
-):
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    data: Any = None,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+    stream: Any = False,
+) -> Any:
     return http_request(
         requests.post,
         ip,
@@ -136,18 +137,18 @@ def http_post(
 
 
 def http_delete(
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    default_headers=True,
-    params=None,
-    data=None,
-):
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+    data: Any = None,
+) -> Any:
     return http_request(
         requests.delete,
         ip,
@@ -165,18 +166,18 @@ def http_delete(
 
 
 def http_patch(
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    data=None,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    default_headers=True,
-    params=None,
-):
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    data: Any = None,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+) -> Any:
     return http_request(
         requests.patch,
         ip,
@@ -194,21 +195,21 @@ def http_patch(
 
 
 def http_request(  # pylint: disable=inconsistent-return-statements
-    http_method,
-    ip,
-    port,
-    path,
-    use_ssl=True,
-    headers=None,
-    verify=False,
-    cert=None,
-    auth=None,
-    data=None,
-    default_headers=True,
-    params=None,
-    stream=False,
-    retries=5,
-):
+    http_method: Any,
+    ip: Any,
+    port: Any,
+    path: Any,
+    use_ssl: Any = True,
+    headers: Any = None,
+    verify: Any = False,
+    cert: Any = None,
+    auth: Any = None,
+    data: Any = None,
+    default_headers: Any = True,
+    params: Any = None,
+    stream: Any = False,
+    retries: Any = 5,
+) -> Any:
     protocol = "https" if use_ssl else "http"
     request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
     if headers:

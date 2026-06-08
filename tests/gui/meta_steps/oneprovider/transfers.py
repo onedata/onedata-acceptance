@@ -6,6 +6,8 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import replicate_files_to_provider
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
@@ -37,7 +39,9 @@ from tests.utils.utils import repeat_failed
         'Oneprovider transfers for "(?P<space>.*)" space'
     )
 )
-def open_transfers_page(selenium, browser_id, provider, space, hosts):
+def open_transfers_page(
+    selenium: Any, browser_id: Any, provider: Any, space: Any, hosts: Any
+) -> Any:
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
@@ -57,8 +61,8 @@ def open_transfers_page(selenium, browser_id, provider, space, hosts):
     )
 )
 def open_transfer_page_by_clicking_on_link(
-    browser_id, file, tmp_memory, selenium, link
-):
+    browser_id: Any, file: Any, tmp_memory: Any, selenium: Any, link: Any
+) -> Any:
     option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
@@ -75,7 +79,14 @@ def open_transfer_page_by_clicking_on_link(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def evict_file(selenium, browser_id, provider, file_name, tmp_memory, hosts):
+def evict_file(
+    selenium: Any,
+    browser_id: Any,
+    provider: Any,
+    file_name: Any,
+    tmp_memory: Any,
+    hosts: Any,
+) -> Any:
     option = "Data distribution"
     tab = "Distribution"
     menu_option = "Evict"
@@ -94,8 +105,8 @@ def evict_file(selenium, browser_id, provider, file_name, tmp_memory, hosts):
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium, browser_id, provider, space, hosts
-):
+    selenium: Any, browser_id: Any, provider: Any, space: Any, hosts: Any
+) -> Any:
     open_transfers_page(selenium, browser_id, provider, space, hosts)
     wait_for_waiting_transfer_to_start(selenium, browser_id)
     wait_for_ongoing_tranfers_to_finish(selenium, browser_id)
@@ -110,8 +121,14 @@ def wait_for_all_transfers_to_start_and_finish(
     )
 )
 def replicate_and_wait_to_complete(
-    selenium, browser_id, names, space, provider, tmp_memory, hosts
-):
+    selenium: Any,
+    browser_id: Any,
+    names: Any,
+    space: Any,
+    provider: Any,
+    tmp_memory: Any,
+    hosts: Any,
+) -> Any:
     replicate_files_to_provider(
         selenium, browser_id, names, tmp_memory, provider, hosts, "replicates"
     )

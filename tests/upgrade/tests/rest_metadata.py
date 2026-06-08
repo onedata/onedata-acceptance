@@ -43,7 +43,7 @@ XATTRS_META: list[dict[str, Any]] = [
 ]
 
 
-def get_tests(tests_controller):
+def get_tests(tests_controller: Any) -> Any:
     return [
         UpgradeTest(
             "rest metadata test",
@@ -53,7 +53,7 @@ def get_tests(tests_controller):
     ]
 
 
-def setup_metadata(tests_controller):
+def setup_metadata(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
@@ -65,7 +65,7 @@ def setup_metadata(tests_controller):
     add_example_metadata_to_files_in_space(provider_host, token)
 
 
-def verify_metadata(tests_controller):
+def verify_metadata(tests_controller: Any) -> Any:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -133,13 +133,13 @@ def verify_metadata(tests_controller):
     )
 
 
-def create_example_content_in_space(client):
+def create_example_content_in_space(client: Any) -> Any:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, FILE_NAME)
     client.create_file(file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host, token):
+def add_example_metadata_to_files_in_space(provider_host: Any, token: Any) -> Any:
     file_id = lookup_file_id(f"{SPACE_NAME}/{FILE_NAME}", provider_host, token)
     set_file_json_metadata(provider_host, token, file_id, JSON_META)
     set_file_rdf_metadata(provider_host, token, file_id, RDF_META)

@@ -4,6 +4,8 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 import yaml
 
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
@@ -11,7 +13,9 @@ from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
 
 
-def _check_files_tree(parent, is_dir_fun, ls_fun, assert_file_content_fun):
+def _check_files_tree(
+    parent: Any, is_dir_fun: Any, ls_fun: Any, assert_file_content_fun: Any
+) -> Any:
     children = ls_fun(parent.path)
     err_msg = (
         f"expected item {parent.path} to have children {parent.get_items()} but got"
@@ -34,13 +38,24 @@ def _check_files_tree(parent, is_dir_fun, ls_fun, assert_file_content_fun):
             assert_file_content_fun(child.path, str(child.content))
 
 
-def check_files_tree(config, cwd, is_dir_fun, ls_fun, assert_file_content_fun):
+def check_files_tree(
+    config: Any, cwd: Any, is_dir_fun: Any, ls_fun: Any, assert_file_content_fun: Any
+) -> Any:
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree, root_path=cwd)
     _check_files_tree(root, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
-def create_content(user, users, cwd, content, create_item_fun, host, hosts, request):
+def create_content(
+    user: Any,
+    users: Any,
+    cwd: Any,
+    content: Any,
+    create_item_fun: Any,
+    host: Any,
+    hosts: Any,
+    request: Any,
+) -> Any:
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -94,7 +109,9 @@ ACL_MASK = {
 }
 
 
-def assert_ace(priv, item_type, ace, name, num, path):
+def assert_ace(
+    priv: Any, item_type: Any, ace: Any, name: Any, num: Any, path: Any
+) -> Any:
     priv = parse_seq(priv)
     if "deny" in priv:
         acetype = "0x1"
@@ -115,7 +132,15 @@ def assert_ace(priv, item_type, ace, name, num, path):
     assert set_priv == sorted(priv), f"Privileges in {num} ACE are not correct"
 
 
-def get_acl_metadata(curr_acl, priv, item_type, groups, name, users, path):
+def get_acl_metadata(
+    curr_acl: Any,
+    priv: Any,
+    item_type: Any,
+    groups: Any,
+    name: Any,
+    users: Any,
+    path: Any,
+) -> Any:
     acl = list(curr_acl)
     acl.append({})
     ace = acl[-1]

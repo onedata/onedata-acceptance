@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from functools import partial
+from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebItem, WebItemsSequence
@@ -22,13 +23,13 @@ class _Breadcrumbs(PageObject):
     space_root = Button(".fb-breadcrumbs-dir-root")
     menu_button = Button(".fb-breadcrumbs-current-dir-button")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"Breadcrumbs({self.pwd()}) in {self.parent}"
 
-    def pwd(self):
+    def pwd(self) -> Any:
         return "/".join(directory.text for directory in self._breadcrumbs)
 
-    def chdir(self, path, archive=False):
+    def chdir(self, path: Any, archive: Any = False) -> Any:
         if not path or path == "/":
             self.space_root()
         else:
@@ -67,14 +68,14 @@ class _Breadcrumbs(PageObject):
                 assert dir2 is not None
                 dir2.click()
 
-    def go_one_back(self):
+    def go_one_back(self) -> Any:
         breadcrumbs = self._breadcrumbs
         if len(breadcrumbs) - 2 < 0:
             raise RuntimeError(f"Cannot go back in breadcrumbs {breadcrumbs}")
         breadcrumbs[len(breadcrumbs) - 2].click()
 
     @property
-    def breadcrumbs(self):
+    def breadcrumbs(self) -> Any:
         return self._breadcrumbs
 
 

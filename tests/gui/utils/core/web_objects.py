@@ -1,5 +1,7 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
+from typing import Any
+
 from tests.gui.utils.generic import nth
 
 from .base import PageObject
@@ -13,28 +15,28 @@ class ButtonPageObject(PageObject):
     name = "button"
     item_not_found_msg = "{text} btn not found in {parent}"
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return f"{self.name} btn in {self.parent}"
 
-    def __call__(self):
+    def __call__(self) -> Any:
         self.click()
 
-    def is_enabled(self):
+    def is_enabled(self) -> Any:
         return (
             self.web_elem.is_enabled()
             and "disabled" not in self.web_elem.get_attribute("class")
         )
 
-    def is_active(self):
+    def is_active(self) -> Any:
         return "active" in self.web_elem.get_attribute("class")
 
 
 class ButtonWithTextPageObject(ButtonPageObject):
-    def __str__(self):
+    def __str__(self) -> Any:
         return f'{self.name} btn with "{self.text}" text in {self.parent}'
 
     @property
-    def text(self):
+    def text(self) -> Any:
         return self.web_elem.text
 
     id = text
@@ -42,30 +44,30 @@ class ButtonWithTextPageObject(ButtonPageObject):
 
 class PageObjectsSequence:
 
-    def __init__(self, driver, items, cls, parent=None):
+    def __init__(self, driver: Any, items: Any, cls: Any, parent: Any = None) -> None:
         self.driver = driver
         self.items = items
         self.cls = cls
         self.parent = parent
 
-    def _getitem_by_id(self, sel):
+    def _getitem_by_id(self, sel: Any) -> Any:
         for item in self:
             if item.id == sel:
                 return item
         return None
 
-    def _getitem_by_idx(self, idx):
+    def _getitem_by_idx(self, idx: Any) -> Any:
         return nth(self.items, idx) if idx < len(self) else None
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         return (self.cls(self.driver, item, self.parent) for item in self.items)
 
-    def __reversed__(self):
+    def __reversed__(self) -> Any:
         return (
             self.cls(self.driver, item, self.parent) for item in reversed(self.items)
         )
 
-    def __getitem__(self, sel):
+    def __getitem__(self, sel: Any) -> Any:
         if isinstance(sel, int):
             item = self._getitem_by_idx(sel)
             if item:
@@ -82,18 +84,18 @@ class PageObjectsSequence:
             raise RuntimeError(f'no "{sel}" found in {self.parent}')
         return None
 
-    def __contains__(self, item):
+    def __contains__(self, item: Any) -> Any:
         if isinstance(item, self.cls):
             item = item.id
         return self._getitem_by_id(item) is not None
 
-    def __len__(self):
+    def __len__(self) -> Any:
         return len(self.items)
 
-    def count(self):
+    def count(self) -> Any:
         return len(self)
 
-    def index(self, item_for_idx):
+    def index(self, item_for_idx: Any) -> Any:
         if isinstance(item_for_idx, self.cls):
             item_searched = item_for_idx.id
         else:

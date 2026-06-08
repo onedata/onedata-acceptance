@@ -4,6 +4,8 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.upgrade.tests import (
     oneclient_crud,
     rest_comprehensive,
@@ -13,7 +15,7 @@ from tests.upgrade.tests import (
 )
 
 
-def test_upgrade(tests_controller):
+def test_upgrade(tests_controller: Any) -> Any:
     """
     All those tests are interpreted as a one test
     Number of tests depends on a config file

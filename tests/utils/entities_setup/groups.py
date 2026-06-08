@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
+from typing import Any
 
 import yaml
 
@@ -25,13 +26,27 @@ from tests.utils.rest_utils import (
         'initial groups configuration in "{service}" Onezone service:\n{config}'
     )
 )
-def groups_creation_step(config, service, admin_credentials, users, hosts, groups):
+def groups_creation_step(
+    config: Any,
+    service: Any,
+    admin_credentials: Any,
+    users: Any,
+    hosts: Any,
+    groups: Any,
+) -> Any:
     groups_creation(
         yaml.load(config, yaml.Loader), service, admin_credentials, users, hosts, groups
     )
 
 
-def groups_creation(config, service, admin_credentials, users, hosts, groups):
+def groups_creation(
+    config: Any,
+    service: Any,
+    admin_credentials: Any,
+    users: Any,
+    hosts: Any,
+    groups: Any,
+) -> Any:
     """Create and configure groups according to given config.
 
     Config format given in yaml is as follows:
@@ -77,7 +92,14 @@ def groups_creation(config, service, admin_credentials, users, hosts, groups):
     _groups_creation(config, service, admin_credentials, users, hosts, groups)
 
 
-def _groups_creation(config, service, admin_credentials, users, hosts, groups):
+def _groups_creation(
+    config: Any,
+    service: Any,
+    admin_credentials: Any,
+    users: Any,
+    hosts: Any,
+    groups: Any,
+) -> Any:
     zone_hostname = hosts[service]["hostname"]
 
     for group_name, description in config.items():
@@ -122,8 +144,12 @@ def _groups_creation(config, service, admin_credentials, users, hosts, groups):
 
 
 def _create_group(
-    zone_hostname, owner_username, owner_password, group_name, group_type="team"
-):
+    zone_hostname: Any,
+    owner_username: Any,
+    owner_password: Any,
+    group_name: Any,
+    group_type: Any = "team",
+) -> Any:
     group_properties = {"name": group_name, "type": group_type}
     response = http_post(
         ip=zone_hostname,
@@ -135,7 +161,13 @@ def _create_group(
     return response.headers["location"].split("/")[-1]
 
 
-def _add_user_to_group(zone_hostname, admin_credentials, group_id, user_id, privileges):
+def _add_user_to_group(
+    zone_hostname: Any,
+    admin_credentials: Any,
+    group_id: Any,
+    user_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:
@@ -150,7 +182,13 @@ def _add_user_to_group(zone_hostname, admin_credentials, group_id, user_id, priv
     )
 
 
-def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id, privileges):
+def _add_child_group(
+    zone_hostname: Any,
+    admin_credentials: Any,
+    parent_id: Any,
+    child_id: Any,
+    privileges: Any,
+) -> Any:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:
@@ -165,7 +203,7 @@ def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id, priv
     )
 
 
-def _get_group_id(hosts, users, user, group_name):
+def _get_group_id(hosts: Any, users: Any, user: Any, group_name: Any) -> Any:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -187,7 +225,7 @@ def _get_group_id(hosts, users, user, group_name):
         "{user} before definition in next steps"
     )
 )
-def remove_group_in_onezone(hosts, users, user, group_name):
+def remove_group_in_onezone(hosts: Any, users: Any, user: Any, group_name: Any) -> Any:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     group_id = _get_group_id(hosts, users, user, group_name)
@@ -206,7 +244,7 @@ def remove_group_in_onezone(hosts, users, user, group_name):
         "definition in next steps"
     )
 )
-def remove_all_groups_rest(user, hosts, users):
+def remove_all_groups_rest(user: Any, hosts: Any, users: Any) -> Any:
     zone_hostname = hosts["onezone"]["hostname"]
 
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -215,7 +253,9 @@ def remove_all_groups_rest(user, hosts, users):
         _try_to_remove_group(group, zone_hostname, user, users)
 
 
-def _try_to_remove_group(group_id, zone_hostname, user, users):
+def _try_to_remove_group(
+    group_id: Any, zone_hostname: Any, user: Any, users: Any
+) -> Any:
     try:
         http_delete(
             ip=zone_hostname,
@@ -227,7 +267,7 @@ def _try_to_remove_group(group_id, zone_hostname, user, users):
         pass
 
 
-def get_group_id_list(user, users, zone_hostname):
+def get_group_id_list(user: Any, users: Any, zone_hostname: Any) -> Any:
     groups_list = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -238,7 +278,9 @@ def get_group_id_list(user, users, zone_hostname):
 
 
 @wt(parsers.parse(r"using REST, user {user} creates {number} groups"))
-def create_n_groups_using_rest(user, users, hosts, number: int, host="onezone"):
+def create_n_groups_using_rest(
+    user: Any, users: Any, hosts: Any, number: int, host: Any = "onezone"
+) -> Any:
     zone_hostname = hosts[host]["hostname"]
     for i in range(number):
         group_name = f"group{i}"

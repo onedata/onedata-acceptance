@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -56,19 +57,19 @@ class Space(Element):
     configuration = NamedButton(".one-list-level-2 .item-header", text="Configuration")
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def click_menu(self):
+    def click_menu(self) -> Any:
         self.click()
         self.menu_button.click()
 
-    def is_element_disabled(self, element_name):
+    def is_element_disabled(self, element_name: Any) -> Any:
         element = getattr(self, element_name)
         return "disabled" in element.web_elem.get_attribute("class")
 
-    def is_element_enabled(self, element_name):
+    def is_element_enabled(self, element_name: Any) -> Any:
         element = getattr(self, element_name)
         return "disabled" not in element.web_elem.get_attribute("class")
 
-    def is_active(self):
+    def is_active(self) -> Any:
         return "active" in self.web_elem.get_attribute("class")
 
 
@@ -107,7 +108,7 @@ class SpaceMarketplaceTile(PageObject):
 class ProvidersMap(Element):
     providers = WebElementsSequence(".one-atlas-point")
 
-    def click_provider(self, provider_name, driver):
+    def click_provider(self, provider_name: Any, driver: Any) -> Any:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -117,7 +118,7 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 
-    def hover_and_check_provider(self, provider_name, driver):
+    def hover_and_check_provider(self, provider_name: Any, driver: Any) -> Any:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -126,7 +127,7 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f"Provider {provider_name} was not found on the map")
 
-    def get_provider_horizontal_position(self, provider_name, driver):
+    def get_provider_horizontal_position(self, provider_name: Any, driver: Any) -> Any:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text
@@ -164,7 +165,7 @@ class HarvesterRow(Element):
     harvester = WebElement(".item-name")
     harvester_menu_button = WebElement(".collapsible-toolbar-toggle")
 
-    def click_harvester_menu_button(self, driver):
+    def click_harvester_menu_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self.harvester).perform()
         self.harvester_menu_button.click()
 
@@ -260,7 +261,7 @@ class DataPage(GenericPage):
     choose_other_provider = Button(".choose-oneprovider-link")
     error_header = Label(".content-info-content-container h1")
 
-    def choose_space(self, name):
+    def choose_space(self, name: Any) -> Any:
         for space in self.elements_list:
             if space.name in (name, ""):
                 space.click()
@@ -268,5 +269,5 @@ class DataPage(GenericPage):
                     return
         raise RuntimeError(f"{name} space not found")
 
-    def get_visible_spaces_list(self):
+    def get_visible_spaces_list(self) -> Any:
         return [el for el in self.spaces_header_list_web_elems if el.text != ""]

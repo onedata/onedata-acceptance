@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Any
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
@@ -34,7 +35,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _remove_parent_acl_from_string(priv):
+def _remove_parent_acl_from_string(priv: Any) -> Any:
     return re.sub("[a-zA-Z]+:", "", priv)
 
 
@@ -47,20 +48,20 @@ def _remove_parent_acl_from_string(priv):
     )
 )
 def grant_acl_privileges_in_op(
-    client,
-    selenium,
-    user,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    priv,
-    item_type,
-    name,
-    groups,
-    tmp_memory,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space: Any,
+    path: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    priv: Any,
+    item_type: Any,
+    name: Any,
+    groups: Any,
+    tmp_memory: Any,
+) -> Any:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -113,21 +114,21 @@ def grant_acl_privileges_in_op(
     )
 )
 def assert_ace_in_op(
-    client,
-    selenium,
-    user,
-    space,
-    path,
-    host,
-    hosts,
-    users,
-    num,
-    priv,
-    item_type,
-    name,
-    numerals,
-    tmp_memory,
-):
+    client: Any,
+    selenium: Any,
+    user: Any,
+    space: Any,
+    path: Any,
+    host: Any,
+    hosts: Any,
+    users: Any,
+    num: Any,
+    priv: Any,
+    item_type: Any,
+    name: Any,
+    numerals: Any,
+    tmp_memory: Any,
+) -> Any:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -185,17 +186,17 @@ def assert_ace_in_op(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op(
-    client,
-    user,
-    item_path,
-    space,
-    mode,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: Any,
+    user: Any,
+    item_path: Any,
+    space: Any,
+    mode: Any,
+    host: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+) -> Any:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -226,18 +227,18 @@ def assert_posix_permissions_in_op(
     )
 )
 def set_posix_permissions_in_op(
-    client,
-    user,
-    item_path,
-    space,
-    mode,
-    result,
-    host,
-    selenium,
-    tmp_memory,
-    users,
-    hosts,
-):
+    client: Any,
+    user: Any,
+    item_path: Any,
+    space: Any,
+    mode: Any,
+    result: Any,
+    host: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+) -> Any:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":

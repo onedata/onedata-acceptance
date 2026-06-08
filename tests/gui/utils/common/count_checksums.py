@@ -5,10 +5,11 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import hashlib
+from typing import Any
 from zlib import adler32
 
 
-def md5_sum(file_name):
+def md5_sum(file_name: Any) -> Any:
     hash_md5 = hashlib.md5()
     with open(file_name, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -16,7 +17,7 @@ def md5_sum(file_name):
     return hash_md5.hexdigest()
 
 
-def sha256_sum(file_name):
+def sha256_sum(file_name: Any) -> Any:
     hash_sha256 = hashlib.sha256()
     with open(file_name, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -24,7 +25,7 @@ def sha256_sum(file_name):
     return hash_sha256.hexdigest()
 
 
-def sha512_sum(file_name):
+def sha512_sum(file_name: Any) -> Any:
     hash_sha512 = hashlib.sha512()
     with open(file_name, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
@@ -32,7 +33,7 @@ def sha512_sum(file_name):
     return hash_sha512.hexdigest()
 
 
-def adler32_sum(file_name):
+def adler32_sum(file_name: Any) -> Any:
     adler_sum = 1
     with open(file_name, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):

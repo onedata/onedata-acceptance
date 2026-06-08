@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebItem
@@ -17,7 +18,7 @@ class ArchiveState(PageObject):
     state_type = Label(".archive-state-type")
     state_details = Label(".archive-state-details")
 
-    def get_state_name(self):
+    def get_state_name(self) -> Any:
         return self.state_type.lower()
 
     def get_files_count(self) -> int:
@@ -26,7 +27,7 @@ class ArchiveState(PageObject):
             raise ValueError(f"Cannot parse file count from: {self.state_details}")
         return int(match.group(1))
 
-    def get_size(self):
+    def get_size(self) -> Any:
         return self.state_details.split(",")[-1].strip()
 
 

@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -24,7 +26,7 @@ class SharesOptions(PageObject):
     menu_button = Button(".menu-toggle-frame")
     icon = WebElement(".one-icon-tag-icon")
 
-    def points_to_del_dir(self):
+    def points_to_del_dir(self) -> Any:
         return "oneicon-x" in self.icon.get_attribute("class")
 
 
@@ -52,5 +54,5 @@ class SharesContentPage(PageObject):
     editor_mode = Label(".btn-switch-editor-mode .text")
     link_type_selector = Button(".share-link-type-selector-trigger")
 
-    def get_visible_shares_list(self):
+    def get_visible_shares_list(self) -> Any:
         return [el for el in self.shares_list_web_elems if el.text != ""]

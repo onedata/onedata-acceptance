@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 from selenium.common.exceptions import TimeoutException
 
@@ -48,15 +49,15 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def invite_user_to_cluster(
-    selenium,
-    browser_id,
-    browser,
-    cluster,
-    hosts,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    browser_id: Any,
+    browser: Any,
+    cluster: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     option = "Clusters"
     sub_item = "Members"
     button = "Invite user using token"
@@ -79,7 +80,9 @@ def invite_user_to_cluster(
 
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def join_to_cluster(selenium, browser_id, displays, clipboard):
+def join_to_cluster(
+    selenium: Any, browser_id: Any, displays: Any, clipboard: Any
+) -> Any:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
 
 
@@ -90,8 +93,8 @@ def join_to_cluster(selenium, browser_id, displays, clipboard):
     )
 )
 def change_privilege_config_in_cluster(
-    selenium, browser_id, where, user_name, hosts, config
-):
+    selenium: Any, browser_id: Any, where: Any, user_name: Any, hosts: Any, config: Any
+) -> Any:
     member_type = "user"
     list_type = "users"
     option = "sets"
@@ -120,13 +123,13 @@ def change_privilege_config_in_cluster(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(
-    selenium,
-    browser_id,
-    hosts,
-    group_name,
-    cluster_name,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    hosts: Any,
+    group_name: Any,
+    cluster_name: Any,
+    tmp_memory: Any,
+) -> Any:
     sidebar = "CLUSTERS"
     menu_option = "Members"
     sub_item = "Add one of your groups"
@@ -167,14 +170,14 @@ def add_group_to_cluster(
     )
 )
 def no_member_in_parent(
-    selenium,
-    browser_id,
-    member_name,
-    member_type,
-    name,
-    tmp_memory,
-    where,
-):
+    selenium: Any,
+    browser_id: Any,
+    member_name: Any,
+    member_type: Any,
+    name: Any,
+    tmp_memory: Any,
+    where: Any,
+) -> Any:
     try:
         remove_member_from_parent(
             selenium,
@@ -192,14 +195,14 @@ def no_member_in_parent(
 @wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(
-    selenium,
-    browser_id,
-    provider,
-    hosts,
-    tmp_memory,
-    clipboard,
-    displays,
-):
+    selenium: Any,
+    browser_id: Any,
+    provider: Any,
+    hosts: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+) -> Any:
     option = "Copy ID"
     click_on_record_in_clusters_menu(selenium, browser_id, provider, hosts)
     click_cluster_menu_button(selenium, browser_id, provider, hosts)
@@ -224,14 +227,14 @@ def remember_cluster_id(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_gui_settings(
-    selenium,
-    browser_id,
-    record,
-    hosts,
-    kind_of_agreement,
-    text,
-    operation,
-):
+    selenium: Any,
+    browser_id: Any,
+    record: Any,
+    hosts: Any,
+    kind_of_agreement: Any,
+    text: Any,
+    operation: Any,
+) -> Any:
     menu = "Clusters"
     option = "GUI settings"
     box = kind_of_agreement + " input"
@@ -259,7 +262,7 @@ def set_gui_settings(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium, browser_id, kind_of_agreement):
+def insert_setting_link(selenium: Any, browser_id: Any, kind_of_agreement: Any) -> Any:
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
     click_button_in_gui_settings_page(selenium, browser_id, link)

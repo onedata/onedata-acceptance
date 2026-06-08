@@ -6,6 +6,8 @@ __author__ = "Jakub Karczewski"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.meta_steps.oneprovider.data import (
     create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
@@ -37,7 +39,16 @@ from tests.utils.bdd_utils import parsers, wt
         r" in (?P<host>.*)"
     )
 )
-def assert_file_symlink_value(client, users, user, hosts, host, space, path1, path2):
+def assert_file_symlink_value(
+    client: Any,
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    space: Any,
+    path1: Any,
+    path2: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
@@ -62,8 +73,15 @@ def assert_file_symlink_value(client, users, user, hosts, host, space, path1, pa
     )
 )
 def assert_file_hardlinks(
-    client, users, user, hosts, host, file_path, space, paths_list
-):
+    client: Any,
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    file_path: Any,
+    space: Any,
+    paths_list: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "rest":
         user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
@@ -90,18 +108,18 @@ def assert_file_hardlinks(
     )
 )
 def create_file_symlink(
-    client,
-    users,
-    user,
-    hosts,
-    host,
-    selenium,
-    file_name,
-    path,
-    space,
-    spaces,
-    tmp_memory,
-):
+    client: Any,
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    selenium: Any,
+    file_name: Any,
+    path: Any,
+    space: Any,
+    spaces: Any,
+    tmp_memory: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_symlinks_of_file_with_path(
@@ -136,7 +154,9 @@ def create_file_symlink(
         r' "(?P<space>.*)"'
     )
 )
-def create_symlink_oneclient(client, user, users, symlink_path, file_path, space):
+def create_symlink_oneclient(
+    client: Any, user: Any, users: Any, symlink_path: Any, file_path: Any, space: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -161,17 +181,17 @@ def create_symlink_oneclient(client, user, users, symlink_path, file_path, space
     )
 )
 def create_file_hardlink(
-    client,
-    users,
-    user,
-    hosts,
-    host,
-    selenium,
-    file_path,
-    hardlink_path,
-    space,
-    tmp_memory,
-):
+    client: Any,
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    selenium: Any,
+    file_path: Any,
+    hardlink_path: Any,
+    space: Any,
+    tmp_memory: Any,
+) -> Any:
     client_lower = client.lower()
     if client_lower == "web gui":
         create_hardlink_of_file_located_outside_current_location_and_place_it_in_path(
@@ -205,7 +225,9 @@ def create_file_hardlink(
         r' "(?P<space>.*)"'
     )
 )
-def create_hardlink_oneclient(client, user, users, file_path, hardlink_path, space):
+def create_hardlink_oneclient(
+    client: Any, user: Any, users: Any, file_path: Any, hardlink_path: Any, space: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -229,8 +251,14 @@ def create_hardlink_oneclient(client, user, users, file_path, hardlink_path, spa
     )
 )
 def assert_hardlink_between_files_rest(
-    users, user, hosts, host, file_path, hardlink_path, space
-):
+    users: Any,
+    user: Any,
+    hosts: Any,
+    host: Any,
+    file_path: Any,
+    hardlink_path: Any,
+    space: Any,
+) -> Any:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     file_id1 = _lookup_file_id(f"{space}/{file_path}", user_client_op)
     file_id2 = _lookup_file_id(f"{space}/{hardlink_path}", user_client_op)
@@ -247,8 +275,8 @@ def assert_hardlink_between_files_rest(
     )
 )
 def assert_hardlink_between_files_oneclient(
-    client, user, users, file_path1, file_path2, request
-):
+    client: Any, user: Any, users: Any, file_path1: Any, file_path2: Any, request: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
@@ -266,8 +294,8 @@ def assert_hardlink_between_files_oneclient(
     )
 )
 def assert_file_is_symlink_and_where_it_points_oneclient(
-    client, user, users, file_path, symlink_path, request
-):
+    client: Any, user: Any, users: Any, file_path: Any, symlink_path: Any, request: Any
+) -> Any:
     client_lower = client.lower()
     if "oneclient" in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)

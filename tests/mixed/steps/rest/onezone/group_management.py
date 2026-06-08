@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 import pytest
 from onezone_client import GroupApi, GroupCreateRequest, UserApi
 from onezone_client.rest import ApiException
@@ -16,7 +18,9 @@ from tests.utils.bdd_utils import parsers, wt
 
 
 @wt(parsers.re(r"(?P<user>\w+) creates groups? (?P<group_list>.*) using REST"))
-def create_groups_using_rest(user, users, hosts, group_list, host="onezone"):
+def create_groups_using_rest(
+    user: Any, users: Any, hosts: Any, group_list: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     user_api = UserApi(user_client)
 
@@ -25,7 +29,9 @@ def create_groups_using_rest(user, users, hosts, group_list, host="onezone"):
 
 
 @wt(parsers.re(r"(?P<user>\w+) sees groups? (?P<group_list>.*) using REST"))
-def see_groups_using_rest(user, users, hosts, group_list, host="onezone"):
+def see_groups_using_rest(
+    user: Any, users: Any, hosts: Any, group_list: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     for group_name in parse_seq(group_list):
         assert get_group(
@@ -34,7 +40,9 @@ def see_groups_using_rest(user, users, hosts, group_list, host="onezone"):
 
 
 @wt(parsers.re(r"(?P<user>\w+) does not see groups? (?P<group_list>.*) using REST"))
-def fail_to_see_groups_using_rest(user, users, hosts, group_list, host="onezone"):
+def fail_to_see_groups_using_rest(
+    user: Any, users: Any, hosts: Any, group_list: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     for group_name in parse_seq(group_list):
         assert not get_group(
@@ -48,7 +56,14 @@ def fail_to_see_groups_using_rest(user, users, hosts, group_list, host="onezone"
         " (?P<new_names>.*) using REST"
     )
 )
-def rename_groups_using_rest(user, users, hosts, group_list, new_names, host="onezone"):
+def rename_groups_using_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    new_names: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -64,8 +79,13 @@ def rename_groups_using_rest(user, users, hosts, group_list, new_names, host="on
     )
 )
 def fail_to_rename_groups_using_rest(
-    user, users, hosts, group_list, new_names, host="onezone"
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    new_names: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -76,7 +96,9 @@ def fail_to_rename_groups_using_rest(
 
 
 @wt(parsers.re(r"(?P<user>\w+) fails to remove groups? (?P<group_list>.*) using REST"))
-def fail_to_remove_groups_using_rest(user, users, hosts, group_list, host="onezone"):
+def fail_to_remove_groups_using_rest(
+    user: Any, users: Any, hosts: Any, group_list: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
@@ -86,8 +108,13 @@ def fail_to_remove_groups_using_rest(user, users, hosts, group_list, host="onezo
 
 
 def remove_groups_using_rest(
-    user, users, hosts, group_list, _user_clients, host="onezone"
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    _user_clients: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
@@ -96,7 +123,9 @@ def remove_groups_using_rest(
 
 
 @wt(parsers.re(r"(?P<user>\w+) leaves groups? (?P<group_list>.*) using REST"))
-def leave_groups_using_rest(user, users, hosts, group_list, host="onezone"):
+def leave_groups_using_rest(
+    user: Any, users: Any, hosts: Any, group_list: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     user_api = UserApi(user_client)
     for group_name in parse_seq(group_list):
@@ -110,7 +139,14 @@ def leave_groups_using_rest(user, users, hosts, group_list, host="onezone"):
         ' to group "(?P<parent>.*)" using REST'
     )
 )
-def add_subgroups_using_rest(user, users, hosts, group_list, parent, host="onezone"):
+def add_subgroups_using_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    parent: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
@@ -121,8 +157,13 @@ def add_subgroups_using_rest(user, users, hosts, group_list, parent, host="onezo
 
 
 def fail_to_add_subgroups_using_rest(
-    user, users, hosts, group_list, parent, host="onezone"
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    parent: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
@@ -140,8 +181,14 @@ def fail_to_add_subgroups_using_rest(
     )
 )
 def create_group_token_using_rest(
-    user1, user2, group_name, tmp_memory, users, hosts, host="onezone"
-):
+    user1: Any,
+    user2: Any,
+    group_name: Any,
+    tmp_memory: Any,
+    users: Any,
+    hosts: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user1, users[user1].password, hosts[host]["hostname"])
     group = get_group(group_name, user_client)
     group_api = GroupApi(user_client)
@@ -150,7 +197,9 @@ def create_group_token_using_rest(
 
 
 @wt(parsers.re(r"(?P<user>\w+) joins group he was invited to using REST"))
-def join_group_using_rest(user, tmp_memory, hosts, users, host="onezone"):
+def join_group_using_rest(
+    user: Any, tmp_memory: Any, hosts: Any, users: Any, host: Any = "onezone"
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     data = {"token": tmp_memory[user]["mailbox"]["token"]}
     UserApi(user_client).join_group(data)
@@ -163,8 +212,13 @@ def join_group_using_rest(user, tmp_memory, hosts, users, host="onezone"):
     )
 )
 def assert_users_in_groups_using_rest(
-    user, user_list, group_list, users, hosts, host="onezone"
-):
+    user: Any,
+    user_list: Any,
+    group_list: Any,
+    users: Any,
+    hosts: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     for group_name in parse_seq(group_list):
@@ -181,7 +235,14 @@ def assert_users_in_groups_using_rest(
         ' to group "(?P<parent>.*)" using REST'
     )
 )
-def assert_subgroups_using_rest(user, users, hosts, group_list, parent, host="onezone"):
+def assert_subgroups_using_rest(
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    parent: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)
@@ -199,8 +260,13 @@ def assert_subgroups_using_rest(user, users, hosts, group_list, parent, host="on
     )
 )
 def remove_subgroups_using_rest(
-    user, users, hosts, group_list, parent_name, host="onezone"
-):
+    user: Any,
+    users: Any,
+    hosts: Any,
+    group_list: Any,
+    parent_name: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     parent = get_group(parent_name, user_client)
@@ -216,8 +282,13 @@ def remove_subgroups_using_rest(
     )
 )
 def fail_to_see_subgroups_using_rest(
-    user, users, group_list, parent, hosts, host="onezone"
-):
+    user: Any,
+    users: Any,
+    group_list: Any,
+    parent: Any,
+    hosts: Any,
+    host: Any = "onezone",
+) -> Any:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     group_api = GroupApi(user_client)
     subgroups = group_api.list_child_groups(get_group(parent, user_client).group_id)

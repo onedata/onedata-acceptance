@@ -4,6 +4,8 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_BACKEND
@@ -57,13 +59,13 @@ from tests.utils.utils import repeat_failed
 
 
 def open_permission_modal(
-    selenium,
-    browser_id,
-    path,
-    space,
-    tmp_memory,
-    permission_type,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    space: Any,
+    tmp_memory: Any,
+    permission_type: Any,
+) -> Any:
     option = "Permissions"
     modal_name = "Details modal"
 
@@ -83,13 +85,13 @@ def open_permission_modal(
 
 
 def _assert_posix_permissions(
-    selenium,
-    browser_id,
-    space,
-    path,
-    perm,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    path: Any,
+    perm: Any,
+    tmp_memory: Any,
+) -> Any:
     modal_name = "Details modal"
     close_button = "X"
     open_permission_modal(
@@ -106,13 +108,13 @@ def _assert_posix_permissions(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(
-    selenium,
-    browser_id,
-    space,
-    path,
-    perm,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    path: Any,
+    perm: Any,
+    tmp_memory: Any,
+) -> Any:
     modal_name = "Details modal"
     close_button = "X"
     try:
@@ -143,13 +145,13 @@ def assert_posix_permissions_in_op_gui(
     )
 )
 def set_posix_permissions_in_op_gui(
-    selenium,
-    browser_id,
-    space,
-    path,
-    perm,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    path: Any,
+    perm: Any,
+    tmp_memory: Any,
+) -> Any:
     modal_name = "Details modal"
     button = "Save"
     close_button = "X"
@@ -170,13 +172,13 @@ def set_posix_permissions_in_op_gui(
 
 
 def fail_to_set_posix_permissions_in_op_gui(
-    selenium,
-    browser_id,
-    space,
-    path,
-    perm,
-    tmp_memory,
-):
+    selenium: Any,
+    browser_id: Any,
+    space: Any,
+    path: Any,
+    perm: Any,
+    tmp_memory: Any,
+) -> Any:
     button = "Save"
     panel = "Edit permissions"
     details_modal = "Details modal"
@@ -201,7 +203,9 @@ def fail_to_set_posix_permissions_in_op_gui(
         r"privileges? set for (?P<type>.*?) (?P<name>.*)"
     )
 )
-def set_acl_entry_in_op_gui(selenium, browser_id, priv, name):
+def set_acl_entry_in_op_gui(
+    selenium: Any, browser_id: Any, priv: Any, name: Any
+) -> Any:
     permission_type = "acl"
 
     select_permission_type(selenium, browser_id, permission_type)
@@ -212,8 +216,13 @@ def set_acl_entry_in_op_gui(selenium, browser_id, priv, name):
 
 
 def _set_acl_privilages_for_selected(
-    browser_id, selenium, tmp_memory, priv, name, path=None
-):
+    browser_id: Any,
+    selenium: Any,
+    tmp_memory: Any,
+    priv: Any,
+    name: Any,
+    path: Any = None,
+) -> Any:
     option = "Permissions"
     modal_name = "Details modal"
     button = "Save"
@@ -246,13 +255,13 @@ def _set_acl_privilages_for_selected(
     )
 )
 def grant_acl_privileges_to_selected_in_filebrowser(
-    selenium,
-    browser_id,
-    priv,
-    name,
-    tmp_memory,
-    item_name,
-):
+    selenium: Any,
+    browser_id: Any,
+    priv: Any,
+    name: Any,
+    tmp_memory: Any,
+    item_name: Any,
+) -> Any:
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, "file browser")
     _set_acl_privilages_for_selected(
         browser_id, selenium, tmp_memory, priv, name, item_name
@@ -267,14 +276,14 @@ def grant_acl_privileges_to_selected_in_filebrowser(
     )
 )
 def grant_acl_privileges_in_op_gui(
-    selenium,
-    browser_id,
-    item_list,
-    priv,
-    name,
-    tmp_memory,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    item_list: Any,
+    priv: Any,
+    name: Any,
+    tmp_memory: Any,
+    space: Any,
+) -> Any:
     option_in_menu = "Data"
     option = "spaces"
     option_in_submenu = "Files"
@@ -297,13 +306,13 @@ def grant_acl_privileges_in_op_gui(
     )
 )
 def read_items_acl(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    res,
-    space,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+) -> Any:
     modal_name = "Details modal"
     close_button = "X"
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, "acl")
@@ -324,17 +333,17 @@ def read_items_acl(
     )
 )
 def assert_ace_in_op_gui(
-    selenium,
-    browser_id,
-    priv,
-    acl_type,
-    name,
-    num,
-    space,
-    path,
-    tmp_memory,
-    numerals,
-):
+    selenium: Any,
+    browser_id: Any,
+    priv: Any,
+    acl_type: Any,
+    name: Any,
+    num: Any,
+    space: Any,
+    path: Any,
+    tmp_memory: Any,
+    numerals: Any,
+) -> Any:
     modal_name = "Details modal"
     close_button = "X"
     open_permission_modal(
@@ -359,16 +368,16 @@ def assert_ace_in_op_gui(
     )
 )
 def assert_user_id_in_ace_in_op_gui(
-    selenium,
-    browser_id,
-    name,
-    num,
-    space,
-    path,
-    tmp_memory,
-    numerals,
-    users,
-):
+    selenium: Any,
+    browser_id: Any,
+    name: Any,
+    num: Any,
+    space: Any,
+    path: Any,
+    tmp_memory: Any,
+    numerals: Any,
+    users: Any,
+) -> Any:
     modal_name = "Details modal"
     close_button = "X"
     open_permission_modal(
@@ -393,14 +402,14 @@ def assert_user_id_in_ace_in_op_gui(
     )
 )
 def change_acl_privileges(
-    selenium,
-    browser_id,
-    path,
-    tmp_memory,
-    res,
-    space,
-    name,
-):
+    selenium: Any,
+    browser_id: Any,
+    path: Any,
+    tmp_memory: Any,
+    res: Any,
+    space: Any,
+    name: Any,
+) -> Any:
     privileges_option_list = "[attributes]" if res == "succeeds" else "[acl:change acl]"
     button_save = "Save"
     button_close = "Close"
@@ -443,8 +452,8 @@ def change_acl_privileges(
     )
 )
 def assert_warning_in_details_modal_in_edit_permimssions_tab(
-    selenium, browser_id, text
-):
+    selenium: Any, browser_id: Any, text: Any
+) -> Any:
     driver = selenium[browser_id]
     acl = Modals(driver).details_modal.edit_permissions.acl
     warn_priv = acl.limited_privileges_warning

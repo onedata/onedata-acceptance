@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence, WebItem
 
@@ -29,7 +31,7 @@ class DataTab(PageObject):
     )
 
     @property
-    def sidebar(self):
+    def sidebar(self) -> Any:
         sidebar_, resize_handler = self._sidebar
         return DataTabSidebar(
             self.web_elem, sidebar_, self, resize_handler=resize_handler

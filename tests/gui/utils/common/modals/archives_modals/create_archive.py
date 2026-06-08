@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import Button, Input, Label, NamedButton
 
@@ -21,5 +23,5 @@ class CreateArchive(Modal):
     follow_symbolic_links = Toggle(".followSymlinks-field .one-way-toggle-track")
     base_archive = Label(".field-component.static-text-field")
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Create archive"

@@ -5,6 +5,8 @@ __author__ = "Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
@@ -42,7 +44,7 @@ class MembersItemHeader(PageObject):
     save_button = NamedButton(".save-btn", text="Save")
     discard_button = NamedButton(".discard-btn", text="Discard changes")
 
-    def click_menu(self, driver):
+    def click_menu(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self.user).perform()
         self.menu_button.click()
 
@@ -58,20 +60,20 @@ class MembersItemRow(PageObject):
     member = WebElement(".list-header-row")
     member_menu_button = WebElement(".collapsible-toolbar-toggle")
 
-    def click_member_menu_button(self, driver):
+    def click_member_menu_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self.member).perform()
         self.member_menu_button.click()
 
-    def are_privileges_visible(self):
+    def are_privileges_visible(self) -> Any:
         try:
             return self.privilege_tree
         except RuntimeError:
             return False
 
-    def has_status_label(self, name):
+    def has_status_label(self, name: Any) -> Any:
         return any(x.text == name for x in self.status_labels)
 
-    def is_opened(self):
+    def is_opened(self) -> Any:
         return "active" in self.web_elem.get_attribute("class")
 
 
@@ -97,7 +99,7 @@ class MembershipRelation(PageObject):
     line = id = WebElement(".line")
     relation_menu_button = Button(".actions-trigger")
 
-    def click_relation_menu_button(self, driver):
+    def click_relation_menu_button(self, driver: Any) -> Any:
         ActionChains(driver).move_to_element(self.line).perform()
         self.relation_menu_button()
 
@@ -137,7 +139,7 @@ class MembersPage(PageObject):
     effective_users_number = Label(".effective-users-number")
     effective_groups_number = Label(".effective-groups-number")
 
-    def close_member(self, driver):
+    def close_member(self, driver: Any) -> Any:
         driver.execute_script("window.scrollBy(0,0)")
         try:
             element = driver.find_element(

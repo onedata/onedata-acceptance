@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 import yaml
 
@@ -62,14 +63,14 @@ from tests.utils.utils import repeat_failed
     )
 )
 def support_space_in_op_panel_using_gui(
-    selenium,
-    user,
-    config,
-    tmp_memory,
-    space_name,
-    provider_name,
-    hosts,
-):
+    selenium: Any,
+    user: Any,
+    config: Any,
+    tmp_memory: Any,
+    space_name: Any,
+    provider_name: Any,
+    hosts: Any,
+) -> Any:
     result = "succeeds"
 
     result_to_support_space_in_op_panel_using_gui(
@@ -92,15 +93,15 @@ def support_space_in_op_panel_using_gui(
     )
 )
 def result_to_support_space_in_op_panel_using_gui(
-    selenium,
-    user,
-    config,
-    result,
-    tmp_memory,
-    space_name,
-    provider_name,
-    hosts,
-):
+    selenium: Any,
+    user: Any,
+    config: Any,
+    result: Any,
+    tmp_memory: Any,
+    space_name: Any,
+    provider_name: Any,
+    hosts: Any,
+) -> Any:
     notify_type = "info"
     notify_text_regexp = ".*[Aa]dded.*support.*space.*"
 
@@ -115,14 +116,18 @@ def result_to_support_space_in_op_panel_using_gui(
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 
-def _set_toggle_state(selenium, toggle_name, storage_import_configuration, user):
+def _set_toggle_state(
+    selenium: Any, toggle_name: Any, storage_import_configuration: Any, user: Any
+) -> Any:
     if storage_import_configuration.get(toggle_name.lower(), False):
         wt_enable_option_box_in_space_support_form(selenium, user, toggle_name)
     else:
         wt_disable_option_box_in_space_support_form(selenium, user, toggle_name)
 
 
-def _handle_configure_auto_storage_import(selenium, user, storage_import_configuration):
+def _handle_configure_auto_storage_import(
+    selenium: Any, user: Any, storage_import_configuration: Any
+) -> Any:
     if "max depth" in storage_import_configuration:
         wt_type_text_to_input_box_in_storage_import_configuration(
             selenium,
@@ -161,8 +166,13 @@ def _handle_configure_auto_storage_import(selenium, user, storage_import_configu
 
 
 def _support_space_in_op_panel_using_gui(
-    selenium, user, config, tmp_memory, provider_name, hosts
-):
+    selenium: Any,
+    user: Any,
+    config: Any,
+    tmp_memory: Any,
+    provider_name: Any,
+    hosts: Any,
+) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
     input_box = "Size"
@@ -199,7 +209,9 @@ def _support_space_in_op_panel_using_gui(
         "Storage import tab as following:\n{config}"
     )
 )
-def configure_auto_storage_import_in_storage_import_tab(selenium, user, config):
+def configure_auto_storage_import_in_storage_import_tab(
+    selenium: Any, user: Any, config: Any
+) -> Any:
     storage_import_configuration = yaml.load(config, yaml.Loader)
     _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
     button = "Save configuration"
@@ -216,8 +228,8 @@ def configure_auto_storage_import_in_storage_import_tab(selenium, user, config):
     )
 )
 def revoke_space_support_in_op_panel_using_gui(
-    selenium, user, provider_name, space_name, hosts
-):
+    selenium: Any, user: Any, provider_name: Any, space_name: Any, hosts: Any
+) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
     option = "Revoke space support"
@@ -238,7 +250,9 @@ def revoke_space_support_in_op_panel_using_gui(
     remove_space_instead_of_revoke(selenium, user)
 
 
-def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, config):
+def configure_sync_parameters_for_space_in_op_panel_gui(
+    selenium: Any, user: Any, config: Any
+) -> Any:
     tab_name = "Storage import"
 
     click_on_navigation_tab_in_space(user, tab_name, selenium)
@@ -246,14 +260,22 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, config):
     configure_auto_storage_import_in_storage_import_tab(selenium, user, config)
 
 
-def copy_id_of_space_gui(selenium, user, space_name, tmp_memory):
+def copy_id_of_space_gui(
+    selenium: Any, user: Any, space_name: Any, tmp_memory: Any
+) -> Any:
     wt_open_space_item_in_spaces_page_op_panel(selenium, user, space_name)
     wt_copy_space_id_in_spaces_page_in_onepanel(selenium, user, space_name, tmp_memory)
 
 
 def assert_proper_space_configuration_in_op_panel_gui(
-    selenium, user, space, sync_type, conf, provider_name, hosts
-):
+    selenium: Any,
+    user: Any,
+    space: Any,
+    sync_type: Any,
+    conf: Any,
+    provider_name: Any,
+    hosts: Any,
+) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
     wt_click_on_subitem_for_item(
@@ -271,7 +293,7 @@ def assert_proper_space_configuration_in_op_panel_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(selenium, browser_id, hosts):
+def revoke_all_space_supports(selenium: Any, browser_id: Any, hosts: Any) -> Any:
     sidebar = "CLUSTERS"
     sub_item = "Spaces"
     record = "oneprovider-1"
@@ -300,7 +322,9 @@ def revoke_all_space_supports(selenium, browser_id, hosts):
     selenium[browser_id].refresh()
 
 
-def _revoke_all_space_supports_using_rest(_selenium, hosts, users, provider_host):
+def _revoke_all_space_supports_using_rest(
+    _selenium: Any, hosts: Any, users: Any, provider_host: Any
+) -> Any:
     user = "onepanel"
 
     provider_hostname = hosts[provider_host]["hostname"]
@@ -323,13 +347,17 @@ def _revoke_all_space_supports_using_rest(_selenium, hosts, users, provider_host
 
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
+def g_revoke_all_space_supports_using_rest(
+    selenium: Any, hosts: Any, users: Any, provider_host: Any
+) -> Any:
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
 
 @wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
+def wt_revoke_all_space_supports_using_rest(
+    selenium: Any, hosts: Any, users: Any, provider_host: Any
+) -> Any:
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
 
@@ -340,7 +368,9 @@ def wt_revoke_all_space_supports_using_rest(selenium, hosts, users, provider_hos
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_quota_in_auto_cleaning(selenium, browser_id, quota, value):
+def set_quota_in_auto_cleaning(
+    selenium: Any, browser_id: Any, quota: Any, value: Any
+) -> Any:
     click_change_quota_button(selenium, browser_id, quota)
     type_value_to_quota_input(selenium, browser_id, quota, value)
     confirm_quota_value_change(selenium, browser_id, quota)
@@ -352,7 +382,7 @@ def set_quota_in_auto_cleaning(selenium, browser_id, quota, value):
         " finished in Onepanel"
     )
 )
-def run_scan_and_wait_till_finished(selenium, browser_id):
+def run_scan_and_wait_till_finished(selenium: Any, browser_id: Any) -> Any:
     tab_name = "Storage import"
     click_on_navigation_tab_in_space(browser_id, tab_name, selenium)
     click_start_scan_button_in_storage_import_tab(selenium, browser_id)

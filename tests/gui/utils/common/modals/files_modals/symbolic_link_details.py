@@ -4,6 +4,8 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Label, NamedButton
 from tests.gui.utils.generic import transform
@@ -21,9 +23,11 @@ class SymbolicLinkDetailsModal(Modal):
         ".file-info-row-target-path .property-value .clipboard-btn"
     )
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return "Symbolic link details modal"
 
-    def get_property(self, property_name, clipboard, displays, browser_id):
+    def get_property(
+        self, property_name: Any, clipboard: Any, displays: Any, browser_id: Any
+    ) -> Any:
         getattr(self, transform(property_name)).click()
         return clipboard.paste(display=displays[browser_id])

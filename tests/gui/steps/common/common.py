@@ -4,7 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -18,8 +18,13 @@ from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_names, transform_fun=None
-):
+    page: Any,
+    selenium: Any,
+    browser_id: Any,
+    number: int,
+    items_names: Any,
+    transform_fun: Any = None,
+) -> Any:
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
@@ -44,16 +49,16 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_names):
+def _get_visible_items_list(page: Any, items_names: Any) -> Any:
     return getattr(page, f"get_visible_{items_names}_list")()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle, toggle_name=""):
+def wait_for_checking_toggle(toggle: Any, toggle_name: Any = "") -> Any:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where, driver):
+def _get_page(where: Any, driver: Any) -> Any:
     if where == "shares":
         return OZLoggedIn(driver)["shares"]
     if where == "groups":
@@ -69,25 +74,27 @@ def _get_page(where, driver):
         " the sidebar"
     )
 )
-def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
+def wt_assert_n_items_in_items_list(
+    selenium: Any, browser_id: Any, number: int, items: Any, where: Any
+) -> Any:
     driver = selenium[browser_id]
     page = _get_page(where, driver)
     assert_n_items_in_items_list(page, selenium, browser_id, number, items)
 
 
-def get_last_item_number_in_table(driver):
+def get_last_item_number_in_table(driver: Any) -> Any:
     last_item = get_last_item_in_table(driver)
     if last_item is None:
         return 0
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver):
+def get_last_item_in_table(driver: Any) -> Any:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
 
-def scroll_to_bottom_of_the_table(driver):
+def scroll_to_bottom_of_the_table(driver: Any) -> Any:
     while True:
         count = get_last_item_number_in_table(driver)
         if count == 0:
@@ -107,7 +114,7 @@ def scroll_to_bottom_of_the_table(driver):
 
 def assert_logs_order_with_optional_logs(
     logs_expected: List[Dict[str, str]], logs_actual: List[str]
-):
+) -> Any:
     """
 
     This function takes as a first argument list of dictionaries as in example below:
@@ -152,7 +159,7 @@ def assert_logs_order_with_optional_logs(
                 idx += 1
 
 
-def scroll_and_get_columns(modal, columns):
+def scroll_and_get_columns(modal: Any, columns: Any) -> Any:
     # The modal has to be a class that implements get_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]

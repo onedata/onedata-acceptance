@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import json
+from typing import Any
 
 import yaml
 
@@ -21,7 +22,9 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
         "LUMA local feed mappings are created with following configuration:\n{config}"
     )
 )
-def wt_create_luma_mappings(config, users, spaces, hosts, onepanel_credentials):
+def wt_create_luma_mappings(
+    config: Any, users: Any, spaces: Any, hosts: Any, onepanel_credentials: Any
+) -> Any:
     """Create LUMA mappings according to given config.
 
     Config format given in yaml is as follows:
@@ -45,7 +48,9 @@ def wt_create_luma_mappings(config, users, spaces, hosts, onepanel_credentials):
     create_luma_mappings(config, users, spaces, hosts, onepanel_credentials)
 
 
-def create_luma_mappings(config, users, spaces, hosts, onepanel_credentials):
+def create_luma_mappings(
+    config: Any, users: Any, spaces: Any, hosts: Any, onepanel_credentials: Any
+) -> Any:
     mappings = yaml.load(config, yaml.Loader)
     for provider in mappings:
         storages = mappings[provider]
@@ -95,16 +100,16 @@ def create_luma_mappings(config, users, spaces, hosts, onepanel_credentials):
 
 
 def set_user_luma_local_feed_mappings(
-    provider,
-    hosts,
-    users,
-    onepanel_credentials,
-    storage_id,
-    storage_type,
-    user,
-    storage_uid,
-    display_uid,
-):
+    provider: Any,
+    hosts: Any,
+    users: Any,
+    onepanel_credentials: Any,
+    storage_id: Any,
+    storage_type: Any,
+    user: Any,
+    storage_uid: Any,
+    display_uid: Any,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -131,7 +136,9 @@ def set_user_luma_local_feed_mappings(
     )
 
 
-def _set_onedata_user_mapping(storage_type, user_id, storage_uid, display_uid):
+def _set_onedata_user_mapping(
+    storage_type: Any, user_id: Any, storage_uid: Any, display_uid: Any
+) -> Any:
     scheme = {
         "onedataUser": {
             "mappingScheme": "onedataUser",
@@ -150,14 +157,14 @@ def _set_onedata_user_mapping(storage_type, user_id, storage_uid, display_uid):
 
 
 def set_default_posix_credentials_luma_lf(
-    provider,
-    storage_id,
-    space,
-    hosts,
-    onepanel_credentials,
-    spaces,
-    default_gid,
-):
+    provider: Any,
+    storage_id: Any,
+    space: Any,
+    hosts: Any,
+    onepanel_credentials: Any,
+    spaces: Any,
+    default_gid: Any,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -183,14 +190,14 @@ def set_default_posix_credentials_luma_lf(
 
 
 def set_default_display_credentials_luma_lf(
-    provider,
-    storage_id,
-    space,
-    hosts,
-    onepanel_credentials,
-    spaces,
-    display_gid,
-):
+    provider: Any,
+    storage_id: Any,
+    space: Any,
+    hosts: Any,
+    onepanel_credentials: Any,
+    spaces: Any,
+    display_gid: Any,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -223,8 +230,14 @@ def set_default_display_credentials_luma_lf(
     )
 )
 def create_imported_storage_luma_mappings_lf(
-    storage, provider, uid_list, user_list, hosts, onepanel_credentials, users
-):
+    storage: Any,
+    provider: Any,
+    uid_list: Any,
+    user_list: Any,
+    hosts: Any,
+    onepanel_credentials: Any,
+    users: Any,
+) -> Any:
     uids = parse_seq(uid_list)
     users_list = parse_seq(user_list)
     storage_id = get_first_storage_id_by_name(
@@ -239,8 +252,14 @@ def create_imported_storage_luma_mappings_lf(
 
 
 def _insert_mapping_of_uid_into_lf(
-    uid, user, provider, hosts, onepanel_credentials, storage_id, users
-):
+    uid: Any,
+    user: Any,
+    provider: Any,
+    hosts: Any,
+    onepanel_credentials: Any,
+    storage_id: Any,
+    users: Any,
+) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

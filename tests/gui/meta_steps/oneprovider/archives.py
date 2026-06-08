@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import Any
 
 import yaml
 
@@ -74,16 +75,16 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-):
+    browser_id: Any,
+    selenium: Any,
+    config: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+    option: Any,
+) -> Any:
     """Create archive according to given config.
 
     Config format given in yaml is as follows:
@@ -125,17 +126,17 @@ def create_archive(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-    follow_symbolic_links,
-):
+    browser_id: Any,
+    selenium: Any,
+    config: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+    option: Any,
+    follow_symbolic_links: Any,
+) -> Any:
     follow_symbolic_links = follow_symbolic_links == "true"
 
     _create_archive(
@@ -153,17 +154,17 @@ def create_archive_with_follow_symbolic_link(
 
 
 def _create_archive(
-    browser_id,
-    selenium,
-    config,
-    item_name,
-    space_name,
-    tmp_memory,
-    clipboard,
-    displays,
-    option,
-    follow_symbolic_links=True,
-):
+    browser_id: Any,
+    selenium: Any,
+    config: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+    option: Any,
+    follow_symbolic_links: Any = True,
+) -> Any:
     option_in_data_row_menu = "Create archive"
     button_name = "Create"
     option_state = "disabled"
@@ -245,14 +246,14 @@ def _create_archive(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
-    selenium,
-    browser_id,
-    client,
-    tmp_memory,
-    clipboard,
-    displays,
-    description,
-):
+    selenium: Any,
+    browser_id: Any,
+    client: Any,
+    tmp_memory: Any,
+    clipboard: Any,
+    displays: Any,
+    description: Any,
+) -> Any:
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
@@ -264,14 +265,14 @@ def copy_archive_id_to_tmp_memory(
 
 
 def assert_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    option,
-    description,
-):
+    browser_id: Any,
+    selenium: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    option: Any,
+    description: Any,
+) -> Any:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -333,14 +334,14 @@ def assert_archive_in_op_gui(
 
 
 def remove_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    description,
-    option,
-):
+    browser_id: Any,
+    selenium: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    description: Any,
+    option: Any,
+) -> Any:
     option_in_menu = "Delete archive"
     text = "I understand that data of the archive will be lost"
     button_name = "Delete archive"
@@ -382,14 +383,14 @@ def remove_archive_in_op_gui(
 
 
 def assert_archive_with_option_in_op_gui(
-    browser_id,
-    selenium,
-    space_name,
-    tmp_memory,
-    item_name,
-    option,
-    description,
-):
+    browser_id: Any,
+    selenium: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    item_name: Any,
+    option: Any,
+    description: Any,
+) -> Any:
     tag_type = transform(option)
     go_to_and_assert_browser(
         selenium,
@@ -412,13 +413,13 @@ def assert_archive_with_option_in_op_gui(
 
 
 def assert_number_of_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    number,
-):
+    browser_id: Any,
+    selenium: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    number: Any,
+) -> Any:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -450,12 +451,12 @@ def assert_number_of_archive_in_op_gui(
     )
 )
 def assert_number_of_archives_with_scrolling(
-    browser_id,
-    selenium,
+    browser_id: Any,
+    selenium: Any,
     number: int,
-    tmp_memory,
-    which_browser,
-):
+    tmp_memory: Any,
+    which_browser: Any,
+) -> Any:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
     transform_fun = lambda item: (
         item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
@@ -466,14 +467,14 @@ def assert_number_of_archives_with_scrolling(
 
 
 def assert_base_archive_for_archive_in_op_gui(
-    browser_id,
-    selenium,
-    item_name,
-    space_name,
-    tmp_memory,
-    description,
-    base_description,
-):
+    browser_id: Any,
+    selenium: Any,
+    item_name: Any,
+    space_name: Any,
+    tmp_memory: Any,
+    description: Any,
+    base_description: Any,
+) -> Any:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -499,13 +500,13 @@ def assert_base_archive_for_archive_in_op_gui(
 
 
 def assert_archive_callback_in_op_gui(
-    browser_id,
-    tmp_memory,
-    description,
-    selenium,
-    expected,
-    option,
-):
+    browser_id: Any,
+    tmp_memory: Any,
+    description: Any,
+    selenium: Any,
+    expected: Any,
+    option: Any,
+) -> Any:
     modal = "Archive Details"
     option_in_menu = "Properties"
     info = f"{option} callback URL"
@@ -519,8 +520,8 @@ def assert_archive_callback_in_op_gui(
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id, description, tmp_memory, selenium, name
-):
+    browser_id: Any, description: Any, tmp_memory: Any, selenium: Any, name: Any
+) -> Any:
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
     name_textfield = "target name input"
@@ -537,8 +538,8 @@ def recall_archive_for_archive_in_op_gui(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id, item_name, tmp_memory, data, selenium
-):
+    browser_id: Any, item_name: Any, tmp_memory: Any, data: Any, selenium: Any
+) -> Any:
     status_type = "recalled"
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
@@ -590,7 +591,7 @@ def recalled_archive_details_in_op_gui(
         "as follow:\n{config}"
     )
 )
-def check_size_stats_for_archive(selenium, browser_id, config):
+def check_size_stats_for_archive(selenium: Any, browser_id: Any, config: Any) -> Any:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -614,8 +615,8 @@ def check_size_stats_for_archive(selenium, browser_id, config):
     )
 )
 def check_size_stats_for_archive_per_provider(
-    selenium, browser_id, hosts, config, provider
-):
+    selenium: Any, browser_id: Any, hosts: Any, config: Any, provider: Any
+) -> Any:
     """Check size stats in directory details for specified provider according
     to given config.
 

@@ -6,6 +6,8 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Any
+
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -52,7 +54,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(selenium, browser_id, group, new_group, confirm_type):
+def rename_group(
+    selenium: Any, browser_id: Any, group: Any, new_group: Any, confirm_type: Any
+) -> Any:
     option = "Rename"
     text = new_group
 
@@ -67,7 +71,7 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type):
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_group(selenium, browser_id, group):
+def leave_group(selenium: Any, browser_id: Any, group: Any) -> Any:
     option = "Leave"
     modal = "LEAVE GROUP"
 
@@ -76,11 +80,11 @@ def leave_group(selenium, browser_id, group):
 
 
 @given(parsers.parse("{user} user does not have access to any group"))
-def g_leave_user_groups_in_onezone_using_rest(hosts, users, user):
+def g_leave_user_groups_in_onezone_using_rest(hosts: Any, users: Any, user: Any) -> Any:
     leave_user_groups_in_onezone_using_rest(hosts, users, user)
 
 
-def leave_user_groups_in_onezone_using_rest(hosts, users, user):
+def leave_user_groups_in_onezone_using_rest(hosts: Any, users: Any, user: Any) -> Any:
     zone_hostname = hosts["onezone"]["hostname"]
     user_groups = get_user_groups(zone_hostname, user, users)
     for group_id in user_groups:
@@ -92,7 +96,7 @@ def leave_user_groups_in_onezone_using_rest(hosts, users, user):
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium, browser_id, group_list):
+def remove_group(selenium: Any, browser_id: Any, group_list: Any) -> Any:
     option = "Remove"
     modal = "REMOVE GROUP"
 
@@ -103,21 +107,23 @@ def remove_group(selenium, browser_id, group_list):
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_groups_using_op_gui(selenium, browser_id, group_list):
+def create_groups_using_op_gui(selenium: Any, browser_id: Any, group_list: Any) -> Any:
     for group in parse_seq(group_list):
         click_create_group_button_in_panel(selenium, browser_id)
         input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
         confirm_name_input_on_main_groups_page(selenium, browser_id)
 
 
-def see_groups_using_op_gui(selenium, user, group_list):
+def see_groups_using_op_gui(selenium: Any, user: Any, group_list: Any) -> Any:
     option = "sees"
 
     for group in parse_seq(group_list):
         assert_group_exists(selenium, user, option, group)
 
 
-def rename_groups_using_op_gui(selenium, user, group_list, new_names):
+def rename_groups_using_op_gui(
+    selenium: Any, user: Any, group_list: Any, new_names: Any
+) -> Any:
     confirm_type = "enter"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -125,19 +131,19 @@ def rename_groups_using_op_gui(selenium, user, group_list, new_names):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def fail_to_see_groups_using_op_gui(selenium, user, group_list):
+def fail_to_see_groups_using_op_gui(selenium: Any, user: Any, group_list: Any) -> Any:
     option = "does not see"
 
     for group in parse_seq(group_list):
         assert_group_exists(selenium, user, option, group)
 
 
-def leave_groups_using_op_gui(selenium, user, group_list):
+def leave_groups_using_op_gui(selenium: Any, user: Any, group_list: Any) -> Any:
     for group in parse_seq(group_list):
         leave_group(selenium, user, group)
 
 
-def _open_member_from_list(selenium, user, parent):
+def _open_member_from_list(selenium: Any, user: Any, parent: Any) -> Any:
     where = "group"
     list_type = "users"
     subpage = "members"
@@ -146,7 +152,9 @@ def _open_member_from_list(selenium, user, parent):
     click_element_in_members_list(selenium, user, user, where, list_type)
 
 
-def assert_subgroups_using_op_gui(selenium, user, group_list, parent):
+def assert_subgroups_using_op_gui(
+    selenium: Any, user: Any, group_list: Any, parent: Any
+) -> Any:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
@@ -156,7 +164,9 @@ def assert_subgroups_using_op_gui(selenium, user, group_list, parent):
         )
 
 
-def fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent):
+def fail_to_see_subgroups_using_op_gui(
+    selenium: Any, user: Any, group_list: Any, parent: Any
+) -> Any:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
@@ -168,15 +178,15 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _create_group_token(
-    selenium,
-    user,
-    user2,
-    name,
-    tmp_memory,
-    displays,
-    clipboard,
-    member,
-):
+    selenium: Any,
+    user: Any,
+    user2: Any,
+    name: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+    member: Any,
+) -> Any:
     item_type = "token"
     where = "group"
     button = f"Invite {member} using token"
@@ -200,14 +210,14 @@ def _create_group_token(
     )
 )
 def create_group_token_to_invite_user_using_op_gui(
-    selenium,
-    user,
-    user2,
-    name,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    user: Any,
+    user2: Any,
+    name: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     member = "user"
     _create_group_token(
         selenium,
@@ -222,14 +232,14 @@ def create_group_token_to_invite_user_using_op_gui(
 
 
 def create_group_token_to_invite_group_using_op_gui(
-    selenium,
-    user,
-    user2,
-    name,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    user: Any,
+    user2: Any,
+    name: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     member = "group"
     _create_group_token(
         selenium,
@@ -248,19 +258,19 @@ def create_group_token_to_invite_group_using_op_gui(
         "user of (?P<browser_id>.*) joins group he was invited to in Onezone service"
     )
 )
-def join_group_using_op_gui(selenium, browser_id, tmp_memory):
+def join_group_using_op_gui(selenium: Any, browser_id: Any, tmp_memory: Any) -> Any:
     consume_received_token(selenium, browser_id, tmp_memory)
 
 
 def add_subgroups_using_op_gui(
-    selenium,
-    user,
-    parent,
-    group_list,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    user: Any,
+    parent: Any,
+    group_list: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(
             selenium,
@@ -274,7 +284,9 @@ def add_subgroups_using_op_gui(
         add_element_with_copied_token(selenium, user, child, clipboard, displays)
 
 
-def remove_subgroups_using_op_gui(selenium, user, group_list, tmp_memory, parent):
+def remove_subgroups_using_op_gui(
+    selenium: Any, user: Any, group_list: Any, tmp_memory: Any, parent: Any
+) -> Any:
     member_type = "group"
 
     for child in parse_seq(group_list):
@@ -289,7 +301,9 @@ def remove_subgroups_using_op_gui(selenium, user, group_list, tmp_memory, parent
         )
 
 
-def fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names):
+def fail_to_rename_groups_using_op_gui(
+    selenium: Any, user: Any, group_list: Any, new_names: Any
+) -> Any:
     text = "failed"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -298,14 +312,14 @@ def fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names):
 
 
 def fail_to_add_subgroups_using_op_gui(
-    selenium,
-    user,
-    parent,
-    group_list,
-    tmp_memory,
-    displays,
-    clipboard,
-):
+    selenium: Any,
+    user: Any,
+    parent: Any,
+    group_list: Any,
+    tmp_memory: Any,
+    displays: Any,
+    clipboard: Any,
+) -> Any:
     create_group_token_to_invite_group_using_op_gui(
         selenium,
         user,

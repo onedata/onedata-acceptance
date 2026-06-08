@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
+from typing import Any
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -30,7 +31,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
+def notify_visible_with_text(
+    selenium: Any, browser_id: Any, notify_type: Any, text_regexp: Any
+) -> Any:
     driver = selenium[browser_id]
     css_sel = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
@@ -43,7 +46,7 @@ def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
 
 @wt(parsers.parse("user of {browser_id} closes all notifies"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_visible_notifies(selenium, browser_id):
+def close_visible_notifies(selenium: Any, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     notifies = driver.find_elements(By.CSS_SELECTOR, ".ember-notify a.close-button")
 
@@ -57,7 +60,7 @@ def close_visible_notifies(selenium, browser_id):
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error(selenium, browser_id, error_msg):
+def assert_loading_error(selenium: Any, browser_id: Any, error_msg: Any) -> Any:
     given_msg = OnePage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg
@@ -70,7 +73,9 @@ def assert_loading_error(selenium, browser_id, error_msg):
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error_public_page(selenium, browser_id, error_msg):
+def assert_loading_error_public_page(
+    selenium: Any, browser_id: Any, error_msg: Any
+) -> Any:
     given_msg = PublicOnePage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg
