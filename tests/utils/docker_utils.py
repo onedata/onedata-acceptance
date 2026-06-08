@@ -10,14 +10,16 @@ from typing import Any
 
 from environment import docker  # pylint: disable=import-error
 
+DockerCommand = str | list[str]
+
 
 def run_cmd(
-    username: Any,
+    username: str,
     client: Any,
-    cmd: Any,
-    detach: Any = False,
-    output: Any = False,
-    error: Any = False,
+    cmd: DockerCommand,
+    detach: bool = False,
+    output: bool = False,
+    error: bool = False,
 ) -> Any:
     """Run command in docker
     :param username: command will be run as given user
@@ -51,5 +53,5 @@ def run_cmd(
     )
 
 
-def docker_ip(container: Any) -> Any:
+def docker_ip(container: Any) -> str:
     return docker.inspect(container)["NetworkSettings"]["IPAddress"]

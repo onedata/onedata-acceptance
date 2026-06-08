@@ -55,16 +55,16 @@ def open_onedata_service_page(
         driver = selenium[browser_id]
         if host == "emergency interface of Onepanel":
             host = "oneprovider-1 provider panel"
-        host = host.lower().split()
+        host_parts = host.lower().split()
         node_number: Union[int, str]
 
-        if "node" in host[0]:
-            node_number = int(host[0][-1:])
-            host = host[2:]
+        if "node" in host_parts[0]:
+            node_number = int(host_parts[0][-1:])
+            host_parts = host_parts[2:]
         else:
             node_number = ""
 
-        alias, service = host[0], "_".join(host[1:])
+        alias, service = host_parts[0], "_".join(host_parts[1:])
         if "panel" in service:
             hostname = hosts[alias]["panel"]["hostname"]
 

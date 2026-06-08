@@ -10,10 +10,12 @@ import os
 import re
 import sys
 import time
+from collections.abc import Callable
+from types import ModuleType
 from typing import Any
 
 
-def config_file(relative_file_path: Any) -> Any:
+def config_file(relative_file_path: str) -> str:
     """Returns a path to file located in {test_name}_data directory, where
     {test_name} is name of the test module that called this function.
     example: using test_utils.config_file('my_file') in my_test.py will return
@@ -29,7 +31,7 @@ def config_file(relative_file_path: Any) -> Any:
     return f"{caller_mod_file_path.rstrip(".py")}_data/{relative_file_path}"
 
 
-def get_file_name(file_path: Any) -> Any:
+def get_file_name(file_path: str) -> str:
     """Returns name of file, based on file_path.
     Name is acquired by removing parent directories from file_path and stripping
     extension.
@@ -38,7 +40,7 @@ def get_file_name(file_path: Any) -> Any:
     return os.path.splitext(os.path.basename(file_path))[0]
 
 
-def get_logdir_name(root_dir: Any, test_name: Any) -> Any:
+def get_logdir_name(root_dir: str, test_name: str) -> str:
     """Returns path to logs directory
     i.e. get_logdir_name("tests/mytest", "test1") will return
     "tests/mytest/test1.<timestamp>"
@@ -47,15 +49,17 @@ def get_logdir_name(root_dir: Any, test_name: Any) -> Any:
     return os.path.join(root_dir, ".".join([test_name, timestamp]))
 
 
-def make_logdir(root_dir: Any, test_name: Any) -> Any:
+def make_logdir(root_dir: str | None, test_name: str) -> str:
     """Creates logdir if it doesn't exist."""
+    if root_dir is None:
+        raise ValueError("Root directory cannot be None")
     name = get_logdir_name(root_dir, test_name)
     if not os.path.exists(name):
         os.makedirs(name)
     return name
 
 
-def get_json_files(directory: Any, relative: Any = False) -> Any:
+def get_json_files(directory: str, relative: bool = False) -> list[str]:
     """Gets all .json files from given directory
     Returns list of files' absolute paths"""
     jsons = []
@@ -68,55 +72,57 @@ def get_json_files(directory: Any, relative: Any = False) -> Any:
     return jsons
 
 
-def save_log_to_file(file_path: Any, log: Any) -> Any:
+def save_log_to_file(file_path: str, log: str) -> None:
     """Saves log to file pointed by file_path"""
     with open(file_path, "w") as f:
         f.write(log)
 
 
-def append_log_to_file(path: Any, log: Any) -> Any:
+def append_log_to_file(path: str, log: str) -> None:
     """Appends log to file pointed by path"""
     with open(path, "a") as f:
         f.write(f"{log}\n\n")
         os.utime(path, None)
 
 
-def get_module(name: Any) -> Any:
+def get_module(name: str) -> ModuleType:
     """Returns module object"""
     return sys.modules[name]
 
 
-def get_function(module: Any, function_name: Any) -> Any:
+def get_function(module: ModuleType, function_name: str) -> Callable[..., Any]:
     """Returns function object from given module"""
     return getattr(module, function_name)
 
 
-def ensure_json(file: Any) -> Any:
+def ensure_json(file: str) -> str:
     """Ensures that file has .json extension."""
     if os.path.splitext(file)[1] != ".json":
         file = ".".join([file, "json"])
     return file
 
 
-def ensure_yaml(file: Any) -> Any:
+def ensure_yaml(file: str) -> str:
     """Ensures that file has .yaml extension."""
     if os.path.splitext(file)[1] != ".yaml":
         file = ".".join([file, "yaml"])
     return file
 
 
-def absolute_path_to_env_file(directory: Any, file: Any) -> Any:
+def absolute_path_to_env_file(directory: str | None, file: str) -> str:
     """Returns absolute path to environment file from dir. Ensures that file
     has .yaml extension"""
+    if directory is None:
+        raise ValueError("Environment file directory cannot be None")
     return os.path.join(directory, ensure_yaml(file))
 
 
-def escape_path(path: Any) -> Any:
+def escape_path(path: str) -> str:
     """Returns path with escaped space and apostrophe"""
     return path.replace("'", "\\'").replace(" ", r"\ ")
 
 
-def get_first_path_element(path: Any) -> Any:
+def get_first_path_element(path: str) -> str:
     """Returns first element in path"""
     return next(elem for elem in path.split(os.path.sep) if elem)
 

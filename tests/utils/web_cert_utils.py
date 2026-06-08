@@ -19,8 +19,8 @@ WEB_KEY = "web_key.pem"
 
 
 def replace_cert_in_op(
-    hosts: Any, prov: Any, cert_name_in_op: Any, cert_path_in_tests: Any
-) -> Any:
+    hosts: Any, prov: str, cert_name_in_op: str, cert_path_in_tests: str
+) -> None:
     cmd_args = [
         os.path.join(PROJECT_DIR, CERT_PATH_TESTS, cert_path_in_tests),
         f"{hosts[prov]["pod-name"]}:{os.path.join(CERT_PATH_OP, cert_name_in_op)}",
@@ -28,7 +28,7 @@ def replace_cert_in_op(
     run_kubectl_command("cp", cmd_args)
 
 
-def replace_cert_for_one_not_including_s3_in_op(hosts: Any, prov: Any) -> Any:
+def replace_cert_for_one_not_including_s3_in_op(hosts: Any, prov: str) -> None:
     replace_cert_in_op(hosts, prov, WEB_CERT, os.path.join("certs_no_s3", WEB_CERT))
     replace_cert_in_op(hosts, prov, WEB_KEY, os.path.join("certs_no_s3", WEB_KEY))
 
@@ -39,5 +39,5 @@ def replace_cert_for_one_not_including_s3_in_op(hosts: Any, prov: Any) -> Any:
         " provider"
     )
 )
-def wt_replace_cert_for_one_not_including_s3_in_op(hosts: Any, provider: Any) -> Any:
+def wt_replace_cert_for_one_not_including_s3_in_op(hosts: Any, provider: str) -> None:
     replace_cert_for_one_not_including_s3_in_op(hosts, provider)

@@ -1,6 +1,6 @@
 """Exceptions classes for http errors."""
 
-from typing import Any
+from typing import Any, NoReturn
 
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -10,13 +10,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 _exceptions: dict[int, type["HTTPError"]] = {}
 
 
-def raise_http_exception(response: Any) -> Any:
+def raise_http_exception(response: Any) -> NoReturn:
     ex_cls = _exceptions.get(response.status_code, HTTPError)
     raise ex_cls(response)
 
 
 class HTTPErrorMeta(type):
-    def __new__(mcs: Any, *args: Any, **kwargs: Any) -> Any:
+    def __new__(mcs: Any, *args: Any, **kwargs: Any) -> type:
         new_cls = super(HTTPErrorMeta, mcs).__new__(mcs, *args, **kwargs)
         if hasattr(new_cls, "status_code"):
             _exceptions[new_cls.status_code] = new_cls
@@ -27,7 +27,7 @@ class HTTPError(IOError, metaclass=HTTPErrorMeta):
     def __init__(self, response: Any) -> None:
         self.response = response
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return (
             f"[{self.response.status_code}] {self.response.reason}:"
             f" {self.response.text}"

@@ -9,6 +9,7 @@ import logging
 import re
 import subprocess as sp
 import traceback
+from collections.abc import Callable, Sequence
 from time import sleep, time
 from typing import Any
 
@@ -16,7 +17,7 @@ import pytest
 from decorator import decorator  # pylint: disable=import-error
 
 
-def check_call_with_logging(cmd: Any) -> Any:
+def check_call_with_logging(cmd: str | Sequence[str]) -> None:
     try:
         sp.check_call(cmd)
     except sp.CalledProcessError as e:
@@ -24,29 +25,31 @@ def check_call_with_logging(cmd: Any) -> Any:
         raise e
 
 
-def log_exception() -> Any:
+def log_exception() -> None:
     extracted_stack = traceback.format_exc(10)
     logging.error(extracted_stack)
 
 
-def assert_generic(expression: Any, should_fail: Any, *args: Any, **kwargs: Any) -> Any:
+def assert_generic(
+    expression: Callable[..., Any], should_fail: bool, *args: Any, **kwargs: Any
+) -> None:
     if should_fail:
         assert_false(expression, *args, **kwargs)
     else:
         assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
 
 
-def assert_(expression: Any, *args: Any, **kwargs: Any) -> Any:
+def assert_(expression: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
     assert_result = expression(*args, **kwargs)
     assert assert_result
 
 
-def assert_false(expression: Any, *args: Any, **kwargs: Any) -> Any:
+def assert_false(expression: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
 
-def get_fun_name(fun: Any) -> Any:
+def get_fun_name(fun: str) -> str | None:
     if "method" in fun:
         return fun.split("method ")[1].split(" ")[0]
     if "function" in fun:
@@ -54,16 +57,16 @@ def get_fun_name(fun: Any) -> Any:
     return None
 
 
-def assert_expected_failure(fun: Any, *args: Any, **kwargs: Any) -> Any:
+def assert_expected_failure(fun: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
     with pytest.raises(OSError):
         fun(*args, **kwargs)
 
 
 def repeat_failed(
-    attempts: Any = 10,
-    timeout: Any = None,
-    interval: Any = 0.1,
-    exceptions: Any = (Exception,),
+    attempts: int = 10,
+    timeout: float | None = None,
+    interval: float = 0.1,
+    exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
 ) -> Any:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
@@ -99,14 +102,14 @@ def repeat_failed(
     return wrapper
 
 
-def get_copyright(mod: Any) -> Any:
+def get_copyright(mod: Any) -> str:
     return mod.__copyright__ if hasattr(mod, "__copyright__") else ""
 
 
-def get_authors(mod: Any) -> Any:
+def get_authors(mod: Any) -> list[str]:
     author = mod.__author__ if hasattr(mod, "__author__") else ""
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod: Any) -> Any:
+def get_suite_description(mod: Any) -> str | None:
     return mod.__doc__

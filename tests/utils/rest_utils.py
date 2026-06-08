@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 import traceback
+from collections.abc import Callable, Mapping
 from itertools import chain
 from typing import Any
 
@@ -27,39 +28,44 @@ from .http_exceptions import HTTPServiceUnavailable, raise_http_exception
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def get_zone_rest_path(*args: Any) -> Any:
-    return "/".join(chain([OZ_REST_PATH_PREFIX], args))
+Headers = Mapping[str, Any] | None
+Params = Mapping[str, Any] | None
+HttpMethod = Callable[..., requests.Response]
 
 
-def get_panel_rest_path(*args: Any) -> Any:
-    return "/".join(chain([PANEL_REST_PATH_PREFIX], args))
+def get_zone_rest_path(*args: object) -> str:
+    return "/".join(chain([OZ_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_provider_rest_path(*args: Any) -> Any:
-    return "/".join(chain([PROVIDER_REST_PATH_PREFIX], args))
+def get_panel_rest_path(*args: object) -> str:
+    return "/".join(chain([PANEL_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_luma_rest_path(*args: Any) -> Any:
-    return "/".join(chain([LUMA_REST_PATH_PREFIX], args))
+def get_provider_rest_path(*args: object) -> str:
+    return "/".join(chain([PROVIDER_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_token_dispenser_rest_path(*args: Any) -> Any:
-    return "/".join(chain([TOKEN_DISPENSER_PATH_PREFIX], args))
+def get_luma_rest_path(*args: object) -> str:
+    return "/".join(chain([LUMA_REST_PATH_PREFIX], map(str, args)))
+
+
+def get_token_dispenser_rest_path(*args: object) -> str:
+    return "/".join(chain([TOKEN_DISPENSER_PATH_PREFIX], map(str, args)))
 
 
 def http_get(
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
     data: Any = None,
-    headers: Any = None,
-    verify: Any = False,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
-) -> Any:
+    default_headers: bool = True,
+    params: Params = None,
+) -> requests.Response:
     return http_request(
         requests.get,
         ip,
@@ -77,18 +83,18 @@ def http_get(
 
 
 def http_put(
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
     data: Any = None,
-    headers: Any = None,
-    verify: Any = False,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
-) -> Any:
+    default_headers: bool = True,
+    params: Params = None,
+) -> requests.Response:
     return http_request(
         requests.put,
         ip,
@@ -106,19 +112,19 @@ def http_put(
 
 
 def http_post(
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
     data: Any = None,
-    headers: Any = None,
-    verify: Any = False,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
-    stream: Any = False,
-) -> Any:
+    default_headers: bool = True,
+    params: Params = None,
+    stream: bool = False,
+) -> requests.Response:
     return http_request(
         requests.post,
         ip,
@@ -137,18 +143,18 @@ def http_post(
 
 
 def http_delete(
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
-    headers: Any = None,
-    verify: Any = False,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
+    default_headers: bool = True,
+    params: Params = None,
     data: Any = None,
-) -> Any:
+) -> requests.Response:
     return http_request(
         requests.delete,
         ip,
@@ -166,18 +172,18 @@ def http_delete(
 
 
 def http_patch(
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
     data: Any = None,
-    headers: Any = None,
-    verify: Any = False,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
-) -> Any:
+    default_headers: bool = True,
+    params: Params = None,
+) -> requests.Response:
     return http_request(
         requests.patch,
         ip,
@@ -195,21 +201,21 @@ def http_patch(
 
 
 def http_request(  # pylint: disable=inconsistent-return-statements
-    http_method: Any,
-    ip: Any,
-    port: Any,
-    path: Any,
-    use_ssl: Any = True,
-    headers: Any = None,
-    verify: Any = False,
+    http_method: HttpMethod,
+    ip: str,
+    port: int,
+    path: str,
+    use_ssl: bool = True,
+    headers: Headers = None,
+    verify: bool = False,
     cert: Any = None,
     auth: Any = None,
     data: Any = None,
-    default_headers: Any = True,
-    params: Any = None,
-    stream: Any = False,
-    retries: Any = 5,
-) -> Any:
+    default_headers: bool = True,
+    params: Params = None,
+    stream: bool = False,
+    retries: int = 5,
+) -> requests.Response:
     protocol = "https" if use_ssl else "http"
     request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
     if headers:
@@ -250,3 +256,4 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             print("Test will freeze to allow debugging!")
             while True:
                 time.sleep(365 * 24 * 60 * 60)
+    raise RuntimeError("HTTP request was not attempted")

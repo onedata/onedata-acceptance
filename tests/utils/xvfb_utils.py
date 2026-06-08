@@ -11,12 +11,15 @@ import subprocess as sp
 import tempfile
 import time
 from itertools import chain
-from typing import Any
 
 
 def start_session(
-    display: Any, screens: Any, screen_width: Any, screen_height: Any, screen_depth: Any
-) -> Any:
+    display: int,
+    screens: list[int],
+    screen_width: int,
+    screen_height: int,
+    screen_depth: int,
+) -> sp.Popen[bytes]:
     whd = f"{screen_width}x{screen_height}x{screen_depth}"
     cmd = ["Xvfb", "-br", "-nolisten", "tcp", f":{display}"]
     for screen in screens:
@@ -34,7 +37,7 @@ def start_session(
     return proc
 
 
-def stop_session(proc: Any) -> Any:
+def stop_session(proc: sp.Popen[bytes]) -> None:
     try:
         proc.terminate()
         proc.wait()
@@ -43,7 +46,7 @@ def stop_session(proc: Any) -> Any:
             raise
 
 
-def find_free_display(min_display_num: Any = 1005) -> Any:
+def find_free_display(min_display_num: int = 1005) -> int:
     tmp_dir = tempfile.gettempdir()
     lock_files = fnmatch.filter(os.listdir(tmp_dir), ".X*-lock")
     displays_in_use = (
