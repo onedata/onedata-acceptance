@@ -490,7 +490,7 @@ def copy_command_from_rest_api_modal(selenium, browser_id, command):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space using scroll on the spaces'
+        'user of {browser_id} opens "{space_name}" space on the spaces'
         " list in the sidebar"
     )
 )

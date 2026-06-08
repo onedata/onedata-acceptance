@@ -193,7 +193,7 @@ def assert_number_of_entries_in_archive_recall(browser_id, selenium):
     modal.move_to_error_logs_table(driver)
 
     detected_entries = scroll_and_get_columns(
-        modal, ["source_file"], id_param="source_file"
+        modal, ["source_file"], main_column="source_file"
     )
     err_msg = (
         f"number of entries is {len(detected_entries)} is not equal to "

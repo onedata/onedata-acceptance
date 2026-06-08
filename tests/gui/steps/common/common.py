@@ -18,14 +18,14 @@ from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_type: str, id_param: str
+    page, selenium, browser_id, number: int, items_type: str, main_field: str
 ):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_type, id_param)
-        new_items_ids = [getattr(el, id_param) for el in new_items]
+        new_items = _get_visible_items_list(page, items_type, main_field)
+        new_items_ids = [getattr(el, main_field) for el in new_items]
 
         stop_scrolling_flag = not any(el not in seen_items for el in new_items_ids)
         seen_items.update(new_items_ids)
@@ -40,9 +40,9 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_type, id_param):
+def _get_visible_items_list(page, items_type, main_field):
     # Items type can be "spaces", "shares" or "groups"
-    return getattr(page, f"get_visible_{items_type}_list")(id_param)
+    return getattr(page, f"get_visible_{items_type}_list")(main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -157,14 +157,14 @@ def assert_logs_order_with_optional_logs(
                 idx += 1
 
 
-def scroll_and_get_columns(modal, columns, id_param="file"):
+def scroll_and_get_columns(modal, columns, main_column="file"):
     # The modal has to be a class that implements get_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         visible_elems = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems[id_param]
+        visible_names = visible_elems[main_column]
 
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(

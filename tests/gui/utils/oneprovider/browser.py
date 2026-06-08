@@ -58,11 +58,11 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def get_visible_items_list(self, id_param="name") -> List[Any]:
-        return [row for row in self.data if getattr(row, id_param)]
+    def get_visible_items_list(self, main_field="name") -> List[Any]:
+        return [row for row in self.data if getattr(row, main_field)]
 
-    def ids_of_visible_elems(self, id_param="name") -> List[str]:
-        return [getattr(row, id_param) for row in self.data if getattr(row, id_param)]
+    def ids_of_visible_elems(self, main_field="name") -> List[str]:
+        return [getattr(row, main_field) for row in self.data if getattr(row, main_field)]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 
