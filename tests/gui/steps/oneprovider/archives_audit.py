@@ -82,7 +82,9 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns = modal.get_visible_rows_of_columns([column_name])
+        rows_of_columns: Dict[str, List[str]] = modal.get_visible_rows_of_columns(
+            [column_name]
+        )
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             current_ = None

@@ -6,7 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -88,10 +88,10 @@ class ArchiveRecallInformation(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, column_names: List[str] = None
+        self, column_names: Optional[List[str]] = None
     ) -> Dict[str, List[str]]:
 
-        temp_columns = list(set(column_names or []) | {"source_file"})
+        temp_columns = list(set((column_names or []) + ["source_file"]))
         column_values = {column: [] for column in temp_columns}
         for row in self.error_file_rows:
             values_in_row = [getattr(row, column) for column in temp_columns]

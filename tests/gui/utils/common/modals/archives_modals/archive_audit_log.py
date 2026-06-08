@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -60,10 +60,10 @@ class ArchiveAuditLog(Modal):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_rows_of_columns(
-        self, columns: List[str] = None
+        self, columns: Optional[List[str]] = None
     ) -> Dict[str, List[str]]:
 
-        temp_columns = list(set(columns or []) | {"file"})
+        temp_columns = list(set((columns or []) + ["file"]))
         column_values = {column: [] for column in temp_columns}
 
         for row in self.data_row:
@@ -71,17 +71,17 @@ class ArchiveAuditLog(Modal):
             if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
 
-            values_in_row[temp_columns.index("file")] += getattr(
-                row, "duplicated_name_hash"
-            )
-
             for column, param in zip(temp_columns, values_in_row):
                 column_values[column].append(param)
+
+            name_hash = getattr(row, "duplicated_name_hash")
+            column_values["file"][-1] += name_hash
+            # adding hash to last file name to make it unique in case of duplicated names
 
         return column_values
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_visible_rows_of_single_column(self, param) -> List[str]:
+    def get_visible_rows_of_single_column(self, param: str) -> List[str]:
         column_values = self.get_visible_rows_of_columns([param])
         return column_values[param]
 
