@@ -1,10 +1,13 @@
 """This module contains utility functions for data management."""
 
+from __future__ import annotations
+
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
+from typing import Any, Protocol
 
 import yaml
 
@@ -13,9 +16,30 @@ from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
 
 
+class FileTreeNode(Protocol):
+    path: str
+    content: str | int | None
+    nodes: Iterable[FileTreeNode]
+
+    def get_items(self) -> Iterable[str]: ...
+
+
+ContentItem = str | Mapping[str, object]
+AclEntry = MutableMapping[str, str]
+Acl = list[AclEntry]
+ItemType = str
+IsDir = Callable[[str], bool]
+ListDir = Callable[[str], Sequence[str]]
+AssertFileContent = Callable[[str, str], Any]
+CreateItem = Callable[..., Any]
+
+
 def _check_files_tree(
-    parent: Any, is_dir_fun: Any, ls_fun: Any, assert_file_content_fun: Any
-) -> Any:
+    parent: FileTreeNode,
+    is_dir_fun: IsDir,
+    ls_fun: ListDir,
+    assert_file_content_fun: AssertFileContent,
+) -> None:
     children = ls_fun(parent.path)
     err_msg = (
         f"expected item {parent.path} to have children {parent.get_items()} but got"
@@ -39,35 +63,39 @@ def _check_files_tree(
 
 
 def check_files_tree(
-    config: Any, cwd: Any, is_dir_fun: Any, ls_fun: Any, assert_file_content_fun: Any
-) -> Any:
+    config: str,
+    cwd: str,
+    is_dir_fun: IsDir,
+    ls_fun: ListDir,
+    assert_file_content_fun: AssertFileContent,
+) -> None:
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree, root_path=cwd)
     _check_files_tree(root, is_dir_fun, ls_fun, assert_file_content_fun)
 
 
 def create_content(
-    user: Any,
+    user: str,
     users: Any,
-    cwd: Any,
-    content: Any,
-    create_item_fun: Any,
-    host: Any,
+    cwd: str,
+    content: Iterable[ContentItem],
+    create_item_fun: CreateItem,
+    host: str,
     hosts: Any,
     request: Any,
-) -> Any:
+) -> None:
     for item in content:
-        try:
-            [(name, content)] = item.items()
-        except AttributeError:
+        if isinstance(item, Mapping):
+            [(name, item_content)] = item.items()
+        else:
             name = item
-            content = None
+            item_content = None
         create_item_fun(
             user,
             users,
             cwd,
             name,
-            content,
+            item_content,
             create_item_fun,
             host,
             hosts,
@@ -110,12 +138,17 @@ ACL_MASK = {
 
 
 def assert_ace(
-    priv: Any, item_type: Any, ace: Any, name: Any, num: Any, path: Any
-) -> Any:
-    priv = parse_seq(priv)
-    if "deny" in priv:
+    priv: str,
+    item_type: ItemType,
+    ace: Mapping[str, str],
+    name: str,
+    num: int | str,
+    path: str,
+) -> None:
+    parsed_priv = parse_seq(priv)
+    if "deny" in parsed_priv:
         acetype = "0x1"
-        priv.remove("deny")
+        parsed_priv.remove("deny")
     else:
         acetype = "0x0"
     aceflags = "0x40" if item_type == "group" else "0x0"
@@ -129,25 +162,25 @@ def assert_ace(
     assert (
         ace["aceflags"] == aceflags
     ), f"{num} ACE is set for {'group' if aceflags else 'user'}"
-    assert set_priv == sorted(priv), f"Privileges in {num} ACE are not correct"
+    assert set_priv == sorted(parsed_priv), f"Privileges in {num} ACE are not correct"
 
 
 def get_acl_metadata(
-    curr_acl: Any,
-    priv: Any,
-    item_type: Any,
+    curr_acl: Iterable[AclEntry],
+    priv: str,
+    item_type: ItemType,
     groups: Any,
-    name: Any,
+    name: str,
     users: Any,
-    path: Any,
-) -> Any:
+    path: str,
+) -> Acl:
     acl = list(curr_acl)
     acl.append({})
     ace = acl[-1]
-    priv = parse_seq(priv)
-    if "deny" in priv:
+    parsed_priv = parse_seq(priv)
+    if "deny" in parsed_priv:
         acetype = "0x1"
-        priv.remove("deny")
+        parsed_priv.remove("deny")
     else:
         acetype = "0x0"
     if item_type == "group":
@@ -161,7 +194,7 @@ def get_acl_metadata(
     ace["acetype"] = acetype
     acemask = 0
     for p in ACL_MASK[cdmi_item_type]:
-        if ACL_MASK[cdmi_item_type][p] in priv:
+        if ACL_MASK[cdmi_item_type][p] in parsed_priv:
             acemask |= p
     ace["acemask"] = hex(acemask)
     ace["aceflags"] = aceflags

@@ -9,22 +9,32 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import os
-from typing import Any
+from collections.abc import Callable
+from typing import Any, TypeAlias
 
 from tests.gui.utils.generic import upload_workflow_path
+
+StoreContent: TypeAlias = dict[str, Any]
+InputFiles: TypeAlias = list[str]
+ExecutionResult: TypeAlias = tuple[list[StoreContent], InputFiles | list[InputFiles]]
+ResolveId: TypeAlias = Callable[[str], str]
+UploadFile: TypeAlias = Callable[[str, str], Any]
 
 
 class ExampleWorkflowExecutionInitialStoreContent:
 
     def __init__(
-        self, resolve_file_id: Any, upload_file: Any, resolve_group_id: Any = None
+        self,
+        resolve_file_id: ResolveId,
+        upload_file: UploadFile,
+        resolve_group_id: ResolveId | None = None,
     ) -> None:
         self.resolve_file_id = resolve_file_id
         self.upload_file = upload_file
         self.resolve_group_id = resolve_group_id
 
     @staticmethod
-    def gather_input_files(workflow: Any) -> Any:
+    def gather_input_files(workflow: str) -> InputFiles:
         return [
             f
             for f in os.listdir(upload_workflow_path(workflow))
@@ -32,8 +42,8 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ]
 
     def bagit_uploader(
-        self, input_file: Any = None, dest_dir: Any = "space1/dir1"
-    ) -> Any:
+        self, input_file: InputFiles | None = None, dest_dir: str = "space1/dir1"
+    ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("bagit-uploader") if not input_file else input_file
         )
@@ -50,7 +60,9 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def detect_file_formats(self, input_file: Any = None, space: Any = "space1") -> Any:
+    def detect_file_formats(
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-formats")
             if not input_file
@@ -66,8 +78,8 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def detect_file_mime_formats(
-        self, input_file: Any = None, space: Any = "space1"
-    ) -> Any:
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-mime-formats")
             if not input_file
@@ -83,8 +95,8 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def download_files(
-        self, input_file: Any = None, destination: Any = "space1/dir1"
-    ) -> Any:
+        self, input_file: InputFiles | None = None, destination: str = "space1/dir1"
+    ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("download-files") if not input_file else input_file
         )
@@ -100,30 +112,36 @@ class ExampleWorkflowExecutionInitialStoreContent:
             for path in file_paths
         ], input_files
 
-    def calculate_checksums_mounted(self, input_file: Any = "space1/file1") -> Any:
+    def calculate_checksums_mounted(
+        self, input_file: str = "space1/file1"
+    ) -> ExecutionResult:
         return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def calculate_checksums_rest(self, input_file: Any = "space1/file1") -> Any:
+    def calculate_checksums_rest(
+        self, input_file: str = "space1/file1"
+    ) -> ExecutionResult:
         return [{"input-files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def demo(self, input_file: Any = "space1/dir1") -> Any:
+    def demo(self, input_file: str = "space1/dir1") -> ExecutionResult:
         return [{"input_files": [{"fileId": self.resolve_file_id(input_file)}]}], [
             input_file
         ]
 
-    def echo(self, input_file: Any = "space1/file1") -> Any:
+    def echo(self, input_file: str = "space1/file1") -> ExecutionResult:
         return [{"input": [{"fileId": self.resolve_file_id(input_file)}]}], [input_file]
 
     def initialize_eureka3D_project(  # pylint: disable=invalid-name
         self,
-        parent_directory: Any = "space1/dir1",
-        project_name: Any = "hello",
-        group: Any = "group1",
-    ) -> Any:
+        parent_directory: str = "space1/dir1",
+        project_name: str = "hello",
+        group: str = "group1",
+    ) -> ExecutionResult:
+        if self.resolve_group_id is None:
+            raise RuntimeError("Group ID resolver is required for this workflow")
         return [
             {
                 "Parent directory": {"fileId": self.resolve_file_id(parent_directory)},
@@ -132,10 +150,12 @@ class ExampleWorkflowExecutionInitialStoreContent:
             }
         ], []
 
-    def substitute_placeholders_example(self, name: Any = "Tom") -> Any:
+    def substitute_placeholders_example(self, name: str = "Tom") -> ExecutionResult:
         return [{"input-store": {"name": name}}], []
 
-    def annotate_images(self, input_file: Any = None, space: Any = "space1") -> Any:
+    def annotate_images(
+        self, input_file: InputFiles | None = None, space: str = "space1"
+    ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("annotate-images") if not input_file else input_file
         )
