@@ -11,9 +11,9 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
+from tests.gui.utils.oneprovider.browser import Browser
 
 from ..breadcrumbs import Breadcrumbs
 from ..file_browser import FileBrowser
@@ -28,7 +28,7 @@ class SharesOptions(PageObject):
         return "oneicon-x" in self.icon.get_attribute("class")
 
 
-class SharesContentPage(PageObject):
+class SharesContentPage(Browser):
     no_shares_msg = Label(".content-info-content-container")
     name = Label(".file-browser .fb-breadcrumbs-dir > .truncate")
     shares_list = WebItemsSequence(
