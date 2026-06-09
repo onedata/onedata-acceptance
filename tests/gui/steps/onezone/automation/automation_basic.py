@@ -191,7 +191,7 @@ def assert_workflow_exists(selenium, browser_id, workflow, option):
 
     if option == "does not see":
         assert (
-            workflow not in page.workflows_page.worflows_list
+            workflow not in page.workflows_page.workflows_list
         ), f"Workflow: {workflow} found "
     else:
         assert (
@@ -246,8 +246,8 @@ def collapse_revision_list(subpage):
 def get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name):
     page_name = page + "s_page"
     subpage = getattr(OZLoggedIn(selenium[browser_id])["automation"], page_name)
-
-    bracket = subpage.automations_list[object_name]
+    list_name = page + "s_list"
+    bracket = getattr(subpage, list_name)[object_name]
 
     try:
         collapse_revision_list(bracket)
