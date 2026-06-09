@@ -39,7 +39,7 @@ def confirm_name_input_on_main_groups_page(selenium, browser_id):
 
 
 def _find_groups(page, group_name):
-    return list(filter(lambda g: g.name == group_name, page.elements_list))
+    return list(filter(lambda g: g.name == group_name, page.groups_list))
 
 
 @wt(
@@ -70,8 +70,8 @@ def click_on_option_of_group_menu_on_left_sidebar_menu(
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     page = OZLoggedIn(driver)["groups"]
-    page.elements_list[group_name]()
-    getattr(page.elements_list[group_name], transform(option))()
+    page.groups_list[group_name]()
+    getattr(page.groups_list[group_name], transform(option))()
 
 
 @wt(parsers.parse("user of {browser_id} sees that create group button is inactive"))
@@ -90,9 +90,9 @@ def assert_create_button_inactive(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage):
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[group]()
+    page.groups_list[group]()
     if subpage != "main":
-        getattr(page.elements_list[group], subpage)()
+        getattr(page.groups_list[group], subpage)()
 
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))
