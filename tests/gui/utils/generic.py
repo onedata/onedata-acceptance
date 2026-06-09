@@ -328,3 +328,11 @@ class ListElement(Enum):
     SPACES = "spaces"
     SPACES_HEADERS = "spaces headers"
     FILES = "files"
+    UPLOADS = "uploads"
+    PROVIDERS = "providers"
+    HARVESTERS = "harvesters"
+    TOKENS = "tokens"
+    AUTOMATIONS = "automations"
+    LAMBDAS = "lambdas"
+    WORKFLOWS = "workflows"
+    

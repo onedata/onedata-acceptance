@@ -366,7 +366,7 @@ def download_and_remove_lambda_dump_from_inventory(
         page_name,
     )
 
-    page.lambdas_page.elements_list[lamda_name].lambda_menu.click()
+    page.lambdas_page.lambdas_list[lamda_name].lambda_menu.click()
     Popups(driver).menu_popup_with_label.menu[option_unlink].click()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
     click_modal_button(selenium, browser_id, option_unlink, modal)

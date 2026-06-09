@@ -139,7 +139,7 @@ class WorkflowCreator(PageObject):
 
 
 class WorkflowsPage(PageObject):
-    elements_list = WebItemsSequence(
+    workflows_list = WebItemsSequence(
         ".atm-workflow-schemas-list .atm-workflow-schemas-list-entry",
         cls=Workflow,
     )

@@ -49,11 +49,11 @@ def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, lis
     list_type = "discovery" if list_type == "harvesters" else list_type
     if option.startswith("appeared"):
         assert (
-            name in OZLoggedIn(driver)[list_type].elements_list
+            name in OZLoggedIn(driver)[list_type].harvesters_list
         ), f'"{name}" not found on {list_type} list'
     else:
         assert (
-            name not in OZLoggedIn(driver)[list_type].elements_list
+            name not in OZLoggedIn(driver)[list_type].harvesters_list
         ), f'"{name}" found on {list_type} list'
 
 
@@ -68,8 +68,8 @@ def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, lis
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_harvester_menu(selenium, browser_id, option, name):
     page = OZLoggedIn(selenium[browser_id])["discovery"]
-    page.elements_list[name]()
-    page.elements_list[name].menu_button()
+    page.harvesters_list[name]()
+    page.harvesters_list[name].menu_button()
     page.menu[option]()
 
 
@@ -102,7 +102,7 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
 ):
     driver = selenium[browser_id]
     getattr(
-        OZLoggedIn(driver)["discovery"].elements_list[harvester_name],
+        OZLoggedIn(driver)["discovery"].harvesters_list[harvester_name],
         transform(option),
     ).click()
 

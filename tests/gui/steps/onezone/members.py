@@ -479,8 +479,9 @@ def remove_member_from_parent(
         main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
             _change_to_tab_name(where)
         )
-        main_page.groups_list[name]()
-        main_page.groups_list[name].members()
+        list_name = f"{where if where in {"group", "space"} else "element"}s_list"
+        getattr(main_page, list_name)[name]()
+        getattr(main_page, list_name)[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"
     (
