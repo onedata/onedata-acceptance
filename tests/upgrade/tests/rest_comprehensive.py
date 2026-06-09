@@ -11,10 +11,11 @@ import os
 import shutil
 import tarfile
 from functools import partial
-from typing import Any
+from typing import TypedDict
 from xml.etree import ElementTree as ET
 
 from tests.upgrade.utils.rest_utils import (
+    JsonObject,
     create_archive,
     create_share,
     download_file_content,
@@ -26,14 +27,22 @@ from tests.upgrade.utils.rest_utils import (
     register_handle,
 )
 from tests.upgrade.utils.upgrade_utils import (
+    OneClientLike,
     UpgradeTest,
+    UpgradeTestsControllerLike,
     get_prov_version,
     is_version_lower_than,
 )
 from tests.utils.utils import repeat_failed
 
 
-def get_tests(tests_controller: Any) -> Any:
+class ComprehensiveResults(TypedDict, total=False):
+    handle_details: JsonObject
+    share_details: JsonObject
+    share_content: bytes
+
+
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
             "rest shares and handles test",
@@ -55,7 +64,7 @@ def get_tests(tests_controller: Any) -> Any:
     ]
 
 
-def unpack_tarball_from_payload(raw_bytes: Any, target_path: Any) -> Any:
+def unpack_tarball_from_payload(raw_bytes: bytes, target_path: str) -> None:
     if os.path.exists(target_path):
         shutil.rmtree(target_path)
     tar_bytes = io.BytesIO(raw_bytes)
@@ -63,13 +72,13 @@ def unpack_tarball_from_payload(raw_bytes: Any, target_path: Any) -> Any:
         tar.extractall(target_path)
 
 
-SHARE_NAME_TO_ID = {}
-HANDLE_NAME_TO_ID = {}
-ARCHIVE_NAME_TO_ID = {}
-RESULTS = {}
+SHARE_NAME_TO_ID: dict[str, str] = {}
+HANDLE_NAME_TO_ID: dict[str, str] = {}
+ARCHIVE_NAME_TO_ID: dict[str, str] = {}
+RESULTS: ComprehensiveResults = {}
 
 
-def setup_shares_handles(tests_controller: Any) -> Any:
+def setup_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -113,7 +122,7 @@ def setup_shares_handles(tests_controller: Any) -> Any:
     )
 
 
-def verify_shares_handles(tests_controller: Any) -> Any:
+def verify_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -149,7 +158,7 @@ def verify_shares_handles(tests_controller: Any) -> Any:
     assert share_details["rootFileType"] == "DIR"
 
 
-def setup_datasets_and_archives(tests_controller: Any) -> Any:
+def setup_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -191,7 +200,7 @@ def setup_datasets_and_archives(tests_controller: Any) -> Any:
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_s")
 
 
-def verify_datasets_and_archives(tests_controller: Any) -> Any:
+def verify_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -212,7 +221,7 @@ def verify_datasets_and_archives(tests_controller: Any) -> Any:
     compare_downloaded_dirs_content("downloaded_archive_s", "downloaded_archive_v")
 
 
-def setup_all_functionalities(tests_controller: Any) -> Any:
+def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     zone_host = tests_controller.hosts["onezone"]["hostname"]
     token = tests_controller.users["user1"].token
@@ -263,7 +272,7 @@ def setup_all_functionalities(tests_controller: Any) -> Any:
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_s")
 
 
-def verify_all_functionalities(tests_controller: Any) -> Any:
+def verify_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -295,7 +304,7 @@ def verify_all_functionalities(tests_controller: Any) -> Any:
     compare_downloaded_dirs_content(path1, path2)
 
 
-def compare_downloaded_dirs_content(path1: Any, path2: Any) -> Any:
+def compare_downloaded_dirs_content(path1: str, path2: str) -> None:
     comp_res = filecmp.dircmp(path1, path2)
     comp_report = [
         f"Differences in common files: {comp_res.diff_files}",
@@ -324,7 +333,7 @@ def compare_downloaded_dirs_content(path1: Any, path2: Any) -> Any:
             )
 
 
-def get_files_content(path1: Any, path2: Any) -> Any:
+def get_files_content(path1: str, path2: str) -> str:
     # Return without exception
     if not os.path.isfile(path1):
         return f"{path1} is not a file!"
@@ -342,12 +351,14 @@ def get_files_content(path1: Any, path2: Any) -> Any:
 
 
 @repeat_failed(timeout=30)
-def wait_for_handle_registration(provider_host: Any, token: Any, share_id: Any) -> Any:
+def wait_for_handle_registration(provider_host: str, token: str, share_id: str) -> None:
     res = get_share_info(provider_host, token, share_id)
     assert res["handleId"] is not None
 
 
-def create_dir_with_example_content(client: Any, space_name: str, dir_name: str) -> Any:
+def create_dir_with_example_content(
+    client: OneClientLike, space_name: str, dir_name: str
+) -> None:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.mkdir(dir_path)
@@ -360,8 +371,8 @@ def create_dir_with_example_content(client: Any, space_name: str, dir_name: str)
 
 
 def create_additional_content_in_dir(
-    client: Any, space_name: str, dir_name: str
-) -> Any:
+    client: OneClientLike, space_name: str, dir_name: str
+) -> None:
     space_path = client.absolute_path(space_name)
     dir_path = os.path.join(space_path, dir_name)
     client.create_file(os.path.join(dir_path, "file4"))
@@ -374,8 +385,8 @@ def create_additional_content_in_dir(
 
 @repeat_failed(timeout=60)
 def wait_for_synced_file_content(
-    provider_host: Any, path: Any, token: Any, expected_content: Any
-) -> Any:
+    provider_host: str, path: str, token: str, expected_content: str
+) -> None:
     file_id = lookup_file_id(path, provider_host, token)
     actual_content = str(
         download_file_content(provider_host, token, file_id), encoding="utf-8"
@@ -387,14 +398,14 @@ def wait_for_synced_file_content(
 
 @repeat_failed(timeout=60)
 def wait_for_preserved_archive_state(
-    provider_host: Any, token: Any, archive_id: Any
-) -> Any:
+    provider_host: str, token: str, archive_id: str
+) -> None:
     archive_state = get_archive_information(provider_host, token, archive_id)["state"]
     err_msg = f"archive {archive_id} is not in preserved state but in {archive_state}"
     assert archive_state == "preserved", err_msg
 
 
-def compare_share_details(details_s: Any, details_v: Any) -> Any:
+def compare_share_details(details_s: JsonObject, details_v: JsonObject) -> None:
     # that parameter differs on various provider versions
     _ = details_s.pop("fileType") if "fileType" in details_s else None
     _ = details_v.pop("fileType") if "fileType" in details_v else None
@@ -408,8 +419,10 @@ def compare_share_details(details_s: Any, details_v: Any) -> Any:
 
 
 def compare_handle_details(
-    details_s: Any, details_v: Any, tests_controller: Any
-) -> Any:
+    details_s: JsonObject,
+    details_v: JsonObject,
+    tests_controller: UpgradeTestsControllerLike,
+) -> None:
     # update xml metadata by publicHandle identifier
     if is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
         public_handle = details_s["publicHandle"]
@@ -452,7 +465,7 @@ def compare_handle_details(
     assert details_s == details_v, err_msg
 
 
-def assert_xmls_equal(e1: Any, e2: Any) -> Any:
+def assert_xmls_equal(e1: str, e2: str) -> None:
     """
     Normalize and compare 2 xmls in string format ignoring order
     """

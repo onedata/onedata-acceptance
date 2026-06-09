@@ -6,7 +6,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import json
+from collections.abc import Iterable, Mapping
 from typing import Any
+
+from requests import Response
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.utils.rest_utils import (
@@ -22,6 +25,10 @@ from tests.utils.rest_utils import (
 from tests.utils.utils import repeat_failed
 
 DEFAULT_REST_QUERY_TIMEOUT = 60
+
+JsonObject = dict[str, Any]
+JsonList = list[JsonObject]
+JsonPayload = Mapping[str, Any]
 
 EXAMPLE_HANDLE_METADATA = {
     "handleServiceId": "$handle_service_id",
@@ -40,7 +47,7 @@ EXAMPLE_HANDLE_METADATA = {
 # Spaces
 
 
-def list_all_user_spaces(provider_host: Any, token: Any) -> Any:
+def list_all_user_spaces(provider_host: str, token: str) -> JsonList:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -52,7 +59,7 @@ def list_all_user_spaces(provider_host: Any, token: Any) -> Any:
     return res.json()
 
 
-def get_space_id(space_name: Any, provider_host: Any, token: Any) -> Any:
+def get_space_id(space_name: str, provider_host: str, token: str) -> str:
     spaces = list_all_user_spaces(provider_host, token)
     for space in spaces:
         if space["name"] == space_name:
@@ -63,7 +70,7 @@ def get_space_id(space_name: Any, provider_host: Any, token: Any) -> Any:
 # File access and management
 
 
-def lookup_file_id(file_path: Any, provider_hostname: Any, token: Any) -> Any:
+def lookup_file_id(file_path: str, provider_hostname: str, token: str) -> str:
     res = http_post(
         ip=provider_hostname,
         port=OP_REST_PORT,
@@ -75,7 +82,7 @@ def lookup_file_id(file_path: Any, provider_hostname: Any, token: Any) -> Any:
     return res.json()["fileId"]
 
 
-def download_file_content(provider_host: Any, token: Any, file_id: Any) -> Any:
+def download_file_content(provider_host: str, token: str, file_id: str) -> bytes:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -88,8 +95,8 @@ def download_file_content(provider_host: Any, token: Any, file_id: Any) -> Any:
 
 
 def get_file_attributes(
-    provider_host: Any, token: Any, file_id: Any, attributes: Any
-) -> Any:
+    provider_host: str, token: str, file_id: str, attributes: Iterable[str]
+) -> JsonObject:
     # if provider version is lower than 21.02.5, provided attributes are ignored
     # and all available attributes are returned
     res = http_get(
@@ -107,8 +114,8 @@ def get_file_attributes(
 
 @repeat_failed(timeout=30)
 def get_directory_size_statistics(
-    provider_host: Any, token: Any, file_id: Any, mode: Any
-) -> Any:
+    provider_host: str, token: str, file_id: str, mode: str
+) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -126,8 +133,8 @@ def get_directory_size_statistics(
 
 
 def set_file_json_metadata(
-    provider_host: Any, token: Any, file_id: Any, data: Any
-) -> Any:
+    provider_host: str, token: str, file_id: str, data: JsonPayload
+) -> Response:
     res = http_put(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -141,7 +148,7 @@ def set_file_json_metadata(
     return res
 
 
-def get_file_json_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
+def get_file_json_metadata(provider_host: str, token: str, file_id: str) -> Response:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -153,7 +160,7 @@ def get_file_json_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
     return res
 
 
-def delete_file_json_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
+def delete_file_json_metadata(provider_host: str, token: str, file_id: str) -> Response:
     res = http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -166,8 +173,8 @@ def delete_file_json_metadata(provider_host: Any, token: Any, file_id: Any) -> A
 
 
 def set_file_rdf_metadata(
-    provider_host: Any, token: Any, file_id: Any, data: Any
-) -> Any:
+    provider_host: str, token: str, file_id: str, data: str
+) -> Response:
     res = http_put(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -181,7 +188,7 @@ def set_file_rdf_metadata(
     return res
 
 
-def get_file_rdf_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
+def get_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Response:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -193,7 +200,7 @@ def get_file_rdf_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
     return res
 
 
-def delete_file_rdf_metadata(provider_host: Any, token: Any, file_id: Any) -> Any:
+def delete_file_rdf_metadata(provider_host: str, token: str, file_id: str) -> Response:
     res = http_delete(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -206,8 +213,8 @@ def delete_file_rdf_metadata(provider_host: Any, token: Any, file_id: Any) -> An
 
 
 def set_file_extended_attribute(
-    provider_host: Any, token: Any, file_id: Any, data: Any
-) -> Any:
+    provider_host: str, token: str, file_id: str, data: JsonPayload
+) -> Response:
     res = http_put(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -222,8 +229,8 @@ def set_file_extended_attribute(
 
 
 def get_file_extended_attributes(
-    provider_host: Any, token: Any, file_id: Any, attribute: Any = None
-) -> Any:
+    provider_host: str, token: str, file_id: str, attribute: str | None = None
+) -> Response:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -237,8 +244,8 @@ def get_file_extended_attributes(
 
 
 def delete_file_extended_attributes(
-    provider_host: Any, token: Any, file_id: Any, keys: Any = None
-) -> Any:
+    provider_host: str, token: str, file_id: str, keys: Iterable[str]
+) -> Response:
     data = {"keys": list(keys)}
     res = http_delete(
         ip=provider_host,
@@ -256,7 +263,7 @@ def delete_file_extended_attributes(
 # Datasets amd Archives
 
 
-def establish_dataset(provider_host: Any, token: Any, file_id: Any) -> Any:
+def establish_dataset(provider_host: str, token: str, file_id: str) -> JsonObject:
     res = http_post(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -272,12 +279,12 @@ def establish_dataset(provider_host: Any, token: Any, file_id: Any) -> Any:
 
 @repeat_failed(timeout=10)
 def create_archive(
-    provider_host: Any,
-    token: Any,
-    dataset_id: Any,
-    description: Any,
-    config: Any = None,
-) -> Any:
+    provider_host: str,
+    token: str,
+    dataset_id: str,
+    description: str,
+    config: JsonPayload | None = None,
+) -> JsonObject:
     data = {"datasetId": dataset_id, "description": description}
     if config:
         data.update(config)
@@ -294,7 +301,9 @@ def create_archive(
     return res.json()
 
 
-def get_archive_information(provider_host: Any, token: Any, archive_id: Any) -> Any:
+def get_archive_information(
+    provider_host: str, token: str, archive_id: str
+) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -309,7 +318,7 @@ def get_archive_information(provider_host: Any, token: Any, archive_id: Any) -> 
 # Shares and Handles
 
 
-def create_share(provider_host: Any, token: Any, file_id: Any, name: Any) -> Any:
+def create_share(provider_host: str, token: str, file_id: str, name: str) -> str:
     prov_version = int(
         get_provider_configuration(provider_host)["version"].split(".")[0]
     )
@@ -331,7 +340,7 @@ def create_share(provider_host: Any, token: Any, file_id: Any, name: Any) -> Any
     return res.json()["shareId"]
 
 
-def get_share_info(provider_host: Any, token: Any, share_id: Any) -> Any:
+def get_share_info(provider_host: str, token: str, share_id: str) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -343,7 +352,7 @@ def get_share_info(provider_host: Any, token: Any, share_id: Any) -> Any:
     return res.json()
 
 
-def list_handles(zone_host: Any, token: Any) -> Any:
+def list_handles(zone_host: str, token: str) -> JsonObject:
     res = http_get(
         ip=zone_host,
         port=OZ_REST_PORT,
@@ -355,7 +364,7 @@ def list_handles(zone_host: Any, token: Any) -> Any:
     return res.json()
 
 
-def list_handle_services(zone_host: Any, token: Any) -> Any:
+def list_handle_services(zone_host: str, token: str) -> JsonObject:
     res = http_get(
         ip=zone_host,
         port=OZ_REST_PORT,
@@ -367,7 +376,7 @@ def list_handle_services(zone_host: Any, token: Any) -> Any:
     return res.json()
 
 
-def register_handle(zone_host: Any, token: Any, share_id: Any) -> Any:
+def register_handle(zone_host: str, token: str, share_id: str) -> Response:
     handle_service_id = list_handle_services(zone_host, token)["handle_services"][0]
     EXAMPLE_HANDLE_METADATA.update(
         {"handleServiceId": handle_service_id, "resourceId": share_id}
@@ -385,7 +394,7 @@ def register_handle(zone_host: Any, token: Any, share_id: Any) -> Any:
     return res
 
 
-def get_handle(zone_host: Any, token: Any, handle_id: Any) -> Any:
+def get_handle(zone_host: str, token: str, handle_id: str) -> JsonObject:
     res = http_get(
         ip=zone_host,
         port=OZ_REST_PORT,
@@ -401,15 +410,15 @@ def get_handle(zone_host: Any, token: Any, handle_id: Any) -> Any:
 
 
 def create_view(
-    provider_host: Any,
-    token: Any,
-    space_id: Any,
-    view_name: Any,
-    data: Any,
-    spatial: Any = False,
-    providers: Any = None,
-) -> Any:
-    query_params = {}
+    provider_host: str,
+    token: str,
+    space_id: str,
+    view_name: str,
+    data: str,
+    spatial: bool = False,
+    providers: list[str] | None = None,
+) -> Response:
+    query_params: dict[str, Any] = {}
     if providers:
         query_params.update({"providers[]": providers})
     if spatial:
@@ -429,14 +438,14 @@ def create_view(
 
 
 def query_view(
-    provider_host: Any,
-    token: Any,
-    space_id: Any,
-    view_name: Any,
-    spatial: Any = False,
-    start_range: Any = None,
-    end_range: Any = None,
-) -> Any:
+    provider_host: str,
+    token: str,
+    space_id: str,
+    view_name: str,
+    spatial: bool = False,
+    start_range: str | None = None,
+    end_range: str | None = None,
+) -> JsonList:
     if spatial:
         query_params = {
             "spatial": "true",
@@ -457,7 +466,9 @@ def query_view(
     return res.json()
 
 
-def get_view(provider_host: Any, token: Any, space_id: Any, view_name: Any) -> Any:
+def get_view(
+    provider_host: str, token: str, space_id: str, view_name: str
+) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -470,8 +481,8 @@ def get_view(provider_host: Any, token: Any, space_id: Any, view_name: Any) -> A
 
 
 def update_view_reduce_function(
-    provider_host: Any, token: Any, space_id: Any, view_name: Any, data: Any
-) -> Any:
+    provider_host: str, token: str, space_id: str, view_name: str, data: str
+) -> Response:
     res = http_put(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -488,7 +499,7 @@ def update_view_reduce_function(
 # Provider
 
 
-def get_provider_configuration(provider_host: Any) -> Any:
+def get_provider_configuration(provider_host: str) -> JsonObject:
     res = http_get(
         ip=provider_host,
         port=OP_REST_PORT,
@@ -498,8 +509,12 @@ def get_provider_configuration(provider_host: Any) -> Any:
 
 
 def subscribe_to_file_changes(
-    provider_host: Any, token: Any, space_id: Any, data: Any, stream: Any = True
-) -> Any:
+    provider_host: str,
+    token: str,
+    space_id: str,
+    data: JsonPayload,
+    stream: bool = True,
+) -> Response:
     query_params = {"last_seq": 0, "timeout": 1000}
 
     res = http_post(
@@ -521,8 +536,8 @@ def subscribe_to_file_changes(
 
 
 def configure_file_popularity_mechanism_in_the_space(
-    provider_host: Any, token: Any, space_id: Any, data: Any
-) -> Any:
+    provider_host: str, token: str, space_id: str, data: JsonPayload
+) -> Response:
     res = http_patch(
         ip=provider_host,
         port=PANEL_REST_PORT,

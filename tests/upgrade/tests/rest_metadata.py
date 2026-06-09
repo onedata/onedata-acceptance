@@ -10,6 +10,7 @@ from functools import partial
 from typing import Any
 
 from tests.upgrade.utils.rest_utils import (
+    JsonObject,
     delete_file_extended_attributes,
     delete_file_json_metadata,
     delete_file_rdf_metadata,
@@ -21,12 +22,17 @@ from tests.upgrade.utils.rest_utils import (
     set_file_json_metadata,
     set_file_rdf_metadata,
 )
-from tests.upgrade.utils.upgrade_utils import UpgradeTest, is_version_lower_than
+from tests.upgrade.utils.upgrade_utils import (
+    OneClientLike,
+    UpgradeTest,
+    UpgradeTestsControllerLike,
+    is_version_lower_than,
+)
 
 SPACE_NAME = "space_posix"
 FILE_NAME = "file_meta"
 
-JSON_META = {"hello": {"world": ["hello", "world"]}}
+JSON_META: JsonObject = {"hello": {"world": ["hello", "world"]}}
 
 RDF_META = (
     '<?xml version="1.0"?>\n\n'
@@ -43,7 +49,7 @@ XATTRS_META: list[dict[str, Any]] = [
 ]
 
 
-def get_tests(tests_controller: Any) -> Any:
+def get_tests(tests_controller: UpgradeTestsControllerLike) -> list[UpgradeTest]:
     return [
         UpgradeTest(
             "rest metadata test",
@@ -53,7 +59,7 @@ def get_tests(tests_controller: Any) -> Any:
     ]
 
 
-def setup_metadata(tests_controller: Any) -> Any:
+def setup_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     client = tests_controller.get_client("user1", "oneclient-1", "client11")
@@ -65,7 +71,7 @@ def setup_metadata(tests_controller: Any) -> Any:
     add_example_metadata_to_files_in_space(provider_host, token)
 
 
-def verify_metadata(tests_controller: Any) -> Any:
+def verify_metadata(tests_controller: UpgradeTestsControllerLike) -> None:
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
@@ -133,13 +139,13 @@ def verify_metadata(tests_controller: Any) -> Any:
     )
 
 
-def create_example_content_in_space(client: Any) -> Any:
+def create_example_content_in_space(client: OneClientLike) -> None:
     space_path = client.absolute_path(SPACE_NAME)
     file_path = os.path.join(space_path, FILE_NAME)
     client.create_file(file_path)
 
 
-def add_example_metadata_to_files_in_space(provider_host: Any, token: Any) -> Any:
+def add_example_metadata_to_files_in_space(provider_host: str, token: str) -> None:
     file_id = lookup_file_id(f"{SPACE_NAME}/{FILE_NAME}", provider_host, token)
     set_file_json_metadata(provider_host, token, file_id, JSON_META)
     set_file_rdf_metadata(provider_host, token, file_id, RDF_META)

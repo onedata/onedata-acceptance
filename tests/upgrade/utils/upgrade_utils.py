@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 import traceback
-from collections.abc import Callable, Iterable
-from typing import Any, TypeAlias, TypeGuard, cast
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any, Protocol, TypeAlias, TypeGuard, cast
 
 from packaging.version import Version
 
@@ -30,7 +30,41 @@ TestCallback: TypeAlias = Callable[..., Any]
 HostConfig: TypeAlias = dict[str, Any]
 HostsConfig: TypeAlias = dict[str, HostConfig]
 VersionSpec: TypeAlias = str | dict[str, Any]
-ClientKey: TypeAlias = tuple[str, str, Any]
+ClientKey: TypeAlias = tuple[str, str, str]
+
+
+class UserLike(Protocol):
+    token: str
+
+
+class OneClientLike(Protocol):
+    def absolute_path(self, space_name: str) -> str: ...
+
+    def mkdir(self, path: str) -> None: ...
+
+    def create_file(self, path: str) -> None: ...
+
+    def write(self, data: str, path: str) -> None: ...
+
+    def read(self, path: str) -> str: ...
+
+    def stat(self, path: str) -> object: ...
+
+    def rm(self, path: str) -> None: ...
+
+    def create_hardlink(self, target_path: str, link_path: str) -> None: ...
+
+    def create_symlink(self, target_path: str, link_path: str) -> None: ...
+
+
+class UpgradeTestsControllerLike(Protocol):
+    hosts: Mapping[str, Mapping[str, str]]
+    users: Mapping[str, UserLike]
+    initial_prov_version: str
+
+    def get_client(
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike: ...
 
 
 class UpgradeTest:
@@ -88,7 +122,7 @@ class UpgradeTestsController:
         self.clients = clients
         self.request = request
         self.users = users
-        self.user_clients: dict[ClientKey, Any] = {}
+        self.user_clients: dict[ClientKey, OneClientLike] = {}
         self.initial_prov_version = ""
 
     def add_test(self, test: UpgradeTest) -> None:
@@ -106,8 +140,8 @@ class UpgradeTestsController:
             self.add_test(test)
 
     def mount_client(
-        self, username: str, client_host_alias: str, client_instance: Any
-    ) -> Any:
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike:
         client = self.users[username].mount_client(
             client_host_alias,
             client_instance,
@@ -116,12 +150,12 @@ class UpgradeTestsController:
             opts=[],
         )
         if client:
-            return client
+            return cast(OneClientLike, client)
         raise RuntimeError("Error when mounting oneclient")
 
     def get_client(
-        self, username: str, client_host_alias: str, client_instance: Any
-    ) -> Any:
+        self, username: str, client_host_alias: str, client_instance: str
+    ) -> OneClientLike:
         client_info = (
             username,
             client_host_alias,

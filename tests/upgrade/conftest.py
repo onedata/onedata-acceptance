@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Generator
 from typing import Any
 
 import pytest
@@ -24,9 +25,9 @@ def tests_controller(
     request: Any,
     users: Any,
     env_desc: Any,
-    scenario_abs_path: Any,
-    env_description_abs_path: Any,
-) -> Any:
+    scenario_abs_path: str,
+    env_description_abs_path: str,
+) -> UpgradeTestsController:
     return UpgradeTestsController(
         test_config,
         hosts,
@@ -40,7 +41,9 @@ def tests_controller(
 
 
 @pytest.fixture(autouse=True, scope="module")
-def finalize(request: Any, env_description_abs_path: Any) -> Any:
+def finalize(
+    request: Any, env_description_abs_path: str
+) -> Generator[None, None, None]:
     yield
     export_logs(request, env_description_abs_path, "after_upgrade")
     clean_env()
