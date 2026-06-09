@@ -11,7 +11,8 @@ import json
 import os
 import subprocess
 import time
-from typing import Any
+from collections.abc import Mapping, Sequence
+from typing import Any, TypeAlias
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -26,16 +27,21 @@ TIME_ATTR_MAPPING = {
     "status-change": "ctime",
 }
 
+Command: TypeAlias = Sequence[str]
+JsonObject: TypeAlias = dict[str, Any]
 
-def list_parser(arg: Any) -> Any:
+
+def list_parser(arg: str) -> list[str]:
     return [el.strip() for el in arg.strip("[]").split(",") if el != ""]
 
 
-def make_arg_list(arg: Any) -> Any:
+def make_arg_list(arg: str) -> str:
     return "[" + arg + "]"
 
 
-def execute_command(cmd: Any, error: Any = None, should_fail: Any = False) -> Any:
+def execute_command(
+    cmd: Command, error: str | None = None, should_fail: bool = False
+) -> bytes:
     with subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     ) as process:
@@ -67,7 +73,7 @@ def execute_command(cmd: Any, error: Any = None, should_fail: Any = False) -> An
         r"(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
-def wait_given_time_if_web_gui(client: Any, seconds: Any) -> Any:
+def wait_given_time_if_web_gui(client: str, seconds: str) -> None:
     if client == "web GUI":
         wait_given_time(seconds)
 
@@ -83,25 +89,25 @@ def wait_given_time_if_web_gui(client: Any, seconds: Any) -> Any:
         r"(?P<user>.+?) is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?"
     )
 )
-def wait_given_time(seconds: Any) -> Any:
+def wait_given_time(seconds: str | float) -> None:
     time.sleep(float(seconds))
 
 
 @wt(parsers.parse("last operation by {user} succeeds"))
-def success(user: Any, users: Any) -> Any:
+def success(user: str, users: Mapping[str, Any]) -> None:
     assert not users[user].last_operation_failed
 
 
 @wt(parsers.parse("last operation by {user} fails"))
-def failure(user: Any, users: Any) -> Any:
+def failure(user: str, users: Mapping[str, Any]) -> None:
     assert users[user].last_operation_failed
 
 
-def time_attr(parameter: Any, prefix: Any = "st") -> Any:
+def time_attr(parameter: str, prefix: str = "st") -> str:
     return f"{prefix}_{TIME_ATTR_MAPPING[parameter]}"
 
 
-def compare(val1: Any, val2: Any, comparator: Any) -> Any:
+def compare(val1: Any, val2: Any, comparator: str) -> bool:
     if comparator == "equal":
         return val1 == val2
     if comparator == "not equal":
@@ -117,7 +123,7 @@ def compare(val1: Any, val2: Any, comparator: Any) -> Any:
     raise ValueError("Wrong argument comparator to function compare")
 
 
-def get_workflow_dump(workflow_name: Any) -> Any:
+def get_workflow_dump(workflow_name: str) -> JsonObject:
     if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
         path = upload_workflow_path(f"{workflow_name}.json")
     elif os.path.isfile(upload_workflow_path(f"{workflow_name}/{workflow_name}.json")):
@@ -131,7 +137,7 @@ def get_workflow_dump(workflow_name: Any) -> Any:
     return data
 
 
-def get_lambda_dump(lambda_name: Any) -> Any:
+def get_lambda_dump(lambda_name: str) -> JsonObject:
     with open(
         upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
     ) as f:
@@ -139,7 +145,7 @@ def get_lambda_dump(lambda_name: Any) -> Any:
     return data
 
 
-def num_to_ordinal(n: Any) -> Any:
+def num_to_ordinal(n: int) -> str:
     return {
         -1: "last",
         0: "first",

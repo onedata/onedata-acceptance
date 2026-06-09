@@ -220,7 +220,7 @@ def http_request(  # pylint: disable=inconsistent-return-statements
 ) -> requests.Response:
     protocol = "https" if use_ssl else "http"
     request_headers: dict[str, object] = (
-        DEFAULT_HEADERS.copy() if default_headers else {}
+        dict(DEFAULT_HEADERS) if default_headers else {}
     )
     if headers:
         request_headers.update(headers)

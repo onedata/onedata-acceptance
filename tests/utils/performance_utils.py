@@ -7,14 +7,21 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import itertools
 import sys
 import time
-from typing import Any
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any, TypeAlias
 
 import pytest
 
 from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
+ReportData: TypeAlias = dict[str, Any]
+ConfigData: TypeAlias = Mapping[str, Any]
+PerformanceTest: TypeAlias = Callable[..., Any]
 
-def performance(default_config: Any, configs: Any) -> Any:
+
+def performance(
+    default_config: ConfigData, configs: Mapping[str, ConfigData]
+) -> Callable[[PerformanceTest], PerformanceTest]:
     """This function is meant to run performance test. It allows to start
     test cases multiple times and for many configs. It should be used as
     decorator to test function.
@@ -29,7 +36,7 @@ def performance(default_config: Any, configs: Any) -> Any:
                     will be started
     """
 
-    def wrap(test_function: Any) -> Any:
+    def wrap(test_function: PerformanceTest) -> PerformanceTest:
 
         def wrapped_test_function(  # pylint: disable=unused-argument
             self: Any,
@@ -39,10 +46,10 @@ def performance(default_config: Any, configs: Any) -> Any:
             hosts: Any,
             users: Any,
             env_desc: Any,
-        ) -> Any:
-            test_case_report = test_function.__name__
+        ) -> None:
+            test_case_name = test_function.__name__
             test_case_report = TestCaseReport(
-                test_case_report, default_config["description"]
+                test_case_name, default_config["description"]
             )
             failed = False
             error_msg = ""
@@ -127,17 +134,17 @@ def performance(default_config: Any, configs: Any) -> Any:
 
 
 class Report:
-    def __init__(self, name: Any) -> None:
+    def __init__(self, name: str) -> None:
         self.name = name
-        self.report: dict[str, Any] = {name: {}}
+        self.report: ReportData = {name: {}}
 
-    def add_to_report(self, key: Any, value: Any) -> Any:
+    def add_to_report(self, key: str, value: object) -> None:
         if isinstance(value, Report):
             self.add_nested_report(key, value)
         else:
             self.report[self.name][key] = value
 
-    def add_nested_report(self, key: Any, value: Any) -> Any:
+    def add_nested_report(self, key: str, value: "Report") -> None:
         if value.name not in self.report[self.name][key].keys():
             self.report[self.name][key][value.name] = value.report[value.name]
         else:
@@ -147,7 +154,7 @@ class Report:
 
 
 class PerformanceReport(Report):
-    def __init__(self, name: Any, repository: Any, commit: Any, branch: Any) -> None:
+    def __init__(self, name: str, repository: str, commit: str, branch: str) -> None:
         Report.__init__(self, name)
         self.report[name] = {"envs": {}}
         self.add_to_report("repository", repository)
@@ -156,7 +163,7 @@ class PerformanceReport(Report):
 
 
 class EnvironmentReport(Report):
-    def __init__(self, name: Any) -> None:
+    def __init__(self, name: str) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("suites", {})
@@ -164,7 +171,7 @@ class EnvironmentReport(Report):
 
 class SuiteReport(Report):
     def __init__(
-        self, name: Any, description: Any, copyright_: Any, authors: Any
+        self, name: str, description: str, copyright_: str, authors: list[str]
     ) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
@@ -177,8 +184,8 @@ class SuiteReport(Report):
 class TestCaseReport(Report):
     def __init__(
         self,
-        name: Any,
-        description: Any,
+        name: str,
+        description: str,
     ) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
@@ -187,7 +194,7 @@ class TestCaseReport(Report):
 
 
 class ConfigReport(Report):
-    def __init__(self, name: Any, description: Any, repeats: Any) -> None:
+    def __init__(self, name: str, description: str, repeats: int) -> None:
         Report.__init__(self, name)
         self.add_to_report("name", name)
         self.add_to_report("description", description)
@@ -200,7 +207,9 @@ class ConfigReport(Report):
 
 
 class Result:
-    def __init__(self, name: Any, value: Any, description: Any, unit: Any = "") -> None:
+    def __init__(
+        self, name: str, value: int | float, description: str, unit: str = ""
+    ) -> None:
         self.name = name
         self.value = value
         self.description = description
@@ -210,12 +219,15 @@ class Result:
 class ResultReport:
 
     def __init__(self) -> None:
-        self.details: dict[Any, Any] = {}
-        self.summary: dict[Any, Any] = {}
-        self.average: dict[Any, Any] = {}
+        self.details: ReportData | list[ReportData] = {}
+        self.summary: ReportData | list[ReportData] = {}
+        self.average: ReportData | list[ReportData] = {}
         self.num = 0
 
-    def prepare_report(self) -> Any:
+    def prepare_report(self) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
+        assert isinstance(self.average, dict)
         for key in self.details:
             avg = float(self.summary[key]["value"]) / self.num
             self.average[key]["value"] = avg
@@ -223,7 +235,10 @@ class ResultReport:
         self.summary = dict_to_list(self.summary)
         self.average = dict_to_list(self.average)
 
-    def add_single_test_results(self, test_results: Any, repeat: Any) -> Any:
+    def add_single_test_results(
+        self, test_results: Iterable[Result], repeat: int
+    ) -> None:
+        assert isinstance(self.details, dict)
         for test_result in test_results:
             if test_result.name not in self.details:
                 self.add_new(test_result, repeat)
@@ -231,7 +246,10 @@ class ResultReport:
                 self.add_existing(test_result, repeat)
         self.num += 1
 
-    def add_new(self, test_result: Any, repeat: Any) -> Any:
+    def add_new(self, test_result: Result, repeat: int) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
+        assert isinstance(self.average, dict)
         name = test_result.name
         val = test_result.value
         new_result = {
@@ -245,14 +263,16 @@ class ResultReport:
         self.summary[name]["value"] = val
         self.average[name] = dict(new_result)
 
-    def add_existing(self, test_result: Any, repeat: Any) -> Any:
+    def add_existing(self, test_result: Result, repeat: int) -> None:
+        assert isinstance(self.details, dict)
+        assert isinstance(self.summary, dict)
         name = test_result.name
         val = test_result.value
         self.details[name]["value"].update({str(repeat): val})
         self.summary[name]["value"] += val
 
 
-def update_dict(base: Any, updating: Any) -> Any:
+def update_dict(base: Mapping[str, Any], updating: Mapping[str, Any]) -> ReportData:
     new_dict = dict(base)
     for key in updating.keys():
         if (
@@ -267,7 +287,7 @@ def update_dict(base: Any, updating: Any) -> Any:
     return new_dict
 
 
-def dict_to_list(dict_: Any) -> Any:
+def dict_to_list(dict_: Mapping[str, ReportData]) -> list[ReportData]:
     list_ = []
     for key in dict_.keys():
         new_elem = dict_[key]
@@ -276,7 +296,7 @@ def dict_to_list(dict_: Any) -> Any:
     return list_
 
 
-def ensure_list(elem: Any) -> Any:
+def ensure_list(elem: Result | list[Result] | None) -> list[Result]:
     if not elem:
         return []
     if not isinstance(elem, list):
@@ -284,7 +304,9 @@ def ensure_list(elem: Any) -> Any:
     return elem
 
 
-def generate_configs(params: Any, description_skeleton: Any) -> Any:
+def generate_configs(
+    params: Mapping[str, list[object]], description_skeleton: str
+) -> ReportData:
     """This function generates all combinations of given parameters. Format of
     returned value is appropriate for @performance decorator
     :param description_skeleton: skeleton of config description, it will be
@@ -310,11 +332,11 @@ def generate_configs(params: Any, description_skeleton: Any) -> Any:
 
 
 def is_success_rate_satisfied(
-    successful_repeats: Any, failed_repeats: Any, rate: Any
-) -> Any:
+    successful_repeats: int, failed_repeats: int, rate: int | float
+) -> bool:
     return rate * (successful_repeats + failed_repeats) <= 100 * successful_repeats
 
 
-def flushed_print(msg: Any) -> Any:
+def flushed_print(msg: object) -> None:
     print(msg)
     sys.stdout.flush()
