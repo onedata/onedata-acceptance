@@ -47,7 +47,9 @@ def get_visible_items_list(
 ):
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
-    return page.__class__.get_visible_elements_list(elements_list, main_field)
+    if isinstance(page, Browser):
+        return page.get_visible_files_list(elements_list, main_field)
+    return page.get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

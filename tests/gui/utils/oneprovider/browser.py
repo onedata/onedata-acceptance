@@ -60,8 +60,8 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
     @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_files_list(
         elements_list: List[BrowserRow], main_field="name"
     ) -> List[BrowserRow]:

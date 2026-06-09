@@ -33,8 +33,8 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
             return self.elements_list[item]
         raise ValueError("there is not elements_list member in class instance")
 
-    @repeat_failed(timeout=WAIT_FRONTEND)
     @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_elements_list(
         elements_list: list[Element], main_field="name"
     ) -> list[Element]:
