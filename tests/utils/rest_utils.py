@@ -8,7 +8,6 @@ import time
 import traceback
 from collections.abc import Callable, Mapping
 from itertools import chain
-from typing import Any
 
 import requests
 import urllib3
@@ -28,8 +27,11 @@ from .http_exceptions import HTTPServiceUnavailable, raise_http_exception
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-Headers = Mapping[str, Any] | None
-Params = Mapping[str, Any] | None
+Headers = Mapping[str, object] | None
+Params = Mapping[str, object] | None
+RequestData = object | None
+Certificate = object | None
+Auth = object | None
 HttpMethod = Callable[..., requests.Response]
 
 
@@ -58,11 +60,11 @@ def http_get(
     port: int,
     path: str,
     use_ssl: bool = True,
-    data: Any = None,
+    data: RequestData = None,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
     default_headers: bool = True,
     params: Params = None,
 ) -> requests.Response:
@@ -87,11 +89,11 @@ def http_put(
     port: int,
     path: str,
     use_ssl: bool = True,
-    data: Any = None,
+    data: RequestData = None,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
     default_headers: bool = True,
     params: Params = None,
 ) -> requests.Response:
@@ -116,11 +118,11 @@ def http_post(
     port: int,
     path: str,
     use_ssl: bool = True,
-    data: Any = None,
+    data: RequestData = None,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
     default_headers: bool = True,
     params: Params = None,
     stream: bool = False,
@@ -149,11 +151,11 @@ def http_delete(
     use_ssl: bool = True,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
     default_headers: bool = True,
     params: Params = None,
-    data: Any = None,
+    data: RequestData = None,
 ) -> requests.Response:
     return http_request(
         requests.delete,
@@ -176,11 +178,11 @@ def http_patch(
     port: int,
     path: str,
     use_ssl: bool = True,
-    data: Any = None,
+    data: RequestData = None,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
     default_headers: bool = True,
     params: Params = None,
 ) -> requests.Response:
@@ -208,16 +210,18 @@ def http_request(  # pylint: disable=inconsistent-return-statements
     use_ssl: bool = True,
     headers: Headers = None,
     verify: bool = False,
-    cert: Any = None,
-    auth: Any = None,
-    data: Any = None,
+    cert: Certificate = None,
+    auth: Auth = None,
+    data: RequestData = None,
     default_headers: bool = True,
     params: Params = None,
     stream: bool = False,
     retries: int = 5,
 ) -> requests.Response:
     protocol = "https" if use_ssl else "http"
-    request_headers = DEFAULT_HEADERS.copy() if default_headers else {}
+    request_headers: dict[str, object] = (
+        DEFAULT_HEADERS.copy() if default_headers else {}
+    )
     if headers:
         request_headers.update(headers)
     for i in range(retries):

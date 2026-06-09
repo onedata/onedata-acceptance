@@ -14,20 +14,25 @@ import errno
 import os
 import subprocess as sp
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
 from typing import Any
 
+FfmpegProcess = sp.Popen[str]
+MoviePaths = list[str]
+Offset = tuple[int, int]
+
 
 def start_recording(
-    movie_dir: Any,
-    movie_name: Any,
-    displays: Any,
-    screen_width: Any,
-    screen_height: Any,
-    mosaic_filter: Any = True,
-) -> Any:
+    movie_dir: str,
+    movie_name: str,
+    displays: list[str],
+    screen_width: int,
+    screen_height: int,
+    mosaic_filter: bool = True,
+) -> tuple[FfmpegProcess, MoviePaths]:
     if not os.path.exists(movie_dir):
         os.makedirs(movie_dir)
 
@@ -61,7 +66,7 @@ def start_recording(
     return proc, paths
 
 
-def stop_recording(proc: Any) -> Any:
+def stop_recording(proc: FfmpegProcess) -> None:
     proc.terminate()
     try:
         proc.wait(timeout=10)  # Wait for process to exit
@@ -76,7 +81,7 @@ class RecorderManager:
     def __init__(self, request: Any) -> None:
         self.request = request
 
-    def handle_start_recording(self) -> Any:
+    def handle_start_recording(self) -> None:
         should_record = self.request.getfixturevalue("should_record")
 
         recording = self.request.config.getoption("--xvfb-recording")
@@ -109,7 +114,7 @@ class RecorderManager:
             self.ffmpeg_details["movies"] = movies
             self.request.node._movies = movies  # pylint: disable=protected-access
 
-    def handle_stop_recording(self, status: Any) -> Any:
+    def handle_stop_recording(self, status: Any) -> None:
         recording = self.request.config.getoption("--xvfb-recording")
         if "proc" in self.ffmpeg_details:
             stop_recording(self.ffmpeg_details["proc"])
@@ -134,7 +139,7 @@ class RecorderManager:
 
 
 @contextmanager
-def _suppress(exception: Any, errnos: Any) -> Any:
+def _suppress(exception: type[OSError], errnos: tuple[int, ...]) -> Iterator[None]:
     try:
         yield
     except exception as e:
@@ -143,14 +148,14 @@ def _suppress(exception: Any, errnos: Any) -> Any:
 
 
 def _create_ffmpeg_cmd(
-    displays: Any,
-    width: Any,
-    height: Any,
-    dir_path: Any,
-    file_name: Any,
-    mosaic_filter: Any,
-    qp: Any = 1,
-) -> Any:
+    displays: list[str],
+    width: int,
+    height: int,
+    dir_path: str,
+    file_name: str,
+    mosaic_filter: bool,
+    qp: int = 1,
+) -> tuple[list[str], MoviePaths]:
     cmd = ["ffmpeg"]
 
     wh = f"{width}x{height}"
@@ -194,7 +199,7 @@ def _create_ffmpeg_cmd(
     return cmd, paths
 
 
-def _create_mosaic_filter(displays: Any, width: Any, height: Any) -> Any:
+def _create_mosaic_filter(displays: list[str], width: int, height: int) -> str:
     filter_fmt = "nullsrc=size={width}x{height} [{base}]; {stream};{overlay}"
     available_screens = _gen_offsets(len(displays), width, height)
     full_width, full_height = next(available_screens)
@@ -209,7 +214,7 @@ def _create_mosaic_filter(displays: Any, width: Any, height: Any) -> Any:
     )
 
 
-def _overlay_streams(tags: Any, offsets: Any) -> Any:
+def _overlay_streams(tags: list[str], offsets: Iterator[Offset]) -> tuple[str, str]:
     overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y} [{new_base}]"
     last_overlay_fmt = "[{base}][{tag}] overlay=shortest=1:x={x}:y={y}"
     base_fmt = "base{num}"
@@ -230,7 +235,7 @@ def _overlay_streams(tags: Any, offsets: Any) -> Any:
     )
 
 
-def _tag_streams(input_streams_num: Any) -> Any:
+def _tag_streams(input_streams_num: int) -> tuple[str, list[str]]:
     tags = [f"v{num}" for num in range(input_streams_num)]
     fmt = "[{stream}:v] setpts=PTS-STARTPTS [{tag}]"
     tagged_streams = ";".join(
@@ -239,7 +244,7 @@ def _tag_streams(input_streams_num: Any) -> Any:
     return tagged_streams, tags
 
 
-def _gen_offsets(screen_num: Any, width: Any, height: Any) -> Any:
+def _gen_offsets(screen_num: int, width: int, height: int) -> Iterator[Offset]:
     a = b = int(round(sqrt(screen_num)))
     if a * b < screen_num:
         a += 1

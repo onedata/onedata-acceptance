@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import inspect
+from collections.abc import Callable
 from functools import wraps
 from typing import Any, get_origin
 
@@ -24,14 +25,17 @@ __all__ = [
     "scenarios_to_rerun",
 ]
 
+StepFunction = Callable[..., Any]
+StepDecorator = Callable[[StepFunction], StepFunction]
+
 
 def given(
-    name: Any,
+    name: object,
     fixture: Any = None,
     converters: Any = None,
-    scope: Any = "function",
+    scope: str = "function",
     target_fixture: Any = None,
-) -> Any:  # pylint: disable=unused-argument
+) -> StepDecorator:  # pylint: disable=unused-argument
     wrappers = [
         sanitize_arguments,
         pytest_bdd_given(name, converters, target_fixture, stacklevel=2),
@@ -39,17 +43,17 @@ def given(
     return _create_decorator(given, wrappers)
 
 
-def when(name: Any, converters: Any = None) -> Any:
+def when(name: object, converters: Any = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_when(name, converters, stacklevel=2)]
     return _create_decorator(when, wrappers)
 
 
-def then(name: Any, converters: Any = None) -> Any:
+def then(name: object, converters: Any = None) -> StepDecorator:
     wrappers = [sanitize_arguments, pytest_bdd_then(name, converters, stacklevel=2)]
     return _create_decorator(then, wrappers)
 
 
-def wt(name: Any, converters: Any = None) -> Any:
+def wt(name: object, converters: Any = None) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
         pytest_bdd_when(name, converters, stacklevel=2),
@@ -58,12 +62,14 @@ def wt(name: Any, converters: Any = None) -> Any:
     return _create_decorator(wt, wrappers)
 
 
-def sanitize_arguments(fun: Any) -> Any:
+def sanitize_arguments(fun: StepFunction) -> StepFunction:
     sig = inspect.signature(fun)
     parameters = sig.parameters
     is_gen = inspect.isgeneratorfunction(fun)
 
-    def _cast_arguments(args: Any, kwargs: Any) -> Any:
+    def _cast_arguments(
+        args: tuple[Any, ...], kwargs: dict[str, Any]
+    ) -> inspect.BoundArguments:
         ba = sig.bind(*args, **kwargs)
         ba.apply_defaults()
 
@@ -99,10 +105,12 @@ def sanitize_arguments(fun: Any) -> Any:
     return wrapper
 
 
-def _create_decorator(wrapped: Any, wrappers: Any) -> Any:
+def _create_decorator(
+    wrapped: StepFunction, wrappers: list[StepDecorator]
+) -> StepDecorator:
 
     @wraps(wrapped)
-    def decorator(original_fun: Any) -> Any:
+    def decorator(original_fun: StepFunction) -> StepFunction:
         fun = original_fun
         for wrapper in wrappers:
             fun = wrapper(fun)
