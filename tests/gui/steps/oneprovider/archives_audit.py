@@ -143,8 +143,8 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events: Dict[str, List[str]] = modal.get_visible_rows_of_columns(
-            ["event"]
+        visible_events: Dict[str, List[str]] = modal.get_visible_rows_of_single_column(
+            "event"
         )[index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
