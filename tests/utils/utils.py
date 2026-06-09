@@ -11,6 +11,7 @@ import subprocess as sp
 import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
+from types import ModuleType
 from typing import Any
 
 import pytest
@@ -67,7 +68,7 @@ def repeat_failed(
     timeout: float | None = None,
     interval: float = 0.1,
     exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
-) -> Any:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
 
@@ -84,7 +85,7 @@ def repeat_failed(
     """
 
     @decorator
-    def wrapper(fun: Any, *args: Any, **kwargs: Any) -> Any:
+    def wrapper(fun: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         now = time()
         limit, i = (now + timeout, now) if timeout else (attempts, 0)
 
@@ -102,14 +103,14 @@ def repeat_failed(
     return wrapper
 
 
-def get_copyright(mod: Any) -> str:
+def get_copyright(mod: ModuleType) -> str:
     return mod.__copyright__ if hasattr(mod, "__copyright__") else ""
 
 
-def get_authors(mod: Any) -> list[str]:
+def get_authors(mod: ModuleType) -> list[str]:
     author = mod.__author__ if hasattr(mod, "__author__") else ""
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod: Any) -> str | None:
+def get_suite_description(mod: ModuleType) -> str | None:
     return mod.__doc__

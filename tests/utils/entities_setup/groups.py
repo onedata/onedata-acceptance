@@ -5,7 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
 
@@ -20,6 +21,33 @@ from tests.utils.rest_utils import (
     http_put,
 )
 
+HostsConfig = Mapping[str, Mapping[str, str]]
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
+
+class UserLike(CredentialsLike, Protocol):
+    user_id: str
+
+
+class MemberOptions(TypedDict):
+    privileges: list[str]
+
+
+MemberEntry = str | dict[str, MemberOptions]
+
+
+class GroupDescription(TypedDict):
+    owner: str
+    users: NotRequired[list[MemberEntry]]
+    groups: NotRequired[list[MemberEntry]]
+
+
+GroupsConfig = Mapping[str, GroupDescription]
+
 
 @given(
     parsers.parse(
@@ -27,26 +55,31 @@ from tests.utils.rest_utils import (
     )
 )
 def groups_creation_step(
-    config: Any,
-    service: Any,
-    admin_credentials: Any,
-    users: Any,
-    hosts: Any,
-    groups: Any,
-) -> Any:
+    config: str,
+    service: str,
+    admin_credentials: CredentialsLike,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    groups: MutableMapping[str, str],
+) -> None:
     groups_creation(
-        yaml.load(config, yaml.Loader), service, admin_credentials, users, hosts, groups
+        cast(GroupsConfig, yaml.load(config, yaml.Loader)),
+        service,
+        admin_credentials,
+        users,
+        hosts,
+        groups,
     )
 
 
 def groups_creation(
-    config: Any,
-    service: Any,
-    admin_credentials: Any,
-    users: Any,
-    hosts: Any,
-    groups: Any,
-) -> Any:
+    config: GroupsConfig,
+    service: str,
+    admin_credentials: CredentialsLike,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    groups: MutableMapping[str, str],
+) -> None:
     """Create and configure groups according to given config.
 
     Config format given in yaml is as follows:
@@ -93,13 +126,13 @@ def groups_creation(
 
 
 def _groups_creation(
-    config: Any,
-    service: Any,
-    admin_credentials: Any,
-    users: Any,
-    hosts: Any,
-    groups: Any,
-) -> Any:
+    config: GroupsConfig,
+    service: str,
+    admin_credentials: CredentialsLike,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    groups: MutableMapping[str, str],
+) -> None:
     zone_hostname = hosts[service]["hostname"]
 
     for group_name, description in config.items():
@@ -110,13 +143,8 @@ def _groups_creation(
         )
         groups[group_name] = group_id
 
-        for user in description.get("users", {}):
-            try:
-                [(user, options)] = user.items()
-            except AttributeError:
-                privileges = None
-            else:
-                privileges = options["privileges"]
+        for user_entry in description.get("users", []):
+            user, privileges = _unpack_member_entry(user_entry)
 
             _add_user_to_group(
                 zone_hostname,
@@ -128,13 +156,8 @@ def _groups_creation(
 
     for group_name, description in config.items():
         group_id = groups[group_name]
-        for child_group in description.get("groups", {}):
-            try:
-                [(child_group, options)] = child_group.items()
-            except AttributeError:
-                privileges = None
-            else:
-                privileges = options["privileges"]
+        for child_group_entry in description.get("groups", []):
+            child_group, privileges = _unpack_member_entry(child_group_entry)
 
             child_id = groups[child_group]
 
@@ -143,13 +166,20 @@ def _groups_creation(
             )
 
 
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
+    if isinstance(entry, str):
+        return entry, None
+    [(name, options)] = entry.items()
+    return name, options["privileges"]
+
+
 def _create_group(
-    zone_hostname: Any,
-    owner_username: Any,
-    owner_password: Any,
-    group_name: Any,
-    group_type: Any = "team",
-) -> Any:
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str,
+    group_name: str,
+    group_type: str = "team",
+) -> str:
     group_properties = {"name": group_name, "type": group_type}
     response = http_post(
         ip=zone_hostname,
@@ -162,12 +192,12 @@ def _create_group(
 
 
 def _add_user_to_group(
-    zone_hostname: Any,
-    admin_credentials: Any,
-    group_id: Any,
-    user_id: Any,
-    privileges: Any,
-) -> Any:
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    group_id: str,
+    user_id: str,
+    privileges: list[str] | None,
+) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:
@@ -183,12 +213,12 @@ def _add_user_to_group(
 
 
 def _add_child_group(
-    zone_hostname: Any,
-    admin_credentials: Any,
-    parent_id: Any,
-    child_id: Any,
-    privileges: Any,
-) -> Any:
+    zone_hostname: str,
+    admin_credentials: CredentialsLike,
+    parent_id: str,
+    child_id: str,
+    privileges: list[str] | None,
+) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
     else:
@@ -203,7 +233,9 @@ def _add_child_group(
     )
 
 
-def _get_group_id(hosts: Any, users: Any, user: Any, group_name: Any) -> Any:
+def _get_group_id(
+    hosts: HostsConfig, users: Mapping[str, UserLike], user: str, group_name: str
+) -> str | None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -225,7 +257,9 @@ def _get_group_id(hosts: Any, users: Any, user: Any, group_name: Any) -> Any:
         "{user} before definition in next steps"
     )
 )
-def remove_group_in_onezone(hosts: Any, users: Any, user: Any, group_name: Any) -> Any:
+def remove_group_in_onezone(
+    hosts: HostsConfig, users: Mapping[str, UserLike], user: str, group_name: str
+) -> None:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     group_id = _get_group_id(hosts, users, user, group_name)
@@ -244,7 +278,9 @@ def remove_group_in_onezone(hosts: Any, users: Any, user: Any, group_name: Any) 
         "definition in next steps"
     )
 )
-def remove_all_groups_rest(user: Any, hosts: Any, users: Any) -> Any:
+def remove_all_groups_rest(
+    user: str, hosts: HostsConfig, users: Mapping[str, UserLike]
+) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
 
     groups_id_list = get_group_id_list(user, users, zone_hostname)
@@ -254,8 +290,8 @@ def remove_all_groups_rest(user: Any, hosts: Any, users: Any) -> Any:
 
 
 def _try_to_remove_group(
-    group_id: Any, zone_hostname: Any, user: Any, users: Any
-) -> Any:
+    group_id: str, zone_hostname: str, user: str, users: Mapping[str, UserLike]
+) -> None:
     try:
         http_delete(
             ip=zone_hostname,
@@ -267,7 +303,9 @@ def _try_to_remove_group(
         pass
 
 
-def get_group_id_list(user: Any, users: Any, zone_hostname: Any) -> Any:
+def get_group_id_list(
+    user: str, users: Mapping[str, UserLike], zone_hostname: str
+) -> list[str]:
     groups_list = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -279,8 +317,12 @@ def get_group_id_list(user: Any, users: Any, zone_hostname: Any) -> Any:
 
 @wt(parsers.parse(r"using REST, user {user} creates {number} groups"))
 def create_n_groups_using_rest(
-    user: Any, users: Any, hosts: Any, number: int, host: Any = "onezone"
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    number: int,
+    host: str = "onezone",
+) -> None:
     zone_hostname = hosts[host]["hostname"]
     for i in range(number):
         group_name = f"group{i}"

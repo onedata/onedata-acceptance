@@ -12,7 +12,13 @@ import sys
 import time
 from collections.abc import Callable
 from types import ModuleType
-from typing import Any
+from typing import Any, Protocol
+
+
+class TestNodeLike(Protocol):
+    nodeid: str
+    name: str
+    originalname: str | None
 
 
 def config_file(relative_file_path: str) -> str:
@@ -127,7 +133,7 @@ def get_first_path_element(path: str) -> str:
     return next(elem for elem in path.split(os.path.sep) if elem)
 
 
-def build_test_dir_name(node: Any, max_length: int = 180) -> str:
+def build_test_dir_name(node: TestNodeLike, max_length: int = 180) -> str:
     """
     Build a filesystem-safe directory name from pytest nodeid
     consisting of: test name + parameters + full name test hash

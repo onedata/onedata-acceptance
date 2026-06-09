@@ -5,7 +5,8 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import Protocol
 
 from tests import ELASTICSEARCH_PORT, OZ_REST_PORT
 from tests.gui.utils.generic import parse_seq
@@ -17,6 +18,15 @@ from tests.utils.rest_utils import (
     http_post,
     http_put,
 )
+
+HostsConfig = Mapping[str, Mapping[str, str]]
+IdMap = Mapping[str, str]
+MutableIdMap = MutableMapping[str, str]
+
+
+class UserLike(Protocol):
+    username: str
+    password: str
 
 
 @given(
@@ -33,13 +43,13 @@ from tests.utils.rest_utils import (
     )
 )
 def create_harvesters_rest(
-    user: Any,
-    harvesters_list: Any,
-    service: Any,
-    hosts: Any,
-    users: Any,
-    harvesters: Any,
-) -> Any:
+    user: str,
+    harvesters_list: str,
+    service: str,
+    hosts: HostsConfig,
+    users: Mapping[str, UserLike],
+    harvesters: MutableIdMap,
+) -> None:
     zone_hostname = hosts[service]["hostname"]
     owner = users[user]
     plugin = "elasticsearch_harvesting_backend"
@@ -58,14 +68,14 @@ def create_harvesters_rest(
 
 
 def _create_harvester(
-    zone_hostname: Any,
-    owner_username: Any,
-    owner_password: Any,
-    harvester_name: Any,
-    endpoint: Any,
-    plugin: Any,
-    harvesters: Any,
-) -> Any:
+    zone_hostname: str,
+    owner_username: str,
+    owner_password: str,
+    harvester_name: str,
+    endpoint: str,
+    plugin: str,
+    harvesters: MutableIdMap,
+) -> None:
     harvester_details = {
         "name": harvester_name,
         "harvestingBackendEndpoint": endpoint,
@@ -89,8 +99,8 @@ def _create_harvester(
 
 
 def _create_harvester_gui_index(
-    zone_hostname: Any, owner_username: Any, owner_password: Any, harvester_id: Any
-) -> Any:
+    zone_hostname: str, owner_username: str, owner_password: str, harvester_id: str
+) -> None:
     index_details = {
         "name": "generic-index",
         "guiPluginName": "generic-index",
@@ -110,7 +120,9 @@ def _create_harvester_gui_index(
 
 @given(parsers.parse("user {user} has no harvesters"))
 @given(parsers.parse("user {user} has no harvesters other than defined in next steps"))
-def remove_all_harvesters_rest(user: Any, hosts: Any, users: Any) -> Any:
+def remove_all_harvesters_rest(
+    user: str, hosts: HostsConfig, users: Mapping[str, UserLike]
+) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
 
     dict_harvesters = http_get(
@@ -126,8 +138,8 @@ def remove_all_harvesters_rest(user: Any, hosts: Any, users: Any) -> Any:
 
 
 def _remove_harvester(
-    harvester_id: Any, zone_hostname: Any, user: Any, users: Any
-) -> Any:
+    harvester_id: str, zone_hostname: str, user: str, users: Mapping[str, UserLike]
+) -> None:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -144,14 +156,14 @@ def _remove_harvester(
     )
 )
 def g_add_space_to_harvester(
-    space_list: Any,
-    harvester_name: Any,
-    spaces: Any,
-    harvesters: Any,
-    hosts: Any,
-    username: Any,
-    users: Any,
-) -> Any:
+    space_list: str,
+    harvester_name: str,
+    spaces: IdMap,
+    harvesters: IdMap,
+    hosts: HostsConfig,
+    username: str,
+    users: Mapping[str, UserLike],
+) -> None:
     add_space_to_harvester(
         space_list, harvester_name, spaces, harvesters, hosts, username, users
     )
@@ -164,28 +176,28 @@ def g_add_space_to_harvester(
     )
 )
 def wt_add_space_to_harvester(
-    space_list: Any,
-    harvester_name: Any,
-    spaces: Any,
-    harvesters: Any,
-    hosts: Any,
-    username: Any,
-    users: Any,
-) -> Any:
+    space_list: str,
+    harvester_name: str,
+    spaces: IdMap,
+    harvesters: IdMap,
+    hosts: HostsConfig,
+    username: str,
+    users: Mapping[str, UserLike],
+) -> None:
     add_space_to_harvester(
         space_list, harvester_name, spaces, harvesters, hosts, username, users
     )
 
 
 def add_space_to_harvester(
-    space_list: Any,
-    harvester_name: Any,
-    spaces: Any,
-    harvesters: Any,
-    hosts: Any,
-    username: Any,
-    users: Any,
-) -> Any:
+    space_list: str,
+    harvester_name: str,
+    spaces: IdMap,
+    harvesters: IdMap,
+    hosts: HostsConfig,
+    username: str,
+    users: Mapping[str, UserLike],
+) -> None:
     for space in parse_seq(space_list):
         _add_space_to_harvester(
             space, harvester_name, spaces, harvesters, hosts, username, users
@@ -193,14 +205,14 @@ def add_space_to_harvester(
 
 
 def _add_space_to_harvester(
-    space_name: Any,
-    harvester_name: Any,
-    spaces: Any,
-    harvesters: Any,
-    hosts: Any,
-    username: Any,
-    users: Any,
-) -> Any:
+    space_name: str,
+    harvester_name: str,
+    spaces: IdMap,
+    harvesters: IdMap,
+    hosts: HostsConfig,
+    username: str,
+    users: Mapping[str, UserLike],
+) -> None:
     space_id = spaces[space_name]
     harvester_id = harvesters[harvester_name]
     zone_hostname = hosts["onezone"]["hostname"]
