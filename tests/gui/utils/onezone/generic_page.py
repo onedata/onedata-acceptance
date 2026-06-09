@@ -10,6 +10,7 @@ from abc import ABCMeta
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
+from tests.gui.utils.generic import ListElement
 from tests.utils.utils import repeat_failed
 
 
@@ -29,9 +30,11 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
     get_started = NamedButton(".btn-default", text="Get started")
 
     def __getitem__(self, item):
-        if hasattr(self, "elements_list"):
-            return self.elements_list[item]
-        raise ValueError("there is not elements_list member in class instance")
+        for attr in ListElement:
+            attr_list = f"{attr.value}_list"
+            if hasattr(self, attr_list):
+                return getattr(self, attr_list)[item]
+        raise ValueError("there is not any elements list member in class instance")
 
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
