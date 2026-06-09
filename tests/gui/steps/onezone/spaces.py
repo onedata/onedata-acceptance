@@ -222,11 +222,11 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, na
     if page_name == "spaces":
         choose_space_from_menu_list(driver, name)
     else:
-        get_element_on_subpage_in_oz_page(driver, page_name, option, name)
+        get_list_element_on_subpage_in_oz_page(driver, page_name, option, name).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_element_on_subpage_in_oz_page(driver, page_name, option, elem_name):
+def get_list_element_on_subpage_in_oz_page(driver, page_name, option, elem_name):
     page = OZLoggedIn(driver).get_page_and_click(page_name)
     elements_list = getattr(page, f"{option}_list")
     return elements_list[elem_name]
