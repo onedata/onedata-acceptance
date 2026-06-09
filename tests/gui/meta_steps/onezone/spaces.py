@@ -431,7 +431,6 @@ def add_group_to_space_or_group(
     modal = "Add one of groups"
     member = "groups"
     button_in_modal = "Add"
-
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, option, where_name
     )

@@ -335,4 +335,3 @@ class ListElement(Enum):
     AUTOMATIONS = "automations"
     LAMBDAS = "lambdas"
     WORKFLOWS = "workflows"
-    
