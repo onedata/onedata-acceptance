@@ -224,9 +224,7 @@ class DataPage(GenericPage):
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
     spaces_header_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.resource-item"
-        " .item-header:not(.truncate)",
-        cls=Space,
+        ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
     spaces_header_list_web_elems = WebElementsSequence(
         ".sidebar-spaces li.one-list-item.clickable.data-row"
