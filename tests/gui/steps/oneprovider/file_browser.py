@@ -61,7 +61,7 @@ def click_on_status_tag_for_file_in_file_browser(
         "user of {browser_id} sees only items named {item_list} in {which_browser}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_only_given_items_in_file_browser(
     browser_id, item_list, tmp_memory, which_browser
 ):
