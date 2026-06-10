@@ -795,6 +795,7 @@ def assert_privileges_in_members_subpage(
         r"\n(?P<config>(.|\s)*)"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)  # wait because modal can load with a delay
 def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
