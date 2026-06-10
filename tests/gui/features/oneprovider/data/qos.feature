@@ -23,6 +23,7 @@ Feature: Quality of Service tests using single storage and single browser in One
   Scenario: User sees QoS file status and entries after adding QoS requirements to file
     When user of browser opens file browser for "space1" space
     And user of browser chooses "Quality of Service" option from file menu for "file1" on file list
+    And user of browser sees that "File details" modal has appeared
     And user of browser clicks on "Add Requirement" button in QoS panel
     And user of browser clicks "enter as text" label in QoS panel
     And user of browser writes "geo=PL" into expression text field in QoS panel
@@ -32,6 +33,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser clicks on "X" button in modal "File details"
     Then user of browser sees QoS status tag for "file1" in file browser
     And user of browser chooses "Quality of Service" option from file menu for "file1" on file list
+    And user of browser sees that "File details" modal has appeared
     And user of browser sees [geo = "PL"] QoS requirement in QoS panel
 
 
@@ -39,6 +41,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     When user of browser creates "geo=PL" QoS requirement for "file1" in space "space1"
     And user of browser sees QoS status tag for "file1" in file browser
     And user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser sees that "File details" modal has appeared
     And user of browser deletes all QoS requirements
     And user of browser clicks on "X" button in modal "File details"
     Then user of browser does not see QoS status tag for "file1" in file browser
@@ -48,12 +51,14 @@ Feature: Quality of Service tests using single storage and single browser in One
   Scenario: User sees that QoS becomes fulfilled shortly after adding already fulfilled requirement
     When user of browser creates "anyStorage" QoS requirement for "file1" in space "space1"
     And user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     Then user of browser sees that all QoS requirements are fulfilled
 
 
   Scenario: User sees that QoS becomes impossible shortly after adding impossible to fulfill requirement
     When user of browser creates "hello=WORLD" QoS requirement for "file1" in space "space1"
     Then user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser sees that all QoS requirements are impossible
 
 

@@ -39,6 +39,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser_unified clicks on inherited status tag for "20B-0.txt" in file browser
     And user of browser_unified clicks on QoS status tag for "20B-0.txt" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "Directory details"
     Then user of browser_unified sees file chunks for file "20B-0.txt" as follows:
@@ -59,6 +60,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that "File details" modal has appeared
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "X" button in modal "File details"
     Then user of browser_unified sees file chunks for file "file1" as follows:
