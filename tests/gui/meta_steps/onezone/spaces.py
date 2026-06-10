@@ -241,24 +241,18 @@ def request_space_support_using_gui(
     clipboard,
     receiver,
 ):
-    where = "Data"
-    option = "Providers"
-    notify_type = "info"
-    text_regexp = ".*copied.*"
-    item_type = "token"
-
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     click_get_support_button_on_providers_page(selenium, user)
     click_copy_button_on_request_support_page(
         selenium, user, displays, clipboard, tmp_memory
     )
-    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    notify_visible_with_text(selenium, user, "info", ".*copied.*")
     send_copied_item_to_other_users(
-        user, item_type, receiver, tmp_memory, displays, clipboard
+        user, "token", receiver, tmp_memory, displays, clipboard
     )
 
 
@@ -328,14 +322,11 @@ def assert_provider_does_not_support_space_in_oz_gui(
 def assert_space_is_supported_by_provider_in_oz_gui(
     selenium, user, space_name, provider_name, hosts
 ):
-    where = "Data"
-    option = "Providers"
-
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     assert_providers_list_contains_provider(selenium, user, provider_name, hosts)
 
 

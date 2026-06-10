@@ -34,6 +34,7 @@ class Browser(ABC, PageObject):
     column_header_cls: ClassVar[Optional[type[PageObject]]] = None
     data: ClassVar[WebItemsSequence]
     column_headers: ClassVar[WebItemsSequence]
+    files_list: ClassVar[WebItemsSequence]
 
     header = WebElement(".file-browser-head-container")
     browser_msg_header = Label(".content-info-content-container h1")
@@ -53,6 +54,7 @@ class Browser(ABC, PageObject):
         super().__init_subclass__(**kwargs)
         if cls.row_cls is not None:
             cls.data = WebItemsSequence(".data-row.fb-table-row", cls=cls.row_cls)
+            cls.files_list = cls.data
         if cls.column_header_cls is not None:
             cls.column_headers = WebItemsSequence(
                 ".fb-table-secondary-col", cls=cls.column_header_cls
