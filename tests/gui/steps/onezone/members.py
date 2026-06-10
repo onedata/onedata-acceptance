@@ -972,8 +972,8 @@ def check_list_length_on_members_subpage(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {where} {item_name} has "
-        "following privilege configuration for {target} {name}:"
+        'user of {browser_id} sees that {item_type} "{item_name}" has '
+        'following privilege configuration for {target} "{name}":'
         "\n{config}"
     )
 )
@@ -981,44 +981,49 @@ def assert_privilege_config_for_user(
     selenium,
     browser_id,
     item_name,
-    where,
+    item_type,
     name,
     config,
     target,
     hosts,
 ):
     list_type = target + "s"
-    option = where + "s" if where != "inventory" else "automation"
+
+    option = item_type + "s" if item_type != "inventory" else "automation"
     option2 = "Members"
 
     data = yaml.load(config, yaml.Loader)
     privileges = data["privileges"]
 
-    if where != "cluster":
+    if item_type != "cluster":
         click_element_on_lists_on_left_sidebar_menu(
             selenium, browser_id, option, item_name
         )
-    if where == "space":
+
+    if item_type == "space":
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "harvester":
+    elif item_type == "harvester":
         click_on_option_of_harvester_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "inventory":
+    elif item_type == "inventory":
         click_on_option_of_inventory_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "group":
+    elif item_type == "group":
         go_to_group_subpage(selenium, browser_id, item_name, option2.lower())
-    elif where == "cluster":
+    elif item_type == "cluster":
         click_on_record_in_clusters_menu(selenium, browser_id, item_name, hosts)
         wt_click_on_subitem_for_item(
             selenium, browser_id, option, option2, item_name, hosts
         )
-    click_element_in_members_list(selenium, browser_id, name, where, list_type)
-    privilege_tree = get_privilege_tree(selenium, browser_id, where, list_type, name)
+
+    click_element_in_members_list(selenium, browser_id, name, item_type, list_type)
+    privilege_tree = get_privilege_tree(
+        selenium, browser_id, item_type, list_type, name
+    )
     privilege_tree.assert_privileges(selenium, browser_id, privileges)
 
 

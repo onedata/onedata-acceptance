@@ -53,7 +53,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser2 clicks on Confirm button on consume token page
     Then user of browser2 sees an success notify with text matching to: .*joined.*
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
-    And user of browser2 sees that space space1 has following privilege configuration for group group1:
+    And user of browser2 sees that space "space1" has following privilege configuration for group "group1":
           privileges:
             Space management:
               granted: Partially
@@ -130,7 +130,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     Then user of browser2 succeeds to consume token for "group1" group
-    And user of browser2 sees that space space1 has following privilege configuration for group group1:
+    And user of browser2 sees that space "space1" has following privilege configuration for group "group1":
           privileges:
             Space management:
               granted: Partially

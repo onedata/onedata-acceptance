@@ -13,7 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ListElement, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -222,13 +222,19 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, na
     if page_name == "spaces":
         choose_space_from_menu_list(driver, name)
     else:
-        get_list_element_on_subpage_in_oz_page(driver, page_name, option, name).click()
+        if option == "automation":
+            option += "s"
+        get_list_element_on_subpage_in_oz_page(
+            driver, page_name, ListElement(option), name
+        ).click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_list_element_on_subpage_in_oz_page(driver, page_name, option, elem_name):
+def get_list_element_on_subpage_in_oz_page(
+    driver, page_name, option: ListElement, elem_name
+):
     page = OZLoggedIn(driver).get_page_and_click(page_name)
-    elements_list = getattr(page, f"{option}_list")
+    elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
 
 

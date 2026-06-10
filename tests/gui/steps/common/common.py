@@ -43,7 +43,7 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: Union[GenericPage, Browser], items_type: ListElement, main_field
+    page: Union[GenericPage, Browser], items_type: ListElement, main_field="name"
 ):
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
