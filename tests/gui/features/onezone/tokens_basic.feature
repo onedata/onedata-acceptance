@@ -18,7 +18,7 @@ Feature: Management of tokens basic features in Onezone GUI
     And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser types "Token1" to token name input box in "Create new token" view
+    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
     And user of browser chooses <token type> token type in "Create new token" view
     And user of browser clicks on "Create token" button in "Create new token" view
     Then user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
@@ -36,7 +36,7 @@ Feature: Management of tokens basic features in Onezone GUI
     And user of browser sees exactly 0 item(s) on tokens list in tokens sidebar
     And user of browser clicks on "Create new token" button in tokens sidebar
     And user of browser clicks on "Create custom token" option in "Create new token" view
-    And user of browser types "Token1" to token name input box in "Create new token" view
+    And user of browser succeeds to type "Token1" to token name input box in "Create new token" view
     And user of browser chooses invite token type in "Create new token" view
     And user of browser chooses "Register Oneprovider" invite type
     And user of browser clicks on "Create token" button in "Create new token" view
