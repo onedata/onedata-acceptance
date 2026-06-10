@@ -89,7 +89,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser types "harvester7" to rename harvester input field
     And user of browser confirms harvester rename using button
     Then user of browser sees that "harvester7" has appeared on the harvesters list in the sidebar
-    And user of browser sees that "harvester6" has disappeared from the harvesters list in the sidebar
+    And user of browser sees that "harvester6" has disappeared on the harvesters list in the sidebar
 
 
   Scenario: User successfully leaves harvester
@@ -99,7 +99,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks "harvester8" on the harvesters list in the sidebar
     And user of browser clicks on "Leave" button in harvester "harvester8" menu in the sidebar
     And user of browser clicks on "Leave" button in modal "Leave harvester"
-    And user of browser sees that "harvester8" has disappeared from the harvesters list in the sidebar
+    And user of browser sees that "harvester8" has disappeared on the harvesters list in the sidebar
 
 
   Scenario: User successfully checks harvesting progress
