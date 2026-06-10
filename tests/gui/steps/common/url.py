@@ -9,11 +9,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from typing import Union
 
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.support.expected_conditions import (
+    invisibility_of_element_located,
+    staleness_of,
+    visibility_of_element_located,
+)
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -264,12 +270,35 @@ def refresh_site_and_wait(selenium, browser_id_list):
         assert_main_page_loaded(selenium, browser_id)
 
 
-@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_main_page_loaded(selenium, browser_id):
-    elems = selenium[browser_id].find_elements(
+    driver = selenium[browser_id]
+    wait_till_main_content_loaded(driver)
+    wait_till_authentication_info_disappear(driver)
+
+
+@repeat_failed(timeout=WAIT_BACKEND * 2)
+def wait_till_main_content_loaded(driver):
+    elems = driver.find_elements(
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
     )
     assert len(elems) > 0, "did not manage to load main page"
+
+
+def wait_till_authentication_info_disappear(driver):
+    # If popup don't appear don't throw error
+    # If appeared and not closed raise
+    try:
+        Wait(driver, WAIT_FRONTEND).until(
+            visibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+        )
+    except TimeoutException:
+        pass
+    else:
+        Popups(driver).authentication_succeeded.close.click()
+
+        Wait(driver, WAIT_FRONTEND).until(
+            invisibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+        )
 
 
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))
