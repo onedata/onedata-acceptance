@@ -140,6 +140,7 @@ def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle):
     getattr(storage_import_configuration, transform(toggle)).uncheck()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{space_name}" space name is displayed in the'

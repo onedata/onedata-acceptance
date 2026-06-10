@@ -40,7 +40,7 @@ def click_create_button_in_discovery_page(selenium, browser_id):
 @wt(
     parsers.re(
         r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
-        r" (?P<option>appeared|not appeared) on the"
+        r" (?P<option>appeared|disappeared) on the"
         r" (?P<list_type>harvesters|automation) "
         r"list in the sidebar"
     ),
