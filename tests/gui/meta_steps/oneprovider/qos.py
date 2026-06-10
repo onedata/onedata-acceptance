@@ -10,6 +10,7 @@ from tests.gui.steps.modals.modal import (
     click_modal_button,
     click_panel_button,
     write_name_into_text_field_in_panel,
+    wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.oneprovider.browser import (
     assert_not_status_tag_for_file_in_browser,
@@ -52,6 +53,7 @@ def _add_qos_requirement_in_modal(
     choose_option_for_file_from_selection_menu(
         browser_id, selenium, qos_option, tmp_memory, item_name
     )
+    wt_wait_for_modal_to_appear(selenium, browser_id, details_modal, tmp_memory)
     click_panel_button(selenium, browser_id, add_button, panel)
     click_enter_as_text_link(selenium, browser_id)
     write_name_into_text_field_in_panel(

@@ -17,6 +17,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -156,6 +157,9 @@ def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
         pass
 
 
+@given(
+    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
+)
 @wt(
     parsers.re(
         r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)"'
@@ -166,13 +170,10 @@ def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
 
-
-@given(
-    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
-)
-def g_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
-    driver = selenium[browser_id]
-    _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+    if check_modal_name(modal_name) == "details_modal":
+        wait_for_sliding_panel_to_stop_moving(
+            driver, WAIT_FRONTEND, ".modal-content .modal-body"
+        )
 
 
 def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):

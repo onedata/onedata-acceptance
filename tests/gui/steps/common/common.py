@@ -4,6 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import time
 from typing import Dict, List
 
 from selenium.common.exceptions import TimeoutException
@@ -166,3 +167,27 @@ def scroll_and_get_columns(modal, columns):
         )
         checked_names.update(visible_names)
     return list(checked_names)
+
+
+def element_rect_stable(css_sel, checks=5, interval=0.1):
+    def _predicate(driver):
+        web_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+
+        last_rect = web_element.rect
+        for _ in range(checks):
+            time.sleep(interval)
+            current_rect = web_element.rect
+            if current_rect != last_rect:
+                return False
+            last_rect = current_rect
+
+        return True
+
+    return _predicate
+
+
+# TODO: VFS-12424 Add class to fully-transitioned file details panel
+def wait_for_sliding_panel_to_stop_moving(driver, timeout, css_sel):
+    WebDriverWait(driver=driver, timeout=timeout).until(
+        element_rect_stable(css_sel=css_sel)
+    )
