@@ -13,14 +13,16 @@ from contextlib import contextmanager
 from enum import Enum
 from itertools import islice
 from time import sleep
-from typing import Any, TypeVar, overload
+from typing import Optional, TypeVar, cast, overload
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests import gui
+from tests.conftest import JsonValue
 
 T = TypeVar("T")
 
@@ -55,15 +57,17 @@ def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
 
 @overload
 def parse_seq(
-    seq: str, pattern: str | None = None, separator: str | None = None
+    seq: str,
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
 ) -> list[str]: ...
 
 
 @overload
 def parse_seq(
     seq: str,
-    pattern: str | None = None,
-    separator: str | None = None,
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
     *,
     default: Callable[[str], T],
 ) -> list[T]: ...
@@ -72,18 +76,18 @@ def parse_seq(
 @overload
 def parse_seq(
     seq: str,
-    pattern: str | None,
-    separator: str | None,
+    pattern: Optional[str],
+    separator: Optional[str],
     default: Callable[[str], T],
 ) -> list[T]: ...
 
 
 def parse_seq(
     seq: str,
-    pattern: str | None = None,
-    separator: str | None = None,
-    default: Callable[[str], Any] = str,
-) -> list[Any]:
+    pattern: Optional[str] = None,
+    separator: Optional[str] = None,
+    default: Callable[[str], T] = cast(Callable[[str], T], str),
+) -> list[T]:
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     separator = "," if separator is None else separator
@@ -105,7 +109,7 @@ def upload_file_path(file_name: str) -> str:
     )
 
 
-def upload_workflow_path(workflow_name: str | None = None) -> str:
+def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -131,7 +135,7 @@ def upload_workflow_path(workflow_name: str | None = None) -> str:
     )
 
 
-def upload_lambda_path(lambda_name: str | None) -> str:
+def upload_lambda_path(lambda_name: Optional[str]) -> str:
     """Resolve an absolute path for lambda dump file with name lambda_name
     stored in automation-examples submodule
     """
@@ -169,7 +173,7 @@ def strip_path(path_string: str, separator: str = "/") -> str:
 
 @contextmanager
 def implicit_wait(
-    driver: Any, timeout: int | float, prev_timeout: int | float
+    driver: WebDriver, timeout: int | float, prev_timeout: int | float
 ) -> Iterator[None]:
     driver.implicitly_wait(timeout)
     try:
@@ -186,11 +190,11 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 
 
 def find_web_elem(
-    web_elem_root: Any,
+    web_elem_root: WebDriver | WebElement,
     css_sel: str,
     err_msg: str | Callable[[], str],
     scroll: bool = True,
-) -> Any:
+) -> WebElement:
     try:
         if scroll:
             _scroll_to_css_sel(web_elem_root, css_sel)
@@ -203,12 +207,12 @@ def find_web_elem(
 
 
 def find_web_elem_with_text(
-    web_elem_root: Any,
+    web_elem_root: WebDriver | WebElement,
     css_sel: str,
     text: str,
     err_msg: str | Callable[[], str],
     scroll: bool = True,
-) -> Any:
+) -> WebElement:
     items = web_elem_root.find_elements(By.CSS_SELECTOR, css_sel)
     if scroll:
         _scroll_to_css_sel(web_elem_root, css_sel)
@@ -221,8 +225,8 @@ def find_web_elem_with_text(
 
 
 def click_on_web_elem(
-    driver: Any,
-    web_elem: Any,
+    driver: WebDriver,
+    web_elem: WebElement,
     err_msg: str | Callable[[], str],
     delay: bool | float = True,
 ) -> None:
@@ -247,7 +251,7 @@ def click_on_web_elem(
         raise RuntimeError(err_msg)
 
 
-def _scroll_to_css_sel(web_elem_root: Any, css_sel: str) -> None:
+def _scroll_to_css_sel(web_elem_root: WebDriver | WebElement, css_sel: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "
@@ -266,13 +270,15 @@ def suppress(*exceptions: type[BaseException]) -> Iterator[None]:
 
 
 @contextmanager
-def rm_css_cls(driver: Any, web_elem: Any, css_cls: str) -> Iterator[Any]:
+def rm_css_cls(
+    driver: WebDriver, web_elem: WebElement, css_cls: str
+) -> Iterator[WebElement]:
     driver.execute_script(f"arguments[0].classList.remove('{css_cls}')", web_elem)
     yield web_elem
     driver.execute_script(f"arguments[0].classList.add('{css_cls}')", web_elem)
 
 
-def nth(seq: Iterable[T], idx: int) -> T | None:
+def nth(seq: Iterable[T], idx: int) -> Optional[T]:
     return next(islice(seq, idx, None), None)
 
 
@@ -290,11 +296,11 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: str | None = None) -> str:
+def transform(val: str, strip_char: Optional[str] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 
-def sort_json_keys(obj: Any) -> Any:
+def sort_json_keys(obj: JsonValue) -> JsonValue:
     if isinstance(obj, dict):
         items = list(obj.items())
         items.sort(reverse=True)
@@ -305,10 +311,9 @@ def sort_json_keys(obj: Any) -> Any:
     return obj  # number or string
 
 
-def sort_json_from_string(value: str) -> Any:
-    value = json.loads(value)
-    value = sort_json_keys(value)
-    return value
+def sort_json_from_string(value: str) -> JsonValue:
+    parsed_value = json.loads(value)
+    return sort_json_keys(parsed_value)
 
 
 class WhichBrowser(Enum):

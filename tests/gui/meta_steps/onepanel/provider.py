@@ -8,11 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Any
 
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers
+from tests.conftest import Hosts, JsonValue, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -43,17 +42,18 @@ from tests.gui.steps.rest.provider import (
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    provider_name: Any,
-    new_provider_name: Any,
-    new_domain: Any,
-    browser_id: Any,
-) -> Any:
+    user: str,
+    provider_name: str,
+    new_provider_name: str,
+    new_domain: str,
+    browser_id: str,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     button = "Edit settings"
@@ -91,8 +91,11 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium: SeleniumDrivers, browser_id: Any, provider_name: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider_name: str,
+    hosts: Hosts,
+) -> None:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
     content = "provider"
@@ -109,8 +112,12 @@ def deregister_provider_in_op_panel_using_gui(
 
 
 def register_provider_in_op_using_gui(
-    selenium: SeleniumDrivers, user: Any, hosts: Hosts, config: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    user: str,
+    hosts: Hosts,
+    config: str,
+    tmp_memory: dict[str, dict[str, object]],
+) -> None:
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)
 
@@ -172,8 +179,11 @@ def register_provider_in_op_using_gui(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
     sub_item = "Provider configuration"
     record = 0
     sidebar = "CLUSTERS"
@@ -206,8 +216,11 @@ def change_provider_name_if_name_is_different_than_given(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
-    hosts: Hosts, provider: Any, onepanel_credentials: Any, status: Any
-) -> Any:
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: AdminUser,
+    status: str,
+) -> None:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
     res = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, OnedataService.ONES3
@@ -219,10 +232,12 @@ def assert_provider_cluster_ones3_node_status_rest(
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
 def add_provider_cluster_ones3_node_rest(
-    hosts: Hosts, provider: Any, onepanel_credentials: Any
-) -> Any:
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: AdminUser,
+) -> None:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
-    data = {"hosts": [host]}
+    data: dict[str, JsonValue] = {"hosts": [host]}
     add_provider_service_node(
         hosts, provider, onepanel_credentials, data, OnedataService.ONES3
     )
@@ -235,8 +250,11 @@ def add_provider_cluster_ones3_node_rest(
     )
 )
 def stop_provider_cluster_ones3_node_rest(
-    option: Any, hosts: Hosts, provider: Any, onepanel_credentials: Any
-) -> Any:
+    option: str,
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: AdminUser,
+) -> None:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
     start_stop_provider_service_node(
         hosts,

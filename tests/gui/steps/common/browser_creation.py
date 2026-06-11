@@ -10,14 +10,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import time
 from itertools import cycle
-from typing import Any, cast
+from typing import cast
 
 from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.remote.webdriver import WebDriver
 from urllib3.exceptions import HTTPError
 
-from tests.conftest import Capabilities, SeleniumDrivers
+from tests.conftest import Capabilities, SeleniumDrivers, WebDriverFactory
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
@@ -27,17 +28,17 @@ from tests.utils.bdd_utils import parsers
 @given(parsers.parse("users opened {browser_id_list} browsers' windows"))
 def create_instances_of_webdriver(
     selenium: SeleniumDrivers,
-    driver: Any,
-    browser_id_list: Any,
-    tmpdir: Any,
-    tmp_memory: Any,
-    driver_type: Any,
-    xvfb: Any,
-    screen_width: Any,
-    screen_height: Any,
-    displays: Any,
+    driver: WebDriverFactory,
+    browser_id_list: str,
+    tmpdir: object,
+    tmp_memory: dict[str, dict[str, dict[str, object]]],
+    driver_type: str,
+    xvfb: list[str],
+    screen_width: int,
+    screen_height: int,
+    displays: dict[str, str],
     capabilities: Capabilities,
-) -> Any:
+) -> None:
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
         if browser_id in selenium:
@@ -86,7 +87,7 @@ def create_instances_of_webdriver(
 
 # TODO: VFS-2205 configure different window sizes for responsiveness
 #  tests: https://jira.plgrid.pl/jira/browse/VFS-2205
-def _config_driver(driver: Any, window_width: Any, window_height: Any) -> Any:
+def _config_driver(driver: WebDriver, window_width: int, window_height: int) -> None:
     driver.implicitly_wait(SELENIUM_IMPLICIT_WAIT)
 
     # perform attempts to change window size
@@ -103,7 +104,7 @@ def _config_driver(driver: Any, window_width: Any, window_height: Any) -> Any:
     driver.set_page_load_timeout(60)
 
 
-def assert_driver_working_properly(driver: Any) -> Any:
+def assert_driver_working_properly(driver: WebDriver) -> None:
     try:
         _ = driver.get_screenshot_as_base64()
     except (WebDriverException, HTTPError) as e:

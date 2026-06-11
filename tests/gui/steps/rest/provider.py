@@ -4,10 +4,11 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 import json
-from typing import Any
+
+from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
-from tests.conftest import Hosts, Users
+from tests.conftest import Hosts, JsonValue, Users
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
@@ -17,9 +18,10 @@ from tests.utils.rest_utils import (
     http_patch,
     http_post,
 )
+from tests.utils.user_utils import AdminUser
 
 
-def get_provider_id(provider: Any, hosts: Hosts, users: Users) -> Any:
+def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
     user = "admin"
     provider_hostname = hosts[provider]["hostname"]
     provider_conf = http_get(
@@ -36,7 +38,7 @@ def get_provider_id(provider: Any, hosts: Hosts, users: Users) -> Any:
         "using REST, user {user} sees that status of OneS3 of {provider} is ok"
     )
 )
-def assert_provider_ones3_status_ok(provider: Any, hosts: Hosts) -> Any:
+def assert_provider_ones3_status_ok(provider: str, hosts: Hosts) -> None:
     provider_hostname = hosts[provider]["hostname"]
     status = http_get(
         ip=provider_hostname,
@@ -49,11 +51,11 @@ def assert_provider_ones3_status_ok(provider: Any, hosts: Hosts) -> Any:
 
 def add_provider_service_node(
     hosts: Hosts,
-    provider: Any,
-    onepanel_credentials: Any,
-    data: Any,
+    provider: str,
+    onepanel_credentials: AdminUser,
+    data: dict[str, JsonValue],
     service: OnedataService,
-) -> Any:
+) -> dict[str, JsonValue]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -70,8 +72,11 @@ def add_provider_service_node(
 
 
 def get_provider_service_nodes_statuses(
-    hosts: Hosts, provider: Any, onepanel_credentials: Any, service: OnedataService
-) -> Any:
+    hosts: Hosts,
+    provider: str,
+    onepanel_credentials: AdminUser,
+    service: OnedataService,
+) -> dict[str, JsonValue]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -87,12 +92,12 @@ def get_provider_service_nodes_statuses(
 
 def start_stop_provider_service_node(
     hosts: Hosts,
-    host: Any,
-    provider: Any,
-    onepanel_credentials: Any,
+    host: str,
+    provider: str,
+    onepanel_credentials: AdminUser,
     service: OnedataService,
-    start: Any = True,
-) -> Any:
+    start: bool = True,
+) -> Response:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

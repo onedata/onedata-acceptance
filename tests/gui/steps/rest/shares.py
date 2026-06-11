@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from typing import Any
 
 import yaml
 
@@ -30,14 +29,14 @@ from tests.utils.rest_utils import (
     )
 )
 def create_share_using_rest(
-    item_path: Any,
-    provider: Any,
-    user: Any,
-    share_name: Any,
+    item_path: str,
+    provider: str,
+    user: str,
+    share_name: str,
     hosts: Hosts,
     users: Users,
-    shares: Any,
-) -> Any:
+    shares: dict[str, str],
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     file_id = get_file_id_by_rest(item_path, provider_hostname, users[user].token)
 
@@ -60,21 +59,21 @@ def create_share_using_rest(
     )
 )
 def wt_create_share_using_rest(
-    item_path: Any,
-    provider: Any,
-    user: Any,
-    share_name: Any,
+    item_path: str,
+    provider: str,
+    user: str,
+    share_name: str,
     hosts: Hosts,
     users: Users,
-    shares: Any,
-) -> Any:
+    shares: dict[str, str],
+) -> None:
     create_share_using_rest(item_path, provider, user, share_name, hosts, users, shares)
 
 
 @given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))
 def create_many_shares_using_rest(
-    user: Any, config: Any, hosts: Hosts, users: Users, shares: Any
-) -> Any:
+    user: str, config: str, hosts: Hosts, users: Users, shares: dict[str, str]
+) -> None:
     """Config:
 
     - name: share name
@@ -86,8 +85,8 @@ def create_many_shares_using_rest(
 
 
 def _create_many_shares_using_rest(
-    user: Any, config: Any, hosts: Hosts, users: Users, shares: Any
-) -> Any:
+    user: str, config: str, hosts: Hosts, users: Users, shares: dict[str, str]
+) -> None:
     data = yaml.load(config, yaml.Loader)
     for share in data:
         name = share["name"]
@@ -98,7 +97,9 @@ def _create_many_shares_using_rest(
 
 
 @given(parsers.parse("user {user} is added to mock handle service in {host}"))
-def add_user_to_handle_service(user: Any, users: Users, host: Any, hosts: Hosts) -> Any:
+def add_user_to_handle_service(
+    user: str, users: Users, host: str, hosts: Hosts
+) -> None:
     zone_hostname = hosts[transform(host)]["hostname"]
     handle_service_id = http_get(
         ip=zone_hostname,
@@ -123,13 +124,13 @@ def add_user_to_handle_service(user: Any, users: Users, host: Any, hosts: Hosts)
 )
 def create_n_shares_in_space(
     users: Users,
-    user: Any,
+    user: str,
     hosts: Hosts,
-    host: Any,
+    host: str,
     number: int,
-    space_name: Any,
-    shares: Any,
-) -> Any:
+    space_name: str,
+    shares: dict[str, str],
+) -> None:
     for i in range(number):
         create_empty_file(f"{space_name}/file{i}", users, user, host, hosts)
         create_share_using_rest(
