@@ -64,14 +64,20 @@ class Browser(ABC, PageObject):
 
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_visible_files_list(
+    def get_visible_file_rows(
         elements_list: List[BrowserRow], main_field="name"
     ) -> List[BrowserRow]:
         return [row for row in elements_list if getattr(row, main_field)]
 
-    def get_main_field_of_visible_files(self, main_field="name") -> List[str]:
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_field_value_from_visible_rows(
+        elements_list: List[BrowserRow], main_field="name"
+    ) -> List[str]:
         return [
-            getattr(row, main_field) for row in self.data if getattr(row, main_field)
+            getattr(row, main_field)
+            for row in elements_list
+            if getattr(row, main_field)
         ]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS

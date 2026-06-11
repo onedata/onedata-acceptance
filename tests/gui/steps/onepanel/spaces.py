@@ -140,13 +140,13 @@ def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle):
     getattr(storage_import_configuration, transform(toggle)).uncheck()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 @wt(
     parsers.parse(
         'user of {browser_id} sees that "{space_name}" space name is displayed in the'
         " supported spaces overview panel in Onepanel"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_correct_supported_space_opened(selenium, browser_id, space_name):
     overview = Onepanel(selenium[browser_id]).content.spaces.space.overview
     assert (

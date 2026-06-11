@@ -27,10 +27,10 @@ def assert_n_items_in_items_list(
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         new_items = get_visible_items_list(page, items_type, main_field)
-        new_items_ids = [getattr(el, main_field) for el in new_items]
+        new_items_fields = [getattr(el, main_field) for el in new_items]
 
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_ids)
-        seen_items.update(new_items_ids)
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
+        seen_items.update(new_items_fields)
         driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
 
     assert len(seen_items) == number, (
@@ -48,7 +48,7 @@ def get_visible_items_list(
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
-        return page.get_visible_files_list(elements_list, main_field)
+        return page.get_visible_file_rows(elements_list, main_field)
     return page.get_visible_elements_list(elements_list, main_field)
 
 
