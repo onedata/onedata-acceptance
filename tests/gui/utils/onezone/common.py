@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebElement
 
@@ -17,7 +15,7 @@ class OZPanel(PageObject, ExpandableMixin):
     name = Label("a.main-accordion-toggle", parent_name="oz panel")
     _toggle = WebElement("a.main-accordion-toggle")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"{self.name} panel in {self.parent}"
 
 

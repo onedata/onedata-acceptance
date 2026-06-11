@@ -17,6 +17,8 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 
+type TmpMemory = dict[str, dict[str, object]]
+
 
 class Clickable(Protocol):
     def click(self) -> None: ...
@@ -37,7 +39,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     key_name: str,
 ) -> None:
     create_xattr_columns_in_columns_menu_in_browser(
@@ -57,7 +59,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     key_name: str,
     label_name: str,
 ) -> None:
@@ -76,7 +78,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     name: str,
     with_label: bool = False,
     label_name: Optional[str] = None,
@@ -119,7 +121,7 @@ def wt_create_json_column_for_whole_document_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     label_name: str,
 ) -> None:
     create_json_column_in_columns_menu(
@@ -144,7 +146,7 @@ def wt_create_json_column_for_whole_document(
     selenium: SeleniumDrivers,
     browser_id: str,
     which_browser: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
 ) -> None:
     create_json_column_in_columns_menu(
         selenium,
@@ -169,7 +171,7 @@ def wt_create_json_column_for_whole_document(
 def wt_create_json_column_for_query_or_key_with_label(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     which_browser: str,
     label_name: str,
     mode: str,
@@ -198,7 +200,7 @@ def wt_create_json_column_for_query_or_key_with_label(
 def wt_create_json_column_for_query_or_key(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     which_browser: str,
     mode: str,
     option: str,
@@ -217,7 +219,7 @@ def wt_create_json_column_for_query_or_key(
 def create_json_column_in_columns_menu(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     which_browser: str,
     label_name: Optional[str],
     mode: str,
@@ -268,7 +270,7 @@ def create_json_column_in_columns_menu(
 def open_metadata_tab_using_tag(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
     item_name: str,
     modal_name: str,
 ) -> None:

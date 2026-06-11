@@ -22,7 +22,7 @@ from tests.gui.utils.core.web_elements import (
 )
 
 PrivilegeGranted = Literal[True, False, "Partially"]
-PrivilegeSubtypes = dict[str, bool]
+type PrivilegeSubtypes = dict[str, bool]
 PrivilegeGroupConfig = TypedDict(
     "PrivilegeGroupConfig",
     {
@@ -30,7 +30,7 @@ PrivilegeGroupConfig = TypedDict(
         "privilege subtypes": PrivilegeSubtypes,
     },
 )
-PrivilegesConfig = dict[str, PrivilegeGroupConfig]
+type PrivilegesConfig = dict[str, PrivilegeGroupConfig]
 
 
 class PrivilegeRow(PageObject):

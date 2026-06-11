@@ -20,9 +20,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-
 from tests import gui
 from tests.conftest import JsonValue
+
+type WebElemRoot = WebDriver | WebElement
 
 T = TypeVar("T")
 
@@ -190,7 +191,7 @@ def iter_ahead(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
 
 
 def find_web_elem(
-    web_elem_root: WebDriver | WebElement,
+    web_elem_root: WebElemRoot,
     css_sel: str,
     err_msg: str | Callable[[], str],
     scroll: bool = True,
@@ -207,7 +208,7 @@ def find_web_elem(
 
 
 def find_web_elem_with_text(
-    web_elem_root: WebDriver | WebElement,
+    web_elem_root: WebElemRoot,
     css_sel: str,
     text: str,
     err_msg: str | Callable[[], str],
@@ -251,7 +252,7 @@ def click_on_web_elem(
         raise RuntimeError(err_msg)
 
 
-def _scroll_to_css_sel(web_elem_root: WebDriver | WebElement, css_sel: str) -> None:
+def _scroll_to_css_sel(web_elem_root: WebElemRoot, css_sel: str) -> None:
     driver = getattr(web_elem_root, "parent", web_elem_root)
     driver.execute_script(
         "var el = (typeof $ === 'function' ? "

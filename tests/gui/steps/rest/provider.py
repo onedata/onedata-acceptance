@@ -20,6 +20,8 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.user_utils import AdminUser
 
+type ProviderResponse = dict[str, JsonValue]
+
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:
     user = "admin"
@@ -55,7 +57,7 @@ def add_provider_service_node(
     onepanel_credentials: AdminUser,
     data: dict[str, JsonValue],
     service: OnedataService,
-) -> dict[str, JsonValue]:
+) -> ProviderResponse:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -76,7 +78,7 @@ def get_provider_service_nodes_statuses(
     provider: str,
     onepanel_credentials: AdminUser,
     service: OnedataService,
-) -> dict[str, JsonValue]:
+) -> ProviderResponse:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
