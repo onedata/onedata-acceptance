@@ -10,6 +10,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
@@ -58,7 +59,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ListElement, parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -124,7 +125,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list):
 
     if space_list == "all":
         space_list = [
-            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
+            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_headers_list
         ]
     else:
         space_list = parse_seq(space_list)
@@ -240,24 +241,18 @@ def request_space_support_using_gui(
     clipboard,
     receiver,
 ):
-    where = "Data"
-    option = "Providers"
-    notify_type = "info"
-    text_regexp = ".*copied.*"
-    item_type = "token"
-
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     click_get_support_button_on_providers_page(selenium, user)
     click_copy_button_on_request_support_page(
         selenium, user, displays, clipboard, tmp_memory
     )
-    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    notify_visible_with_text(selenium, user, "info", ".*copied.*")
     send_copied_item_to_other_users(
-        user, item_type, receiver, tmp_memory, displays, clipboard
+        user, "token", receiver, tmp_memory, displays, clipboard
     )
 
 
@@ -327,14 +322,11 @@ def assert_provider_does_not_support_space_in_oz_gui(
 def assert_space_is_supported_by_provider_in_oz_gui(
     selenium, user, space_name, provider_name, hosts
 ):
-    where = "Data"
-    option = "Providers"
-
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     assert_providers_list_contains_provider(selenium, user, provider_name, hosts)
 
 
@@ -430,7 +422,6 @@ def add_group_to_space_or_group(
     modal = "Add one of groups"
     member = "groups"
     button_in_modal = "Add"
-
     click_element_on_lists_on_left_sidebar_menu(
         selenium, browser_id, option, where_name
     )
@@ -490,8 +481,8 @@ def copy_command_from_rest_api_modal(selenium, browser_id, command):
 
 @wt(
     parsers.parse(
-        'user of {browser_id} opens "{space_name}" space on the spaces list in the'
-        " sidebar"
+        'user of {browser_id} opens "{space_name}" space on the spaces'
+        " list in the sidebar"
     )
 )
 def open_space_in_spaces_list(selenium, browser_id, space_name):
@@ -500,24 +491,27 @@ def open_space_in_spaces_list(selenium, browser_id, space_name):
     seen_spaces = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        new_spaces = _get_visible_spaces_list(page)
-        new_spaces_names = [el.text.split("\n")[0] for el in new_spaces]
+        new_spaces = get_visible_items_list(
+            page, items_type=ListElement.SPACES_HEADERS, main_field="name"
+        )
+        currently_seen_names = [new_space.name for new_space in new_spaces]
 
-        if space_name in new_spaces_names:
-            index = new_spaces_names.index(space_name)
-            new_spaces[index].click()
+        if space_name in currently_seen_names:
+            space = [space for space in new_spaces if space.name == space_name][0]
+            driver.execute_script(
+                "arguments[0].scrollIntoView();",
+                space.clickable_field,
+            )
+            space.click()
             return
 
-        # if there are at least 1 new space keep scrolling
-        stop_scrolling_flag = not any(el not in seen_spaces for el in new_spaces_names)
-        seen_spaces.update(new_spaces_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1])
+        stop_scrolling_flag = not any(
+            el not in seen_spaces for el in currently_seen_names
+        )
+        seen_spaces.update(currently_seen_names)
+        driver.execute_script("arguments[0].scrollIntoView();", new_spaces[-1].web_elem)
+
     raise AssertionError(f"did not manage to open space {space_name}")
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_spaces_list(page):
-    return page.get_visible_spaces_list()
 
 
 @wt(
@@ -530,10 +524,11 @@ def _get_visible_spaces_list(page):
 def assert_opened_space(selenium, browser_id, space_name):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
-    vis_spaces = _get_visible_spaces_list(page)
-    vis_spaces_names = [el.text.split("\n")[0] for el in vis_spaces]
-    index = vis_spaces_names.index(space_name)
-    el = vis_spaces[index]
+    vis_spaces = get_visible_items_list(
+        page, items_type=ListElement.SPACES, main_field="name"
+    )
+    space = [space for space in vis_spaces if space.name == space_name][0]
+
     err_msg = f"Space {space_name} is not opened."
-    assert el.is_displayed(), err_msg
-    assert "active" in el.get_attribute("class"), err_msg
+    assert space.is_displayed(), err_msg
+    assert "active" in space.web_elem.get_attribute("class"), err_msg

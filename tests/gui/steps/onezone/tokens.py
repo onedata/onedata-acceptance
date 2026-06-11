@@ -88,7 +88,7 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, button):
                 button_clean.click()
                 return
             time.sleep(0.1)
-        raise RuntimeError(f"did not menage to click {button} button")
+        raise RuntimeError(f"Did not manage to click {button} button")
     else:
         sidebar = OZLoggedIn(driver)["tokens"].sidebar
         getattr(sidebar, transform(button))()
@@ -167,7 +167,7 @@ def select_member_from_dropdown(selenium, browser_id, member_name):
 def click_create_token_button_in_create_token_page(selenium, browser_id):
     driver = selenium[browser_id]
     # prevent clicking when there is ongoing animation
-    time.sleep(0.1)
+    time.sleep(0.2)
     create_token_button = OZLoggedIn(driver)["tokens"].create_token_page.create_token
     create_token_button.click()
     # ensure clicking at create token succeeded
@@ -370,9 +370,10 @@ def assert_token_on_tokens_list(selenium, browser_id, token_name):
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} types "{token_name}" to token name '
-        'input box in "Create new token" view'
+    parsers.re(
+        r'user of (?P<browser_id>.*?) succeeds to type "(?P<token_name>.*?)" to token'
+        r" name "
+        r'input box in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -380,6 +381,9 @@ def type_new_token_name(selenium, browser_id, token_name):
     driver = selenium[browser_id]
     input_box = OZLoggedIn(driver)["tokens"].create_token_page.token_name_input
     input_box.value = token_name
+    assert (
+        input_box.value == token_name
+    ), f"Failed to type new token name, expected {token_name}, got: {input_box.value}"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

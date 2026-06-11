@@ -4,7 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -12,29 +12,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.oneprovider.browser import Browser
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def assert_n_items_in_items_list(
-    page, selenium, browser_id, number: int, items_names, transform_fun=None
+    page, selenium, browser_id, number: int, items_type: ListElement, main_field: str
 ):
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
-    if not transform_fun:
-        transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [
-            transform_fun(el) for el in new_items if transform_fun(el) != ""
-        ]
+        new_items = get_visible_items_list(page, items_type, main_field)
+        new_items_fields = [getattr(el, main_field) for el in new_items]
 
-        # if there are at least 1 new item keep scrolling
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
-        seen_items.update(new_items_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
+        seen_items.update(new_items_fields)
+        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -44,8 +42,14 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page, items_names):
-    return getattr(page, f"get_visible_{items_names}_list")()
+def get_visible_items_list(
+    page: Union[GenericPage, Browser], items_type: ListElement, main_field="name"
+):
+    items_type_str = transform(items_type.value)
+    elements_list = getattr(page, f"{items_type_str}_list")
+    if isinstance(page, Browser):
+        return page.get_visible_file_rows(elements_list, main_field)
+    return page.get_visible_elements_list(elements_list, main_field)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -64,15 +68,23 @@ def _get_page(where, driver):
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} list in"
-        " the sidebar"
-    )
+    parsers.re(
+        r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
+        r" (?P<items_type>.*) on the (?P<list_type>.*)"
+        r" list in the sidebar",
+    ),
+    converters={
+        "number": int,
+        "items_type": ListElement,
+        "list_type": ListElement,
+    },
 )
-def wt_assert_n_items_in_items_list(selenium, browser_id, number: int, items, where):
+def wt_assert_n_items_in_items_list(
+    selenium, browser_id, number: int, items_type: ListElement, list_type: ListElement
+):
     driver = selenium[browser_id]
-    page = _get_page(where, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    page = _get_page(list_type.value, driver)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
 def get_last_item_number_in_table(driver):
@@ -152,14 +164,15 @@ def assert_logs_order_with_optional_logs(
                 idx += 1
 
 
-def scroll_and_get_columns(modal, columns):
-    # The modal has to be a class that implements get_rows_of_columns
+def scroll_and_get_columns(modal, columns, main_column="file"):
+    # The modal has to be a class that implements get_visible_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems["file"]
+        visible_elems = modal.get_visible_rows_of_columns(columns)
+        visible_names = visible_elems[main_column]
+
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(
             name not in checked_names for name in visible_names

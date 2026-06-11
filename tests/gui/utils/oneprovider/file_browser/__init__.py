@@ -49,12 +49,6 @@ class _FileBrowser(Browser):
     def __str__(self):
         return f"file browser in {self.parent}"
 
-    def names_of_visible_elems(self):
-        files = self._data
-        # make sure row is fully loaded in gui
-        names = [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
-        return names
-
     @contextmanager
     def select_files(self):
         ctrl_or_cmd_key = (

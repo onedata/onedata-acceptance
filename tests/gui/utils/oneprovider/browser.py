@@ -7,21 +7,22 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import ABC
-from typing import ClassVar, Optional
+from typing import ClassVar, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
+from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
 from .breadcrumbs import Breadcrumbs
@@ -33,6 +34,7 @@ class Browser(ABC, PageObject):
     column_header_cls: ClassVar[Optional[type[PageObject]]] = None
     data: ClassVar[WebItemsSequence]
     column_headers: ClassVar[WebItemsSequence]
+    files_list: ClassVar[WebItemsSequence]
 
     header = WebElement(".file-browser-head-container")
     browser_msg_header = Label(".content-info-content-container h1")
@@ -44,11 +46,6 @@ class Browser(ABC, PageObject):
     error_msg = Label(".error-dir-text")
     _empty_dir_icon = WebElement(".empty-dir-image")
 
-    _data = WebElementsSequence(".data-row.fb-table-row")
-    items_list_web_elems = WebElementsSequence(
-        ".data-row.fb-table-row .fb-table-col-files"
-    )
-
     _bottom = WebElement(".table-bottom-spacing")
 
     parent = ""
@@ -57,6 +54,7 @@ class Browser(ABC, PageObject):
         super().__init_subclass__(**kwargs)
         if cls.row_cls is not None:
             cls.data = WebItemsSequence(".data-row.fb-table-row", cls=cls.row_cls)
+            cls.files_list = cls.data
         if cls.column_header_cls is not None:
             cls.column_headers = WebItemsSequence(
                 ".fb-table-secondary-col", cls=cls.column_header_cls
@@ -64,13 +62,23 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def names_of_visible_elems(self):
-        files = self.items_list_web_elems
-        names = [f.text.split("\n")[0] for f in files]
-        return names
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_file_rows(
+        elements_list: List[BrowserRow], main_field="name"
+    ) -> List[BrowserRow]:
+        return [row for row in elements_list if getattr(row, main_field)]
 
-    def get_visible_items_list(self):
-        return [el for el in self.items_list_web_elems if el.text != ""]
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_field_value_from_visible_rows(
+        elements_list: List[BrowserRow], main_field="name"
+    ) -> List[str]:
+        return [
+            getattr(row, main_field)
+            for row in elements_list
+            if getattr(row, main_field)
+        ]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 
