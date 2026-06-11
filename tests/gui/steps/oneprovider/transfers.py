@@ -22,6 +22,7 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 def _assert_transfer(
@@ -29,8 +30,8 @@ def _assert_transfer(
     item_type: Any,
     desc: Any,
     sufix: Any,
-    hosts: Any,
-    selenium: Any,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
     browser_id: Any,
 ) -> Any:
     assert getattr(
@@ -80,7 +81,7 @@ def _assert_transfer(
 )
 @repeat_failed(interval=0.5, timeout=240)
 def assert_ended_transfer(
-    selenium: Any, browser_id: Any, item_type: Any, desc: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_type: Any, desc: Any, hosts: Hosts
 ) -> Any:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     transfer = transfers.ended[0]
@@ -103,7 +104,7 @@ def assert_ended_transfer(
 )
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(
-    selenium: Any, browser_id: Any, item_type: Any, desc: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_type: Any, desc: Any, hosts: Hosts
 ) -> Any:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     transfer = transfers.waiting[0]
@@ -132,7 +133,7 @@ def assert_waiting_transfer(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(
-    selenium: Any, browser_id: Any, option: Any, state: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, state: Any
 ) -> Any:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     if state == "waiting":
@@ -153,7 +154,7 @@ def cancel_or_rerun_transfer(
     timeout=420,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_waiting_transfer_to_start(selenium: Any, browser_id: Any) -> Any:
+def wait_for_waiting_transfer_to_start(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     assert (
         len(OPLoggedIn(selenium[browser_id]).transfers.waiting) == 0
     ), "Waiting transfers did not start"
@@ -165,7 +166,7 @@ def wait_for_waiting_transfer_to_start(selenium: Any, browser_id: Any) -> Any:
     timeout=240,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_ongoing_tranfers_to_finish(selenium: Any, browser_id: Any) -> Any:
+def wait_for_ongoing_tranfers_to_finish(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     assert (
         len(OPLoggedIn(selenium[browser_id]).transfers.ongoing) == 0
     ), "Ongoing transfers did not finish"
@@ -173,7 +174,7 @@ def wait_for_ongoing_tranfers_to_finish(selenium: Any, browser_id: Any) -> Any:
 
 @wt(parsers.re("user of (?P<browser_id>.*) expands first transfer record"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_transfer_record(selenium: Any, browser_id: Any) -> Any:
+def expand_transfer_record(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     transfers.ended[0].expand()
 
@@ -185,7 +186,7 @@ def expand_transfer_record(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_non_zero_transfer_speed(selenium: Any, browser_id: Any) -> Any:
+def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
     chart = transfers.ended[0].get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
@@ -210,7 +211,7 @@ def check_provider_in_migrate_dropdown(driver: Any, provider_name: Any) -> Any:
     )
 )
 def migrate_item(
-    selenium: Any, browser_id: Any, source: Any, target: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, source: Any, target: Any, hosts: Hosts
 ) -> Any:
     menu_option = "Migrate..."
 
@@ -236,7 +237,7 @@ def migrate_item(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def replicate_item(selenium: Any, browser_id: Any, provider: Any, hosts: Any) -> Any:
+def replicate_item(selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts) -> Any:
     menu_option = "Replicate here"
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -261,7 +262,7 @@ def is_current_item_fully_on_provider(driver: Any, provider_name: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_button_in_data_distribution_panel(
-    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -278,7 +279,7 @@ def click_menu_button_in_data_distribution_panel(
     )
 )
 def fail_to_click_option_in_data_distribution_popup(
-    browser_id: Any, option: Any, selenium: Any
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     try:
@@ -297,7 +298,7 @@ def fail_to_click_option_in_data_distribution_popup(
     )
 )
 @repeat_failed(interval=1, timeout=90)
-def assert_see_history_btn_shown(selenium: Any, browser_id: Any) -> Any:
+def assert_see_history_btn_shown(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     button = getattr(Modals(driver).details_modal.data_distribution, "see_history_btn")
     assert (
@@ -310,13 +311,13 @@ def assert_see_history_btn_shown(selenium: Any, browser_id: Any) -> Any:
         'user of (?P<browser_id>.*) selects "(?P<space>.*)" space in transfers tab'
     )
 )
-def change_transfer_space(selenium: Any, browser_id: Any, space: Any) -> Any:
+def change_transfer_space(selenium: SeleniumDrivers, browser_id: Any, space: Any) -> Any:
     OPLoggedIn(selenium[browser_id]).transfers.spaces[space].select()
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for Transfers page to load"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_transfers_page_to_load(selenium: Any, browser_id: Any) -> Any:
+def wait_for_transfers_page_to_load(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
 
     assert OPLoggedIn(selenium[browser_id]).transfers.providers_table.is_displayed()
@@ -330,7 +331,7 @@ def wait_for_transfers_page_to_load(selenium: Any, browser_id: Any) -> Any:
     )
 )
 def assert_option_in_provider_popup_menu(
-    selenium: Any, browser_id: Any, provider: Any, hosts: Any, options: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts, options: Any
 ) -> Any:
 
     driver = selenium[browser_id]
@@ -347,7 +348,7 @@ def assert_option_in_provider_popup_menu(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _select_columns_to_be_visible_in_transfers(
-    selenium: Any, browser_id: Any, columns: Any
+    selenium: SeleniumDrivers, browser_id: Any, columns: Any
 ) -> Any:
     option_select = "select"
     option_unselect = "unselect"
@@ -368,7 +369,7 @@ def _select_columns_to_be_visible_in_transfers(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_transfers_and_enable_initial_cols(browser_id: Any, selenium: Any) -> Any:
+def _get_transfers_and_enable_initial_cols(browser_id: Any, selenium: SeleniumDrivers) -> Any:
     columns = ["user", "type", "status"]
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers
@@ -382,7 +383,7 @@ def _get_transfers_and_enable_initial_cols(browser_id: Any, selenium: Any) -> An
     )
 )
 def select_columns_to_be_visible_in_transfers(
-    selenium: Any, browser_id: Any, columns: Any
+    selenium: SeleniumDrivers, browser_id: Any, columns: Any
 ) -> Any:
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, parse_seq(columns))
 
@@ -394,7 +395,7 @@ def select_columns_to_be_visible_in_transfers(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_visible_columns_in_transfers(
-    browser_id: Any, columns: Any, selenium: Any
+    browser_id: Any, columns: Any, selenium: SeleniumDrivers
 ) -> Any:
     columns = parse_seq(columns)
     transfers = OPLoggedIn(selenium[browser_id]).transfers

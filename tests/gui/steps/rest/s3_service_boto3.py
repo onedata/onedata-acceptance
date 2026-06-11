@@ -16,6 +16,7 @@ from tests import ONES3_PORT
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, Tokens
 
 DEFAULT_ONES3_TIMEOUT = 10
 
@@ -48,7 +49,7 @@ def create_s3client(s3_endpoint: Any, access_token: Any, secret_key: Any) -> Any
     )
 
 
-def get_s3client(tmp_memory: Any, tokens: Any, hosts: Any) -> Any:
+def get_s3client(tmp_memory: Any, tokens: Tokens, hosts: Hosts) -> Any:
     if tmp_memory["s3 client"]:
         return tmp_memory["s3 client"]
     s3_endpoint = f"https://{hosts["oneprovider-1"]["hostname"]}:{ONES3_PORT}"
@@ -71,7 +72,7 @@ def list_buckets(s3: Any) -> Any:
 @wt(parsers.parse('using OneS3, user {user} can see spaces "{spaces_list}"'))
 @repeat_failed(timeout=DEFAULT_ONES3_TIMEOUT)
 def wt_assert_listed_buckets(
-    spaces_list: Any, tmp_memory: Any, tokens: Any, hosts: Any
+    spaces_list: Any, tmp_memory: Any, tokens: Tokens, hosts: Hosts
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_spaces = list_buckets(s3)
@@ -96,7 +97,7 @@ def does_bucket_exist(s3: Any, bucket_name: Any) -> Any:
     )
 )
 def wt_assert_bucket_exists(
-    space_name: Any, tmp_memory: Any, tokens: Any, hosts: Any
+    space_name: Any, tmp_memory: Any, tokens: Tokens, hosts: Hosts
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     assert does_bucket_exist(s3, space_name)
@@ -122,8 +123,8 @@ def wt_download_file_from_bucket(
     tmpdir: Any,
     user: Any,
     tmp_memory: Any,
-    tokens: Any,
-    hosts: Any,
+    tokens: Tokens,
+    hosts: Hosts,
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     download_file_from_bucket(s3, space_name, file_name, tmpdir, user)
@@ -149,8 +150,8 @@ def wt_create_file_in_bucket(
     file_name: Any,
     file_content: Any,
     tmp_memory: Any,
-    tokens: Any,
-    hosts: Any,
+    tokens: Tokens,
+    hosts: Hosts,
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     create_file_in_bucket(s3, space_name, file_name, file_content)
@@ -172,8 +173,8 @@ def wt_assert_file_content_read_from_bucket(
     file_name: Any,
     file_content: Any,
     tmp_memory: Any,
-    tokens: Any,
-    hosts: Any,
+    tokens: Tokens,
+    hosts: Hosts,
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = read_file_content_from_bucket(s3, space_name, file_name)
@@ -193,7 +194,7 @@ def list_bucket_content(s3: Any, bucket_name: Any) -> Any:
 
 @wt(parsers.parse('using OneS3, user {user} can see items {items} in "{space_name}"'))
 def wt_assert_bucket_content(
-    space_name: Any, items: Any, tmp_memory: Any, tokens: Any, hosts: Any
+    space_name: Any, items: Any, tmp_memory: Any, tokens: Tokens, hosts: Hosts
 ) -> Any:
     s3 = get_s3client(tmp_memory, tokens, hosts)
     actual_content = list_bucket_content(s3, space_name)

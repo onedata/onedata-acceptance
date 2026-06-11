@@ -14,6 +14,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 DATASET_BROWSER = "dataset browser"
 
@@ -27,7 +28,7 @@ DATASET_BROWSER = "dataset browser"
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_general_toggle_checked_for_ancestors(
-    browser_id: Any, selenium: Any, kind: Any
+    browser_id: Any, selenium: SeleniumDrivers, kind: Any
 ) -> Any:
     driver = selenium[browser_id]
     protection_kind = f"ancestor_{kind}_protection"
@@ -43,7 +44,7 @@ def assert_general_toggle_checked_for_ancestors(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_dataset_modal(browser_id: Any, selenium: Any) -> Any:
+def click_on_option_in_dataset_modal(browser_id: Any, selenium: SeleniumDrivers) -> Any:
     driver = selenium[browser_id]
     Modals(driver).datasets.ancestor_option.click()
 
@@ -56,7 +57,7 @@ def click_on_option_in_dataset_modal(browser_id: Any, selenium: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_toggle_checked_on_item_in_ancestor_list(
-    browser_id: Any, selenium: Any, kind: Any, name: Any
+    browser_id: Any, selenium: SeleniumDrivers, kind: Any, name: Any
 ) -> Any:
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
@@ -73,7 +74,7 @@ def assert_toggle_checked_on_item_in_ancestor_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_toggle_unchecked_on_item_in_ancestor_list(
-    browser_id: Any, selenium: Any, kind: Any, name: Any
+    browser_id: Any, selenium: SeleniumDrivers, kind: Any, name: Any
 ) -> Any:
     driver = selenium[browser_id]
     protection_kind = f"{kind}_protection_toggle"
@@ -90,7 +91,7 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(
-    browser_id: Any, selenium: Any, toggle_type: Any, modal_name: Any
+    browser_id: Any, selenium: SeleniumDrivers, toggle_type: Any, modal_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     toggle = getattr(
@@ -110,7 +111,7 @@ def click_protection_toggle(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def can_not_click_protection_toggle(
-    browser_id: Any, selenium: Any, toggle_type: Any, modal_name: Any
+    browser_id: Any, selenium: SeleniumDrivers, toggle_type: Any, modal_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     try:
@@ -126,7 +127,7 @@ def can_not_click_protection_toggle(
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_protected_tag_label_in_dataset_modal(
-    browser_id: Any, selenium: Any, text: Any
+    browser_id: Any, selenium: SeleniumDrivers, text: Any
 ) -> Any:
     driver = selenium[browser_id]
     error = f"Text: {text} not found in label "
@@ -221,7 +222,7 @@ def assert_two_identical_root_file_paths(
     )
 )
 def fail_to_click_button_in_modal(
-    browser_id: Any, button: Any, modal: Any, selenium: Any
+    browser_id: Any, button: Any, modal: Any, selenium: SeleniumDrivers
 ) -> Any:
     try:
         click_modal_button(selenium, browser_id, button, modal)
@@ -238,7 +239,7 @@ def fail_to_click_button_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle_in_ancestor_list(
-    browser_id: Any, selenium: Any, name: Any, modal_name: Any, toggle_type: Any
+    browser_id: Any, selenium: SeleniumDrivers, name: Any, modal_name: Any, toggle_type: Any
 ) -> Any:
     driver = selenium[browser_id]
     toggle = getattr(
@@ -254,7 +255,7 @@ def click_protection_toggle_in_ancestor_list(
 
 @wt(parsers.parse("user of {browser_id} clicks on archives tab in datasets modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_tab_in_dataset_modal(selenium: Any, browser_id: Any) -> Any:
+def click_tab_in_dataset_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     archives_tab = Modals(driver).datasets.archives_tab
     archives_tab.click()

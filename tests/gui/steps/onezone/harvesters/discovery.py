@@ -16,6 +16,7 @@ from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -25,7 +26,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_discovery_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     button = transform(button_name) + "_button"
@@ -34,7 +35,7 @@ def click_button_on_discovery_on_left_sidebar_menu(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_discovery_page(selenium: Any, browser_id: Any) -> Any:
+def click_create_button_in_discovery_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].create_button()
 
@@ -48,7 +49,7 @@ def click_create_button_in_discovery_page(selenium: Any, browser_id: Any) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_element_exists_on_sidebar_list(
-    selenium: Any, browser_id: Any, name: Any, option: Any, list_type: Any
+    selenium: SeleniumDrivers, browser_id: Any, name: Any, option: Any, list_type: Any
 ) -> Any:
     driver = selenium[browser_id]
     list_type = "discovery" if list_type == "harvesters" else list_type
@@ -72,7 +73,7 @@ def check_element_exists_on_sidebar_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_harvester_menu(
-    selenium: Any, browser_id: Any, option: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, name: Any
 ) -> Any:
     page = OZLoggedIn(selenium[browser_id])["discovery"]
     page.elements_list[name]()
@@ -85,7 +86,7 @@ def click_on_option_in_harvester_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_rename_input_field_in_discovery_page(
-    selenium: Any, browser_id: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
 ) -> Any:
     driver = selenium[browser_id]
     input_field = OZLoggedIn(driver)["discovery"].rename_input
@@ -94,7 +95,7 @@ def type_text_to_rename_input_field_in_discovery_page(
 
 @wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_harvester_rename_using_button(selenium: Any, browser_id: Any) -> Any:
+def confirm_harvester_rename_using_button(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].rename_button()
 
@@ -107,7 +108,7 @@ def confirm_harvester_rename_using_button(selenium: Any, browser_id: Any) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_harvester_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, harvester_name: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any, option: Any
 ) -> Any:
     driver = selenium[browser_id]
     getattr(
@@ -117,7 +118,7 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
 
 
 def click_option_in_discovery_page_menu(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"]
@@ -134,7 +135,7 @@ def click_option_in_discovery_page_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_on_discovery_page(
-    selenium: Any, browser_id: Any, alert_text: Any
+    selenium: SeleniumDrivers, browser_id: Any, alert_text: Any
 ) -> Any:
     driver = selenium[browser_id]
     forbidden_alert = OZLoggedIn(driver)["discovery"].forbidden_alert.text
@@ -150,7 +151,7 @@ def see_insufficient_permissions_alert_on_discovery_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_input_field_in_discovery_page(
-    selenium: Any, browser_id: Any, text: Any, input_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any, input_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
@@ -166,7 +167,7 @@ def type_text_to_input_field_in_discovery_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_endpoint_to_input_field_in_discovery_page(
-    selenium: Any, browser_id: Any, input_name: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, input_name: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     input_field = getattr(OZLoggedIn(driver)["discovery"], input_name)
@@ -181,7 +182,7 @@ def type_endpoint_to_input_field_in_discovery_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_harvester_spaces_page(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
@@ -196,7 +197,7 @@ def click_button_in_harvester_spaces_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(
-    selenium: Any, browser_id: Any, element_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, element_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal_name = "add_one_of_elements"
@@ -219,7 +220,7 @@ def choose_element_from_dropdown_in_add_element_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_has_appeared_in_discovery_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     assert (
@@ -228,7 +229,7 @@ def assert_space_has_appeared_in_discovery_page(
 
 
 def click_remove_space_option_in_menu_in_discover_spaces_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"]

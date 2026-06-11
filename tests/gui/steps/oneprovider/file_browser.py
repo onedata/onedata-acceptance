@@ -25,6 +25,7 @@ from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
@@ -153,7 +154,7 @@ def assert_item_in_file_browser_is_of_size(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_size_to_be_displayed_in_data_row(
-    selenium: Any, browser_id: Any, tmp_memory: Any, item_name: Any, size: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_name: Any, size: Any
 ) -> Any:
     # refresh site after enabling size statistics to see displayed size
     # in data row
@@ -413,7 +414,7 @@ def assert_empty_dir_msg_in_file_browser(browser_id: Any, tmp_memory: Any) -> An
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_create_new_directory(selenium: Any, browser_id: Any, option: Any) -> Any:
+def confirm_create_new_directory(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -428,7 +429,7 @@ def confirm_create_new_directory(selenium: Any, browser_id: Any, option: Any) ->
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_directory(selenium: Any, browser_id: Any, option: Any) -> Any:
+def confirm_rename_directory(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -486,7 +487,7 @@ def count_files_while_scrolling(
     )
 )
 def check_file_owner_in_file_details_modal(
-    selenium: Any, browser_id: Any, owner: Any
+    selenium: SeleniumDrivers, browser_id: Any, owner: Any
 ) -> Any:
     assert_tab_in_modal(selenium, browser_id, "Info", "File details")
     actual = Modals(selenium[browser_id]).details_modal.owner
@@ -494,7 +495,7 @@ def check_file_owner_in_file_details_modal(
 
 
 def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-    selenium: Any, browser_id: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: Any
 ) -> Any:
     name = Modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip("(").strip(")")
@@ -504,7 +505,7 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
 
 
 def assert_num_of_hardlinks_entry_in_file_dets_modal(
-    selenium: Any, browser_id: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: Any
 ) -> Any:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     assert len(entries) == int(
@@ -519,7 +520,7 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
     )
 )
 def assert_num_of_hardlinks_in_file_dets_modal(
-    selenium: Any, browser_id: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: Any
 ) -> Any:
     assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number)
     assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number)
@@ -533,7 +534,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(
     )
 )
 def assert_hardlink_path_in_file_dets_modal(
-    selenium: Any, browser_id: Any, file: Any, path: Any
+    selenium: SeleniumDrivers, browser_id: Any, file: Any, path: Any
 ) -> Any:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
@@ -550,7 +551,7 @@ def assert_hardlink_path_in_file_dets_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_hardlinks_paths_in_file_dets_modal(
-    selenium: Any, browser_id: Any, paths: Any
+    selenium: SeleniumDrivers, browser_id: Any, paths: Any
 ) -> Any:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
@@ -567,7 +568,7 @@ def assert_hardlinks_paths_in_file_dets_modal(
     )
 )
 def assert_property_in_symlink_dets_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     link_property: Any,
     value: Any,
@@ -701,7 +702,7 @@ def write_to_jump_input(browser_id: Any, tmp_memory: Any, prefix: Any) -> Any:
         "{option} because of insufficient privileges"
     )
 )
-def assert_message_at_alert_modal(browser_id: Any, option: Any, selenium: Any) -> Any:
+def assert_message_at_alert_modal(browser_id: Any, option: Any, selenium: SeleniumDrivers) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).error
     messages_dict = {
@@ -737,12 +738,12 @@ def scroll_to_top_in_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
     )
 )
 def assert_physical_location_path_and_copy_in_file_details(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     provider: Any,
     clipboard: Any,
     displays: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -760,7 +761,7 @@ def assert_physical_location_path_and_copy_in_file_details(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     tmp_memory: Any,
     expected_msg: Any,

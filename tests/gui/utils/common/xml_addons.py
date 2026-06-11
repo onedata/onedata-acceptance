@@ -12,6 +12,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import PublicShareView as public_share
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 NAMESPACES_OPENAIRE = {
     "oaire": "http://namespace.openaire.eu/schema/oaire/",
@@ -110,7 +111,7 @@ def replace_xml_editor_data(driver: Any, new_data: Any) -> Any:
     )
 
 
-def check_ace_editor_appeared(selenium: Any, browser_id: Any) -> Any:
+def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)

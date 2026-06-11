@@ -12,11 +12,12 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_range_as_initial_workflow_value(
-    selenium: Any, browser_id: Any, item: Any, add_new: Any = True
+    selenium: SeleniumDrivers, browser_id: Any, item: Any, add_new: Any = True
 ) -> Any:
     driver = selenium[browser_id]
     if add_new:
@@ -61,7 +62,7 @@ def open_select_initial_files_modal(driver: Any, store_name: Any = False) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(
-    selenium: Any, browser_id: Any, store_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, store_name: Any
 ) -> Any:
     option = "Select groups"
     driver = selenium[browser_id]
@@ -144,7 +145,7 @@ def get_data_type_of_array_initial_value_store(driver: Any, store_name: Any) -> 
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_in_select_initial_groups_modal(
-    selenium: Any, browser_id: Any, option: Any, group: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, group: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).select_groups

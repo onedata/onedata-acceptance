@@ -30,14 +30,15 @@ from tests.gui.steps.onezone.providers import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     provider_name: Any,
     domain_provider: Any,
-    hosts: Any,
+    hosts: Hosts,
     with_refresh: Any = False,
     test_domain: Any = False,
 ) -> Any:
@@ -70,7 +71,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
 
 
 def assert_there_is_no_provider_in_oz_gui(
-    selenium: Any, user: Any, provider_name: Any, hosts: Any
+    selenium: SeleniumDrivers, user: Any, provider_name: Any, hosts: Hosts
 ) -> Any:
     option = "Data"
 
@@ -82,7 +83,7 @@ def assert_there_is_no_provider_in_oz_gui(
 
 
 def send_copied_invite_token_in_oz_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     browser_list: Any,
     tmp_memory: Any,
@@ -106,7 +107,7 @@ def send_copied_invite_token_in_oz_gui(
     )
 )
 def revoke_support_of_provider_in_list(
-    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     button = "Cease support"
@@ -130,7 +131,7 @@ def revoke_support_of_provider_in_list(
     )
 )
 def assert_file_with_content_in_provider_storage(
-    browser_id: Any, clipboard: Any, displays: Any, content: Any, hosts: Any
+    browser_id: Any, clipboard: Any, displays: Any, content: Any, hosts: Hosts
 ) -> Any:
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)

@@ -60,12 +60,13 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_workflow_using_gui(
-    selenium: Any, browser_id: Any, workflow_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, workflow_name: Any
 ) -> Any:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
@@ -82,7 +83,7 @@ def create_workflow_using_gui(
     )
 )
 def upload_and_assert_workflow_to_inventory_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     inventory: Any,
     workflow: Any,
@@ -107,7 +108,7 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium: Any, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
 ) -> Any:
     upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
@@ -121,7 +122,7 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium: Any, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
 ) -> Any:
     _upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
@@ -135,7 +136,7 @@ def upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples_with_given_method(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     inventory: Any,
     workflow: Any,
@@ -153,7 +154,7 @@ def upload_workflow_from_automation_examples_with_given_method(
 
 
 def _upload_workflow_from_automation_examples(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     inventory: Any,
     workflow: Any,
@@ -195,7 +196,7 @@ def change_workflow_dump_name_to_visible_name(workflow_name: Any) -> Any:
 )
 def execute_workflow_with_input_config(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space: Any,
     ordinal: Any,
     workflow: Any,
@@ -229,7 +230,7 @@ def execute_workflow_with_input_config(
 
 def _execute_workflow_with_input_config(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space: Any,
     ordinal: Any,
     workflow: Any,
@@ -308,7 +309,7 @@ def _execute_workflow_with_input_config(
 )
 def execute_workflow_and_wait(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space: Any,
     ordinal: Any,
     workflow: Any,
@@ -340,7 +341,7 @@ def execute_workflow_and_wait(
 )
 def execute_workflow(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space: Any,
     ordinal: Any,
     workflow: Any,
@@ -405,7 +406,7 @@ def execute_workflow(
     )
 )
 def modify_data_type_in_store(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     store_name: Any,
     value: Any,

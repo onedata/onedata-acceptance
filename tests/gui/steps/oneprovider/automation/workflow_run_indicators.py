@@ -13,9 +13,10 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 )
 from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
-def get_run_indicators_for_lane(selenium: Any, browser_id: Any, lane_name: Any) -> Any:
+def get_run_indicators_for_lane(selenium: SeleniumDrivers, browser_id: Any, lane_name: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
@@ -30,7 +31,7 @@ def get_run_indicators_for_lane(selenium: Any, browser_id: Any, lane_name: Any) 
     )
 )
 def assert_run_indicator_for_lane(
-    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any, number: Any
 ) -> Any:
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
     err_msg = (
@@ -48,7 +49,7 @@ def assert_run_indicator_for_lane(
     )
 )
 def assert_certain_indicator_is_only_one_in_lane(
-    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any, number: Any
 ) -> Any:
     assert_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     run_indicators = get_run_indicators_for_lane(selenium, browser_id, lane_name)
@@ -66,7 +67,7 @@ def assert_certain_indicator_is_only_one_in_lane(
     )
 )
 def click_on_run_indicator_for_lane(
-    selenium: Any, browser_id: Any, lane_name: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any, number: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
@@ -82,7 +83,7 @@ def click_on_run_indicator_for_lane(
     )
 )
 def assert_origin_run_number_for_run_in_lane(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane_name: Any,
     run_number: Any,
@@ -109,7 +110,7 @@ def assert_origin_run_number_for_run_in_lane(
     )
 )
 def assert_status_for_run_in_popup(
-    selenium: Any, browser_id: Any, option: Any, value: Any, lane_name: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, value: Any, lane_name: Any, number: Any
 ) -> Any:
     click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     info = Popups(selenium[browser_id]).run_info

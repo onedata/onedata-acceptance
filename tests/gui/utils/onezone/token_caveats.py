@@ -13,6 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
+from tests.conftest import Hosts, SeleniumDrivers, Users
     Button,
     Input,
     Label,
@@ -73,18 +74,18 @@ class CaveatField(PageObject):
     def is_allow(self) -> Any:
         return self.item_label == "Allow"
 
-    def set_allow(self, popups: Any, selenium: Any, browser_id: Any) -> Any:
+    def set_allow(self, popups: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
         if not self.is_allow():
             self.expander()
             popups(selenium[browser_id]).power_select.choose_item("Allow")
 
-    def set_deny(self, popups: Any, selenium: Any, browser_id: Any) -> Any:
+    def set_deny(self, popups: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
         if self.is_allow():
             self.expander()
             popups(selenium[browser_id]).power_select.choose_item("Deny")
 
     def set_allowance(
-        self, allow: Any, popups: Any, selenium: Any, browser_id: Any
+        self, allow: Any, popups: Any, selenium: SeleniumDrivers, browser_id: Any
     ) -> Any:
         if allow:
             self.set_allow(popups, selenium, browser_id)
@@ -106,7 +107,7 @@ class CaveatField(PageObject):
 
     # setters
 
-    def set_item_in_inner_input(self, selenium: Any, browser_id: Any, item: Any) -> Any:
+    def set_item_in_inner_input(self, selenium: SeleniumDrivers, browser_id: Any, item: Any) -> Any:
         self.new_item()
         self.inner_input = item
         driver = selenium[browser_id]
@@ -128,7 +129,7 @@ class CaveatField(PageObject):
 
     # region caveat
     def set_region_caveats(
-        self, selenium: Any, browser_id: Any, region_caveat: Any, popups: Any
+        self, selenium: SeleniumDrivers, browser_id: Any, region_caveat: Any, popups: Any
     ) -> Any:
         self.activate()
         caveat_allow = region_caveat.get("allow", True)
@@ -138,7 +139,7 @@ class CaveatField(PageObject):
             self.set_region_in_region_caveat(selenium, browser_id, region, popups)
 
     def set_region_in_region_caveat(
-        self, selenium: Any, browser_id: Any, region: Any, popups: Any
+        self, selenium: SeleniumDrivers, browser_id: Any, region: Any, popups: Any
     ) -> Any:
         self.new_item()
         driver = selenium[browser_id]
@@ -146,7 +147,7 @@ class CaveatField(PageObject):
 
     # country caveat
     def set_country_caveats(
-        self, selenium: Any, browser_id: Any, country_caveat: Any, popups: Any
+        self, selenium: SeleniumDrivers, browser_id: Any, country_caveat: Any, popups: Any
     ) -> Any:
         self.activate()
         caveat_allow = country_caveat.get("allow", True)
@@ -156,13 +157,13 @@ class CaveatField(PageObject):
             self.set_item_in_inner_input(selenium, browser_id, country)
 
     # asn caveat
-    def set_asn_caveats(self, selenium: Any, browser_id: Any, asn_list: Any) -> Any:
+    def set_asn_caveats(self, selenium: SeleniumDrivers, browser_id: Any, asn_list: Any) -> Any:
         self.activate()
         for asn in asn_list:
             self.set_item_in_inner_input(selenium, browser_id, str(asn))
 
     # ip caveat
-    def set_ip_caveats(self, selenium: Any, browser_id: Any, ips: Any) -> Any:
+    def set_ip_caveats(self, selenium: SeleniumDrivers, browser_id: Any, ips: Any) -> Any:
         self.activate()
         for ip in ips:
             self.set_item_in_inner_input(selenium, browser_id, ip)
@@ -170,13 +171,13 @@ class CaveatField(PageObject):
     # consumer caveat
     def set_consumer_caveats(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         popups: Any,
         consumer_caveats: Any,
-        users: Any,
+        users: Users,
         groups: Any,
-        hosts: Any,
+        hosts: Hosts,
         oz_page: Any,
     ) -> Any:
         self.activate()
@@ -203,7 +204,7 @@ class CaveatField(PageObject):
 
     def set_consumer_in_consumer_caveat(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         popups: Any,
         consumer_type: Any,
@@ -225,7 +226,7 @@ class CaveatField(PageObject):
 
     # service caveat
     def set_service_caveats(
-        self, selenium: Any, browser_id: Any, service_caveats: Any, popups: Any
+        self, selenium: SeleniumDrivers, browser_id: Any, service_caveats: Any, popups: Any
     ) -> Any:
         self.activate()
         service_cav = service_caveats.get("Service", [])
@@ -241,7 +242,7 @@ class CaveatField(PageObject):
 
     def set_service_in_service_caveat(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         popups: Any,
         consumer_type: Any,
@@ -362,7 +363,7 @@ class CaveatField(PageObject):
     # creation parameter is to check if assertion is done directly after
     # creation - then consumer is checked only by name
     def assert_consumer_caveats(
-        self, consumer_caveats: Any, users: Any, groups: Any, hosts: Any, creation: Any
+        self, consumer_caveats: Any, users: Users, groups: Any, hosts: Hosts, creation: Any
     ) -> Any:
         for consumer in consumer_caveats:
             consumer_type = consumer.get("type")

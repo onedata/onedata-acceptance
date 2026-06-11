@@ -28,11 +28,12 @@ from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_processing_chart(browser_id: Any, selenium: Any) -> Any:
+def assert_processing_chart(browser_id: Any, selenium: SeleniumDrivers) -> Any:
     switch_to_iframe(selenium, browser_id)
     time.sleep(1)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -47,7 +48,7 @@ def assert_processing_chart(browser_id: Any, selenium: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
-    browser_id: Any, selenium: Any
+    browser_id: Any, selenium: SeleniumDrivers
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -66,7 +67,7 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
     )
 )
 def assert_value_of_last_column_is_bigger_than_zero(
-    browser_id: Any, selenium: Any
+    browser_id: Any, selenium: SeleniumDrivers
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -86,7 +87,7 @@ def assert_value_of_last_column_is_bigger_than_zero(
     )
 )
 def choose_time_resolution(
-    selenium: Any, browser_id: Any, resolution: Any, modal: Any
+    selenium: SeleniumDrivers, browser_id: Any, resolution: Any, modal: Any
 ) -> Any:
     driver = selenium[browser_id]
     for option in Popups(driver).time_resolutions_list:
@@ -106,7 +107,7 @@ def choose_time_resolution(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_data_message_processing_chart(
-    browser_id: Any, selenium: Any, message: Any
+    browser_id: Any, selenium: SeleniumDrivers, message: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
@@ -127,7 +128,7 @@ def assert_no_data_message_processing_chart(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id: Any, selenium: Any, option: Any, number: Any, compare_option: Any
+    browser_id: Any, selenium: SeleniumDrivers, option: Any, number: Any, compare_option: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -187,7 +188,7 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium: Any, browser_id: Any, store_name: Any) -> Any:
+def open_store_details_modal(selenium: SeleniumDrivers, browser_id: Any, store_name: Any) -> Any:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
@@ -294,7 +295,7 @@ def open_url_from_store_content(
     browser_id: Any,
     option: Any,
     store_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     clipboard: Any,
     displays: Any,
 ) -> Any:
@@ -315,7 +316,7 @@ def open_url_from_store_content(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_elements_in_store_details_modal(
-    selenium: Any, browser_id: Any, number: Any, store_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: Any, store_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     scroll_to_bottom_of_the_table(driver)

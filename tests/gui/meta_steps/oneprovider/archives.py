@@ -59,6 +59,7 @@ from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 OPTION_IN_SPACE = "Datasets, Archives"
 DATASET_BROWSER = "dataset browser"
@@ -76,7 +77,7 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     config: Any,
     item_name: Any,
     space_name: Any,
@@ -127,7 +128,7 @@ def create_archive(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     config: Any,
     item_name: Any,
     space_name: Any,
@@ -155,7 +156,7 @@ def create_archive_with_follow_symbolic_link(
 
 def _create_archive(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     config: Any,
     item_name: Any,
     space_name: Any,
@@ -246,7 +247,7 @@ def _create_archive(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     client: Any,
     tmp_memory: Any,
@@ -266,7 +267,7 @@ def copy_archive_id_to_tmp_memory(
 
 def assert_archive_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     item_name: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -335,7 +336,7 @@ def assert_archive_in_op_gui(
 
 def remove_archive_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     item_name: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -384,7 +385,7 @@ def remove_archive_in_op_gui(
 
 def assert_archive_with_option_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space_name: Any,
     tmp_memory: Any,
     item_name: Any,
@@ -414,7 +415,7 @@ def assert_archive_with_option_in_op_gui(
 
 def assert_number_of_archive_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     item_name: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -452,7 +453,7 @@ def assert_number_of_archive_in_op_gui(
 )
 def assert_number_of_archives_with_scrolling(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     number: int,
     tmp_memory: Any,
     which_browser: Any,
@@ -468,7 +469,7 @@ def assert_number_of_archives_with_scrolling(
 
 def assert_base_archive_for_archive_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     item_name: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -503,7 +504,7 @@ def assert_archive_callback_in_op_gui(
     browser_id: Any,
     tmp_memory: Any,
     description: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     expected: Any,
     option: Any,
 ) -> Any:
@@ -520,7 +521,7 @@ def assert_archive_callback_in_op_gui(
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id: Any, description: Any, tmp_memory: Any, selenium: Any, name: Any
+    browser_id: Any, description: Any, tmp_memory: Any, selenium: SeleniumDrivers, name: Any
 ) -> Any:
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
@@ -538,7 +539,7 @@ def recall_archive_for_archive_in_op_gui(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id: Any, item_name: Any, tmp_memory: Any, data: Any, selenium: Any
+    browser_id: Any, item_name: Any, tmp_memory: Any, data: Any, selenium: SeleniumDrivers
 ) -> Any:
     status_type = "recalled"
     click_on_status_tag_for_file_in_file_browser(
@@ -591,7 +592,7 @@ def recalled_archive_details_in_op_gui(
         "as follow:\n{config}"
     )
 )
-def check_size_stats_for_archive(selenium: Any, browser_id: Any, config: Any) -> Any:
+def check_size_stats_for_archive(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -615,7 +616,7 @@ def check_size_stats_for_archive(selenium: Any, browser_id: Any, config: Any) ->
     )
 )
 def check_size_stats_for_archive_per_provider(
-    selenium: Any, browser_id: Any, hosts: Any, config: Any, provider: Any
+    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, config: Any, provider: Any
 ) -> Any:
     """Check size stats in directory details for specified provider according
     to given config.

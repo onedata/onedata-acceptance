@@ -28,6 +28,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Capabilities, Hosts, SeleniumDrivers, Users
 
 
 @given(
@@ -38,7 +39,7 @@ from tests.utils.utils import repeat_failed
 )
 def login_using_gui(
     host_list: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     driver: Any,
     tmpdir: Any,
     tmp_memory: Any,
@@ -47,12 +48,12 @@ def login_using_gui(
     displays: Any,
     screen_width: Any,
     screen_height: Any,
-    hosts: Any,
-    users: Any,
+    hosts: Hosts,
+    users: Users,
     browser_id_list: Any,
     user_list: Any,
     test_type: Any,
-    capabilities: Any,
+    capabilities: Capabilities,
 ) -> Any:
     create_instances_of_webdriver(
         selenium,
@@ -88,7 +89,7 @@ def login_using_gui(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium: Any, browser_id: Any, provider_name: Any) -> Any:
+def visit_op(selenium: SeleniumDrivers, browser_id: Any, provider_name: Any) -> Any:
     driver = selenium[browser_id]
     providers_panel = OZLoggedIn(driver).get_page_and_click("providers")
     time.sleep(0.5)
@@ -102,7 +103,7 @@ def click_visit_provider(driver: Any) -> Any:
 
 
 def g_wt_visit_op(
-    selenium: Any, browser_id_list: Any, providers_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, providers_list: Any, hosts: Hosts
 ) -> Any:
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(
@@ -121,7 +122,7 @@ def g_wt_visit_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(
-    selenium: Any, browser_id_list: Any, providers_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, providers_list: Any, hosts: Hosts
 ) -> Any:
     g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
@@ -134,18 +135,18 @@ def g_visit_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_visit_op(
-    selenium: Any, browser_id_list: Any, providers_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, providers_list: Any, hosts: Hosts
 ) -> Any:
     g_wt_visit_op(selenium, browser_id_list, providers_list, hosts)
 
 
 def visit_file_browser(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     providers_list: Any,
     spaces_list: Any,
     browser_id_list: Any,
     tmp_memory: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     option = "spaces"
     option_in_submenu = "Files"
@@ -172,12 +173,12 @@ def visit_file_browser(
     )
 )
 def g_visit_file_browser(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     providers_list: Any,
     spaces_list: Any,
     browser_id_list: Any,
     tmp_memory: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     visit_file_browser(
         selenium,
@@ -197,12 +198,12 @@ def g_visit_file_browser(
     )
 )
 def wt_visit_file_browser(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     providers_list: Any,
     spaces_list: Any,
     browser_id_list: Any,
     tmp_memory: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     visit_file_browser(
         selenium,
@@ -236,7 +237,7 @@ def search_for_members(
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout_from_onezone_page(selenium: Any, browser_id: Any) -> Any:
+def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
     Popups(driver).user_account_menu.options["Logout"].click()
@@ -244,7 +245,7 @@ def logout_from_onezone_page(selenium: Any, browser_id: Any) -> Any:
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout_from_onezone_emergency_panel(selenium: Any, browser_id: Any) -> Any:
+def logout_from_onezone_emergency_panel(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     button = OZLoggedIn(driver)["profile"].logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
@@ -253,7 +254,7 @@ def logout_from_onezone_emergency_panel(selenium: Any, browser_id: Any) -> Any:
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_username(
-    selenium: Any, browser_id: Any, username: Any, new_username: Any, users: Any
+    selenium: SeleniumDrivers, browser_id: Any, username: Any, new_username: Any, users: Users
 ) -> Any:
     driver = selenium[browser_id]
     profile = OZLoggedIn(driver)["profile"]
@@ -268,7 +269,7 @@ def change_username(
 @wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_password(
-    selenium: Any, browser_id: Any, new_password: Any, username: Any, users: Any
+    selenium: SeleniumDrivers, browser_id: Any, new_password: Any, username: Any, users: Users
 ) -> Any:
     driver = selenium[browser_id]
     cur_passwd = users[username].password

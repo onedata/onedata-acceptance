@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
@@ -27,7 +28,7 @@ def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND, interval=1.5)
-def is_present_on_groups_list(selenium: Any, browser_id: Any, name: Any) -> Any:
+def is_present_on_groups_list(selenium: SeleniumDrivers, browser_id: Any, name: Any) -> Any:
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()
@@ -42,7 +43,7 @@ def is_present_on_groups_list(selenium: Any, browser_id: Any, name: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_settings_icon_for_group(
-    selenium: Any, browser_id: Any, group_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
 ) -> Any:
     (
         OPLoggedIn(selenium[browser_id])
@@ -59,7 +60,7 @@ def click_settings_icon_for_group(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_group_settings_dropdown(
-    selenium: Any, browser_id: Any, option_name: Any, group_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, option_name: Any, group_name: Any
 ) -> Any:
     (
         OPLoggedIn(selenium[browser_id])
@@ -78,7 +79,7 @@ def click_on_item_in_group_settings_dropdown(
 )
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_item_appeared_in_groups_perm_table(
-    selenium: Any, browser_id: Any, name: Any, caption: Any
+    selenium: SeleniumDrivers, browser_id: Any, name: Any, caption: Any
 ) -> Any:
     driver = selenium[browser_id]
     items = getattr(OPLoggedIn(driver).groups.permission_table, caption.lower())

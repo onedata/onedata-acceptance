@@ -14,6 +14,7 @@ from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -23,7 +24,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_marketplace_subpage(selenium: Any, browser_id: Any) -> Any:
+def click_button_in_marketplace_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].space_marketplace_page.advertise_space_button()
 
@@ -36,7 +37,7 @@ def click_button_in_marketplace_subpage(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_marketplace_icon_in_space_sidebar(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     err_msg = f"Space: {space_name} does not have marketplace indicator visible"
@@ -45,7 +46,7 @@ def assert_marketplace_icon_in_space_sidebar(
 
 
 def get_space_from_marketplace_list(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].space_marketplace_page
@@ -62,7 +63,7 @@ def get_today_date() -> Any:
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_in_space_marketplace(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     element_type: Any,
@@ -85,7 +86,7 @@ def assert_element_in_space_marketplace(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_elements_list_in_space_marketplace(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     element_type: Any,

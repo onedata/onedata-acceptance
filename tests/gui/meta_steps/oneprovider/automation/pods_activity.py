@@ -22,6 +22,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def change_tab_in_function_pods_activity_modal(modal: Any, tab_name: Any) -> Any:
@@ -43,7 +44,7 @@ def change_tab_in_function_pods_activity_modal(modal: Any, tab_name: Any) -> Any
     timeout=180,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_ongoing_pods_to_be_terminated(selenium: Any, browser_id: Any) -> Any:
+def wait_for_ongoing_pods_to_be_terminated(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, "Current")
@@ -59,7 +60,7 @@ def wait_for_ongoing_pods_to_be_terminated(selenium: Any, browser_id: Any) -> An
     )
 )
 def assert_lambda_name_in_tab_name(
-    selenium: Any, browser_id: Any, tab: Any, lambda_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab: Any, lambda_name: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
@@ -76,7 +77,7 @@ def assert_lambda_name_in_tab_name(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_pod(selenium: Any, browser_id: Any, tab: Any) -> Any:
+def click_on_first_pod(selenium: SeleniumDrivers, browser_id: Any, tab: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, tab)
@@ -90,7 +91,7 @@ def click_on_first_pod(selenium: Any, browser_id: Any, tab: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_first_terminated_pod(selenium: Any, browser_id: Any) -> Any:
+def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, "All")
@@ -116,7 +117,7 @@ def gather_events_list(modal: Any, driver: Any, option: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_in_pods_monitor(
-    selenium: Any, browser_id: Any, events: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, events: Any, option: Any
 ) -> Any:
 
     driver = selenium[browser_id]
@@ -143,7 +144,7 @@ def assert_events_in_pods_monitor(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_containing_lambda_name(
-    selenium: Any, browser_id: Any, events: Any, option: Any, lambda_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, events: Any, option: Any, lambda_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
@@ -191,7 +192,7 @@ def get_lambda_name(events: Any) -> Any:
     )
 )
 def checks_events_for_task(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -231,7 +232,7 @@ def checks_events_for_task(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pod_name_for_task(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -253,7 +254,7 @@ def assert_pod_name_for_task(
 
 
 def check_number_of_events(
-    selenium: Any, browser_id: Any, exp_num: Any, task: Any
+    selenium: SeleniumDrivers, browser_id: Any, exp_num: Any, task: Any
 ) -> Any:
     driver = selenium[browser_id]
     actual_num = int(
@@ -275,7 +276,7 @@ def check_number_of_events(
     )
 )
 def assert_number_of_events_in_task(
-    browser_id: Any, task: Any, lane: Any, exp_num: Any, ordinal: Any, selenium: Any
+    browser_id: Any, task: Any, lane: Any, exp_num: Any, ordinal: Any, selenium: SeleniumDrivers
 ) -> Any:
     click = "clicks on"
     close = "closes"

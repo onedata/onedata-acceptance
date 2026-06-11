@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def main_menu_tab_to_url(tab: Any) -> Any:
@@ -49,7 +50,7 @@ def _click_on_tab_in_main_menu_sidebar(driver: Any, tab: Any) -> Any:
     )
 )
 def g_click_on_the_given_main_menu_tab(
-    selenium: Any, browser_id_list: Any, main_menu_tab: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, main_menu_tab: Any
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
@@ -64,7 +65,7 @@ def g_click_on_the_given_main_menu_tab(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_the_given_main_menu_tab(
-    selenium: Any, browser_id_list: Any, main_menu_tab: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, main_menu_tab: Any
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
@@ -89,7 +90,7 @@ def _has_dir_content_been_loaded(driver: Any) -> Any:
         "user of {browser_id} sees that content of current directory has been loaded"
     )
 )
-def g_has_dir_content_been_loaded(selenium: Any, browser_id: Any) -> Any:
+def g_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)
 
@@ -99,6 +100,6 @@ def g_has_dir_content_been_loaded(selenium: Any, browser_id: Any) -> Any:
         "user of {browser_id} sees that content of current directory has been loaded"
     )
 )
-def wt_has_dir_content_been_loaded(selenium: Any, browser_id: Any) -> Any:
+def wt_has_dir_content_been_loaded(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     _has_dir_content_been_loaded(driver)

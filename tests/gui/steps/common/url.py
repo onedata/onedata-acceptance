@@ -17,6 +17,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 HOST_PATTERN = (
     r"(?:"
@@ -41,7 +42,7 @@ HOSTS_LIST_PATTERN = (
 
 
 def open_onedata_service_page(
-    selenium: Any, browser_id_list: Any, hosts_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, hosts_list: Any, hosts: Hosts
 ) -> Any:
     """hosts_list may contains:
     onezone,
@@ -84,7 +85,7 @@ def open_onedata_service_page(
     )
 )
 def g_open_onedata_service_page(
-    selenium: Any, browser_id_list: Any, hosts_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, hosts_list: Any, hosts: Hosts
 ) -> Any:
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
@@ -97,14 +98,14 @@ def g_open_onedata_service_page(
     )
 )
 def wt_open_onedata_service_page(
-    selenium: Any, browser_id_list: Any, hosts_list: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, hosts_list: Any, hosts: Hosts
 ) -> Any:
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @wt(parsers.re("user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_being_redirected_to_page(page: Any, selenium: Any, browser_id: Any) -> Any:
+def assert_being_redirected_to_page(page: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     match = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url)
     if match is None:
@@ -116,7 +117,7 @@ def assert_being_redirected_to_page(page: Any, selenium: Any, browser_id: Any) -
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.+) changes the relative URL to (?P<path>.+)"))
-def change_relative_url(selenium: Any, browser_id: Any, path: Any) -> Any:
+def change_relative_url(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + path)
 
@@ -127,7 +128,7 @@ def change_relative_url(selenium: Any, browser_id: Any, path: Any) -> Any:
         r"application path to plain (?P<path>.+)"
     )
 )
-def change_application_path(selenium: Any, browser_id: Any, path: Any) -> Any:
+def change_application_path(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + "/#" + path)
 
@@ -138,7 +139,7 @@ def change_application_path(selenium: Any, browser_id: Any, path: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_url_matching(selenium: Any, browser_id: Any, path: Any) -> Any:
+def is_url_matching(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
     driver = selenium[browser_id]
     regexp = r"{}$".format(path.replace("\\", "\\\\"))
     err_msg = rf"expected url: {path} does not match current one: {{}}"
@@ -151,7 +152,7 @@ def is_url_matching(selenium: Any, browser_id: Any, path: Any) -> Any:
     assert_url_match(driver, regexp, err_msg)
 
 
-def _open_url(selenium: Any, browser_id: Any, url: Any) -> Any:
+def _open_url(selenium: SeleniumDrivers, browser_id: Any, url: Any) -> Any:
     driver = selenium[browser_id]
     old_page = driver.find_element(By.CSS_SELECTOR, "html")
     driver.get(url)
@@ -163,7 +164,7 @@ def _open_url(selenium: Any, browser_id: Any, url: Any) -> Any:
 
 @wt(parsers.re("user of (?P<browser_id>.+?) opens received (?:url|URL)"))
 def open_received_url_with_base_url(
-    selenium: Any, browser_id: Any, tmp_memory: Any, base_url: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, base_url: Any
 ) -> Any:
     url = tmp_memory[browser_id]["mailbox"]["url"]
     url = url.replace(parse_url(url).group("base_url"), base_url, 1)
@@ -176,7 +177,7 @@ def open_received_url_with_base_url(
         r"user of (?P<browser_id2>\S+)"
     )
 )
-def open_exactly_received_url(selenium: Any, browser_id: Any, tmp_memory: Any) -> Any:
+def open_exactly_received_url(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
     url = tmp_memory[browser_id]["mailbox"]["url"]
 
     _open_url(selenium, browser_id, url)
@@ -189,7 +190,7 @@ def open_exactly_received_url(selenium: Any, browser_id: Any, tmp_memory: Any) -
     )
 )
 def change_app_path_with_copied_item(
-    selenium: Any, browser_id: Any, path: Any, displays: Any, clipboard: Any
+    selenium: SeleniumDrivers, browser_id: Any, path: Any, displays: Any, clipboard: Any
 ) -> Any:
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
@@ -207,7 +208,7 @@ def change_app_path_with_copied_item(
     )
 )
 def change_app_path_with_recv_item(
-    selenium: Any, browser_id: Any, path: Any, tmp_memory: Any, item: Any
+    selenium: SeleniumDrivers, browser_id: Any, path: Any, tmp_memory: Any, item: Any
 ) -> Any:
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group("base_url")
@@ -219,13 +220,13 @@ def change_app_path_with_recv_item(
 
 
 @wt(parsers.parse("user of {browser_id} copies url from browser's location bar"))
-def copy_site_url(selenium: Any, browser_id: Any, displays: Any, clipboard: Any) -> Any:
+def copy_site_url(selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any) -> Any:
     driver = selenium[browser_id]
     clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
 @wt(parsers.parse("user of {browser_id} opens copied URL in browser's location bar"))
-def open_site_url(selenium: Any, browser_id: Any, displays: Any, clipboard: Any) -> Any:
+def open_site_url(selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any) -> Any:
     driver = selenium[browser_id]
     url = clipboard.paste(display=displays[browser_id])
     # We use javascript instead of driver.get because of chromedriver being
@@ -240,7 +241,7 @@ def open_site_url(selenium: Any, browser_id: Any, displays: Any, clipboard: Any)
     )
 )
 def open_received_url_without_waiting(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     url = tmp_memory[browser_id]["mailbox"]["url"]
@@ -250,7 +251,7 @@ def open_received_url_without_waiting(
 @wt(parsers.parse("user of {browser_id} copies a first resource ID from URL"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cp_part_of_url(
-    selenium: Any, browser_id: Any, displays: Any, clipboard: Any
+    selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any
 ) -> Any:
     driver = selenium[browser_id]
     item_value = parse_url(driver.current_url).group("id")
@@ -263,7 +264,7 @@ def cp_part_of_url(
 
 @wt(parsers.parse("using web GUI, {browser_id_list} refreshes site"))
 @wt(parsers.re("users? of (?P<browser_id_list>.*?) refreshes site"))
-def refresh_site(selenium: Any, browser_id_list: Any) -> Any:
+def refresh_site(selenium: SeleniumDrivers, browser_id_list: Any) -> Any:
     for browser_id in parse_seq(browser_id_list):
         selenium[browser_id].refresh()
 
@@ -273,7 +274,7 @@ def refresh_site(selenium: Any, browser_id_list: Any) -> Any:
         "users? of (?P<browser_id_list>.*?) refreshes site and waits for page to load"
     )
 )
-def refresh_site_and_wait(selenium: Any, browser_id_list: Any) -> Any:
+def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: Any) -> Any:
     for browser_id in parse_seq(browser_id_list):
         selenium[browser_id].refresh()
     for browser_id in parse_seq(browser_id_list):
@@ -281,7 +282,7 @@ def refresh_site_and_wait(selenium: Any, browser_id_list: Any) -> Any:
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def assert_main_page_loaded(selenium: Any, browser_id: Any) -> Any:
+def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     elems = selenium[browser_id].find_elements(
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
     )
@@ -289,20 +290,20 @@ def assert_main_page_loaded(selenium: Any, browser_id: Any) -> Any:
 
 
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))
-def if_gui_refresh_site(selenium: Any, client: Any, user: Any) -> Any:
+def if_gui_refresh_site(selenium: SeleniumDrivers, client: Any, user: Any) -> Any:
     if client == "web GUI":
         refresh_site(selenium, user)
 
 
 @wt(parsers.parse("user of {browser_id} refreshes webapp"))
 @repeat_failed(timeout=WAIT_FRONTEND, exceptions=AttributeError)
-def refresh_webapp(selenium: Any, browser_id: Any) -> Any:
+def refresh_webapp(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url"))
 
 
 @wt(parsers.parse("user of {browser_id} is redirected to newly opened tab"))
-def switch_to_last_tab(selenium: Any, browser_id: Any) -> Any:
+def switch_to_last_tab(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.window(driver.window_handles[-1])
 
@@ -312,13 +313,13 @@ def switch_to_last_tab(selenium: Any, browser_id: Any) -> Any:
         "user of {browser_id} switches to the previously opened tab in the web browser"
     )
 )
-def switch_to_first_tab(selenium: Any, browser_id: Any) -> Any:
+def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.window(driver.window_handles[0])
 
 
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
-def assert_image_in_browser(browser_id: Any, selenium: Any, image_name: Any) -> Any:
+def assert_image_in_browser(browser_id: Any, selenium: SeleniumDrivers, image_name: Any) -> Any:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
     err_msg = f"{image_name} is not visible in browser"

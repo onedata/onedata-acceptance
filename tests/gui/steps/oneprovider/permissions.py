@@ -15,9 +15,10 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
-def _get_index(selenium: Any, browser_id: Any, num: Any, numerals: Any) -> Any:
+def _get_index(selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any) -> Any:
     n = numerals[num]
     if n < 0:
         perm = Modals(
@@ -34,14 +35,14 @@ def _get_index(selenium: Any, browser_id: Any, num: Any, numerals: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_permission_type(selenium: Any, browser_id: Any, permission_type: Any) -> Any:
+def select_permission_type(selenium: SeleniumDrivers, browser_id: Any, permission_type: Any) -> Any:
     driver = selenium[browser_id]
     button_name = f"{permission_type.lower()}_button"
     getattr(Modals(driver).details_modal.edit_permissions, button_name).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that current permission is "{perm}"'))
-def check_permission(selenium: Any, browser_id: Any, perm: Any) -> Any:
+def check_permission(selenium: SeleniumDrivers, browser_id: Any, perm: Any) -> Any:
     perm_value = Modals(selenium[browser_id]).details_modal.edit_permissions.posix.value
     assert (
         perm_value == perm
@@ -54,7 +55,7 @@ def check_permission(selenium: Any, browser_id: Any, perm: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_posix_permission(selenium: Any, browser_id: Any, perm: Any) -> Any:
+def set_posix_permission(selenium: SeleniumDrivers, browser_id: Any, perm: Any) -> Any:
     Modals(selenium[browser_id]).details_modal.edit_permissions.posix.value = perm
 
 
@@ -65,7 +66,7 @@ def set_posix_permission(selenium: Any, browser_id: Any, perm: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def fail_to_set_posix_permission(selenium: Any, browser_id: Any, perm: Any) -> Any:
+def fail_to_set_posix_permission(selenium: SeleniumDrivers, browser_id: Any, perm: Any) -> Any:
     try:
         Modals(selenium[browser_id]).details_modal.edit_permissions.posix.value = perm
         raise AssertionError(
@@ -109,7 +110,7 @@ def _change_acl_options(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_acl_options(
-    selenium: Any, browser_id: Any, option_list: Any, subject: Any
+    selenium: SeleniumDrivers, browser_id: Any, option_list: Any, subject: Any
 ) -> Any:
     # argument 'option_list' is one of the following patterns:
     # [<parent_permission>|<parent_permission>:<child_permission>, ...]
@@ -135,7 +136,7 @@ def select_acl_options(
 
 
 def assert_fail_to_select_acl_option(
-    selenium: Any, browser_id: Any, option_list: Any, subject: Any
+    selenium: SeleniumDrivers, browser_id: Any, option_list: Any, subject: Any
 ) -> Any:
     driver = selenium[browser_id]
     subject = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[
@@ -165,7 +166,7 @@ def assert_fail_to_select_acl_option(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_acl_modal(selenium: Any, browser_id: Any, num: Any, numerals: Any) -> Any:
+def expand_acl_modal(selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
     Modals(selenium[browser_id]).details_modal.edit_permissions.acl.permissions[
@@ -180,7 +181,7 @@ def expand_acl_modal(selenium: Any, browser_id: Any, num: Any, numerals: Any) ->
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_subject(selenium: Any, browser_id: Any, subject: Any) -> Any:
+def select_acl_subject(selenium: SeleniumDrivers, browser_id: Any, subject: Any) -> Any:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
     Popups(driver).dropdown.options[subject].click()
@@ -193,7 +194,7 @@ def select_acl_subject(selenium: Any, browser_id: Any, subject: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_amount_of_acls(selenium: Any, browser_id: Any, val: int) -> Any:
+def assert_amount_of_acls(selenium: SeleniumDrivers, browser_id: Any, val: int) -> Any:
     driver = selenium[browser_id]
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list
     assert val == len(perm), f"There are {len(perm)} instead of {val} ACL records"
@@ -208,7 +209,7 @@ def assert_amount_of_acls(selenium: Any, browser_id: Any, val: int) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_type(
-    selenium: Any, browser_id: Any, subject_type: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, subject_type: Any, num: Any, numerals: Any
 ) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -227,7 +228,7 @@ def assert_subject_type(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any
 ) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -248,7 +249,7 @@ def assert_lack_of_subject(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_editable(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any, name: Any
 ) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -272,7 +273,7 @@ def assert_acl_record_editable(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_not_editable(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any, name: Any
 ) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -295,7 +296,7 @@ def assert_acl_record_not_editable(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_set_acl_privileges(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any, option_list: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any, option_list: Any
 ) -> Any:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
@@ -336,7 +337,7 @@ def assert_set_acl_privileges(
     )
 )
 def assert_set_all_acl_privileges(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any
 ) -> Any:
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
     assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
@@ -351,7 +352,7 @@ def assert_set_all_acl_privileges(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_subject(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any, sub_type: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any, sub_type: Any, name: Any
 ) -> Any:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
@@ -375,7 +376,7 @@ def assert_acl_subject(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_acl_record(
-    selenium: Any, browser_id: Any, btn: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, btn: Any, num: Any, numerals: Any
 ) -> Any:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
@@ -394,7 +395,7 @@ def click_on_btn_in_acl_record(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_in_list_in_acl_record(
-    selenium: Any, browser_id: Any, subjects: Any
+    selenium: SeleniumDrivers, browser_id: Any, subjects: Any
 ) -> Any:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.expand_dropdown()
@@ -410,7 +411,7 @@ def assert_subject_in_list_in_acl_record(
     )
 )
 def assert_subject_not_in_list_in_acl_record(
-    selenium: Any, browser_id: Any, subjects: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, subjects: Any, num: Any, numerals: Any
 ) -> Any:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -427,7 +428,7 @@ def assert_subject_not_in_list_in_acl_record(
 
 
 def expand_subject_record_in_edit_permissions_modal(
-    selenium: Any, browser_id: Any, subject: Any
+    selenium: SeleniumDrivers, browser_id: Any, subject: Any
 ) -> Any:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.member_permission_list[
@@ -436,7 +437,7 @@ def expand_subject_record_in_edit_permissions_modal(
 
 
 def click_on_record_header_in_edit_permissions_modal(
-    selenium: Any, browser_id: Any, subject: Any
+    selenium: SeleniumDrivers, browser_id: Any, subject: Any
 ) -> Any:
     driver = selenium[browser_id]
     Modals(driver).details_modal.edit_permissions.acl.member_permission_list[
@@ -445,14 +446,14 @@ def click_on_record_header_in_edit_permissions_modal(
 
 
 def check_permission_denied_alert_in_edit_permissions_modal(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     edit_permissions_modal = Modals(selenium[browser_id]).details_modal.edit_permissions
     assert edit_permissions_modal.permission_denied_alert
 
 
 def check_permissions_list_in_edit_permissions_modal(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     edit_permissions_modal = Modals(driver).details_modal.edit_permissions
@@ -486,7 +487,7 @@ def assert_not_no_access_tag_on_file(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_unknown_user_id_from_acl_entry(
-    selenium: Any, browser_id: Any, num: Any, numerals: Any
+    selenium: SeleniumDrivers, browser_id: Any, num: Any, numerals: Any
 ) -> Any:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)

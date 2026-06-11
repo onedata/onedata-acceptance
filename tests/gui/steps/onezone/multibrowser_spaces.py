@@ -13,6 +13,7 @@ from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -41,7 +42,7 @@ def send_invitation_token_to_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_group_on_groups_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, group_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["groups"].elements_list[group_name].click()

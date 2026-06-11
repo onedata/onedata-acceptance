@@ -52,6 +52,7 @@ from tests.gui.utils import Onepanel
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 @wt(
@@ -63,13 +64,13 @@ from tests.utils.utils import repeat_failed
     )
 )
 def support_space_in_op_panel_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     config: Any,
     tmp_memory: Any,
     space_name: Any,
     provider_name: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     result = "succeeds"
 
@@ -93,14 +94,14 @@ def support_space_in_op_panel_using_gui(
     )
 )
 def result_to_support_space_in_op_panel_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     config: Any,
     result: Any,
     tmp_memory: Any,
     space_name: Any,
     provider_name: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     notify_type = "info"
     notify_text_regexp = ".*[Aa]dded.*support.*space.*"
@@ -117,7 +118,7 @@ def result_to_support_space_in_op_panel_using_gui(
 
 
 def _set_toggle_state(
-    selenium: Any, toggle_name: Any, storage_import_configuration: Any, user: Any
+    selenium: SeleniumDrivers, toggle_name: Any, storage_import_configuration: Any, user: Any
 ) -> Any:
     if storage_import_configuration.get(toggle_name.lower(), False):
         wt_enable_option_box_in_space_support_form(selenium, user, toggle_name)
@@ -126,7 +127,7 @@ def _set_toggle_state(
 
 
 def _handle_configure_auto_storage_import(
-    selenium: Any, user: Any, storage_import_configuration: Any
+    selenium: SeleniumDrivers, user: Any, storage_import_configuration: Any
 ) -> Any:
     if "max depth" in storage_import_configuration:
         wt_type_text_to_input_box_in_storage_import_configuration(
@@ -166,12 +167,12 @@ def _handle_configure_auto_storage_import(
 
 
 def _support_space_in_op_panel_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     config: Any,
     tmp_memory: Any,
     provider_name: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
@@ -210,7 +211,7 @@ def _support_space_in_op_panel_using_gui(
     )
 )
 def configure_auto_storage_import_in_storage_import_tab(
-    selenium: Any, user: Any, config: Any
+    selenium: SeleniumDrivers, user: Any, config: Any
 ) -> Any:
     storage_import_configuration = yaml.load(config, yaml.Loader)
     _handle_configure_auto_storage_import(selenium, user, storage_import_configuration)
@@ -228,7 +229,7 @@ def configure_auto_storage_import_in_storage_import_tab(
     )
 )
 def revoke_space_support_in_op_panel_using_gui(
-    selenium: Any, user: Any, provider_name: Any, space_name: Any, hosts: Any
+    selenium: SeleniumDrivers, user: Any, provider_name: Any, space_name: Any, hosts: Hosts
 ) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
@@ -251,7 +252,7 @@ def revoke_space_support_in_op_panel_using_gui(
 
 
 def configure_sync_parameters_for_space_in_op_panel_gui(
-    selenium: Any, user: Any, config: Any
+    selenium: SeleniumDrivers, user: Any, config: Any
 ) -> Any:
     tab_name = "Storage import"
 
@@ -261,20 +262,20 @@ def configure_sync_parameters_for_space_in_op_panel_gui(
 
 
 def copy_id_of_space_gui(
-    selenium: Any, user: Any, space_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, user: Any, space_name: Any, tmp_memory: Any
 ) -> Any:
     wt_open_space_item_in_spaces_page_op_panel(selenium, user, space_name)
     wt_copy_space_id_in_spaces_page_in_onepanel(selenium, user, space_name, tmp_memory)
 
 
 def assert_proper_space_configuration_in_op_panel_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     space: Any,
     sync_type: Any,
     conf: Any,
     provider_name: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
@@ -293,7 +294,7 @@ def assert_proper_space_configuration_in_op_panel_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(selenium: Any, browser_id: Any, hosts: Any) -> Any:
+def revoke_all_space_supports(selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts) -> Any:
     sidebar = "CLUSTERS"
     sub_item = "Spaces"
     record = "oneprovider-1"
@@ -323,7 +324,7 @@ def revoke_all_space_supports(selenium: Any, browser_id: Any, hosts: Any) -> Any
 
 
 def _revoke_all_space_supports_using_rest(
-    _selenium: Any, hosts: Any, users: Any, provider_host: Any
+    _selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: Any
 ) -> Any:
     user = "onepanel"
 
@@ -348,7 +349,7 @@ def _revoke_all_space_supports_using_rest(
 @given(parsers.parse("there are no spaces supported by {provider_host} in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_revoke_all_space_supports_using_rest(
-    selenium: Any, hosts: Any, users: Any, provider_host: Any
+    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: Any
 ) -> Any:
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
@@ -356,7 +357,7 @@ def g_revoke_all_space_supports_using_rest(
 @wt(parsers.parse("{provider_host} revokes all spaces support in Onepanel using REST"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_revoke_all_space_supports_using_rest(
-    selenium: Any, hosts: Any, users: Any, provider_host: Any
+    selenium: SeleniumDrivers, hosts: Hosts, users: Users, provider_host: Any
 ) -> Any:
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
@@ -369,7 +370,7 @@ def wt_revoke_all_space_supports_using_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_quota_in_auto_cleaning(
-    selenium: Any, browser_id: Any, quota: Any, value: Any
+    selenium: SeleniumDrivers, browser_id: Any, quota: Any, value: Any
 ) -> Any:
     click_change_quota_button(selenium, browser_id, quota)
     type_value_to_quota_input(selenium, browser_id, quota, value)
@@ -382,7 +383,7 @@ def set_quota_in_auto_cleaning(
         " finished in Onepanel"
     )
 )
-def run_scan_and_wait_till_finished(selenium: Any, browser_id: Any) -> Any:
+def run_scan_and_wait_till_finished(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     tab_name = "Storage import"
     click_on_navigation_tab_in_space(browser_id, tab_name, selenium)
     click_start_scan_button_in_storage_import_tab(selenium, browser_id)

@@ -27,6 +27,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -43,7 +44,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
 def assert_data_discovery_files(
-    selenium: Any, browser_id: Any, config: Any, spaces: Any
+    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
 ) -> Any:
     button_name = "Query"
 
@@ -52,7 +53,7 @@ def assert_data_discovery_files(
     assert_files(selenium, browser_id, config, spaces)
 
 
-def assert_files(selenium: Any, browser_id: Any, config: Any, spaces: Any) -> Any:
+def assert_files(selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any) -> Any:
     expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     _assert_elem_num_equals(expected_data, data_dict)
@@ -80,7 +81,7 @@ def _check_spaces_of_data_disc(expected: Any, actual: Any) -> Any:
         assert space in actual, f"space {space} not harvested"
 
 
-def _unpack_files_data(selenium: Any, browser_id: Any) -> Any:
+def _unpack_files_data(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     regex = r'fileName: "(?P<file_name>[^\s]+)"'
     files_data_dict = {}
@@ -139,7 +140,7 @@ def _assert_unexpected_properties_of_files(
     )
 )
 def assert_not_files_properties(
-    selenium: Any, browser_id: Any, config: Any, spaces: Any
+    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
 ) -> Any:
     unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
@@ -156,7 +157,7 @@ def assert_not_files_properties(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_files_with_order(selenium: Any, browser_id: Any, config: Any) -> Any:
+def see_files_with_order(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
     files_list = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
@@ -170,7 +171,7 @@ def see_files_with_order(selenium: Any, browser_id: Any, config: Any) -> Any:
     )
 )
 def open_data_discovery_of_harvester(
-    selenium: Any, browser_id: Any, harvester_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any
 ) -> Any:
     option = "Discovery"
     list_name = "harvesters"
@@ -191,7 +192,7 @@ def open_data_discovery_of_harvester(
         'user of {browser_id} clicks on "Go to source file..." for "{filename}"'
     )
 )
-def go_to_source_of_file(selenium: Any, browser_id: Any, filename: Any) -> Any:
+def go_to_source_of_file(selenium: SeleniumDrivers, browser_id: Any, filename: Any) -> Any:
     data_dict = _unpack_files_data(selenium, browser_id)
     data_dict[filename].source_button()
 
@@ -199,7 +200,7 @@ def go_to_source_of_file(selenium: Any, browser_id: Any, filename: Any) -> Any:
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
-    selenium: Any, browser_id: Any, number: int
+    selenium: SeleniumDrivers, browser_id: Any, number: int
 ) -> Any:
     files_dict = _unpack_files_data(selenium, browser_id)
     assert (
@@ -213,12 +214,12 @@ def assert_number_of_files_on_data_disc(
         "filter on data discovery page:\n{config}"
     )
 )
-def choose_properties_to_filter(selenium: Any, browser_id: Any, config: Any) -> Any:
+def choose_properties_to_filter(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
     data = yaml.load(config, yaml.Loader)
     _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data: Any, selenium: Any, browser_id: Any) -> Any:
+def _parse_data(data: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):

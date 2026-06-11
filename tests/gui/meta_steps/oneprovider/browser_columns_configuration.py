@@ -15,6 +15,7 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -27,7 +28,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
-    selenium: Any, browser_id: Any, columns: Any, which_browser: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, columns: Any, which_browser: Any, tmp_memory: Any
 ) -> Any:
     # This function enables the selected columns and disables the rest.
     option_select = "select"
@@ -57,7 +58,7 @@ def select_columns_to_be_visible_in_browser(
     )
 )
 def change_visibility_for_browser_columns(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     res: Any,
     columns: Any,
@@ -97,7 +98,7 @@ def change_visibility_for_browser_columns(
     )
 )
 def remove_column(
-    selenium: Any, browser_id: Any, name: Any, which_browser: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, name: Any, which_browser: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -123,7 +124,7 @@ def remove_column(
     )
 )
 def modify_props_of_xattr_column_in_columns_menu(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     which_browser: Any,
     tmp_memory: Any,
@@ -169,7 +170,7 @@ def modify_props_of_xattr_column_in_columns_menu(
     )
 )
 def modify_json_column_in_columns_menu(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     col_name: Any,
     config: Any,
@@ -237,7 +238,7 @@ def modify_json_column_in_columns_menu(
     )
 )
 def assert_json_column_content(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     tmp_memory: Any,
     which_browser: Any,
@@ -271,7 +272,7 @@ def assert_json_column_content(
     )
 )
 def assert_column_presence(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     res: Any,
     name: Any,

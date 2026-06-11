@@ -37,6 +37,7 @@ from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 ALL_LAMBDA_NAMES = []
 
@@ -46,7 +47,7 @@ ALL_LAMBDA_NAMES = []
         "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
-def create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
+def create_lambda_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -83,7 +84,7 @@ def create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
     _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
+def _create_lambda_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -164,7 +165,7 @@ def _create_lambda_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_lambda_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lambda_name: Any,
     docker_image: Any,
@@ -192,7 +193,7 @@ def create_lambda_using_gui(
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium: Any, browser_id: Any, option: Any, param_type: Any, ordinal: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, param_type: Any, ordinal: Any
 ) -> Any:
     driver = selenium[browser_id]
     param_type = param_type.lower()
@@ -233,7 +234,7 @@ def change_parameter_type_in_lambda_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parameter_into_lambda_form(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     option: Any,
     name: Any,
@@ -266,7 +267,7 @@ def add_parameter_into_lambda_form(
     )
 )
 def modify_parameter_in_lambda_form(
-    selenium: Any, browser_id: Any, ordinal: Any, config: Any
+    selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, config: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"].lambdas_page.form
@@ -302,7 +303,7 @@ def modify_parameter_in_lambda_form(
     )
 )
 def upload_all_lambda_dumps_from_automation_examples(
-    selenium: Any, browser_id: Any, inventory: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, tmp_memory: Any
 ) -> Any:
     global ALL_LAMBDA_NAMES
     ALL_LAMBDA_NAMES = [
@@ -321,7 +322,7 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium: Any, browser_id: Any, inventory: Any, lambda_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, lambda_name: Any, tmp_memory: Any
 ) -> Any:
     subpage = "lambdas"
     modal = "Upload workflow"
@@ -340,7 +341,7 @@ def _upload_lambda_dump_from_automation_examples(
     )
 )
 def download_and_remove_all_lambda_dumps_from_inventory(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     for lamda_name in sorted(ALL_LAMBDA_NAMES):
         visible_lambda_name = get_lambda_dump(lamda_name)["revision"][
@@ -355,7 +356,7 @@ def download_and_remove_all_lambda_dumps_from_inventory(
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium: Any, browser_id: Any, tmp_memory: Any, lamda_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, lamda_name: Any
 ) -> Any:
     option = "Download (json)"
     option_unlink = "Unlink"

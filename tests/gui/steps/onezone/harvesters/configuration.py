@@ -23,6 +23,7 @@ from tests.utils.environment_utils import (
 )
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -31,7 +32,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 def check_public_toggle_on_harvester_config_page(
-    selenium: Any, browser_id: Any, action: Any
+    selenium: SeleniumDrivers, browser_id: Any, action: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page
@@ -48,7 +49,7 @@ def check_public_toggle_on_harvester_config_page(
     )
 )
 def assert_public_toggle_on_harvester_config_page(
-    selenium: Any, browser_id: Any, checked: Any
+    selenium: SeleniumDrivers, browser_id: Any, checked: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page
@@ -59,7 +60,7 @@ def assert_public_toggle_on_harvester_config_page(
 
 
 @wt(parsers.parse("user of {browser_id} clicks on copy icon of public harvester URL"))
-def copy_public_harvester_url(selenium: Any, browser_id: Any) -> Any:
+def copy_public_harvester_url(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].configuration_page.general_tab.copy_public_url()
 
@@ -70,7 +71,7 @@ def copy_public_harvester_url(selenium: Any, browser_id: Any) -> Any:
     )
 )
 def click_on_tab_of_harvester_config_page(
-    selenium: Any, browser_id: Any, tab_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page
@@ -84,7 +85,7 @@ def click_on_tab_of_harvester_config_page(
     )
 )
 def upload_discovery_gui_plugin(
-    selenium: Any, browser_id: Any, plugin: Any, tmpdir: Any
+    selenium: SeleniumDrivers, browser_id: Any, plugin: Any, tmpdir: Any
 ) -> Any:
     driver = selenium[browser_id]
     path = tmpdir.join(browser_id).join(plugin)
@@ -100,7 +101,7 @@ def upload_discovery_gui_plugin(
     )
 )
 def click_button_in_tab_of_harvester_config_page(
-    selenium: Any, browser_id: Any, button: Any, tab_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button: Any, tab_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = getattr(
@@ -111,7 +112,7 @@ def click_button_in_tab_of_harvester_config_page(
 
 @wt(parsers.parse("user of {browser_id} waits until plugin upload finish"))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wait_until_plugin_upload_finish(selenium: Any, browser_id: Any) -> Any:
+def wait_until_plugin_upload_finish(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     assert (
@@ -120,7 +121,7 @@ def wait_until_plugin_upload_finish(selenium: Any, browser_id: Any) -> Any:
 
 
 @wt(parsers.parse("user of {browser_id} sees that GUI plugin version is {version}"))
-def assert_plugin_version(selenium: Any, browser_id: Any, version: Any) -> Any:
+def assert_plugin_version(selenium: SeleniumDrivers, browser_id: Any, version: Any) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     assert (
@@ -135,7 +136,7 @@ def assert_plugin_version(selenium: Any, browser_id: Any, version: Any) -> Any:
     )
 )
 def assert_plugin_index_value(
-    selenium: Any, browser_id: Any, plugin_index: Any, harvester_index: Any
+    selenium: SeleniumDrivers, browser_id: Any, plugin_index: Any, harvester_index: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
@@ -155,7 +156,7 @@ def assert_plugin_index_value(
     )
 )
 def assert_plugin_injected_config(
-    selenium: Any, browser_id: Any, configuration: Any
+    selenium: SeleniumDrivers, browser_id: Any, configuration: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
@@ -166,19 +167,19 @@ def assert_plugin_injected_config(
 
 
 @wt(parsers.parse("elasticsearch plugin stops working"))
-def pause_elasticsearch_container(hosts: Any) -> Any:
+def pause_elasticsearch_container(hosts: Hosts) -> Any:
     run_onenv_command("service", ["stop", "elasticsearch"])
     wait_for_pod_to_stop(hosts["elasticsearch"]["hostname"].split(".")[0])
 
 
 @wt(parsers.parse("elasticsearch plugin starts working"))
-def unpause_elasticsearch_container(hosts: Any) -> Any:
+def unpause_elasticsearch_container(hosts: Hosts) -> Any:
     run_onenv_command("service", ["start", "elasticsearch"])
     # Necessary for pod to reach 1/1 running status
     set_elasticsearch_replicas_number(hosts)
 
 
-def set_elasticsearch_replicas_number(hosts: Any) -> Any:
+def set_elasticsearch_replicas_number(hosts: Hosts) -> Any:
     wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
     pods = get_pods_config()
     es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]

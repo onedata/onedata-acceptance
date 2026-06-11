@@ -20,12 +20,13 @@ from tests.gui.steps.onezone.space_configuration import (
     set_space_data_in_configuration_tab,
 )
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
-def configure_space_manually(browser_id: Any, config: Any, selenium: Any) -> Any:
+def configure_space_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -61,7 +62,7 @@ def configure_space_manually(browser_id: Any, config: Any, selenium: Any) -> Any
     )
 )
 def configure_space_manually_without_saving(
-    browser_id: Any, config: Any, selenium: Any
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
 ) -> Any:
     """Adjust space configuration according to given config.
 
@@ -71,7 +72,7 @@ def configure_space_manually_without_saving(
 
 
 def _configure_space_manually(
-    browser_id: Any, config: Any, selenium: Any, with_save: Any = True
+    browser_id: Any, config: Any, selenium: SeleniumDrivers, with_save: Any = True
 ) -> Any:
     data = yaml.load(config, yaml.Loader)
 
@@ -129,7 +130,7 @@ def _configure_space_manually(
     )
 )
 def assert_space_in_marketplace_with_config(
-    browser_id: Any, selenium: Any, config: Any
+    browser_id: Any, selenium: SeleniumDrivers, config: Any
 ) -> Any:
     """Assert space advertised in marketplace according to given config.
 
@@ -161,7 +162,7 @@ def assert_space_in_marketplace_with_config(
 
 
 def _assert_space_in_marketplace_with_config(
-    browser_id: Any, config: Any, selenium: Any
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
 ) -> Any:
     data = yaml.load(config, yaml.Loader)
 

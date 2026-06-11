@@ -17,6 +17,7 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.conftest import SeleniumDrivers
 
 
 def fail_to_set_privileges_using_op_gui(
@@ -25,7 +26,7 @@ def fail_to_set_privileges_using_op_gui(
     member_name: Any,
     member_type: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     button = "Members"
     option = "fails to set"
@@ -51,7 +52,7 @@ def assert_privileges_in_space_using_op_gui(
     member_name: Any,
     member_type: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     option = "Members"
     list_type = "users"
@@ -70,7 +71,7 @@ def assert_privileges_in_space_using_op_gui(
 
 
 def fail_to_create_invitation_in_space_using_op_gui(
-    user: Any, space_name: Any, selenium: Any
+    user: Any, space_name: Any, selenium: SeleniumDrivers
 ) -> Any:
     option = "Members"
     button = "Invite user using token"
@@ -85,7 +86,7 @@ def fail_to_create_invitation_in_space_using_op_gui(
 
 
 def assert_not_user_in_space_using_op_gui(
-    user: Any, space_name: Any, member_name: Any, selenium: Any
+    user: Any, space_name: Any, member_name: Any, selenium: SeleniumDrivers
 ) -> Any:
     option = "does not see"
     member_type = "user"
@@ -102,7 +103,7 @@ def assert_not_user_in_space_using_op_gui(
 
 
 def assert_group_in_space_using_op_gui(
-    selenium: Any, user: Any, space_name: Any, group_name: Any
+    selenium: SeleniumDrivers, user: Any, space_name: Any, group_name: Any
 ) -> Any:
     option1 = "Members"
     option2 = "sees"

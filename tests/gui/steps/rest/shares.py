@@ -14,6 +14,7 @@ from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import create_empty_file, get_file_id_by_rest
 from tests.utils.rest_utils import (
+from tests.conftest import Hosts, Users
     get_provider_rest_path,
     get_zone_rest_path,
     http_get,
@@ -33,8 +34,8 @@ def create_share_using_rest(
     provider: Any,
     user: Any,
     share_name: Any,
-    hosts: Any,
-    users: Any,
+    hosts: Hosts,
+    users: Users,
     shares: Any,
 ) -> Any:
     provider_hostname = hosts[provider]["hostname"]
@@ -63,8 +64,8 @@ def wt_create_share_using_rest(
     provider: Any,
     user: Any,
     share_name: Any,
-    hosts: Any,
-    users: Any,
+    hosts: Hosts,
+    users: Users,
     shares: Any,
 ) -> Any:
     create_share_using_rest(item_path, provider, user, share_name, hosts, users, shares)
@@ -72,7 +73,7 @@ def wt_create_share_using_rest(
 
 @given(parsers.parse("using REST, user {user} creates following shares:\n{config}"))
 def create_many_shares_using_rest(
-    user: Any, config: Any, hosts: Any, users: Any, shares: Any
+    user: Any, config: Any, hosts: Hosts, users: Users, shares: Any
 ) -> Any:
     """Config:
 
@@ -85,7 +86,7 @@ def create_many_shares_using_rest(
 
 
 def _create_many_shares_using_rest(
-    user: Any, config: Any, hosts: Any, users: Any, shares: Any
+    user: Any, config: Any, hosts: Hosts, users: Users, shares: Any
 ) -> Any:
     data = yaml.load(config, yaml.Loader)
     for share in data:
@@ -97,7 +98,7 @@ def _create_many_shares_using_rest(
 
 
 @given(parsers.parse("user {user} is added to mock handle service in {host}"))
-def add_user_to_handle_service(user: Any, users: Any, host: Any, hosts: Any) -> Any:
+def add_user_to_handle_service(user: Any, users: Users, host: Any, hosts: Hosts) -> Any:
     zone_hostname = hosts[transform(host)]["hostname"]
     handle_service_id = http_get(
         ip=zone_hostname,
@@ -121,9 +122,9 @@ def add_user_to_handle_service(user: Any, users: Any, host: Any, hosts: Any) -> 
     )
 )
 def create_n_shares_in_space(
-    users: Any,
+    users: Users,
     user: Any,
-    hosts: Any,
+    hosts: Hosts,
     host: Any,
     number: int,
     space_name: Any,

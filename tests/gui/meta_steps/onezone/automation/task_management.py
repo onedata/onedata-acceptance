@@ -25,6 +25,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
 )
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -38,7 +39,7 @@ from tests.utils.bdd_utils import parsers, wt
 def create_task_using_previously_created_lambda(
     browser_id: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     lane_name: Any,
     lambda_name: Any,
     ordinal: Any,
@@ -87,7 +88,7 @@ def create_task_using_previously_created_lambda(
 def _create_task_using_previously_created_lambda(
     browser_id: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     lane_name: Any,
     lambda_name: Any,
     ordinal: Any,
@@ -171,7 +172,7 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(selenium: Any, browser_id: Any, lane: Any, task: Any) -> Any:
+def remove_task_from_lane(selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any) -> Any:
     modal = "Remove task"
     option = "Remove"
 
@@ -191,7 +192,7 @@ def remove_task_from_lane(selenium: Any, browser_id: Any, lane: Any, task: Any) 
     )
 )
 def modify_task_results(
-    selenium: Any, browser_id: Any, lane: Any, task: Any, config: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any, config: Any, option: Any
 ) -> Any:
     conf_param_option = "configuration parameters"
     data = yaml.load(config, yaml.Loader)

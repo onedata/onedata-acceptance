@@ -55,11 +55,12 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_harvester(selenium: Any, browser_id: Any, space_name: Any) -> Any:
+def remove_space_from_harvester(selenium: SeleniumDrivers, browser_id: Any, space_name: Any) -> Any:
     button = "Remove"
     modal = "Remove space from harvester"
 
@@ -77,7 +78,7 @@ def remove_space_from_harvester(selenium: Any, browser_id: Any, space_name: Any)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_from_given_harvester(
-    selenium: Any, browser_id: Any, space_name: Any, harvester_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, harvester_name: Any
 ) -> Any:
     button = "Remove"
     modal = "Remove space from harvester"
@@ -98,7 +99,7 @@ def remove_space_from_given_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_harvester(selenium: Any, browser_id: Any, harvester_name: Any) -> Any:
+def remove_harvester(selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any) -> Any:
     where = "Discovery"
     list_type = "harvesters"
     option = "Remove"
@@ -119,10 +120,10 @@ def remove_harvester(selenium: Any, browser_id: Any, harvester_name: Any) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_harvester(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     harvester_name: Any,
-    hosts: Any,
+    hosts: Hosts,
     harvesters: Any,
     clipboard: Any,
     displays: Any,
@@ -155,7 +156,7 @@ def create_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     harvester_name: Any,
@@ -197,7 +198,7 @@ def join_space_to_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_harvester(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     group_name: Any,
     harvester_name: Any,
@@ -234,7 +235,7 @@ def add_group_to_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(
-    selenium: Any, browser_id: Any, index_name: Any, harvester_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, index_name: Any, harvester_name: Any
 ) -> Any:
     option = "Indices"
     member_menu_option = "Create new index"
@@ -257,7 +258,7 @@ def create_index_in_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id1: Any,
     harvester_name: Any,
     browser_id2: Any,
@@ -303,7 +304,7 @@ def send_invitation_token(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_harvester(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     config: Any,
     user_name: Any,
@@ -343,7 +344,7 @@ def change_privilege_config_in_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_harvester(
-    selenium: Any, browser_id: Any, harvester_name: Any, harvester_renamed: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any, harvester_renamed: Any
 ) -> Any:
     option = "harvesters"
     menu_option = "Rename"
@@ -365,7 +366,7 @@ def rename_harvester(
     )
 )
 def assert_space_on_harvester_list(
-    selenium: Any, browser_id: Any, space: Any, harvester: Any
+    selenium: SeleniumDrivers, browser_id: Any, space: Any, harvester: Any
 ) -> Any:
     option = "Discovery"
     option2 = "harvesters"
@@ -383,7 +384,7 @@ def assert_space_on_harvester_list(
 
 @wt(parsers.parse('user of {browser_id} configures "{harvester}" harvester as public'))
 def configure_harvester_as_public(
-    selenium: Any, browser_id: Any, harvester: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester: Any
 ) -> Any:
     action = "checks"
     discovery_tab = "Discovery"
@@ -417,7 +418,7 @@ def configure_harvester_as_public(
     )
 )
 def check_harvesting_process_in_harvester(
-    selenium: Any, browser_id: Any, harvester: Any, index: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester: Any, index: Any
 ) -> Any:
     discovery_tab = "Discovery"
     scope = "harvesters"
@@ -442,7 +443,7 @@ def check_harvesting_process_in_harvester(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_with_toggles_list(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     index_name: Any,
     toggles_list: Any,
     harvester_name: Any,
@@ -466,7 +467,7 @@ def create_index_with_toggles_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_indices_for_harvester(
-    browser_id: Any, selenium: Any, index_name: Any, harvester_name: Any
+    browser_id: Any, selenium: SeleniumDrivers, index_name: Any, harvester_name: Any
 ) -> Any:
     option = "Configuration"
     tab_name = "GUI plugin"

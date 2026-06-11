@@ -15,6 +15,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -25,7 +26,7 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
-    selenium: Any, browser_id: Any, which_browser: Any, tmp_memory: Any, key_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, which_browser: Any, tmp_memory: Any, key_name: Any
 ) -> Any:
     create_xattr_columns_in_columns_menu_in_browser(
         selenium, browser_id, which_browser, tmp_memory, key_name
@@ -41,7 +42,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser(
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     which_browser: Any,
     tmp_memory: Any,
@@ -60,7 +61,7 @@ def wt_create_xattr_columns_in_columns_menu_in_browser_with_label(
 
 
 def create_xattr_columns_in_columns_menu_in_browser(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     which_browser: Any,
     tmp_memory: Any,
@@ -102,7 +103,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     )
 )
 def wt_create_json_column_for_whole_document_with_label(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     which_browser: Any,
     tmp_memory: Any,
@@ -127,7 +128,7 @@ def wt_create_json_column_for_whole_document_with_label(
     )
 )
 def wt_create_json_column_for_whole_document(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     which_browser: Any,
     tmp_memory: Any,
@@ -153,7 +154,7 @@ def wt_create_json_column_for_whole_document(
     )
 )
 def wt_create_json_column_for_query_or_key_with_label(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     tmp_memory: Any,
     which_browser: Any,
@@ -182,7 +183,7 @@ def wt_create_json_column_for_query_or_key_with_label(
     )
 )
 def wt_create_json_column_for_query_or_key(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     tmp_memory: Any,
     which_browser: Any,
@@ -201,7 +202,7 @@ def wt_create_json_column_for_query_or_key(
 
 
 def create_json_column_in_columns_menu(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     tmp_memory: Any,
     which_browser: Any,
@@ -249,7 +250,7 @@ def create_json_column_in_columns_menu(
     )
 )
 def open_metadata_tab_using_tag(
-    selenium: Any, browser_id: Any, tmp_memory: Any, item_name: Any, modal_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_name: Any, modal_name: Any
 ) -> Any:
     tab_name = "Metadata"
     click_on_status_tag_for_file_in_file_browser(

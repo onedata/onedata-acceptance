@@ -20,6 +20,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
 from tests import gui
+from tests.conftest import SeleniumDrivers
 
 T = TypeVar("T")
 
@@ -46,7 +47,7 @@ def parse_url(url: str) -> re.Match[str]:
     return match
 
 
-def go_to_relative_url(selenium: Any, relative_url: str) -> None:
+def go_to_relative_url(selenium: SeleniumDrivers, relative_url: str) -> None:
     match = parse_url(selenium.current_url)
     new_url = match.group("base_url") + relative_url
     selenium.get(new_url)

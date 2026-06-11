@@ -43,10 +43,11 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     provider_name: Any,
     new_provider_name: Any,
@@ -90,7 +91,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(
     )
 )
 def deregister_provider_in_op_panel_using_gui(
-    selenium: Any, browser_id: Any, provider_name: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider_name: Any, hosts: Hosts
 ) -> Any:
     sidebar = "CLUSTERS"
     sub_item = "Provider configuration"
@@ -108,7 +109,7 @@ def deregister_provider_in_op_panel_using_gui(
 
 
 def register_provider_in_op_using_gui(
-    selenium: Any, user: Any, hosts: Any, config: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, user: Any, hosts: Hosts, config: Any, tmp_memory: Any
 ) -> Any:
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)
@@ -171,7 +172,7 @@ def register_provider_in_op_using_gui(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(
-    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
 ) -> Any:
     sub_item = "Provider configuration"
     record = 0
@@ -205,7 +206,7 @@ def change_provider_name_if_name_is_different_than_given(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_cluster_ones3_node_status_rest(
-    hosts: Any, provider: Any, onepanel_credentials: Any, status: Any
+    hosts: Hosts, provider: Any, onepanel_credentials: Any, status: Any
 ) -> Any:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
     res = get_provider_service_nodes_statuses(
@@ -218,7 +219,7 @@ def assert_provider_cluster_ones3_node_status_rest(
 
 @wt(parsers.parse("user {user} adds oneS3 node to provider cluster in {provider}"))
 def add_provider_cluster_ones3_node_rest(
-    hosts: Any, provider: Any, onepanel_credentials: Any
+    hosts: Hosts, provider: Any, onepanel_credentials: Any
 ) -> Any:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
     data = {"hosts": [host]}
@@ -234,7 +235,7 @@ def add_provider_cluster_ones3_node_rest(
     )
 )
 def stop_provider_cluster_ones3_node_rest(
-    option: Any, hosts: Any, provider: Any, onepanel_credentials: Any
+    option: Any, hosts: Hosts, provider: Any, onepanel_credentials: Any
 ) -> Any:
     host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
     start_stop_provider_service_node(

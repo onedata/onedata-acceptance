@@ -31,10 +31,11 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 def change_user_password_in_oz_panel_using_gui(
-    selenium: Any, user: Any, users: Any, new_password: Any
+    selenium: SeleniumDrivers, user: Any, users: Users, new_password: Any
 ) -> Any:
     option_name = "Manage account"
     button_name = "Change password"
@@ -52,7 +53,7 @@ def change_user_password_in_oz_panel_using_gui(
 
 
 def login_to_oz_panel_using_new_password_gui(
-    selenium: Any, user: Any, password: Any
+    selenium: SeleniumDrivers, user: Any, password: Any
 ) -> Any:
     notify_type = "info"
     notify_text_regexp = ".*[Aa]uthentication.*succeeded.*"
@@ -64,7 +65,7 @@ def login_to_oz_panel_using_new_password_gui(
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def log_out_from_oz_panel_gui(username: Any, selenium: Any) -> Any:
+def log_out_from_oz_panel_gui(username: Any, selenium: SeleniumDrivers) -> Any:
     button_name = "Logout"
 
     wt_click_on_user_account_btn_panel(selenium, username)
@@ -81,11 +82,11 @@ def log_out_from_oz_panel_gui(username: Any, selenium: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_passphrase(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     current_passphrase: Any,
     new_passphrase: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     change_passphrase_button = "Change passphrase"
     confirm_button = "Change"

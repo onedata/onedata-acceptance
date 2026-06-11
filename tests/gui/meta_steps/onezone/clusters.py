@@ -40,6 +40,7 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -49,11 +50,11 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def invite_user_to_cluster(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     browser: Any,
     cluster: Any,
-    hosts: Any,
+    hosts: Hosts,
     tmp_memory: Any,
     displays: Any,
     clipboard: Any,
@@ -81,7 +82,7 @@ def invite_user_to_cluster(
 @wt(parsers.parse("user of {browser_id} joins to cluster"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_to_cluster(
-    selenium: Any, browser_id: Any, displays: Any, clipboard: Any
+    selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any
 ) -> Any:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
 
@@ -93,7 +94,7 @@ def join_to_cluster(
     )
 )
 def change_privilege_config_in_cluster(
-    selenium: Any, browser_id: Any, where: Any, user_name: Any, hosts: Any, config: Any
+    selenium: SeleniumDrivers, browser_id: Any, where: Any, user_name: Any, hosts: Hosts, config: Any
 ) -> Any:
     member_type = "user"
     list_type = "users"
@@ -123,9 +124,9 @@ def change_privilege_config_in_cluster(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
-    hosts: Any,
+    hosts: Hosts,
     group_name: Any,
     cluster_name: Any,
     tmp_memory: Any,
@@ -170,7 +171,7 @@ def add_group_to_cluster(
     )
 )
 def no_member_in_parent(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     member_name: Any,
     member_type: Any,
@@ -195,10 +196,10 @@ def no_member_in_parent(
 @wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     provider: Any,
-    hosts: Any,
+    hosts: Hosts,
     tmp_memory: Any,
     clipboard: Any,
     displays: Any,
@@ -227,10 +228,10 @@ def remember_cluster_id(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_gui_settings(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     record: Any,
-    hosts: Any,
+    hosts: Hosts,
     kind_of_agreement: Any,
     text: Any,
     operation: Any,
@@ -262,7 +263,7 @@ def set_gui_settings(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium: Any, browser_id: Any, kind_of_agreement: Any) -> Any:
+def insert_setting_link(selenium: SeleniumDrivers, browser_id: Any, kind_of_agreement: Any) -> Any:
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
     click_button_in_gui_settings_page(selenium, browser_id, link)

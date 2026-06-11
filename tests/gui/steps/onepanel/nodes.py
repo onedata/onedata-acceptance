@@ -15,6 +15,7 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -25,7 +26,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(
-    selenium: Any, browser_id: Any, options: Any, host_regexp: Any
+    selenium: SeleniumDrivers, browser_id: Any, options: Any, host_regexp: Any
 ) -> Any:
     options = [transform(option) for option in parse_seq(options)]
     err_msg = f"{{}} not enabled for {host_regexp} in Nodes page in Onepanel"
@@ -45,7 +46,7 @@ def wt_assert_options_enabled_for_host_in_nodes(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_cannot_be_changed_for_host_in_nodes(
-    selenium: Any, browser_id: Any, options: Any, host_regexp: Any
+    selenium: SeleniumDrivers, browser_id: Any, options: Any, host_regexp: Any
 ) -> Any:
     options = [transform(option) for option in parse_seq(options)]
     err_msg = (

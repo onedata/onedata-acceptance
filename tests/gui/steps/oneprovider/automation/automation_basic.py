@@ -22,6 +22,7 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 # this step is created to avoid using repeat_failed in metasteps
@@ -30,7 +31,7 @@ def get_op_workflow_visualizer_page(driver: Any) -> Any:
     return OPLoggedIn(driver).automation_page.workflow_visualiser
 
 
-def switch_to_automation_page(selenium: Any, browser_id: Any) -> Any:
+def switch_to_automation_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     switch_to_iframe(selenium, browser_id)
     return OPLoggedIn(selenium[browser_id]).automation_page
 
@@ -44,7 +45,7 @@ def get_input_element(driver: Any, input_type: Any) -> Any:
 @wt(parsers.parse('user of {browser_id} clicks "{tab_name}" in the automation tab bar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_navigation_tab(
-    selenium: Any, browser_id: Any, tab_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -67,7 +68,7 @@ def click_button_in_navigation_tab(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_workflow_revision_to_run(
-    selenium: Any, browser_id: Any, ordinal: Any, workflow: Any
+    selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, workflow: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     revision = int(ordinal[:-2]) - 1
@@ -81,7 +82,7 @@ def choose_workflow_revision_to_run(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_workflow_to_execute(selenium: Any, browser_id: Any) -> Any:
+def confirm_workflow_to_execute(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.run_workflow_button.click()
 
@@ -139,7 +140,7 @@ def search_for_task_in_parallel_box(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_task_in_lane(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane_name: Any,
     task_name: Any,
@@ -189,7 +190,7 @@ def click_on_task_in_lane(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_link_in_task_box(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane_name: Any,
     task_name: Any,
@@ -216,7 +217,7 @@ def click_on_link_in_task_box(
     )
 )
 def change_tab_in_automation_subpage(
-    selenium: Any, browser_id: Any, tab_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.navigation_tab[tab_name].click()
@@ -225,7 +226,7 @@ def change_tab_in_automation_subpage(
 
 @wt(parsers.re("user of (?P<browser_id>.*) clicks on first executed workflow"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_first_executed_workflow_record(selenium: Any, browser_id: Any) -> Any:
+def expand_first_executed_workflow_record(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Ended")
     page.workflow_executions_list[0].click()
@@ -238,7 +239,7 @@ def expand_first_executed_workflow_record(selenium: Any, browser_id: Any) -> Any
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_workflow_menu(selenium: Any, browser_id: Any, workflow: Any) -> Any:
+def click_on_workflow_menu(selenium: SeleniumDrivers, browser_id: Any, workflow: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].menu_button()
 
@@ -249,7 +250,7 @@ def click_on_workflow_menu(selenium: Any, browser_id: Any, workflow: Any) -> Any
         "on workflow executions list"
     )
 )
-def click_and_enter_workflow(selenium: Any, browser_id: Any, workflow: Any) -> Any:
+def click_and_enter_workflow(selenium: SeleniumDrivers, browser_id: Any, workflow: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].click()
 
@@ -262,7 +263,7 @@ def click_and_enter_workflow(selenium: Any, browser_id: Any, workflow: Any) -> A
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_workflow_on_executed_workflows_list(
-    selenium: Any, browser_id: Any, workflow: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, workflow: Any, option: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
 
@@ -282,7 +283,7 @@ def assert_workflow_on_executed_workflows_list(
     )
 )
 def assert_option_disabled_in_automation_page(
-    selenium: Any, browser_id: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
 ) -> Any:
     err_msg = (
         f"Option {option} is not disabled in data row menu in automation workflows page"
@@ -298,7 +299,7 @@ def assert_option_disabled_in_automation_page(
     )
 )
 def click_option_for_lane(
-    selenium: Any, browser_id: Any, lane_name: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any, option: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
@@ -314,7 +315,7 @@ def click_option_for_lane(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_status_bar(selenium: Any, browser_id: Any, button: Any) -> Any:
+def click_button_on_status_bar(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     time.sleep(1)
     getattr(page.workflow_visualiser, transform(button))()
@@ -329,7 +330,7 @@ def click_button_on_status_bar(selenium: Any, browser_id: Any, button: Any) -> A
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_workflow_in_inventory_subpage(
-    selenium: Any, browser_id: Any, ordinal: Any, workflow: Any
+    selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, workflow: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"]
@@ -341,7 +342,7 @@ def click_on_workflow_in_inventory_subpage(
 
 @wt(parsers.parse('user of {browser_id} chooses "{level}" logging level'))
 def select_logging_level_in_automation_subpage(
-    browser_id: Any, selenium: Any, level: Any
+    browser_id: Any, selenium: SeleniumDrivers, level: Any
 ) -> Any:
     driver = selenium[browser_id]
     OPLoggedIn(driver).automation_page.logging_level()

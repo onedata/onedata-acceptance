@@ -19,12 +19,13 @@ from urllib3.exceptions import HTTPError
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
+from tests.conftest import Capabilities, SeleniumDrivers
 
 
 @given(parsers.parse("user opened {browser_id_list} window"))
 @given(parsers.parse("users opened {browser_id_list} browsers' windows"))
 def create_instances_of_webdriver(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     driver: Any,
     browser_id_list: Any,
     tmpdir: Any,
@@ -34,7 +35,7 @@ def create_instances_of_webdriver(
     screen_width: Any,
     screen_height: Any,
     displays: Any,
-    capabilities: Any,
+    capabilities: Capabilities,
 ) -> Any:
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):

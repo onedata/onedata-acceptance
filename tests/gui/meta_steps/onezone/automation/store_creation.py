@@ -18,6 +18,7 @@ from tests.gui.steps.modals.modal import (
 )
 from tests.gui.steps.onezone.automation.workflow_creation import click_add_store_button
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -27,7 +28,7 @@ from tests.utils.bdd_utils import parsers, wt
         r"\n(?P<config>(.|\s)*)"
     )
 )
-def create_store_for_workflow(browser_id: Any, config: Any, selenium: Any) -> Any:
+def create_store_for_workflow(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -45,7 +46,7 @@ def create_store_for_workflow(browser_id: Any, config: Any, selenium: Any) -> An
     _create_store_for_workflow(browser_id, config, selenium)
 
 
-def _create_store_for_workflow(browser_id: Any, config: Any, selenium: Any) -> Any:
+def _create_store_for_workflow(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 

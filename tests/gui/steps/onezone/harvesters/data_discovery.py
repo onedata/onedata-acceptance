@@ -15,11 +15,12 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page"))
 @wt(parsers.parse("user of {browser_id} sees public data discovery page"))
-def assert_data_discovery_page(selenium: Any, browser_id: Any) -> Any:
+def assert_data_discovery_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     # this function can only be used when we are sure that
     # there will be some files harvested as to use active waiting
     # instead of just sleep
@@ -31,7 +32,7 @@ def assert_data_discovery_page(selenium: Any, browser_id: Any) -> Any:
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=1.5)
-def _wait_for_files_list(selenium: Any, browser_id: Any) -> Any:
+def _wait_for_files_list(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     button_name = "Query"
 
     click_button_on_data_disc_page(selenium, browser_id, button_name)
@@ -39,7 +40,7 @@ def _wait_for_files_list(selenium: Any, browser_id: Any) -> Any:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND / 2)
-def assert_files_list_on_data_disc(selenium: Any, browser_id: Any) -> Any:
+def assert_files_list_on_data_disc(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     msg = "files list is not visible on data discovery page"
     assert len(DataDiscovery(selenium[browser_id]).results_list), msg
 
@@ -49,7 +50,7 @@ def assert_files_list_on_data_disc(selenium: Any, browser_id: Any) -> Any:
         "user of {browser_id} sees public data discovery page with no harvested data"
     )
 )
-def assert_empty_data_discovery_page(selenium: Any, browser_id: Any) -> Any:
+def assert_empty_data_discovery_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     button_name = "Query"
 
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
@@ -63,7 +64,7 @@ def assert_empty_data_discovery_page(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_BACKEND * 9, interval=10)
 def assert_alert_text_on_data_disc_page(
-    selenium: Any, browser_id: Any, error_msg: Any
+    selenium: SeleniumDrivers, browser_id: Any, error_msg: Any
 ) -> Any:
     msg = f"alert with {error_msg} message is not visible"
     assert error_msg == DataDiscovery(selenium[browser_id]).error_message, msg
@@ -76,7 +77,7 @@ def assert_alert_text_on_data_disc_page(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def see_alert_on_data_discovery_page(
-    selenium: Any, browser_id: Any, error_msg: Any
+    selenium: SeleniumDrivers, browser_id: Any, error_msg: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
     assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg)
@@ -87,7 +88,7 @@ def see_alert_on_data_discovery_page(
     parsers.parse("user of {browser_id} sees public data discovery page with Ecrin GUI")
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_data_discovery_page_ecrin(selenium: Any, browser_id: Any) -> Any:
+def assert_data_discovery_page_ecrin(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     switch_to_iframe(selenium, browser_id, ".plugin-frame")
     driver = selenium[browser_id]
     assert (
@@ -101,7 +102,7 @@ def assert_data_discovery_page_ecrin(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block(selenium: Any, browser_id: Any) -> Any:
+def start_query_block(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     DataDiscovery(driver).query_builder.root_block()
 
@@ -113,7 +114,7 @@ def start_query_block(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_another_query_block(selenium: Any, browser_id: Any) -> Any:
+def start_another_query_block(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     DataDiscovery(driver).query_builder.another_block_buttons[0].click()
 
@@ -125,7 +126,7 @@ def start_another_query_block(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(selenium: Any, browser_id: Any, number: str) -> Any:
+def start_query_block_no(selenium: SeleniumDrivers, browser_id: Any, number: str) -> Any:
     driver = selenium[browser_id]
     no = int(number.split()[0])
     DataDiscovery(driver).query_builder.another_block_buttons[no - 1].click()
@@ -137,7 +138,7 @@ def start_query_block_no(selenium: Any, browser_id: Any, number: str) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_condition_properties_list(selenium: Any, browser_id: Any) -> Any:
+def open_condition_properties_list(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.expand_properties()
@@ -150,7 +151,7 @@ def open_condition_properties_list(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_properties_on_condition_properties_list(
-    selenium: Any, browser_id: Any, properties_list: Any
+    selenium: SeleniumDrivers, browser_id: Any, properties_list: Any
 ) -> Any:
     driver = selenium[browser_id]
     properties = parse_seq(properties_list)
@@ -169,7 +170,7 @@ def assert_properties_on_condition_properties_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_property_for_query(
-    selenium: Any, browser_id: Any, property_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, property_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
@@ -184,7 +185,7 @@ def choose_property_for_query(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_comparator_in_query_builder(
-    selenium: Any, browser_id: Any, comparator: Any
+    selenium: SeleniumDrivers, browser_id: Any, comparator: Any
 ) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
@@ -197,7 +198,7 @@ def choose_comparator_in_query_builder(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_value_in_query_builder(selenium: Any, browser_id: Any, value: str) -> Any:
+def write_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, value: str) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.value = value
@@ -210,7 +211,7 @@ def write_value_in_query_builder(selenium: Any, browser_id: Any, value: str) -> 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_in_query_builder(selenium: Any, browser_id: Any, value: str) -> Any:
+def choose_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, value: str) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_value(value)
@@ -218,7 +219,7 @@ def choose_value_in_query_builder(selenium: Any, browser_id: Any, value: str) ->
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_button_in_query_builder(selenium: Any, browser_id: Any) -> Any:
+def click_add_button_in_query_builder(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.add_button()
@@ -231,7 +232,7 @@ def click_add_button_in_query_builder(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_operator_in_query_builder(
-    selenium: Any, browser_id: Any, operator: Any
+    selenium: SeleniumDrivers, browser_id: Any, operator: Any
 ) -> Any:
     driver = selenium[browser_id]
     query_builder = Popups(driver).get_query_builder_not_hidden_popup()
@@ -245,7 +246,7 @@ def click_operator_in_query_builder(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_data_disc_page(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = DataDiscovery(driver)
@@ -253,14 +254,14 @@ def click_button_on_data_disc_page(
 
 
 @wt(parsers.parse("user of {browser_id} sees that paging is set for {number} pages"))
-def assert_page_size(selenium: Any, browser_id: Any, number: str) -> Any:
+def assert_page_size(selenium: SeleniumDrivers, browser_id: Any, number: str) -> Any:
     driver = selenium[browser_id]
     given = DataDiscovery(driver).page_size
     assert given == number, f"Expected page size was {number}, but got {given}"
 
 
 @wt(parsers.parse("user of {browser_id} opens next page of data discovery page"))
-def open_next_data_disc_page(selenium: Any, browser_id: Any) -> Any:
+def open_next_data_disc_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     DataDiscovery(driver).next_page()
 
@@ -272,7 +273,7 @@ def open_next_data_disc_page(selenium: Any, browser_id: Any) -> Any:
     )
 )
 def choose_sorting_parameter_or_order(
-    selenium: Any, browser_id: Any, parameter: Any, item: Any
+    selenium: SeleniumDrivers, browser_id: Any, parameter: Any, item: Any
 ) -> Any:
     driver = selenium[browser_id]
     getattr(DataDiscovery(driver), f"sorting_{item}_selector")()

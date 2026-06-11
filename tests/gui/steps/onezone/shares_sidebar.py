@@ -12,6 +12,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -22,7 +23,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_name_for_share_matches_expected(
-    selenium: Any, browser_id: Any, share_name: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any, space_name: Any
 ) -> Any:
     shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_sidebar_list
 
@@ -43,7 +44,7 @@ def assert_space_name_for_share_matches_expected(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_name_in_shares_sidebar(
-    selenium: Any, browser_id: Any, share_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
 ) -> Any:
     shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_sidebar_list
     share_names_list = {share.name for share in shares_list}

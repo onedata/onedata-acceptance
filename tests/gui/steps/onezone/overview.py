@@ -16,6 +16,7 @@ from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -25,7 +26,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_space_name_on_rename_space_input_on_overview_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].overview_page.info_tile.rename()
@@ -37,7 +38,7 @@ def type_space_name_on_rename_space_input_on_overview_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_space_by_click_on_confirmation_button_on_overview_page(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.confirm()
@@ -45,7 +46,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_cancel_rename_button_on_overview_page(selenium: Any, browser_id: Any) -> Any:
+def click_cancel_rename_button_on_overview_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.cancel()
 
@@ -56,7 +57,7 @@ def click_cancel_rename_button_on_overview_page(selenium: Any, browser_id: Any) 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_the_space(selenium: Any, browser_id: Any, option: Any) -> Any:
+def confirm_rename_the_space(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -72,7 +73,7 @@ def confirm_rename_the_space(selenium: Any, browser_id: Any, option: Any) -> Any
     )
 )
 def assert_number_of_shares_on_overview_page(
-    browser_id: Any, selenium: Any, number: int
+    browser_id: Any, selenium: SeleniumDrivers, number: int
 ) -> Any:
     driver = selenium[browser_id]
     shares_count = int(OZLoggedIn(driver)["data"].overview_page.info_tile.shares_count)
@@ -84,7 +85,7 @@ def assert_number_of_shares_on_overview_page(
 @wt(parsers.parse('user of {browser_id} sees "{space_name}" label on overview page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_name_label_of_space_on_overview_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     assert (
@@ -94,7 +95,7 @@ def assert_name_label_of_space_on_overview_page(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_mes_at_field_in_space_details_in_overview(
-    selenium: Any, browser_id: Any, text: Any, field: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any, field: Any
 ) -> Any:
     driver = selenium[browser_id]
     details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
@@ -106,7 +107,7 @@ def assert_mes_at_field_in_space_details_in_overview(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tags_in_space_details_in_overview(
-    selenium: Any, browser_id: Any, tags_to_check: Any
+    selenium: SeleniumDrivers, browser_id: Any, tags_to_check: Any
 ) -> Any:
     tags = "tags"
     driver = selenium[browser_id]
@@ -128,7 +129,7 @@ def assert_tags_in_space_details_in_overview(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_advertised_in_space_marketplace_in_overview(
-    browser_id: Any, option: Any, selenium: Any
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
@@ -149,7 +150,7 @@ def assert_space_advertised_in_space_marketplace_in_overview(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_link_in_space_marketplace_in_overview(
-    browser_id: Any, link: Any, selenium: Any
+    browser_id: Any, link: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     marketplace_tile = OZLoggedIn(driver)["data"].overview_page.marketplace_tile
@@ -164,7 +165,7 @@ def click_link_in_space_marketplace_in_overview(
     )
 )
 def assert_space_in_overview_with_config(
-    browser_id: Any, selenium: Any, config: Any
+    browser_id: Any, selenium: SeleniumDrivers, config: Any
 ) -> Any:
     """Assert space advertised in marketplace according to given config.
 
@@ -188,7 +189,7 @@ def assert_space_in_overview_with_config(
 
 
 def _assert_space_in_overview_with_config(
-    browser_id: Any, config: Any, selenium: Any
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
 ) -> Any:
     data = yaml.load(config, yaml.Loader)
 

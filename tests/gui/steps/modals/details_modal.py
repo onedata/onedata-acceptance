@@ -19,6 +19,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -28,7 +29,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_chart_title_in_details_modal(
-    selenium: Any, browser_id: Any, title: Any, which_title: Any, modal: Any
+    selenium: SeleniumDrivers, browser_id: Any, title: Any, which_title: Any, modal: Any
 ) -> Any:
     modal = check_modal_name(modal)
     modal = getattr(Modals(selenium[browser_id]), modal).size_statistics
@@ -45,7 +46,7 @@ def assert_chart_title_in_details_modal(
 
 @wt(parsers.parse('user of {browser_id} clicks on chart in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_chart_in_modal(browser_id: Any, selenium: Any, modal: Any) -> Any:
+def click_on_chart_in_modal(browser_id: Any, selenium: SeleniumDrivers, modal: Any) -> Any:
     modal = check_modal_name(modal)
     getattr(Modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
@@ -58,7 +59,7 @@ def click_on_chart_in_modal(browser_id: Any, selenium: Any, modal: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_button_in_modal_not_active(
-    browser_id: Any, modal: Any, element: Any, selenium: Any
+    browser_id: Any, modal: Any, element: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     modal = getattr(Modals(driver), check_modal_name(modal))
@@ -73,7 +74,7 @@ def assert_button_in_modal_not_active(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tooltip_on_chart_in_modal(browser_id: Any, selenium: Any) -> Any:
+def assert_tooltip_on_chart_in_modal(browser_id: Any, selenium: SeleniumDrivers) -> Any:
     driver = selenium[browser_id]
     header = Popups(driver).chart_statistics.header
     try:
@@ -92,7 +93,7 @@ def assert_tooltip_on_chart_in_modal(browser_id: Any, selenium: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_navigation_tab_in_modal(
-    selenium: Any, browser_id: Any, tab_name: Any, modal: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any, modal: Any
 ) -> Any:
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal))
     tab = modal.navigation[tab_name]
@@ -107,7 +108,7 @@ def click_on_navigation_tab_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_navigation_tab_in_panel(
-    selenium: Any, browser_id: Any, tab_name: Any, modal: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any, modal: Any
 ) -> Any:
     modal = getattr(Modals(selenium[browser_id]).details_modal, check_modal_name(modal))
     tab = modal.navigation[tab_name]
@@ -121,7 +122,7 @@ def click_on_navigation_tab_in_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tab_in_modal(
-    selenium: Any, browser_id: Any, tab: Any, modal_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tab: Any, modal_name: Any
 ) -> Any:
     # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
     # trying to get active tab, when file details panel is being animated. There are
@@ -148,7 +149,7 @@ def assert_tab_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_posix_tab_in_panel(selenium: Any, browser_id: Any, modal_name: Any) -> Any:
+def assert_posix_tab_in_panel(selenium: SeleniumDrivers, browser_id: Any, modal_name: Any) -> Any:
     elem_name = "posix_permission_edition"
     posix_hidden = getattr(
         Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
@@ -171,7 +172,7 @@ def assert_posix_tab_in_panel(selenium: Any, browser_id: Any, modal_name: Any) -
     )
 )
 def click_on_context_menu_item(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -191,7 +192,7 @@ def click_on_context_menu_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_more_physical_locations_in_details_modal(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations
@@ -206,7 +207,7 @@ def click_show_more_physical_locations_in_details_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_message_in_physical_location_in_details_modal(
-    selenium: Any, browser_id: Any, expected_error: Any, provider: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, expected_error: Any, provider: Any, hosts: Hosts
 ) -> Any:
     provider_name = hosts[provider]["name"]
     details_modal = Modals(selenium[browser_id]).details_modal

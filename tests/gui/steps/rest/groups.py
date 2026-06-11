@@ -8,9 +8,10 @@ from typing import Any
 
 from tests import OZ_REST_PORT
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
+from tests.conftest import Users
 
 
-def get_user_groups(zone_hostname: Any, user: Any, users: Any) -> Any:
+def get_user_groups(zone_hostname: Any, user: Any, users: Users) -> Any:
     return http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -19,7 +20,7 @@ def get_user_groups(zone_hostname: Any, user: Any, users: Any) -> Any:
     ).json()["groups"]
 
 
-def leave_user_group(zone_hostname: Any, user: Any, users: Any, group_id: Any) -> Any:
+def leave_user_group(zone_hostname: Any, user: Any, users: Users, group_id: Any) -> Any:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,

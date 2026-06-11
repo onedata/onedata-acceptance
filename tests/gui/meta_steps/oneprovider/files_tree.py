@@ -22,6 +22,7 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 
 def build_tree_config(data: Any, root_path: Any = "") -> Any:
@@ -50,7 +51,7 @@ def _build_tree_config(data: Any, parent: Node) -> Any:
 
 def check_tree_browser(
     parent: Node,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     tmp_memory: Any,
     tmpdir: Any,
@@ -118,7 +119,7 @@ def check_tree_browser(
 def wt_check_file_structure_in_browser(
     browser_id: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     tmp_memory: Any,
     tmpdir: Any,
     which_browser: Any,
@@ -136,7 +137,7 @@ def wt_check_file_structure_in_browser(
 def check_file_structure_in_browser(
     browser_id: Any,
     config: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     tmp_memory: Any,
     tmpdir: Any,
     which_browser: Any = "file browser",

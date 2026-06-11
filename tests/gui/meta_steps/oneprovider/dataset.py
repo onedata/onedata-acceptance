@@ -32,6 +32,7 @@ from tests.gui.steps.oneprovider.dataset import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
+from tests.conftest import SeleniumDrivers
 
 DATA_PROTECTION = "data_protection"
 METADATA_PROTECTION = "metadata_protection"
@@ -47,7 +48,7 @@ def get_flags(option: Any) -> Any:
 
 
 def get_item_name_from_path(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -74,7 +75,7 @@ def create_dataset(
     tmp_memory: Any,
     item_name: Any,
     space_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     option: Any,
 ) -> Any:
     option_in_space = "Files"
@@ -121,7 +122,7 @@ def fail_to_create_dataset_in_op_gui(
     tmp_memory: Any,
     item_name: Any,
     space_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     option_in_space = "Files"
     option_in_data_row_menu = "Datasets"
@@ -143,7 +144,7 @@ def fail_to_create_dataset_in_op_gui(
 
 
 def assert_top_level_dataset_in_space_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -179,7 +180,7 @@ def assert_top_level_dataset_in_space_in_op_gui(
 
 
 def remove_dataset_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -210,7 +211,7 @@ def remove_dataset_in_op_gui(
 
 
 def check_dataset_structure_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     config: Any,
@@ -240,7 +241,7 @@ def check_dataset_structure_in_op_gui(
 
 
 def check_effective_protection_flags_for_file_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -270,7 +271,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
 
 
 def check_effective_protection_flag(
-    browser_id: Any, selenium: Any, kind: Any, item_name: Any, tmp_memory: Any
+    browser_id: Any, selenium: SeleniumDrivers, kind: Any, item_name: Any, tmp_memory: Any
 ) -> Any:
     try:
         assert_general_toggle_checked_for_ancestors(browser_id, selenium, kind)
@@ -283,7 +284,7 @@ def check_effective_protection_flag(
 
 def set_protection_flags_for_dataset_in_op_gui(
     browser_id: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     space_name: Any,
     tmp_memory: Any,
     item_name: Any,
@@ -326,7 +327,7 @@ def set_protection_flags_for_dataset_in_op_gui(
 
 
 def detach_dataset_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,
@@ -358,7 +359,7 @@ def detach_dataset_in_op_gui(
 
 
 def assert_dataset_detached_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     space_name: Any,
@@ -389,7 +390,7 @@ def assert_dataset_detached_in_op_gui(
 
 
 def reattach_dataset_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     space_name: Any,
     tmp_memory: Any,

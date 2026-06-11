@@ -10,6 +10,7 @@ from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
+from tests.conftest import Hosts, Users
     get_panel_rest_path,
     get_provider_rest_path,
     http_get,
@@ -18,7 +19,7 @@ from tests.utils.rest_utils import (
 )
 
 
-def get_provider_id(provider: Any, hosts: Any, users: Any) -> Any:
+def get_provider_id(provider: Any, hosts: Hosts, users: Users) -> Any:
     user = "admin"
     provider_hostname = hosts[provider]["hostname"]
     provider_conf = http_get(
@@ -35,7 +36,7 @@ def get_provider_id(provider: Any, hosts: Any, users: Any) -> Any:
         "using REST, user {user} sees that status of OneS3 of {provider} is ok"
     )
 )
-def assert_provider_ones3_status_ok(provider: Any, hosts: Any) -> Any:
+def assert_provider_ones3_status_ok(provider: Any, hosts: Hosts) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     status = http_get(
         ip=provider_hostname,
@@ -47,7 +48,7 @@ def assert_provider_ones3_status_ok(provider: Any, hosts: Any) -> Any:
 
 
 def add_provider_service_node(
-    hosts: Any,
+    hosts: Hosts,
     provider: Any,
     onepanel_credentials: Any,
     data: Any,
@@ -69,7 +70,7 @@ def add_provider_service_node(
 
 
 def get_provider_service_nodes_statuses(
-    hosts: Any, provider: Any, onepanel_credentials: Any, service: OnedataService
+    hosts: Hosts, provider: Any, onepanel_credentials: Any, service: OnedataService
 ) -> Any:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
@@ -85,7 +86,7 @@ def get_provider_service_nodes_statuses(
 
 
 def start_stop_provider_service_node(
-    hosts: Any,
+    hosts: Hosts,
     host: Any,
     provider: Any,
     onepanel_credentials: Any,

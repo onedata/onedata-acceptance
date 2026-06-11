@@ -20,6 +20,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -27,7 +28,7 @@ def get_status_from_workflow_visualizer(page: Any) -> Any:
     return page.workflow_visualiser.status
 
 
-def get_parallel_box(selenium: Any, browser_id: Any, ordinal: Any, lane: Any) -> Any:
+def get_parallel_box(selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, lane: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     number = from_ordinal_number_to_int(ordinal) - 1
     return search_for_lane_status(selenium[browser_id], page, lane, number)
@@ -41,7 +42,7 @@ def get_parallel_box(selenium: Any, browser_id: Any, ordinal: Any, lane: Any) ->
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_in_workflow_visualizer(
-    selenium: Any, browser_id: Any, status: Any
+    selenium: SeleniumDrivers, browser_id: Any, status: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = page.workflow_visualiser.status
@@ -52,7 +53,7 @@ def assert_status_in_workflow_visualizer(
 
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def assert_task_status_in_parallel_box(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     ordinal: Any,
     lane: Any,
@@ -74,7 +75,7 @@ def assert_task_status_in_parallel_box(
 
 @repeat_failed(interval=1, timeout=90)
 def await_for_task_status_in_parallel_box(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -98,7 +99,7 @@ def await_for_task_status_in_parallel_box(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_of_lane(
-    selenium: Any, browser_id: Any, lane: Any, expected_status: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane: Any, expected_status: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     driver = selenium[browser_id]
@@ -123,7 +124,7 @@ def get_status(page: Any, option: Any, name: Any) -> Any:
 )
 @repeat_failed(interval=1, timeout=120)
 def await_for_lane_or_workflow_status(
-    selenium: Any, browser_id: Any, expected_status: Any, name: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, expected_status: Any, name: Any, option: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = get_status(page, option, name)
@@ -142,7 +143,7 @@ def await_for_lane_or_workflow_status(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_of_workflow(
-    selenium: Any, browser_id: Any, expected_status: Any, workflow: Any
+    selenium: SeleniumDrivers, browser_id: Any, expected_status: Any, workflow: Any
 ) -> Any:
     option = "workflow"
     page = switch_to_automation_page(selenium, browser_id)
@@ -168,7 +169,7 @@ def assert_status(name: Any, actual_status: Any, expected_status: Any) -> Any:
     interval=1,
     timeout=360,
 )
-def wait_for_workflow_to_be_stopped(selenium: Any, browser_id: Any, option: Any) -> Any:
+def wait_for_workflow_to_be_stopped(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     status = page.workflow_visualiser.status
     assert status != "Stopping", f"workflow is not in {option} state"

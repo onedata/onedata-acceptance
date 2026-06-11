@@ -39,6 +39,7 @@ from tests.gui.utils.common.count_checksums import (
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def get_store_details_json(
@@ -92,7 +93,7 @@ def open_modal_and_get_store_content(
     )
 )
 def compare_store_contents(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     store1: Any,
     store2: Any,
@@ -147,7 +148,7 @@ def count_checksums_for_file(
     file_name: Any,
     tmpdir: Any,
     checksum_list: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
 
     click_and_press_enter_on_item_in_browser(
@@ -187,7 +188,7 @@ def checksums_counted_in_workflow(metadata_modal: Any) -> Any:
     )
 )
 def assert_checksums_are_the_same(
-    browser_id: Any, checksum_list: Any, file_name: Any, tmp_memory: Any, selenium: Any
+    browser_id: Any, checksum_list: Any, file_name: Any, tmp_memory: Any, selenium: SeleniumDrivers
 ) -> Any:
 
     status_type = "Metadata"
@@ -228,7 +229,7 @@ def count_checksums_and_compare_them(
     file_name: Any,
     tmpdir: Any,
     checksum_list: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     count_checksums_for_file(
         browser_id,
@@ -251,7 +252,7 @@ def count_checksums_and_compare_them(
     )
 )
 def assert_status_of_task_is_one_of_two(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -281,7 +282,7 @@ def assert_status_of_task_is_one_of_two(
     )
 )
 def assert_status_of_task(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -307,7 +308,7 @@ def assert_status_of_task(
     )
 )
 def open_link_and_assert_processing_stats_chart(
-    selenium: Any, browser_id: Any, lane: Any, task: Any, ordinal: Any, link: Any
+    selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any, ordinal: Any, link: Any
 ) -> Any:
     click = "clicks on"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)

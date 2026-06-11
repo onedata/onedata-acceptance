@@ -18,6 +18,7 @@ from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 SPACE_TABS = [
     "overview",
@@ -67,7 +68,7 @@ def _parse_tabs_list(tabs: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_spaces_sidebar_menu(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     button_name = transform(button_name) + "_button"
@@ -81,7 +82,7 @@ def click_button_on_spaces_sidebar_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_space_harvesters_page(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     button_name = transform(button_name)
@@ -95,7 +96,7 @@ def click_button_in_space_harvesters_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_space_name_on_input_on_create_new_space_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].input_box.value = space_name
@@ -104,7 +105,7 @@ def type_space_name_on_input_on_create_new_space_page(
 @wt(parsers.parse("user of {browser_id} clicks on Create new space button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_by_click_on_create_new_space_button(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].input_box.confirm()
@@ -113,7 +114,7 @@ def create_new_space_by_click_on_create_new_space_button(
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_on_onezone_page(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.create_space_button()
@@ -129,7 +130,7 @@ def create_new_space_on_onezone_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_provider_for_space(
-    selenium: Any, browser_id: Any, provider_name: Any, space_name: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider_name: Any, space_name: Any, hosts: Hosts
 ) -> Any:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.spaces_header_list[space_name]()
@@ -153,7 +154,7 @@ def assert_no_provider_for_space(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_new_created_space_has_appeared_on_spaces(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     assert (
@@ -163,7 +164,7 @@ def assert_new_created_space_has_appeared_on_spaces(
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "Automation" in the main menu'))
 def click_on_automation_option_in_the_sidebar(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     option = "Automation"
     page = _click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -179,7 +180,7 @@ def click_on_automation_option_in_the_sidebar(
         r'Clusters)" in the main menu'
     )
 )
-def click_on_option_in_the_sidebar(selenium: Any, browser_id: Any, option: Any) -> Any:
+def click_on_option_in_the_sidebar(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     _click_on_option_in_the_sidebar(selenium, browser_id, option, force=True)
 
 
@@ -188,13 +189,13 @@ def click_on_option_in_the_sidebar(selenium: Any, browser_id: Any, option: Any) 
         'user of {browser_id} can see tabs "{tabs}" are disabled in the main menu'
     )
 )
-def wt_assert_main_tabs_disabled(selenium: Any, browser_id: Any, tabs: Any) -> Any:
+def wt_assert_main_tabs_disabled(selenium: SeleniumDrivers, browser_id: Any, tabs: Any) -> Any:
     for tab in parse_seq(tabs):
         assert_main_tab_disabled(selenium, browser_id, tab)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_main_tab_disabled(selenium: Any, browser_id: Any, tab: Any) -> Any:
+def assert_main_tab_disabled(selenium: SeleniumDrivers, browser_id: Any, tab: Any) -> Any:
     driver = selenium[browser_id]
     assert OZLoggedIn(driver).is_panel_disabled(
         tab.lower()
@@ -207,7 +208,7 @@ def assert_main_tab_disabled(selenium: Any, browser_id: Any, tab: Any) -> Any:
         "sidebar by clicking on the background"
     )
 )
-def close_sidebar_by_click_on_background(selenium: Any, browser_id: Any) -> Any:
+def close_sidebar_by_click_on_background(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     css_sel = ".sidenav-backdrop"
     el = driver.find_element(By.CSS_SELECTOR, css_sel)
@@ -216,7 +217,7 @@ def close_sidebar_by_click_on_background(selenium: Any, browser_id: Any) -> Any:
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_on_option_in_the_sidebar(
-    selenium: Any, browser_id: Any, option: Any, force: Any = True
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, force: Any = True
 ) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -236,7 +237,7 @@ def _click_on_option_in_the_sidebar(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_element_on_lists_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, option: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any, name: Any
 ) -> Any:
     driver = selenium[browser_id]
     if option == "harvesters":
@@ -255,7 +256,7 @@ def click_element_on_lists_on_left_sidebar_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_space_menu(
-    selenium: Any, browser_id: Any, space_name: Any, button: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, button: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].spaces_header_list[space_name].click_menu()
@@ -268,7 +269,7 @@ def click_on_option_in_space_menu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_menu(selenium: Any, browser_id: Any, button: Any) -> Any:
+def click_on_option_in_menu(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     page.menu_button()
@@ -282,7 +283,7 @@ def click_on_option_in_menu(selenium: Any, browser_id: Any, button: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(
-    selenium: Any, browser_id: Any, button_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any
 ) -> Any:
     getattr(Modals(selenium[browser_id]).leave_modal, button_name.lower())()
 
@@ -294,7 +295,7 @@ def click_confirm_or_cancel_button_on_leave_space_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_remove_space_understand_notice(selenium: Any, browser_id: Any) -> Any:
+def check_remove_space_understand_notice(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     Modals(selenium[browser_id]).remove_modal.understand_notice()
 
 
@@ -304,7 +305,7 @@ def check_remove_space_understand_notice(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_remove_space_button(selenium: Any, browser_id: Any) -> Any:
+def check_remove_space_button(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     Modals(selenium[browser_id]).remove_modal.remove()
 
 
@@ -316,7 +317,7 @@ def check_remove_space_button(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_space_has_disappeared_on_spaces(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     spaces = OZLoggedIn(driver)["data"].elements_list
@@ -331,7 +332,7 @@ def assert_space_has_disappeared_on_spaces(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_supporting_providers_of_space(
-    selenium: Any, browser_id: Any, number: int, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: int, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     supporting_providers_number = int(
@@ -345,7 +346,7 @@ def assert_number_of_supporting_providers_of_space(
 @wt(parsers.parse('user of {browser_id} sees {number} size of the "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_size_of_space_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, number: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     assert (
@@ -365,7 +366,7 @@ def _get_subpage_name(subpage: Any) -> Any:
     )
 )
 def click_provider_on_the_map_on_data_page(
-    selenium: Any, browser_id: Any, provider: Any, page: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, page: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     current_page = getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page))
@@ -381,7 +382,7 @@ def click_provider_on_the_map_on_data_page(
     )
 )
 def hover_provider_on_the_map_on_data_page(
-    selenium: Any, browser_id: Any, provider: Any, page: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, page: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     current_page = getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page))
@@ -396,7 +397,7 @@ def hover_provider_on_the_map_on_data_page(
         "page"
     )
 )
-def click_the_map_on_data_page(selenium: Any, browser_id: Any, page: Any) -> Any:
+def click_the_map_on_data_page(selenium: SeleniumDrivers, browser_id: Any, page: Any) -> Any:
     driver = selenium[browser_id]
     getattr(OZLoggedIn(driver)["data"], _get_subpage_name(page)).map()
 
@@ -408,7 +409,7 @@ def click_the_map_on_data_page(selenium: Any, browser_id: Any, page: Any) -> Any
     )
 )
 def click_on_option_of_space_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, space_name: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, option: Any
 ) -> Any:
     _click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space_name, option
@@ -417,7 +418,7 @@ def click_on_option_of_space_on_left_sidebar_menu(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_on_option_of_space_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any, space_name: Any, option: Any, force: Any = True
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, option: Any, force: Any = True
 ) -> Any:
     submenu_option = transform(option).replace(",", "")
     driver = selenium[browser_id]
@@ -447,7 +448,7 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(space: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(
-    selenium: Any, browser_id: Any, space_name: Any, element_list: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, element_list: Any
 ) -> Any:
     driver = selenium[browser_id]
     element_list = _parse_tabs_list(element_list)
@@ -471,7 +472,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_providers_on_the_map_on_data_page(
-    selenium: Any, browser_id: Any, correct_number: Any, page: Any
+    selenium: SeleniumDrivers, browser_id: Any, correct_number: Any, page: Any
 ) -> Any:
     if correct_number == "no":
         correct_number = 0
@@ -487,7 +488,7 @@ def check_number_of_providers_on_the_map_on_data_page(
 @wt(parsers.parse("user of {browser_id} clicks Get started in data sidebar"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_get_started_on_data_on_left_sidebar_menu(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].get_started()
@@ -501,14 +502,14 @@ def click_get_started_on_data_on_left_sidebar_menu(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_on_welcome_page(selenium: Any, browser_id: Any, option: Any) -> Any:
+def click_option_on_welcome_page(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     driver = selenium[browser_id]
     getattr(OZLoggedIn(driver)["data"].welcome_page, transform(option)).click()
 
 
 @wt(parsers.parse("user of {browser_id} sees that error popup has appeared"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_popup_has_appeared(selenium: Any, browser_id: Any) -> Any:
+def assert_error_popup_has_appeared(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     assert (
         "failed" in Modals(selenium[browser_id]).error.content
     ), "error popup not found"
@@ -523,7 +524,7 @@ def assert_error_popup_has_appeared(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_harvester_on_list_on_space_harvesters_subpage(
-    selenium: Any, browser_id: Any, harvester_name: Any, see: Any
+    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any, see: Any
 ) -> Any:
     driver = selenium[browser_id]
     harvesters_list = OZLoggedIn(driver)["data"].harvesters_page.harvesters_list
@@ -538,7 +539,7 @@ def assert_harvester_on_list_on_space_harvesters_subpage(
 @wt(parsers.parse('user of {browser_id} sees "{provider}" is on the providers list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_providers_list_contains_provider(
-    selenium: Any, browser_id: Any, provider: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     if provider in hosts:
@@ -556,7 +557,7 @@ def assert_providers_list_contains_provider(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_toggle_on_providers_subpage(
-    browser_id: Any, toggle: Any, selenium: Any, option: Any
+    browser_id: Any, toggle: Any, selenium: SeleniumDrivers, option: Any
 ) -> Any:
     driver = selenium[browser_id]
     getattr(
@@ -573,7 +574,7 @@ def click_toggle_on_providers_subpage(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_prov_option_in_prov_menu_in_prov_section_in_space(
-    browser_id: Any, option: Any, selenium: Any
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     last_url = driver.current_url
@@ -592,7 +593,7 @@ def open_prov_option_in_prov_menu_in_prov_section_in_space(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_selected_provider_name_on_space_provider_header(
-    browser_id: Any, provider: Any, selenium: Any, hosts: Any
+    browser_id: Any, provider: Any, selenium: SeleniumDrivers, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -610,7 +611,7 @@ def assert_selected_provider_name_on_space_provider_header(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_name_on_provider_settings_menu(
-    browser_id: Any, provider: Any, selenium: Any, hosts: Any
+    browser_id: Any, provider: Any, selenium: SeleniumDrivers, hosts: Hosts
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -628,7 +629,7 @@ def assert_provider_name_on_provider_settings_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_length_of_providers_list(
-    selenium: Any, browser_id: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
@@ -649,7 +650,7 @@ def assert_length_of_providers_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_length_of_providers_list_of_space(
-    selenium: Any, browser_id: Any, space_name: Any, number_of_providers: Any
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, number_of_providers: Any
 ) -> Any:
     driver = selenium[browser_id]
     providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
@@ -661,7 +662,7 @@ def assert_length_of_providers_list_of_space(
 
 @wt(parsers.parse("user of {browser_id} clicks Add support button on providers page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_get_support_button_on_providers_page(selenium: Any, browser_id: Any) -> Any:
+def click_get_support_button_on_providers_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].providers_page.add_support()
 
@@ -669,7 +670,7 @@ def click_get_support_button_on_providers_page(selenium: Any, browser_id: Any) -
 @wt(parsers.parse("user of {browser_id} sees {text} alert on providers page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_privileges_label_on_providers_page(
-    selenium: Any, browser_id: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
 ) -> Any:
     driver = selenium[browser_id]
     item_text = OZLoggedIn(driver)[
@@ -685,7 +686,7 @@ def see_insufficient_privileges_label_on_providers_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_deploy_your_own_provider_tab_on_get_support_page(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].providers_page.get_support_page.deploy_provider_modal()
@@ -698,7 +699,7 @@ def click_deploy_your_own_provider_tab_on_get_support_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_expose_existing_data_collection_tab_on_get_support_page(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)[
@@ -714,7 +715,7 @@ def click_expose_existing_data_collection_tab_on_get_support_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_harvester_from_harvesters_list(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     harvester_name: Any,
     tmp_memory: Any,
@@ -733,7 +734,7 @@ def remove_harvester_from_harvesters_list(
 @wt(parsers.parse("user of {browser_id} clicks Copy button on Add support page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_on_request_support_page(
-    selenium: Any, browser_id: Any, displays: Any, clipboard: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].providers_page.get_support_page.copy()
@@ -750,7 +751,7 @@ def click_copy_button_on_request_support_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_copy_token_and_input_token_are_the_same(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]["mailbox"]["token"]
@@ -775,7 +776,7 @@ def assert_copy_token_is_not_empty(browser_id: Any, tmp_memory: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def generate_and_send_support_token(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id1: Any,
     space_name: Any,
     browser_id2: Any,
@@ -794,7 +795,7 @@ def generate_and_send_support_token(
 
 @wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from Spaces page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_token(selenium: Any, browser_id: Any) -> Any:
+def copy_token(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     OZLoggedIn(selenium[browser_id])["data"].providers_page.get_support_page.copy()
 
 
@@ -804,7 +805,7 @@ def copy_token(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_create_new_space(selenium: Any, browser_id: Any, option: Any) -> Any:
+def confirm_create_new_space(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -813,7 +814,7 @@ def confirm_create_new_space(selenium: Any, browser_id: Any, option: Any) -> Any
 
 @wt(parsers.parse('user of {browser_id} sees "{tab_name}" label of current page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_tab_name_label(selenium: Any, browser_id: Any, tab_name: Any) -> Any:
+def check_tab_name_label(selenium: SeleniumDrivers, browser_id: Any, tab_name: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     label = OZLoggedIn(driver)["data"].tab_name
@@ -822,7 +823,7 @@ def check_tab_name_label(selenium: Any, browser_id: Any, tab_name: Any) -> Any:
 
 @wt(parsers.parse('user of {browser_id} sees that opened space name is "{space}"'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def assert_opened_space_name(selenium: Any, browser_id: Any, space: Any) -> Any:
+def assert_opened_space_name(selenium: SeleniumDrivers, browser_id: Any, space: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     msg = f"{space} space view is not opened"
@@ -837,7 +838,7 @@ def assert_opened_space_name(selenium: Any, browser_id: Any, space: Any) -> Any:
 )
 @repeat_failed(WAIT_BACKEND * 3)
 def assert_tabs_of_space_enabled(
-    selenium: Any, browser_id: Any, tabs_list: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tabs_list: Any, space_name: Any
 ) -> Any:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.spaces_header_list[space_name]()
@@ -856,7 +857,7 @@ def assert_tabs_of_space_enabled(
 )
 @repeat_failed(WAIT_BACKEND * 2)
 def assert_tabs_of_space_disabled(
-    selenium: Any, browser_id: Any, tabs_list: Any, space_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, tabs_list: Any, space_name: Any
 ) -> Any:
     page = OZLoggedIn(selenium[browser_id])["data"]
     page.spaces_header_list[space_name]()
@@ -868,7 +869,7 @@ def assert_tabs_of_space_disabled(
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_detail_text_spaces(selenium: Any, browser_id: Any, text: Any) -> Any:
+def assert_error_detail_text_spaces(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     page = OZLoggedIn(driver)["data"]
@@ -883,7 +884,7 @@ def assert_error_detail_text_spaces(selenium: Any, browser_id: Any, text: Any) -
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_two_providers_places(
-    selenium: Any, browser_id: Any, hosts: Any, provider1: Any, provider2: Any
+    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, provider1: Any, provider2: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = "providers"
@@ -912,7 +913,7 @@ def check_two_providers_places(
     )
 )
 def write_into_input_box_in_space_title_sidebar_item(
-    selenium: Any, browser_id: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
 ) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].input_rename = text
@@ -923,6 +924,6 @@ def write_into_input_box_in_space_title_sidebar_item(
         "user of {browser_id} clicks on save icon in space title sidebar item"
     )
 )
-def click_save_in_space_title_sidebar_item(selenium: Any, browser_id: Any) -> Any:
+def click_save_in_space_title_sidebar_item(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].save_icon()

@@ -22,6 +22,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 in_type_to_id = {
     "username": "login-form-username-input",
@@ -51,7 +52,7 @@ def check_modal_name(modal_name: Any) -> Any:
 @wt(parsers.parse('user of {browser_id} sees that modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wait_for_add_storage_modal_to_appear(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).add_storage
@@ -142,7 +143,7 @@ def _wait_for_modal_to_appear(
     tmp_memory[browser_id]["window"]["modal"] = modal
 
 
-def check_warning_modal(selenium: Any, browser_id: Any) -> Any:
+def check_warning_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     if not driver.find_elements(By.CSS_SELECTOR, ".question-modal"):
         return False
@@ -155,7 +156,7 @@ def check_warning_modal(selenium: Any, browser_id: Any) -> Any:
     )
 )
 def assert_modal_does_not_appear(
-    selenium: Any, browser_id: Any, modal_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     try:
@@ -172,7 +173,7 @@ def assert_modal_does_not_appear(
     )
 )
 def wt_wait_for_modal_to_appear(
-    selenium: Any, browser_id: Any, modal_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -182,7 +183,7 @@ def wt_wait_for_modal_to_appear(
     parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
 )
 def g_wait_for_modal_to_appear(
-    selenium: Any, browser_id: Any, modal_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -198,7 +199,7 @@ def _wait_for_modal_to_disappear(driver: Any, browser_id: Any, tmp_memory: Any) 
 
 
 def wait_for_named_modal_to_disappear(
-    selenium: Any, browser_id: Any, modal_name: Any, wait_time: Any = WAIT_FRONTEND
+    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any, wait_time: Any = WAIT_FRONTEND
 ) -> Any:
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
@@ -221,7 +222,7 @@ def wait_for_named_modal_to_disappear(
 
 @wt(parsers.parse("user of {browser_id} sees that the modal has disappeared"))
 def wt_wait_for_modal_to_disappear(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
@@ -229,7 +230,7 @@ def wt_wait_for_modal_to_disappear(
 
 @given(parsers.parse("user of {browser_id} seen that the modal has disappeared"))
 def g_wait_for_modal_to_disappear(
-    selenium: Any, browser_id: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
@@ -261,7 +262,7 @@ def _click_on_confirmation_btn_in_modal(
     )
 )
 def wt_click_on_confirmation_btn_in_modal(
-    selenium: Any, browser_id: Any, button_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
@@ -274,7 +275,7 @@ def wt_click_on_confirmation_btn_in_modal(
     )
 )
 def g_click_on_confirmation_btn_in_modal(
-    selenium: Any, browser_id: Any, button_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, button_name: Any, tmp_memory: Any
 ) -> Any:
     driver = selenium[browser_id]
     _click_on_confirmation_btn_in_modal(driver, browser_id, button_name, tmp_memory)
@@ -294,7 +295,7 @@ def is_modal_msg_matching(browser_id: Any, regexp: Any, tmp_memory: Any) -> Any:
 
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in active modal"))
-def get_token_from_modal(selenium: Any, browser_id: Any, tmp_memory: Any) -> Any:
+def get_token_from_modal(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
     token_box = modal.find_element(By.CSS_SELECTOR, "input[readonly]")
@@ -321,7 +322,7 @@ def activate_input_box_in_modal(browser_id: Any, in_type: Any, tmp_memory: Any) 
 
 @wt(parsers.parse("user of {browser_id} clicks on {option} button in active modal"))
 def click_on_button_in_active_modal(
-    selenium: Any, browser_id: Any, tmp_memory: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, option: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
@@ -418,7 +419,7 @@ def assert_btn_in_modal_is_enabled(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_text_in_modal(
-    selenium: Any, browser_id: Any, modal: Any, text: Any, element: Any
+    selenium: SeleniumDrivers, browser_id: Any, modal: Any, text: Any, element: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = check_modal_name(modal)
@@ -439,7 +440,7 @@ def assert_element_text(elem: Any, selector: Any, elem_text: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_panel_button(
-    selenium: Any, browser_id: Any, button: Any, panel_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button: Any, panel_name: Any
 ) -> Any:
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, transform(button))()
@@ -458,7 +459,7 @@ def click_panel_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_panel_question_icon(selenium: Any, browser_id: Any, panel_name: Any) -> Any:
+def click_panel_question_icon(selenium: SeleniumDrivers, browser_id: Any, panel_name: Any) -> Any:
     panel_name = "qos" if panel_name == "Quality of Service" else panel_name
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, "question_icon").click()
@@ -470,7 +471,7 @@ def click_panel_question_icon(selenium: Any, browser_id: Any, panel_name: Any) -
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_popup_link(selenium: Any, browser_id: Any, link: Any) -> Any:
+def click_popup_link(selenium: SeleniumDrivers, browser_id: Any, link: Any) -> Any:
     link = "documentation_link" if "documentation" in link else link
     tab = getattr(Popups(selenium[browser_id]), transform("info"))
     getattr(tab, transform(link)).click()
@@ -484,7 +485,7 @@ def click_popup_link(selenium: Any, browser_id: Any, link: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_no_button_in_panel(
-    selenium: Any, browser_id: Any, button: Any, panel_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button: Any, panel_name: Any
 ) -> Any:
     modal = getattr(
         Modals(selenium[browser_id]).details_modal, check_modal_name(panel_name)
@@ -508,7 +509,7 @@ def assert_there_is_no_button_in_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(
-    selenium: Any, browser_id: Any, button: Any, modal_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, button: Any, modal_name: Any
 ) -> Any:
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     button = button.replace(".", "")
@@ -522,7 +523,7 @@ def click_modal_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_link(selenium: Any, browser_id: Any, link: Any, modal_name: Any) -> Any:
+def click_modal_link(selenium: SeleniumDrivers, browser_id: Any, link: Any, modal_name: Any) -> Any:
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     getattr(modal, transform(link)).click()
 
@@ -535,7 +536,7 @@ def click_modal_link(selenium: Any, browser_id: Any, link: Any, modal_name: Any)
     )
 )
 def wt_write_name_into_text_field_in_panel(
-    selenium: Any, browser_id: Any, item_name: Any, panel_name: Any, name_textfield: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, panel_name: Any, name_textfield: Any
 ) -> Any:
     write_name_into_text_field_in_panel(
         selenium,
@@ -548,7 +549,7 @@ def wt_write_name_into_text_field_in_panel(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_panel(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     panel_name: Any,
@@ -569,7 +570,7 @@ def write_name_into_text_field_in_panel(
     )
 )
 def wt_write_name_into_text_field_in_modal(
-    selenium: Any, browser_id: Any, item_name: Any, modal_name: Any, name_textfield: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, modal_name: Any, name_textfield: Any
 ) -> Any:
     write_name_into_text_field_in_modal(
         selenium,
@@ -582,7 +583,7 @@ def wt_write_name_into_text_field_in_modal(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     modal_name: Any,
@@ -604,7 +605,7 @@ def write_name_into_text_field_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_shares_in_modal(
-    selenium: Any, browser_id: Any, item_name: Any, number: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, number: Any
 ) -> Any:
     name = "Shares"
     driver = selenium[browser_id]
@@ -635,7 +636,7 @@ def _assert_number_of_shares_in_modal(number: Any, links: Any, info: Any) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_details_link_in_shares_panel(
-    selenium: Any, browser_id: Any, share_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
 ) -> Any:
     modal = Modals(selenium[browser_id]).details_modal.shares
 
@@ -652,7 +653,7 @@ def click_share_details_link_in_shares_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(
-    selenium: Any, browser_id: Any, owner_name: Any, icon_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, owner_name: Any, icon_name: Any
 ) -> Any:
     elem_groups = Modals(selenium[browser_id]).details_modal.shares.share_options
     icon_name = transform(icon_name) + "_icon"
@@ -670,7 +671,7 @@ def click_icon_in_share_directory_modal(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 6)
 def assert_error_modal_with_text_appeared(
-    selenium: Any, browser_id: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
 ) -> Any:
     modal_text = Modals(selenium[browser_id]).error.content.lower()
     message = f'Modal does not contain text "{text}".\nVisible message: "{modal_text}"'
@@ -680,7 +681,7 @@ def assert_error_modal_with_text_appeared(
 @wt(parsers.parse('user of {browser_id} sees that "{title}" error modal appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_titled_error_modal_appeared(
-    selenium: Any, browser_id: Any, title: Any
+    selenium: SeleniumDrivers, browser_id: Any, title: Any
 ) -> Any:
     message = f'Modal is not titled "{title}"'
     modal_text = Modals(selenium[browser_id]).error.title.lower()
@@ -695,7 +696,7 @@ def assert_titled_error_modal_appeared(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_invalid_id_in_error_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     target_name: Any,
     target_type: Any,
@@ -725,7 +726,7 @@ def assert_invalid_id_in_error_modal(
 
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" (modal|panel)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_modal(selenium: Any, browser_id: Any, modal: Any) -> Any:
+def close_modal(selenium: SeleniumDrivers, browser_id: Any, modal: Any) -> Any:
     modal = check_modal_name(modal)
     try:
         getattr(Modals(selenium[browser_id]), modal).close()
@@ -742,7 +743,7 @@ def close_modal(selenium: Any, browser_id: Any, modal: Any) -> Any:
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_in_rest_api_modal(selenium: Any, browser_id: Any) -> Any:
+def click_copy_icon_in_rest_api_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     Modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
@@ -754,7 +755,7 @@ def click_copy_icon_in_rest_api_modal(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium: Any, browser_id: Any, dropdown_name: Any, option: Any, modal_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, dropdown_name: Any, option: Any, modal_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = getattr(Modals(driver), transform(modal_name))
@@ -772,7 +773,7 @@ def choose_option_in_dropdown_menu_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_path_where_symbolic_link_points(
-    selenium: Any, browser_id: Any, expected_path: Any, modal: Any
+    selenium: SeleniumDrivers, browser_id: Any, expected_path: Any, modal: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = transform(modal)
@@ -792,7 +793,7 @@ def assert_path_where_symbolic_link_points(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_modal(
-    selenium: Any, browser_id: Any, toggle_name: Any, option: Any, modal_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, toggle_name: Any, option: Any, modal_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = getattr(Modals(driver), check_modal_name(modal_name))
@@ -808,7 +809,7 @@ def switch_toggle_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_checkbox_in_advertise_space_modal(selenium: Any, browser_id: Any) -> Any:
+def check_checkbox_in_advertise_space_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
@@ -823,6 +824,6 @@ def check_checkbox_in_advertise_space_modal(selenium: Any, browser_id: Any) -> A
     parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_warning(selenium: Any, browser_id: Any, button: Any) -> Any:
+def click_button_on_warning(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
     driver = selenium[browser_id]
     getattr(Modals(driver).warning_info, transform(button))()

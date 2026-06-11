@@ -15,6 +15,7 @@ from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 # The docs timeout needs to be higher than the standard WAIT_FRONTEND,
 # because opening the docs page is a resource-consuming operation.
@@ -110,7 +111,7 @@ FILE_DETAILS_ENDPOINTS = {
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_sidebar_link_in_docs_subpage(
-    selenium: Any, browser_id: Any, subpage: Any, link: Any
+    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, link: Any
 ) -> Any:
     driver = selenium[browser_id]
     # inherits from DocumentationPage
@@ -133,7 +134,7 @@ def assert_active_sidebar_link_in_docs_subpage(
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_chapter_tab_in_docs_subpage(
-    selenium: Any, browser_id: Any, subpage: Any, chapter: Any
+    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, chapter: Any
 ) -> Any:
     driver = selenium[browser_id]
     page: DocumentationPage = Homepage(driver)[subpage]
@@ -149,7 +150,7 @@ def assert_active_chapter_tab_in_docs_subpage(
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_user_sees_name_in_header_in_docs_subpage(
-    selenium: Any, browser_id: Any, subpage: Any, name: Any
+    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, name: Any
 ) -> Any:
     driver = selenium[browser_id]
     page: DocumentationPage = Homepage(driver)[subpage]
@@ -159,7 +160,7 @@ def assert_user_sees_name_in_header_in_docs_subpage(
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_docs_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any:
+def assert_docs_title_contains(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
     assert_title_contains(selenium, browser_id, text)
 
 
@@ -171,7 +172,7 @@ def assert_docs_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_expanded_folders_in_sidebar_in_docs_subpage(
-    selenium: Any, browser_id: Any, subpage: Any, folders: Any
+    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, folders: Any
 ) -> Any:
     driver = selenium[browser_id]
     expected_folders = set(parse_seq(folders))
@@ -189,7 +190,7 @@ def assert_expanded_folders_in_sidebar_in_docs_subpage(
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_file_details(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.api
@@ -236,7 +237,7 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_space_menu(
-    selenium: Any, browser_id: Any
+    selenium: SeleniumDrivers, browser_id: Any
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).rest_api.api
@@ -277,7 +278,7 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
     )
 )
 def assert_user_sees_name_in_docs_subpage(
-    selenium: Any, browser_id: Any, name: Any, subpage: Any
+    selenium: SeleniumDrivers, browser_id: Any, name: Any, subpage: Any
 ) -> Any:
     assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
     assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)

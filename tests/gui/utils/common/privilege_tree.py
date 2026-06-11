@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
+from tests.conftest import SeleniumDrivers
     Button,
     Label,
     WebElement,
@@ -189,7 +190,7 @@ class PrivilegeTree(PageObject):
 
     def assert_privileges(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         privileges: Any,
         is_direct_privileges: Any = True,
@@ -217,7 +218,7 @@ class PrivilegeTree(PageObject):
         self._assert_privileges(selenium, browser_id, privileges, is_direct_privileges)
 
     def _assert_privileges(
-        self, selenium: Any, browser_id: Any, privileges: Any, is_direct_privileges: Any
+        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any, is_direct_privileges: Any
     ) -> Any:
         for privilege_name, privilege_group in privileges.items():
             self._assert_privilege_group(
@@ -230,7 +231,7 @@ class PrivilegeTree(PageObject):
 
     def _assert_privilege_group(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         group: Any,
         name: Any,
@@ -256,7 +257,7 @@ class PrivilegeTree(PageObject):
             privilege_row.assert_effective_privilege_granted(granted)
 
     def set_privileges(
-        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any, with_scroll: Any = False
     ) -> Any:
         """Set privileges according to given config.
         For this method only dict should be passed!
@@ -281,7 +282,7 @@ class PrivilegeTree(PageObject):
         return self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
     def _set_privileges(
-        self, selenium: Any, browser_id: Any, privileges: Any, with_scroll: Any = False
+        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any, with_scroll: Any = False
     ) -> Any:
         result = True
         for privilege_name, privilege_group in privileges.items():
@@ -296,7 +297,7 @@ class PrivilegeTree(PageObject):
 
     def _set_privilege_group(
         self,
-        selenium: Any,
+        selenium: SeleniumDrivers,
         browser_id: Any,
         group: Any,
         name: Any,

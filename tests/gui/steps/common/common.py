@@ -15,11 +15,12 @@ from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def assert_n_items_in_items_list(
     page: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     number: int,
     items_names: Any,
@@ -75,7 +76,7 @@ def _get_page(where: Any, driver: Any) -> Any:
     )
 )
 def wt_assert_n_items_in_items_list(
-    selenium: Any, browser_id: Any, number: int, items: Any, where: Any
+    selenium: SeleniumDrivers, browser_id: Any, number: int, items: Any, where: Any
 ) -> Any:
     driver = selenium[browser_id]
     page = _get_page(where, driver)

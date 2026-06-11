@@ -12,6 +12,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -23,7 +24,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_for_user_full_name_edit_box_in_oz(
-    selenium: Any, browser_id: Any, btn: Any
+    selenium: SeleniumDrivers, browser_id: Any, btn: Any
 ) -> Any:
     getattr(OZLoggedIn(selenium[browser_id])["profile"].edit_box, btn).click()
 
@@ -35,7 +36,7 @@ def click_on_btn_for_user_full_name_edit_box_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_into_user_full_name_edit_box_in_oz(
-    selenium: Any, browser_id: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
 ) -> Any:
     OZLoggedIn(selenium[browser_id])["profile"].edit_box.value = text
 
@@ -47,7 +48,7 @@ def type_text_into_user_full_name_edit_box_in_oz(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def activate_user_full_name_edit_box_in_oz(selenium: Any, browser_id: Any) -> Any:
+def activate_user_full_name_edit_box_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     OZLoggedIn(selenium[browser_id])["profile"].rename_full_name()
 
 
@@ -59,7 +60,7 @@ def activate_user_full_name_edit_box_in_oz(selenium: Any, browser_id: Any) -> An
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_usr_full_name_in_oz(
-    selenium: Any, browser_id: Any, expected_full_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, expected_full_name: Any
 ) -> Any:
     displayed_full_name = OZLoggedIn(selenium[browser_id])["profile"].full_name
     err_msg = (

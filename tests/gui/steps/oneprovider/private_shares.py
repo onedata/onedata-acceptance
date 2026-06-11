@@ -19,6 +19,7 @@ from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -29,7 +30,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_publish_handle_service_as_open_data(
-    browser_id: Any, option: Any, selenium: Any
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     Popups(driver).handle_service.options[option].click()
@@ -43,7 +44,7 @@ def choose_option_for_publish_handle_service_as_open_data(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_publish_metadata_as_open_data(
-    browser_id: Any, option: Any, selenium: Any
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     Popups(driver).metadata_type.options[option].click()
@@ -58,7 +59,7 @@ def choose_option_for_publish_metadata_as_open_data(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_input_in_form_in_shares_interface(
-    browser_id: Any, text: Any, which_input: Any, selenium: Any
+    browser_id: Any, text: Any, which_input: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.write_to_last_input(
@@ -74,7 +75,7 @@ def write_input_in_form_in_shares_interface(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_form_in_shares_interface(
-    browser_id: Any, button: Any, selenium: Any
+    browser_id: Any, button: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     private_share(driver).dublin_core_metadata_form.click_add_button(driver, button)
@@ -87,7 +88,7 @@ def click_button_in_form_in_shares_interface(
     )
 )
 def click_button_in_description_form(
-    browser_id: Any, selenium: Any, button: Any
+    browser_id: Any, selenium: SeleniumDrivers, button: Any
 ) -> Any:
     driver = selenium[browser_id]
     getattr(private_share(driver).description_form, transform(button))()
@@ -99,7 +100,7 @@ def click_button_in_description_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_link_on_shares_interface(browser_id: Any, link: Any, selenium: Any) -> Any:
+def assert_link_on_shares_interface(browser_id: Any, link: Any, selenium: SeleniumDrivers) -> Any:
     driver = selenium[browser_id]
     err_msg = f'Link on share\'s private interface is not "{link}"'
     assert private_share(driver).link_name == link, err_msg
@@ -112,7 +113,7 @@ def assert_link_on_shares_interface(browser_id: Any, link: Any, selenium: Any) -
     )
 )
 def write_description_in_description_form(
-    browser_id: Any, text: Any, where: Any, selenium: Any
+    browser_id: Any, text: Any, where: Any, selenium: SeleniumDrivers
 ) -> Any:
     driver = selenium[browser_id]
     setattr(private_share(driver).description_form, transform(where), text)
@@ -124,7 +125,7 @@ def write_description_in_description_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
-def assert_private_share_named(selenium: Any, browser_id: Any, share_name: Any) -> Any:
+def assert_private_share_named(selenium: SeleniumDrivers, browser_id: Any, share_name: Any) -> Any:
     driver = selenium[browser_id]
     # because label with share name lies beyond iframe we need to change
     # to default content
@@ -145,7 +146,7 @@ def assert_private_share_named(selenium: Any, browser_id: Any, share_name: Any) 
     )
 )
 def write_input_in_edm_form_in_shares_interface(
-    browser_id: Any, text: Any, which_input: Any, selenium: Any, numerals: Any
+    browser_id: Any, text: Any, which_input: Any, selenium: SeleniumDrivers, numerals: Any
 ) -> Any:
     numeral = "first"
     write_to_nth_input_in_edm_form_in_shares_interface(
@@ -165,7 +166,7 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
     browser_id: Any,
     text: Any,
     which_input: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     numeral: Any,
     numerals: Any,
 ) -> Any:
@@ -199,7 +200,7 @@ def choose_option_in_edm_form_in_shares_interface(
     browser_id: Any,
     option: Any,
     section_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     is_group: Any = False,
     requires_group_selection: Any = False,
 ) -> Any:
@@ -250,7 +251,7 @@ def _open_section_dropdown_and_choose(
     "share's private interface"
 )
 def choose_option_group_in_edm_form_in_shares_interface(
-    browser_id: Any, option: Any, section_name: Any, selenium: Any
+    browser_id: Any, option: Any, section_name: Any, selenium: SeleniumDrivers
 ) -> Any:
     choose_option_in_edm_form_in_shares_interface(
         browser_id,
@@ -272,7 +273,7 @@ def assert_val_edm_form_in_shares_interface(
     browser_id: Any,
     expected_value: Any,
     section_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     numerals: Any,
 ) -> Any:
     numeral = "first"
@@ -292,7 +293,7 @@ def assert_nth_val_edm_form_in_shares_interface(
     browser_id: Any,
     expected_value: Any,
     section_name: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     numeral: Any,
     numerals: Any,
 ) -> Any:
@@ -324,7 +325,7 @@ def assert_nth_val_edm_form_in_shares_interface(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_property_to_edm_form_in_shares_interface(
-    browser_id: Any, selenium: Any, item_name: Any
+    browser_id: Any, selenium: SeleniumDrivers, item_name: Any
 ) -> Any:
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
@@ -343,7 +344,7 @@ def add_property_to_edm_form_in_shares_interface(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_warning_message_in_shares_page(
-    browser_id: Any, selenium: Any, mess_text: Any
+    browser_id: Any, selenium: SeleniumDrivers, mess_text: Any
 ) -> Any:
     driver = selenium[browser_id]
     warning = private_share(driver).alert_warning
@@ -358,7 +359,7 @@ def assert_warning_message_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_warning_message_in_shares_page(browser_id: Any, selenium: Any) -> Any:
+def assert_no_warning_message_in_shares_page(browser_id: Any, selenium: SeleniumDrivers) -> Any:
     driver = selenium[browser_id]
     try:
         warning = private_share(driver).alert_warning

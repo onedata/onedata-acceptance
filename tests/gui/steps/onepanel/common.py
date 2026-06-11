@@ -14,6 +14,7 @@ from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -25,7 +26,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_content(
-    selenium: Any, browser_id_list: Any, btn: Any, content: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, btn: Any, content: Any
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         content = getattr(Onepanel(selenium[browser_id]).content, transform(content))
@@ -41,12 +42,12 @@ def wt_click_on_btn_in_content(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_subitem_for_item(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id_list: Any,
     sidebar: Any,
     sub_item: Any,
     record: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     record = hosts[record]["name"]
     for browser_id in parse_seq(browser_id_list):
@@ -62,12 +63,12 @@ def wt_click_on_subitem_for_item(
     )
 )
 def g_click_on_subitem_for_item(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id_list: Any,
     sidebar: Any,
     sub_item: Any,
     record: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     wt_click_on_subitem_for_item(
         selenium, browser_id_list, sidebar, sub_item, record, hosts
@@ -84,7 +85,7 @@ def g_click_on_subitem_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(
-    selenium: Any, browser_id_list: Any, sidebar: Any, sub_item: Any, record: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, sidebar: Any, sub_item: Any, record: Any
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
@@ -99,7 +100,7 @@ def wt_click_on_subitem_for_item_with_name(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_sidebar_item(
-    selenium: Any, browser_id_list: Any, sidebar: Any, record: Any
+    selenium: SeleniumDrivers, browser_id_list: Any, sidebar: Any, record: Any
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
@@ -112,20 +113,20 @@ def wt_click_on_sidebar_item(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_info_button_on_warning_bar(selenium: Any, browser_id: Any) -> Any:
+def click_info_button_on_warning_bar(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     OnePage(selenium[browser_id]).warning_bar.info()
 
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_open_in_onezone_in_modal(selenium: Any, browser_id: Any) -> Any:
+def click_open_in_onezone_in_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     modal = Modals(selenium[browser_id])
     modal.emergency_interface.open_in_onezone()
 
 
 @wt(parsers.parse("user of {browser_id} clicks open in onezone in Onepanel login page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_open_in_onezone(selenium: Any, browser_id: Any) -> Any:
+def click_open_in_onezone(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     LoginPage(selenium[browser_id]).open_in_onezone()
 
 
@@ -137,7 +138,7 @@ def click_open_in_onezone(selenium: Any, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_working_in_clusters_sidebar(
-    selenium: Any, browser_id: Any, age: Any, record: Any, hosts: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, age: Any, record: Any, hosts: Hosts, tmp_memory: Any
 ) -> Any:
     sidebar = "CLUSTERS"
     nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
@@ -151,7 +152,7 @@ def assert_not_working_in_clusters_sidebar(
 @wt(parsers.parse('user of {browser_id} sees Overview page of "{cluster}" cluster'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_overview_page_of_cluster(
-    selenium: Any, browser_id: Any, cluster: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, cluster: Any, hosts: Hosts
 ) -> Any:
     found = Onepanel(selenium[browser_id]).content.overview.cluster_name
     expected = hosts[cluster]["name"]
@@ -165,7 +166,7 @@ def assert_overview_page_of_cluster(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_sidebar_submenu_link(
-    selenium: Any, browser_id: Any, view_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     nav.documentation_link.click()
@@ -179,7 +180,7 @@ def click_on_sidebar_submenu_link(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_sidebar_submenu_subdomain_delegation_link(
-    selenium: Any, browser_id: Any, view_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     nav.subdomain_delegation_documentation_link.click()
@@ -192,7 +193,7 @@ def click_on_sidebar_submenu_subdomain_delegation_link(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_toggle_in_onepanel_view(
-    selenium: Any, browser_id: Any, view_name: Any, toggle: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any, toggle: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     getattr(nav, transform(toggle.replace("-", "_"))).check()
@@ -206,7 +207,7 @@ def click_on_toggle_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_toggle_checked_in_onepanel_view(
-    selenium: Any, browser_id: Any, view_name: Any, toggle: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any, toggle: Any, option: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     toggle_elem = getattr(nav, transform(toggle.replace("-", "_")))
@@ -223,7 +224,7 @@ def assert_toggle_checked_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_label_content_in_onepanel_view(
-    selenium: Any, browser_id: Any, view_name: Any, label: Any, label_content: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any, label: Any, label_content: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
@@ -239,7 +240,7 @@ def assert_label_content_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_label_ends_with_in_onepanel_view(
-    selenium: Any, browser_id: Any, view_name: Any, label: Any, suffix: Any
+    selenium: SeleniumDrivers, browser_id: Any, view_name: Any, label: Any, suffix: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
@@ -255,7 +256,7 @@ def assert_label_ends_with_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_label_contains_prov_domain_in_onepanel_view(
-    selenium: Any, browser_id: Any, host: Any, label: Any, view_name: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, host: Any, label: Any, view_name: Any, hosts: Hosts
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
@@ -272,7 +273,7 @@ def assert_label_contains_prov_domain_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_warning_in_dns_names_in_onepanel_view(
-    selenium: Any, browser_id: Any, warning: Any, view_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, warning: Any, view_name: Any
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_warning = nav.dns_names_warning
@@ -288,7 +289,7 @@ def assert_warning_in_dns_names_in_onepanel_view(
     )
 )
 def assert_value_in_info_tile_in_overview_onepanel_view(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     view_name: Any,
     property_name: Any,

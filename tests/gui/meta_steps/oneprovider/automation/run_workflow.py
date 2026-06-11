@@ -38,6 +38,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def open_initial_modal(data_type: Any, driver: Any) -> Any:
@@ -95,7 +96,7 @@ def select_initial_items_for_workflow_in_modal(
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium: Any, browser_id: Any, file_list: Any, store_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, file_list: Any, store_name: Any
 ) -> Any:
     data_type = "file"
 
@@ -106,7 +107,7 @@ def choose_file_as_initial_workflow_value_for_store(
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium: Any, browser_id: Any, group_list: Any, store_name: Any
+    selenium: SeleniumDrivers, browser_id: Any, group_list: Any, store_name: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -144,7 +145,7 @@ def provide_text_to_string_initial_workflow_value_store(
     )
 )
 def fails_to_choose_directory_as_initial_workflow_value(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     dir_name: Any,
     expected_err_msg: Any,
@@ -169,7 +170,7 @@ def fails_to_choose_directory_as_initial_workflow_value(
     )
 )
 def choose_file_as_initial_workflow_value(
-    selenium: Any, browser_id: Any, file_list: Any, data_type: Any
+    selenium: SeleniumDrivers, browser_id: Any, file_list: Any, data_type: Any
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -188,7 +189,7 @@ def choose_file_as_initial_workflow_value(
     timeout=360,
 )
 def wait_for_workflows_in_automation_subpage(
-    selenium: Any, browser_id: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
 ) -> Any:
     _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
@@ -205,19 +206,19 @@ def wait_for_workflows_in_automation_subpage(
     exceptions=(AssertionError, StaleElementReferenceException),
 )
 def wait_for_workflows_in_automation_subpage_extended_time(
-    selenium: Any, browser_id: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
 ) -> Any:
     _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
-def wait_for_workflow_execution_in_atm_subpage(selenium: Any, browser_id: Any) -> Any:
+def wait_for_workflow_execution_in_atm_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
     assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
 
 
 def _wait_for_workflows_in_automation_subpage(
-    selenium: Any, browser_id: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     if option == "start":
@@ -230,7 +231,7 @@ def _wait_for_workflows_in_automation_subpage(
     assert len(page.workflow_executions_list) == 0, err
 
 
-def assert_no_suspended_workflows_in_atm_subpage(selenium: Any, browser_id: Any) -> Any:
+def assert_no_suspended_workflows_in_atm_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
     err_msg = "Workflow did not finished successfully and it is in suspended state."
@@ -245,7 +246,7 @@ def assert_no_suspended_workflows_in_atm_subpage(selenium: Any, browser_id: Any)
     )
 )
 def await_for_task_status(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     lane: Any,
     task: Any,
@@ -269,7 +270,7 @@ def await_for_task_status(
     )
 )
 def change_time_resolution_in_modal(
-    selenium: Any, browser_id: Any, resolution: Any
+    selenium: SeleniumDrivers, browser_id: Any, resolution: Any
 ) -> Any:
     button = "Time resolution"
     modal_name = "Task time series"

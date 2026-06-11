@@ -19,6 +19,7 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)
@@ -30,37 +31,37 @@ def _enter_text(input_box: Any, text: Any) -> Any:
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
-def type_string_into_active_element(selenium: Any, browser_id: Any, text: Any) -> Any:
+def type_string_into_active_element(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
     _enter_text(selenium[browser_id].switch_to.active_element, text)
 
 
 @wt(parsers.parse("user of {browser_id} types received {item_type} on keyboard"))
 def type_item_into_active_element(
-    selenium: Any, browser_id: Any, item_type: Any, tmp_memory: Any
+    selenium: SeleniumDrivers, browser_id: Any, item_type: Any, tmp_memory: Any
 ) -> Any:
     item = tmp_memory[browser_id]["mailbox"][item_type]
     _enter_text(selenium[browser_id].switch_to.active_element, item)
 
 
 @wt(parsers.parse("user of {browser_id} presses enter on keyboard"))
-def press_enter_on_active_element(selenium: Any, browser_id: Any) -> Any:
+def press_enter_on_active_element(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.RETURN)
 
 
 @wt(parsers.parse("user of {browser_id} presses tab on keyboard"))
-def press_tab_on_active_element(selenium: Any, browser_id: Any) -> Any:
+def press_tab_on_active_element(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.TAB)
 
 
 @wt(parsers.parse("user of {browser_id} presses backspace on keyboard"))
-def press_backspace_on_active_element(selenium: Any, browser_id: Any) -> Any:
+def press_backspace_on_active_element(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
 
 
-def assert_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any:
+def assert_title_contains(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
     page_title = selenium[browser_id].title
     assert text in page_title, f"{page_title} page title should contain {text}"
 
@@ -71,7 +72,7 @@ def assert_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any:
+def wt_assert_title_contains(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
     assert_title_contains(selenium, browser_id, text)
 
 
@@ -83,7 +84,7 @@ def wt_assert_title_contains(selenium: Any, browser_id: Any, text: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_popup(
-    selenium: Any, browser_id: Any, btn: Any, popup: Any
+    selenium: SeleniumDrivers, browser_id: Any, btn: Any, popup: Any
 ) -> Any:
     getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
@@ -96,21 +97,21 @@ def wt_click_on_btn_in_popup(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_click_on_btn_in_popup(
-    selenium: Any, browser_id: Any, btn: Any, popup: Any
+    selenium: SeleniumDrivers, browser_id: Any, btn: Any, popup: Any
 ) -> Any:
     getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu popup'))
 def click_option_in_popup_labeled_menu(
-    selenium: Any, browser_id: Any, option: Any
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
 ) -> Any:
     driver = selenium[browser_id]
     Popups(driver).menu_popup_with_label.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu'))
-def click_option_in_popup_text_menu(selenium: Any, browser_id: Any, option: Any) -> Any:
+def click_option_in_popup_text_menu(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
     driver = selenium[browser_id]
     Popups(driver).menu_popup_with_text.menu[option]()
 
@@ -121,7 +122,7 @@ def pass_test() -> Any:
 
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
-def switch_to_iframe(selenium: Any, browser_id: Any, _selector: Any = None) -> Any:
+def switch_to_iframe(selenium: SeleniumDrivers, browser_id: Any, _selector: Any = None) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     iframe = driver.find_element(By.TAG_NAME, "iframe")

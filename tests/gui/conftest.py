@@ -28,6 +28,7 @@ from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir
+from tests.conftest import Capabilities, Hosts
 
 SELENIUM_IMPLICIT_WAIT = 0
 
@@ -246,7 +247,7 @@ def clipboard() -> Any:
 
 
 @fixture(scope="session")
-def base_url(hosts: Any, maybe_start_env: Any) -> Any:
+def base_url(hosts: Hosts, maybe_start_env: Any) -> Any:
     return f'https://{hosts["onezone"]["hostname"]}'
 
 
@@ -266,7 +267,7 @@ def _skip_sensitive(request: Any, sensitive_url: Any) -> Any:
 
 
 @fixture
-def capabilities(request: Any, capabilities: Any, tmpdir: Any) -> Any:
+def capabilities(request: Any, capabilities: Capabilities, tmpdir: Any) -> Any:
     """Add --no-sandbox argument for Chrome headless
     Should be the same as adding
     capability: 'chromeOptions': {'args': ['--no-sandbox'], 'extensions': []}
@@ -388,6 +389,6 @@ def should_record() -> Any:
 
 
 @fixture(name="run_unmock")
-def run_around_testcase(hosts: Any) -> Any:
+def run_around_testcase(hosts: Hosts) -> Any:
     yield
     unmock_archive_verification("oneprovider-krakow", hosts)

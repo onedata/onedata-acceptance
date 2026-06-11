@@ -15,6 +15,7 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -24,7 +25,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_emergency_passphrase_page(
-    selenium: Any, browser_id: Any, button: Any
+    selenium: SeleniumDrivers, browser_id: Any, button: Any
 ) -> Any:
     driver = selenium[browser_id]
     button = transform(button) + "_button"
@@ -39,7 +40,7 @@ def click_button_on_emergency_passphrase_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_input_on_emergency_passphrase_page(
-    selenium: Any, browser_id: Any, text: Any, input_field: Any
+    selenium: SeleniumDrivers, browser_id: Any, text: Any, input_field: Any
 ) -> Any:
     driver = selenium[browser_id]
     input_field = transform(input_field) + "_input"

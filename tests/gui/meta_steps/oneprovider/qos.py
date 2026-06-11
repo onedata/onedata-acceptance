@@ -32,10 +32,11 @@ from tests.gui.steps.oneprovider.qos import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers
 
 
 def _add_qos_requirement_in_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -76,7 +77,7 @@ def _add_qos_requirement_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -105,7 +106,7 @@ def add_qos_requirement_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal_with_replicas(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -132,7 +133,7 @@ def add_qos_requirement_in_modal_with_replicas(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_id_qos_requirement_in_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -160,7 +161,7 @@ def add_id_qos_requirement_in_modal(
     )
 )
 def add_no_id_qos_requirement_in_modal(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     item_name: Any,
     tmp_memory: Any,
@@ -187,7 +188,7 @@ def assert_qos_file_status_in_op_gui(
     file_name: Any,
     space_name: Any,
     tmp_memory: Any,
-    selenium: Any,
+    selenium: SeleniumDrivers,
     option: Any,
 ) -> Any:
     option_of_space = "Files"
@@ -205,7 +206,7 @@ def assert_qos_file_status_in_op_gui(
 
 
 def delete_qos_requirement_in_op_gui(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     user: Any,
     space_name: Any,
     file_name: Any,

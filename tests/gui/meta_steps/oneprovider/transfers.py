@@ -31,6 +31,7 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -40,7 +41,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 def open_transfers_page(
-    selenium: Any, browser_id: Any, provider: Any, space: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, space: Any, hosts: Hosts
 ) -> Any:
     option = "Transfers"
     provider_name = hosts[provider]["name"]
@@ -61,7 +62,7 @@ def open_transfers_page(
     )
 )
 def open_transfer_page_by_clicking_on_link(
-    browser_id: Any, file: Any, tmp_memory: Any, selenium: Any, link: Any
+    browser_id: Any, file: Any, tmp_memory: Any, selenium: SeleniumDrivers, link: Any
 ) -> Any:
     option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
@@ -80,12 +81,12 @@ def open_transfer_page_by_clicking_on_link(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def evict_file(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     provider: Any,
     file_name: Any,
     tmp_memory: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     option = "Data distribution"
     tab = "Distribution"
@@ -105,7 +106,7 @@ def evict_file(
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium: Any, browser_id: Any, provider: Any, space: Any, hosts: Any
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any, space: Any, hosts: Hosts
 ) -> Any:
     open_transfers_page(selenium, browser_id, provider, space, hosts)
     wait_for_waiting_transfer_to_start(selenium, browser_id)
@@ -121,13 +122,13 @@ def wait_for_all_transfers_to_start_and_finish(
     )
 )
 def replicate_and_wait_to_complete(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id: Any,
     names: Any,
     space: Any,
     provider: Any,
     tmp_memory: Any,
-    hosts: Any,
+    hosts: Hosts,
 ) -> Any:
     replicate_files_to_provider(
         selenium, browser_id, names, tmp_memory, provider, hosts, "replicates"

@@ -16,6 +16,7 @@ from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
+from tests.conftest import SeleniumDrivers, Users
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
@@ -38,16 +39,16 @@ def _login_using_passphrase(login_page: Any, password: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_sign_in_to_emergency_interface(selenium: Any, browser_id: Any) -> Any:
+def click_sign_in_to_emergency_interface(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
 def _login_to_service(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id_list: Any,
     user_id_list: Any,
     service_list: Any,
-    users: Any,
+    users: Users,
 ) -> Any:
     for browser_id, username, service in zip(
         parse_seq(browser_id_list),
@@ -80,10 +81,10 @@ def _login_to_service(
     )
 )
 def login_using_basic_auth(
-    selenium: Any,
+    selenium: SeleniumDrivers,
     browser_id_list: Any,
     user_id_list: Any,
-    users: Any,
+    users: Users,
     service_list: Any,
 ) -> Any:
     _login_to_service(selenium, browser_id_list, user_id_list, service_list, users)
@@ -98,7 +99,7 @@ def login_using_basic_auth(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enter_text_to_field_in_login_form(
-    selenium: Any, browser_id: Any, in_box: Any, text: Any
+    selenium: SeleniumDrivers, browser_id: Any, in_box: Any, text: Any
 ) -> Any:
     setattr(LoginPage(selenium[browser_id]), transform(in_box), text)
 
@@ -111,7 +112,7 @@ def wt_enter_text_to_field_in_login_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enter_password_of_user(
-    selenium: Any, browser_id: Any, username: Any, users: Any
+    selenium: SeleniumDrivers, browser_id: Any, username: Any, users: Users
 ) -> Any:
     password = users[username].password
     setattr(LoginPage(selenium[browser_id]), "password", password)
@@ -124,13 +125,13 @@ def wt_enter_password_of_user(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_press_sign_in_btn_on_login_page(selenium: Any, browser_id: Any) -> Any:
+def wt_press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     LoginPage(selenium[browser_id]).sign_in()
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_successful_login(selenium: Any, browser_id: Any, service: Any) -> Any:
+def wt_assert_successful_login(selenium: SeleniumDrivers, browser_id: Any, service: Any) -> Any:
     logged_in_service = OnePage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
@@ -144,7 +145,7 @@ def wt_assert_successful_login(selenium: Any, browser_id: Any, service: Any) -> 
 )
 @wt(parsers.re("user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page"))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wt_assert_login_page(selenium: Any, browser_id: Any) -> Any:
+def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     _ = LoginPage(selenium[browser_id]).header
 
 
@@ -156,7 +157,7 @@ def wt_assert_login_page(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_err_msg_about_credentials(selenium: Any, browser_id: Any) -> Any:
+def wt_assert_err_msg_about_credentials(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     assert LoginPage(
         selenium[browser_id]
     ).err_msg, "no err msg about invalid credentials found"
@@ -169,7 +170,7 @@ def wt_assert_err_msg_about_credentials(selenium: Any, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_sign_in_notification(text: Any, selenium: Any, browser_id: Any) -> Any:
+def assert_sign_in_notification(text: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
     err_msg = "sign in notification message is not as expected"
     assert (
         LoginPage(selenium[browser_id]).login_notification_message.text == text
