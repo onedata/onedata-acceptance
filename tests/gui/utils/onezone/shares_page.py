@@ -4,7 +4,6 @@ __author__ = "Jakub Pilch"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -28,5 +27,5 @@ class SharesPage(GenericPage):
         ".sidebar-shares .one-list-item .share-name"
     )
 
-    def get_visible_shares_list(self) -> Any:
+    def get_visible_shares_list(self) -> list[object]:
         return [el for el in self.shares_sidebar_list_web_elems if el.text != ""]

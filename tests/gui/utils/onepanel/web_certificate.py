@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2025 Onedata.org"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label
@@ -23,5 +21,5 @@ class WebCertificate(PageObject):
     warning_info = Label(".alert-warning.alert-simple-info")
     dns_names_warning = Label(".dnsNames-field .warning-item-container")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Web certificate"

@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -37,6 +36,7 @@ from tests.gui.steps.oneprovider.metadata import (
     type_text_to_metadata_textarea,
     type_text_to_val_of_attr_in_new_xattr_entry,
 )
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -50,13 +50,13 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: Any, key_name: Any, value: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, key_name: str, value: str
+) -> None:
     type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name)
     type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
 
-def get_modal_name_from_item_name(item_name: Any) -> Any:
+def get_modal_name_from_item_name(item_name: str) -> GuiObject:
     if "file" in item_name:
         return "File details"
     return "Directory details"
@@ -72,12 +72,12 @@ def get_modal_name_from_item_name(item_name: Any) -> Any:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    text: Any,
-    input_type: Any,
-    item_name: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    text: str,
+    input_type: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
 
     modal_name = get_modal_name_from_item_name(item_name.lower())
     button = "Save"
@@ -102,11 +102,11 @@ def add_json_rdf_metadata_for_item(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    tab: Any,
-    item_name: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    tab: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     modal_name = get_modal_name_from_item_name(item_name.lower())
     option = "Metadata"
     click_on_context_menu_item(selenium, browser_id, item_name, tmp_memory, option)
@@ -125,15 +125,15 @@ def open_json_rdf_metadata_for_item(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_metadata_in_op_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    path: Any,
-    tmp_memory: Any,
-    res: Any,
-    space: Any,
-    tab_name: Any,
-    val: Any,
-    item: Any,
-) -> Any:
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    res: str,
+    space: str,
+    tab_name: str,
+    val: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     button = "Save"
@@ -167,7 +167,7 @@ def set_metadata_in_op_gui(
     click_modal_button(selenium, browser_id, close_button, modal_name)
 
 
-def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: str) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     assert "Insufficient privileges" in modal.loading_alert, "resource loaded"
 
@@ -184,15 +184,15 @@ def _assert_metadata_loading_alert(selenium: SeleniumDrivers, browser_id: Any) -
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_metadata_in_op_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    path: Any,
-    tmp_memory: Any,
-    res: Any,
-    space: Any,
-    tab_name: Any,
-    val: Any,
-    item: Any,
-) -> Any:
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    res: str,
+    space: str,
+    tab_name: str,
+    val: str,
+    item: str,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     close_button = "X"
@@ -220,14 +220,14 @@ def assert_metadata_in_op_gui(
 
 def assert_such_metadata_not_exist_in_op_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    path: Any,
-    tmp_memory: Any,
-    space: Any,
-    tab_name: Any,
-    val: Any,
-    item: Any,
-) -> Any:
+    browser_id: str,
+    path: str,
+    tmp_memory: TmpMemory,
+    space: str,
+    tab_name: str,
+    val: GuiObject,
+    item: GuiObject,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
     details_modal = "Details modal"
@@ -252,7 +252,7 @@ def assert_such_metadata_not_exist_in_op_gui(
     click_modal_button(selenium, browser_id, x_button, details_modal)
 
 
-def remove_all_xattrs_metadata(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def remove_all_xattrs_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
     modal = Modals(selenium[browser_id]).details_modal.metadata
@@ -266,12 +266,12 @@ def remove_all_xattrs_metadata(selenium: SeleniumDrivers, browser_id: Any) -> An
 
 def remove_all_metadata_in_op_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    space: Any,
-    tmp_memory: Any,
-    path: Any,
-    item: Any,
-) -> Any:
+    browser_id: str,
+    space: str,
+    tmp_memory: TmpMemory,
+    path: str,
+    item: GuiObject,
+) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
 
@@ -297,7 +297,7 @@ def remove_all_metadata_in_op_gui(
     click_save_button_metadata(selenium, browser_id)
 
 
-def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: str) -> None:
     button = "Save"
     panel = "Metadata"
     try:
@@ -311,7 +311,7 @@ def click_save_button_metadata(selenium: SeleniumDrivers, browser_id: Any) -> An
         "user of {browser_id} sees that there is no metadata in metadata panel"
     )
 )
-def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     panel = "Metadata"
 
     assert_no_xattrs_metadata_for_item(selenium, browser_id)
@@ -329,12 +329,12 @@ def assert_no_metadata_in_modal(selenium: SeleniumDrivers, browser_id: Any) -> A
 )
 def open_filebrowser_and_remove_meta(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    key: Any,
-    path: Any,
-    space: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    key: str,
+    path: str,
+    space: str,
+    tmp_memory: TmpMemory,
+) -> None:
     modal_name = "File details"
     button = "Save"
     option = "Metadata"

@@ -4,8 +4,8 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, NamedButton, WebElement
 
@@ -15,7 +15,7 @@ class AddStorage(PageObject):
     _space_name = WebElement(".modal-header .special-name")
 
     @property
-    def title(self) -> Any:
+    def title(self) -> GuiObject:
         header = self.driver.execute_script(
             "$(arguments[0]).clone().children().remove().end().text()",
             self._header,
@@ -26,5 +26,5 @@ class AddStorage(PageObject):
     copy = Button(".copy-btn")
     generate_token = NamedButton("a.clickable", text="generate another token")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return 'Add storage modal for "{}"'.format(self.title)

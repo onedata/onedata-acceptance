@@ -4,7 +4,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebItemsSequence
@@ -13,17 +12,17 @@ from tests.gui.utils.core.web_elements import Button, Label, WebItemsSequence
 class MenuItem(PageObject):
     name = id = Label("a.clickable .text")
 
-    def __call__(self) -> Any:
+    def __call__(self) -> None:
         self.click()
 
-    def is_enabled(self) -> Any:
+    def is_enabled(self) -> bool:
         return "disabled" not in self.web_elem.get_attribute("class")
 
 
 class DataDistributionItem(PageObject):
     name = id = Label(".text")
 
-    def __call__(self) -> Any:
+    def __call__(self) -> None:
         self.click()
 
 
@@ -38,5 +37,5 @@ class MenuPopupWithText(PageObject):
     cease_support_from_providers_list_menu = Button(".cease-oneprovider-support-btn")
     confirm_cancel_button = Button(".btn-danger")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Menu popup with text"

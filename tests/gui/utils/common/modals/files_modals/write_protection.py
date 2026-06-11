@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.gui.utils.common.common import Button, Toggle
 
 from ..modal import Modal
@@ -17,5 +15,5 @@ class WriteProtection(Modal):
     metadata_protection_toggle = Toggle(".direct-dataset-item .metadata-flag-toggle")
     close = Button(".close-btn")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Write protection modal"

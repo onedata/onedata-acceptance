@@ -7,9 +7,10 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 import pytest
+from _pytest._py.path import LocalPath
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import (
@@ -20,6 +21,7 @@ from tests.gui.conftest import (
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
@@ -34,8 +36,11 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def check_browser_to_load(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, browser: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    browser: GuiObject,
+) -> None:
     driver = selenium[browser_id]
     if transform(browser) == "shares_browser":
         items_browser = OPLoggedIn(driver).shares_page.shares_browser
@@ -54,8 +59,8 @@ def check_browser_to_load(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_if_list_contains_space_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, space_name: Any, option: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, space_name: str, option: str
+) -> None:
     driver = selenium[browser_id]
     space_selector = OPLoggedIn(driver).data.sidebar.space_selector
     space_selector.expand()
@@ -81,8 +86,8 @@ def assert_if_list_contains_space_in_data_tab_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tooltip_from_toolbar_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, tooltip: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tooltip: str
+) -> None:
     driver = selenium[browser_id]
     getattr(OPLoggedIn(driver).data.toolbar, transform(tooltip)).click()
 
@@ -96,8 +101,8 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_from_file_browser_menu_bar(
-    browser_id: Any, button: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, button: str, tmp_memory: TmpMemory
+) -> None:
     button = transform(button) + "_button"
     file_browser = tmp_memory[browser_id]["file_browser"]
     getattr(file_browser, transform(button)).click()
@@ -110,8 +115,8 @@ def click_button_from_file_browser_menu_bar(
     )
 )
 def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any, which_browser: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, path: str, which_browser: str
+) -> None:
     change_cwd_using_breadcrumbs_in_data_tab_in_op(
         selenium, browser_id, path, which_browser=which_browser
     )
@@ -126,10 +131,10 @@ def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
 @repeat_failed(timeout=WAIT_BACKEND)
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    path: Any,
-    which_browser: Any = "file browser",
-) -> Any:
+    browser_id: str,
+    path: str,
+    which_browser: str = "file browser",
+) -> None:
     # this cannot be first step that uses which_browser,
     # browser must be loaded before in some previous step
     archive = which_browser == "archive file browser"
@@ -143,8 +148,10 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def go_one_back_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, which_browser: Any = "file browser"
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    which_browser: str = "file browser",
+) -> None:
     # this cannot be first step that uses which_browser,
     # browser must be loaded before in some previous step
     breadcrumbs = _get_breadcrumbs(browser_id, selenium, which_browser)
@@ -152,8 +159,8 @@ def go_one_back_using_breadcrumbs_in_data_tab_in_op(
 
 
 def _get_breadcrumbs(
-    browser_id: Any, selenium: SeleniumDrivers, which_browser: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, which_browser: str
+) -> GuiObject:
     try:
         breadcrumbs = getattr(
             OPLoggedIn(selenium[browser_id]), transform(which_browser)
@@ -174,8 +181,8 @@ def _get_breadcrumbs(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_dir_tree_in_data_tab_in_op_correct(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, path: str
+) -> None:
     driver = selenium[browser_id]
     cwd = OPLoggedIn(driver).data.sidebar.cwd.pwd()
     assert path == cwd, f"expected path {path}\n got: {path}"
@@ -184,8 +191,8 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(
 @wt(parsers.parse("user of {browser_id} does not see {path} in directory tree"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_absence_of_path_in_dir_tree(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, path: str
+) -> None:
     driver = selenium[browser_id]
     curr_dir = OPLoggedIn(driver).data.sidebar.root_dir
     with pytest.raises(RuntimeError):
@@ -195,8 +202,8 @@ def assert_absence_of_path_in_dir_tree(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _is_space_viewed_space_in_data_tab_in_op(
-    driver: Any, is_home: Any, space_name: Any
-) -> Any:
+    driver: WebDriver, is_home: GuiObject, space_name: str
+) -> None:
     selector = OPLoggedIn(driver).data.sidebar.space_selector
     displayed_name = selector.selected_space_name
     err_msg = 'current directory tree is displayed for "{}" instead of "{}"'
@@ -216,8 +223,8 @@ def _is_space_viewed_space_in_data_tab_in_op(
     )
 )
 def g_is_space_tree_root(
-    selenium: SeleniumDrivers, browser_id: Any, is_home: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, is_home: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
     _is_space_viewed_space_in_data_tab_in_op(driver, bool(is_home), space_name)
 
@@ -230,8 +237,8 @@ def g_is_space_tree_root(
     )
 )
 def wt_is_space_tree_root(
-    selenium: SeleniumDrivers, browser_id: Any, is_home: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, is_home: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
     _is_space_viewed_space_in_data_tab_in_op(driver, bool(is_home), space_name)
 
@@ -239,10 +246,10 @@ def wt_is_space_tree_root(
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_files_tab_in_op(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    tmp_memory: Any,
-    item_browser: Any = "file browser",
-) -> Any:
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_browser: str = "file browser",
+) -> None:
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -254,10 +261,10 @@ def assert_nonempty_file_browser_in_files_tab_in_op(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_browser_in_files_tab_in_op(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    tmp_memory: Any,
-    item_browser: Any = "file browser",
-) -> Any:
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_browser: str = "file browser",
+) -> None:
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -269,8 +276,11 @@ def assert_empty_browser_in_files_tab_in_op(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_browser_in_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_browser: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_browser: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, item_browser)
 
@@ -281,8 +291,11 @@ def assert_browser_in_tab_in_op(
     )
 )
 def wt_assert_browser_in_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_browser: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_browser: str,
+) -> None:
     if "empty" in item_browser.split(" "):
         assert_empty_browser_in_files_tab_in_op(
             selenium,
@@ -314,8 +327,8 @@ def wt_assert_browser_in_tab_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_displayed_dir_name_len_in_dir_tree(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, path: str, tmp_memory: TmpMemory
+) -> None:
     driver = selenium[browser_id]
     cwd = OPLoggedIn(driver).data.sidebar.root_dir
     cwd.click()
@@ -333,8 +346,8 @@ def check_displayed_dir_name_len_in_dir_tree(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_diff_in_len_of_dir_name_before_and_now(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, path: str, tmp_memory: TmpMemory
+) -> None:
     driver = selenium[browser_id]
     cwd = OPLoggedIn(driver).data.sidebar.root_dir
     cwd.click()
@@ -355,8 +368,8 @@ def assert_diff_in_len_of_dir_name_before_and_now(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resize_data_tab_sidebar(
-    selenium: SeleniumDrivers, browser_id: Any, direction: Any, offset: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, direction: str, offset: int
+) -> None:
     driver = selenium[browser_id]
     sidebar = OPLoggedIn(driver).data.sidebar
     offset = (-1 if direction == "left" else 1) * int(offset)
@@ -365,7 +378,7 @@ def resize_data_tab_sidebar(
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for file uploads? to finish"))
 @repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
-def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     time.sleep(1)
@@ -382,8 +395,8 @@ def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: Any) -
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def wait_extended_time_for_file_upload_to_finish(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     assert not Popups(
@@ -401,8 +414,8 @@ def wait_extended_time_for_file_upload_to_finish(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser_no_waiting(
-    selenium: SeleniumDrivers, browser_id: Any, file_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_name: str
+) -> None:
     driver = selenium[browser_id]
     OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file_name))
 
@@ -417,8 +430,8 @@ def upload_file_to_cwd_in_file_browser_no_waiting(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_automation_file_to_cwd_in_file_browser(
-    selenium: SeleniumDrivers, browser_id: Any, file_name: Any, inner_dir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_name: str, inner_dir: str
+) -> None:
     file_name = "automation/" + inner_dir + "/" + file_name.replace('"', "")
     driver = selenium[browser_id]
     OPLoggedIn(driver).file_browser.upload_files(upload_file_path(file_name))
@@ -434,8 +447,8 @@ def upload_automation_file_to_cwd_in_file_browser(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(
-    selenium: SeleniumDrivers, browser_id: Any, dir_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+) -> None:
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split("/"))
     if directory.isdir():
@@ -453,8 +466,8 @@ def upload_files_to_cwd_in_data_tab_no_waiting(
     )
 )
 def upload_file_to_cwd_in_file_browser(
-    selenium: SeleniumDrivers, browser_id: Any, file_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_name: str
+) -> None:
     upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id, file_name)
     wait_for_file_upload_to_finish(selenium, browser_id)
 
@@ -468,8 +481,8 @@ def upload_file_to_cwd_in_file_browser(
     )
 )
 def upload_files_to_cwd_in_data_tab_extended_wait(
-    selenium: SeleniumDrivers, browser_id: Any, dir_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+) -> None:
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id)
 
@@ -482,8 +495,8 @@ def upload_files_to_cwd_in_data_tab_extended_wait(
     )
 )
 def upload_file_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: Any, file_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_path: str, tmpdir: LocalPath
+) -> None:
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path, tmpdir)
     wait_for_file_upload_to_finish(selenium, browser_id)
 
@@ -496,8 +509,8 @@ def upload_file_to_cwd_in_data_tab(
     )
 )
 def upload_files_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: Any, dir_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, dir_path: str, tmpdir: LocalPath
+) -> None:
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path, tmpdir)
     wait_for_file_upload_to_finish(selenium, browser_id)
 
@@ -511,8 +524,12 @@ def upload_files_to_cwd_in_data_tab(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_number_of_files_to_cwd_in_data_tab(
-    selenium: SeleniumDrivers, browser_id: Any, file_path: Any, tmpdir: Any, number: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    file_path: str,
+    tmpdir: LocalPath,
+    number: int,
+) -> None:
     for _ in range(int(number)):
         upload_file_to_cwd_in_data_tab_no_waiting(
             selenium, browser_id, file_path, tmpdir
@@ -529,8 +546,8 @@ def upload_number_of_files_to_cwd_in_data_tab(
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab_no_waiting(
-    selenium: SeleniumDrivers, browser_id: Any, file_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_path: str, tmpdir: LocalPath
+) -> None:
     driver = selenium[browser_id]
     file = tmpdir.join(browser_id, *file_path.split("/"))
     if file.isfile():
@@ -540,7 +557,7 @@ def upload_file_to_cwd_in_data_tab_no_waiting(
 
 
 @wt(parsers.parse("user of {browser_id} sets slow upload network conditions"))
-def network_throttling_upload(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def network_throttling_upload(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
@@ -552,7 +569,7 @@ def network_throttling_upload(selenium: SeleniumDrivers, browser_id: Any) -> Any
 
 
 @wt(parsers.parse("user of {browser_id} sets normal network conditions"))
-def network_normal_conditions(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def network_normal_conditions(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.delete_network_conditions()
 
@@ -566,8 +583,8 @@ def network_normal_conditions(selenium: SeleniumDrivers, browser_id: Any) -> Any
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_file_to_cwd_in_data_tab_with_network_throttling(
-    selenium: SeleniumDrivers, browser_id: Any, file_path: Any, tmpdir: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file_path: str, tmpdir: LocalPath
+) -> None:
     driver = selenium[browser_id]
     network_throttling_upload(selenium, browser_id)
     file = tmpdir.join(browser_id, file_path)
@@ -587,8 +604,8 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunk_in_data_distribution_size(
-    selenium: SeleniumDrivers, browser_id: Any, size: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, size: int, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     prov_rec = Modals(driver).details_modal.data_distribution.providers[provider]
@@ -608,8 +625,8 @@ def assert_provider_chunk_in_data_distribution_size(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_provider_chunk_in_data_distribution_filled(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     data_distribution = Modals(driver).details_modal.data_distribution
@@ -633,8 +650,8 @@ def assert_provider_chunk_in_data_distribution_filled(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_empty(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     data_distribution = Modals(driver).details_modal.data_distribution
@@ -654,8 +671,12 @@ def assert_provider_chunk_in_data_distribution_empty(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunks_in_data_distribution(
-    selenium: SeleniumDrivers, browser_id: Any, chunks: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    chunks: str,
+    provider: str,
+    hosts: Hosts,
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     data_distribution = Modals(driver).details_modal.data_distribution
@@ -688,8 +709,8 @@ def assert_provider_chunks_in_data_distribution(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def has_downloaded_file_content(
-    browser_id: Any, file_name: Any, content: Any, tmpdir: Any
-) -> Any:
+    browser_id: str, file_name: str, content: str, tmpdir: LocalPath
+) -> None:
     downloaded_file = tmpdir.join(browser_id, "download", file_name)
     if downloaded_file.isfile():
         with downloaded_file.open() as f:
@@ -710,8 +731,8 @@ def has_downloaded_file_content(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def choose_option_from_selection_menu(
-    browser_id: Any, selenium: SeleniumDrivers, option: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, option: str, tmp_memory: TmpMemory
+) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
     file_browser.selection_menu_button()
@@ -726,12 +747,12 @@ def choose_option_from_selection_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_file_from_selection_menu(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    option: Any,
-    tmp_memory: Any,
-    file_name: Any,
-) -> Any:
+    option: str,
+    tmp_memory: TmpMemory,
+    file_name: str,
+) -> None:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
     file_browser.data[file_name].menu_button()
@@ -740,7 +761,7 @@ def choose_option_for_file_from_selection_menu(
 
 
 @wt(parsers.parse("user of {browser_id} sees that upload file failed"))
-def check_error_in_upload_presenter(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def check_error_in_upload_presenter(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
@@ -753,8 +774,8 @@ def check_error_in_upload_presenter(selenium: SeleniumDrivers, browser_id: Any) 
     )
 )
 def choose_provider_in_selected_page(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     driver.switch_to.default_content()
@@ -769,15 +790,17 @@ def choose_provider_in_selected_page(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_choose_other_oneprovider_on_file_browser(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     OZLoggedIn(driver)["data"].choose_other_provider()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_current_provider_in_space(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def check_current_provider_in_space(
+    selenium: SeleniumDrivers, browser_id: str
+) -> GuiObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
@@ -786,8 +809,8 @@ def check_current_provider_in_space(selenium: SeleniumDrivers, browser_id: Any) 
 
 
 def _assert_current_provider_in_space(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str
+) -> None:
     current_provider = check_current_provider_in_space(selenium, browser_id)
     assert (
         provider == current_provider
@@ -795,8 +818,8 @@ def _assert_current_provider_in_space(
 
 
 def _assert_provider_in_space(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str
+) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     providers = OZLoggedIn(selenium[browser_id])["data"].providers
@@ -812,8 +835,8 @@ def _assert_provider_in_space(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_current_provider_in_space(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str
+) -> None:
     _assert_current_provider_in_space(selenium, browser_id, provider)
 
 
@@ -825,8 +848,8 @@ def assert_current_provider_in_space(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_current_provider_name_in_space(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     provider = hosts[provider]["name"]
     _assert_current_provider_in_space(selenium, browser_id, provider)
 
@@ -838,8 +861,8 @@ def assert_current_provider_name_in_space(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_in_space(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     provider = hosts[provider]["name"]
     _assert_provider_in_space(selenium, browser_id, provider)
 
@@ -853,8 +876,11 @@ def assert_provider_in_space(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_file_browser_button(
-    browser_id: Any, button: Any, which_browser: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str,
+    button: str,
+    which_browser: WhichBrowser,
+    tmp_memory: TmpMemory,
+) -> None:
     file_browser = tmp_memory[browser_id][transform(which_browser.value)]
     getattr(file_browser, f"{transform(button)}_button").click()
 
@@ -868,18 +894,21 @@ def click_file_browser_button(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def fail_to_click_file_browser_button(
-    browser_id: Any, button: Any, which_browser: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str,
+    button: str,
+    which_browser: WhichBrowser,
+    tmp_memory: TmpMemory,
+) -> None:
     file_browser = tmp_memory[browser_id][transform(which_browser.value)]
-    button = getattr(file_browser, f"{transform(button)}_button")
+    browser_button = getattr(file_browser, f"{transform(button)}_button")
     try:
-        button.click()
+        browser_button.click()
     except RuntimeError:
         return
     raise AssertionError(f"{transform(button)}_button is not supposed to be clickable")
 
 
-def network_throttling_download(driver: Any) -> Any:
+def network_throttling_download(driver: WebDriver) -> None:
     download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
 
     driver.set_network_conditions(
@@ -897,8 +926,8 @@ def network_throttling_download(driver: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def download_file_with_network_throttling(
-    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, item_name: str, tmp_memory: TmpMemory
+) -> None:
     driver = selenium[browser_id]
     network_throttling_download(driver)
 
@@ -916,11 +945,11 @@ def download_file_with_network_throttling(
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_data_distribution_percentage_for_provider(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    provider: Any,
-    percentage: Any,
+    browser_id: str,
+    provider: str,
+    percentage: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     # TODO VFS-12315 remove sleep in acc tests
@@ -940,8 +969,8 @@ def check_data_distribution_percentage_for_provider(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_data_distribution_size_for_provider(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, size: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, size: int, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     data_distribution = Modals(driver).details_modal.data_distribution
@@ -959,8 +988,8 @@ def check_data_distribution_size_for_provider(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_size_statistics_for_providers(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     Modals(driver).details_modal.size_statistics.expand_stats_button()
 
@@ -972,8 +1001,8 @@ def expand_size_statistics_for_providers(
     )
 )
 def toggle_include_virtual_size_in_size_statistics(
-    selenium: SeleniumDrivers, browser_id: Any, res: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, res: str
+) -> None:
     driver = selenium[browser_id]
     size_stats_tab = Modals(driver).details_modal.size_statistics
     size_stats_tab.scroll_to_top()
@@ -1001,11 +1030,11 @@ def toggle_include_virtual_size_in_size_statistics(
 def check_size_stats_for_provider(
     selenium: SeleniumDrivers,
     hosts: Hosts,
-    browser_id: Any,
-    elem_type: Any,
-    providers: Any,
-    expected_sizes: Any,
-) -> Any:
+    browser_id: str,
+    elem_type: str,
+    providers: str,
+    expected_sizes: str,
+) -> None:
     driver = selenium[browser_id]
     for provider, expected_size in zip(parse_seq(providers), parse_seq(expected_sizes)):
         provider_name = hosts[provider]["name"]
@@ -1032,10 +1061,10 @@ def check_size_stats_for_provider(
 def check_error_cell_for_provider(
     selenium: SeleniumDrivers,
     hosts: Hosts,
-    browser_id: Any,
-    provider: Any,
-    message: Any,
-) -> Any:
+    browser_id: str,
+    provider: str,
+    message: str,
+) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     error_cell = (
@@ -1058,10 +1087,10 @@ def check_error_cell_for_provider(
 def check_content_for_provider(
     selenium: SeleniumDrivers,
     hosts: Hosts,
-    browser_id: Any,
-    provider: Any,
-    content: Any,
-) -> Any:
+    browser_id: str,
+    provider: str,
+    content: str,
+) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     provider_content = (
@@ -1082,10 +1111,10 @@ def check_content_for_provider(
 def check_content_for_providers(
     selenium: SeleniumDrivers,
     hosts: Hosts,
-    browser_id: Any,
-    providers: Any,
-    contents: Any,
-) -> Any:
+    browser_id: str,
+    providers: str,
+    contents: str,
+) -> None:
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')
     ]  # removing extra quotes
@@ -1095,8 +1124,11 @@ def check_content_for_providers(
 
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_size_statistic_in_dir_details(
-    selenium: SeleniumDrivers, browser_id: Any, elem_type: Any, expected: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    elem_type: GuiObject,
+    expected: GuiObject,
+) -> None:
     driver = selenium[browser_id]
     size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))
 

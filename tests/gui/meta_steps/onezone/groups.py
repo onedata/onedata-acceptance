@@ -6,7 +6,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from selenium.webdriver.common.keys import Keys
 
@@ -42,6 +41,7 @@ from tests.gui.steps.onezone.members import (
     remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -57,11 +57,11 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_group(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    group: Any,
-    new_group: Any,
-    confirm_type: Any,
-) -> Any:
+    browser_id: str,
+    group: str,
+    new_group: str,
+    confirm_type: str,
+) -> None:
     option = "Rename"
     text = new_group
 
@@ -76,7 +76,7 @@ def rename_group(
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_group(selenium: SeleniumDrivers, browser_id: Any, group: Any) -> Any:
+def leave_group(selenium: SeleniumDrivers, browser_id: str, group: str) -> None:
     option = "Leave"
     modal = "LEAVE GROUP"
 
@@ -86,14 +86,14 @@ def leave_group(selenium: SeleniumDrivers, browser_id: Any, group: Any) -> Any:
 
 @given(parsers.parse("{user} user does not have access to any group"))
 def g_leave_user_groups_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: Any
-) -> Any:
+    hosts: Hosts, users: Users, user: str
+) -> None:
     leave_user_groups_in_onezone_using_rest(hosts, users, user)
 
 
 def leave_user_groups_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: Any
-) -> Any:
+    hosts: Hosts, users: Users, user: str
+) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
     user_groups = get_user_groups(zone_hostname, user, users)
     for group_id in user_groups:
@@ -105,7 +105,7 @@ def leave_user_groups_in_onezone_using_rest(
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium: SeleniumDrivers, browser_id: Any, group_list: Any) -> Any:
+def remove_group(selenium: SeleniumDrivers, browser_id: str, group_list: str) -> None:
     option = "Remove"
     modal = "REMOVE GROUP"
 
@@ -117,8 +117,8 @@ def remove_group(selenium: SeleniumDrivers, browser_id: Any, group_list: Any) ->
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(
-    selenium: SeleniumDrivers, browser_id: Any, group_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, group_list: str
+) -> None:
     for group in parse_seq(group_list):
         click_create_group_button_in_panel(selenium, browser_id)
         input_name_into_input_box_on_main_groups_page(selenium, browser_id, group)
@@ -126,8 +126,8 @@ def create_groups_using_op_gui(
 
 
 def see_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str
+) -> None:
     option = "sees"
 
     for group in parse_seq(group_list):
@@ -135,8 +135,8 @@ def see_groups_using_op_gui(
 
 
 def rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any, new_names: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str, new_names: GuiObject
+) -> None:
     confirm_type = "enter"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -145,8 +145,8 @@ def rename_groups_using_op_gui(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_see_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str
+) -> None:
     option = "does not see"
 
     for group in parse_seq(group_list):
@@ -154,13 +154,15 @@ def fail_to_see_groups_using_op_gui(
 
 
 def leave_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str
+) -> None:
     for group in parse_seq(group_list):
         leave_group(selenium, user, group)
 
 
-def _open_member_from_list(selenium: SeleniumDrivers, user: Any, parent: Any) -> Any:
+def _open_member_from_list(
+    selenium: SeleniumDrivers, user: str, parent: GuiObject
+) -> None:
     where = "group"
     list_type = "users"
     subpage = "members"
@@ -170,8 +172,8 @@ def _open_member_from_list(selenium: SeleniumDrivers, user: Any, parent: Any) ->
 
 
 def assert_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any, parent: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str, parent: GuiObject
+) -> None:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
@@ -182,8 +184,8 @@ def assert_subgroups_using_op_gui(
 
 
 def fail_to_see_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any, parent: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str, parent: GuiObject
+) -> None:
     where = "group"
 
     _open_member_from_list(selenium, user, parent)
@@ -196,14 +198,14 @@ def fail_to_see_subgroups_using_op_gui(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _create_group_token(
     selenium: SeleniumDrivers,
-    user: Any,
-    user2: Any,
-    name: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-    member: Any,
-) -> Any:
+    user: str,
+    user2: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    member: GuiObject,
+) -> None:
     item_type = "token"
     where = "group"
     button = f"Invite {member} using token"
@@ -228,13 +230,13 @@ def _create_group_token(
 )
 def create_group_token_to_invite_user_using_op_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    user2: Any,
-    name: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    user2: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     member = "user"
     _create_group_token(
         selenium,
@@ -250,13 +252,13 @@ def create_group_token_to_invite_user_using_op_gui(
 
 def create_group_token_to_invite_group_using_op_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    user2: Any,
-    name: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    user2: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     member = "group"
     _create_group_token(
         selenium,
@@ -276,20 +278,20 @@ def create_group_token_to_invite_group_using_op_gui(
     )
 )
 def join_group_using_op_gui(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory
+) -> None:
     consume_received_token(selenium, browser_id, tmp_memory)
 
 
 def add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    parent: Any,
-    group_list: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    parent: GuiObject,
+    group_list: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(
             selenium,
@@ -304,8 +306,12 @@ def add_subgroups_using_op_gui(
 
 
 def remove_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any, tmp_memory: Any, parent: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    user: str,
+    group_list: str,
+    tmp_memory: TmpMemory,
+    parent: GuiObject,
+) -> None:
     member_type = "group"
 
     for child in parse_seq(group_list):
@@ -321,8 +327,8 @@ def remove_subgroups_using_op_gui(
 
 
 def fail_to_rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, group_list: Any, new_names: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, group_list: str, new_names: GuiObject
+) -> None:
     text = "failed"
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
@@ -332,13 +338,13 @@ def fail_to_rename_groups_using_op_gui(
 
 def fail_to_add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    parent: Any,
-    group_list: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    parent: GuiObject,
+    group_list: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     create_group_token_to_invite_group_using_op_gui(
         selenium,
         user,

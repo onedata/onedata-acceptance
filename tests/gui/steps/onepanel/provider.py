@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Any, cast
+from typing import cast
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -27,8 +27,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_attribute(
-    selenium: SeleniumDrivers, browser_id: Any, attr: Any, val: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, attr: str, val: str
+) -> None:
     details = Onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
     assert (
@@ -47,12 +47,12 @@ def wt_assert_value_of_provider_attribute(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_attribute_is_known(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    attr: Any,
-    prop: Any,
-    host: Any,
+    browser_id: str,
+    attr: str,
+    prop: str,
+    host: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     expected_val = cast(str, cast(dict[str, str], hosts[host])[prop])
     details = Onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
@@ -71,8 +71,8 @@ def wt_assert_value_of_provider_attribute_is_known(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_val_to_in_box_in_provider_details_form(
-    selenium: SeleniumDrivers, browser_id: Any, val: Any, attr: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, val: str, attr: str
+) -> None:
     form = Onepanel(selenium[browser_id]).content.provider.form
     setattr(form, transform(attr), val)
 
@@ -85,8 +85,8 @@ def wt_type_val_to_in_box_in_provider_details_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_request_subdomain_toggle_in_provider_details_form(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     form = Onepanel(selenium[browser_id]).content.provider.form
     form.subdomain_delegation.check()
 
@@ -102,12 +102,12 @@ def wt_check_request_subdomain_toggle_in_provider_details_form(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_host_domain_to_in_box_in_provider_details_form(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    host_property: Any,
-    host: Any,
-    attr: Any,
+    browser_id: str,
+    host_property: str,
+    host: str,
+    attr: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     form = Onepanel(selenium[browser_id]).content.provider.form
     setattr(
         form,
@@ -123,8 +123,8 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_save_changes_in_modify_provider_detail_form(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).content.provider.form.save()
 
@@ -135,8 +135,8 @@ def wt_save_changes_in_modify_provider_detail_form(
     )
 )
 def click_discard_button_on_modal_in_provider_panel(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     Onepanel(driver).discard_button()
 
@@ -148,8 +148,8 @@ def click_discard_button_on_modal_in_provider_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_discard_btn_in_domain_change_modal(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     try:
         Modals(selenium[browser_id]).configure_web_cert.discard()
     except RuntimeError as e:
@@ -161,8 +161,8 @@ def wt_click_on_discard_btn_in_domain_change_modal(
 
 @wt(parsers.parse("user of {browser_id} activates Request a subdomain toggle"))
 def activate_request_subdomain_toggle(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     (
         Onepanel(
             selenium[browser_id]
@@ -172,8 +172,8 @@ def activate_request_subdomain_toggle(
 
 @wt(parsers.parse("user of {browser_id} deactivates Request a subdomain toggle"))
 def deactivate_request_subdomain_toggle(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     (
         Onepanel(
             selenium[browser_id]
@@ -190,8 +190,8 @@ matcher_wt_enter_test_domain_in_deployment_step2 = parsers.re(
 
 @wt(matcher_wt_enter_test_domain_in_deployment_step2)
 def wt_enter_test_domain_in_deployment_step2(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     Onepanel(selenium[browser_id]).content.provider.form.domain = (
         f"{hosts[provider]['hostname']}.test"
     )
@@ -207,8 +207,8 @@ matcher_wt_assert_value_of_provider_domain = parsers.re(
 @wt(matcher_wt_assert_value_of_provider_domain)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_domain(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     displayed_val = Onepanel(selenium[browser_id]).content.provider.details.domain
     expected_val = f"{hosts[provider]['hostname']}.test"
     assert displayed_val == expected_val, (
@@ -224,6 +224,6 @@ def wt_assert_value_of_provider_domain(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_emergency_interface(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def go_to_emergency_interface(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     Popups(driver).deregister_provider.buttons["Go to emergency interface"].click()

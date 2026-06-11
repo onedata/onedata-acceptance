@@ -11,7 +11,7 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import DefaultDict, Generator, Protocol, cast
+from typing import Generator, Protocol, cast
 
 import pytest
 from _pytest.config.argparsing import Parser
@@ -32,6 +32,7 @@ from tests.gui.sse_fixtures import (
     monitors,
     space_files_monitor_factory,
 )
+from tests.gui.types import Clipboard, DisplayMap, Numerals, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
@@ -165,7 +166,7 @@ def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
 
 
 @fixture(scope="session")
-def numerals() -> dict[str, int]:
+def numerals() -> Numerals:
     return {
         "first": 0,
         "second": 1,
@@ -218,23 +219,23 @@ def data_discovery() -> type:
 
 
 @fixture
-def tmp_memory() -> DefaultDict[str, dict[str, object]]:
+def tmp_memory() -> TmpMemory:
     """Dict to use when one wants to store sth between steps.
 
     Because of use of multiple browsers, the correct format would be:
      {'browser1': {...}, 'browser2': {...}, ...}
     """
-    return defaultdict(dict)
+    return cast(TmpMemory, defaultdict(dict))
 
 
 @fixture
-def displays() -> dict[str, str]:
+def displays() -> DisplayMap:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 
 
 @fixture(scope="session")
-def clipboard() -> object:
+def clipboard() -> Clipboard:
     """utility simulating os clipboard"""
     from collections import namedtuple
     from platform import system as get_system

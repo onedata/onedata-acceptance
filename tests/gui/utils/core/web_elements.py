@@ -6,10 +6,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from functools import partial
-from typing import Any
 
 from selenium.webdriver.common.by import By
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
 from .base import AbstractWebElement, AbstractWebItem
@@ -17,11 +17,11 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         if instance is None:
             return self
 
@@ -32,20 +32,22 @@ class WebElement(AbstractWebElement):
             scroll=self.scroll,
         )
 
-    def _format_msg(self, err_msg: Any, parent: Any, **kwargs: Any) -> Any:
+    def _format_msg(
+        self, err_msg: GuiObject, parent: GuiObject, **kwargs: GuiObject
+    ) -> GuiObject:
         name = self.name.replace("_", " ").strip().upper()
         p_name = self.parent_name if self.parent_name != "" else str(parent)
         return err_msg.format(item=name, parent=p_name, **kwargs)
 
 
 class WebElementWithText(WebElement):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
         self.text = kwargs.pop("text", None)
         if self.text is None:
             raise ValueError("text not specified")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         if instance is None:
             return self
 
@@ -60,7 +62,7 @@ class WebElementWithText(WebElement):
 
 
 class WebItem(AbstractWebItem, WebElement):
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         elem = super().__get__(instance, owner)
         return (
             elem
@@ -80,17 +82,17 @@ NamedButton = partial(WebItemWithText, cls=ButtonWithTextPageObject)
 class Label(WebElement):
     item_not_found_msg = "{item} label not found in {parent}"
 
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         item = super().__get__(instance, owner)
         return item.text if instance else item
 
 
 class Input(WebElement):
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         item = super().__get__(instance, owner)
         return item.get_attribute("value") if instance else item
 
-    def __set__(self, instance: Any, val: Any) -> Any:
+    def __set__(self, instance: GuiObject, val: GuiObject) -> None:
         input_box = super().__get__(instance, type(instance))
         input_box.clear()
         if val != "":
@@ -101,13 +103,13 @@ class Input(WebElement):
 
 
 class AceEditor(WebElement):
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         selector = self.css_sel + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         return driver.execute_script(script).text
 
-    def __set__(self, instance: Any, val: Any) -> Any:
+    def __set__(self, instance: GuiObject, val: GuiObject) -> None:
         driver = instance.web_elem.parent
         selector = self.css_sel + " .ace_text-input"
         script = (
@@ -122,7 +124,7 @@ class AceEditor(WebElement):
 
 
 class WebElementsSequence(AbstractWebElement):
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         if instance is None:
             return self
 
@@ -130,7 +132,7 @@ class WebElementsSequence(AbstractWebElement):
 
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):
-    def __get__(self, instance: Any, owner: Any) -> Any:
+    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
         seq = super().__get__(instance, owner)
         return (
             seq

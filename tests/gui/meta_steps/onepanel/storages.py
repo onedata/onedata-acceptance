@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import re
-from typing import Any
+from typing import Optional
 
 import yaml
 from selenium.common.exceptions import NoSuchElementException
@@ -48,13 +48,14 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import Onepanel
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
+from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
 def remove_storage_in_op_panel_using_gui(
-    selenium: SeleniumDrivers, browser_id: Any, name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     option = "Remove storage backend"
     button = "Remove"
     modal = "REMOVE STORAGE BACKEND"
@@ -75,12 +76,12 @@ def remove_storage_in_op_panel_using_gui(
 )
 def add_storage_in_op_panel_using_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    name: Any,
-    provider_name: Any,
-    config: Any,
+    browser_id: str,
+    name: str,
+    provider_name: str,
+    config: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     """Create storage according to given config.
 
     Config format given in yaml is as follows:
@@ -94,8 +95,8 @@ def add_storage_in_op_panel_using_gui(
 
 
 def _go_to_storage_view_in_clusters(
-    selenium: SeleniumDrivers, browser_id: Any, provider_name: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider_name: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     onezone_url_pattern = "https?://[^/]*/ozw/.*"
     sidebar = "Clusters"
@@ -111,8 +112,8 @@ def _go_to_storage_view_in_clusters(
 
 
 def _add_storage_in_op_panel_using_gui(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any, storage_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str, storage_name: str
+) -> None:
     content = "storages"
     btn = "Add storage backend"
     form = "POSIX"
@@ -150,12 +151,12 @@ def _add_storage_in_op_panel_using_gui(
     )
 )
 def safely_create_storage_rest(
-    storage_name: Any,
-    provider: Any,
-    config: Any,
+    storage_name: str,
+    provider: str,
+    config: str,
     hosts: Hosts,
-    onepanel_credentials: Any,
-) -> Any:
+    onepanel_credentials: AdminUser,
+) -> None:
     """Create storage according to given config.
 
     Config format given in yaml is as follows:
@@ -180,8 +181,8 @@ def safely_create_storage_rest(
     )
 )
 def remove_all_storages_named(
-    storage_name: Any, provider: Any, hosts: Hosts, onepanel_credentials: Any
-) -> Any:
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+) -> None:
     _remove_storage_in_op_panel_using_rest(
         storage_name, provider, hosts, onepanel_credentials
     )
@@ -189,8 +190,8 @@ def remove_all_storages_named(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _remove_storage_in_op_panel_using_rest(
-    storage_name: Any, provider: Any, hosts: Hosts, onepanel_credentials: Any
-) -> Any:
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -205,11 +206,11 @@ def _remove_storage_in_op_panel_using_rest(
 
 
 def _remove_storage_by_id(
-    provider_hostname: Any,
-    onepanel_username: Any,
-    onepanel_password: Any,
-    storage_id: Any,
-) -> Any:
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+    storage_id: str,
+) -> None:
     http_delete(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -220,14 +221,16 @@ def _remove_storage_by_id(
 
 @given(parsers.parse('there is no "{name}" storage in "{provider}" Oneprovider panel'))
 def remove_storage_in_op_panel_rest(
-    onepanel_credentials: Any, hosts: Hosts, provider: Any, name: Any
-) -> Any:
+    onepanel_credentials: AdminUser, hosts: Hosts, provider: str, name: str
+) -> None:
     _remove_storage_in_op_panel_using_rest(name, provider, hosts, onepanel_credentials)
 
 
 def _get_storages_ids(
-    provider_hostname: Any, onepanel_username: Any, onepanel_password: Any
-) -> Any:
+    provider_hostname: str,
+    onepanel_username: str,
+    onepanel_password: Optional[str],
+) -> list[str]:
     return http_get(
         ip=provider_hostname,
         port=PANEL_REST_PORT,
@@ -237,8 +240,8 @@ def _get_storages_ids(
 
 
 def _get_storage_id_list_by_name(
-    storage_name: Any, provider: Any, hosts: Hosts, onepanel_credentials: Any
-) -> Any:
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+) -> list[str]:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -260,8 +263,8 @@ def _get_storage_id_list_by_name(
 
 
 def get_first_storage_id_by_name(
-    storage_name: Any, provider: Any, hosts: Hosts, onepanel_credentials: Any
-) -> Any:
+    storage_name: str, provider: str, hosts: Hosts, onepanel_credentials: AdminUser
+) -> str:
     return _get_storage_id_list_by_name(
         storage_name, provider, hosts, onepanel_credentials
     )[0]
@@ -269,12 +272,12 @@ def get_first_storage_id_by_name(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(
-    config: Any,
-    storage_name: Any,
-    provider: Any,
+    config: str,
+    storage_name: str,
+    provider: str,
     hosts: Hosts,
-    onepanel_credentials: Any,
-) -> Any:
+    onepanel_credentials: AdminUser,
+) -> None:
     storage_config = {}
     options = yaml.load(config, yaml.Loader)
 
@@ -308,8 +311,8 @@ def _add_storage_in_op_panel_using_rest(
     )
 )
 def add_key_value_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: Any, key: Any, val: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, key: str, val: str
+) -> None:
 
     type_key_in_posix_storage_edit_page(selenium, browser_id, key)
     click_value_in_posix_storage_edit_page(selenium, browser_id)
@@ -320,8 +323,8 @@ def add_key_value_in_storage_page(
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
 def delete_additional_param_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
     save_changes_in_posix_storage_edit_page(selenium, browser_id)
@@ -329,8 +332,8 @@ def delete_additional_param_in_storage_page(
 
 
 def _delete_all_additional_params_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     deleted = False
     name = "posix"
 
@@ -353,8 +356,8 @@ def _delete_all_additional_params_in_storage_page(
     )
 )
 def g_delete_all_additional_params_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
@@ -365,14 +368,14 @@ def g_delete_all_additional_params_in_storage_page(
     )
 )
 def wt_delete_all_additional_params_in_storage_page(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
 def _try_confirm_changes_in_modify_storage_modal(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     button = "Proceed"
     checkbox = "Understand checkbox"
     modal = "Modify Storage"
@@ -393,6 +396,6 @@ def _try_confirm_changes_in_modify_storage_modal(
     )
 )
 def confirm_changes_in_modify_storage_modal(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)

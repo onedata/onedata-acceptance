@@ -6,7 +6,6 @@ __author__ = "Bartosz Walkowicz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -24,8 +23,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_for_user_full_name_edit_box_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, btn: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, btn: str
+) -> None:
     getattr(OZLoggedIn(selenium[browser_id])["profile"].edit_box, btn).click()
 
 
@@ -36,8 +35,8 @@ def click_on_btn_for_user_full_name_edit_box_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_into_user_full_name_edit_box_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str
+) -> None:
     OZLoggedIn(selenium[browser_id])["profile"].edit_box.value = text
 
 
@@ -49,8 +48,8 @@ def type_text_into_user_full_name_edit_box_in_oz(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def activate_user_full_name_edit_box_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     OZLoggedIn(selenium[browser_id])["profile"].rename_full_name()
 
 
@@ -62,8 +61,8 @@ def activate_user_full_name_edit_box_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_usr_full_name_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, expected_full_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, expected_full_name: str
+) -> None:
     displayed_full_name = OZLoggedIn(selenium[browser_id])["profile"].full_name
     err_msg = (
         f'expected "{expected_full_name}" as user full name, but instead'

@@ -5,8 +5,9 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Input,
@@ -34,10 +35,10 @@ class ClusterRecord(ButtonWithTextPageObject):
     submenu = WebItemsSequence("ul.one-list-level-2 li", cls=ButtonWithTextPageObject)
     status_icon = WebElement(".sidebar-item-icon")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"{self.name} item in {self.parent}"
 
-    def is_not_working(self) -> Any:
+    def is_not_working(self) -> bool:
         return "error" in self.status_icon.get_attribute("class")
 
 
@@ -48,9 +49,9 @@ class ClustersSidebar(PageObject):
         cls=ClusterRecord,
     )
 
-    def scroll_to_bottom(self, driver: Any) -> Any:
+    def scroll_to_bottom(self, driver: WebDriver) -> None:
         driver.execute_script("var s = $('#col-sidebar'); s.scrollTo(s.height())")
 
-    def get_all_items(self, driver: Any) -> Any:
+    def get_all_items(self, driver: WebDriver) -> GuiObject:
         self.scroll_to_bottom(driver)
         return self.items

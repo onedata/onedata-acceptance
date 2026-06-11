@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
@@ -59,6 +58,7 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
@@ -69,12 +69,12 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_list: Any,
-    spaces: Any,
-    clipboard: Any,
-    displays: Any,
-) -> Any:
+    user: str,
+    space_list: str,
+    spaces: GuiObject,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+) -> None:
     option = "enter"
     button = "Create space"
     button_copy_id = "Copy ID"
@@ -96,13 +96,13 @@ def create_spaces_in_oz_using_gui(
 )
 def send_support_token_in_oz_using_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_name: Any,
-    browser_id: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    space_name: str,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     option = "spaces"
     where = "Providers"
     item_type = "token"
@@ -123,8 +123,8 @@ def send_support_token_in_oz_using_gui(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(
-    selenium: SeleniumDrivers, user: Any, space_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_list: str
+) -> None:
     where = "spaces"
     option = "Leave"
     confirmation_button = "Leave"
@@ -132,13 +132,13 @@ def leave_spaces_in_oz_using_gui(
     driver.switch_to.default_content()
 
     if space_list == "all":
-        space_list = [
+        space_names = [
             elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
         ]
     else:
-        space_list = parse_seq(space_list)
+        space_names = parse_seq(space_list)
 
-    for space_name in space_list:
+    for space_name in space_names:
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where, space_name)
         click_on_option_in_space_menu(selenium, user, space_name, option)
         click_confirm_or_cancel_button_on_leave_space_page(
@@ -154,26 +154,29 @@ def leave_spaces_in_oz_using_gui(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_spaces_in_oz_using_gui(
-    selenium: SeleniumDrivers, browser_id: Any, space_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, space_list: str
+) -> None:
     where = "Data"
     option = "Remove"
     modal = "Remove space"
 
-    space_list = parse_seq(space_list)
+    space_names = parse_seq(space_list)
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
     click_on_option_in_the_sidebar(selenium, browser_id, where)
-    for space_name in space_list:
+    for space_name in space_names:
         click_on_option_in_space_menu(selenium, browser_id, space_name, option)
         check_remove_space_understand_notice(selenium, browser_id)
         click_modal_button(selenium, browser_id, option, modal)
 
 
 def rename_spaces_in_oz_using_gui(
-    selenium: SeleniumDrivers, user: Any, space_list: Any, new_names_list: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    user: str,
+    space_list: GuiObject,
+    new_names_list: GuiObject,
+) -> None:
     where = "spaces"
     option = "enter"
     option_in_submenu = "overview"
@@ -192,8 +195,8 @@ def rename_spaces_in_oz_using_gui(
 
 
 def remove_provider_support_for_space_in_oz_using_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_name: str, hosts: Hosts
+) -> None:
     sidebar = "CLUSTERS"
     record = "Spaces"
     option = "Revoke space support"
@@ -212,13 +215,13 @@ def remove_provider_support_for_space_in_oz_using_gui(
 
 def invite_other_users_to_space_using_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_name: Any,
-    user_list: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    space_name: str,
+    user_list: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     option = "spaces"
     option_in_space = "Members"
     button = "Invite user using token"
@@ -246,13 +249,13 @@ def invite_other_users_to_space_using_gui(
 
 def request_space_support_using_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-    receiver: Any,
-) -> Any:
+    user: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    receiver: GuiObject,
+) -> None:
     where = "Data"
     option = "Providers"
     notify_type = "info"
@@ -275,29 +278,32 @@ def request_space_support_using_gui(
 
 
 def join_space_in_oz_using_gui(
-    selenium: SeleniumDrivers, user_list: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, user_list: str, tmp_memory: TmpMemory
+) -> None:
     for user in parse_seq(user_list):
         consume_received_token(selenium, user, tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_list: GuiObject
+) -> None:
     for space_name in parse_seq(space_list):
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
 
 
 def assert_there_are_no_spaces_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_list: GuiObject
+) -> None:
     for space_name in parse_seq(space_list):
         assert_space_has_disappeared_on_spaces(selenium, user, space_name)
 
 
 def assert_spaces_have_been_renamed_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_list: Any, new_names_list: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    user: str,
+    space_list: GuiObject,
+    new_names_list: GuiObject,
+) -> None:
     for space_name, new_space_name in zip(
         parse_seq(space_list), parse_seq(new_names_list)
     ):
@@ -306,16 +312,16 @@ def assert_spaces_have_been_renamed_in_oz_gui(
 
 
 def assert_there_is_no_provider_for_space_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_name: str
+) -> None:
     number = 0
 
     assert_number_of_supporting_providers_of_space(selenium, user, number, space_name)
 
 
 def assert_user_is_member_of_space_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any, user_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_name: str, user_list: str
+) -> None:
     where = "Members"
     option = "sees"
     member_type = "user"
@@ -337,11 +343,11 @@ def assert_user_is_member_of_space_gui(
 
 def assert_provider_does_not_support_space_in_oz_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_name: Any,
-    provider_name: Any,
+    user: str,
+    space_name: str,
+    provider_name: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     where = "spaces"
     option = "Providers"
 
@@ -353,11 +359,11 @@ def assert_provider_does_not_support_space_in_oz_gui(
 
 def assert_space_is_supported_by_provider_in_oz_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    space_name: Any,
-    provider_name: Any,
+    user: str,
+    space_name: str,
+    provider_name: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     where = "Data"
     option = "Providers"
 
@@ -375,8 +381,8 @@ def assert_space_is_supported_by_provider_in_oz_gui(
     )
 )
 def leave_space_in_onezone(
-    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -394,14 +400,14 @@ def leave_space_in_onezone(
     )
 )
 def g_leave_user_spaces_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: Any
-) -> Any:
+    hosts: Hosts, users: Users, user: str
+) -> None:
     leave_user_spaces_in_onezone_using_rest(hosts, users, user)
 
 
 def leave_user_spaces_in_onezone_using_rest(
-    hosts: Hosts, users: Users, user: Any
-) -> Any:
+    hosts: Hosts, users: Users, user: str
+) -> None:
     zone_hostname = hosts["onezone"]["hostname"]
     user_spaces = get_user_spaces(zone_hostname, user, users)
     for space_id in user_spaces:
@@ -418,11 +424,11 @@ def leave_user_spaces_in_onezone_using_rest(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    space_name: Any,
-    harvester_name: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    space_name: str,
+    harvester_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     option = "Harvesters, Discovery"
     button_name = "add one of harvesters"
     button_in_modal = "Add"
@@ -455,12 +461,12 @@ def add_harvester_to_existing_space(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_or_group(
-    browser_id: Any,
-    group_name: Any,
-    where_name: Any,
+    browser_id: str,
+    group_name: str,
+    where_name: str,
     selenium: SeleniumDrivers,
-    where: Any,
-) -> Any:
+    where: str,
+) -> None:
     option = where + "s"
     option_in_function = "Members"
     button = "Add one of your groups"
@@ -492,8 +498,8 @@ def add_group_to_space_or_group(
 @wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(
-    browser_id: Any, space_name: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, space_name: str, selenium: SeleniumDrivers
+) -> None:
     option = "spaces"
     option_in_space = "Members"
     where = "space"
@@ -518,8 +524,8 @@ def copy_user_space_invite_token(
     )
 )
 def copy_command_from_rest_api_modal(
-    selenium: SeleniumDrivers, browser_id: Any, command: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, command: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).rest_api
     command = f"{command}\nREST"
@@ -536,8 +542,8 @@ def copy_command_from_rest_api_modal(
     )
 )
 def open_space_in_spaces_list(
-    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     seen_spaces = set()
@@ -559,7 +565,7 @@ def open_space_in_spaces_list(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_spaces_list(page: Any) -> Any:
+def _get_visible_spaces_list(page: GuiObject) -> GuiObject:
     return page.get_visible_spaces_list()
 
 
@@ -571,8 +577,8 @@ def _get_visible_spaces_list(page: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_opened_space(
-    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, space_name: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     vis_spaces = _get_visible_spaces_list(page)

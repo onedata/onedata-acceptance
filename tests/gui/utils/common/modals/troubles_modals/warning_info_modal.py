@@ -4,7 +4,6 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 Onedata.org"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import NamedButton
 
@@ -16,5 +15,5 @@ class WarningInfoModal(Modal):
     discard = NamedButton(".btn-default", text="Discard")
     enable_lets_encrypt = NamedButton(".btn-primary", text="Enable Let's Encrypt")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Warning modal"

@@ -4,7 +4,8 @@ __author__ = "Bartosz Walkowicz, Natalia Organek"
 __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -59,8 +60,8 @@ class PublicShareView:
         '".clipboard-line-public-url-input"]'
     )
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Public share View"

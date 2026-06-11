@@ -9,13 +9,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
-from typing import Any
+from typing import Optional
 
 import requests
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.types import GuiObject
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -24,7 +26,7 @@ PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
 
 @given(parsers.parse("directory tree structure on local file system:\n{structure}"))
-def create_dir_tree_structure_on_local_fs(structure: Any, tmpdir: Any) -> Any:
+def create_dir_tree_structure_on_local_fs(structure: str, tmpdir: LocalPath) -> None:
     """Create directory tree structure on local storage.
 
     Directory tree structure format given in yaml is as follow:
@@ -57,7 +59,7 @@ def create_dir_tree_structure_on_local_fs(structure: Any, tmpdir: Any) -> Any:
         _mkdirs(home_dir, home_dir_content)
 
 
-def _mkdirs(cwd: Any, dir_content: Any = None) -> Any:
+def _mkdirs(cwd: GuiObject, dir_content: Optional[GuiObject] = None) -> None:
     if not dir_content:
         return
 
@@ -83,7 +85,7 @@ def _mkdirs(cwd: Any, dir_content: Any = None) -> Any:
             _mkfile(cwd.join(f"file{i}.txt"))
 
 
-def specify_size(size_string: Any) -> Any:
+def specify_size(size_string: str) -> int:
     try:
         return int(size_string)
     except ValueError:
@@ -97,7 +99,7 @@ def specify_size(size_string: Any) -> Any:
         return int(size) * unit_dict[unit]
 
 
-def _mkfile(file_: Any, file_content: Any = None) -> Any:
+def _mkfile(file_: GuiObject, file_content: Optional[GuiObject] = None) -> None:
     if not file_content:
         file_content = "1" * 10
 
@@ -111,8 +113,8 @@ def _mkfile(file_: Any, file_content: Any = None) -> Any:
     )
 )
 def download_file_to_local_file_system(
-    browser_id: Any, file_url: Any, file_name: Any, tmpdir: Any
-) -> Any:
+    browser_id: str, file_url: str, file_name: str, tmpdir: LocalPath
+) -> None:
     home_dir = tmpdir.join(browser_id)
     os.makedirs(home_dir, exist_ok=True)
 
@@ -129,8 +131,12 @@ def download_file_to_local_file_system(
     )
 )
 def create_file_on_local_file_system(
-    browser_id: Any, file_name: Any, item_size: Any, directory_name: Any, tmpdir: Any
-) -> Any:
+    browser_id: str,
+    file_name: str,
+    item_size: str,
+    directory_name: str,
+    tmpdir: LocalPath,
+) -> None:
     home_dir = tmpdir.join(browser_id)
     path = home_dir + directory_name
     size = specify_size(item_size)
@@ -141,7 +147,9 @@ def create_file_on_local_file_system(
 
 @wt(parsers.parse('user of {browser_id} removes "{path}" from local file system'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def remove_file_from_local_file_system(browser_id: Any, path: Any, tmpdir: Any) -> Any:
+def remove_file_from_local_file_system(
+    browser_id: str, path: str, tmpdir: LocalPath
+) -> None:
     home_dir = tmpdir.join(browser_id)
 
     cmd = ["rm", home_dir + path]

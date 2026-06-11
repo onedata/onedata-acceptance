@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -28,7 +27,7 @@ class Files(BrowserRow):
     name = id = Label(".file-name")
     clickable_field = WebElement(".file-base-name")
 
-    def click_and_enter(self) -> Any:
+    def click_and_enter(self) -> None:
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
         self.wait_for_selected()
@@ -41,5 +40,5 @@ class SelectFiles(Modal):
     files = WebItemsSequence(".fb-table-tbody .data-row", cls=Files)
     error_msg = Label(".selection-validation-error")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Select files, directories or symlinks modal"

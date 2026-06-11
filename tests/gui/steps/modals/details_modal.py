@@ -7,7 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from datetime import datetime
 from time import sleep
-from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -16,6 +17,7 @@ from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser,
 )
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -29,16 +31,20 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_chart_title_in_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any, title: Any, which_title: Any, modal: Any
-) -> Any:
-    modal = check_modal_name(modal)
-    modal = getattr(Modals(selenium[browser_id]), modal).size_statistics
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    title: str,
+    which_title: str,
+    modal: str,
+) -> None:
+    modal_name = check_modal_name(modal)
+    modal_page = getattr(Modals(selenium[browser_id]), modal_name).size_statistics
     if which_title == "charts title":
-        charts_title = modal.charts_title
+        charts_title = modal_page.charts_title
     elif which_title == "count chart title":
-        charts_title = modal.chart[0].title
+        charts_title = modal_page.chart[0].title
     else:
-        charts_title = modal.chart[1].title
+        charts_title = modal_page.chart[1].title
     assert (
         charts_title == title
     ), f"Charts title is {charts_title} not {title} as expected"
@@ -47,8 +53,8 @@ def assert_chart_title_in_details_modal(
 @wt(parsers.parse('user of {browser_id} clicks on chart in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_chart_in_modal(
-    browser_id: Any, selenium: SeleniumDrivers, modal: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, modal: str
+) -> None:
     modal = check_modal_name(modal)
     getattr(Modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
@@ -61,12 +67,12 @@ def click_on_chart_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_button_in_modal_not_active(
-    browser_id: Any, modal: Any, element: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, modal: str, element: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
-    modal = getattr(Modals(driver), check_modal_name(modal))
+    modal_page = getattr(Modals(driver), check_modal_name(modal))
     err_msg = f'"{element}" button is in active state'
-    assert not modal.is_element_active(transform(element)), err_msg
+    assert not modal_page.is_element_active(transform(element)), err_msg
 
 
 @wt(
@@ -76,7 +82,9 @@ def assert_button_in_modal_not_active(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tooltip_on_chart_in_modal(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def assert_tooltip_on_chart_in_modal(
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     header = Popups(driver).chart_statistics.header
     try:
@@ -95,10 +103,10 @@ def assert_tooltip_on_chart_in_modal(browser_id: Any, selenium: SeleniumDrivers)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_navigation_tab_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any, modal: Any
-) -> Any:
-    modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal))
-    tab = modal.navigation[tab_name]
+    selenium: SeleniumDrivers, browser_id: str, tab_name: str, modal: str
+) -> None:
+    modal_page = getattr(Modals(selenium[browser_id]), check_modal_name(modal))
+    tab = modal_page.navigation[tab_name]
     tab.web_elem.click()
 
 
@@ -110,10 +118,12 @@ def click_on_navigation_tab_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_navigation_tab_in_panel(
-    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any, modal: Any
-) -> Any:
-    modal = getattr(Modals(selenium[browser_id]).details_modal, check_modal_name(modal))
-    tab = modal.navigation[tab_name]
+    selenium: SeleniumDrivers, browser_id: str, tab_name: str, modal: str
+) -> None:
+    modal_page = getattr(
+        Modals(selenium[browser_id]).details_modal, check_modal_name(modal)
+    )
+    tab = modal_page.navigation[tab_name]
     tab.web_elem.click()
 
 
@@ -124,8 +134,8 @@ def click_on_navigation_tab_in_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tab_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, tab: Any, modal_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tab: str, modal_name: str
+) -> None:
     # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
     # trying to get active tab, when file details panel is being animated. There are
     # plans to add special class to the modal/panel saying that the transition ended, so
@@ -152,8 +162,8 @@ def assert_tab_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_posix_tab_in_panel(
-    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, modal_name: str
+) -> None:
     elem_name = "posix_permission_edition"
     posix_hidden = getattr(
         Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
@@ -177,11 +187,11 @@ def assert_posix_tab_in_panel(
 )
 def click_on_context_menu_item(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_name: Any,
-    tmp_memory: Any,
-    context_menu_item: Any,
-) -> Any:
+    browser_id: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    context_menu_item: str,
+) -> None:
     if item_name[0] == '"':
         item_name = item_name.replace('"', "")
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
@@ -196,8 +206,8 @@ def click_on_context_menu_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_more_physical_locations_in_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations
     physical_locations.show_more_button.click()
@@ -212,11 +222,11 @@ def click_show_more_physical_locations_in_details_modal(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_message_in_physical_location_in_details_modal(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    expected_error: Any,
-    provider: Any,
+    browser_id: str,
+    expected_error: str,
+    provider: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     provider_name = hosts[provider]["name"]
     details_modal = Modals(selenium[browser_id]).details_modal
     physical_locations = details_modal.physical_locations.locations
@@ -228,8 +238,8 @@ def assert_error_message_in_physical_location_in_details_modal(
 
 
 def click_copy_icon_for_browser_link_on_details_modal(
-    driver: Any, link_type: str
-) -> Any:
+    driver: WebDriver, link_type: str
+) -> None:
     copy_icon = (
         Modals(driver).details_modal.browser_links.links[link_type].clipboard_icon
     )

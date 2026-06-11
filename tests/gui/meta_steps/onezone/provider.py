@@ -6,7 +6,6 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -30,18 +29,19 @@ from tests.gui.steps.onezone.providers import (
     click_on_provider_in_providers_sidebar_with_provider_name,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    provider_name: Any,
-    domain_provider: Any,
+    user: str,
+    provider_name: str,
+    domain_provider: GuiObject,
     hosts: Hosts,
-    with_refresh: Any = False,
-    test_domain: Any = False,
-) -> Any:
+    with_refresh: GuiObject = False,
+    test_domain: GuiObject = False,
+) -> None:
     option = "Data"
 
     if with_refresh:
@@ -71,8 +71,8 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
 
 
 def assert_there_is_no_provider_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, provider_name: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, user: str, provider_name: str, hosts: Hosts
+) -> None:
     option = "Data"
 
     refresh_site(selenium, user)
@@ -84,12 +84,12 @@ def assert_there_is_no_provider_in_oz_gui(
 
 def send_copied_invite_token_in_oz_gui(
     selenium: SeleniumDrivers,
-    user: Any,
-    browser_list: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    user: str,
+    browser_list: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     item_type = "token"
     button = "add new provider cluster"
 
@@ -107,8 +107,8 @@ def send_copied_invite_token_in_oz_gui(
     )
 )
 def revoke_support_of_provider_in_list(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, hosts: Hosts
+) -> None:
     driver = selenium[browser_id]
     button = "Cease support"
     notify_type = "info"
@@ -131,7 +131,11 @@ def revoke_support_of_provider_in_list(
     )
 )
 def assert_file_with_content_in_provider_storage(
-    browser_id: Any, clipboard: Any, displays: Any, content: Any, hosts: Hosts
-) -> Any:
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    content: str,
+    hosts: Hosts,
+) -> None:
     path = clipboard.paste(display=displays[browser_id])
     wt_assert_file_in_path_with_content(path, content, hosts)

@@ -4,10 +4,10 @@ __author__ = "Michal Dronka"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from selenium.common.exceptions import JavascriptException
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
@@ -41,7 +41,7 @@ class AuditLogBrowser(PageObject):
     entries = WebItemsSequence(".table-entry.data-row.audit-log-table-entry", cls=Entry)
     empty_info = WebElement(".table-is-empty-cell")
 
-    def is_empty(self) -> Any:
+    def is_empty(self) -> bool:
         return len(self.entries) == 0
 
 
@@ -67,10 +67,10 @@ class QoSTab(Modal):
     privileges_message = Label(".world-map .text-center")
     question_icon = Button(".oneicon-sign-question-rounded")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "QoS tab"
 
-    def scroll_to_top(self) -> Any:
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector('.perfect-scrollbar-element"

@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import abstractmethod
-from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label
@@ -15,5 +14,5 @@ class Modal(PageObject):
     title = Label(".modal-title")
 
     @abstractmethod
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         pass

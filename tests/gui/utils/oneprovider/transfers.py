@@ -5,10 +5,11 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from functools import partial
-from typing import Any
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -45,37 +46,43 @@ class TransferRecord(PageObject):
     type_icon = Icon(".cell-type")
     icon = Icon(".transfer-file-icon")
 
-    def __init__(self, driver: Any, web_elem: Any, parent: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        driver: WebDriver,
+        web_elem: GuiObject,
+        parent: GuiObject,
+        **kwargs: GuiObject,
+    ) -> None:
         super().__init__(driver, web_elem, parent, **kwargs)
         status_class = self.status_icon.get_attribute("class").split()
         type_class = self.type_icon.get_attribute("class").split()
         self.status = [x for x in status_class if x in TransferStatusList][0]
         self.type = [x for x in type_class if x in TransferTypeList][0]
 
-    def get_chart(self) -> Any:
+    def get_chart(self) -> "TransferChart":
         return TransferChart(
             self.driver,
             self.web_elem.find_element(By.XPATH, " .//following-sibling::tr"),
             self.web_elem,
         )
 
-    def is_expanded(self) -> Any:
+    def is_expanded(self) -> bool:
         return "expanded-row" in self.web_elem.get_attribute("class")
 
-    def expand(self) -> Any:
+    def expand(self) -> None:
         self.web_elem.click()
 
-    def collapse(self) -> Any:
+    def collapse(self) -> None:
         if self.is_expanded():
             self.web_elem.click()
 
-    def is_file(self) -> Any:
+    def is_file(self) -> bool:
         return "oneicon-browser-file" in self.icon.get_attribute("class")
 
-    def is_directory(self) -> Any:
+    def is_directory(self) -> bool:
         return "oneicon-browser-directory" in self.icon.get_attribute("class")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"Transfer row {self.name} in {self.parent}"
 
 
@@ -96,14 +103,14 @@ class TransferChart(PageObject):
     # We take only last point in the chart
     _speed = WebElement(".transfers-transfer-chart .ct-series line:last-of-type")
 
-    def get_speed(self) -> Any:
+    def get_speed(self) -> GuiObject:
         return self._speed.get_attribute("ct:value").split(",")[1]
 
 
 class TabHeader(PageObject):
     name = Label(".tab-label")
 
-    def click(self) -> Any:
+    def click(self) -> None:
         self.web_elem.click()
 
 
@@ -134,25 +141,25 @@ class _TransfersTab(PageObject):
     )
 
     @property
-    def ongoing(self) -> Any:
+    def ongoing(self) -> GuiObject:
         self["ongoing"].click()
         return self._ongoing_list
 
     @property
-    def ended(self) -> Any:
+    def ended(self) -> GuiObject:
         self["ended"].click()
         return self._ended_list
 
     @property
-    def waiting(self) -> Any:
+    def waiting(self) -> GuiObject:
         self["waiting"].click()
         return self._waiting_list
 
     @property
-    def certain_file(self) -> Any:
+    def certain_file(self) -> GuiObject:
         return self._transfers_list_for_certain_file
 
-    def __getitem__(self, name: Any) -> Any:
+    def __getitem__(self, name: str) -> GuiObject:
         for tab in self.tabs:
             if name in tab.name.lower():
                 return tab

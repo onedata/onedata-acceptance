@@ -7,10 +7,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
 
 import yaml
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -32,6 +32,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -45,18 +46,18 @@ MENU_ELEM_TO_TAB_NAME = {
 }
 
 
-def _change_to_tab_name(element: Any) -> Any:
+def _change_to_tab_name(element: str) -> str:
     return MENU_ELEM_TO_TAB_NAME.get(element, element + "s")
 
 
-def _find_members_page(driver: Any, where: Any) -> Any:
+def _find_members_page(driver: WebDriver, where: str) -> GuiObject:
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
     return OZLoggedIn(driver)[tab_name].members_page
 
 
-def _change_membership_to_name(membership_type: Any, subject_type: Any) -> Any:
+def _change_membership_to_name(membership_type: str, subject_type: str) -> str:
     if not subject_type.endswith("s"):
         subject_type += "s"
     return membership_type + "_" + subject_type
@@ -64,11 +65,11 @@ def _change_membership_to_name(membership_type: Any, subject_type: Any) -> Any:
 
 def get_privilege_tree(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    where: Any,
-    list_type: Any,
-    member_name: Any,
-) -> Any:
+    browser_id: str,
+    where: str,
+    list_type: str,
+    member_name: str,
+) -> GuiObject:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
@@ -95,18 +96,18 @@ def get_privilege_tree(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_member_of_parent_in_memberships(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    parent_name: Any,
-    member_type: Any,
-    parent_type: Any,
-    where: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    parent_name: str,
+    member_type: str,
+    parent_type: str,
+    where: str,
+) -> GuiObject:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def fun(_record: Any, member_index: Any) -> Any:
+    def fun(_record: GuiObject, member_index: GuiObject) -> GuiObject:
         if member_type != "user":
             return True
         if member_index == 0:
@@ -131,18 +132,18 @@ def assert_element_is_member_of_parent_in_memberships(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_not_member_of_parent_in_memberships(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    where: Any,
-    parent_name: Any,
-    member_type: Any,
-    parent_type: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    where: str,
+    parent_name: str,
+    member_type: str,
+    parent_type: str,
+) -> GuiObject:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def fun(_record: Any, member_index: Any) -> Any:
+    def fun(_record: GuiObject, member_index: GuiObject) -> GuiObject:
         if member_type != "user":
             raise RuntimeError(
                 f'found "{member_name}" {member_type} as a member of'
@@ -166,8 +167,8 @@ def assert_element_is_not_member_of_parent_in_memberships(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_count_membership_rows(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any, where: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int, where: str
+) -> None:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
@@ -191,12 +192,12 @@ def assert_count_membership_rows(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_all_members_number_in_space_members_tile(
     selenium: SeleniumDrivers,
-    browser_id: Any,
+    browser_id: str,
     number_direct_groups: int,
     number_effective_groups: int,
     number_direct_users: int,
     number_effective_users: int,
-) -> Any:
+) -> None:
     direct = "direct"
     effective = "effective"
     groups = "groups"
@@ -230,11 +231,11 @@ def assert_all_members_number_in_space_members_tile(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_members_number_in_space_members_tile(
     selenium: SeleniumDrivers,
-    browser_id: Any,
+    browser_id: str,
     number: int,
-    membership_type: Any,
-    subject_type: Any,
-) -> Any:
+    membership_type: str,
+    subject_type: str,
+) -> None:
     driver = selenium[browser_id]
     members_tile = OZLoggedIn(driver)["data"].overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
@@ -255,13 +256,13 @@ def assert_members_number_in_space_members_tile(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_relation_menu_button(
-    selenium: SeleniumDrivers, browser_id: Any, member_name: Any, name: Any, where: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, member_name: str, name: str, where: str
+) -> GuiObject:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def click_on_menu(record: Any, member_index: Any) -> Any:
+    def click_on_menu(record: GuiObject, member_index: GuiObject) -> GuiObject:
         record.relations[member_index].click_relation_menu_button(driver)
         return True
 
@@ -276,8 +277,8 @@ def click_relation_menu_button(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_relation_menu_button(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     driver = selenium[browser_id]
     Popups(driver).membership_relation_menu.options[option].click()
 
@@ -293,11 +294,11 @@ def click_option_in_relation_menu_button(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_element_to_close_its_dropdown(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    type_name: Any,
-    where: Any,
-    list_type: Any,
-) -> Any:
+    browser_id: str,
+    type_name: str,
+    where: str,
+    list_type: str,
+) -> None:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     getattr(page, list_type).items[type_name].header.click()
@@ -314,11 +315,11 @@ def click_element_to_close_its_dropdown(
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_element_in_members_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    where: Any,
-    list_type: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    where: str,
+    list_type: str,
+) -> None:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
 
@@ -339,8 +340,8 @@ def click_element_in_members_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(
-    selenium: SeleniumDrivers, browser_id: Any, group: Any, member: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, group: str, member: str
+) -> None:
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
     page.elements_list[group]()
     page.elements_list[group].members()
@@ -357,8 +358,12 @@ def click_generate_token_in_subgroups_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_members_list_menu(
-    selenium: SeleniumDrivers, browser_id: Any, button: Any, where: Any, member: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    button: str,
+    where: str,
+    member: str,
+) -> None:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     getattr(page, member).header.menu_button()
@@ -373,8 +378,8 @@ def click_on_option_in_members_list_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_area_appeared(
-    selenium: SeleniumDrivers, browser_id: Any, who: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, who: str, tmp_memory: TmpMemory
+) -> None:
     modal_name = f"invite {who} using token"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
@@ -382,8 +387,8 @@ def assert_token_area_appeared(
 @wt(parsers.parse("user of {browser_id} sees non-empty token in token area"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_generated_token_is_present(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     try:
         text = Modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, "Token is empty, while it should be non-empty"
@@ -393,7 +398,7 @@ def assert_generated_token_is_present(
 
 @wt(parsers.re("user of (?P<browser_id>.*) copies invitation token from modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
     Modals(selenium[browser_id]).invite_using_token.copy()
 
 
@@ -405,8 +410,12 @@ def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_element_is_groups_child(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, child: Any, parent: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    child: str,
+    parent: str,
+) -> None:
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
     page.elements_list[parent]()
     page.elements_list[parent].members()
@@ -431,13 +440,13 @@ def assert_element_is_groups_child(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_member_is_in_parent_members_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    option: Any,
-    member_name: Any,
-    member_type: Any,
-    parent_name: Any,
-    parent_type: Any,
-) -> Any:
+    browser_id: str,
+    option: str,
+    member_name: str,
+    member_type: str,
+    parent_name: str,
+    parent_type: str,
+) -> None:
     driver = selenium[browser_id]
     page = _find_members_page(driver, parent_type)
 
@@ -478,11 +487,11 @@ def assert_member_is_in_parent_members_list(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_user_in_space_members_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    option: Any,
-    username: Any,
-    space_name: Any,
-) -> Any:
+    browser_id: str,
+    option: str,
+    username: str,
+    space_name: str,
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     page.spaces_header_list[space_name]()
@@ -509,13 +518,13 @@ def check_user_in_space_members_list(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_parent(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    member_type: Any,
-    name: Any,
-    tmp_memory: Any,
-    where: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    name: str,
+    tmp_memory: TmpMemory,
+    where: str,
+) -> None:
     driver = selenium[browser_id]
     if where != "cluster":
         main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
@@ -556,8 +565,8 @@ def remove_member_from_parent(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_option_on_members_page(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, username: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, username: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].members_page
     page.users.items[username].click_member_menu_button(driver)
@@ -573,8 +582,12 @@ def click_member_option_on_members_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_options_for_user_are_enabled_or_disabled(
-    selenium: SeleniumDrivers, browser_id: Any, options: Any, username: Any, state: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    options: str,
+    username: str,
+    state: str,
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].members_page
     page.users.items[username].click_member_menu_button(driver)
@@ -588,7 +601,7 @@ def assert_options_for_user_are_enabled_or_disabled(
             assert not enabled, error_msg
 
 
-def _get_cluster_members(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def _get_cluster_members(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
     driver = selenium[browser_id]
     where = "cluster"
     members_page = _find_members_page(driver, where)
@@ -603,8 +616,8 @@ def _get_cluster_members(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_user_in_cluster_members_page(
-    selenium: SeleniumDrivers, browser_id: Any, member_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, member_name: str
+) -> None:
     cluster_members = _get_cluster_members(selenium, browser_id)
 
     assert (
@@ -620,8 +633,8 @@ def assert_user_in_cluster_members_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_user_not_in_cluster_members_page(
-    selenium: SeleniumDrivers, browser_id: Any, member_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, member_name: str
+) -> None:
     cluster_members = _get_cluster_members(selenium, browser_id)
 
     assert (
@@ -637,8 +650,12 @@ def assert_user_not_in_cluster_members_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_invitation_token(
-    selenium: SeleniumDrivers, browser_id: Any, group: Any, who: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group: str,
+    who: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("groups")
     page.elements_list[group]()
@@ -661,8 +678,12 @@ def copy_invitation_token(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_invitation_token(
-    selenium: SeleniumDrivers, browser_id: Any, group: Any, who: Any, tmp_memory: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group: str,
+    who: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["groups"]
     page.elements_list[group]()
@@ -683,13 +704,13 @@ def get_invitation_token(
 )
 def try_setting_privileges_in_members_subpage(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    member_type: Any,
-    where: Any,
-    config: Any,
-    option: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    where: str,
+    config: str,
+    option: str,
+) -> None:
     try:
         assert_privileges_in_members_subpage(
             selenium,
@@ -732,12 +753,12 @@ def try_setting_privileges_in_members_subpage(
 )
 def set_all_privileges_true_in_members_subpage(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    value: Any,
-    member_type: Any,
-    where: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    value: str,
+    member_type: str,
+    where: str,
+) -> None:
     option = "Save"
     member_type_new = member_type + "s"
 
@@ -767,13 +788,13 @@ def set_all_privileges_true_in_members_subpage(
 )
 def set_some_privileges_in_members_subpage_other_granted(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    member_type: Any,
-    where: Any,
-    are_granted: Any,
-    config: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    where: str,
+    are_granted: str,
+    config: str,
+) -> None:
     option = "sets"
     tree = get_privilege_tree(
         selenium,
@@ -806,8 +827,8 @@ def set_some_privileges_in_members_subpage_other_granted(
     )
 )
 def set_privileges_in_members_subpage_on_modal(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
     tree = Modals(driver).change_privileges.privilege_tree
@@ -826,13 +847,13 @@ def set_privileges_in_members_subpage_on_modal(
 )
 def assert_privileges_in_members_subpage(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_name: Any,
-    member_type: Any,
-    where: Any,
-    config: Any,
-    option: Any,
-) -> Any:
+    browser_id: str,
+    member_name: str,
+    member_type: str,
+    where: str,
+    config: str,
+    option: str,
+) -> None:
     member_type = member_type + "s"
     privileges = yaml.load(config, yaml.Loader)
     tree = get_privilege_tree(selenium, browser_id, where, member_type, member_name)
@@ -855,8 +876,8 @@ def assert_privileges_in_members_subpage(
     )
 )
 def assert_privileges_in_members_subpage_on_modal(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
     tree = Modals(driver).change_privileges.privilege_tree
@@ -872,8 +893,8 @@ def assert_privileges_in_members_subpage_on_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, where: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, where: str
+) -> None:
     driver = selenium[browser_id]
     option_selector = f".{option.lower()}-btn"
     page = _find_members_page(driver, where)
@@ -884,8 +905,8 @@ def click_button_on_element_header_in_members(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members_and_wait(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, where: Any, tree: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, where: str, tree: GuiObject
+) -> None:
     driver = selenium[browser_id]
     option_selector = f".{option.lower()}-btn"
     page = _find_members_page(driver, where)
@@ -906,22 +927,24 @@ def click_button_on_element_header_in_members_and_wait(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def ckeck_status_labels_for_member_of_space(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    labels: Any,
-    member_name: Any,
-    member_type: Any,
-    where: Any,
-) -> Any:
+    browser_id: str,
+    labels: str,
+    member_name: str,
+    member_type: str,
+    where: str,
+) -> None:
     driver = selenium[browser_id]
 
     member_type = member_type + "s"
     page = _find_members_page(driver, where)
     member = getattr(page, member_type).items[member_name]
     status_labels = [x.text for x in member.status_labels]
-    labels = parse_seq(labels)
+    expected_labels = parse_seq(labels)
 
-    assert len(status_labels) == len(labels), f"Invalid status labels for {member_name}"
-    for x in labels:
+    assert len(status_labels) == len(
+        expected_labels
+    ), f"Invalid status labels for {member_name}"
+    for x in expected_labels:
         assert x in status_labels, f'"{x}" label not found for {member_name}'
 
 
@@ -936,12 +959,12 @@ def ckeck_status_labels_for_member_of_space(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_for_member(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    where: Any,
-    member_name: Any,
-    member_type: Any,
-    alert_text: Any,
-) -> Any:
+    browser_id: str,
+    where: str,
+    member_name: str,
+    member_type: str,
+    alert_text: str,
+) -> None:
     driver = selenium[browser_id]
     member_type = member_type + "s"
     page = _find_members_page(driver, where)
@@ -960,8 +983,8 @@ def see_insufficient_permissions_alert_for_member(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_insufficient_permission_alert_in_members_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, where: Any, alert_text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, where: str, alert_text: str
+) -> None:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     assert_element_text(page, "forbidden_alert", alert_text)
@@ -978,11 +1001,11 @@ def assert_insufficient_permission_alert_in_members_subpage(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_privileges_for_member(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    where: Any,
-    member_type: Any,
-    member_name: Any,
-) -> Any:
+    browser_id: str,
+    where: str,
+    member_type: str,
+    member_name: str,
+) -> None:
     driver = selenium[browser_id]
     member_type = member_type + "s"
     page = _find_members_page(driver, where)
@@ -1003,12 +1026,12 @@ def see_privileges_for_member(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_element_in_members_subpage(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    option: Any,
-    member_name: Any,
-    member_type: Any,
-    list_type: Any,
-) -> Any:
+    browser_id: str,
+    option: str,
+    member_name: str,
+    member_type: str,
+    list_type: str,
+) -> None:
     driver = selenium[browser_id]
     member_list = getattr(OZLoggedIn(driver)["discovery"].members_page, list_type).items
     if option == "sees":
@@ -1034,11 +1057,11 @@ def check_element_in_members_subpage(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_list_length_on_members_subpage(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    member_type: Any,
-    where: Any,
+    browser_id: str,
+    member_type: str,
+    where: str,
     number: int,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     member_type = member_type + "s"
     page = _find_members_page(driver, where)
@@ -1056,14 +1079,14 @@ def check_list_length_on_members_subpage(
 )
 def assert_privilege_config_for_user(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_name: Any,
-    where: Any,
-    name: Any,
-    config: Any,
-    target: Any,
+    browser_id: str,
+    item_name: str,
+    where: str,
+    name: str,
+    config: str,
+    target: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     list_type = target + "s"
     option = where + "s" if where != "inventory" else "automation"
     option2 = "Members"
@@ -1105,8 +1128,8 @@ def assert_privilege_config_for_user(
     )
 )
 def click_on_bulk_checkbox(
-    browser_id: Any, member_type: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, member_type: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["groups"].members_page
     members_list = getattr(page, member_type)
@@ -1121,8 +1144,8 @@ def click_on_bulk_checkbox(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_member_checkbox(
-    selenium: SeleniumDrivers, browser_id: Any, member_name: Any, member_type: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, member_name: str, member_type: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["groups"].members_page
 
@@ -1131,7 +1154,7 @@ def click_member_checkbox(
 
 @wt(parsers.parse("user of {browser_id} clicks on bulk edit button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_bulk_edit(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def click_on_bulk_edit(browser_id: str, selenium: SeleniumDrivers) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["groups"].members_page.bulk_edit_button.click()
 
@@ -1146,8 +1169,8 @@ def click_on_bulk_edit(browser_id: Any, selenium: SeleniumDrivers) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_ownership_privileges_warning_appeared_for_user(
-    selenium: SeleniumDrivers, browser_id: Any, username: Any, alert_text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, username: str, alert_text: str
+) -> None:
     driver = selenium[browser_id]
     members_list = OZLoggedIn(driver)["data"].members_page.users
     error_msg = f'alert with text "{alert_text}" not found'
@@ -1163,8 +1186,8 @@ def assert_ownership_privileges_warning_appeared_for_user(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_items_in_members_onezone(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any, item_type: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int, item_type: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["clusters"].members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
@@ -1180,8 +1203,8 @@ def assert_number_items_in_members_onezone(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_button_in_members_onezone(
-    selenium: SeleniumDrivers, browser_id: Any, button_name: Any, where: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, button_name: str, where: str
+) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)[where].members_page
     getattr(page, transform(button_name)).click()
@@ -1192,7 +1215,7 @@ def click_on_button_in_members_onezone(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_onezone_members_page_opened(
-    selenium: SeleniumDrivers, browser_id: Any, where: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, where: str
+) -> None:
     driver = selenium[browser_id]
     _ = OZLoggedIn(driver)[where].members_page

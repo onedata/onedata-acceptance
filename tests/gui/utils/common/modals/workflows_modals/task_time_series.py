@@ -4,8 +4,8 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 
@@ -17,7 +17,7 @@ class TaskTimeSeries(Modal):
     no_data_message = Label(".no-data-message")
     x = Button(".close")
 
-    def get_time_from_chart(self) -> Any:
+    def get_time_from_chart(self) -> GuiObject:
         chart = self.driver.execute_script(_canvas_fill, self._canvas)
         if chart is not False:
             time = [chunk[0] for chunk in chart["series"][0]["data"]]
@@ -25,7 +25,7 @@ class TaskTimeSeries(Modal):
         else:
             raise RuntimeError("Failed to get data from task time series canvas")
 
-    def get_columns_values(self) -> Any:
+    def get_columns_values(self) -> GuiObject:
         chart = self.driver.execute_script(_canvas_fill, self._canvas)
         if chart is not False:
             values1 = [chunk[1] for chunk in chart["series"][0]["data"]]
@@ -36,15 +36,15 @@ class TaskTimeSeries(Modal):
         else:
             raise RuntimeError("Failed to get data from task time series canvas")
 
-    def get_last_column_value(self) -> Any:
+    def get_last_column_value(self) -> GuiObject:
         values = self.get_columns_values()
         return [(values[0][0][-1], values[0][1]), (values[1][0][-1], values[1][1])]
 
-    def get_max_value(self) -> Any:
+    def get_max_value(self) -> GuiObject:
         values = self.get_columns_values()
         return [(max(values[0][0]), values[0][1]), (max(values[1][0]), values[1][1])]
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Task time series modal"
 
 

@@ -5,11 +5,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Any
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -83,18 +84,18 @@ class QOSParams(PageObject):
     )
     enabled_remove_icons = WebElementsSequence(".remove-param")
 
-    def set_last_key(self, key: Any) -> Any:
+    def set_last_key(self, key: str) -> None:
         self.last_key.value = key
 
-    def click_value_in_modified_record(self) -> Any:
+    def click_value_in_modified_record(self) -> None:
         size = len(self.key_values)
         self.key_values[size - 2].key.click()
         self.key_values[size - 2].val.click()
 
-    def get_key_values_count(self) -> Any:
+    def get_key_values_count(self) -> int:
         return len(self.key_values) - 1
 
-    def delete_first_additional_param(self) -> Any:
+    def delete_first_additional_param(self) -> None:
         if self.enabled_remove_icons:
             css_sel = ".remove-param"
             scroll_to_css_selector(self.driver, css_sel)
@@ -114,7 +115,7 @@ class POSIXEditor(Editor):
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
 
-    def change_mount_point(self, val: Any) -> Any:
+    def change_mount_point(self, val: GuiObject) -> None:
         input_box = self.mount_point
         self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
         input_box.clear()
@@ -158,15 +159,15 @@ class StorageRecord(PageObject, ExpandableMixin):
 
     menu_button = Button(".collapsible-toolbar-toggle")
 
-    def is_expanded(self) -> Any:
+    def is_expanded(self) -> bool:
         return bool(
             re.match(r".*\b(?<!-)opened\b.*", self._toggle.get_attribute("class"))
         )
 
-    def expand_menu(self) -> Any:
+    def expand_menu(self) -> None:
         self.menu_button.click()
 
-    def click_toggle(self) -> Any:
+    def click_toggle(self) -> None:
         self._click_on_toggle()
 
 
@@ -177,7 +178,9 @@ class StorageContentPage(PageObject):
     cancel = NamedButton("button", text="Cancel")
 
     @repeat_failed(timeout=30)
-    def click_modify_button_of_storage(self, driver: Any, storage_name: Any) -> Any:
+    def click_modify_button_of_storage(
+        self, driver: WebDriver, storage_name: str
+    ) -> None:
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
@@ -190,6 +193,6 @@ class StorageContentPage(PageObject):
                 "because storage is not visible on page."
             )
 
-    def scroll_by_press_space(self) -> Any:
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()

@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -16,7 +16,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
+def _is_group_present_in_sidebar(driver: WebDriver, group_name: str) -> bool:
     groups = {group.name for group in OPLoggedIn(driver).groups.sidebar.groups}
     return group_name in groups
 
@@ -29,8 +29,8 @@ def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND, interval=1.5)
 def is_present_on_groups_list(
-    selenium: SeleniumDrivers, browser_id: Any, name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, name: str
+) -> None:
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()
@@ -45,8 +45,8 @@ def is_present_on_groups_list(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_settings_icon_for_group(
-    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, group_name: str
+) -> None:
     (
         OPLoggedIn(selenium[browser_id])
         .groups.sidebar.groups[group_name]
@@ -62,8 +62,8 @@ def click_settings_icon_for_group(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_group_settings_dropdown(
-    selenium: SeleniumDrivers, browser_id: Any, option_name: Any, group_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option_name: str, group_name: str
+) -> None:
     (
         OPLoggedIn(selenium[browser_id])
         .groups.sidebar.groups[group_name]
@@ -81,8 +81,8 @@ def click_on_item_in_group_settings_dropdown(
 )
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_item_appeared_in_groups_perm_table(
-    selenium: SeleniumDrivers, browser_id: Any, name: Any, caption: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, name: str, caption: str
+) -> None:
     driver = selenium[browser_id]
     items = getattr(OPLoggedIn(driver).groups.permission_table, caption.lower())
     items_names = {item.name for item in items}

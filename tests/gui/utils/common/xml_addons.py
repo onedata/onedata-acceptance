@@ -6,7 +6,9 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import xml.etree.ElementTree as ET
-from typing import Any
+from typing import Optional
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -57,7 +59,7 @@ SELECTABLE_FIELDS = {
 }
 
 
-def register_namespace_by_metadata_type(metadata_type: Any) -> Any:
+def register_namespace_by_metadata_type(metadata_type: str) -> None:
     namespaces = (
         NAMESPACES_OPENAIRE
         if metadata_type.lower() == "openaire"
@@ -67,7 +69,7 @@ def register_namespace_by_metadata_type(metadata_type: Any) -> Any:
         ET.register_namespace(prefix, uri)
 
 
-def map_namespace_prefix_to_uri(prefix: Any, metadata_type: Any) -> Any:
+def map_namespace_prefix_to_uri(prefix: str, metadata_type: str) -> Optional[str]:
     prefix = prefix.lower()
     if metadata_type.lower() == "openaire":
         return NAMESPACES_OPENAIRE.get(prefix)
@@ -79,7 +81,7 @@ def map_namespace_prefix_to_uri(prefix: Any, metadata_type: Any) -> Any:
     return NAMESPACES_DATACITE.get(prefix)
 
 
-def resolve_xml_tag_for_et_search(tag: Any, metadata_type: Any) -> Any:
+def resolve_xml_tag_for_et_search(tag: str, metadata_type: str) -> str:
     if tag.startswith("{") or ":" not in tag:
         # If the tag is already in the format {uri}local_name or
         # doesn't contain a colon, that is possibly a namespace separator
@@ -95,13 +97,13 @@ def resolve_xml_tag_for_et_search(tag: Any, metadata_type: Any) -> Any:
     return f"{{{uri}}}{local_name}"
 
 
-def get_xml_editor_data(driver: Any) -> Any:
+def get_xml_editor_data(driver: WebDriver) -> str:
     return driver.execute_script(
         "return ace.edit(document.querySelector('.ace_editor')).getValue()"
     )
 
 
-def replace_xml_editor_data(driver: Any, new_data: Any) -> Any:
+def replace_xml_editor_data(driver: WebDriver, new_data: str) -> None:
     driver.execute_script(
         """
         var editor = ace.edit(document.querySelector('.ace_editor'));
@@ -111,7 +113,7 @@ def replace_xml_editor_data(driver: Any, new_data: Any) -> Any:
     )
 
 
-def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     try:
         _ = get_xml_data_openaire(driver)
@@ -121,13 +123,13 @@ def check_ace_editor_appeared(selenium: SeleniumDrivers, browser_id: Any) -> Any
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_xml_data_openaire(driver: Any) -> Any:
+def get_xml_data_openaire(driver: WebDriver) -> str:
     return public_share(driver).xml_data_ace_editor
 
 
-def is_metadata_field_option_selectable_edm(field_name: Any) -> Any:
+def is_metadata_field_option_selectable_edm(field_name: str) -> bool:
     return field_name.lower() in SELECTABLE_FIELDS["edm"]
 
 
-def is_name_in_initial_form_fields(field_name: Any, metadata_type: Any) -> Any:
+def is_name_in_initial_form_fields(field_name: str, metadata_type: str) -> bool:
     return field_name.lower() in INITIAL_FIELDS[metadata_type.lower()]

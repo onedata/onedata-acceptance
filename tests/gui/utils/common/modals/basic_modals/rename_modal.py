@@ -4,7 +4,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import Input, NamedButton
 
@@ -16,5 +15,5 @@ class RenameModal(Modal):
     rename = NamedButton("button", text="Rename")
     cancel = NamedButton("button", text="Cancel")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Rename modal"

@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Any
 
 import yaml
 
@@ -56,6 +55,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -76,16 +76,16 @@ ARCHIVE_FILE_BROWSER = "archive file browser"
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    config: Any,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    option: Any,
-) -> Any:
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    option: str,
+) -> None:
     """Create archive according to given config.
 
     Config format given in yaml is as follows:
@@ -127,18 +127,18 @@ def create_archive(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_with_follow_symbolic_link(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    config: Any,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    option: Any,
-    follow_symbolic_links: Any,
-) -> Any:
-    follow_symbolic_links = follow_symbolic_links == "true"
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    option: str,
+    follow_symbolic_links: str,
+) -> None:
+    should_follow_symbolic_links = follow_symbolic_links == "true"
 
     _create_archive(
         browser_id,
@@ -150,22 +150,22 @@ def create_archive_with_follow_symbolic_link(
         clipboard,
         displays,
         option,
-        follow_symbolic_links,
+        should_follow_symbolic_links,
     )
 
 
 def _create_archive(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    config: Any,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    option: Any,
-    follow_symbolic_links: Any = True,
-) -> Any:
+    config: str,
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    option: str,
+    follow_symbolic_links: GuiObject = True,
+) -> None:
     option_in_data_row_menu = "Create archive"
     button_name = "Create"
     option_state = "disabled"
@@ -248,13 +248,13 @@ def _create_archive(
 @repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    client: Any,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    description: Any,
-) -> Any:
+    browser_id: str,
+    client: GuiObject,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    description: str,
+) -> None:
     if client.lower() == "web gui":
         option_in_menu = "Copy archive ID"
         assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, ARCHIVE_BROWSER)
@@ -266,14 +266,14 @@ def copy_archive_id_to_tmp_memory(
 
 
 def assert_archive_in_op_gui(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    option: Any,
-    description: Any,
-) -> Any:
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    option: str,
+    description: str,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -335,14 +335,14 @@ def assert_archive_in_op_gui(
 
 
 def remove_archive_in_op_gui(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    description: Any,
-    option: Any,
-) -> Any:
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+) -> None:
     option_in_menu = "Delete archive"
     text = "I understand that data of the archive will be lost"
     button_name = "Delete archive"
@@ -384,14 +384,14 @@ def remove_archive_in_op_gui(
 
 
 def assert_archive_with_option_in_op_gui(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    space_name: Any,
-    tmp_memory: Any,
-    item_name: Any,
-    option: Any,
-    description: Any,
-) -> Any:
+    space_name: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    option: str,
+    description: str,
+) -> None:
     tag_type = transform(option)
     go_to_and_assert_browser(
         selenium,
@@ -414,13 +414,13 @@ def assert_archive_with_option_in_op_gui(
 
 
 def assert_number_of_archive_in_op_gui(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    number: Any,
-) -> Any:
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    number: int,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -452,12 +452,12 @@ def assert_number_of_archive_in_op_gui(
     )
 )
 def assert_number_of_archives_with_scrolling(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
     number: int,
-    tmp_memory: Any,
-    which_browser: Any,
-) -> Any:
+    tmp_memory: TmpMemory,
+    which_browser: WhichBrowser,
+) -> None:
     browser = tmp_memory[browser_id][transform(which_browser.value)]
     transform_fun = lambda item: (
         item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
@@ -468,14 +468,14 @@ def assert_number_of_archives_with_scrolling(
 
 
 def assert_base_archive_for_archive_in_op_gui(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    item_name: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    description: Any,
-    base_description: Any,
-) -> Any:
+    item_name: str,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    base_description: GuiObject,
+) -> None:
     go_to_and_assert_browser(
         selenium,
         browser_id,
@@ -501,13 +501,13 @@ def assert_base_archive_for_archive_in_op_gui(
 
 
 def assert_archive_callback_in_op_gui(
-    browser_id: Any,
-    tmp_memory: Any,
-    description: Any,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    description: str,
     selenium: SeleniumDrivers,
-    expected: Any,
-    option: Any,
-) -> Any:
+    expected: GuiObject,
+    option: str,
+) -> None:
     modal = "Archive Details"
     option_in_menu = "Properties"
     info = f"{option} callback URL"
@@ -521,12 +521,12 @@ def assert_archive_callback_in_op_gui(
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id: Any,
-    description: Any,
-    tmp_memory: Any,
+    browser_id: str,
+    description: str,
+    tmp_memory: TmpMemory,
     selenium: SeleniumDrivers,
-    name: Any,
-) -> Any:
+    name: str,
+) -> None:
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
     name_textfield = "target name input"
@@ -543,12 +543,12 @@ def recall_archive_for_archive_in_op_gui(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id: Any,
-    item_name: Any,
-    tmp_memory: Any,
-    data: Any,
+    browser_id: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+    data: GuiObject,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
     status_type = "recalled"
     click_on_status_tag_for_file_in_file_browser(
         browser_id, status_type, item_name, tmp_memory
@@ -601,8 +601,8 @@ def recalled_archive_details_in_op_gui(
     )
 )
 def check_size_stats_for_archive(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:
@@ -626,8 +626,12 @@ def check_size_stats_for_archive(
     )
 )
 def check_size_stats_for_archive_per_provider(
-    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, config: Any, provider: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    hosts: Hosts,
+    config: str,
+    provider: str,
+) -> None:
     """Check size stats in directory details for specified provider according
     to given config.
 

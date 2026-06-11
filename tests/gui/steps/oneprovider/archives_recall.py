@@ -10,10 +10,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 from datetime import datetime
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -27,8 +27,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_in_archive_recall_information_modal(
-    selenium: SeleniumDrivers, browser_id: Any, info: Any, text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, info: str, text: str
+) -> None:
     info_type = transform(info)
     recall_modal = Modals(selenium[browser_id]).archive_recall_information
     information = getattr(recall_modal, info_type)
@@ -55,8 +55,8 @@ def assert_info_in_archive_recall_information_modal(
     )
 )
 def fail_to_see_recalled_data_statistics(
-    selenium: SeleniumDrivers, browser_id: Any, info: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, info: str
+) -> None:
 
     recall_modal = Modals(selenium[browser_id]).archive_recall_information
     information = getattr(recall_modal, transform(info)).split("/")
@@ -72,8 +72,8 @@ def fail_to_see_recalled_data_statistics(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wait_for_status_in_archive_recall_information_modal(
-    selenium: SeleniumDrivers, browser_id: Any, status: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, status: str
+) -> None:
     driver = selenium[browser_id]
     recall_status = Modals(driver).archive_recall_information.status
     for _ in range(100):
@@ -94,8 +94,8 @@ def wait_for_status_in_archive_recall_information_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_recall_duration_in_archive_recall_information_modal(
-    selenium: SeleniumDrivers, browser_id: Any, start: Any, stop: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, start: str, stop: str
+) -> None:
     """
     start variable could be the time of starting or canceling the recall,
     stop variable could be the time of canceling or finishing the recall
@@ -117,8 +117,8 @@ def assert_recall_duration_in_archive_recall_information_modal(
 @wt(parsers.parse("user of {browser_id} sees that not all {kind} were recalled"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_all_files_were_recalled(
-    selenium: SeleniumDrivers, browser_id: Any, kind: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, kind: str
+) -> None:
     kind = kind + " recalled"
     characters = "[\nMiB ]"
     data_info = getattr(
@@ -138,8 +138,8 @@ def assert_not_all_files_were_recalled(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_item_greater_than_zero(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     items_failed = Modals(driver).archive_recall_information.items_failed
     try:
@@ -156,8 +156,8 @@ def assert_number_of_item_greater_than_zero(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, modal: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, modal: str
+) -> None:
     driver = selenium[browser_id]
     modal = transform(modal)
     getattr(Modals(driver), modal).dropdown_menu.click()
@@ -172,7 +172,9 @@ def choose_option_in_dropdown_menu_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_recalled_status_tag(browser_id: Any, name: Any, tmp_memory: Any) -> Any:
+def wait_for_recalled_status_tag(
+    browser_id: str, name: str, tmp_memory: TmpMemory
+) -> None:
     status_type = "recalled"
     browser = tmp_memory[browser_id]["file_browser"]
 
@@ -191,8 +193,8 @@ def wait_for_recalled_status_tag(browser_id: Any, name: Any, tmp_memory: Any) ->
     )
 )
 def assert_number_of_entries_in_archive_recall(
-    browser_id: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     items_failed = modal.items_failed
@@ -206,7 +208,7 @@ def assert_number_of_entries_in_archive_recall(
     # table containing error logs
     modal.move_to_error_logs_table(driver)
 
-    def condition(index: Any = 0) -> Any:
+    def condition(index: int = 0) -> None:
         # just pass
         _ = index
 
@@ -226,8 +228,8 @@ def assert_number_of_entries_in_archive_recall(
     )
 )
 def assert_entries_with_file_names_in_archive_recall(
-    browser_id: Any, file_name: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, file_name: str, selenium: SeleniumDrivers
+) -> None:
     # this test assumes that original file name does not
     # contain '(' or ')' characters
     driver = selenium[browser_id]
@@ -238,7 +240,7 @@ def assert_entries_with_file_names_in_archive_recall(
     # table containing error logs
     modal.move_to_error_logs_table(driver)
 
-    def condition(index: Any = 0) -> Any:
+    def condition(index: int = 0) -> None:
         entries = modal.error_file_row
         new_entries_names = [
             entry.text.split("\n")[1]
@@ -267,15 +269,15 @@ def assert_entries_with_file_names_in_archive_recall(
     )
 )
 def assert_entries_with_error_messages_in_archive_recall(
-    browser_id: Any, message: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, message: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     # if we want to scroll cursor need to be somewhere on the
     # table containing error logs
     modal.move_to_error_logs_table(driver)
 
-    def condition(index: Any = 0) -> Any:
+    def condition(index: int = 0) -> None:
         entries = modal.error_file_row
         new_entries_mes = [
             entry.text.split("\n")[2]
@@ -294,8 +296,8 @@ def assert_entries_with_error_messages_in_archive_recall(
 
 
 def _scroll_and_check_condition(
-    browser_id: Any, selenium: SeleniumDrivers, condition: Any, *args: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, condition: GuiObject, *args: GuiObject
+) -> GuiObject:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     entries = modal.error_file_row
@@ -334,8 +336,8 @@ def _scroll_and_check_condition(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_top_in_archive_recall_information(
-    browser_id: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     modal.scroll_to_top()

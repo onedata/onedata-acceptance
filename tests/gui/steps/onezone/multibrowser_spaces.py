@@ -6,10 +6,10 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -23,13 +23,13 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def send_invitation_token_to_browser(
-    browser_id: Any,
-    item_type: Any,
-    displays: Any,
-    clipboard: Any,
-    browser_list: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    item_type: str,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    browser_list: str,
+    tmp_memory: TmpMemory,
+) -> None:
     item = clipboard.paste(display=displays[browser_id])
     for browser in parse_seq(browser_list):
         tmp_memory[browser]["mailbox"][item_type.lower()] = item
@@ -42,7 +42,7 @@ def send_invitation_token_to_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_group_on_groups_on_left_sidebar_menu(
-    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, group_name: str
+) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["groups"].elements_list[group_name].click()

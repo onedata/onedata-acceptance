@@ -6,7 +6,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -28,6 +27,7 @@ from tests.gui.steps.oneprovider.transfers import (
     wait_for_waiting_transfer_to_start,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -41,8 +41,8 @@ from tests.utils.utils import repeat_failed
     )
 )
 def open_transfers_page(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, space: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, space: str, hosts: Hosts
+) -> None:
     option = "Transfers"
     provider_name = hosts[provider]["name"]
 
@@ -62,8 +62,12 @@ def open_transfers_page(
     )
 )
 def open_transfer_page_by_clicking_on_link(
-    browser_id: Any, file: Any, tmp_memory: Any, selenium: SeleniumDrivers, link: Any
-) -> Any:
+    browser_id: str,
+    file: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    link: str,
+) -> None:
     option = "Data distribution"
     click_menu_for_elem_in_browser(browser_id, file, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
@@ -82,12 +86,12 @@ def open_transfer_page_by_clicking_on_link(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def evict_file(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    provider: Any,
-    file_name: Any,
-    tmp_memory: Any,
+    browser_id: str,
+    provider: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
     hosts: Hosts,
-) -> Any:
+) -> None:
     option = "Data distribution"
     tab = "Distribution"
     menu_option = "Evict"
@@ -106,8 +110,8 @@ def evict_file(
 
 
 def wait_for_all_transfers_to_start_and_finish(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, space: Any, hosts: Hosts
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, provider: str, space: str, hosts: Hosts
+) -> None:
     open_transfers_page(selenium, browser_id, provider, space, hosts)
     wait_for_waiting_transfer_to_start(selenium, browser_id)
     wait_for_ongoing_tranfers_to_finish(selenium, browser_id)
@@ -123,13 +127,13 @@ def wait_for_all_transfers_to_start_and_finish(
 )
 def replicate_and_wait_to_complete(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    names: Any,
-    space: Any,
-    provider: Any,
-    tmp_memory: Any,
+    browser_id: str,
+    names: str,
+    space: str,
+    provider: str,
+    tmp_memory: TmpMemory,
     hosts: Hosts,
-) -> Any:
+) -> None:
     replicate_files_to_provider(
         selenium, browser_id, names, tmp_memory, provider, hosts, "replicates"
     )

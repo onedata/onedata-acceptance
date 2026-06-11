@@ -6,7 +6,6 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.modal import assert_element_text_in_modal
@@ -21,13 +20,13 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 
 
 def fail_to_set_privileges_using_op_gui(
-    user: Any,
-    space_name: Any,
-    member_name: Any,
-    member_type: Any,
-    config: Any,
+    user: str,
+    space_name: str,
+    member_name: str,
+    member_type: str,
+    config: str,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
     button = "Members"
     option = "fails to set"
     list_type = "users"
@@ -47,13 +46,13 @@ def fail_to_set_privileges_using_op_gui(
 
 
 def assert_privileges_in_space_using_op_gui(
-    user: Any,
-    space_name: Any,
-    member_name: Any,
-    member_type: Any,
-    config: Any,
+    user: str,
+    space_name: str,
+    member_name: str,
+    member_type: str,
+    config: str,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
     option = "Members"
     list_type = "users"
     where = "space"
@@ -71,8 +70,8 @@ def assert_privileges_in_space_using_op_gui(
 
 
 def fail_to_create_invitation_in_space_using_op_gui(
-    user: Any, space_name: Any, selenium: SeleniumDrivers
-) -> Any:
+    user: str, space_name: str, selenium: SeleniumDrivers
+) -> None:
     option = "Members"
     button = "Invite user using token"
     where = "space"
@@ -86,8 +85,8 @@ def fail_to_create_invitation_in_space_using_op_gui(
 
 
 def assert_not_user_in_space_using_op_gui(
-    user: Any, space_name: Any, member_name: Any, selenium: SeleniumDrivers
-) -> Any:
+    user: str, space_name: str, member_name: str, selenium: SeleniumDrivers
+) -> None:
     option = "does not see"
     member_type = "user"
     parent_type = "space"
@@ -103,8 +102,8 @@ def assert_not_user_in_space_using_op_gui(
 
 
 def assert_group_in_space_using_op_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any, group_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, space_name: str, group_name: str
+) -> None:
     option1 = "Members"
     option2 = "sees"
     member_type = "group"

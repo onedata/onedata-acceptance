@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.gui.utils.core.web_elements import Label, WebElement
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
@@ -20,5 +18,5 @@ class DataRow(BrowserRow):
     path_to_root_file = Label(".dataset-info-secondary-file-path-internal")
     deleted_root_file_icon = WebElement(".one-icon-tag-circle")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"{self.name} in {str(self.parent)}"

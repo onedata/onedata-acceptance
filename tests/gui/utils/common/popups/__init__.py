@@ -4,8 +4,10 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -138,17 +140,17 @@ class Popups:
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "popups"
 
-    def is_upload_presenter(self) -> Any:
+    def is_upload_presenter(self) -> bool:
         return len(self.upload_presenter) > 0
 
     @repeat_failed(timeout=10)
-    def get_query_builder_not_hidden_popup(self) -> Any:
+    def get_query_builder_not_hidden_popup(self) -> GuiObject:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup

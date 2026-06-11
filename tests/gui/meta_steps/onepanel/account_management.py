@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.login import (
@@ -35,8 +33,8 @@ from tests.utils.utils import repeat_failed
 
 
 def change_user_password_in_oz_panel_using_gui(
-    selenium: SeleniumDrivers, user: Any, users: Users, new_password: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, users: Users, new_password: str
+) -> None:
     option_name = "Manage account"
     button_name = "Change password"
     notify_type = "info"
@@ -53,8 +51,8 @@ def change_user_password_in_oz_panel_using_gui(
 
 
 def login_to_oz_panel_using_new_password_gui(
-    selenium: SeleniumDrivers, user: Any, password: Any
-) -> Any:
+    selenium: SeleniumDrivers, user: str, password: str
+) -> None:
     notify_type = "info"
     notify_text_regexp = ".*[Aa]uthentication.*succeeded.*"
 
@@ -65,7 +63,7 @@ def login_to_oz_panel_using_new_password_gui(
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def log_out_from_oz_panel_gui(username: Any, selenium: SeleniumDrivers) -> Any:
+def log_out_from_oz_panel_gui(username: str, selenium: SeleniumDrivers) -> None:
     button_name = "Logout"
 
     wt_click_on_user_account_btn_panel(selenium, username)
@@ -83,11 +81,11 @@ def log_out_from_oz_panel_gui(username: Any, selenium: SeleniumDrivers) -> Any:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_passphrase(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    current_passphrase: Any,
-    new_passphrase: Any,
+    browser_id: str,
+    current_passphrase: str,
+    new_passphrase: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     change_passphrase_button = "Change passphrase"
     confirm_button = "Change"
     current_passphrase_input = "Current passphrase"

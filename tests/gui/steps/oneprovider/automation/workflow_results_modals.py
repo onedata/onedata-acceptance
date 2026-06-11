@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from datetime import datetime
-from typing import Any
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
@@ -24,6 +24,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
+from tests.gui.types import Clipboard, DisplayMap, GuiObject
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -33,7 +34,7 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_processing_chart(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def assert_processing_chart(browser_id: str, selenium: SeleniumDrivers) -> None:
     switch_to_iframe(selenium, browser_id)
     time.sleep(1)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -48,8 +49,8 @@ def assert_processing_chart(browser_id: Any, selenium: SeleniumDrivers) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
-    browser_id: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     chart_time_in_right_corner = modal.get_time_from_chart()[-1]
@@ -67,8 +68,8 @@ def assert_time_on_lower_right_corner_of_chart_is_around_current_time(
     )
 )
 def assert_value_of_last_column_is_bigger_than_zero(
-    browser_id: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers
+) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_last_column_value()
@@ -87,8 +88,8 @@ def assert_value_of_last_column_is_bigger_than_zero(
     )
 )
 def choose_time_resolution(
-    selenium: SeleniumDrivers, browser_id: Any, resolution: Any, modal: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, resolution: str, modal: str
+) -> None:
     driver = selenium[browser_id]
     for option in Popups(driver).time_resolutions_list:
         if option.text == resolution:
@@ -107,8 +108,8 @@ def choose_time_resolution(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_data_message_processing_chart(
-    browser_id: Any, selenium: SeleniumDrivers, message: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, message: str
+) -> None:
     switch_to_iframe(selenium, browser_id)
     actual_message = Modals(selenium[browser_id]).task_time_series.no_data_message
     err_msg = (
@@ -128,12 +129,12 @@ def assert_no_data_message_processing_chart(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    option: Any,
-    number: Any,
-    compare_option: Any,
-) -> Any:
+    option: str,
+    number: int,
+    compare_option: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
     values = modal.get_max_value()
@@ -157,13 +158,15 @@ def assert_number_of_proceeded_files(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_task_audit_log(task: Any) -> Any:
+def click_on_task_audit_log(task: GuiObject) -> None:
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
     task.audit_log()
 
 
-def get_modal_and_logs_for_task(path: Any, task: Any, driver: Any) -> Any:
+def get_modal_and_logs_for_task(
+    path: str, task: GuiObject, driver: WebDriver
+) -> GuiObject:
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
@@ -173,7 +176,7 @@ def get_modal_and_logs_for_task(path: Any, task: Any, driver: Any) -> Any:
     return modal, logs
 
 
-def close_modal_and_task(modal: Any, task: Any) -> Any:
+def close_modal_and_task(modal: GuiObject, task: GuiObject) -> None:
     modal.x()
     task.drag_handle.click()
     # wait for task to close
@@ -182,8 +185,13 @@ def close_modal_and_task(modal: Any, task: Any) -> Any:
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_audit_log_json_and_write_to_file(
-    log: Any, modal: Any, clipboard: Any, displays: Any, browser_id: Any, path: Any
-) -> Any:
+    log: GuiObject,
+    modal: GuiObject,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    browser_id: str,
+    path: str,
+) -> None:
     log.click()
     modal.copy_json()
     audit_log = clipboard.paste(display=displays[browser_id])
@@ -193,8 +201,8 @@ def get_audit_log_json_and_write_to_file(
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_store_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any, store_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, store_name: str
+) -> GuiObject:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
@@ -204,17 +212,19 @@ def open_store_details_modal(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_datasets_in_store_details_modal(
-    item_list: Any, modal: Any, store_name: Any
-) -> Any:
-    item_list = parse_seq(item_list)
+    item_list: str, modal: GuiObject, store_name: str
+) -> None:
+    parsed_items = parse_seq(item_list)
     actual_items = [elem.name for elem in modal.store_content_list]
-    for item in item_list:
+    for item in parsed_items:
         err_msg = f"{item} is not in Store details modal for {store_name} store"
         assert item in actual_items, err_msg
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_booleans_in_store_details_modal(item_list: Any, modal: Any) -> Any:
+def compare_booleans_in_store_details_modal(
+    item_list: list[bool], modal: GuiObject
+) -> None:
     actual = [elem.value for elem in modal.store_content_list]
     err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
     assert actual.count("true") == item_list.count(True) and actual.count(
@@ -224,8 +234,8 @@ def compare_booleans_in_store_details_modal(item_list: Any, modal: Any) -> Any:
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_string_in_store_details_modal(
-    item: Any, modal: Any, variable_type: Any, store_name: Any
-) -> Any:
+    item: str, modal: GuiObject, variable_type: str, store_name: str
+) -> None:
     actual = modal.raw_view.replace('"', "")
     err_msg = (
         f"expected {variable_type} {item} does not contain"
@@ -235,7 +245,7 @@ def compare_string_in_store_details_modal(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_array_in_store_details_modal(modal: Any, item_list: Any) -> Any:
+def compare_array_in_store_details_modal(modal: GuiObject, item_list: str) -> None:
     item_list = json.loads(item_list)
     expected_num = str(len(item_list))
     actual_num = modal.array_view.header.replace(")", "").split(" (")[1]
@@ -255,7 +265,9 @@ def compare_array_in_store_details_modal(modal: Any, item_list: Any) -> Any:
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def open_raw_view_for_elem(store_content_list: Any, index: Any, modal: Any) -> Any:
+def open_raw_view_for_elem(
+    store_content_list: GuiObject, index: int, modal: GuiObject
+) -> None:
     for _ in range(10):
         store_content_list[index].click()
         try:
@@ -272,13 +284,13 @@ def open_raw_view_for_elem(store_content_list: Any, index: Any, modal: Any) -> A
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_store_content(
-    modal: Any,
-    store_type: Any,
-    index: Any,
-    clipboard: Any,
-    displays: Any,
-    browser_id: Any,
-) -> Any:
+    modal: GuiObject,
+    store_type: GuiObject,
+    index: int,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    browser_id: str,
+) -> GuiObject:
     store_content_type = "store_content_" + store_type
     store_content_list = getattr(modal, store_content_type)
     try:
@@ -298,13 +310,13 @@ def get_store_content(
     )
 )
 def open_url_from_store_content(
-    browser_id: Any,
-    option: Any,
-    store_name: Any,
+    browser_id: str,
+    option: str,
+    store_name: str,
     selenium: SeleniumDrivers,
-    clipboard: Any,
-    displays: Any,
-) -> Any:
+    clipboard: Clipboard,
+    displays: DisplayMap,
+) -> None:
 
     modal = open_store_details_modal(selenium, browser_id, store_name)
     modal.store_content_list[0].click()
@@ -322,8 +334,8 @@ def open_url_from_store_content(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_number_of_elements_in_store_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any, store_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int, store_name: str
+) -> None:
     driver = selenium[browser_id]
     scroll_to_bottom_of_the_table(driver)
     actual_number = get_last_item_number_in_table(driver)

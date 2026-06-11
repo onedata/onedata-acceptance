@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
-from typing import Any
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -33,8 +32,11 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def notify_visible_with_text(
-    selenium: SeleniumDrivers, browser_id: Any, notify_type: Any, text_regexp: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    notify_type: str,
+    text_regexp: str,
+) -> None:
     driver = selenium[browser_id]
     css_sel = f".ember-notify-show[class*={notify_type}] .message"
     regexp = re.compile(text_regexp)
@@ -47,7 +49,7 @@ def notify_visible_with_text(
 
 @wt(parsers.parse("user of {browser_id} closes all notifies"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_visible_notifies(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def close_visible_notifies(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     notifies = driver.find_elements(By.CSS_SELECTOR, ".ember-notify a.close-button")
 
@@ -62,8 +64,8 @@ def close_visible_notifies(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_loading_error(
-    selenium: SeleniumDrivers, browser_id: Any, error_msg: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, error_msg: str
+) -> None:
     given_msg = OnePage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg
@@ -77,8 +79,8 @@ def assert_loading_error(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_loading_error_public_page(
-    selenium: SeleniumDrivers, browser_id: Any, error_msg: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, error_msg: str
+) -> None:
     given_msg = PublicOnePage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg

@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.gui.utils.core.web_elements import Button, Label, WebElement
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
@@ -38,25 +36,25 @@ class DataRow(BrowserRow):
     json = Label(".table-cell-json-info")
     copy_json_icon = Button(".oneicon-browser-copy")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"{self.name} in {self.parent}"
 
-    def is_symbolic_link(self) -> Any:
+    def is_symbolic_link(self) -> bool:
         return "browser-file" in self._icon.get_attribute(
             "class"
         ) and "oneicon-shortcut" in self._icon_tag.get_attribute("class")
 
-    def is_directory_symbolic_link(self) -> Any:
+    def is_directory_symbolic_link(self) -> bool:
         return "browser-directory" in self._icon.get_attribute(
             "class"
         ) and "oneicon-shortcut" in self._icon_tag.get_attribute("class")
 
-    def is_malformed_symbolic_link(self) -> Any:
+    def is_malformed_symbolic_link(self) -> bool:
         return "browser-file" in self._icon.get_attribute(
             "class"
         ) and "oneicon-x" in self._icon_tag.get_attribute("class")
 
-    def is_malformed_directory_symbolic_link(self) -> Any:
+    def is_malformed_directory_symbolic_link(self) -> bool:
         return "browser-directory" in self._icon.get_attribute(
             "class"
         ) and "oneicon-x" in self._icon_tag.get_attribute("class")

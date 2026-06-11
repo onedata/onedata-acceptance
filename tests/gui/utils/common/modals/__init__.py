@@ -4,7 +4,8 @@ __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.web_elements import WebItem
 
@@ -168,9 +169,9 @@ class Modals:
     )
     there_are_unsaved_changes = WebItem(".modal-dialog", cls=ThereAreUnsavedChanges)
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = driver
         self.web_elem = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "modals"

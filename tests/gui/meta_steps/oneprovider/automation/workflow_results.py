@@ -8,7 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
-from typing import Any
+
+from _pytest._py.path import LocalPath
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -30,6 +32,7 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.count_checksums import (
     adler32_sum,
@@ -43,13 +46,13 @@ from tests.utils.utils import repeat_failed
 
 
 def get_store_details_json(
-    driver: Any,
-    browser_id: Any,
-    clipboard: Any,
-    displays: Any,
-    store_name: Any,
-    store_type: Any,
-) -> Any:
+    driver: WebDriver,
+    browser_id: str,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    store_name: str,
+    store_type: GuiObject,
+) -> GuiObject:
     page = get_op_workflow_visualizer_page(driver)
     store_details = json.loads(
         open_modal_and_get_store_content(
@@ -67,15 +70,15 @@ def get_store_details_json(
 
 
 def open_modal_and_get_store_content(
-    browser_id: Any,
-    driver: Any,
-    page: Any,
-    clipboard: Any,
-    displays: Any,
-    store_name: Any,
-    store_type: Any,
-    index: Any = 0,
-) -> Any:
+    browser_id: str,
+    driver: WebDriver,
+    page: GuiObject,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    store_name: str,
+    store_type: GuiObject,
+    index: int = 0,
+) -> GuiObject:
     page.stores_list[store_name].click()
     modal = Modals(driver).store_details
     store_value = get_store_content(
@@ -94,13 +97,13 @@ def open_modal_and_get_store_content(
 )
 def compare_store_contents(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    store1: Any,
-    store2: Any,
-    clipboard: Any,
-    displays: Any,
-    option: Any,
-) -> Any:
+    browser_id: str,
+    store1: str,
+    store2: str,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    option: str,
+) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
 
@@ -143,13 +146,13 @@ def compare_store_contents(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(
-    browser_id: Any,
-    tmp_memory: Any,
-    file_name: Any,
-    tmpdir: Any,
-    checksum_list: Any,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    file_name: str,
+    tmpdir: LocalPath,
+    checksum_list: str,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
 
     click_and_press_enter_on_item_in_browser(
         selenium, browser_id, file_name, tmp_memory, "file browser"
@@ -171,7 +174,7 @@ def count_checksums_for_file(
     tmp_memory["checksums_" + file_name] = results
 
 
-def checksums_counted_in_workflow(metadata_modal: Any) -> Any:
+def checksums_counted_in_workflow(metadata_modal: GuiObject) -> GuiObject:
     result = {}
     # wait for modal to load
     time.sleep(0.5)
@@ -188,12 +191,12 @@ def checksums_counted_in_workflow(metadata_modal: Any) -> Any:
     )
 )
 def assert_checksums_are_the_same(
-    browser_id: Any,
-    checksum_list: Any,
-    file_name: Any,
-    tmp_memory: Any,
+    browser_id: str,
+    checksum_list: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
 
     status_type = "Metadata"
     modal_name = "Details modal"
@@ -228,13 +231,13 @@ def assert_checksums_are_the_same(
     )
 )
 def count_checksums_and_compare_them(
-    browser_id: Any,
-    tmp_memory: Any,
-    file_name: Any,
-    tmpdir: Any,
-    checksum_list: Any,
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    file_name: str,
+    tmpdir: LocalPath,
+    checksum_list: str,
     selenium: SeleniumDrivers,
-) -> Any:
+) -> None:
     count_checksums_for_file(
         browser_id,
         tmp_memory,
@@ -257,13 +260,13 @@ def count_checksums_and_compare_them(
 )
 def assert_status_of_task_is_one_of_two(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    lane: Any,
-    task: Any,
-    ordinal: Any,
-    status1: Any,
-    status2: Any,
-) -> Any:
+    browser_id: str,
+    lane: str,
+    task: str,
+    ordinal: str,
+    status1: str,
+    status2: str,
+) -> None:
     click = "clicks on"
     close = "closes"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
@@ -287,12 +290,12 @@ def assert_status_of_task_is_one_of_two(
 )
 def assert_status_of_task(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    lane: Any,
-    task: Any,
-    ordinal: Any,
-    expected_status: Any,
-) -> Any:
+    browser_id: str,
+    lane: str,
+    task: str,
+    ordinal: str,
+    expected_status: str,
+) -> None:
 
     click = "clicks on"
     close = "closes"
@@ -313,12 +316,12 @@ def assert_status_of_task(
 )
 def open_link_and_assert_processing_stats_chart(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    lane: Any,
-    task: Any,
-    ordinal: Any,
-    link: Any,
-) -> Any:
+    browser_id: str,
+    lane: str,
+    task: str,
+    ordinal: str,
+    link: str,
+) -> None:
     click = "clicks on"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, lane, task, link, ordinal)

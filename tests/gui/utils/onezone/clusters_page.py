@@ -4,7 +4,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -53,20 +52,20 @@ class MenuItem(PageObject):
     # conflicted clusters have 4-letter cluster id digest added to label
     id_hash = Label(".conflict-label")
 
-    def __call__(self) -> Any:
+    def __call__(self) -> None:
         self.click()
 
-    def is_not_working(self) -> Any:
+    def is_not_working(self) -> bool:
         return "error" in self.status_icon.get_attribute("class")
 
-    def is_working(self) -> Any:
+    def is_working(self) -> bool:
         return not self.is_not_working()
 
 
 class SubmenuItem(PageObject):
     name = id = Label(".one-label")
 
-    def __call__(self) -> Any:
+    def __call__(self) -> None:
         self.click()
 
 

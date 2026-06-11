@@ -6,7 +6,6 @@ __author__ = "Jakub Pilch"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -23,8 +22,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_space_name_for_share_matches_expected(
-    selenium: SeleniumDrivers, browser_id: Any, share_name: Any, space_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, share_name: str, space_name: str
+) -> None:
     shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_sidebar_list
 
     found_space_name = shares_list[share_name].space_name
@@ -44,8 +43,8 @@ def assert_space_name_for_share_matches_expected(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_name_in_shares_sidebar(
-    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, share_name: str
+) -> None:
     shares_list = OZLoggedIn(selenium[browser_id])["shares"].shares_sidebar_list
     share_names_list = {share.name for share in shares_list}
 

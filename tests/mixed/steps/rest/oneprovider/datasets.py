@@ -35,7 +35,7 @@ def create_dataset_in_op_by_id_rest(
 ) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
-    data = {"rootFileId": f"{file_id}"}
+    data: dict[str, object] = {"rootFileId": f"{file_id}"}
     flags = get_flags(option)
     if len(flags) != 0:
         data["protectionFlags"] = flags

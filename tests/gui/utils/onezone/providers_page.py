@@ -4,7 +4,6 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -33,5 +32,5 @@ class ProvidersPage(GenericPage):
     icons = WebItemsSequence(".provider-place", cls=Icon)
     map_point = Button('.one-map-container .jvectormap-container path[data-code="RO"]')
 
-    def is_working(self) -> Any:
+    def is_working(self) -> bool:
         return "online" in self._popover.get_attribute("class")

@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Any, Tuple
+from typing import Tuple
 
 import yaml
 
@@ -30,6 +30,7 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -42,11 +43,11 @@ from tests.utils.bdd_utils import parsers, wt
 )
 def setup_step1(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    host_regexp: Any,
-    config: Any,
+    browser_id: str,
+    host_regexp: str,
+    config: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     """
     config:
 
@@ -63,11 +64,11 @@ def setup_step1(
 
 def _setup_step1(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    host_regexp: Any,
-    configuration: Any,
+    browser_id: str,
+    host_regexp: str,
+    configuration: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     options = config.get("options", [])
     step = "step 1"
@@ -109,11 +110,11 @@ def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
 
 def _setup_onezone_in_step1(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    zone_for_name: Any,
-    zone_for_domain: Any,
+    browser_id: str,
+    zone_for_name: GuiObject,
+    zone_for_domain: GuiObject,
     hosts: Hosts,
-) -> Any:
+) -> None:
     step = "step 1"
 
     name_property = "name"
@@ -146,7 +147,7 @@ def _setup_onezone_in_step1(
         "setup DNS step and proceeds"
     )
 )
-def setup_dns(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def setup_dns(selenium: SeleniumDrivers, browser_id: str) -> None:
     wt_click_perform_check_in_dns_setup_step(selenium, browser_id)
     wt_click_proceed_in_dns_setup_step(selenium, browser_id)
     wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id)
@@ -161,14 +162,14 @@ def setup_dns(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 )
 def enable_provider_cluster_registration_for_user(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    user_login: Any,
-    browser_id2: Any,
+    browser_id: str,
+    user_login: str,
+    browser_id2: str,
     users: Users,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
     last_step_btn = "Manage cluster via onezone"
     last_step = "last step"
     wt_click_on_btn_in_deployment_step(selenium, browser_id, last_step_btn, last_step)
@@ -192,8 +193,8 @@ def enable_provider_cluster_registration_for_user(
     )
 )
 def setup_step2(
-    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, config: str
+) -> None:
     """
     provider: provider_name
     request a subdomain: True/False
@@ -205,10 +206,10 @@ def setup_step2(
 
 def _setup_step2(
     selenium: SeleniumDrivers,
-    browser_id: Any,
+    browser_id: str,
     hosts: Hosts,
-    configuration: Any,
-) -> Any:
+    configuration: str,
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     provider_for_name, provider_for_domain = _parse_provider(
         config["name"], config["domain"]
@@ -274,8 +275,8 @@ def _parse_provider(provider_name: str, provider_domain: str) -> Tuple[str, str]
     )
 )
 def add_storage_in_step5(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     """
     storage type: type of storage
     storage name: name of storage
@@ -284,8 +285,8 @@ def add_storage_in_step5(
 
 
 def _add_storage_in_step5(
-    selenium: SeleniumDrivers, browser_id: Any, configuration: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, configuration: str
+) -> None:
     config = yaml.load(configuration, yaml.Loader)
     storage_type = config["storage type"]
     name = config["name"]

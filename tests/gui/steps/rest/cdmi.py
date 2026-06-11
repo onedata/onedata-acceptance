@@ -1,7 +1,5 @@
 """Steps for cdmi usage."""
 
-from typing import Any
-
 from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import CDMIClient as cdmi
@@ -21,14 +19,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def partial_write_to_file_using_cdmi(
-    user: Any,
-    text: Any,
-    path: Any,
-    offset: Any,
-    provider: Any,
+    user: str,
+    text: str,
+    path: str,
+    offset: int,
+    provider: str,
     hosts: Hosts,
     users: Users,
-) -> Any:
+) -> None:
     client = cdmi(hosts[provider]["ip"], users[user].token)
     client.write_to_file(path, text, offset)
 
@@ -41,13 +39,13 @@ def partial_write_to_file_using_cdmi(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def partial_read_from_file_using_cdmi(
-    user: Any,
-    path: Any,
-    start: Any,
-    end: Any,
-    provider: Any,
+    user: str,
+    path: str,
+    start: int,
+    end: int,
+    provider: str,
     hosts: Hosts,
     users: Users,
-) -> Any:
+) -> None:
     client = cdmi(hosts[provider]["ip"], users[user].token)
     print(client.read_from_file(path, read_range=(start, end)))

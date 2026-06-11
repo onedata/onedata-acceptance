@@ -4,7 +4,6 @@ __author__ = "Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import Label, NamedButton
 
@@ -17,5 +16,5 @@ class ErrorModal(Modal):
     title = Label("h1 .one-label")
     content_message = Label(".message-body")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Error modal"

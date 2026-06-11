@@ -4,7 +4,6 @@ __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, NamedButton
@@ -15,5 +14,5 @@ class ModifyStorage(Modal):
     cancel = NamedButton("button", text="Cancel")
     understand_checkbox = Button(".one-checkbox-understand")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Modify storage modal"

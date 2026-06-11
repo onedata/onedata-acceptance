@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.conftest import SeleniumDrivers
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
@@ -111,8 +109,8 @@ FILE_DETAILS_ENDPOINTS = {
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_sidebar_link_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, link: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, link: str
+) -> None:
     driver = selenium[browser_id]
     # inherits from DocumentationPage
     page: DocumentationPage = Homepage(driver)[subpage]
@@ -134,8 +132,8 @@ def assert_active_sidebar_link_in_docs_subpage(
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_active_chapter_tab_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, chapter: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
+) -> None:
     driver = selenium[browser_id]
     page: DocumentationPage = Homepage(driver)[subpage]
     active_tabs = page.chapters.get_active_chapter_tabs_names()
@@ -150,8 +148,8 @@ def assert_active_chapter_tab_in_docs_subpage(
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_user_sees_name_in_header_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
+) -> None:
     driver = selenium[browser_id]
     page: DocumentationPage = Homepage(driver)[subpage]
     assert (
@@ -161,8 +159,8 @@ def assert_user_sees_name_in_header_in_docs_subpage(
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_docs_title_contains(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str
+) -> None:
     assert_title_contains(selenium, browser_id, text)
 
 
@@ -174,8 +172,8 @@ def assert_docs_title_contains(
 )
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
 def assert_expanded_folders_in_sidebar_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, subpage: Any, folders: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, subpage: str, folders: str
+) -> None:
     driver = selenium[browser_id]
     expected_folders = set(parse_seq(folders))
     page: DocumentationPage = Homepage(driver)[subpage]
@@ -192,8 +190,8 @@ def assert_expanded_folders_in_sidebar_in_docs_subpage(
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_file_details(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.api
     modal.operations.click()
@@ -239,8 +237,8 @@ def assert_all_links_to_rest_api_docs_works_in_file_details(
     )
 )
 def assert_all_links_to_rest_api_docs_works_in_space_menu(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).rest_api.api
     modal.operations.click()
@@ -280,8 +278,8 @@ def assert_all_links_to_rest_api_docs_works_in_space_menu(
     )
 )
 def assert_user_sees_name_in_docs_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, name: Any, subpage: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, name: str, subpage: str
+) -> None:
     assert_user_sees_name_in_header_in_docs_subpage(selenium, browser_id, subpage, name)
     assert_active_sidebar_link_in_docs_subpage(selenium, browser_id, subpage, name)
     assert_docs_title_contains(selenium, browser_id, f"{name} | Onedata Docs")

@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import re
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -26,13 +25,16 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(
-    selenium: SeleniumDrivers, browser_id: Any, options: Any, host_regexp: Any
-) -> Any:
-    options = [transform(option) for option in parse_seq(options)]
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    options: str,
+    host_regexp: str,
+) -> None:
+    option_names = [transform(option) for option in parse_seq(options)]
     err_msg = f"{{}} not enabled for {host_regexp} in Nodes page in Onepanel"
     for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):
-            for option in options:
+            for option in option_names:
                 toggle = getattr(host, option)
                 assert toggle.is_checked(), err_msg.format(option)
 
@@ -46,15 +48,18 @@ def wt_assert_options_enabled_for_host_in_nodes(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_cannot_be_changed_for_host_in_nodes(
-    selenium: SeleniumDrivers, browser_id: Any, options: Any, host_regexp: Any
-) -> Any:
-    options = [transform(option) for option in parse_seq(options)]
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    options: str,
+    host_regexp: str,
+) -> None:
+    option_names = [transform(option) for option in parse_seq(options)]
     err_msg = (
         f"{{}} can be changed for {host_regexp} in Nodes page in Onepanel, "
         "while it should not be"
     )
     for host in Onepanel(selenium[browser_id]).content.nodes.hosts:
         if re.match(host_regexp, host.name):
-            for option in options:
+            for option in option_names:
                 toggle = getattr(host, option)
                 assert not toggle.is_enabled(), err_msg.format(option)

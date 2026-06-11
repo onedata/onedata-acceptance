@@ -60,16 +60,16 @@ def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
 @overload
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: Optional[Optional[str]] = None,
+    separator: Optional[Optional[str]] = None,
 ) -> list[str]: ...
 
 
 @overload
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: Optional[Optional[str]] = None,
+    separator: Optional[Optional[str]] = None,
     *,
     default: Callable[[str], T],
 ) -> list[T]: ...
@@ -86,8 +86,8 @@ def parse_seq(
 
 def parse_seq(
     seq: str,
-    pattern: Optional[str] = None,
-    separator: Optional[str] = None,
+    pattern: Optional[Optional[str]] = None,
+    separator: Optional[Optional[str]] = None,
     default: Callable[[str], T] = cast(Callable[[str], T], str),
 ) -> list[T]:
     if pattern is not None:
@@ -111,7 +111,7 @@ def upload_file_path(file_name: str) -> str:
     )
 
 
-def upload_workflow_path(workflow_name: Optional[str] = None) -> str:
+def upload_workflow_path(workflow_name: Optional[Optional[str]] = None) -> str:
     """Resolve an absolute path for workflow file with name workflow_name
     stored in automation-examples submodule
     """
@@ -298,7 +298,7 @@ def redirect_display(new_display: str) -> Iterator[None]:
             del os.environ["DISPLAY"]
 
 
-def transform(val: str, strip_char: Optional[str] = None) -> str:
+def transform(val: str, strip_char: Optional[Optional[str]] = None) -> str:
     return val.strip(strip_char).lower().replace(" ", "_").replace("'", "")
 
 

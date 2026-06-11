@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import tarfile
 import time
 from datetime import datetime
-from typing import Any
 
 import yaml
+from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.conftest import Hosts, SeleniumDrivers
@@ -21,6 +21,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
+from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
@@ -31,8 +32,8 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_msg_instead_of_browser(
-    browser_id: Any, msg: Any, tmp_memory: Any, which_browser: Any
-) -> Any:
+    browser_id: str, msg: str, tmp_memory: TmpMemory, which_browser: str
+) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
     displayed_msg = browser.browser_msg_header
     start = time.time()
@@ -53,8 +54,8 @@ def assert_msg_instead_of_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_status_tag_for_file_in_file_browser(
-    browser_id: Any, status_type: Any, item_name: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, status_type: str, item_name: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.data[item_name].click_on_status_tag(transform(status_type))
 
@@ -66,8 +67,8 @@ def click_on_status_tag_for_file_in_file_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_only_given_items_in_file_browser(
-    browser_id: Any, item_list: Any, tmp_memory: Any, which_browser: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory, which_browser: str
+) -> None:
     file_browser = tmp_memory[browser_id][transform(which_browser)]
     files = {f.name for f in file_browser.data}
     items = parse_seq(item_list)
@@ -84,8 +85,8 @@ def assert_only_given_items_in_file_browser(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_presence_in_file_browser_with_order(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     items = iter(parse_seq(item_list))
     curr_item = next(items)
@@ -111,8 +112,8 @@ def assert_presence_in_file_browser_with_order(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_file_browser_is_of_mdate(
-    browser_id: Any, item_name: Any, err_time: float, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_name: str, err_time: float, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     date_fmt = "%d %b %Y %H:%M:%S"
     # %b - abbreviated month name
@@ -138,8 +139,8 @@ def assert_item_in_file_browser_is_of_mdate(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_size(
-    browser_id: Any, item_name: Any, size: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_name: str, size: int, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     item_size = browser.data[item_name].size
     err_msg = "displayed size {} for {} does not match expected {}"
@@ -155,11 +156,11 @@ def assert_item_in_file_browser_is_of_size(
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_size_to_be_displayed_in_data_row(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    tmp_memory: Any,
-    item_name: Any,
-    size: Any,
-) -> Any:
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    item_name: str,
+    size: int,
+) -> None:
     # refresh site after enabling size statistics to see displayed size
     # in data row
     refresh_site(selenium, browser_id)
@@ -173,7 +174,7 @@ def wait_for_size_to_be_displayed_in_data_row(
 
 @wt(parsers.parse("user of {browser_id} scrolls to the bottom of file browser"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_bottom_of_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
+def scroll_to_bottom_of_file_browser(browser_id: str, tmp_memory: TmpMemory) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     visible_files = browser.names_of_visible_elems()
     detected_files = []
@@ -196,12 +197,12 @@ def scroll_to_bottom_of_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_type(
-    browser_id: Any,
-    item_name: Any,
-    item_attr: Any,
-    tmp_memory: Any,
-    which_browser: Any,
-) -> Any:
+    browser_id: str,
+    item_name: str,
+    item_attr: str,
+    tmp_memory: TmpMemory,
+    which_browser: str,
+) -> None:
     browser = tmp_memory[browser_id][transform(which_browser)]
     action = getattr(browser.data[item_name], f"is_{transform(item_attr)}")
     assert action(), f'"{item_name}" is not {item_attr}, while it should'
@@ -214,8 +215,8 @@ def assert_item_in_file_browser_is_of_type(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_item_in_file_browser(
-    browser_id: Any, item_name: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_name: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.data[item_name].clickable_field.click()
 
@@ -227,8 +228,8 @@ def click_on_item_in_file_browser(
     )
 )
 def select_files_from_file_list_using_shift(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
         selector.shift_down()
@@ -245,8 +246,8 @@ def select_files_from_file_list_using_shift(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_files_from_file_list_using_ctrl(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
@@ -269,8 +270,8 @@ def select_files_from_file_list_using_ctrl(
     ),
 )
 def select_first_n_files(
-    browser_id: Any, num_files_to_select: int, tmp_memory: Any
-) -> Any:
+    browser_id: str, num_files_to_select: int, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
@@ -302,8 +303,8 @@ def select_first_n_files(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_items_from_file_browser(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
@@ -312,14 +313,14 @@ def deselect_items_from_file_browser(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _select_files(browser: Any, selector: Any, item_list: Any) -> Any:
+def _select_files(browser: GuiObject, selector: GuiObject, item_list: str) -> None:
     for item_name in parse_seq(item_list):
         item = browser.data[item_name]
         if not item.is_selected():
             selector.select(item)
 
 
-def _deselect_files(browser: Any, selector: Any, item_list: Any) -> Any:
+def _deselect_files(browser: GuiObject, selector: GuiObject, item_list: str) -> None:
     for item_name in parse_seq(item_list):
         item = browser.files[item_name]
         if item.is_selected():
@@ -330,7 +331,9 @@ def _deselect_files(browser: Any, selector: Any, item_list: Any) -> Any:
     parsers.parse("user of {browser_id} deselects all selected items from file browser")
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def deselect_all_items_from_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
+def deselect_all_items_from_file_browser(
+    browser_id: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     item = browser.files[0]
     item.click()
@@ -350,8 +353,8 @@ def deselect_all_items_from_file_browser(browser_id: Any, tmp_memory: Any) -> An
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_selected_in_file_browser(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is not selected while it should be'
     for item_name in parse_seq(item_list):
@@ -373,8 +376,8 @@ def assert_items_are_selected_in_file_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_not_selected_in_file_browser(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
     for item_name in parse_seq(item_list):
@@ -389,8 +392,8 @@ def assert_items_are_not_selected_in_file_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_none_item_is_selected_in_file_browser(
-    browser_id: Any, item_list: Any, tmp_memory: Any
-) -> Any:
+    browser_id: str, item_list: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     err_msg = 'item "{name}" is selected while it should not be'
     for item_name in parse_seq(item_list):
@@ -400,7 +403,9 @@ def assert_none_item_is_selected_in_file_browser(
 
 @wt(parsers.parse("user of {browser_id} sees empty directory message in file browser"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_empty_dir_msg_in_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
+def assert_empty_dir_msg_in_file_browser(
+    browser_id: str, tmp_memory: TmpMemory
+) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     expected_msg = "empty directory"
     displayed_msg = browser.empty_dir_msg.lower()
@@ -419,8 +424,8 @@ def assert_empty_dir_msg_in_file_browser(browser_id: Any, tmp_memory: Any) -> An
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_create_new_directory(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -436,8 +441,8 @@ def confirm_create_new_directory(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_directory(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -454,8 +459,8 @@ def confirm_rename_directory(
     )
 )
 def count_files_while_scrolling(
-    browser_id: Any, count: int, tmp_memory: Any, which_browser: Any
-) -> Any:
+    browser_id: str, count: int, tmp_memory: TmpMemory, which_browser: WhichBrowser
+) -> None:
     """
     In order to stabilize this function, func does not scroll too much at once
     to don`t omit any files
@@ -495,16 +500,16 @@ def count_files_while_scrolling(
     )
 )
 def check_file_owner_in_file_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any, owner: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, owner: str
+) -> None:
     assert_tab_in_modal(selenium, browser_id, "Info", "File details")
     actual = Modals(selenium[browser_id]).details_modal.owner
     assert actual == owner, f"Expected {owner} as file owner but got {actual}"
 
 
 def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int
+) -> None:
     name = Modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip("(").strip(")")
     assert (
@@ -513,8 +518,8 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
 
 
 def assert_num_of_hardlinks_entry_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int
+) -> None:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     assert len(entries) == int(
         number
@@ -528,8 +533,8 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
     )
 )
 def assert_num_of_hardlinks_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: Any, number: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int
+) -> None:
     assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number)
     assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number)
 
@@ -542,8 +547,8 @@ def assert_num_of_hardlinks_in_file_dets_modal(
     )
 )
 def assert_hardlink_path_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: Any, file: Any, path: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, file: str, path: str
+) -> None:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
     assert (
@@ -559,8 +564,8 @@ def assert_hardlink_path_in_file_dets_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_hardlinks_paths_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: Any, paths: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, paths: str
+) -> None:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
@@ -577,12 +582,12 @@ def assert_hardlinks_paths_in_file_dets_modal(
 )
 def assert_property_in_symlink_dets_modal(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    link_property: Any,
-    value: Any,
-    clipboard: Any,
-    displays: Any,
-) -> Any:
+    browser_id: str,
+    link_property: str,
+    value: str,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+) -> None:
     modal = Modals(selenium[browser_id]).symbolic_link_details
     actual_value = modal.get_property(link_property, clipboard, displays, browser_id)
     assert (
@@ -606,19 +611,19 @@ def assert_property_in_symlink_dets_modal(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_contents_downloaded_tar_file(
-    browser_id: Any,
-    contents: Any,
-    tmpdir: Any,
-    clipboard: Any,
-    displays: Any,
-    name: Any,
-) -> Any:
-    configured_dir_contents: dict[Any, Any] = {}
+    browser_id: str,
+    contents: str,
+    tmpdir: LocalPath,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    name: str,
+) -> None:
+    configured_dir_contents: dict[GuiObject, GuiObject] = {}
     if name == "archive":
         name = f"archive_{clipboard.paste(display=displays[browser_id])}.tar"
         contents = contents.replace("archive", name.split(".", maxsplit=1)[0])
 
-    def _get_directory_contents(directory_tree: Any, path: Any = "") -> Any:
+    def _get_directory_contents(directory_tree: GuiObject, path: str = "") -> None:
 
         if not directory_tree:
             return
@@ -678,8 +683,12 @@ def assert_contents_downloaded_tar_file(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_displayed_on_page(
-    browser_id: Any, item_list: Any, tmp_memory: Any, option: Any, which: Any
-) -> Any:
+    browser_id: str,
+    item_list: str,
+    tmp_memory: TmpMemory,
+    option: str,
+    which: str,
+) -> None:
     browser = tmp_memory[browser_id][f"{which}_browser"]
     visible_files = browser.names_of_visible_elems()
     items = parse_seq(item_list)
@@ -699,7 +708,7 @@ def assert_item_displayed_on_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_to_jump_input(browser_id: Any, tmp_memory: Any, prefix: Any) -> Any:
+def write_to_jump_input(browser_id: str, tmp_memory: TmpMemory, prefix: str) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.jump_input = prefix
 
@@ -711,8 +720,8 @@ def write_to_jump_input(browser_id: Any, tmp_memory: Any, prefix: Any) -> Any:
     )
 )
 def assert_message_at_alert_modal(
-    browser_id: Any, option: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, option: str, selenium: SeleniumDrivers
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).error
     messages_dict = {
@@ -736,7 +745,7 @@ def assert_message_at_alert_modal(
 
 @wt(parsers.parse("user of {browser_id} scrolls to the top in file browser"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
+def scroll_to_top_in_file_browser(browser_id: str, tmp_memory: TmpMemory) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.scroll_to_top()
 
@@ -749,12 +758,12 @@ def scroll_to_top_in_file_browser(browser_id: Any, tmp_memory: Any) -> Any:
 )
 def assert_physical_location_path_and_copy_in_file_details(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    provider: Any,
-    clipboard: Any,
-    displays: Any,
+    browser_id: str,
+    provider: str,
+    clipboard: Clipboard,
+    displays: DisplayMap,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
     physical_locations = Modals(driver).details_modal.physical_locations
@@ -772,11 +781,11 @@ def assert_physical_location_path_and_copy_in_file_details(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    tmp_memory: Any,
-    expected_msg: Any,
-    which_browser: Any,
-) -> Any:
+    browser_id: str,
+    tmp_memory: TmpMemory,
+    expected_msg: str,
+    which_browser: str,
+) -> None:
     if transform(which_browser) == "shares_file_browser":
         file_browser = public_share(selenium[browser_id]).shares_file_browser
     else:

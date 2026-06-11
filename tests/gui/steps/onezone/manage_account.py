@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -22,7 +20,7 @@ from tests.utils.utils import repeat_failed
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
 
@@ -36,15 +34,15 @@ def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: Any) ->
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_account_settings_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str
+) -> None:
     driver = selenium[browser_id]
     Popups(driver).user_account_menu.options[option].click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_user_menu_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_on_user_menu_button_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].show_user_account_menu_toolbar.click()
 
@@ -55,7 +53,7 @@ def click_on_user_menu_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_remove_user_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_remove_user_button_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     Popups(driver).user_delete_account_popover_menu.click()
 
@@ -68,8 +66,8 @@ def click_remove_user_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) -
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_understand_consequences_checkbox_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     Modals(driver).delete_user_account.understand_consequences.click()
 
@@ -77,8 +75,8 @@ def click_understand_consequences_checkbox_in_oz(
 @wt(parsers.parse("user of {browser_id} clicks on delete account button in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_delete_account_button_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     driver = selenium[browser_id]
     Modals(driver).delete_user_account.delete_account.click()
 
@@ -91,8 +89,8 @@ def click_delete_account_button_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_user_name_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, expected_user_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, expected_user_name: str
+) -> None:
     driver = selenium[browser_id]
     displayed_user_name = OZLoggedIn(driver)["profile"].user_name
     err_msg = (
@@ -109,8 +107,8 @@ def assert_correct_user_name_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_user_alias_in_sidebar(
-    selenium: SeleniumDrivers, browser_id: Any, username: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, username: str
+) -> None:
     driver = selenium[browser_id]
     err_msg = "User alias: {} not found in the sidebar, visible alias: {}"
 

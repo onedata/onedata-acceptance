@@ -6,7 +6,6 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 import yaml
 
@@ -27,8 +26,8 @@ from tests.utils.bdd_utils import parsers, wt
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
 def configure_space_manually(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:
@@ -64,8 +63,8 @@ def configure_space_manually(
     )
 )
 def configure_space_manually_without_saving(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as in the previous function:
@@ -74,8 +73,11 @@ def configure_space_manually_without_saving(
 
 
 def _configure_space_manually(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers, with_save: Any = True
-) -> Any:
+    browser_id: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    with_save: bool = True,
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"
@@ -132,8 +134,8 @@ def _configure_space_manually(
     )
 )
 def assert_space_in_marketplace_with_config(
-    browser_id: Any, selenium: SeleniumDrivers, config: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, config: str
+) -> None:
     """Assert space advertised in marketplace according to given config.
 
     Config format given in yaml is as follows:
@@ -164,8 +166,8 @@ def assert_space_in_marketplace_with_config(
 
 
 def _assert_space_in_marketplace_with_config(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     space_name_option = "space name"

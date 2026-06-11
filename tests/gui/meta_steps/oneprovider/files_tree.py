@@ -5,9 +5,8 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.steps.oneprovider.browser import (
@@ -20,19 +19,20 @@ from tests.gui.steps.oneprovider.data_tab import (
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
 )
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
 from tests.utils.bdd_utils import parsers, wt
 
 
-def build_tree_config(data: Any, root_path: Any = "") -> Any:
+def build_tree_config(data: GuiObject, root_path: GuiObject = "") -> GuiObject:
     root = Node("root")
     root.path = root_path
     _build_tree_config(data, root)
     return root
 
 
-def _build_tree_config(data: Any, parent: Node) -> Any:
+def _build_tree_config(data: GuiObject, parent: Node) -> None:
     for item in data:
         try:
             [(item_name, item_subtree)] = item.items()
@@ -52,11 +52,11 @@ def _build_tree_config(data: Any, parent: Node) -> Any:
 def check_tree_browser(
     parent: Node,
     selenium: SeleniumDrivers,
-    user: Any,
-    tmp_memory: Any,
-    tmpdir: Any,
-    which_browser: Any,
-) -> Any:
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
     assert_only_expected_items_presence_in_browser(
         selenium, user, parent.get_items(), tmp_memory, which_browser
     )
@@ -117,13 +117,13 @@ def check_tree_browser(
     )
 )
 def wt_check_file_structure_in_browser(
-    browser_id: Any,
-    config: Any,
+    browser_id: str,
+    config: str,
     selenium: SeleniumDrivers,
-    tmp_memory: Any,
-    tmpdir: Any,
-    which_browser: Any,
-) -> Any:
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str,
+) -> None:
     check_file_structure_in_browser(
         browser_id,
         config,
@@ -135,13 +135,13 @@ def wt_check_file_structure_in_browser(
 
 
 def check_file_structure_in_browser(
-    browser_id: Any,
-    config: Any,
+    browser_id: str,
+    config: str,
     selenium: SeleniumDrivers,
-    tmp_memory: Any,
-    tmpdir: Any,
-    which_browser: Any = "file browser",
-) -> Any:
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    which_browser: str = "file browser",
+) -> None:
     tree = yaml.load(config, yaml.Loader)
     root = build_tree_config(tree)
     check_tree_browser(

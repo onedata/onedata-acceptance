@@ -6,7 +6,6 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 import yaml
 
@@ -29,8 +28,8 @@ from tests.utils.bdd_utils import parsers, wt
     )
 )
 def create_store_for_workflow(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     """Create store according to given config.
 
     Config format given in yaml is as follows:
@@ -49,8 +48,8 @@ def create_store_for_workflow(
 
 
 def _create_store_for_workflow(
-    browser_id: Any, config: Any, selenium: SeleniumDrivers
-) -> Any:
+    browser_id: str, config: str, selenium: SeleniumDrivers
+) -> None:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
 

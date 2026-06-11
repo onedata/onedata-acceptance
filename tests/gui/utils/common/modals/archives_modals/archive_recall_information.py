@@ -6,12 +6,13 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -39,7 +40,7 @@ class ArchiveRecallInformation(Modal):
     error_log_table = WebElement(".infinite-scroll-table")
 
     @staticmethod
-    def parse_progress(progress_text_content: Any) -> Any:
+    def parse_progress(progress_text_content: GuiObject) -> GuiObject:
         """Parses recall progress values in format: <current_value>/<target_value>,
         eg. "1 B / 3 B" to tuple containing two strings: (current_value, target_value).
         """
@@ -48,10 +49,10 @@ class ArchiveRecallInformation(Modal):
         total_info = total_info.strip()
         return (progress_info, total_info)
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Archive recall information"
 
-    def get_progress_info(self, type: Any) -> Any:
+    def get_progress_info(self, type: GuiObject) -> GuiObject:
         """Returns a tuple with (currnet_value, total_value) for progress info.
         Return values are in string, because they can contain size with units, eg.
         ("3 B", "40 KiB").
@@ -61,14 +62,14 @@ class ArchiveRecallInformation(Modal):
         """
         return ArchiveRecallInformation.parse_progress(getattr(self, type))
 
-    def scroll_by_press_space(self) -> Any:
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def move_to_error_logs_table(self, driver: Any) -> Any:
+    def move_to_error_logs_table(self, driver: WebDriver) -> None:
         ActionChains(driver).move_to_element(self.error_log_table).perform()
 
-    def scroll_to_top(self) -> Any:
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector('.infinite-scroll-table "

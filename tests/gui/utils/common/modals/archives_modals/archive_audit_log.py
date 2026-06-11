@@ -6,13 +6,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Any, Dict, List
+from typing import Dict, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -32,7 +33,7 @@ class FilesLog(BrowserRow):
     duplicated_name_hash = Label(".log-filename-duplicate-hash", scroll=False)
     time_taken = Label(".time-taken-text", scroll=False)
 
-    def click(self) -> Any:
+    def click(self) -> None:
         time.sleep(0.1)
         ActionChains(self.driver).click(self.clickable_field).perform()
 
@@ -43,11 +44,11 @@ class ArchiveAuditLog(Modal):
 
     x = Button(".close")
 
-    def scroll_by_press_space(self) -> Any:
+    def scroll_by_press_space(self) -> None:
         action = ActionChains(self.driver)
         action.key_down(Keys.SPACE).perform()
 
-    def scroll_to_top(self) -> Any:
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector("
@@ -59,7 +60,7 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(self, columns: Any = None) -> Any:
+    def get_rows_of_columns(self, columns: Optional[list[str]] = None) -> GuiObject:
         if columns is None:
             columns = []
         temp_columns = [column for column in columns if column != "file"]
@@ -84,5 +85,5 @@ class ArchiveAuditLog(Modal):
 
         return column_values
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Archive audit log"

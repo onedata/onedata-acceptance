@@ -4,7 +4,6 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import Button, WebElement
 
@@ -15,5 +14,5 @@ class AdvertiseSpace(Modal):
     configure = Button(".proceed-btn")
     spaces_dropdown_menu = WebElement(".spaces-dropdown-trigger")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Advertise space modal"

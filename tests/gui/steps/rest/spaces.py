@@ -5,14 +5,13 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
 from tests import OZ_REST_PORT
 from tests.conftest import Users
+from tests.gui.types import GuiObject
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 
 
-def get_user_spaces(zone_hostname: Any, user: Any, users: Users) -> Any:
+def get_user_spaces(zone_hostname: GuiObject, user: str, users: Users) -> GuiObject:
     return http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -21,7 +20,9 @@ def get_user_spaces(zone_hostname: Any, user: Any, users: Users) -> Any:
     ).json()["spaces"]
 
 
-def leave_user_space(zone_hostname: Any, user: Any, users: Users, space_id: Any) -> Any:
+def leave_user_space(
+    zone_hostname: GuiObject, user: str, users: Users, space_id: GuiObject
+) -> None:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,

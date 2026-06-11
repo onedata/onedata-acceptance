@@ -6,10 +6,13 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Any
+from typing import Optional
+
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.types import GuiObject
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -17,8 +20,11 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_range_as_initial_workflow_value(
-    selenium: SeleniumDrivers, browser_id: Any, item: Any, add_new: Any = True
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item: GuiObject,
+    add_new: GuiObject = True,
+) -> None:
     driver = selenium[browser_id]
     if add_new:
         OPLoggedIn(driver).automation_page.input_link.click()
@@ -30,7 +36,9 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(driver: Any, files: Any) -> Any:
+def check_if_select_files_modal_disappeared(
+    driver: WebDriver, files: GuiObject
+) -> None:
     try:
         Modals(driver).select_files  # pylint: disable=expression-not-assigned
         raise AssertionError(
@@ -41,7 +49,9 @@ def check_if_select_files_modal_disappeared(driver: Any, files: Any) -> Any:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_files_modal(driver: Any, store_name: Any = False) -> Any:
+def open_select_initial_files_modal(
+    driver: WebDriver, store_name: Optional[str] = None
+) -> None:
     option = "Select/upload file"
 
     click_input_link_in_automation_page(driver, store_name)
@@ -62,8 +72,8 @@ def open_select_initial_files_modal(driver: Any, store_name: Any = False) -> Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_select_initial_groups_modal(
-    selenium: SeleniumDrivers, browser_id: Any, store_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, store_name: str
+) -> None:
     option = "Select groups"
     driver = selenium[browser_id]
 
@@ -79,7 +89,7 @@ def open_select_initial_groups_modal(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_select_initial_datasets_modal(driver: Any) -> Any:
+def open_select_initial_datasets_modal(driver: WebDriver) -> None:
     option = "Select datasets"
     OPLoggedIn(driver).automation_page.input_link()
     time.sleep(1)
@@ -89,14 +99,16 @@ def open_select_initial_datasets_modal(driver: Any) -> Any:
     Modals(driver).select_dataset  # pylint: disable=expression-not-assigned
 
 
-def get_select_option_from_initial_value_popup(option: Any, popup_menu: Any) -> Any:
+def get_select_option_from_initial_value_popup(
+    option: str, popup_menu: GuiObject
+) -> GuiObject:
     for elem in popup_menu:
         if option in elem.name:
             return elem
     raise ValueError(f"{option} not found in popup menu")
 
 
-def get_initial_value_store(driver: Any, store_name: Any) -> Any:
+def get_initial_value_store(driver: WebDriver, store_name: str) -> GuiObject:
     initial_value_stores = OPLoggedIn(driver).automation_page.initial_value_store
     if store_name + ":" in initial_value_stores:
         return initial_value_stores[store_name + ":"]
@@ -105,7 +117,9 @@ def get_initial_value_store(driver: Any, store_name: Any) -> Any:
     raise ValueError()
 
 
-def click_input_link_in_automation_page(driver: Any, store_name: Any) -> Any:
+def click_input_link_in_automation_page(
+    driver: WebDriver, store_name: Optional[str]
+) -> None:
     if store_name:
         store = get_initial_value_store(driver, store_name)
         store.input_link.click()
@@ -121,12 +135,16 @@ def click_input_link_in_automation_page(driver: Any, store_name: Any) -> Any:
             OPLoggedIn(driver).automation_page.single_file_input_link.click()
 
 
-def get_data_type_in_initial_value_store(driver: Any, store_name: Any) -> Any:
+def get_data_type_in_initial_value_store(
+    driver: WebDriver, store_name: str
+) -> GuiObject:
     store = get_initial_value_store(driver, store_name)
     return store.data_type
 
 
-def get_data_type_of_array_initial_value_store(driver: Any, store_name: Any) -> Any:
+def get_data_type_of_array_initial_value_store(
+    driver: WebDriver, store_name: str
+) -> GuiObject:
     store = get_initial_value_store(driver, store_name)
     link_name = store.input_link.web_elem.text
 
@@ -145,8 +163,8 @@ def get_data_type_of_array_initial_value_store(driver: Any, store_name: Any) -> 
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_in_select_initial_groups_modal(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, group: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).select_groups
     err_msg = "there {} visible {} in select groups modal, but should {}"

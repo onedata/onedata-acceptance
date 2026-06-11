@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -18,7 +18,7 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _expand_oz_panel(driver: Any, panel: Any) -> Any:
+def _expand_oz_panel(driver: WebDriver, panel: str) -> None:
     OZLoggedIn(driver)[panel].expand()
 
 
@@ -29,8 +29,8 @@ def _expand_oz_panel(driver: Any, panel: Any) -> Any:
     )
 )
 def g_expand_oz_panel(
-    selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id_list: str, panel_name: str
+) -> None:
     for browser_id in list_parser(browser_id_list):
         _expand_oz_panel(selenium[browser_id], panel_name)
 
@@ -42,8 +42,8 @@ def g_expand_oz_panel(
     )
 )
 def wt_expand_oz_panel(
-    selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id_list: str, panel_name: str
+) -> None:
     for browser_id in list_parser(browser_id_list):
         _expand_oz_panel(selenium[browser_id], panel_name)
 
@@ -55,8 +55,8 @@ def wt_expand_oz_panel(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_alert_with_title_in_oz(
-    selenium: SeleniumDrivers, browser_id: Any, title: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, title: str
+) -> None:
     driver = selenium[browser_id]
     alert = OZLoggedIn(driver).provider_alert_message
     err_msg = f"expected alert: {title}, found: {alert}"
@@ -79,8 +79,8 @@ def assert_alert_with_title_in_oz(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_btn_in_oz_panel(
-    selenium: SeleniumDrivers, browser_id: Any, btn: Any, oz_panel: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, btn: str, oz_panel: str
+) -> None:
     driver = selenium[browser_id]
     action = getattr(OZLoggedIn(driver)[oz_panel], btn.lower().replace(" ", "_"))
     action()
@@ -103,12 +103,12 @@ def click_on_btn_in_oz_panel(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_with_known_name_in_oz_panel_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_type: Any,
-    item_name: Any,
-    oz_panel: Any,
+    browser_id: str,
+    item_type: str,
+    item_name: str,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     item_name = hosts[item_name]["name"]
     items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
@@ -162,11 +162,11 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_named_in_oz_panel_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_type: Any,
-    item_name: Any,
-    oz_panel: Any,
-) -> Any:
+    browser_id: str,
+    item_type: str,
+    item_name: str,
+    oz_panel: str,
+) -> None:
     driver = selenium[browser_id]
     items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")
     assert (
@@ -219,12 +219,12 @@ def assert_there_is_item_named_in_oz_panel_list(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_no_item_named_in_oz_panel_list(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_type: Any,
-    item_name: Any,
-    oz_panel: Any,
+    browser_id: str,
+    item_type: str,
+    item_name: str,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
@@ -257,14 +257,14 @@ def assert_there_is_no_item_named_in_oz_panel_list(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_counter_match_given_num(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    counter_type: Any,
-    item_type: Any,
-    item_name: Any,
-    number: Any,
-    oz_panel: Any,
+    browser_id: str,
+    counter_type: str,
+    item_type: str,
+    item_name: str,
+    number: int,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
@@ -308,13 +308,13 @@ def assert_item_counter_match_given_num(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_items_match_items_counter(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_name: Any,
-    item_type: Any,
-    counter_type: Any,
-    oz_panel: Any,
+    browser_id: str,
+    item_name: str,
+    item_type: str,
+    counter_type: str,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
@@ -351,12 +351,12 @@ def assert_number_of_items_match_items_counter(
 @repeat_failed(timeout=WAIT_BACKEND)
 def expand_items_submenu_in_oz_panel(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    item_type: Any,
-    item_name: Any,
-    oz_panel: Any,
+    browser_id: str,
+    item_type: str,
+    item_name: str,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]
@@ -387,14 +387,14 @@ def expand_items_submenu_in_oz_panel(
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_submenu_of_item_in_oz_panel(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    subitem_type: Any,
-    subitem_name: Any,
-    item_type: Any,
-    item_name: Any,
-    oz_panel: Any,
+    browser_id: str,
+    subitem_type: str,
+    subitem_name: str,
+    item_type: str,
+    item_name: str,
+    oz_panel: str,
     hosts: Hosts,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     if item_type == "provider":
         item_name = hosts[item_name]["name"]

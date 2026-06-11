@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
-from typing import Any
+from typing import Optional
 
 import yaml
 
@@ -57,6 +57,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
@@ -66,8 +67,8 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_workflow_using_gui(
-    selenium: SeleniumDrivers, browser_id: Any, workflow_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, workflow_name: str
+) -> None:
     click_add_new_button_in_menu_bar(selenium, browser_id, "Add new workflow")
     write_text_into_workflow_name_on_main_workflows_page(
         selenium, browser_id, workflow_name
@@ -84,12 +85,12 @@ def create_workflow_using_gui(
 )
 def upload_and_assert_workflow_to_inventory_using_gui(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    inventory: Any,
-    workflow: Any,
-    file_name: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     click_on_automation_option_in_the_sidebar(selenium, browser_id, tmp_memory)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
@@ -109,11 +110,11 @@ def upload_and_assert_workflow_to_inventory_using_gui(
 )
 def given_upload_workflow_from_automation_examples(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    inventory: Any,
-    workflow: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
     upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -127,11 +128,11 @@ def given_upload_workflow_from_automation_examples(
 )
 def upload_workflow_from_automation_examples(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    inventory: Any,
-    workflow: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+) -> None:
     _upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
     )
@@ -145,12 +146,12 @@ def upload_workflow_from_automation_examples(
 )
 def upload_workflow_from_automation_examples_with_given_method(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    inventory: Any,
-    workflow: Any,
-    tmp_memory: Any,
-    method: Any,
-) -> Any:
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: str,
+) -> None:
     _upload_workflow_from_automation_examples(
         selenium,
         browser_id,
@@ -163,12 +164,12 @@ def upload_workflow_from_automation_examples_with_given_method(
 
 def _upload_workflow_from_automation_examples(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    inventory: Any,
-    workflow: Any,
-    tmp_memory: Any,
-    method: Any = None,
-) -> Any:
+    browser_id: str,
+    inventory: str,
+    workflow: str,
+    tmp_memory: TmpMemory,
+    method: Optional[str] = None,
+) -> None:
     subpage = "workflows"
     modal = "Upload workflow"
     button = "Apply"
@@ -190,7 +191,7 @@ def _upload_workflow_from_automation_examples(
     assert_workflow_exists(selenium, browser_id, visible_workflow_name, "sees")
 
 
-def change_workflow_dump_name_to_visible_name(workflow_name: Any) -> Any:
+def change_workflow_dump_name_to_visible_name(workflow_name: str) -> str:
     data = get_workflow_dump(workflow_name)
     return data["name"]
 
@@ -203,13 +204,13 @@ def change_workflow_dump_name_to_visible_name(workflow_name: Any) -> Any:
     )
 )
 def execute_workflow_with_input_config(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    space: Any,
-    ordinal: Any,
-    workflow: Any,
-    config: Any,
-) -> Any:
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
     """Adjust configuration of input values for stores according to given config.
 
     Config format given in yaml is as follows:
@@ -237,13 +238,13 @@ def execute_workflow_with_input_config(
 
 
 def _execute_workflow_with_input_config(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    space: Any,
-    ordinal: Any,
-    workflow: Any,
-    config: Any,
-) -> Any:
+    space: str,
+    ordinal: str,
+    workflow: str,
+    config: str,
+) -> None:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -316,14 +317,14 @@ def _execute_workflow_with_input_config(
     )
 )
 def execute_workflow_and_wait(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    space: Any,
-    ordinal: Any,
-    workflow: Any,
-    item_list: Any,
-    data_type: Any,
-) -> Any:
+    space: str,
+    ordinal: str,
+    workflow: str,
+    item_list: str,
+    data_type: str,
+) -> None:
 
     execute_workflow(
         browser_id,
@@ -348,14 +349,14 @@ def execute_workflow_and_wait(
     )
 )
 def execute_workflow(
-    browser_id: Any,
+    browser_id: str,
     selenium: SeleniumDrivers,
-    space: Any,
-    ordinal: Any,
-    workflow: Any,
-    item_list: Any,
-    data_type: Any,
-) -> Any:
+    space: str,
+    ordinal: str,
+    workflow: str,
+    item_list: str,
+    data_type: str,
+) -> None:
     spaces = "spaces"
     automation_workflows = "Automation Workflows"
     tab_name = "Run workflow"
@@ -415,12 +416,12 @@ def execute_workflow(
 )
 def modify_data_type_in_store(
     selenium: SeleniumDrivers,
-    browser_id: Any,
-    store_name: Any,
-    value: Any,
-    menu: Any,
-    tmp_memory: Any,
-) -> Any:
+    browser_id: str,
+    store_name: str,
+    value: str,
+    menu: str,
+    tmp_memory: TmpMemory,
+) -> None:
     driver = selenium[browser_id]
     dropdown_menu = f"{menu} dropdown menu"
     button = "OK"

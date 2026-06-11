@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Any
 
 import yaml
 
@@ -25,6 +24,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
+from tests.gui.types import GuiObject, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -44,8 +44,8 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
 def assert_data_discovery_files(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+) -> None:
     button_name = "Query"
 
     click_button_on_data_disc_page(selenium, browser_id, button_name)
@@ -54,8 +54,8 @@ def assert_data_discovery_files(
 
 
 def assert_files(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+) -> None:
     expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     _assert_elem_num_equals(expected_data, data_dict)
@@ -68,7 +68,7 @@ def assert_files(
             )
 
 
-def _assert_elem_num_equals(expected_data: Any, data_dict: Any) -> Any:
+def _assert_elem_num_equals(expected_data: GuiObject, data_dict: GuiObject) -> None:
     expected_num = len(expected_data)
     spaces = expected_data.get("spaces", [])
     if spaces:
@@ -78,12 +78,12 @@ def _assert_elem_num_equals(expected_data: Any, data_dict: Any) -> Any:
     ), f"There should be {expected_num} files visible but there is {len(data_dict)}"
 
 
-def _check_spaces_of_data_disc(expected: Any, actual: Any) -> Any:
+def _check_spaces_of_data_disc(expected: GuiObject, actual: GuiObject) -> None:
     for space in expected:
         assert space in actual, f"space {space} not harvested"
 
 
-def _unpack_files_data(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def _unpack_files_data(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
     driver = selenium[browser_id]
     regex = r'fileName: "(?P<file_name>[^\s]+)"'
     files_data_dict = {}
@@ -93,7 +93,9 @@ def _unpack_files_data(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     return files_data_dict
 
 
-def _assert_data_discovery_files(expected: Any, actual: Any, spaces: Any) -> Any:
+def _assert_data_discovery_files(
+    expected: GuiObject, actual: GuiObject, spaces: GuiObject
+) -> None:
     for item in expected.items():
         if item[0] == "spaceId":
             item = ("spaceId", f'"{spaces[item[1]]}"')
@@ -110,19 +112,19 @@ def _assert_data_discovery_files(expected: Any, actual: Any, spaces: Any) -> Any
             ), f"{item[0]}: {item[1]} not in {actual}"
 
 
-def _assert_unexpected_xattr(sub_item: Any, actual: Any) -> Any:
+def _assert_unexpected_xattr(sub_item: GuiObject, actual: GuiObject) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex not in actual, f"{regex} in {actual} but should not be"
 
 
-def _assert_expected_xattr(sub_item: Any, actual: Any) -> Any:
+def _assert_expected_xattr(sub_item: GuiObject, actual: GuiObject) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex in actual, f"{regex} not in {actual}"
 
 
 def _assert_unexpected_properties_of_files(
-    unexpected: Any, actual: Any, spaces: Any
-) -> Any:
+    unexpected: GuiObject, actual: GuiObject, spaces: GuiObject
+) -> None:
     for item in unexpected.items():
         if item[0] == "spaceId":
             item = ("spaceId", f'"{spaces[item[1]]}"')
@@ -142,8 +144,8 @@ def _assert_unexpected_properties_of_files(
     )
 )
 def assert_not_files_properties(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+) -> None:
     unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     for file in unexpected_data:
@@ -160,8 +162,8 @@ def assert_not_files_properties(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def see_files_with_order(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     files_list = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
@@ -175,8 +177,8 @@ def see_files_with_order(
     )
 )
 def open_data_discovery_of_harvester(
-    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, harvester_name: str
+) -> None:
     option = "Discovery"
     list_name = "harvesters"
     option2 = "data discovery"
@@ -197,8 +199,8 @@ def open_data_discovery_of_harvester(
     )
 )
 def go_to_source_of_file(
-    selenium: SeleniumDrivers, browser_id: Any, filename: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, filename: str
+) -> None:
     data_dict = _unpack_files_data(selenium, browser_id)
     data_dict[filename].source_button()
 
@@ -206,8 +208,8 @@ def go_to_source_of_file(
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
-    selenium: SeleniumDrivers, browser_id: Any, number: int
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, number: int
+) -> None:
     files_dict = _unpack_files_data(selenium, browser_id)
     assert (
         len(files_dict) == number
@@ -221,13 +223,13 @@ def assert_number_of_files_on_data_disc(
     )
 )
 def choose_properties_to_filter(
-    selenium: SeleniumDrivers, browser_id: Any, config: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, config: str
+) -> None:
     data = yaml.load(config, yaml.Loader)
     _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def _parse_data(data: GuiObject, selenium: SeleniumDrivers, browser_id: str) -> None:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):
@@ -263,7 +265,9 @@ def _parse_data(data: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
         "following files:\n{config}"
     )
 )
-def compare_files_with_curl(browser_id: Any, tmp_memory: Any, config: Any) -> Any:
+def compare_files_with_curl(
+    browser_id: str, tmp_memory: TmpMemory, config: str
+) -> None:
     curl_res = tmp_memory[browser_id]["curl result"]
     expected_data = yaml.load(config, yaml.Loader)
 
@@ -286,7 +290,7 @@ def compare_files_with_curl(browser_id: Any, tmp_memory: Any, config: Any) -> An
                 assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
 
 
-def _curl_data_to_dict(query_curl_data: Any) -> Any:
+def _curl_data_to_dict(query_curl_data: GuiObject) -> GuiObject:
     new_dict = {}
     for entry in query_curl_data:
         file_name = entry["_source"]["__onedata"]["fileName"]

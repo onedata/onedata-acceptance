@@ -6,7 +6,6 @@ __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from tests.gui.utils.core.web_elements import Button, Input
 
@@ -18,5 +17,5 @@ class AdvertiseSpaceInTheMarketplace(Modal):
     checkbox = Button(".one-checkbox")
     proceed = Button(".proceed-btn")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Advertise space in the Marketplace modal"

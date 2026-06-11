@@ -8,11 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
-from typing import Any
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
+from tests.gui.types import GuiObject
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -25,8 +25,8 @@ from tests.utils.utils import repeat_failed
     )
 )
 def assert_all_metadata_tabs_marked_empty(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tabs = modal.navigation
     for tab in tabs:
@@ -40,8 +40,8 @@ def assert_all_metadata_tabs_marked_empty(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_metadata_panel_displayed(
-    selenium: SeleniumDrivers, browser_id: Any, tab_list: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tab_list: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     nav = modal.navigation
     for tab in parse_seq(tab_list):
@@ -51,8 +51,8 @@ def are_nav_tabs_for_metadata_panel_displayed(
 @wt(parsers.re("user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_xattrs_metadata_for_item(
-    selenium: SeleniumDrivers, browser_id: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     assert (
         len(modal.xattrs.entries) == 0
@@ -67,8 +67,8 @@ def assert_no_xattrs_metadata_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_attr_input_in_new_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     modal.xattrs.new_entry.key = text
     press_tab_on_active_element(selenium, browser_id)
@@ -82,8 +82,8 @@ def type_text_to_attr_input_in_new_xattr_entry(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_val_input_in_new_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     modal.xattrs.new_entry.value = text
 
@@ -96,8 +96,8 @@ def type_text_to_val_input_in_new_xattr_entry(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_val_of_attr_in_new_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any, attribute_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str, attribute_name: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     modal.xattrs.entries[attribute_name].value = text
 
@@ -110,8 +110,8 @@ def type_text_to_val_of_attr_in_new_xattr_entry(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_xattr_meta_record(
-    selenium: SeleniumDrivers, browser_id: Any, attr_key: Any, attr_val: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, attr_key: str, attr_val: str
+) -> None:
     attr_val = attr_val.lower()
     modal = Modals(selenium[browser_id]).details_modal.metadata
     err_msg = f'no metadata entry "{attr_key}" with value "{attr_val}" found'
@@ -125,8 +125,8 @@ def assert_there_is_such_xattr_meta_record(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_no_such_meta_record(
-    selenium: SeleniumDrivers, browser_id: Any, key_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, key_name: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     err_msg = f"metadata entry {key_name} found while should not be"
     assert key_name not in modal.xattrs.entries, err_msg
@@ -141,8 +141,8 @@ def assert_there_is_no_such_meta_record(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_del_metadata_record_button(
-    selenium: SeleniumDrivers, browser_id: Any, attr_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, attr_name: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     entry = modal.xattrs.entries[attr_name]
     entry.remove()
@@ -156,8 +156,8 @@ def click_on_del_metadata_record_button(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_metadata_textarea(
-    selenium: SeleniumDrivers, browser_id: Any, text: Any, tab_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, text: str, tab_name: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     tab.text_area = text
@@ -172,16 +172,20 @@ def type_text_to_metadata_textarea(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_contains_record(
-    selenium: SeleniumDrivers, browser_id: Any, expected_metadata: Any, tab_name: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    expected_metadata: str,
+    tab_name: str,
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == "json":
-        expected_metadata = json.loads(expected_metadata)
+        parsed_expected_metadata = json.loads(expected_metadata)
         metadata = json.loads(tab.text_area)
-        err_msg = f"got {metadata} instead of expected {expected_metadata}"
+        err_msg = f"got {metadata} instead of expected {parsed_expected_metadata}"
         assert all(
-            metadata.get(key, None) == value for key, value in expected_metadata.items()
+            metadata.get(key, None) == value
+            for key, value in parsed_expected_metadata.items()
         ), err_msg
     else:
         err_msg = (
@@ -192,8 +196,11 @@ def assert_textarea_contains_record(
 
 
 def assert_textarea_not_contain_record(
-    selenium: SeleniumDrivers, browser_id: Any, expected_metadata: Any, tab_name: Any
-) -> Any:
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    expected_metadata: GuiObject,
+    tab_name: str,
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     assert expected_metadata not in tab.text_area
@@ -207,8 +214,8 @@ def assert_textarea_not_contain_record(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_is_empty_for_metadata(
-    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tab_name: str
+) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     err_msg = f"{tab_name} textarea is not empty"
@@ -223,8 +230,8 @@ def assert_textarea_is_empty_for_metadata(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clean_tab_textarea_in_metadata_modal(
-    selenium: SeleniumDrivers, browser_id: Any, tab_name: Any
-) -> Any:
+    selenium: SeleniumDrivers, browser_id: str, tab_name: str
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
@@ -234,8 +241,8 @@ def clean_tab_textarea_in_metadata_modal(
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(
-    browser_id: Any, selenium: SeleniumDrivers, text: Any
-) -> Any:
+    browser_id: str, selenium: SeleniumDrivers, text: str
+) -> None:
     driver = selenium[browser_id]
     item_status = Modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f"{item_status} does not match expected {text}"
@@ -250,11 +257,11 @@ def see_editor_disabled_label(
 )
 def modify_existing_xattr_entry(
     selenium: SeleniumDrivers,
-    browser_id: Any,
+    browser_id: str,
     entry_elem: str,
     new_text: str,
     attr_name: str,
-) -> Any:
+) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.metadata
     entry_elem = entry_elem.lower()
@@ -268,7 +275,7 @@ def modify_existing_xattr_entry(
     modal.xattrs.click_on_background_in_xattrs_panel()
 
 
-def edit_xattr_entry_key(entry: Any, new_key: Any) -> Any:
+def edit_xattr_entry_key(entry: GuiObject, new_key: str) -> None:
     entry.edit_existing_key.click()
     time.sleep(0.5)
     # this sleep is necessary, because there is small delay between

@@ -4,7 +4,10 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from tests.gui.types import GuiObject
 
 from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser
@@ -38,11 +41,11 @@ class OPLoggedIn:
     dataset_archive_browser = DatasetArchiveBrowser(".dataset-archives-browser")
     archive_recall_browser = ArchiveRecallBrowser(".archive-recall-browser")
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Oneprovider page"
 
-    def __getattr__(self, item: Any) -> Any:
+    def __getattr__(self, item: GuiObject) -> GuiObject:
         return self.tabs[item](self.web_elem, self.web_elem, self)

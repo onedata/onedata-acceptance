@@ -6,8 +6,8 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
 
@@ -17,7 +17,7 @@ class Property(PageObject):
 
 
 class Item(PageObject):
-    def get_name(self) -> Any:
+    def get_name(self) -> str:
         return self.web_elem.text
 
 
@@ -44,24 +44,24 @@ class ExpressionBuilderPopup(PageObject):
     value = Input(".comparator-value")
     add_button = Button(".accept-condition")
 
-    def expand_properties(self) -> Any:
+    def expand_properties(self) -> None:
         self.property_choice()
 
-    def choose_property(self, property_name: Any) -> Any:
+    def choose_property(self, property_name: str) -> None:
         self.expand_properties()
         self.properties[property_name].click()
 
-    def assert_property(self, property_name: Any) -> Any:
+    def assert_property(self, property_name: str) -> GuiObject:
         try:
             self.properties[property_name]
         except IndexError:
             return False
         return True
 
-    def expand_comparators(self) -> Any:
+    def expand_comparators(self) -> None:
         self.comparator_choice()
 
-    def choose_comparator(self, comparator_name: Any) -> Any:
+    def choose_comparator(self, comparator_name: GuiObject) -> None:
         self.expand_comparators()
         for comparator in self.comparators:
             if comparator.get_name() == comparator_name:
@@ -69,10 +69,10 @@ class ExpressionBuilderPopup(PageObject):
                 return
         raise RuntimeError(f"There is no comparator {comparator_name}")
 
-    def expand_values(self) -> Any:
+    def expand_values(self) -> None:
         self.values_choice()
 
-    def choose_value(self, value_name: Any) -> Any:
+    def choose_value(self, value_name: GuiObject) -> None:
         self.expand_values()
         for value in self.values:
             if value.get_name() == value_name:

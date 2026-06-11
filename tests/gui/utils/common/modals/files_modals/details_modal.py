@@ -4,11 +4,11 @@ __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 
+from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
@@ -33,7 +33,7 @@ class HardlinkEntry(PageObject):
     name = id = Label(".file-name")
     path = Label(".file-path .anchor-container")
 
-    def get_path_string(self) -> Any:
+    def get_path_string(self) -> str:
         return strip_path(self.path)
 
 
@@ -41,7 +41,7 @@ class Hardlinks(PageObject):
     tab = WebElement(".nav-link-hardlinks")
     files = WebItemsSequence(".file-hardlink", cls=HardlinkEntry)
 
-    def is_active(self) -> Any:
+    def is_active(self) -> bool:
         return "active" in self.tab.get_attribute("class")
 
 
@@ -80,12 +80,12 @@ class SizeStatistics(PageObject):
     total_physical_size = Label(".property-physical-size .property-value")
     contain_counter = Label(".property-contains .property-value")
 
-    def click_on_chart(self) -> Any:
+    def click_on_chart(self) -> None:
         ActionChains(self.driver).move_to_element_with_offset(
             self.chart[0].chart, 100, 100
         ).click().perform()
 
-    def scroll_to_top(self) -> Any:
+    def scroll_to_top(self) -> None:
         try:
             self.driver.execute_script(
                 "document.querySelector('.perfect-scrollbar-element').scrollTo(0, 0)"
@@ -151,9 +151,9 @@ class DetailsModal(Modal):
     data_distribution = WebItem(".modal-content", cls=DataDistributionTab)
     api = WebItem(".modal-content", cls=ApiTab)
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Details modal"
 
-    def is_element_active(self, element_name: Any) -> Any:
+    def is_element_active(self, element_name: str) -> bool:
         element = getattr(self, element_name)
         return "active" in element.web_elem.get_attribute("class")
