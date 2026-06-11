@@ -12,13 +12,13 @@ import sys
 import time
 from collections.abc import Callable
 from types import ModuleType
-from typing import Any, Protocol
+from typing import Any, Protocol, Optional
 
 
 class TestNodeLike(Protocol):
     nodeid: str
     name: str
-    originalname: str | None
+    originalname: Optional[str]
 
 
 def config_file(relative_file_path: str) -> str:
@@ -55,7 +55,7 @@ def get_logdir_name(root_dir: str, test_name: str) -> str:
     return os.path.join(root_dir, ".".join([test_name, timestamp]))
 
 
-def make_logdir(root_dir: str | None, test_name: str) -> str:
+def make_logdir(root_dir: Optional[str], test_name: str) -> str:
     """Creates logdir if it doesn't exist."""
     if root_dir is None:
         raise ValueError("Root directory cannot be None")
@@ -115,7 +115,7 @@ def ensure_yaml(file: str) -> str:
     return file
 
 
-def absolute_path_to_env_file(directory: str | None, file: str) -> str:
+def absolute_path_to_env_file(directory: Optional[str], file: str) -> str:
     """Returns absolute path to environment file from dir. Ensures that file
     has .yaml extension"""
     if directory is None:

@@ -1,7 +1,8 @@
 """Utils for managing REST API for CDMI service"""
 
 import json
-from typing import Any
+from typing import Optional
+import requests
 
 from tests import OP_REST_PORT
 from tests.utils.rest_utils import http_get, http_put
@@ -15,21 +16,21 @@ CONTAINER_TYPE = "container"
 OBJECT_TYPE = "object"
 
 
-def get_item_type(item_path: Any) -> Any:
+def get_item_type(item_path: str) -> str:
     return "container" if item_path.split("/")[-1].startswith("dir") else "object"
 
 
-def get_content_type(item_type: Any) -> Any:
+def get_content_type(item_type: str) -> str:
     return f"application/cdmi-{item_type}"
 
 
-def parse_path(path: Any, item_type: Any, add_cdmi_prefix: Any = False) -> Any:
-    if item_type == "container" and path[-1] != "/":
+def parse_path(path: str, item_type: str, add_cdmi_prefix: bool = False) -> str:
+    if item_type == "container" and path and path[-1] != "/":
         parsed_path = f"{path}/"
     else:
         parsed_path = path
 
-    if path[0] != "/":
+    if parsed_path and parsed_path[0] != "/":
         parsed_path = f"/{parsed_path}"
 
     if add_cdmi_prefix:
@@ -41,10 +42,10 @@ def parse_path(path: Any, item_type: Any, add_cdmi_prefix: Any = False) -> Any:
 class CDMIClient:
     def __init__(
         self,
-        provider_ip: Any,
-        auth: Any,
-        cdmi_version: Any = "1.1.1",
-        port: Any = OP_REST_PORT,
+        provider_ip: str,
+        auth: str,
+        cdmi_version: str = "1.1.1",
+        port: int = OP_REST_PORT,
     ) -> None:
         self.ip = provider_ip
         # We use token header to authenticate
@@ -52,7 +53,7 @@ class CDMIClient:
         self.cdmi_version = cdmi_version
         self.port = port
 
-    def create_file(self, path: Any, text: Any = "") -> Any:
+    def create_file(self, path: str, text: str = "") -> requests.Response:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {
@@ -70,7 +71,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def write_to_file(self, path: Any, text: Any, offset: Any = 0) -> Any:
+    def write_to_file(self, path: str, text: str, offset: int = 0) -> requests.Response:
         start = offset
         end = start + len(text) - 1
         item_type = get_item_type(path)
@@ -89,7 +90,9 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def read_from_file(self, path: Any, read_range: Any = None) -> Any:
+    def read_from_file(
+        self, path: str, read_range: Optional[tuple[int, int]] = None
+    ) -> bytes:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         headers = {}
@@ -104,7 +107,7 @@ class CDMIClient:
             default_headers=False,
         ).content
 
-    def read_metadata(self, path: Any, metadata: Any = "") -> Any:
+    def read_metadata(self, path: str, metadata: str = "") -> dict:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
         parsed_path = f"{parsed_path}?metadata:{metadata}"
@@ -118,7 +121,7 @@ class CDMIClient:
             default_headers=False,
         ).json()
 
-    def write_metadata(self, path: Any, metadata: Any) -> Any:
+    def write_metadata(self, path: str, metadata: dict) -> requests.Response:
         item_type = get_item_type(path)
         parsed_path = parse_path(path, item_type, add_cdmi_prefix=True)
 
@@ -137,7 +140,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def move_item(self, src_path: Any, dst_path: Any) -> Any:
+    def move_item(self, src_path: str, dst_path: str) -> requests.Response:
         item_type = get_item_type(src_path)
         parsed_src_path = parse_path(src_path, item_type)
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)
@@ -156,7 +159,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def move_item_by_id(self, src_id: Any, dst_path: Any) -> Any:
+    def move_item_by_id(self, src_id: str, dst_path: str) -> requests.Response:
         item_type = "container"
         parsed_src_path = f"/cdmi/cdmi_objectid/{src_id}"
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)
@@ -175,7 +178,7 @@ class CDMIClient:
             default_headers=False,
         )
 
-    def copy_item(self, src_path: Any, dst_path: Any) -> Any:
+    def copy_item(self, src_path: str, dst_path: str) -> requests.Response:
         item_type = get_item_type(src_path)
         parsed_src_path = parse_path(src_path, item_type)
         parsed_dst_path = parse_path(dst_path, item_type, add_cdmi_prefix=True)

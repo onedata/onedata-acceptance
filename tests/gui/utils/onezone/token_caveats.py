@@ -6,7 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Callable, Iterable, cast
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from selenium.webdriver.common.keys import Keys
 
@@ -26,7 +27,7 @@ class CaveatTag(PageObject):
     name = id = Label(".tag-label")
     icon = WebElement(".tag-icon")
 
-    def is_icon_type(self, i_type: Any) -> Any:
+    def is_icon_type(self, i_type: str) -> bool:
         if i_type == "oneprovider":
             i_type = "provider"
         return i_type in self.icon.get_attribute("class")
@@ -65,88 +66,104 @@ class CaveatField(PageObject):
     path_entries = WebItemsSequence(".pathEntry-collapse", cls=PathEntry)
     object_id_entries = WebItemsSequence(".objectIdEntry-field", cls=ObjectIdEntry)
 
-    def activate(self) -> Any:
+    def activate(self) -> None:
         self.toggle.check()
 
-    def deactivate(self) -> Any:
+    def deactivate(self) -> None:
         self.toggle.uncheck()
 
-    def is_allow(self) -> Any:
+    def is_allow(self) -> bool:
         return self.item_label == "Allow"
 
-    def set_allow(self, popups: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
+    def set_allow(
+        self, popups: Callable[[WebDriver], Any], selenium: SeleniumDrivers, browser_id: str
+    ) -> None:
         if not self.is_allow():
             self.expander()
             popups(selenium[browser_id]).power_select.choose_item("Allow")
 
-    def set_deny(self, popups: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
+    def set_deny(
+        self, popups: Callable[[WebDriver], Any], selenium: SeleniumDrivers, browser_id: str
+    ) -> None:
         if self.is_allow():
             self.expander()
             popups(selenium[browser_id]).power_select.choose_item("Deny")
 
     def set_allowance(
-        self, allow: Any, popups: Any, selenium: SeleniumDrivers, browser_id: Any
-    ) -> Any:
+        self,
+        allow: bool,
+        popups: Callable[[WebDriver], Any],
+        selenium: SeleniumDrivers,
+        browser_id: str,
+    ) -> None:
         if allow:
             self.set_allow(popups, selenium, browser_id)
         else:
             self.set_deny(popups, selenium, browser_id)
 
-    def assert_allowance(self, allow: Any) -> Any:
+    def assert_allowance(self, allow: bool) -> None:
         if allow:
             assert self.is_allow(), "Caveat type should be Allow but is Deny"
         else:
             assert not self.is_allow(), "Caveat type should be Deny but is Allow"
 
-    def assert_num_caveats_equal(self, exp_items: Any) -> Any:
+    def assert_num_caveats_equal(self, exp_items: Iterable[object]) -> None:
         msg = (
             f"Number of expected items {exp_items} does not equal actual "
             f"number of items {[tag.name for tag in self.tags]}"
         )
-        assert len(exp_items) == len(self.tags), msg
+        assert len(list(exp_items)) == len(self.tags), msg
 
     # setters
 
     def set_item_in_inner_input(
-        self, selenium: SeleniumDrivers, browser_id: Any, item: Any
-    ) -> Any:
+        self, selenium: SeleniumDrivers, browser_id: str, item: str
+    ) -> None:
         self.new_item()
         self.inner_input = item
         driver = selenium[browser_id]
         driver.switch_to.active_element.send_keys(Keys.RETURN)
 
     # expiration caveat
-    def set_expiration_caveat(self, expire_caveat: Any, tmp_memory: Any) -> Any:
+    def set_expiration_caveat(
+        self,
+        expire_caveat: dict[str, int],
+        tmp_memory: dict[str, object],
+    ) -> None:
         self.activate()
         min_delta = expire_caveat["after"]
         _time = self.get_time_after_delta(min_delta)
         self.time_input = _time
         tmp_memory["expire_time"] = _time
 
-    def get_time_after_delta(self, delta: Any) -> Any:
+    def get_time_after_delta(self, delta: int) -> str:
         now = datetime.now()
-        delta = timedelta(minutes=delta)
-        then = now + delta
+        delta_td = timedelta(minutes=delta)
+        then = now + delta_td
         return then.strftime("%Y/%m/%d %-H:%M")
 
     # region caveat
     def set_region_caveats(
         self,
         selenium: SeleniumDrivers,
-        browser_id: Any,
-        region_caveat: Any,
-        popups: Any,
-    ) -> Any:
+        browser_id: str,
+        region_caveat: dict[str, Any],
+        popups: Callable[[WebDriver], Any],
+    ) -> None:
         self.activate()
         caveat_allow = region_caveat.get("allow", True)
-        regions = region_caveat.get("region codes")
+        regions = region_caveat.get("region codes", [])
         self.set_allowance(caveat_allow, popups, selenium, browser_id)
         for region in regions:
             self.set_region_in_region_caveat(selenium, browser_id, region, popups)
 
     def set_region_in_region_caveat(
-        self, selenium: SeleniumDrivers, browser_id: Any, region: Any, popups: Any
-    ) -> Any:
+        self,
+        selenium: SeleniumDrivers,
+        browser_id: str,
+        region: str,
+        popups: Callable[[WebDriver], Any],
+    ) -> None:
         self.new_item()
         driver = selenium[browser_id]
         popups(driver).selector_popup.selectors[region]()
@@ -155,29 +172,29 @@ class CaveatField(PageObject):
     def set_country_caveats(
         self,
         selenium: SeleniumDrivers,
-        browser_id: Any,
-        country_caveat: Any,
-        popups: Any,
-    ) -> Any:
+        browser_id: str,
+        country_caveat: dict[str, Any],
+        popups: Callable[[WebDriver], Any],
+    ) -> None:
         self.activate()
         caveat_allow = country_caveat.get("allow", True)
-        countries = country_caveat.get("country codes")
+        countries = country_caveat.get("country codes", [])
         self.set_allowance(caveat_allow, popups, selenium, browser_id)
         for country in countries:
             self.set_item_in_inner_input(selenium, browser_id, country)
 
     # asn caveat
     def set_asn_caveats(
-        self, selenium: SeleniumDrivers, browser_id: Any, asn_list: Any
-    ) -> Any:
+        self, selenium: SeleniumDrivers, browser_id: str, asn_list: Iterable[int]
+    ) -> None:
         self.activate()
         for asn in asn_list:
             self.set_item_in_inner_input(selenium, browser_id, str(asn))
 
     # ip caveat
     def set_ip_caveats(
-        self, selenium: SeleniumDrivers, browser_id: Any, ips: Any
-    ) -> Any:
+        self, selenium: SeleniumDrivers, browser_id: str, ips: Iterable[str]
+    ) -> None:
         self.activate()
         for ip in ips:
             self.set_item_in_inner_input(selenium, browser_id, ip)
@@ -186,20 +203,20 @@ class CaveatField(PageObject):
     def set_consumer_caveats(
         self,
         selenium: SeleniumDrivers,
-        browser_id: Any,
-        popups: Any,
-        consumer_caveats: Any,
+        browser_id: str,
+        popups: Callable[[WebDriver], Any],
+        consumer_caveats: Iterable[dict[str, Any]],
         users: Users,
-        groups: Any,
+        groups: dict[str, str],
         hosts: Hosts,
-        oz_page: Any,
-    ) -> Any:
+        oz_page: Callable[[WebDriver], Any],
+    ) -> None:
         self.activate()
         oz_page(selenium[browser_id])["tokens"].create_token_page.hide_caveats()
         for consumer in consumer_caveats:
-            consumer_type = consumer.get("type")
-            method = consumer.get("by")
-            value = consumer.get("consumer name")
+            consumer_type = cast(str, consumer.get("type"))
+            method = cast(str, consumer.get("by"))
+            value = cast(str, consumer.get("consumer name"))
             if method == "id":
                 if consumer_type == "user":
                     value = users[value].user_id
@@ -219,12 +236,12 @@ class CaveatField(PageObject):
     def set_consumer_in_consumer_caveat(
         self,
         selenium: SeleniumDrivers,
-        browser_id: Any,
-        popups: Any,
-        consumer_type: Any,
-        method: Any,
-        value: Any,
-    ) -> Any:
+        browser_id: str,
+        popups: Callable[[WebDriver], Any],
+        consumer_type: str,
+        method: str,
+        value: str,
+    ) -> None:
         self.new_item()
         driver = selenium[browser_id]
         popup = popups(driver).consumer_caveat_popup

@@ -12,7 +12,7 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import Any
+from typing import Any, Optional
 
 import pytest
 from decorator import decorator  # pylint: disable=import-error
@@ -32,7 +32,7 @@ def log_exception() -> None:
 
 
 def assert_generic(
-    expression: Callable[..., Any], should_fail: bool, *args: Any, **kwargs: Any
+    expression: Callable[..., object], should_fail: bool, *args: object, **kwargs: object
 ) -> None:
     if should_fail:
         assert_false(expression, *args, **kwargs)
@@ -40,17 +40,17 @@ def assert_generic(
         assert_(expression, *args, **kwargs)  # pylint: disable=deprecated-method
 
 
-def assert_(expression: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+def assert_(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
     assert_result = expression(*args, **kwargs)
     assert assert_result
 
 
-def assert_false(expression: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
 
-def get_fun_name(fun: str) -> str | None:
+def get_fun_name(fun: str) -> Optional[str]:
     if "method" in fun:
         return fun.split("method ")[1].split(" ")[0]
     if "function" in fun:
@@ -58,14 +58,14 @@ def get_fun_name(fun: str) -> str | None:
     return None
 
 
-def assert_expected_failure(fun: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs: object) -> None:
     with pytest.raises(OSError):
         fun(*args, **kwargs)
 
 
 def repeat_failed(
     attempts: int = 10,
-    timeout: float | None = None,
+    timeout: Optional[float] = None,
     interval: float = 0.1,
     exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
@@ -85,7 +85,7 @@ def repeat_failed(
     """
 
     @decorator
-    def wrapper(fun: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+    def wrapper(fun: Callable[..., object], *args: object, **kwargs: object) -> object:
         now = time()
         limit, i = (now + timeout, now) if timeout else (attempts, 0)
 

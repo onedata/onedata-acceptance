@@ -8,11 +8,12 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Mapping, cast
 
 import requests
 import urllib3
 import yaml
+import pytest
 from requests.exceptions import ConnectTimeout
 
 # pylint: disable=import-error,no-name-in-module
@@ -35,6 +36,7 @@ from tests.utils.onenv_utils import (
     run_onenv_command,
     service_name_to_alias_mapping,
 )
+from tests.conftest import Hosts, Users, TestConfig
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.user_utils import AdminUser, User
 from tests.utils.utils import repeat_failed
@@ -45,13 +47,13 @@ ENV_READY_TIMEOUT_SECONDS = 300
 
 
 def start_environment(
-    scenario_path: Any,
-    request: Any,
-    hosts: Any,
-    patch_path: Any,
-    users: Any,
-    test_config: Any,
-) -> Any:
+    scenario_path: str,
+    request: pytest.FixtureRequest,
+    hosts: Hosts,
+    patch_path: Optional[str],
+    users: Users,
+    test_config: Optional[TestConfig],
+) -> str | OnenvError:
     attempts = 0
     local = request.config.getoption("--local")
     up_args = parse_up_args(request, test_config)
@@ -101,7 +103,7 @@ def start_environment(
     return "ok"
 
 
-def maybe_setup_helm() -> Any:
+def maybe_setup_helm() -> None:
     is_helm_v2 = False
     try:
         helm_version_proc = sp.run(["helm", "version"], stdout=sp.PIPE, check=False)
@@ -117,7 +119,7 @@ def maybe_setup_helm() -> Any:
         init_helm()
 
 
-def update_etc_hosts() -> Any:
+def update_etc_hosts() -> None:
     """
     The 'onenv hosts' command updates entries in /etc/hosts file present in
     one-env container. This file is a docker volume mounted from host machine.
@@ -141,7 +143,7 @@ def update_etc_hosts() -> Any:
     sp.call(["sudo", "cp", tmp_hosts_path, etc_hosts_path])
 
 
-def configure_os(scenario_path: str, dep_status: Any) -> None:
+def configure_os(scenario_path: str, dep_status: Dict[str, Any]) -> None:
     """
     Function responsible for creating system users and groups in containers for
     Onezone / Oneprovider / Oneclient.
@@ -159,6 +161,9 @@ def configure_os(scenario_path: str, dep_status: Any) -> None:
     if not os_configs:
         return
 
+    if not pods_cfg:
+        return
+
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg["service-type"]
         if service_type in ["onezone", "oneprovider"]:
@@ -174,7 +179,7 @@ def configure_os(scenario_path: str, dep_status: Any) -> None:
                 create_groups_in_pod(pod_name, os_config.get("groups"))
 
 
-def setup_hosts_cfg(hosts: Any, request: Any) -> Any:
+def setup_hosts_cfg(hosts: Hosts, request: pytest.FixtureRequest) -> None:
     pods_cfg = get_pods_config()
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg["service-type"]
@@ -193,29 +198,37 @@ def setup_hosts_cfg(hosts: Any, request: Any) -> Any:
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
-def setup_users(patch_cfg: Any, users: Any, zone_hostname: Any) -> Any:
-    for user_cfg in patch_cfg.get("users"):
+def setup_users(patch_cfg: Dict[str, Any], users: Users, zone_hostname: str) -> None:
+    for user_cfg in patch_cfg.get("users", []):
         user_name = user_cfg.get("name")
         password = user_cfg.get("password")
-        new_user = users[user_name] = User(
+        new_user = User(
             username=user_name, zone_hostname=zone_hostname, password=password
         )
+        users[user_name] = cast(Any, new_user)
         idps = user_cfg.get("idps", {})
         for idp_type in idps:
             new_user.idps.append(idp_type)
             if idp_type == "keycloak":
                 global_cfg = patch_cfg.get("global")
-                keycloak_suffix = global_cfg.get("keycloakInstance", {}).get("idpName")
-                new_user.keycloak_name = f"keycloak-{keycloak_suffix}"
+                if global_cfg:
+                    keycloak_suffix = global_cfg.get("keycloakInstance", {}).get(
+                        "idpName"
+                    )
+                    new_user.keycloak_name = f"keycloak-{keycloak_suffix}"
 
 
-def add_luma_mappings(patch_cfg: Any, users: Any, hosts: Any) -> Any:
+def add_luma_mappings(patch_cfg: Dict[str, Any], users: Users, hosts: Hosts) -> None:
     admin_user = users["admin"]
 
-    spaces = get_all_spaces_details(admin_user, hosts)
-    local_feed_luma_storages = get_local_feed_luma_storages(admin_user, hosts)
+    spaces = get_all_spaces_details(
+        admin_user, cast(Mapping[str, Mapping[str, str]], hosts)
+    )
+    local_feed_luma_storages = get_local_feed_luma_storages(
+        admin_user, cast(Mapping[str, Mapping[str, str]], hosts)
+    )
 
-    for user_cfg in patch_cfg.get("users"):
+    for user_cfg in patch_cfg.get("users", []):
         user_name = user_cfg.get("name")
         new_user = users[user_name]
         add_user_luma_mapping(admin_user, new_user, local_feed_luma_storages)
@@ -223,11 +236,11 @@ def add_luma_mappings(patch_cfg: Any, users: Any, hosts: Any) -> Any:
     add_spaces_luma_mapping(admin_user, local_feed_luma_storages, spaces)
 
 
-def get_deployment_status() -> Any:
+def get_deployment_status() -> Dict[str, Any]:
     return yaml.load(run_onenv_command("status"), yaml.Loader)
 
 
-def check_deployment(deployment_status: Any) -> Any:
+def check_deployment(deployment_status: Dict[str, Any]) -> None:
     env_ready = deployment_status.get("ready")
 
     if not env_ready:
@@ -236,7 +249,7 @@ def check_deployment(deployment_status: Any) -> Any:
         )
 
 
-def parse_patch_args(request: Any, patch_path: Any) -> Any:
+def parse_patch_args(request: pytest.FixtureRequest, patch_path: str) -> List[str]:
     patch_args = []
     local_charts_path = request.config.getoption("--local-charts-path")
 
@@ -247,7 +260,7 @@ def parse_patch_args(request: Any, patch_path: Any) -> Any:
     return patch_args
 
 
-def parse_wait_args(request: Any) -> Any:
+def parse_wait_args(request: pytest.FixtureRequest) -> List[str]:
     wait_args = []
 
     timeout = request.config.getoption("--timeout")
@@ -256,7 +269,7 @@ def parse_wait_args(request: Any) -> Any:
     return wait_args
 
 
-def parse_up_args(request: Any, test_config: Any) -> Any:
+def parse_up_args(request: pytest.FixtureRequest, test_config: Optional[TestConfig]) -> List[str]:
     up_args = []
 
     option_values = [
@@ -297,20 +310,21 @@ def parse_up_args(request: Any, test_config: Any) -> Any:
             (request.config.getoption("--oc-image"), "-ci", "oneclient"),
         ]:
             if not image_value:
+                initial_versions = cast(Mapping[str, Any], test_config).get(
+                    "initialVersions", {}
+                )
+                version_val = initial_versions.get(service_name)
                 up_args.extend(
                     [
                         option,
-                        config_image_spec_to_image(
-                            service_name,
-                            test_config["initialVersions"][service_name],
-                        ),
+                        config_image_spec_to_image(service_name, cast(str, version_val)),
                     ]
                 )
 
     return up_args
 
 
-def config_image_spec_to_image(service: Any, version: Any) -> Any:
+def config_image_spec_to_image(service: str, version: str) -> str:
     if version == "default":
         return resolve_image(service)
     return f"docker.onedata.org/{service}-dev:{version}"
@@ -373,7 +387,7 @@ def create_groups_in_pod(pod_name: str, groups: Dict[str, List[str]]) -> None:
                 run_kubectl_command("exec", command)
 
 
-def get_pods_config() -> Any:
+def get_pods_config() -> Dict[str, Any]:
     pods_json = get_pods_with_kubectl()["items"]
     pods = {}
     for pod in pods_json:

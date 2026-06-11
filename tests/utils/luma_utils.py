@@ -8,14 +8,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 import json
 from collections.abc import Callable, Mapping
-from typing import Any, NamedTuple
+from typing import NamedTuple
+import requests
 
 from tests import PANEL_REST_PORT
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.rest_utils import get_panel_rest_path, http_get, http_post, http_put
 from tests.utils.user_utils import AdminUser, User
 
-HttpMethod = Callable[..., Any]  # http_post or http_put
+HttpMethod = Callable[..., requests.Response]  # http_post or http_put
 
 
 class SpaceDetails(NamedTuple):
