@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 import yaml
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
@@ -42,7 +43,6 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @given(
@@ -51,12 +51,18 @@ from tests.conftest import Hosts, SeleniumDrivers
         "(users? of )?(?P<browser_id_list>.*)"
     )
 )
-def go_to_tab_in_provider(browser_id_list: Any, tab_name: Any, selenium: SeleniumDrivers) -> Any:
+def go_to_tab_in_provider(
+    browser_id_list: Any, tab_name: Any, selenium: SeleniumDrivers
+) -> Any:
     g_click_on_the_given_main_menu_tab(selenium, browser_id_list, tab_name)
 
 
 def navigate_to_tab_in_op_using_gui(
-    selenium: SeleniumDrivers, user: Any, provider: Any, main_menu_tab: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    user: Any,
+    provider: Any,
+    main_menu_tab: Any,
+    hosts: Hosts,
 ) -> Any:
     title = selenium[user].title
 
@@ -164,7 +170,9 @@ def wt_assert_file_chunks(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _assert_file_chunks(selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, desc: Any) -> Any:
+def _assert_file_chunks(
+    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts, desc: Any
+) -> Any:
     desc = yaml.load(desc, yaml.Loader)
     for provider, chunks in desc.items():
         if chunks == "entirely empty":
@@ -178,7 +186,9 @@ def _assert_file_chunks(selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(selenium: SeleniumDrivers, browser_id: Any, name: Any, tmp_memory: Any) -> Any:
+def create_directory(
+    selenium: SeleniumDrivers, browser_id: Any, name: Any, tmp_memory: Any
+) -> Any:
     button = "New directory"
     modal_header = "Create new directory:"
     modal_name = "Create dir"

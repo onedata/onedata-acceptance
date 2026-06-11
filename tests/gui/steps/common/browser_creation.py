@@ -10,16 +10,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import time
 from itertools import cycle
-from typing import Any
+from typing import Any, cast
 
 from pytest_bdd import given
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.chrome.options import Options
 from urllib3.exceptions import HTTPError
 
+from tests.conftest import Capabilities, SeleniumDrivers
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
 from tests.utils.bdd_utils import parsers
-from tests.conftest import Capabilities, SeleniumDrivers
 
 
 @given(parsers.parse("user opened {browser_id_list} window"))
@@ -59,8 +60,9 @@ def create_instances_of_webdriver(
 
             if driver_type.lower() == "chrome":
                 chrome_prefs = {"download.default_directory": download_dir}
-                capabilities["options"].add_experimental_option("prefs", chrome_prefs)
-                capabilities["options"].add_argument(f"--user-data-dir={browser_data}")
+                options = cast(Options, capabilities["options"])
+                options.add_experimental_option("prefs", chrome_prefs)
+                options.add_argument(f"--user-data-dir={browser_data}")
 
             for i in range(DRIVER_CREATION_RETRIES):
                 try:

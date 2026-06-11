@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -62,7 +63,6 @@ from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -122,7 +122,9 @@ def send_support_token_in_oz_using_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(selenium: SeleniumDrivers, user: Any, space_list: Any) -> Any:
+def leave_spaces_in_oz_using_gui(
+    selenium: SeleniumDrivers, user: Any, space_list: Any
+) -> Any:
     where = "spaces"
     option = "Leave"
     confirmation_button = "Leave"
@@ -272,7 +274,9 @@ def request_space_support_using_gui(
     )
 
 
-def join_space_in_oz_using_gui(selenium: SeleniumDrivers, user_list: Any, tmp_memory: Any) -> Any:
+def join_space_in_oz_using_gui(
+    selenium: SeleniumDrivers, user_list: Any, tmp_memory: Any
+) -> Any:
     for user in parse_seq(user_list):
         consume_received_token(selenium, user, tmp_memory)
 
@@ -332,7 +336,11 @@ def assert_user_is_member_of_space_gui(
 
 
 def assert_provider_does_not_support_space_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any, provider_name: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    user: Any,
+    space_name: Any,
+    provider_name: Any,
+    hosts: Hosts,
 ) -> Any:
     where = "spaces"
     option = "Providers"
@@ -344,7 +352,11 @@ def assert_provider_does_not_support_space_in_oz_gui(
 
 
 def assert_space_is_supported_by_provider_in_oz_gui(
-    selenium: SeleniumDrivers, user: Any, space_name: Any, provider_name: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    user: Any,
+    space_name: Any,
+    provider_name: Any,
+    hosts: Hosts,
 ) -> Any:
     where = "Data"
     option = "Providers"
@@ -362,7 +374,9 @@ def assert_space_is_supported_by_provider_in_oz_gui(
         'there is no "{space_name}" space in Onezone used by user of {browser_id}'
     )
 )
-def leave_space_in_onezone(selenium: SeleniumDrivers, browser_id: Any, space_name: Any) -> Any:
+def leave_space_in_onezone(
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
+) -> Any:
     option = "Data"
 
     click_on_option_in_the_sidebar(selenium, browser_id, option)
@@ -379,11 +393,15 @@ def leave_space_in_onezone(selenium: SeleniumDrivers, browser_id: Any, space_nam
         "{user} user does not have access to any space other than defined in next steps"
     )
 )
-def g_leave_user_spaces_in_onezone_using_rest(hosts: Hosts, users: Users, user: Any) -> Any:
+def g_leave_user_spaces_in_onezone_using_rest(
+    hosts: Hosts, users: Users, user: Any
+) -> Any:
     leave_user_spaces_in_onezone_using_rest(hosts, users, user)
 
 
-def leave_user_spaces_in_onezone_using_rest(hosts: Hosts, users: Users, user: Any) -> Any:
+def leave_user_spaces_in_onezone_using_rest(
+    hosts: Hosts, users: Users, user: Any
+) -> Any:
     zone_hostname = hosts["onezone"]["hostname"]
     user_spaces = get_user_spaces(zone_hostname, user, users)
     for space_id in user_spaces:
@@ -517,7 +535,9 @@ def copy_command_from_rest_api_modal(
         " sidebar"
     )
 )
-def open_space_in_spaces_list(selenium: SeleniumDrivers, browser_id: Any, space_name: Any) -> Any:
+def open_space_in_spaces_list(
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     seen_spaces = set()
@@ -550,7 +570,9 @@ def _get_visible_spaces_list(page: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_opened_space(selenium: SeleniumDrivers, browser_id: Any, space_name: Any) -> Any:
+def assert_opened_space(
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
     vis_spaces = _get_visible_spaces_list(page)

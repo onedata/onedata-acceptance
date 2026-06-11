@@ -12,6 +12,7 @@ from typing import Any
 import requests
 
 from tests import ELASTICSEARCH_PORT
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
@@ -23,7 +24,6 @@ from tests.utils.environment_utils import (
 )
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -121,7 +121,9 @@ def wait_until_plugin_upload_finish(selenium: SeleniumDrivers, browser_id: Any) 
 
 
 @wt(parsers.parse("user of {browser_id} sees that GUI plugin version is {version}"))
-def assert_plugin_version(selenium: SeleniumDrivers, browser_id: Any, version: Any) -> Any:
+def assert_plugin_version(
+    selenium: SeleniumDrivers, browser_id: Any, version: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["discovery"].configuration_page.gui_plugin_tab
     assert (

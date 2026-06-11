@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
@@ -19,7 +20,6 @@ from tests.gui.utils.generic import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -29,7 +29,9 @@ from tests.conftest import SeleniumDrivers
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_automation_button_in_sidebar(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_create_automation_button_in_sidebar(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id])["automation"].create_automation()
 
 
@@ -56,7 +58,9 @@ def input_name_into_input_box_on_main_automation_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_name_input_on_main_automation_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def confirm_name_input_on_main_automation_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id])["automation"].input_box.confirm()
 
 
@@ -129,7 +133,11 @@ def assert_inventory_exists(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def go_to_inventory_subpage(
-    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, subpage: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    inventory: Any,
+    subpage: Any,
+    tmp_memory: Any,
 ) -> Any:
     try:
         page = tmp_memory[browser_id]["oz_page"]
@@ -147,7 +155,9 @@ def go_to_inventory_subpage(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_text_in_inventory_page(selenium: SeleniumDrivers, browser_ids: Any, text: Any) -> Any:
+def assert_text_in_inventory_page(
+    selenium: SeleniumDrivers, browser_ids: Any, text: Any
+) -> Any:
     for browser_id in parse_seq(browser_ids):
         err_msg = OZLoggedIn(selenium[browser_id])["automation"].privileges_err_msg
 
@@ -162,7 +172,9 @@ def assert_text_in_inventory_page(selenium: SeleniumDrivers, browser_ids: Any, t
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_workflow_as_json(selenium: SeleniumDrivers, browser_id: Any, file_name: Any) -> Any:
+def upload_workflow_as_json(
+    selenium: SeleniumDrivers, browser_id: Any, file_name: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["automation"].upload_workflow(upload_file_path(file_name))
 
@@ -220,7 +232,9 @@ def assert_workflow_exists(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lambda_exists(selenium: SeleniumDrivers, browser_id: Any, lambda_name: Any) -> Any:
+def assert_lambda_exists(
+    selenium: SeleniumDrivers, browser_id: Any, lambda_name: Any
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["automation"]
 
     assert (
@@ -235,7 +249,9 @@ def assert_lambda_exists(selenium: SeleniumDrivers, browser_id: Any, lambda_name
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_lambdas(selenium: SeleniumDrivers, browser_id: Any, number: int) -> Any:
+def assert_number_of_lambdas(
+    selenium: SeleniumDrivers, browser_id: Any, number: int
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["automation"]
     lambdas_number = len(page.lambdas_page.elements_list)
     err_msg = f"number of lambdas is {lambdas_number} instead of {number}"

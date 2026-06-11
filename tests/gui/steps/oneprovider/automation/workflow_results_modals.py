@@ -13,6 +13,7 @@ from typing import Any
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     get_last_item_number_in_table,
@@ -28,7 +29,6 @@ from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse("user of {browser_id} sees that chart with processing stats exist"))
@@ -128,7 +128,11 @@ def assert_no_data_message_processing_chart(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_proceeded_files(
-    browser_id: Any, selenium: SeleniumDrivers, option: Any, number: Any, compare_option: Any
+    browser_id: Any,
+    selenium: SeleniumDrivers,
+    option: Any,
+    number: Any,
+    compare_option: Any,
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).task_time_series
@@ -188,7 +192,9 @@ def get_audit_log_json_and_write_to_file(
 
 @wt(parsers.parse('user of {browser_id} opens "{store_name}" store details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def open_store_details_modal(selenium: SeleniumDrivers, browser_id: Any, store_name: Any) -> Any:
+def open_store_details_modal(
+    selenium: SeleniumDrivers, browser_id: Any, store_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()

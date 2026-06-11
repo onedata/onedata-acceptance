@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
@@ -32,7 +33,6 @@ from tests.gui.steps.oneprovider.qos import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def _add_qos_requirement_in_modal(

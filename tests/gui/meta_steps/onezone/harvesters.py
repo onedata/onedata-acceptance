@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -55,12 +56,13 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space from harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_space_from_harvester(selenium: SeleniumDrivers, browser_id: Any, space_name: Any) -> Any:
+def remove_space_from_harvester(
+    selenium: SeleniumDrivers, browser_id: Any, space_name: Any
+) -> Any:
     button = "Remove"
     modal = "Remove space from harvester"
 
@@ -99,7 +101,9 @@ def remove_space_from_given_harvester(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_harvester(selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any) -> Any:
+def remove_harvester(
+    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any
+) -> Any:
     where = "Discovery"
     list_type = "harvesters"
     option = "Remove"
@@ -344,7 +348,10 @@ def change_privilege_config_in_harvester(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_harvester(
-    selenium: SeleniumDrivers, browser_id: Any, harvester_name: Any, harvester_renamed: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    harvester_name: Any,
+    harvester_renamed: Any,
 ) -> Any:
     option = "harvesters"
     menu_option = "Rename"

@@ -14,6 +14,7 @@ from typing import Any
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
@@ -25,7 +26,6 @@ from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
@@ -154,7 +154,11 @@ def assert_item_in_file_browser_is_of_size(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_size_to_be_displayed_in_data_row(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_name: Any, size: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    item_name: Any,
+    size: Any,
 ) -> Any:
     # refresh site after enabling size statistics to see displayed size
     # in data row
@@ -414,7 +418,9 @@ def assert_empty_dir_msg_in_file_browser(browser_id: Any, tmp_memory: Any) -> An
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_create_new_directory(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def confirm_create_new_directory(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -429,7 +435,9 @@ def confirm_create_new_directory(selenium: SeleniumDrivers, browser_id: Any, opt
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_directory(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def confirm_rename_directory(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -702,7 +710,9 @@ def write_to_jump_input(browser_id: Any, tmp_memory: Any, prefix: Any) -> Any:
         "{option} because of insufficient privileges"
     )
 )
-def assert_message_at_alert_modal(browser_id: Any, option: Any, selenium: SeleniumDrivers) -> Any:
+def assert_message_at_alert_modal(
+    browser_id: Any, option: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).error
     messages_dict = {

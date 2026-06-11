@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import replicate_files_to_provider
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
@@ -31,7 +32,6 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(

@@ -10,6 +10,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.steps.onezone.marketplace import (
     assert_element_in_space_marketplace,
     assert_elements_list_in_space_marketplace,
@@ -20,13 +21,14 @@ from tests.gui.steps.onezone.space_configuration import (
     set_space_data_in_configuration_tab,
 )
 from tests.utils.bdd_utils import parsers, wt
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
     parsers.parse("user of {browser_id} sets space configuration as follows:\n{config}")
 )
-def configure_space_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
+def configure_space_manually(
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
+) -> Any:
     """Adjust space configuration according to given config.
 
     Config format given in yaml is as follows:

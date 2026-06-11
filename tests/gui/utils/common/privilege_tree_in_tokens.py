@@ -10,10 +10,10 @@ from typing import Any
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-from tests.conftest import SeleniumDrivers
     Button,
     Label,
     WebElement,
@@ -124,7 +124,9 @@ class PrivilegeTree(PageObject):
     def get_privilege_row(self, name: Any) -> Any:
         return self.privileges[name]
 
-    def assert_privileges(self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any) -> Any:
+    def assert_privileges(
+        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any
+    ) -> Any:
         """Assert privileges according to given config.
         For this method only dict should be passed!
 
@@ -172,7 +174,11 @@ class PrivilegeTree(PageObject):
         privilege_row.assert_privilege_granted(granted)
 
     def set_privileges(
-        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any, with_scroll: Any = False
+        self,
+        selenium: SeleniumDrivers,
+        browser_id: Any,
+        privileges: Any,
+        with_scroll: Any = False,
     ) -> Any:
         """Set privileges according to given config.
         For this method only dict should be passed!
@@ -197,7 +203,11 @@ class PrivilegeTree(PageObject):
         self._set_privileges(selenium, browser_id, privileges, with_scroll)
 
     def _set_privileges(
-        self, selenium: SeleniumDrivers, browser_id: Any, privileges: Any, with_scroll: Any = False
+        self,
+        selenium: SeleniumDrivers,
+        browser_id: Any,
+        privileges: Any,
+        with_scroll: Any = False,
     ) -> Any:
         for privilege_name, privilege_group in privileges.items():
             self._set_privilege_group(

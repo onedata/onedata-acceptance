@@ -11,6 +11,7 @@ from typing import Any
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
@@ -22,7 +23,6 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 # this step is created to avoid using repeat_failed in metasteps
@@ -226,7 +226,9 @@ def change_tab_in_automation_subpage(
 
 @wt(parsers.re("user of (?P<browser_id>.*) clicks on first executed workflow"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_first_executed_workflow_record(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def expand_first_executed_workflow_record(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Ended")
     page.workflow_executions_list[0].click()
@@ -239,7 +241,9 @@ def expand_first_executed_workflow_record(selenium: SeleniumDrivers, browser_id:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_workflow_menu(selenium: SeleniumDrivers, browser_id: Any, workflow: Any) -> Any:
+def click_on_workflow_menu(
+    selenium: SeleniumDrivers, browser_id: Any, workflow: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].menu_button()
 
@@ -250,7 +254,9 @@ def click_on_workflow_menu(selenium: SeleniumDrivers, browser_id: Any, workflow:
         "on workflow executions list"
     )
 )
-def click_and_enter_workflow(selenium: SeleniumDrivers, browser_id: Any, workflow: Any) -> Any:
+def click_and_enter_workflow(
+    selenium: SeleniumDrivers, browser_id: Any, workflow: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     page.workflow_executions_list[workflow].click()
 
@@ -315,7 +321,9 @@ def click_option_for_lane(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_status_bar(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
+def click_button_on_status_bar(
+    selenium: SeleniumDrivers, browser_id: Any, button: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     time.sleep(1)
     getattr(page.workflow_visualiser, transform(button))()

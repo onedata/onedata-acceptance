@@ -12,6 +12,7 @@ from typing import Any
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -38,7 +39,6 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def open_initial_modal(data_type: Any, driver: Any) -> Any:
@@ -211,7 +211,9 @@ def wait_for_workflows_in_automation_subpage_extended_time(
     _wait_for_workflows_in_automation_subpage(selenium, browser_id, option)
 
 
-def wait_for_workflow_execution_in_atm_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wait_for_workflow_execution_in_atm_subpage(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "start")
     wait_for_workflows_in_automation_subpage(selenium, browser_id, "finish")
     assert_no_suspended_workflows_in_atm_subpage(selenium, browser_id)
@@ -231,7 +233,9 @@ def _wait_for_workflows_in_automation_subpage(
     assert len(page.workflow_executions_list) == 0, err
 
 
-def assert_no_suspended_workflows_in_atm_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_no_suspended_workflows_in_atm_subpage(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     change_tab_in_automation_subpage(selenium, browser_id, "Suspended")
     err_msg = "Workflow did not finished successfully and it is in suspended state."

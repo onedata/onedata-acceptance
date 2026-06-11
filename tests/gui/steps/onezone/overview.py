@@ -10,13 +10,13 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -46,7 +46,9 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(
 
 @wt(parsers.parse("user of {browser_id} clicks on cancel button on overview page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_cancel_rename_button_on_overview_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_cancel_rename_button_on_overview_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].overview_page.info_tile.edit_name_box.cancel()
 
@@ -57,7 +59,9 @@ def click_cancel_rename_button_on_overview_page(selenium: SeleniumDrivers, brows
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_the_space(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def confirm_rename_the_space(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:

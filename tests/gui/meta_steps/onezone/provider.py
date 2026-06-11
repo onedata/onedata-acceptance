@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.docker import wt_assert_file_in_path_with_content
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -30,7 +31,6 @@ from tests.gui.steps.onezone.providers import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import parsers, wt
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(

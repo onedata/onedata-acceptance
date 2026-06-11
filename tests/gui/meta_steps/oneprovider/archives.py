@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
@@ -59,7 +60,6 @@ from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 OPTION_IN_SPACE = "Datasets, Archives"
 DATASET_BROWSER = "dataset browser"
@@ -521,7 +521,11 @@ def assert_archive_callback_in_op_gui(
 
 
 def recall_archive_for_archive_in_op_gui(
-    browser_id: Any, description: Any, tmp_memory: Any, selenium: SeleniumDrivers, name: Any
+    browser_id: Any,
+    description: Any,
+    tmp_memory: Any,
+    selenium: SeleniumDrivers,
+    name: Any,
 ) -> Any:
     option_in_menu = "Recall to..."
     modal_name = "Recall archive"
@@ -539,7 +543,11 @@ def recall_archive_for_archive_in_op_gui(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recalled_archive_details_in_op_gui(
-    browser_id: Any, item_name: Any, tmp_memory: Any, data: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    data: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     status_type = "recalled"
     click_on_status_tag_for_file_in_file_browser(
@@ -592,7 +600,9 @@ def recalled_archive_details_in_op_gui(
         "as follow:\n{config}"
     )
 )
-def check_size_stats_for_archive(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
+def check_size_stats_for_archive(
+    selenium: SeleniumDrivers, browser_id: Any, config: Any
+) -> Any:
     """Check size stats in directory details according to given config.
 
     Config format given in yaml is as follows:

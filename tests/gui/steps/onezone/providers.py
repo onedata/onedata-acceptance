@@ -13,6 +13,7 @@ from typing import Any
 import requests
 
 from tests import OP_REST_PORT
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
@@ -20,7 +21,6 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
 TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
@@ -140,7 +140,11 @@ def _click_on_btn_in_provider_popup(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_btn_in_provider_popup(
-    selenium: SeleniumDrivers, browser_id_list: Any, btn: Any, provider_list: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id_list: Any,
+    btn: Any,
+    provider_list: Any,
+    hosts: Hosts,
 ) -> Any:
     browser_ids = parse_seq(browser_id_list)
     providers = parse_seq(provider_list)
@@ -228,7 +232,9 @@ def assert_no_provider_popup_next_to_provider_circle(
         r"on Onezone world map"
     )
 )
-def assert_no_provider_popup_on_world_map(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_no_provider_popup_on_world_map(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     try:
         Popups(driver).provider_map_popover
@@ -247,7 +253,9 @@ def assert_no_provider_popup_on_world_map(selenium: SeleniumDrivers, browser_id:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_provider_circle(selenium: SeleniumDrivers, browser_id: Any, ordinal: Any) -> Any:
+def click_on_provider_circle(
+    selenium: SeleniumDrivers, browser_id: Any, ordinal: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["world map"].providers[int(ordinal[:-2]) - 1].click()
 
@@ -377,7 +385,9 @@ def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_list_of_providers_is_empty(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_list_of_providers_is_empty(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     count = OZLoggedIn(driver)["go to your files"].providers.count()
     assert count == 0, f"Providers count is {count} instead of expected 0"
@@ -618,7 +628,9 @@ def wait_until_provider_goes_online_by_rest(
     )
 
 
-def _start_and_wait_for_providers(hosts: Hosts, provider_list: Any, users: Users) -> Any:
+def _start_and_wait_for_providers(
+    hosts: Hosts, provider_list: Any, users: Users
+) -> Any:
     start_providers(hosts, provider_list)
     for provider in parse_seq(provider_list):
         wait_until_provider_goes_online_by_rest(hosts, provider, users)

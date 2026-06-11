@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
@@ -15,7 +16,6 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -26,7 +26,11 @@ from tests.conftest import SeleniumDrivers
     )
 )
 def wt_create_xattr_columns_in_columns_menu_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, which_browser: Any, tmp_memory: Any, key_name: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    which_browser: Any,
+    tmp_memory: Any,
+    key_name: Any,
 ) -> Any:
     create_xattr_columns_in_columns_menu_in_browser(
         selenium, browser_id, which_browser, tmp_memory, key_name
@@ -250,7 +254,11 @@ def create_json_column_in_columns_menu(
     )
 )
 def open_metadata_tab_using_tag(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_name: Any, modal_name: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    item_name: Any,
+    modal_name: Any,
 ) -> Any:
     tab_name = "Metadata"
     click_on_status_tag_for_file_in_file_browser(

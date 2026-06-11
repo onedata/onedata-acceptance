@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping
-from typing import Any, Protocol
+from typing import Protocol
 
 import yaml
 

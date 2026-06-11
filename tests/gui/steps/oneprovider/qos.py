@@ -12,6 +12,7 @@ from pytest_bdd import parsers
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
@@ -21,7 +22,6 @@ from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 # Character used to separate provider name from storage name in QoS expressions editor.
 # Eg. "storage is my_posix @provider-krakow"
@@ -58,7 +58,9 @@ def assert_all_qualities_of_service_are_fulfilled(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_option_qos(selenium: SeleniumDrivers, browser_id: Any, option_name: Any) -> Any:
+def select_option_qos(
+    selenium: SeleniumDrivers, browser_id: Any, option_name: Any
+) -> Any:
     driver = selenium[browser_id]
 
     modal_qos = Modals(driver).details_modal.qos
@@ -103,7 +105,9 @@ def assert_audit_log_logs_for_each_file_in_list(
         ' and can see following information: "{info}"'
     )
 )
-def assert_no_logs_in_qos_audit_log(selenium: SeleniumDrivers, browser_id: Any, info: Any) -> Any:
+def assert_no_logs_in_qos_audit_log(
+    selenium: SeleniumDrivers, browser_id: Any, info: Any
+) -> Any:
     driver = selenium[browser_id]
     modal_qos = Modals(driver).details_modal.qos
     audit_log = modal_qos.audit_log_list
@@ -122,7 +126,9 @@ def assert_no_logs_in_qos_audit_log(selenium: SeleniumDrivers, browser_id: Any, 
         " are ordered from newest to oldest"
     )
 )
-def assert_qos_audit_log_entries_times_ordered(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_qos_audit_log_entries_times_ordered(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     modal_qos = Modals(driver).details_modal.qos
     entries = modal_qos.audit_log_list.entries
@@ -215,7 +221,11 @@ def process_expression(expression: Any, hosts: Hosts, users: Users) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_expression_in_qos_panel(
-    selenium: SeleniumDrivers, browser_id: Any, expression: Any, hosts: Hosts, users: Users
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    expression: Any,
+    hosts: Hosts,
+    users: Users,
 ) -> Any:
     driver = selenium[browser_id]
     requirements = Modals(driver).details_modal.qos.requirements
@@ -266,7 +276,11 @@ def process_whole_nested_expression(expression: Any, hosts: Hosts, users: Users)
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_nested_expression_in_qos_panel(
-    selenium: SeleniumDrivers, browser_id: Any, expression: Any, hosts: Hosts, users: Users
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    expression: Any,
+    hosts: Hosts,
+    users: Users,
 ) -> Any:
     driver = selenium[browser_id]
     requirements = Modals(driver).details_modal.qos.requirements
@@ -327,7 +341,9 @@ def click_add_query_block(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(selenium: SeleniumDrivers, browser_id: Any, number: Any) -> Any:
+def start_query_block_no(
+    selenium: SeleniumDrivers, browser_id: Any, number: Any
+) -> Any:
     driver = selenium[browser_id]
     no = int(number.split()[0])
     modal = Modals(driver).details_modal.qos.query_builder
@@ -440,7 +456,9 @@ def click_add_in_add_cond_popup(selenium: SeleniumDrivers, browser_id: Any) -> A
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_num_of_matching_storages(selenium: SeleniumDrivers, browser_id: Any, number: Any) -> Any:
+def assert_num_of_matching_storages(
+    selenium: SeleniumDrivers, browser_id: Any, number: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.qos
     if number == "no":
@@ -506,7 +524,9 @@ def choose_operator_in_add_cond_popup(
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in QoS panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_label_in_qos_modal(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
+def assert_error_label_in_qos_modal(
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
+) -> Any:
     driver = selenium[browser_id]
 
     assert (
@@ -536,7 +556,11 @@ def assert_button_disabled_in_qos_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_status_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, status: Any, item_name: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    status: Any,
+    item_name: Any,
+    which_browser: Any,
 ) -> Any:
 
     driver = selenium[browser_id]

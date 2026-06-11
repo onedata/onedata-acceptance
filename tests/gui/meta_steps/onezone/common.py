@@ -9,6 +9,7 @@ from typing import Any
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 
+from tests.conftest import Capabilities, Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import login_using_basic_auth
@@ -28,7 +29,6 @@ from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Capabilities, Hosts, SeleniumDrivers, Users
 
 
 @given(
@@ -245,7 +245,9 @@ def logout_from_onezone_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 
 @wt(parsers.parse("user of {browser_id} logs out from Onezone Emergency panel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout_from_onezone_emergency_panel(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def logout_from_onezone_emergency_panel(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     button = OZLoggedIn(driver)["profile"].logout.web_elem
     ActionChains(driver).move_to_element(button).click(button).perform()
@@ -254,7 +256,11 @@ def logout_from_onezone_emergency_panel(selenium: SeleniumDrivers, browser_id: A
 @wt(parsers.parse("user of {browser_id} changes {username} username to {new_username}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_username(
-    selenium: SeleniumDrivers, browser_id: Any, username: Any, new_username: Any, users: Users
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    username: Any,
+    new_username: Any,
+    users: Users,
 ) -> Any:
     driver = selenium[browser_id]
     profile = OZLoggedIn(driver)["profile"]
@@ -269,7 +275,11 @@ def change_username(
 @wt(parsers.parse("user of {browser_id} changes {username} password to {new_password}"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_password(
-    selenium: SeleniumDrivers, browser_id: Any, new_password: Any, username: Any, users: Users
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    new_password: Any,
+    username: Any,
+    users: Users,
 ) -> Any:
     driver = selenium[browser_id]
     cur_passwd = users[username].password

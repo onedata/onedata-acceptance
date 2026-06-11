@@ -11,6 +11,7 @@ from typing import Any
 
 from selenium.common.exceptions import TimeoutException
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -40,7 +41,6 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -94,7 +94,12 @@ def join_to_cluster(
     )
 )
 def change_privilege_config_in_cluster(
-    selenium: SeleniumDrivers, browser_id: Any, where: Any, user_name: Any, hosts: Hosts, config: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    where: Any,
+    user_name: Any,
+    hosts: Hosts,
+    config: Any,
 ) -> Any:
     member_type = "user"
     list_type = "users"
@@ -263,7 +268,9 @@ def set_gui_settings(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium: SeleniumDrivers, browser_id: Any, kind_of_agreement: Any) -> Any:
+def insert_setting_link(
+    selenium: SeleniumDrivers, browser_id: Any, kind_of_agreement: Any
+) -> Any:
     link = "insert " + kind_of_agreement + " link"
     button = "save cookie consent notification"
     click_button_in_gui_settings_page(selenium, browser_id, link)

@@ -11,6 +11,7 @@ from typing import Any
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
@@ -20,7 +21,6 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -28,7 +28,9 @@ def get_status_from_workflow_visualizer(page: Any) -> Any:
     return page.workflow_visualiser.status
 
 
-def get_parallel_box(selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, lane: Any) -> Any:
+def get_parallel_box(
+    selenium: SeleniumDrivers, browser_id: Any, ordinal: Any, lane: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     number = from_ordinal_number_to_int(ordinal) - 1
     return search_for_lane_status(selenium[browser_id], page, lane, number)
@@ -124,7 +126,11 @@ def get_status(page: Any, option: Any, name: Any) -> Any:
 )
 @repeat_failed(interval=1, timeout=120)
 def await_for_lane_or_workflow_status(
-    selenium: SeleniumDrivers, browser_id: Any, expected_status: Any, name: Any, option: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    expected_status: Any,
+    name: Any,
+    option: Any,
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     actual_status = get_status(page, option, name)
@@ -169,7 +175,9 @@ def assert_status(name: Any, actual_status: Any, expected_status: Any) -> Any:
     interval=1,
     timeout=360,
 )
-def wait_for_workflow_to_be_stopped(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def wait_for_workflow_to_be_stopped(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     status = page.workflow_visualiser.status
     assert status != "Stopping", f"workflow is not in {option} state"

@@ -14,6 +14,7 @@ from typing import Any
 import yaml
 from selenium.common.exceptions import ElementNotInteractableException
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
@@ -37,7 +38,6 @@ from tests.gui.utils.generic import transform, upload_lambda_path
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 ALL_LAMBDA_NAMES = []
 
@@ -47,7 +47,9 @@ ALL_LAMBDA_NAMES = []
         "user of {browser_id} creates lambda with following configuration:\n{config}"
     )
 )
-def create_lambda_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
+def create_lambda_manually(
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
+) -> Any:
     """Create lambda according to given config.
 
     Config format given in yaml is as follows:
@@ -84,7 +86,9 @@ def create_lambda_manually(browser_id: Any, config: Any, selenium: SeleniumDrive
     _create_lambda_manually(browser_id, config, selenium)
 
 
-def _create_lambda_manually(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
+def _create_lambda_manually(
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
+) -> Any:
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -193,7 +197,11 @@ def create_lambda_using_gui(
     )
 )
 def change_parameter_type_in_lambda_form(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, param_type: Any, ordinal: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    option: Any,
+    param_type: Any,
+    ordinal: Any,
 ) -> Any:
     driver = selenium[browser_id]
     param_type = param_type.lower()
@@ -322,7 +330,11 @@ def upload_all_lambda_dumps_from_automation_examples(
 
 
 def _upload_lambda_dump_from_automation_examples(
-    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, lambda_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    inventory: Any,
+    lambda_name: Any,
+    tmp_memory: Any,
 ) -> Any:
     subpage = "lambdas"
     modal = "Upload workflow"

@@ -8,6 +8,7 @@ from typing import Any
 
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
@@ -56,7 +57,6 @@ from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers, Users
 
 
 def open_permission_modal(

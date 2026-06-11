@@ -9,13 +9,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
 from tests.gui.utils import Homepage, Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 # The docs timeout needs to be higher than the standard WAIT_FRONTEND,
 # because opening the docs page is a resource-consuming operation.
@@ -160,7 +160,9 @@ def assert_user_sees_name_in_header_in_docs_subpage(
 
 
 @repeat_failed(timeout=DEFAULT_DOCS_TIMEOUT)
-def assert_docs_title_contains(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
+def assert_docs_title_contains(
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
+) -> Any:
     assert_title_contains(selenium, browser_id, text)
 
 

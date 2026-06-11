@@ -12,9 +12,9 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.conftest import Hosts
 
 PROVIDER_CONTAINER_NAME = "oneprovider-1"
 MOUNT_POINT = "/volumes/posix"
@@ -250,7 +250,12 @@ def wt_cp_files_to_dir_in_storage_mount_point(
     )
 )
 def wt_cp_files_to_space_root_dir(
-    browser_id: Any, src_path: Any, space: Any, tmpdir: Any, tmp_memory: Any, hosts: Hosts
+    browser_id: Any,
+    src_path: Any,
+    space: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    hosts: Hosts,
 ) -> Any:
     _docker_cp(
         tmpdir,
@@ -288,7 +293,9 @@ def wt_cp_files_to_dst_path_in_space(
 @wt(
     parsers.parse('user of {browser_id} copies "{space}" space directory to {dst_path}')
 )
-def wt_cp_space_to_dst_path(dst_path: Any, space: Any, hosts: Hosts, spaces: Any) -> Any:
+def wt_cp_space_to_dst_path(
+    dst_path: Any, space: Any, hosts: Hosts, spaces: Any
+) -> Any:
     cmd = [
         "docker",
         "exec",

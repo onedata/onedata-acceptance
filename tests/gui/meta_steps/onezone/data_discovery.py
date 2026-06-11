@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     assert_data_discovery_page,
@@ -27,7 +28,6 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -53,7 +53,9 @@ def assert_data_discovery_files(
     assert_files(selenium, browser_id, config, spaces)
 
 
-def assert_files(selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any) -> Any:
+def assert_files(
+    selenium: SeleniumDrivers, browser_id: Any, config: Any, spaces: Any
+) -> Any:
     expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     _assert_elem_num_equals(expected_data, data_dict)
@@ -157,7 +159,9 @@ def assert_not_files_properties(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def see_files_with_order(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
+def see_files_with_order(
+    selenium: SeleniumDrivers, browser_id: Any, config: Any
+) -> Any:
     files_list = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
     assert len(files_list) == len(data_dict)
@@ -192,7 +196,9 @@ def open_data_discovery_of_harvester(
         'user of {browser_id} clicks on "Go to source file..." for "{filename}"'
     )
 )
-def go_to_source_of_file(selenium: SeleniumDrivers, browser_id: Any, filename: Any) -> Any:
+def go_to_source_of_file(
+    selenium: SeleniumDrivers, browser_id: Any, filename: Any
+) -> Any:
     data_dict = _unpack_files_data(selenium, browser_id)
     data_dict[filename].source_button()
 
@@ -214,7 +220,9 @@ def assert_number_of_files_on_data_disc(
         "filter on data discovery page:\n{config}"
     )
 )
-def choose_properties_to_filter(selenium: SeleniumDrivers, browser_id: Any, config: Any) -> Any:
+def choose_properties_to_filter(
+    selenium: SeleniumDrivers, browser_id: Any, config: Any
+) -> Any:
     data = yaml.load(config, yaml.Loader)
     _parse_data(data, selenium, browser_id)
 

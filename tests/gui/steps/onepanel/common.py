@@ -8,13 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -85,7 +85,11 @@ def g_click_on_subitem_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(
-    selenium: SeleniumDrivers, browser_id_list: Any, sidebar: Any, sub_item: Any, record: Any
+    selenium: SeleniumDrivers,
+    browser_id_list: Any,
+    sidebar: Any,
+    sub_item: Any,
+    record: Any,
 ) -> Any:
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
@@ -138,7 +142,12 @@ def click_open_in_onezone(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_working_in_clusters_sidebar(
-    selenium: SeleniumDrivers, browser_id: Any, age: Any, record: Any, hosts: Hosts, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    age: Any,
+    record: Any,
+    hosts: Hosts,
+    tmp_memory: Any,
 ) -> Any:
     sidebar = "CLUSTERS"
     nav = getattr(Onepanel(selenium[browser_id]).sidebar, transform(sidebar))
@@ -224,7 +233,11 @@ def assert_toggle_checked_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_label_content_in_onepanel_view(
-    selenium: SeleniumDrivers, browser_id: Any, view_name: Any, label: Any, label_content: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    view_name: Any,
+    label: Any,
+    label_content: Any,
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))
@@ -256,7 +269,12 @@ def assert_label_ends_with_in_onepanel_view(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_label_contains_prov_domain_in_onepanel_view(
-    selenium: SeleniumDrivers, browser_id: Any, host: Any, label: Any, view_name: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    host: Any,
+    label: Any,
+    view_name: Any,
+    hosts: Hosts,
 ) -> Any:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     actual_label = getattr(nav, transform(label))

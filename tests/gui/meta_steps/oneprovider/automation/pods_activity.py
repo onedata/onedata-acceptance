@@ -12,6 +12,7 @@ from typing import Any
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -22,7 +23,6 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
 from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def change_tab_in_function_pods_activity_modal(modal: Any, tab_name: Any) -> Any:
@@ -44,7 +44,9 @@ def change_tab_in_function_pods_activity_modal(modal: Any, tab_name: Any) -> Any
     timeout=180,
     exceptions=(AssertionError, StaleElementReferenceException),
 )
-def wait_for_ongoing_pods_to_be_terminated(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wait_for_ongoing_pods_to_be_terminated(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     switch_to_iframe(selenium, browser_id)
     modal = Modals(selenium[browser_id]).function_pods_activity
     change_tab_in_function_pods_activity_modal(modal, "Current")
@@ -144,7 +146,11 @@ def assert_events_in_pods_monitor(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_containing_lambda_name(
-    selenium: SeleniumDrivers, browser_id: Any, events: Any, option: Any, lambda_name: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    events: Any,
+    option: Any,
+    lambda_name: Any,
 ) -> Any:
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
@@ -276,7 +282,12 @@ def check_number_of_events(
     )
 )
 def assert_number_of_events_in_task(
-    browser_id: Any, task: Any, lane: Any, exp_num: Any, ordinal: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    task: Any,
+    lane: Any,
+    exp_num: Any,
+    ordinal: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     click = "clicks on"
     close = "closes"

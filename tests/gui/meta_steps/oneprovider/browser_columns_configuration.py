@@ -9,13 +9,13 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -28,7 +28,11 @@ from tests.conftest import SeleniumDrivers
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_columns_to_be_visible_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, columns: Any, which_browser: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    columns: Any,
+    which_browser: Any,
+    tmp_memory: Any,
 ) -> Any:
     # This function enables the selected columns and disables the rest.
     option_select = "select"
@@ -98,7 +102,11 @@ def change_visibility_for_browser_columns(
     )
 )
 def remove_column(
-    selenium: SeleniumDrivers, browser_id: Any, name: Any, which_browser: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    name: Any,
+    which_browser: Any,
+    tmp_memory: Any,
 ) -> Any:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]

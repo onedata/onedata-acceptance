@@ -12,12 +12,12 @@ import time
 from datetime import datetime
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -137,7 +137,9 @@ def assert_not_all_files_were_recalled(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_item_greater_than_zero(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_number_of_item_greater_than_zero(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     items_failed = Modals(driver).archive_recall_information.items_failed
     try:
@@ -188,7 +190,9 @@ def wait_for_recalled_status_tag(browser_id: Any, name: Any, tmp_memory: Any) ->
         "which is equal to number of items failed in status tab"
     )
 )
-def assert_number_of_entries_in_archive_recall(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def assert_number_of_entries_in_archive_recall(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     items_failed = modal.items_failed
@@ -329,7 +333,9 @@ def _scroll_and_check_condition(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_recall_information(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def scroll_to_top_in_archive_recall_information(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     modal.scroll_to_top()

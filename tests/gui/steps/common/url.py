@@ -13,11 +13,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 HOST_PATTERN = (
     r"(?:"
@@ -105,7 +105,9 @@ def wt_open_onedata_service_page(
 
 @wt(parsers.re("user of (?P<browser_id>.+) should be redirected to (?P<page>.+) page"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_being_redirected_to_page(page: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_being_redirected_to_page(
+    page: Any, selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     match = re.match(r"https?://.*?(/#)?(/.*)", driver.current_url)
     if match is None:
@@ -128,7 +130,9 @@ def change_relative_url(selenium: SeleniumDrivers, browser_id: Any, path: Any) -
         r"application path to plain (?P<path>.+)"
     )
 )
-def change_application_path(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
+def change_application_path(
+    selenium: SeleniumDrivers, browser_id: Any, path: Any
+) -> Any:
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group("base_url") + "/#" + path)
 
@@ -177,7 +181,9 @@ def open_received_url_with_base_url(
         r"user of (?P<browser_id2>\S+)"
     )
 )
-def open_exactly_received_url(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
+def open_exactly_received_url(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
+) -> Any:
     url = tmp_memory[browser_id]["mailbox"]["url"]
 
     _open_url(selenium, browser_id, url)
@@ -220,13 +226,17 @@ def change_app_path_with_recv_item(
 
 
 @wt(parsers.parse("user of {browser_id} copies url from browser's location bar"))
-def copy_site_url(selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any) -> Any:
+def copy_site_url(
+    selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any
+) -> Any:
     driver = selenium[browser_id]
     clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
 @wt(parsers.parse("user of {browser_id} opens copied URL in browser's location bar"))
-def open_site_url(selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any) -> Any:
+def open_site_url(
+    selenium: SeleniumDrivers, browser_id: Any, displays: Any, clipboard: Any
+) -> Any:
     driver = selenium[browser_id]
     url = clipboard.paste(display=displays[browser_id])
     # We use javascript instead of driver.get because of chromedriver being
@@ -319,7 +329,9 @@ def switch_to_first_tab(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 
 
 @wt(parsers.parse('user of {browser_id} sees image named "{image_name}" in browser'))
-def assert_image_in_browser(browser_id: Any, selenium: SeleniumDrivers, image_name: Any) -> Any:
+def assert_image_in_browser(
+    browser_id: Any, selenium: SeleniumDrivers, image_name: Any
+) -> Any:
     driver = selenium[browser_id]
     url = driver.find_elements(By.TAG_NAME, "img")[0].get_attribute("src")
     err_msg = f"{image_name} is not visible in browser"

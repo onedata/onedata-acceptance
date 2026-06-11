@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
@@ -28,7 +28,9 @@ def _is_group_present_in_sidebar(driver: Any, group_name: Any) -> Any:
     )
 )
 @repeat_failed(timeout=2 * WAIT_BACKEND, interval=1.5)
-def is_present_on_groups_list(selenium: SeleniumDrivers, browser_id: Any, name: Any) -> Any:
+def is_present_on_groups_list(
+    selenium: SeleniumDrivers, browser_id: Any, name: Any
+) -> Any:
     driver = selenium[browser_id]
     if not _is_group_present_in_sidebar(driver, name):
         driver.refresh()

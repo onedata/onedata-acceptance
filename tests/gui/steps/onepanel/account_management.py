@@ -10,17 +10,19 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from time import sleep
 from typing import Any
 
+from tests.conftest import SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OnePage, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers, Users
 
 
 @wt(parsers.parse("user of {browser_id} clicks on logout button in main menu"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_user_account_btn_panel(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_on_user_account_btn_panel(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     sleep(1)
     OnePage(selenium[browser_id]).logout.click()
 
@@ -72,7 +74,9 @@ def wt_type_text_to_in_box_in_chpasswd_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_confirm_btn_in_chpasswd_form(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_confirm_btn_in_chpasswd_form(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     form = OnePage(selenium[browser_id]).content.account_management.chpasswd_form
     form.confirm_password_change()
 

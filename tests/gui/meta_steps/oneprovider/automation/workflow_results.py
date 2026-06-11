@@ -10,6 +10,7 @@ import json
 import time
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -39,7 +40,6 @@ from tests.gui.utils.common.count_checksums import (
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def get_store_details_json(
@@ -188,7 +188,11 @@ def checksums_counted_in_workflow(metadata_modal: Any) -> Any:
     )
 )
 def assert_checksums_are_the_same(
-    browser_id: Any, checksum_list: Any, file_name: Any, tmp_memory: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    checksum_list: Any,
+    file_name: Any,
+    tmp_memory: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
 
     status_type = "Metadata"
@@ -308,7 +312,12 @@ def assert_status_of_task(
     )
 )
 def open_link_and_assert_processing_stats_chart(
-    selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any, ordinal: Any, link: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    lane: Any,
+    task: Any,
+    ordinal: Any,
+    link: Any,
 ) -> Any:
     click = "clicks on"
     click_on_task_in_lane(selenium, browser_id, lane, task, ordinal, click)

@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -43,7 +44,6 @@ from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(

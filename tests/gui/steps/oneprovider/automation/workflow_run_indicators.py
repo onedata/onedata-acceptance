@@ -8,15 +8,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
 from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
-from tests.conftest import SeleniumDrivers
 
 
-def get_run_indicators_for_lane(selenium: SeleniumDrivers, browser_id: Any, lane_name: Any) -> Any:
+def get_run_indicators_for_lane(
+    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any
+) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
@@ -110,7 +112,12 @@ def assert_origin_run_number_for_run_in_lane(
     )
 )
 def assert_status_for_run_in_popup(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, value: Any, lane_name: Any, number: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    option: Any,
+    value: Any,
+    lane_name: Any,
+    number: Any,
 ) -> Any:
     click_on_run_indicator_for_lane(selenium, browser_id, lane_name, number)
     info = Popups(selenium[browser_id]).run_info

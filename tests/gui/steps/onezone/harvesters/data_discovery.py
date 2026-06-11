@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
@@ -15,7 +16,6 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse("user of {browser_id} sees Data Discovery page"))
@@ -126,7 +126,9 @@ def start_another_query_block(selenium: SeleniumDrivers, browser_id: Any) -> Any
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query_block_no(selenium: SeleniumDrivers, browser_id: Any, number: str) -> Any:
+def start_query_block_no(
+    selenium: SeleniumDrivers, browser_id: Any, number: str
+) -> Any:
     driver = selenium[browser_id]
     no = int(number.split()[0])
     DataDiscovery(driver).query_builder.another_block_buttons[no - 1].click()
@@ -198,7 +200,9 @@ def choose_comparator_in_query_builder(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, value: str) -> Any:
+def write_value_in_query_builder(
+    selenium: SeleniumDrivers, browser_id: Any, value: str
+) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.value = value
@@ -211,7 +215,9 @@ def write_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, val
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, value: str) -> Any:
+def choose_value_in_query_builder(
+    selenium: SeleniumDrivers, browser_id: Any, value: str
+) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.choose_value(value)
@@ -219,7 +225,9 @@ def choose_value_in_query_builder(selenium: SeleniumDrivers, browser_id: Any, va
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_button_in_query_builder(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_add_button_in_query_builder(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     query_builder_popup = Popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.add_button()

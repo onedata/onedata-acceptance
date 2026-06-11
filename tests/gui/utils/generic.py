@@ -18,9 +18,9 @@ from typing import Any, TypeVar, overload
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import gui
-from tests.conftest import SeleniumDrivers
 
 T = TypeVar("T")
 
@@ -47,7 +47,7 @@ def parse_url(url: str) -> re.Match[str]:
     return match
 
 
-def go_to_relative_url(selenium: SeleniumDrivers, relative_url: str) -> None:
+def go_to_relative_url(selenium: WebDriver, relative_url: str) -> None:
     match = parse_url(selenium.current_url)
     new_url = match.group("base_url") + relative_url
     selenium.get(new_url)

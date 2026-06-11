@@ -10,13 +10,13 @@ import json
 import time
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -24,7 +24,9 @@ from tests.conftest import SeleniumDrivers
         "user of {browser_id} sees that all metadata tabs are marked as empty"
     )
 )
-def assert_all_metadata_tabs_marked_empty(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_all_metadata_tabs_marked_empty(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     tabs = modal.navigation
     for tab in tabs:
@@ -48,7 +50,9 @@ def are_nav_tabs_for_metadata_panel_displayed(
 
 @wt(parsers.re("user of (?P<browser_id>.*?) sees that there is no xattrs metadata"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_xattrs_metadata_for_item(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_no_xattrs_metadata_for_item(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     modal = Modals(selenium[browser_id]).details_modal.metadata
     assert (
         len(modal.xattrs.entries) == 0
@@ -229,7 +233,9 @@ def clean_tab_textarea_in_metadata_modal(
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_editor_disabled_label(browser_id: Any, selenium: SeleniumDrivers, text: Any) -> Any:
+def see_editor_disabled_label(
+    browser_id: Any, selenium: SeleniumDrivers, text: Any
+) -> Any:
     driver = selenium[browser_id]
     item_status = Modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f"{item_status} does not match expected {text}"
@@ -243,7 +249,11 @@ def see_editor_disabled_label(browser_id: Any, selenium: SeleniumDrivers, text: 
     )
 )
 def modify_existing_xattr_entry(
-    selenium: SeleniumDrivers, browser_id: Any, entry_elem: str, new_text: str, attr_name: str
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    entry_elem: str,
+    new_text: str,
+    attr_name: str,
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).details_modal.metadata

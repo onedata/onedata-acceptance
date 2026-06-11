@@ -11,6 +11,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -25,7 +26,6 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
 )
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -172,7 +172,9 @@ def _create_task_using_previously_created_lambda(
         ' from (?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane'
     )
 )
-def remove_task_from_lane(selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any) -> Any:
+def remove_task_from_lane(
+    selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any
+) -> Any:
     modal = "Remove task"
     option = "Remove"
 
@@ -192,7 +194,12 @@ def remove_task_from_lane(selenium: SeleniumDrivers, browser_id: Any, lane: Any,
     )
 )
 def modify_task_results(
-    selenium: SeleniumDrivers, browser_id: Any, lane: Any, task: Any, config: Any, option: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    lane: Any,
+    task: Any,
+    config: Any,
+    option: Any,
 ) -> Any:
     conf_param_option = "configuration parameters"
     data = yaml.load(config, yaml.Loader)

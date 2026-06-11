@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
@@ -15,7 +16,6 @@ from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -24,7 +24,9 @@ from tests.conftest import SeleniumDrivers
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_group_button_in_panel(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_create_group_button_in_panel(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id]).get_page_and_click("groups").create_group()
 
 
@@ -38,7 +40,9 @@ def input_name_into_input_box_on_main_groups_page(
 
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_name_input_on_main_groups_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def confirm_name_input_on_main_groups_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id])["groups"].input_box.confirm()
 
 
@@ -109,7 +113,9 @@ def input_new_group_name_into_rename_group_inpux_box(
 
 @wt(parsers.parse("user of {browser_id} clicks on confirmation button to rename group"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_on_confirmation_button_to_rename_group(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id])["groups"].elements_list[""].edit_box.confirm()
 
 
@@ -138,14 +144,18 @@ def go_to_group_subpage(
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_page_appeared(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
+def assert_error_page_appeared(
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["groups"]
     assert page.main_page.error_label == text, f'page with text "{text}" not found'
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) confirms group rename using (?P<option>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_the_group(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def confirm_rename_the_group(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     if option == "enter":
         press_enter_on_active_element(selenium, browser_id)
     else:
@@ -168,7 +178,9 @@ def confirm_add_group(selenium: SeleniumDrivers, browser_id: Any, option: Any) -
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_trigger(selenium: SeleniumDrivers, browser_id: Any, group_name: Any) -> Any:
+def click_on_group_trigger(
+    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
+) -> Any:
     driver = selenium[browser_id]
     (
         OZLoggedIn(driver)["groups"]
@@ -237,7 +249,11 @@ def write_name_group_in_create_new_child_group_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_list_of_children_contains_group(
-    selenium: SeleniumDrivers, browser_id: Any, group_name: Any, relation: Any, option: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    group_name: Any,
+    relation: Any,
+    option: Any,
 ) -> Any:
     relation = "children" if relation == "child" else "parents"
 
@@ -256,7 +272,9 @@ def assert_list_of_children_contains_group(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_show_parent_groups_in_hierarchy_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_show_parent_groups_in_hierarchy_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     (
         OZLoggedIn(selenium[browser_id])[
             "groups"
@@ -266,14 +284,18 @@ def click_show_parent_groups_in_hierarchy_page(selenium: SeleniumDrivers, browse
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_detail_text(selenium: SeleniumDrivers, browser_id: Any, text: Any) -> Any:
+def assert_error_detail_text(
+    selenium: SeleniumDrivers, browser_id: Any, text: Any
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["groups"]
     assert text in page.main_page.error_header, f'page with text "{text}" not found'
 
 
 @wt(parsers.parse('user of {browser_id} sees "{group_name}" group members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_user_sees_group_page(selenium: SeleniumDrivers, browser_id: Any, group_name: Any) -> Any:
+def assert_user_sees_group_page(
+    selenium: SeleniumDrivers, browser_id: Any, group_name: Any
+) -> Any:
     driver = selenium[browser_id]
     group_name_on_page = OZLoggedIn(driver)["groups"].selected_group_name
     err_msg = f"expected group name {group_name}, found {group_name_on_page}"
@@ -287,7 +309,9 @@ def assert_user_sees_group_page(selenium: SeleniumDrivers, browser_id: Any, grou
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
-def assert_group_in_groups_page(browser_id: Any, selenium: SeleniumDrivers, group_name: Any) -> Any:
+def assert_group_in_groups_page(
+    browser_id: Any, selenium: SeleniumDrivers, group_name: Any
+) -> Any:
     driver = selenium[browser_id]
     assert (
         group_name in OZLoggedIn(driver)["groups"].elements_list

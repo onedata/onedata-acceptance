@@ -9,6 +9,7 @@ from datetime import datetime
 from time import sleep
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import check_modal_name
 from tests.gui.steps.oneprovider.browser import (
@@ -19,7 +20,6 @@ from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -46,7 +46,9 @@ def assert_chart_title_in_details_modal(
 
 @wt(parsers.parse('user of {browser_id} clicks on chart in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_chart_in_modal(browser_id: Any, selenium: SeleniumDrivers, modal: Any) -> Any:
+def click_on_chart_in_modal(
+    browser_id: Any, selenium: SeleniumDrivers, modal: Any
+) -> Any:
     modal = check_modal_name(modal)
     getattr(Modals(selenium[browser_id]), modal).size_statistics.chart[0].chart.click()
 
@@ -149,7 +151,9 @@ def assert_tab_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_posix_tab_in_panel(selenium: SeleniumDrivers, browser_id: Any, modal_name: Any) -> Any:
+def assert_posix_tab_in_panel(
+    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any
+) -> Any:
     elem_name = "posix_permission_edition"
     posix_hidden = getattr(
         Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
@@ -207,7 +211,11 @@ def click_show_more_physical_locations_in_details_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_message_in_physical_location_in_details_modal(
-    selenium: SeleniumDrivers, browser_id: Any, expected_error: Any, provider: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    expected_error: Any,
+    provider: Any,
+    hosts: Hosts,
 ) -> Any:
     provider_name = hosts[provider]["name"]
     details_modal = Modals(selenium[browser_id]).details_modal

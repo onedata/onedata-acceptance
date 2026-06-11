@@ -13,6 +13,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
@@ -60,7 +61,6 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} creates workflow "{workflow_name}"'))
@@ -108,7 +108,11 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     )
 )
 def given_upload_workflow_from_automation_examples(
-    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    inventory: Any,
+    workflow: Any,
+    tmp_memory: Any,
 ) -> Any:
     upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory
@@ -122,7 +126,11 @@ def given_upload_workflow_from_automation_examples(
     )
 )
 def upload_workflow_from_automation_examples(
-    selenium: SeleniumDrivers, browser_id: Any, inventory: Any, workflow: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    inventory: Any,
+    workflow: Any,
+    tmp_memory: Any,
 ) -> Any:
     _upload_workflow_from_automation_examples(
         selenium, browser_id, inventory, workflow, tmp_memory

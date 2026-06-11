@@ -35,11 +35,12 @@ def given(
     converters: Any = None,
     scope: str = "function",
     target_fixture: Any = None,
-) -> StepDecorator:  # pylint: disable=unused-argument
+) -> StepDecorator:
     wrappers = [
         sanitize_arguments,
         pytest_bdd_given(name, converters, target_fixture, stacklevel=2),
     ]
+    _ = (fixture, scope)
     return _create_decorator(given, wrappers)
 
 

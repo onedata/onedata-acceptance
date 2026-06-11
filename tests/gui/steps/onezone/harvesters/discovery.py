@@ -10,13 +10,13 @@ import time
 from typing import Any
 
 from tests import ELASTICSEARCH_PORT
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(
@@ -35,7 +35,9 @@ def click_button_on_discovery_on_left_sidebar_menu(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in discovery page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_discovery_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_create_button_in_discovery_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].create_button()
 
@@ -95,7 +97,9 @@ def type_text_to_rename_input_field_in_discovery_page(
 
 @wt(parsers.parse("user of {browser_id} confirms harvester rename using button"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_harvester_rename_using_button(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def confirm_harvester_rename_using_button(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].rename_button()
 

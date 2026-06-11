@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.login import (
     wt_assert_login_page,
@@ -31,7 +32,6 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 def change_user_password_in_oz_panel_using_gui(

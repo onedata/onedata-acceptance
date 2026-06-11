@@ -10,11 +10,11 @@ from typing import Any
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT
+from tests.conftest import Hosts, Users
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import create_empty_file, get_file_id_by_rest
 from tests.utils.rest_utils import (
-from tests.conftest import Hosts, Users
     get_provider_rest_path,
     get_zone_rest_path,
     http_get,

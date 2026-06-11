@@ -14,6 +14,7 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
@@ -73,7 +74,6 @@ from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(
@@ -312,7 +312,11 @@ def create_dir_in_current_dir(
     )
 )
 def check_metadata_for_file_in_directory(
-    selenium: SeleniumDrivers, browser_id: Any, directory: Any, config: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    directory: Any,
+    config: Any,
+    tmp_memory: Any,
 ) -> Any:
     which_browser = "file_browser"
     metadata = yaml.load(config, yaml.Loader)
@@ -623,7 +627,9 @@ def assert_mtime_not_earlier_than_op_gui(
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, mtime, tmp_memory)
 
 
-def _select_item(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, path: Any) -> Any:
+def _select_item(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, path: Any
+) -> Any:
     item_name, path = get_item_name_and_containing_dir_path(path)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path)
     select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
@@ -637,7 +643,11 @@ def _select_item(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, pa
     )
 )
 def go_to_path_(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, path: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    path: Any,
+    which_browser: Any,
 ) -> Any:
     go_to_path(
         selenium,
@@ -747,7 +757,11 @@ def open_modal_for_file_browser_item(
 
 
 def check_file_owner(
-    selenium: SeleniumDrivers, browser_id: Any, owner: Any, file_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    owner: Any,
+    file_name: Any,
+    tmp_memory: Any,
 ) -> Any:
     option = "Information"
     modal_name = "File details"
@@ -1159,7 +1173,10 @@ def go_to_size_statistics_per_provider_by_breadcrumbs(
 
 
 def delete_first_n_files(
-    browser_id: Any, num_files_to_delete: Any, tmp_memory: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    num_files_to_delete: Any,
+    tmp_memory: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     option_to_select = "Delete"
     modal = "Delete modal"
@@ -1182,7 +1199,10 @@ def delete_first_n_files(
     )
 )
 def delete_first_n_files_with_fixed_step(
-    browser_id: Any, num_files_to_delete: int, tmp_memory: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    num_files_to_delete: int,
+    tmp_memory: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     deleted_files = 0
     fixed_step = 5

@@ -8,11 +8,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -48,7 +48,9 @@ def type_text_into_user_full_name_edit_box_in_oz(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def activate_user_full_name_edit_box_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def activate_user_full_name_edit_box_in_oz(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OZLoggedIn(selenium[browser_id])["profile"].rename_full_name()
 
 

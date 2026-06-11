@@ -8,17 +8,17 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
-from typing import Any
+from typing import Any, cast
 
 from selenium.webdriver.common.by import By
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.environment_utils import add_etc_hosts_entries
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @given(
@@ -35,7 +35,9 @@ def g_create_admin_in_panels(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_create_admin_in_panel(selenium: SeleniumDrivers, browser_id: Any, passphrase: Any) -> Any:
+def g_create_admin_in_panel(
+    selenium: SeleniumDrivers, browser_id: Any, passphrase: Any
+) -> Any:
     init_page = Onepanel(selenium[browser_id]).init_page
     init_page.create_new_cluster()
     init_page.passphrase = passphrase
@@ -131,7 +133,7 @@ def wt_type_property_to_in_box_in_deployment_step(
     step: Any,
     hosts: Hosts,
 ) -> Any:
-    text = hosts[alias][name_property]
+    text = cast(str, cast(dict[str, str], hosts[alias])[name_property])
     step = getattr(
         Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )
@@ -198,7 +200,9 @@ def wait_for_next_step_in_deployment(driver: Any, next_step_num: Any) -> Any:
 
 @wt(parsers.parse("user of {browser_id} sees that cluster deployment has started"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_begin_of_cluster_deployment(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_assert_begin_of_cluster_deployment(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     _ = Modals(selenium[browser_id]).cluster_deployment
 
 
@@ -232,7 +236,9 @@ def wt_await_finish_of_cluster_deployment(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_perform_check_in_dns_setup_step(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_perform_check_in_dns_setup_step(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
 
 
@@ -243,7 +249,9 @@ def wt_click_perform_check_in_dns_setup_step(selenium: SeleniumDrivers, browser_
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_proceed_in_dns_setup_step(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_proceed_in_dns_setup_step(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed()
 
 
@@ -267,7 +275,9 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_setup_ip_in_deployment_setup_ip(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_setup_ip_in_deployment_setup_ip(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     (
         Onepanel(
             selenium[browser_id]
@@ -423,7 +433,9 @@ def wt_type_text_to_in_box_in_deployment_step5(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_add_btn_in_storage_add_form(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_on_add_btn_in_storage_add_form(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Onepanel(selenium[browser_id]).content.deployment.step5.form.add()
 
 
@@ -493,7 +505,9 @@ def wt_click_proceed_button_in_step2(selenium: SeleniumDrivers, browser_id: Any)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_go_to_emergency_onepanel_interface(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_go_to_emergency_onepanel_interface(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Onepanel(selenium[browser_id]).content.deployment.laststep.link()
 
 
@@ -518,5 +532,7 @@ def add_prov_with_oz_subdomain_to_etc_host(hosts: Hosts, provider: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def wait_for_emergency_interface_onepanel(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def wait_for_emergency_interface_onepanel(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     assert LoginPage(selenium[browser_id]).open_in_onezone.is_displayed()

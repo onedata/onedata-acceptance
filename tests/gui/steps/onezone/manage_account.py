@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -67,14 +67,18 @@ def click_remove_user_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) -
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_understand_consequences_checkbox_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_understand_consequences_checkbox_in_oz(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     Modals(driver).delete_user_account.understand_consequences.click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on delete account button in modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_delete_account_button_in_oz(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_delete_account_button_in_oz(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     Modals(driver).delete_user_account.delete_account.click()
 

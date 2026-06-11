@@ -17,12 +17,12 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.expected_conditions import staleness_of
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OnePage, PublicOnePage
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -61,7 +61,9 @@ def close_visible_notifies(selenium: SeleniumDrivers, browser_id: Any) -> Any:
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error on Onedata page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_loading_error(selenium: SeleniumDrivers, browser_id: Any, error_msg: Any) -> Any:
+def assert_loading_error(
+    selenium: SeleniumDrivers, browser_id: Any, error_msg: Any
+) -> Any:
     given_msg = OnePage(selenium[browser_id]).loading_error.lower()
     assert (
         error_msg.lower() in given_msg

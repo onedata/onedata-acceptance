@@ -11,6 +11,7 @@ from typing import Any
 
 import pytest
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import (
     WAIT_BACKEND,
     WAIT_EXTENDED_UPLOAD,
@@ -29,7 +30,6 @@ from tests.utils.entities_setup import (
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -125,7 +125,10 @@ def wt_change_cwd_using_breadcrumbs_in_data_tab_in_op(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any, which_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    path: Any,
+    which_browser: Any = "file browser",
 ) -> Any:
     # this cannot be first step that uses which_browser,
     # browser must be loaded before in some previous step
@@ -148,7 +151,9 @@ def go_one_back_using_breadcrumbs_in_data_tab_in_op(
     breadcrumbs.go_one_back()
 
 
-def _get_breadcrumbs(browser_id: Any, selenium: SeleniumDrivers, which_browser: Any) -> Any:
+def _get_breadcrumbs(
+    browser_id: Any, selenium: SeleniumDrivers, which_browser: Any
+) -> Any:
     try:
         breadcrumbs = getattr(
             OPLoggedIn(selenium[browser_id]), transform(which_browser)
@@ -233,7 +238,10 @@ def wt_is_space_tree_root(
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_files_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    item_browser: Any = "file browser",
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, item_browser)
@@ -245,7 +253,10 @@ def assert_nonempty_file_browser_in_files_tab_in_op(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_browser_in_files_tab_in_op(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, item_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    item_browser: Any = "file browser",
 ) -> Any:
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, item_browser)
@@ -370,7 +381,9 @@ def wait_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: Any) -
     )
 )
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
-def wait_extended_time_for_file_upload_to_finish(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wait_extended_time_for_file_upload_to_finish(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     assert not Popups(
@@ -713,7 +726,11 @@ def choose_option_from_selection_menu(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_file_from_selection_menu(
-    browser_id: Any, selenium: SeleniumDrivers, option: Any, tmp_memory: Any, file_name: Any
+    browser_id: Any,
+    selenium: SeleniumDrivers,
+    option: Any,
+    tmp_memory: Any,
+    file_name: Any,
 ) -> Any:
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]["file_browser"]
@@ -777,7 +794,9 @@ def _assert_current_provider_in_space(
     ), f"{provider} is not current provider on file browser page"
 
 
-def _assert_provider_in_space(selenium: SeleniumDrivers, browser_id: Any, provider: Any) -> Any:
+def _assert_provider_in_space(
+    selenium: SeleniumDrivers, browser_id: Any, provider: Any
+) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     providers = OZLoggedIn(selenium[browser_id])["data"].providers
@@ -896,7 +915,11 @@ def download_file_with_network_throttling(
 )
 @repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
 def check_data_distribution_percentage_for_provider(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, percentage: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    provider: Any,
+    percentage: Any,
+    hosts: Hosts,
 ) -> Any:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
@@ -935,7 +958,9 @@ def check_data_distribution_size_for_provider(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_size_statistics_for_providers(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def expand_size_statistics_for_providers(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     Modals(driver).details_modal.size_statistics.expand_stats_button()
 
@@ -1005,7 +1030,11 @@ def check_size_stats_for_provider(
 )
 @repeat_failed(WAIT_FRONTEND)
 def check_error_cell_for_provider(
-    selenium: SeleniumDrivers, hosts: Hosts, browser_id: Any, provider: Any, message: Any
+    selenium: SeleniumDrivers,
+    hosts: Hosts,
+    browser_id: Any,
+    provider: Any,
+    message: Any,
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -1027,7 +1056,11 @@ def check_error_cell_for_provider(
 )
 @repeat_failed(WAIT_FRONTEND)
 def check_content_for_provider(
-    selenium: SeleniumDrivers, hosts: Hosts, browser_id: Any, provider: Any, content: Any
+    selenium: SeleniumDrivers,
+    hosts: Hosts,
+    browser_id: Any,
+    provider: Any,
+    content: Any,
 ) -> Any:
     driver = selenium[browser_id]
     provider_name = hosts[provider]["name"]
@@ -1047,7 +1080,11 @@ def check_content_for_provider(
     )
 )
 def check_content_for_providers(
-    selenium: SeleniumDrivers, hosts: Hosts, browser_id: Any, providers: Any, contents: Any
+    selenium: SeleniumDrivers,
+    hosts: Hosts,
+    browser_id: Any,
+    providers: Any,
+    contents: Any,
 ) -> Any:
     contents_list = [
         content.strip('"') for content in parse_seq(contents, pattern=r'"(.*?)"')

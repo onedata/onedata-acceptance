@@ -14,6 +14,7 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 
 from tests import PANEL_REST_PORT
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (
     _camel_transform,
@@ -48,7 +49,6 @@ from tests.gui.utils import Onepanel
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage in Onepanel page'))
@@ -150,7 +150,11 @@ def _add_storage_in_op_panel_using_gui(
     )
 )
 def safely_create_storage_rest(
-    storage_name: Any, provider: Any, config: Any, hosts: Hosts, onepanel_credentials: Any
+    storage_name: Any,
+    provider: Any,
+    config: Any,
+    hosts: Hosts,
+    onepanel_credentials: Any,
 ) -> Any:
     """Create storage according to given config.
 
@@ -265,7 +269,11 @@ def get_first_storage_id_by_name(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(
-    config: Any, storage_name: Any, provider: Any, hosts: Hosts, onepanel_credentials: Any
+    config: Any,
+    storage_name: Any,
+    provider: Any,
+    hosts: Hosts,
+    onepanel_credentials: Any,
 ) -> Any:
     storage_config = {}
     options = yaml.load(config, yaml.Loader)
@@ -311,7 +319,9 @@ def add_key_value_in_storage_page(
 
 
 @wt(parsers.parse("user of {browser_id} deletes additional param in storage edit page"))
-def delete_additional_param_in_storage_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def delete_additional_param_in_storage_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id)
     save_changes_in_posix_storage_edit_page(selenium, browser_id)
@@ -360,7 +370,9 @@ def wt_delete_all_additional_params_in_storage_page(
     _delete_all_additional_params_in_storage_page(selenium, browser_id)
 
 
-def _try_confirm_changes_in_modify_storage_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def _try_confirm_changes_in_modify_storage_modal(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     button = "Proceed"
     checkbox = "Understand checkbox"
     modal = "Modify Storage"
@@ -380,5 +392,7 @@ def _try_confirm_changes_in_modify_storage_modal(selenium: SeleniumDrivers, brow
         'user of {browser_id} confirms committed changes in modal "Modify Storage"'
     )
 )
-def confirm_changes_in_modify_storage_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def confirm_changes_in_modify_storage_modal(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     _try_confirm_changes_in_modify_storage_modal(selenium, browser_id)

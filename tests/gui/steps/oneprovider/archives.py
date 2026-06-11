@@ -10,13 +10,13 @@ import re
 import time
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -289,7 +289,9 @@ def click_menu_for_archive(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_in_confirmation_input(browser_id: Any, text: Any, selenium: SeleniumDrivers) -> Any:
+def write_in_confirmation_input(
+    browser_id: Any, text: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     Modals(driver).delete_archive.confirmation_input = text
 
@@ -334,7 +336,9 @@ def assert_page_with_text_appeared(browser_id: Any, text: Any, tmp_memory: Any) 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_back_to_dataset_page_from_archive_browser(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def go_back_to_dataset_page_from_archive_browser(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     OZLoggedIn(driver)["data"].archive_header.back_to_dataset_page()
@@ -395,7 +399,9 @@ def waits_for_preserved_state(
 
 @wt(parsers.parse("user of {browser_id} sees archive ID in Archive details modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archive_id_in_properties_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_archive_id_in_properties_modal(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     archive_id = Modals(driver).archive_details.archive_id
     err_msg = "User does not see archive ID in Archive details modal"

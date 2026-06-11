@@ -12,6 +12,7 @@ from typing import Any
 import yaml
 
 from tests import OP_REST_PORT
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
@@ -52,7 +53,6 @@ from tests.gui.utils import Onepanel
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 @wt(
@@ -118,7 +118,10 @@ def result_to_support_space_in_op_panel_using_gui(
 
 
 def _set_toggle_state(
-    selenium: SeleniumDrivers, toggle_name: Any, storage_import_configuration: Any, user: Any
+    selenium: SeleniumDrivers,
+    toggle_name: Any,
+    storage_import_configuration: Any,
+    user: Any,
 ) -> Any:
     if storage_import_configuration.get(toggle_name.lower(), False):
         wt_enable_option_box_in_space_support_form(selenium, user, toggle_name)
@@ -229,7 +232,11 @@ def configure_auto_storage_import_in_storage_import_tab(
     )
 )
 def revoke_space_support_in_op_panel_using_gui(
-    selenium: SeleniumDrivers, user: Any, provider_name: Any, space_name: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    user: Any,
+    provider_name: Any,
+    space_name: Any,
+    hosts: Hosts,
 ) -> Any:
     sidebar = "Clusters"
     sub_item = "Spaces"
@@ -294,7 +301,9 @@ def assert_proper_space_configuration_in_op_panel_gui(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts) -> Any:
+def revoke_all_space_supports(
+    selenium: SeleniumDrivers, browser_id: Any, hosts: Hosts
+) -> Any:
     sidebar = "CLUSTERS"
     sub_item = "Spaces"
     record = "oneprovider-1"

@@ -9,13 +9,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -75,7 +75,9 @@ def wt_check_option_in_box_in_storages_page_op_panel(
     getattr(form.storage_path_type, option).click()
 
 
-def enable_import_in_add_storage_form(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def enable_import_in_add_storage_form(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     form = Onepanel(selenium[browser_id]).content.storages.form
     form.posix.imported_storage.check()
 
@@ -167,7 +169,9 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_modify_storage_in_onepanel(selenium: SeleniumDrivers, browser_id: Any, name: Any) -> Any:
+def click_modify_storage_in_onepanel(
+    selenium: SeleniumDrivers, browser_id: Any, name: Any
+) -> Any:
     driver = selenium[browser_id]
     Onepanel(driver).content.storages.storages[name].click()
     Onepanel(driver).content.storages.storages[name].modify()
@@ -195,7 +199,9 @@ def type_key_in_posix_storage_edit_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_value_in_posix_storage_edit_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_value_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     storage_posix = Onepanel(driver).content.storages.storages["posix"]
     storage_posix.edit_form.posix_editor.params.click_value_in_modified_record()
@@ -218,7 +224,9 @@ def delete_additional_param_in_posix_storage_edit_page(
 
 @wt(parsers.parse("user of {browser_id} saves changes in posix storage edit page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def save_changes_in_posix_storage_edit_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def save_changes_in_posix_storage_edit_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     storage = Onepanel(driver).content.storages.storages["posix"]
     storage.edit_form.posix_editor.save_button.click()
@@ -245,13 +253,17 @@ def assert_storage_disappeared_from_list(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_storage_on_storage_list(selenium: SeleniumDrivers, browser_id: Any, name: Any) -> Any:
+def assert_storage_on_storage_list(
+    selenium: SeleniumDrivers, browser_id: Any, name: Any
+) -> Any:
     assert is_storage_on_storage_list(
         selenium, browser_id, name
     ), f"{name} not visible on storages list"
 
 
-def is_storage_on_storage_list(selenium: SeleniumDrivers, browser_id: Any, name: Any) -> Any:
+def is_storage_on_storage_list(
+    selenium: SeleniumDrivers, browser_id: Any, name: Any
+) -> Any:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
     return name in storages_list

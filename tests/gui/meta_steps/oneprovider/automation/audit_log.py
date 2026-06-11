@@ -17,6 +17,7 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests import GUI_LOGDIR
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
     get_store_details_json,
@@ -59,7 +60,6 @@ from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 def write_audit_logs_for_task_to_file(
@@ -119,7 +119,11 @@ def get_audit_logs_from_every_task_in_workflow(
     )
 )
 def save_audit_logs_to_logs(
-    selenium: SeleniumDrivers, browser_id: Any, exp_status: Any, clipboard: Any, displays: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    exp_status: Any,
+    clipboard: Any,
+    displays: Any,
 ) -> Any:
     page = switch_to_automation_page(selenium, browser_id)
     act_status = get_status_from_workflow_visualizer(page)
@@ -710,7 +714,11 @@ def check_if_element_is_selected(
     )
 )
 def assert_element_selected_in_new_browser_tab(
-    browser_id: Any, selenium: SeleniumDrivers, name: Any, tmp_memory: Any, which_browser: Any
+    browser_id: Any,
+    selenium: SeleniumDrivers,
+    name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
 ) -> Any:
     switch_to_last_tab(selenium, browser_id)
     assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, which_browser)
@@ -928,7 +936,11 @@ def compare_content_of_task_audit_log(
     )
 )
 def assert_content_of_user_task_audit_log(
-    selenium: SeleniumDrivers, browser_id: Any, lane_name: Any, task_name: Any, ordinal: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    lane_name: Any,
+    task_name: Any,
+    ordinal: Any,
 ) -> Any:
     click = "click"
     close = "closes"
@@ -1133,7 +1145,11 @@ def click_on_log_in_workflow_audit_log(driver: Any, severity: Any, source: Any) 
     )
 )
 def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
-    browser_id: Any, tmpdir: Any, selenium: SeleniumDrivers, clipboard: Any, displays: Any
+    browser_id: Any,
+    tmpdir: Any,
+    selenium: SeleniumDrivers,
+    clipboard: Any,
+    displays: Any,
 ) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log
@@ -1173,7 +1189,11 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
     )
 )
 def assert_workflow_audit_log_contains_entries(
-    selenium: SeleniumDrivers, browser_id: Any, tmpdir: Any, tmp_memory: Any, config: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    config: Any,
 ) -> Any:
     _assert_workflow_audit_log_contains_entries(
         selenium, browser_id, tmpdir, tmp_memory, config
@@ -1181,7 +1201,11 @@ def assert_workflow_audit_log_contains_entries(
 
 
 def _assert_workflow_audit_log_contains_entries(
-    selenium: SeleniumDrivers, browser_id: Any, tmpdir: Any, tmp_memory: Any, config: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    config: Any,
 ) -> Any:
     data = yaml.load(config, yaml.Loader)
     driver = selenium[browser_id]
@@ -1218,7 +1242,11 @@ def compare_audit_log_debug_entries(actual_entry: Any, expected_entry: Any) -> A
     )
 )
 def assert_workflow_audit_log_contains_entry(
-    selenium: SeleniumDrivers, browser_id: Any, tmpdir: Any, tmp_memory: Any, item_list: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmpdir: Any,
+    tmp_memory: Any,
+    item_list: Any,
 ) -> Any:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:

@@ -9,6 +9,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
@@ -74,7 +75,6 @@ from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -89,7 +89,11 @@ from tests.conftest import SeleniumDrivers
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_share(
-    selenium: SeleniumDrivers, browser_id: Any, share_name: Any, item_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    share_name: Any,
+    item_name: Any,
+    tmp_memory: Any,
 ) -> Any:
     option = "Share / Publish"
     modal_name = "Share / Publish directory"
@@ -130,7 +134,9 @@ def open_single_share_view_by_modal(
 
 @wt(parsers.parse('user of {browser_id} creates another share named "{share_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_another_share(selenium: SeleniumDrivers, browser_id: Any, share_name: Any) -> Any:
+def create_another_share(
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
+) -> Any:
     button = "Create another share"
     modal_name = "Shares"
     create_button = "Create"
@@ -142,7 +148,9 @@ def create_another_share(selenium: SeleniumDrivers, browser_id: Any, share_name:
 
 @wt(parsers.parse("user of {browser_id} removes current share"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_current_share(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
+def remove_current_share(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
+) -> Any:
     option = "Remove"
     modal_name = "Remove share"
     button = "Remove"
@@ -220,7 +228,11 @@ def hand_share_url_to_another_user(
     )
 )
 def copy_url_of_share(
-    selenium: SeleniumDrivers, browser_id: Any, share_name: Any, item_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    share_name: Any,
+    item_name: Any,
+    tmp_memory: Any,
 ) -> Any:
     icon_name = "copy"
     status_type = "shared"
@@ -397,7 +409,9 @@ def assert_properties_in_dublin_core_metadata_form(
         r" share's file browser on share's public interface"
     )
 )
-def open_shares_file_browser(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
+def open_shares_file_browser(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
+) -> Any:
     open_tab_in_public_share(selenium, browser_id, "Files")
     assert_file_browser_in_public_share(selenium, browser_id, tmp_memory)
 
@@ -611,7 +625,11 @@ def assert_xml_data_in_edm_form_in_shares_interface(
     )
 )
 def modify_xml_data_in_edm_form_in_shares_interface(
-    selenium: SeleniumDrivers, browser_id: Any, metadata_type: Any, tag: Any, new_text: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    metadata_type: Any,
+    tag: Any,
+    new_text: Any,
 ) -> Any:
     driver = selenium[browser_id]
     public_share(driver).modify_button.click()

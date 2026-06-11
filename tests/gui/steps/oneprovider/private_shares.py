@@ -13,13 +13,13 @@ from selenium.common.exceptions import (
     ElementNotInteractableException,
 )
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -100,7 +100,9 @@ def click_button_in_description_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_link_on_shares_interface(browser_id: Any, link: Any, selenium: SeleniumDrivers) -> Any:
+def assert_link_on_shares_interface(
+    browser_id: Any, link: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     err_msg = f'Link on share\'s private interface is not "{link}"'
     assert private_share(driver).link_name == link, err_msg
@@ -125,7 +127,9 @@ def write_description_in_description_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND, interval=0.5)
-def assert_private_share_named(selenium: SeleniumDrivers, browser_id: Any, share_name: Any) -> Any:
+def assert_private_share_named(
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
+) -> Any:
     driver = selenium[browser_id]
     # because label with share name lies beyond iframe we need to change
     # to default content
@@ -146,7 +150,11 @@ def assert_private_share_named(selenium: SeleniumDrivers, browser_id: Any, share
     )
 )
 def write_input_in_edm_form_in_shares_interface(
-    browser_id: Any, text: Any, which_input: Any, selenium: SeleniumDrivers, numerals: Any
+    browser_id: Any,
+    text: Any,
+    which_input: Any,
+    selenium: SeleniumDrivers,
+    numerals: Any,
 ) -> Any:
     numeral = "first"
     write_to_nth_input_in_edm_form_in_shares_interface(
@@ -359,7 +367,9 @@ def assert_warning_message_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_no_warning_message_in_shares_page(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def assert_no_warning_message_in_shares_page(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     try:
         warning = private_share(driver).alert_warning

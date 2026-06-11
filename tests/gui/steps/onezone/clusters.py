@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
@@ -16,12 +17,13 @@ from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @wt(parsers.parse("user of {browser_id} clicks on {button} button in clusters {where}"))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_button_in_cluster_page(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
+def click_button_in_cluster_page(
+    selenium: SeleniumDrivers, browser_id: Any, button: Any
+) -> Any:
     driver = selenium[browser_id]
     getattr(
         OZLoggedIn(driver).get_page_and_click("clusters"), transform(button)
@@ -213,7 +215,12 @@ def _assert_num_cluster_records(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_old_or_new_cluster_record(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, age: Any, tmp_memory: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    provider: Any,
+    age: Any,
+    tmp_memory: Any,
+    hosts: Hosts,
 ) -> Any:
     records = _get_clusters(selenium, browser_id)
     return get_old_or_new_cluster_record_from_list(
@@ -248,7 +255,12 @@ def get_old_or_new_cluster_record_from_list(
 @wt(parsers.parse('user of browser sees that {age} "{provider}" cluster is working'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_new_cluster_working(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, hosts: Hosts, age: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    provider: Any,
+    hosts: Hosts,
+    age: Any,
+    tmp_memory: Any,
 ) -> Any:
     record = _get_old_or_new_cluster_record(
         selenium, browser_id, provider, age, tmp_memory, hosts
@@ -264,7 +276,12 @@ def assert_new_cluster_working(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_new_or_old_cluster_record(
-    selenium: SeleniumDrivers, browser_id: Any, provider: Any, age: Any, tmp_memory: Any, hosts: Hosts
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    provider: Any,
+    age: Any,
+    tmp_memory: Any,
+    hosts: Hosts,
 ) -> Any:
     record = _get_old_or_new_cluster_record(
         selenium, browser_id, provider, age, tmp_memory, hosts
@@ -274,7 +291,9 @@ def click_new_or_old_cluster_record(
 
 @wt(parsers.parse("user of {browser_id} clicks deregistration link in clusters page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_deregister_link_in_cluster_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_deregister_link_in_cluster_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["clusters"].deregister_label.click()
 
@@ -295,7 +314,9 @@ def click_on_link_in_cookies_popup(
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button in cookies popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_cookies_popup(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
+def click_button_in_cookies_popup(
+    selenium: SeleniumDrivers, browser_id: Any, button: Any
+) -> Any:
     driver = selenium[browser_id]
     getattr(Popups(driver).cookies, transform(button))()
 
@@ -333,7 +354,9 @@ def click_button_on_agreement_page(
 
 @wt(parsers.parse("user of {browser_id} goes to {kind_of_agreement} page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_agreement_page(selenium: SeleniumDrivers, browser_id: Any, kind_of_agreement: Any) -> Any:
+def go_to_agreement_page(
+    selenium: SeleniumDrivers, browser_id: Any, kind_of_agreement: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["profile"].profile()
     Popups(driver).user_account_menu.options[kind_of_agreement].click()

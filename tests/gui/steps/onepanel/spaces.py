@@ -14,6 +14,7 @@ from typing import Any
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT, WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import wait_for_checking_toggle
 from tests.gui.steps.common.docker import docker_ls
@@ -24,7 +25,6 @@ from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 @wt(
@@ -52,7 +52,9 @@ def wt_select_storage_in_support_space_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_support_space_btn_on_condition(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_on_support_space_btn_on_condition(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     # set implicit wait in case spaces list take time to load,
     # otherwise one can miss it and not click the button
@@ -96,7 +98,9 @@ def wt_select_mode_in_space_support_form(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_space_support_form(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_click_on_btn_in_space_support_form(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Onepanel(selenium[browser_id]).content.spaces.form.support_space()
 
 
@@ -176,7 +180,9 @@ def wt_assert_correct_supported_space_opened(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_supported_spaces_list_is_empty(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_assert_supported_spaces_list_is_empty(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     count = Onepanel(selenium[browser_id]).content.spaces.spaces.count()
     assert (
         count == 0
@@ -302,7 +308,11 @@ def wt_open_space_item_in_spaces_page_op_panel(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_proper_space_configuration_in_panel(
-    selenium: SeleniumDrivers, browser_id: Any, sync_type: Any, space_name: Any, conf: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    sync_type: Any,
+    space_name: Any,
+    conf: Any,
 ) -> Any:
     """Assert configuration displayed in space record in panel.
 
@@ -464,7 +474,9 @@ def wt_clicks_on_configure(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_option_in_spaces_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_clicks_on_option_in_spaces_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     space = Onepanel(selenium[browser_id]).content.spaces.space
     space.sync_chart.import_settings_list[0].click()
 
@@ -537,7 +549,9 @@ def click_on_navigation_tab_in_space(
 
 @wt(parsers.parse("user of {browser_id} clicks on {interval} update view"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_interval_update(browser_id: Any, interval: Any, selenium: SeleniumDrivers) -> Any:
+def click_on_interval_update(
+    browser_id: Any, interval: Any, selenium: SeleniumDrivers
+) -> Any:
     getattr(
         Onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
         transform(interval + " view"),
@@ -586,7 +600,9 @@ def enable_space_option_in_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def enable_option_in_auto_cleaning(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def enable_option_in_auto_cleaning(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     driver = selenium[browser_id]
     tab = Onepanel(driver).content.spaces.space.auto_cleaning
     if option == "selective cleaning":
@@ -626,7 +642,9 @@ def click_option_on_dropdown_rule(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_change_quota_button(selenium: SeleniumDrivers, browser_id: Any, quota: Any) -> Any:
+def click_change_quota_button(
+    selenium: SeleniumDrivers, browser_id: Any, quota: Any
+) -> Any:
     button = f"click_rename_{quota}_quota_button"
     driver = selenium[browser_id]
     getattr(Onepanel(driver).content.spaces.space.auto_cleaning, button)(driver)
@@ -657,7 +675,9 @@ def type_value_to_quota_input(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_quota_value_change(selenium: SeleniumDrivers, browser_id: Any, quota: Any) -> Any:
+def confirm_quota_value_change(
+    selenium: SeleniumDrivers, browser_id: Any, quota: Any
+) -> Any:
     quota = f"{quota}_quota"
     driver = selenium[browser_id]
     getattr(Onepanel(driver).content.spaces.space.auto_cleaning, quota).accept_button()
@@ -771,7 +791,9 @@ def open_advanced_settings_in_file_popularity_onepanel(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_docs_link_in_file_popularity_onepanel(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_docs_link_in_file_popularity_onepanel(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     Onepanel(
         driver

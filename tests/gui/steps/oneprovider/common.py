@@ -12,15 +12,17 @@ from typing import Any
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
-def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: Any) -> Any:
+def _wait_for_op_session_to_start(
+    selenium: SeleniumDrivers, browser_id_list: Any
+) -> Any:
     @repeat_failed(timeout=WAIT_BACKEND)
     def _assert_correct_url(d: Any) -> Any:
         try:
@@ -44,7 +46,9 @@ def _wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: An
         "users? of (?P<browser_id_list>.*?) seen that Oneprovider session has started"
     )
 )
-def g_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: Any) -> Any:
+def g_wait_for_op_session_to_start(
+    selenium: SeleniumDrivers, browser_id_list: Any
+) -> Any:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -53,7 +57,9 @@ def g_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: A
         "users? of (?P<browser_id_list>.*?) sees that Oneprovider session has started"
     )
 )
-def wt_wait_for_op_session_to_start(selenium: SeleniumDrivers, browser_id_list: Any) -> Any:
+def wt_wait_for_op_session_to_start(
+    selenium: SeleniumDrivers, browser_id_list: Any
+) -> Any:
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -82,7 +88,9 @@ def wt_assert_provider_name_prov_in_op(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(selenium: SeleniumDrivers, browser_id: Any, val: Any) -> Any:
+def wt_assert_provider_name_in_op(
+    selenium: SeleniumDrivers, browser_id: Any, val: Any
+) -> Any:
     displayed_name = OPLoggedIn(selenium[browser_id]).provider_name
     assert displayed_name == val, (
         f"displayed {displayed_name} provider name in Oneprovider GUI instead"

@@ -11,6 +11,7 @@ from typing import Any
 
 import yaml
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
@@ -58,11 +59,12 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers, Users
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _paste_token_into_text_field(selenium: SeleniumDrivers, browser_id: Any, token: Any) -> Any:
+def _paste_token_into_text_field(
+    selenium: SeleniumDrivers, browser_id: Any, token: Any
+) -> Any:
     page = OZLoggedIn(selenium[browser_id])["tokens"]
     page.input_name = token
 
@@ -99,7 +101,9 @@ def paste_received_token_into_text_field(
         "received token"
     )
 )
-def consume_received_token(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
+def consume_received_token(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
+) -> Any:
     # step doesn`t check whether token consumption was successful
     option = "Tokens"
     button = "Consume token"
@@ -140,7 +144,11 @@ def consume_token_from_copied_token(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(
-    selenium: SeleniumDrivers, browser_id: Any, elem_name: Any, clipboard: Any, displays: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    elem_name: Any,
+    clipboard: Any,
+    displays: Any,
 ) -> Any:
     option = "Tokens"
     button = "Consume token"
@@ -195,13 +203,19 @@ def assert_alert_while_consuming_token(
     )
 )
 def result_to_consume_token(
-    selenium: SeleniumDrivers, browser_id: Any, result: Any, clipboard: Any, displays: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    result: Any,
+    clipboard: Any,
+    displays: Any,
 ) -> Any:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result)
 
 
-def _result_to_consume_token(selenium: SeleniumDrivers, browser_id: Any, result: Any) -> Any:
+def _result_to_consume_token(
+    selenium: SeleniumDrivers, browser_id: Any, result: Any
+) -> Any:
     if result == "succeeds":
         notify_type = "success"
         text_regexp = ".*joined.*"

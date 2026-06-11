@@ -256,39 +256,31 @@ def parse_wait_args(request: Any) -> Any:
     return wait_args
 
 
-def parse_up_args(
-    request: Any, test_config: Any
-) -> Any:  # pylint: disable=too-many-branches
+def parse_up_args(request: Any, test_config: Any) -> Any:
     up_args = []
 
-    oz_image = request.config.getoption("--oz-image")
-    op_image = request.config.getoption("--op-image")
-    oc_image = request.config.getoption("--oc-image")
-    rest_cli_image = request.config.getoption("--rest-cli-image")
-    openfaas_pod_status_monitor_image = request.config.getoption(
-        "--openfaas-pod-status-monitor-image"
-    )
-    openfaas_lambda_result_streamer_image = request.config.getoption(
-        "--openfaas-lambda-result-streamer-image"
-    )
+    option_values = [
+        ("-zi", request.config.getoption("--oz-image")),
+        ("-pi", request.config.getoption("--op-image")),
+        ("-ci", request.config.getoption("--oc-image")),
+        ("-ri", request.config.getoption("--rest-cli-image")),
+        (
+            "-mi",
+            request.config.getoption("--openfaas-pod-status-monitor-image"),
+        ),
+        (
+            "-si",
+            request.config.getoption("--openfaas-lambda-result-streamer-image"),
+        ),
+    ]
     sources = request.config.getoption("--sources")
     timeout = request.config.getoption("--timeout")
     local_charts_path = request.config.getoption("--local-charts-path")
-
     gui_pkg_verification = request.config.getoption("--gui-pkg-verification")
 
-    if oz_image:
-        up_args.extend(["-zi", oz_image])
-    if op_image:
-        up_args.extend(["-pi", op_image])
-    if oc_image:
-        up_args.extend(["-ci", oc_image])
-    if rest_cli_image:
-        up_args.extend(["-ri", rest_cli_image])
-    if openfaas_pod_status_monitor_image:
-        up_args.extend(["-mi", openfaas_pod_status_monitor_image])
-    if openfaas_lambda_result_streamer_image:
-        up_args.extend(["-si", openfaas_lambda_result_streamer_image])
+    for option, value in option_values:
+        if value:
+            up_args.extend([option, value])
     if sources:
         up_args.append("-s")
     if local_charts_path:
@@ -299,33 +291,21 @@ def parse_up_args(
         up_args.append("--gui-pkg-verification")
 
     if test_config:
-        if not oz_image:
-            up_args.extend(
-                [
-                    "-zi",
-                    config_image_spec_to_image(
-                        "onezone", test_config["initialVersions"]["onezone"]
-                    ),
-                ]
-            )
-        if not op_image:
-            up_args.extend(
-                [
-                    "-pi",
-                    config_image_spec_to_image(
-                        "oneprovider", test_config["initialVersions"]["oneprovider"]
-                    ),
-                ]
-            )
-        if not oc_image:
-            up_args.extend(
-                [
-                    "-ci",
-                    config_image_spec_to_image(
-                        "oneclient", test_config["initialVersions"]["oneclient"]
-                    ),
-                ]
-            )
+        for image_value, option, service_name in [
+            (request.config.getoption("--oz-image"), "-zi", "onezone"),
+            (request.config.getoption("--op-image"), "-pi", "oneprovider"),
+            (request.config.getoption("--oc-image"), "-ci", "oneclient"),
+        ]:
+            if not image_value:
+                up_args.extend(
+                    [
+                        option,
+                        config_image_spec_to_image(
+                            service_name,
+                            test_config["initialVersions"][service_name],
+                        ),
+                    ]
+                )
 
     return up_args
 

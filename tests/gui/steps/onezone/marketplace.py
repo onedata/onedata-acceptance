@@ -9,12 +9,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from datetime import date
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -24,7 +24,9 @@ from tests.conftest import SeleniumDrivers
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_marketplace_subpage(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_button_in_marketplace_subpage(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["data"].space_marketplace_page.advertise_space_button()
 

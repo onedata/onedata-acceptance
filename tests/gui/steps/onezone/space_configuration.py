@@ -9,12 +9,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -62,7 +62,9 @@ def advertise_space_on_space_configuration_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_space_configuration_page(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def click_button_on_space_configuration_page(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.marketplace_link.click()
@@ -132,7 +134,11 @@ def set_description_of_a_space(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_tags_in_space_configuration_tab(
-    selenium: SeleniumDrivers, browser_id: Any, tag_type: Any, tags: Any, with_save: Any = True
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tag_type: Any,
+    tags: Any,
+    with_save: Any = True,
 ) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
@@ -203,7 +209,9 @@ def check_message_after_hovering_over_toggle(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_org_name_in_space_conf(selenium: SeleniumDrivers, browser_id: Any, org_name: Any) -> Any:
+def change_org_name_in_space_conf(
+    selenium: SeleniumDrivers, browser_id: Any, org_name: Any
+) -> Any:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].configuration_page
     page.organization_name.click()

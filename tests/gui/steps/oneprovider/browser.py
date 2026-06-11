@@ -10,6 +10,7 @@ import time
 from datetime import datetime
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
@@ -20,7 +21,6 @@ from tests.gui.utils.generic import (
 )
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -55,7 +55,11 @@ def click_and_press_enter_on_item_in_browser(
     )
 )
 def wt_click_and_press_enter_on_item_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, tmp_memory: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_name: Any,
+    tmp_memory: Any,
+    which_browser: Any,
 ) -> Any:
     click_and_press_enter_on_item_in_browser(
         selenium,
@@ -110,7 +114,10 @@ def wt_is_displayed_breadcrumbs_in_data_tab_in_op_correct(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(
-    selenium: SeleniumDrivers, browser_id: Any, path: Any, which_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    path: Any,
+    which_browser: Any = "file browser",
 ) -> Any:
     driver = selenium[browser_id]
     breadcrumbs = getattr(
@@ -146,7 +153,10 @@ def click_on_breadcrumbs_menu(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_items_list_from_browser(
-    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any, which_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tmp_memory: Any,
+    which_browser: Any = "file browser",
 ) -> Any:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
@@ -195,7 +205,11 @@ def _gather_data_from_browser(driver: Any, browser: Any, condition: Any) -> Any:
     )
 )
 def wt_assert_items_presence_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, item_list: Any, tmp_memory: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_list: Any,
+    tmp_memory: Any,
+    which_browser: Any,
 ) -> Any:
     assert_items_presence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser=which_browser.value
@@ -282,7 +296,11 @@ def check_if_item_is_dir_in_browser(
     )
 )
 def wt_assert_items_absence_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, item_list: Any, tmp_memory: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_list: Any,
+    tmp_memory: Any,
+    which_browser: Any,
 ) -> Any:
     assert_items_absence_in_browser(
         selenium, browser_id, item_list, tmp_memory, which_browser=which_browser
@@ -460,7 +478,10 @@ def _choose_menu(selenium: SeleniumDrivers, browser_id: Any, which_browser: Any)
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, which_browser: Any = "file browser"
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    option: Any,
+    which_browser: Any = "file browser",
 ) -> Any:
     menu = _choose_menu(selenium, browser_id, which_browser)
     menu.choose_option(option)
@@ -488,7 +509,11 @@ def wt_click_option_in_data_row_menu_in_browser(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_state_in_data_row_menu(
-    selenium: SeleniumDrivers, browser_id: Any, option: Any, option_state: Any, which_browser: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    option: Any,
+    option_state: Any,
+    which_browser: Any,
 ) -> Any:
     err_msg = (
         f"{option} option is not {option_state} in opened item menu in file browser"
@@ -659,7 +684,11 @@ def assert_value_in_xattr_or_json_column_for_item(
     )
 )
 def assert_no_column_for_item(
-    browser_id: Any, item_name: Any, option: Any, which_browser: Any, selenium: SeleniumDrivers
+    browser_id: Any,
+    item_name: Any,
+    option: Any,
+    which_browser: Any,
+    selenium: SeleniumDrivers,
 ) -> Any:
     driver = selenium[browser_id]
     browser = getattr(OPLoggedIn(driver), transform(which_browser))

@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
@@ -39,7 +40,6 @@ from tests.gui.steps.oneprovider.metadata import (
 from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -49,7 +49,9 @@ from tests.conftest import SeleniumDrivers
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_xattr_entry(selenium: SeleniumDrivers, browser_id: Any, key_name: Any, value: Any) -> Any:
+def add_xattr_entry(
+    selenium: SeleniumDrivers, browser_id: Any, key_name: Any, value: Any
+) -> Any:
     type_text_to_attr_input_in_new_xattr_entry(selenium, browser_id, key_name)
     type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
@@ -99,7 +101,11 @@ def add_json_rdf_metadata_for_item(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_json_rdf_metadata_for_item(
-    selenium: SeleniumDrivers, browser_id: Any, tab: Any, item_name: Any, tmp_memory: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    tab: Any,
+    item_name: Any,
+    tmp_memory: Any,
 ) -> Any:
     modal_name = get_modal_name_from_item_name(item_name.lower())
     option = "Metadata"

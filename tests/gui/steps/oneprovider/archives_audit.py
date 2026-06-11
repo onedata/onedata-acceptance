@@ -14,13 +14,13 @@ from typing import Any, Dict, List, Union
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -108,7 +108,9 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         "in archive audit log"
     )
 )
-def assert_ascending_file_or_dir_names(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def assert_ascending_file_or_dir_names(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     start_value = -1
@@ -287,7 +289,9 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
 
 
 @wt(parsers.parse("user of {browser_id} clicks on top item in archive audit log"))
-def click_on_top_item_in_archive_audit_log(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def click_on_top_item_in_archive_audit_log(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     click_on_item_in_archive_audit_log(browser_id, 0, selenium)
 
 
@@ -337,7 +341,9 @@ def assert_message_at_field_in_archive_audit_log(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_details_for_archived_item(browser_id: Any, config: Any, selenium: SeleniumDrivers) -> Any:
+def check_details_for_archived_item(
+    browser_id: Any, config: Any, selenium: SeleniumDrivers
+) -> Any:
     """
     Config format given in yaml:
     Possible fields, each of them is optional
@@ -441,7 +447,9 @@ def click_on_field_in_details_archive_audit_log(
 
 @wt(parsers.parse("user of {browser_id} scrolls to top in archive audit log"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def scroll_to_top_in_archive_audit_log(browser_id: Any, selenium: SeleniumDrivers) -> Any:
+def scroll_to_top_in_archive_audit_log(
+    browser_id: Any, selenium: SeleniumDrivers
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     modal.scroll_to_top()

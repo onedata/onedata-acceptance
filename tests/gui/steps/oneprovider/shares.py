@@ -8,13 +8,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import OPLoggedIn, Popups
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 
 @wt(
@@ -43,7 +43,9 @@ def assert_item_in_file_browser_in_shares_page(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_share_abs_path_correct(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
+def is_share_abs_path_correct(
+    selenium: SeleniumDrivers, browser_id: Any, path: Any
+) -> Any:
     displayed_path = OPLoggedIn(selenium[browser_id]).shares_page.path.pwd()
     assert (
         displayed_path == path
@@ -73,7 +75,9 @@ def is_cwd_correct(selenium: SeleniumDrivers, browser_id: Any, cwd: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_dir_in_abs_path(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
+def click_on_dir_in_abs_path(
+    selenium: SeleniumDrivers, browser_id: Any, path: Any
+) -> Any:
     OPLoggedIn(selenium[browser_id]).shares_page.path.chdir(path)
 
 
@@ -98,7 +102,9 @@ def copy_current_url(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_selected_share_named(selenium: SeleniumDrivers, browser_id: Any, share_name: Any) -> Any:
+def is_selected_share_named(
+    selenium: SeleniumDrivers, browser_id: Any, share_name: Any
+) -> Any:
     displayed_name = OPLoggedIn(selenium[browser_id]).shares_page.name
     assert (
         displayed_name == share_name
@@ -123,7 +129,9 @@ def click_menu_button_on_shares_page(selenium: SeleniumDrivers, browser_id: Any)
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_share_row_menu(selenium: SeleniumDrivers, browser_id: Any, option: Any) -> Any:
+def click_option_in_share_row_menu(
+    selenium: SeleniumDrivers, browser_id: Any, option: Any
+) -> Any:
     Popups(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
@@ -232,7 +240,9 @@ def change_shares_browser_to_file_browser(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_breadcrumbs(selenium: SeleniumDrivers, browser_id: Any, path: Any) -> Any:
+def change_cwd_using_breadcrumbs(
+    selenium: SeleniumDrivers, browser_id: Any, path: Any
+) -> Any:
     OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.chdir(path)
 
 
@@ -244,7 +254,9 @@ def change_cwd_using_breadcrumbs(selenium: SeleniumDrivers, browser_id: Any, pat
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_to_home_using_breadcrumbs(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def change_cwd_to_home_using_breadcrumbs(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     OPLoggedIn(selenium[browser_id]).shares_page.breadcrumbs.space_root()
 
 
@@ -283,7 +295,9 @@ def click_share_link_type_selector(selenium: SeleniumDrivers, browser_id: Any) -
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_share_link_type(selenium: SeleniumDrivers, browser_id: Any, url_type: Any) -> Any:
+def choose_share_link_type(
+    selenium: SeleniumDrivers, browser_id: Any, url_type: Any
+) -> Any:
     driver = selenium[browser_id]
     Popups(driver).power_select.choose_item(url_type)
 
@@ -311,7 +325,9 @@ def click_add_description_button(selenium: SeleniumDrivers, browser_id: Any) -> 
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def append_description(selenium: SeleniumDrivers, browser_id: Any, description: Any) -> Any:
+def append_description(
+    selenium: SeleniumDrivers, browser_id: Any, description: Any
+) -> Any:
     driver = selenium[browser_id]
 
     # check if editor is in preview or edit mode

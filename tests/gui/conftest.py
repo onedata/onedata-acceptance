@@ -18,7 +18,7 @@ from pytest import fixture, hookimpl, skip
 from selenium import webdriver
 
 from tests import LOGDIRS
-from tests.conftest import export_logs, get_log_dir_path
+from tests.conftest import Capabilities, Hosts, export_logs, get_log_dir_path
 from tests.gui.sse_fixtures import (
     async_loop_in_thread,
     monitors,
@@ -28,7 +28,6 @@ from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir
-from tests.conftest import Capabilities, Hosts
 
 SELENIUM_IMPLICIT_WAIT = 0
 

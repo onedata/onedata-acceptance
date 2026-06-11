@@ -10,6 +10,7 @@ import time
 from datetime import datetime
 from typing import Any
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
@@ -19,7 +20,6 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 CREATE_INDEX_TOGGLES = {
     "include_metadata": ["xattrs", "json", "rdf"],
@@ -62,7 +62,9 @@ def type_index_name_to_input_field_in_indices_page(
 
 @wt(parsers.parse("user of {browser_id} clicks on Create button in indices page"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_button_in_indices_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_create_button_in_indices_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["discovery"].indices_page.create_button()
 

@@ -17,12 +17,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers
 
 in_type_to_id = {
     "username": "login-form-username-input",
@@ -199,7 +199,10 @@ def _wait_for_modal_to_disappear(driver: Any, browser_id: Any, tmp_memory: Any) 
 
 
 def wait_for_named_modal_to_disappear(
-    selenium: SeleniumDrivers, browser_id: Any, modal_name: Any, wait_time: Any = WAIT_FRONTEND
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    modal_name: Any,
+    wait_time: Any = WAIT_FRONTEND,
 ) -> Any:
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
@@ -295,7 +298,9 @@ def is_modal_msg_matching(browser_id: Any, regexp: Any, tmp_memory: Any) -> Any:
 
 
 @wt(parsers.parse("user of {browser_id} sees non-empty token in active modal"))
-def get_token_from_modal(selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any) -> Any:
+def get_token_from_modal(
+    selenium: SeleniumDrivers, browser_id: Any, tmp_memory: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]["window"]["modal"]
     token_box = modal.find_element(By.CSS_SELECTOR, "input[readonly]")
@@ -459,7 +464,9 @@ def click_panel_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_panel_question_icon(selenium: SeleniumDrivers, browser_id: Any, panel_name: Any) -> Any:
+def click_panel_question_icon(
+    selenium: SeleniumDrivers, browser_id: Any, panel_name: Any
+) -> Any:
     panel_name = "qos" if panel_name == "Quality of Service" else panel_name
     tab = getattr(Modals(selenium[browser_id]).details_modal, transform(panel_name))
     getattr(tab, "question_icon").click()
@@ -523,7 +530,9 @@ def click_modal_button(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_link(selenium: SeleniumDrivers, browser_id: Any, link: Any, modal_name: Any) -> Any:
+def click_modal_link(
+    selenium: SeleniumDrivers, browser_id: Any, link: Any, modal_name: Any
+) -> Any:
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     getattr(modal, transform(link)).click()
 
@@ -536,7 +545,11 @@ def click_modal_link(selenium: SeleniumDrivers, browser_id: Any, link: Any, moda
     )
 )
 def wt_write_name_into_text_field_in_panel(
-    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, panel_name: Any, name_textfield: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_name: Any,
+    panel_name: Any,
+    name_textfield: Any,
 ) -> Any:
     write_name_into_text_field_in_panel(
         selenium,
@@ -570,7 +583,11 @@ def write_name_into_text_field_in_panel(
     )
 )
 def wt_write_name_into_text_field_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, item_name: Any, modal_name: Any, name_textfield: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_name: Any,
+    modal_name: Any,
+    name_textfield: Any,
 ) -> Any:
     write_name_into_text_field_in_modal(
         selenium,
@@ -743,7 +760,9 @@ def close_modal(selenium: SeleniumDrivers, browser_id: Any, modal: Any) -> Any:
 
 @wt(parsers.parse("user of {browser_id} clicks copy command icon in REST API modal"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_in_rest_api_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_copy_icon_in_rest_api_modal(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     Modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
@@ -755,7 +774,11 @@ def click_copy_icon_in_rest_api_modal(selenium: SeleniumDrivers, browser_id: Any
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, dropdown_name: Any, option: Any, modal_name: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    dropdown_name: Any,
+    option: Any,
+    modal_name: Any,
 ) -> Any:
     driver = selenium[browser_id]
     modal = getattr(Modals(driver), transform(modal_name))
@@ -793,7 +816,11 @@ def assert_path_where_symbolic_link_points(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_modal(
-    selenium: SeleniumDrivers, browser_id: Any, toggle_name: Any, option: Any, modal_name: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    toggle_name: Any,
+    option: Any,
+    modal_name: Any,
 ) -> Any:
     driver = selenium[browser_id]
     modal = getattr(Modals(driver), check_modal_name(modal_name))
@@ -809,7 +836,9 @@ def switch_toggle_in_modal(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_checkbox_in_advertise_space_modal(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def check_checkbox_in_advertise_space_modal(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     driver = selenium[browser_id]
     modal = Modals(driver).advertise_space_in_the_marketplace
     modal.checkbox.click()
@@ -824,6 +853,8 @@ def check_checkbox_in_advertise_space_modal(selenium: SeleniumDrivers, browser_i
     parsers.parse('user of {browser_id} clicks "{button}" on "{warning_label}" warning')
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_warning(selenium: SeleniumDrivers, browser_id: Any, button: Any) -> Any:
+def click_button_on_warning(
+    selenium: SeleniumDrivers, browser_id: Any, button: Any
+) -> Any:
     driver = selenium[browser_id]
     getattr(Modals(driver).warning_info, transform(button))()

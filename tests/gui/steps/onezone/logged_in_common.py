@@ -9,12 +9,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Any
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import Hosts, SeleniumDrivers
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -28,7 +28,9 @@ def _expand_oz_panel(driver: Any, panel: Any) -> Any:
         r'"(?P<panel_name>.*)" Onezone sidebar panel'
     )
 )
-def g_expand_oz_panel(selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any) -> Any:
+def g_expand_oz_panel(
+    selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any
+) -> Any:
     for browser_id in list_parser(browser_id_list):
         _expand_oz_panel(selenium[browser_id], panel_name)
 
@@ -39,7 +41,9 @@ def g_expand_oz_panel(selenium: SeleniumDrivers, browser_id_list: Any, panel_nam
         '"(?P<panel_name>.*)" Onezone sidebar panel'
     )
 )
-def wt_expand_oz_panel(selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any) -> Any:
+def wt_expand_oz_panel(
+    selenium: SeleniumDrivers, browser_id_list: Any, panel_name: Any
+) -> Any:
     for browser_id in list_parser(browser_id_list):
         _expand_oz_panel(selenium[browser_id], panel_name)
 
@@ -50,7 +54,9 @@ def wt_expand_oz_panel(selenium: SeleniumDrivers, browser_id_list: Any, panel_na
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_alert_with_title_in_oz(selenium: SeleniumDrivers, browser_id: Any, title: Any) -> Any:
+def assert_alert_with_title_in_oz(
+    selenium: SeleniumDrivers, browser_id: Any, title: Any
+) -> Any:
     driver = selenium[browser_id]
     alert = OZLoggedIn(driver).provider_alert_message
     err_msg = f"expected alert: {title}, found: {alert}"
@@ -155,7 +161,11 @@ def assert_there_is_item_with_known_name_in_oz_panel_list(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_named_in_oz_panel_list(
-    selenium: SeleniumDrivers, browser_id: Any, item_type: Any, item_name: Any, oz_panel: Any
+    selenium: SeleniumDrivers,
+    browser_id: Any,
+    item_type: Any,
+    item_name: Any,
+    oz_panel: Any,
 ) -> Any:
     driver = selenium[browser_id]
     items = getattr(OZLoggedIn(driver)[oz_panel], f"{item_type}s")

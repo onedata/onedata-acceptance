@@ -10,13 +10,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from typing import Any
 
+from tests.conftest import SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.conftest import SeleniumDrivers, Users
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
@@ -39,7 +39,9 @@ def _login_using_passphrase(login_page: Any, password: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_sign_in_to_emergency_interface(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def click_sign_in_to_emergency_interface(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     LoginPage(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
@@ -125,13 +127,17 @@ def wt_enter_password_of_user(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_press_sign_in_btn_on_login_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_press_sign_in_btn_on_login_page(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     LoginPage(selenium[browser_id]).sign_in()
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) successfully signed in (?P<service>.*)"))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_successful_login(selenium: SeleniumDrivers, browser_id: Any, service: Any) -> Any:
+def wt_assert_successful_login(
+    selenium: SeleniumDrivers, browser_id: Any, service: Any
+) -> Any:
     logged_in_service = OnePage(selenium[browser_id]).service
     assert (
         service.lower() in logged_in_service.lower()
@@ -157,7 +163,9 @@ def wt_assert_login_page(selenium: SeleniumDrivers, browser_id: Any) -> Any:
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_err_msg_about_credentials(selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def wt_assert_err_msg_about_credentials(
+    selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     assert LoginPage(
         selenium[browser_id]
     ).err_msg, "no err msg about invalid credentials found"
@@ -170,7 +178,9 @@ def wt_assert_err_msg_about_credentials(selenium: SeleniumDrivers, browser_id: A
     )
 )
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_sign_in_notification(text: Any, selenium: SeleniumDrivers, browser_id: Any) -> Any:
+def assert_sign_in_notification(
+    text: Any, selenium: SeleniumDrivers, browser_id: Any
+) -> Any:
     err_msg = "sign in notification message is not as expected"
     assert (
         LoginPage(selenium[browser_id]).login_notification_message.text == text
