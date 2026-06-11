@@ -202,20 +202,20 @@ def _result_to_consume_token(selenium, browser_id, result):
         click_modal_button(selenium, browser_id, button, modal)
 
 
-@repeat_failed(timeout=WAIT_BACKEND)
 def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
-    button = "Create new token"
     token_name = f"{token_type}_token"
     if iteration:
         token_name = token_name + str(iteration)
 
-    click_on_button_in_tokens_sidebar(selenium, browser_id, button)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, "Create new token")
     click_create_custom_token(selenium, browser_id)
     type_new_token_name(selenium, browser_id, token_name)
     choose_token_type_to_create(selenium, browser_id, token_type)
+
     if token_type == "invite":
-        invite_type = "Register Oneprovider"
-        choose_invite_type_in_oz_token_page(selenium, browser_id, invite_type)
+        choose_invite_type_in_oz_token_page(
+            selenium, browser_id, "Register Oneprovider"
+        )
     click_create_token_button_in_create_token_page(selenium, browser_id)
 
 
@@ -225,7 +225,6 @@ def _create_token_of_type(selenium, browser_id, token_type, iteration=None):
         r"(?P<token_type>.*?) tokens?"
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(selenium, browser_id, number: int, token_type):
     for i in range(number):
         _create_token_of_type(selenium, browser_id, token_type, i)

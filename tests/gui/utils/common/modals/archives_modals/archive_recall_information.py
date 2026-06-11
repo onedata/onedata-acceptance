@@ -90,7 +90,7 @@ class ArchiveRecallInformation(Modal):
     def get_visible_rows_of_columns(
         self, column_names: Optional[List[str]] = None
     ) -> Dict[str, List[str]]:
-
+        # This function concerns browsing logs with errors in archive recall
         temp_columns = list(set((column_names or []) + ["source_file"]))
         column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
         for row in self.error_file_rows:

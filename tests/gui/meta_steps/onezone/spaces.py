@@ -528,6 +528,7 @@ def assert_opened_space(selenium, browser_id, space_name):
         page, items_type=ListElement.SPACES, main_field="name"
     )
     space = [space for space in vis_spaces if space.name == space_name][0]
+
     err_msg = f"Space {space_name} is not opened."
     assert space.is_displayed(), err_msg
-    assert space.is_active(), err_msg
+    assert "active" in space.get_attribute("class"), err_msg
