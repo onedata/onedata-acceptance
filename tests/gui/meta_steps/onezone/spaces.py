@@ -531,4 +531,4 @@ def assert_opened_space(selenium, browser_id, space_name):
 
     err_msg = f"Space {space_name} is not opened."
     assert space.is_displayed(), err_msg
-    assert "active" in space.get_attribute("class"), err_msg
+    assert "active" in space.web_elem.get_attribute("class"), err_msg
