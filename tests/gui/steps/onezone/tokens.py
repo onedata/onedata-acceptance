@@ -100,27 +100,10 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, button):
         'option in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_custom_token(selenium, browser_id):
     driver = selenium[browser_id]
-    create_btn = OZLoggedIn(driver)["tokens"].create_token_page.create_custom_token
-    for _ in range(50):
-        try:
-            driver.execute_script(
-                "arguments[0].scrollIntoView();",
-                create_btn.web_elem,
-            )
-            create_btn.click()
-            break
-        except RuntimeError:
-            time.sleep(0.1)
-            if not create_btn.is_displayed():
-                # Successfully clicked, but got RuntimeError
-                return
-    else:
-        raise RuntimeError('Failed to click on "Create custom token" button')
-
-    wait_for_item_to_disappear(create_btn)
+    OZLoggedIn(driver)["tokens"].create_token_page.create_custom_token()
 
 
 @wt(
@@ -218,7 +201,7 @@ def click_copy_button_in_token_view(selenium, browser_id):
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
-@repeat_failed(timeout=2 * WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_invite_type_in_oz_token_page(selenium, browser_id, invite_type):
     driver = selenium[browser_id]
     new_token_page = OZLoggedIn(driver)["tokens"].create_token_page
@@ -396,7 +379,6 @@ def assert_token_on_tokens_list(selenium, browser_id, token_name):
 @repeat_failed(timeout=WAIT_BACKEND)
 def type_new_token_name(selenium, browser_id, token_name):
     driver = selenium[browser_id]
-    time.sleep(0.2)
     input_box = OZLoggedIn(driver)["tokens"].create_token_page.token_name_input
     input_box.value = token_name
     assert (
