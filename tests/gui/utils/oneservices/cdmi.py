@@ -2,6 +2,7 @@
 
 import json
 from typing import Optional
+
 import requests
 
 from tests import OP_REST_PORT

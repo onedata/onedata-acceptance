@@ -10,14 +10,14 @@ import os
 import re
 import subprocess as sp
 import sys
-from typing import Any, Literal, TypeAlias, overload
+from typing import Any, Literal, Optional, overload
 
 import urllib3
 import yaml
 from kubernetes import client, config  # pylint: disable=import-error
 
-Command: TypeAlias = list[str]
-CommandResult: TypeAlias = str | int
+type Command = list[str]
+type CommandResult = str | int
 
 
 class OnenvError(BaseException):
@@ -178,16 +178,16 @@ def service_name_to_alias_mapping(name: str) -> str:
     ][0]
 
 
-def get_service_type(pod: Any) -> str | None:
+def get_service_type(pod: client.V1Pod) -> Optional[str]:
     # returns SERVICE_ONEZONE | SERVICE_ONEPROVIDER
     return pod.metadata.labels.get("component")
 
 
-def get_client_provider_host(pod: Any) -> str | None:
+def get_client_provider_host(pod: client.V1Pod) -> Optional[str]:
     return get_env_variable(pod, "ONECLIENT_PROVIDER_HOST")
 
 
-def get_env_variable(pod: Any, env_name: str) -> str | None:
+def get_env_variable(pod: client.V1Pod, env_name: str) -> Optional[str]:
     envs = get_env_variables(pod)
     for env in envs:
         if env.name == env_name:
@@ -195,7 +195,7 @@ def get_env_variable(pod: Any, env_name: str) -> str | None:
     return None
 
 
-def get_env_variables(pod: Any) -> list[Any]:
+def get_env_variables(pod: client.V1Pod) -> list[client.V1EnvVar]:
     return pod.spec.containers[0].env
 
 
@@ -203,7 +203,7 @@ def init_helm() -> None:
     sp.call(helm_init_cmd(client_only=True))
 
 
-def helm_init_cmd(client_only: bool | None = None) -> Command:
+def helm_init_cmd(client_only: Optional[bool] = None) -> Command:
     cmd = ["helm", "init"]
 
     if client_only:
@@ -212,7 +212,7 @@ def helm_init_cmd(client_only: bool | None = None) -> Command:
     return cmd
 
 
-def get_kube_client() -> Any:
+def get_kube_client() -> client.CoreV1Api:
     urllib3.disable_warnings()
     config.load_kube_config(
         config_file=os.path.join(os.path.expanduser("~"), ".kube", "config")
@@ -221,18 +221,18 @@ def get_kube_client() -> Any:
     return kube
 
 
-def list_pods_and_jobs() -> list[Any]:
+def list_pods_and_jobs() -> list[client.V1Pod]:
     kube = get_kube_client()
     namespace = get_current_namespace()
     return kube.list_namespaced_pod(namespace).items
 
 
 def cmd_exec(
-    pod: Any,
+    pod: str,
     command: str | list[str],
     interactive: bool = False,
     tty: bool = False,
-    container: str | None = None,
+    container: Optional[str] = None,
 ) -> Command:
     cmd = ["kubectl", "--namespace", get_current_namespace(), "exec"]
 
@@ -254,25 +254,25 @@ def cmd_exec(
     return cmd
 
 
-def get_name(component: Any) -> str:
+def get_name(component: client.V1Pod) -> str:
     return component.metadata.name
 
 
-def get_ip(pod: Any) -> str:
+def get_ip(pod: client.V1Pod) -> str:
     return pod.status.pod_ip
 
 
-def is_pod(pod: Any) -> bool:
+def is_pod(pod: client.V1Pod) -> bool:
     if pod.metadata.owner_references:
         return pod.metadata.owner_references[0].kind != "Job"
     return False
 
 
-def list_pods() -> list[Any]:
+def list_pods() -> list[client.V1Pod]:
     return list(filter(is_pod, list_pods_and_jobs()))
 
 
-def match_pods(substring: str) -> list[Any]:
+def match_pods(substring: str) -> list[client.V1Pod]:
     pods_list = list_pods()
     # Accept dashes as wildcard characters
     pattern = f".*{substring.replace("-", ".*")}.*"

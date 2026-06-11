@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from typing import Any
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.utils.core.web_elements import WebElementsSequence
@@ -40,7 +41,7 @@ class Homepage:
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
 
-def get_page(docs_page: 'Homepage', item: str, click: bool = True) -> Any:
+def get_page(docs_page: "Homepage", item: str, click: bool = True) -> Any:
     item = item.lower()
     cls = docs_page.panels_classes.get(item, None)
     if cls:

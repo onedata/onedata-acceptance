@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, Protocol, TypeAlias, TypeGuard, cast
+from typing import Any, Protocol, TypeGuard, cast
 
 from packaging.version import Version
 
@@ -26,11 +26,11 @@ from tests.utils.environment_utils import (
 )
 from tests.utils.onenv_utils import run_onenv_command
 
-TestCallback: TypeAlias = Callable[..., Any]
-HostConfig: TypeAlias = dict[str, Any]
-HostsConfig: TypeAlias = dict[str, HostConfig]
-VersionSpec: TypeAlias = str | dict[str, Any]
-ClientKey: TypeAlias = tuple[str, str, str]
+type TestCallback = Callable[..., Any]
+type HostConfig = dict[str, Any]
+type HostsConfig = dict[str, HostConfig]
+type VersionSpec = str | dict[str, Any]
+type ClientKey = tuple[str, str, str]
 
 
 class UserLike(Protocol):

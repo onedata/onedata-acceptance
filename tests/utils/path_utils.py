@@ -12,7 +12,7 @@ import sys
 import time
 from collections.abc import Callable
 from types import ModuleType
-from typing import Any, Protocol, Optional
+from typing import Any, Optional, Protocol
 
 
 class TestNodeLike(Protocol):

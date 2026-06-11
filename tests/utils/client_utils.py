@@ -13,25 +13,45 @@ import string
 import subprocess
 import time
 from collections.abc import Callable
-from typing import Any, TypeAlias
+from typing import IO, Any, Mapping, Optional, Protocol, cast
 
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR
 from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
 
-Command: TypeAlias = str | list[str]
-CommandResult: TypeAlias = int | str | None
+
+class ModulesProxy(Protocol):
+    os: Any
+    shutil: Any
+    subprocess: Any
+    tempfile: Any
+    xattr: Any
+
+
+class BuiltinsProxy(Protocol):
+    def open(self, file: str, mode: str = ...) -> IO[str]: ...
+
+
+class RpycConnectionLike(Protocol):
+    modules: ModulesProxy
+    builtins: BuiltinsProxy
+
+
+type Command = str | list[str]
+type CommandResult = int | str | None
 
 
 class Client:
-    def __init__(self, rpyc_connection: Any, timeout: int | None = 40) -> None:
+    def __init__(
+        self, rpyc_connection: RpycConnectionLike, timeout: Optional[int] = 40
+    ) -> None:
         self._id = "".join(
             random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
         )
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
         self.timeout = timeout if timeout is not None else 40
-        self.opened_files: dict[object, Any] = {}
+        self.opened_files: dict[object, IO[Any]] = {}
         self.file_stats: dict[str, object] = {}
 
     def mount(
@@ -198,24 +218,24 @@ class Client:
 
     def write(self, text: str | bytes, file_path: str, mode: str = "w") -> None:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
-            f.write(text)
+            f.write(cast(str, text))
 
     def read(self, file_path: str, mode: str = "r") -> str | bytes:
         with self.rpyc_connection.builtins.open(file_path, mode) as f:
             read_text = f.read()
         return read_text
 
-    def open_file(self, file: str, mode: str = "w+") -> Any:
+    def open_file(self, file: str, mode: str = "w+") -> IO[Any]:
         return self.rpyc_connection.builtins.open(file, mode)
 
     def close_file(self, file: object) -> None:
         self.opened_files[file].close()
 
     def write_to_opened_file(self, file: object, text: str | bytes) -> None:
-        self.opened_files[file].write(text)
+        self.opened_files[file].write(cast(str, text))
         self.opened_files[file].flush()
 
-    def read_from_opened_file(self, file: object) -> str | bytes:
+    def read_from_opened_file(self, file: object) -> str:
         return self.opened_files[file].read()
 
     def seek(self, file: object, offset: int) -> None:
@@ -229,7 +249,7 @@ class Client:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         return xattrs[name]
 
-    def get_all_xattr(self, file: str) -> Any:
+    def get_all_xattr(self, file: str) -> Mapping[str, object]:
         return self.rpyc_connection.modules.xattr.xattr(file)
 
     def listxattr(self, file: str) -> list[str]:
@@ -374,9 +394,16 @@ def user_home_dir(user: str = "root") -> str:
 
 
 def get_client_conf(
-    client_id: str, client_host_alias: str, env_desc: Any
+    client_id: str, client_host_alias: str, env_desc: Mapping[str, Any]
 ) -> dict[str, Any]:
-    client_host_conf = env_desc.get("oneclient").get(client_host_alias)
-    client_conf = client_host_conf.get("clients").get(client_id)
+    client_host_mapping = cast(Mapping[str, Any], env_desc.get("oneclient") or {})
+    client_host_conf = cast(
+        Mapping[str, Any], client_host_mapping.get(client_host_alias) or {}
+    )
+    client_conf = cast(
+        dict[str, Any],
+        cast(Mapping[str, Any], client_host_conf.get("clients") or {}).get(client_id)
+        or {},
+    )
     client_conf["id"] = client_id
     return client_conf

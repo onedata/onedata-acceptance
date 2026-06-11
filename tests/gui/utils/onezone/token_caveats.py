@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 from datetime import datetime, timedelta
 from typing import Any, Callable, Iterable, cast
-from selenium.webdriver.remote.webdriver import WebDriver
 
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.utils.common.common import Toggle
@@ -76,14 +76,20 @@ class CaveatField(PageObject):
         return self.item_label == "Allow"
 
     def set_allow(
-        self, popups: Callable[[WebDriver], Any], selenium: SeleniumDrivers, browser_id: str
+        self,
+        popups: Callable[[WebDriver], Any],
+        selenium: SeleniumDrivers,
+        browser_id: str,
     ) -> None:
         if not self.is_allow():
             self.expander()
             popups(selenium[browser_id]).power_select.choose_item("Allow")
 
     def set_deny(
-        self, popups: Callable[[WebDriver], Any], selenium: SeleniumDrivers, browser_id: str
+        self,
+        popups: Callable[[WebDriver], Any],
+        selenium: SeleniumDrivers,
+        browser_id: str,
     ) -> None:
         if self.is_allow():
             self.expander()

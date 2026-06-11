@@ -9,6 +9,7 @@ import hashlib
 import json
 from collections.abc import Callable, Mapping
 from typing import NamedTuple
+
 import requests
 
 from tests import PANEL_REST_PORT

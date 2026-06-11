@@ -12,7 +12,7 @@ import os
 import subprocess
 import time
 from collections.abc import Mapping, Sequence
-from typing import Any, TypeAlias
+from typing import Any
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -27,8 +27,8 @@ TIME_ATTR_MAPPING = {
     "status-change": "ctime",
 }
 
-Command: TypeAlias = Sequence[str]
-JsonObject: TypeAlias = dict[str, Any]
+type Command = Sequence[str]
+type JsonObject = dict[str, Any]
 
 
 def list_parser(arg: str) -> list[str]:

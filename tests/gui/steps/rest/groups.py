@@ -20,7 +20,9 @@ def get_user_groups(zone_hostname: str, user: str, users: Users) -> List[str]:
     ).json()["groups"]
 
 
-def leave_user_group(zone_hostname: str, user: str, users: Users, group_id: str) -> None:
+def leave_user_group(
+    zone_hostname: str, user: str, users: Users, group_id: str
+) -> None:
     http_delete(
         ip=zone_hostname,
         port=OZ_REST_PORT,

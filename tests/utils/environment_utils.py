@@ -8,17 +8,18 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import Any, Dict, List, Optional, Mapping, cast
+from typing import Any, Dict, List, Mapping, Optional, cast
 
+import pytest
 import requests
 import urllib3
 import yaml
-import pytest
 from requests.exceptions import ConnectTimeout
 
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
+from tests.conftest import Hosts, TestConfig, Users
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
@@ -36,7 +37,6 @@ from tests.utils.onenv_utils import (
     run_onenv_command,
     service_name_to_alias_mapping,
 )
-from tests.conftest import Hosts, Users, TestConfig
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.user_utils import AdminUser, User
 from tests.utils.utils import repeat_failed
@@ -269,7 +269,9 @@ def parse_wait_args(request: pytest.FixtureRequest) -> List[str]:
     return wait_args
 
 
-def parse_up_args(request: pytest.FixtureRequest, test_config: Optional[TestConfig]) -> List[str]:
+def parse_up_args(
+    request: pytest.FixtureRequest, test_config: Optional[TestConfig]
+) -> List[str]:
     up_args = []
 
     option_values = [
@@ -317,7 +319,9 @@ def parse_up_args(request: pytest.FixtureRequest, test_config: Optional[TestConf
                 up_args.extend(
                     [
                         option,
-                        config_image_spec_to_image(service_name, cast(str, version_val)),
+                        config_image_spec_to_image(
+                            service_name, cast(str, version_val)
+                        ),
                     ]
                 )
 

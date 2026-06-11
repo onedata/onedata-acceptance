@@ -32,7 +32,10 @@ def log_exception() -> None:
 
 
 def assert_generic(
-    expression: Callable[..., object], should_fail: bool, *args: object, **kwargs: object
+    expression: Callable[..., object],
+    should_fail: bool,
+    *args: object,
+    **kwargs: object,
 ) -> None:
     if should_fail:
         assert_false(expression, *args, **kwargs)
@@ -45,7 +48,9 @@ def assert_(expression: Callable[..., object], *args: object, **kwargs: object) 
     assert assert_result
 
 
-def assert_false(expression: Callable[..., object], *args: object, **kwargs: object) -> None:
+def assert_false(
+    expression: Callable[..., object], *args: object, **kwargs: object
+) -> None:
     assert_result = expression(*args, **kwargs)
     assert not assert_result
 
@@ -58,7 +63,9 @@ def get_fun_name(fun: str) -> Optional[str]:
     return None
 
 
-def assert_expected_failure(fun: Callable[..., object], *args: object, **kwargs: object) -> None:
+def assert_expected_failure(
+    fun: Callable[..., object], *args: object, **kwargs: object
+) -> None:
     with pytest.raises(OSError):
         fun(*args, **kwargs)
 

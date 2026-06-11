@@ -8,15 +8,15 @@ import itertools
 import sys
 import time
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, TypeAlias
+from typing import Any
 
 import pytest
 
 from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
-ReportData: TypeAlias = dict[str, Any]
-ConfigData: TypeAlias = Mapping[str, Any]
-PerformanceTest: TypeAlias = Callable[..., Any]
+type ReportData = dict[str, Any]
+type ConfigData = Mapping[str, Any]
+type PerformanceTest = Callable[..., Any]
 
 
 def performance(
