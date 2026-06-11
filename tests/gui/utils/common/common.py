@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from functools import partial
-from typing import Any
 
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -32,7 +32,7 @@ class BaseContent(PageObject):
     _main_content = ".main-content"
     account_management = WebItem(_main_content, cls=AccountManagementContentPage)
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"content in {self.parent}"
 
 
@@ -52,58 +52,58 @@ class OnePage:
     )
     warning_bar = WebItem(".one-warning-bar", cls=EmergencyInterfaceWarningBar)
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "OnePage"
 
 
 class PublicOnePage:
     loading_error = Label(".application-error-message")
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = self.web_elem = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "public onedata page"
 
 
 class _Toggle(PageObject):
     _lock = WebElement(".one-way-toggle-readonly-icon")
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return f"toggle switch in {self.parent}"
 
-    def is_checked(self) -> Any:
+    def is_checked(self) -> bool:
         class_attrs = self.web_elem.get_attribute("class")
         return "checked" in class_attrs and "in-progress" not in class_attrs
 
-    def is_partial_checked(self) -> Any:
+    def is_partial_checked(self) -> bool:
         return "maybe" in self.web_elem.get_attribute("class")
 
-    def is_unchecked(self) -> Any:
+    def is_unchecked(self) -> bool:
         return not self.is_checked() and not self.is_partial_checked()
 
-    def check(self) -> Any:
+    def check(self) -> None:
         if not self.is_checked():
             self.click()
 
-    def uncheck(self) -> Any:
+    def uncheck(self) -> None:
         if self.is_checked():
             self.click()
         elif self.is_partial_checked():
             self.click()
             self.click()
 
-    def is_enabled(self) -> Any:
+    def is_enabled(self) -> bool:
         try:
             self._lock
         except RuntimeError:
             return True
         return False
 
-    def wait_for_status(self, is_checked: Any) -> Any:
+    def wait_for_status(self, is_checked: bool) -> None:
         Wait(self.driver, WAIT_BACKEND).until(
             lambda _: self.is_checked() == is_checked,
             message=(
@@ -143,8 +143,8 @@ class LoginPage:
     open_in_onezone = Button(".btn-login-onezone")
     login_notification_message = WebElement(".login-notification")
 
-    def __init__(self, driver: Any) -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.web_elem = self.driver = driver
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return "Onezone Login page"
