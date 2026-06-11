@@ -180,7 +180,7 @@ def click_create_token_button_in_create_token_page(selenium, browser_id):
         '"Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_token_type_to_create(selenium, browser_id, token_type):
     driver = selenium[browser_id]
     option = f"{token_type}_option"
@@ -376,7 +376,7 @@ def assert_token_on_tokens_list(selenium, browser_id, token_name):
         r'input box in "Create new token" view'
     )
 )
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def type_new_token_name(selenium, browser_id, token_name):
     driver = selenium[browser_id]
     input_box = OZLoggedIn(driver)["tokens"].create_token_page.token_name_input
