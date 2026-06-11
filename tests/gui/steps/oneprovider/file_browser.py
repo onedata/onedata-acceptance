@@ -23,7 +23,6 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
-from tests.gui.utils.oneprovider.browser import Browser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -165,13 +164,13 @@ def wait_for_size_to_be_displayed_in_data_row(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]["file_browser"]
-    visible_files = Browser.get_field_value_from_visible_rows(browser.files_list)
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     detected_files = []
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
         browser.scroll_visible_fragment()
-        visible_files = Browser.get_field_value_from_visible_rows(browser.files_list)
+        visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
         new_files = [f for f in visible_files if f and f not in detected_files]
 
 
@@ -257,7 +256,7 @@ def select_first_n_files(browser_id, num_files_to_select: int, tmp_memory):
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
         selected_files = []
-        visible_files = Browser.get_field_value_from_visible_rows(browser.files_list)
+        visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
         new_files = [f for f in visible_files if f]
         err_msg = (
             f"there are {len(new_files)} files in file browser"
@@ -432,7 +431,7 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory, which_browse
 
     browser = tmp_memory[browser_id][transform(which_browser.value)]
     detected_files = []
-    visible_files = Browser.get_field_value_from_visible_rows(browser.files_list)
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
@@ -444,7 +443,7 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory, which_browse
         # wait if page does not respond instantly
         for _ in range(10):
             try:
-                visible_files = Browser.get_field_value_from_visible_rows(
+                visible_files = browser.get_field_value_from_visible_rows(
                     browser.files_list
                 )
                 break
@@ -627,7 +626,7 @@ def assert_contents_downloaded_tar_file(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option, which):
     browser = tmp_memory[browser_id][f"{which}_browser"]
-    visible_files = Browser.get_field_value_from_visible_rows(browser.files_list)
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     items = parse_seq(item_list)
     data = [f for f in visible_files if f]
     for name in items:
