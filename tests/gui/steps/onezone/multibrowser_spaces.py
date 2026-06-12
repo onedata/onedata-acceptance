@@ -40,4 +40,4 @@ def send_invitation_token_to_browser(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_group_on_groups_on_left_sidebar_menu(selenium, browser_id, group_name):
     driver = selenium[browser_id]
-    OZLoggedIn(driver).groups.elements_list[group_name].click()
+    OZLoggedIn(driver).groups.groups_list[group_name].click()

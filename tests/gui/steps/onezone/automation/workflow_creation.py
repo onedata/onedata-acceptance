@@ -321,7 +321,7 @@ def click_button_in_workflow(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_lambda_revision_to_workflow(selenium, browser_id, lambda_name, ordinal):
     subpage = OZLoggedIn(selenium[browser_id]).automation.lambdas_page
-    lambda_object = subpage.elements_list[lambda_name]
+    lambda_object = subpage.lambdas_list[lambda_name]
     revision = lambda_object.revision_list[ordinal[:-2]]
 
     try:

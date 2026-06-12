@@ -318,3 +318,40 @@ class FileAttr(Enum):
     SYMLINK_VALUE = "symlinkValue"
     TYPE = "type"
     XATTR_KEY = "xattr.key"
+
+
+class ListElement(Enum):
+    """
+    Represents supported list-like element types available on pages.
+
+    Each enum value corresponds to a logical list of elements that can be
+    displayed in the GUI, for example spaces, groups, files, tokens or workflows.
+
+    This enum should be used whenever code needs to refer to a specific type of
+    list in a page-independent way, instead of passing raw strings such as
+    "spaces", "groups headers" or "shares sidebar".
+
+    The enum values are used to build attribute names dynamically, for example:
+        ListElement.SPACES -> "spaces" -> "spaces_list"
+        ListElement.GROUPS_HEADERS -> "groups headers" -> "groups_headers_list"
+
+    Use this enum when:
+    - selecting which elements list should be read from a page,
+    - calling generic helpers such as get_visible_items_list(),
+    - avoiding hardcoded string literals in step definitions or page utilities,
+    - ensuring that only supported list types are passed to generic list-handling code.
+    """
+
+    SHARES = "shares"
+    GROUPS = "groups"
+    GROUPS_HEADERS = "groups headers"
+    SPACES = "spaces"
+    SPACES_HEADERS = "spaces headers"
+    FILES = "files"
+    UPLOADS = "uploads"
+    PROVIDERS = "providers"
+    HARVESTERS = "harvesters"
+    TOKENS = "tokens"
+    AUTOMATIONS = "automations"
+    LAMBDAS = "lambdas"
+    WORKFLOWS = "workflows"

@@ -92,7 +92,7 @@ def assert_provider_hostname_matches_test_hostname(
     driver = selenium[browser_id]
     expected_domain = f"{hosts[provider]['hostname']}.test"
     page = OZLoggedIn(driver).open_page_and_click("providers")
-    page.elements_list[0]()
+    page.providers_list[0]()
     _click_copy_hostname(driver)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, (
@@ -281,7 +281,7 @@ def assert_provider_working_in_oz_panel(selenium, browser_id, provider, hosts):
     provider = hosts[provider]["name"]
     page = OZLoggedIn(driver).open_page_and_click("providers")
     try:
-        provider_record = page.elements_list[provider]
+        provider_record = page.providers_list[provider]
         provider_record.click()
     except RuntimeError:
         assert False, f'no provider "{provider}" found on providers list'
@@ -295,7 +295,7 @@ def click_on_provider_in_providers_sidebar_with_provider_name(
     selenium, browser_id, provider_name
 ):
     driver = selenium[browser_id]
-    OZLoggedIn(driver).providers.elements_list[provider_name]()
+    OZLoggedIn(driver).providers.providers_list[provider_name]()
 
 
 @wt(
@@ -323,7 +323,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(
 ):
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
-    providers_list = OZLoggedIn(driver).providers.elements_list
+    providers_list = OZLoggedIn(driver).providers.providers_list
     assert (
         provider not in providers_list
     ), f"{provider} is in providers list in data sidebar"
@@ -370,7 +370,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     supported_spaces_number = (
-        OZLoggedIn(driver).providers.elements_list[provider].supported_spaces_number
+        OZLoggedIn(driver).providers.providers_list[provider].supported_spaces_number
     )
     assert (
         number == supported_spaces_number
@@ -435,7 +435,7 @@ def wait_until_provider_goes_offline_by_gui(selenium, browser_id, hosts, provide
     provider = hosts[provider_name]["name"]
     page = OZLoggedIn(driver).open_page_and_click("providers")
     time.sleep(0.5)
-    provider_record = page.elements_list[provider]
+    provider_record = page.providers_list[provider]
     provider_record.click()
     start = time.time()
     while page.is_working():

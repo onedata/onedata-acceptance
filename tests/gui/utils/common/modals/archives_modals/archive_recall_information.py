@@ -6,17 +6,28 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Dict, List, Optional
+
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebElementsSequence,
+    WebItemsSequence,
 )
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.utils.utils import repeat_failed
+
+
+class ErrorLogRow(BrowserRow):
+    source_file = Label(".cell-file", scroll=False)
+    time = Label(".timestamp-cell", scroll=False)
+    error_message = Label(".truncated-string", scroll=False)
 
 
 class ArchiveRecallInformation(Modal):
@@ -33,7 +44,7 @@ class ArchiveRecallInformation(Modal):
     recalling_oneprovider = Label(".recall-info-row-recalling-provider .property-value")
     recall_destination = Label(".recall-info-row-target-path .property-value")
     error_log = Button(".logs-nav-link")
-    error_file_row = WebElementsSequence(".table-entry.data-row")
+    error_file_rows = WebItemsSequence(".table-entry.data-row", cls=ErrorLogRow)
     error_log_table = WebElement(".infinite-scroll-table")
 
     @staticmethod
@@ -74,3 +85,25 @@ class ArchiveRecallInformation(Modal):
             )
         except JavascriptException:
             pass
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_columns(
+        self, column_names: Optional[List[str]] = None
+    ) -> Dict[str, List[str]]:
+        # This function concerns browsing logs with errors in archive recall
+        temp_columns = list(set((column_names or []) + ["source_file"]))
+        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
+        for row in self.error_file_rows:
+            values_in_row = [getattr(row, column) for column in temp_columns]
+            if any(value_in_row == "" for value_in_row in values_in_row):
+                continue
+
+            for column, value in zip(temp_columns, values_in_row):
+                column_values[column].append(value)
+
+        return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, param) -> List[str]:
+        column_values = self.get_visible_rows_of_columns([param])
+        return column_values[param]

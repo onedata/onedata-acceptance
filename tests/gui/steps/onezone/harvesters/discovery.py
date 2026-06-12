@@ -10,9 +10,10 @@ import time
 
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import ListElement, transform
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -38,23 +39,30 @@ def click_create_button_in_discovery_page(selenium, browser_id):
 
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
-        " (?P<option>.*) the (?P<list_type>harvesters|automation) "
-        "list in the sidebar"
-    )
+        r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" has'
+        r" (?P<option>appeared|disappeared) on the"
+        r" (?P<list_type>harvesters|automation) "
+        r"list in the sidebar"
+    ),
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, list_type):
     driver = selenium[browser_id]
-    list_type = "discovery" if list_type == "harvesters" else list_type
-    if option.startswith("appeared"):
-        assert (
-            name in getattr(OZLoggedIn(driver), list_type).elements_list
-        ), f'"{name}" not found on {list_type} list'
+
+    if list_type == "harvesters":
+        list_type, attr = "discovery", ListElement.HARVESTERS
     else:
-        assert (
-            name not in getattr(OZLoggedIn(driver), list_type).elements_list
-        ), f'"{name}" found on {list_type} list'
+        attr = ListElement.AUTOMATIONS
+
+    elements_list = get_visible_items_list(
+        getattr(OZLoggedIn(driver), list_type), attr, main_field="name"
+    )
+    elements_names = [elem.name for elem in elements_list]
+
+    if option == "appeared":
+        assert name in elements_names, f'"{name}" not found on {list_type} list'
+    else:
+        assert name not in elements_names, f'"{name}" found on {list_type} list'
 
 
 @wt(
@@ -68,8 +76,8 @@ def check_element_exists_on_sidebar_list(selenium, browser_id, name, option, lis
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_harvester_menu(selenium, browser_id, option, name):
     page = OZLoggedIn(selenium[browser_id]).discovery
-    page.elements_list[name]()
-    page.elements_list[name].menu_button()
+    page.harvesters_list[name]()
+    page.harvesters_list[name].menu_button()
     page.menu[option]()
 
 
@@ -102,7 +110,7 @@ def click_on_option_of_harvester_on_left_sidebar_menu(
 ):
     driver = selenium[browser_id]
     getattr(
-        OZLoggedIn(driver).discovery.elements_list[harvester_name],
+        OZLoggedIn(driver).discovery.harvesters_list[harvester_name],
         transform(option),
     ).click()
 

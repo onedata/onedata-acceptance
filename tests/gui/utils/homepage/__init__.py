@@ -5,9 +5,12 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import WebElementsSequence
-from tests.gui.utils.homepage.documentation import APIPage, DocsPage
-from tests.gui.utils.homepage.how_it_works import HowItWorksPage
-from tests.gui.utils.homepage.quick_start import QuickStartPage
+from tests.gui.utils.homepage.documentation import (
+    APIPage,
+    DocsPage,
+    HowItWorksPage,
+    QuickStartPage,
+)
 
 
 class Homepage:

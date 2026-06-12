@@ -34,7 +34,7 @@ from tests.utils.utils import repeat_failed
 def check_browser_to_load(selenium, browser_id, tmp_memory, browser):
     driver = selenium[browser_id]
     if transform(browser) == "shares_browser":
-        items_browser = OPLoggedIn(driver).shares_page.shares_browser
+        items_browser = OPLoggedIn(driver).shares_page.shares_list
     elif transform(browser) == "shares_file_browser":
         items_browser = OPLoggedIn(driver).shares_page.shares_file_browser
     else:

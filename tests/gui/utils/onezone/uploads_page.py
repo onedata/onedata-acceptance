@@ -22,7 +22,7 @@ class UploadedContentPage(PageObject):
 
 
 class UploadsPage(GenericPage):
-    elements_list = WebItemsSequence(
+    uploads_list = WebItemsSequence(
         ".sidebar-uploads li.one-list-item.clickable", cls=Provider
     )
     uploaded_content_page = WebItem(".main-content", cls=UploadedContentPage)
