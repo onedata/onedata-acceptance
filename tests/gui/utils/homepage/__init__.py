@@ -8,11 +8,14 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
-from tests.gui.utils.core.web_objects import PageObject
-from tests.gui.utils.homepage.documentation import APIPage, DocsPage
-from tests.gui.utils.homepage.how_it_works import HowItWorksPage
-from tests.gui.utils.homepage.quick_start import QuickStartPage
+from tests.gui.utils.homepage.documentation import (
+    APIPage,
+    DocsPage,
+    HowItWorksPage,
+    QuickStartPage,
+)
 
 
 class Homepage:

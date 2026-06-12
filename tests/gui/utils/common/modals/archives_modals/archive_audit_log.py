@@ -59,14 +59,11 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(
-        self, columns: Optional[list[str]] = None
+    def get_visible_rows_of_columns(
+        self, column_names: Optional[list[str]] = None
     ) -> dict[str, list[str]]:
-        if columns is None:
-            columns = []
-        temp_columns = [column for column in columns if column != "file"]
-        temp_columns.append("file")
 
+        temp_columns = list(set((column_names or []) + ["file"]))
         column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
@@ -86,6 +83,11 @@ class ArchiveAuditLog(Modal):
                 column_values[column].append(param)
 
         return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, column_name: str) -> list[str]:
+        column_values = self.get_visible_rows_of_columns([column_name])
+        return column_values[column_name]
 
     def __str__(self) -> str:
         return "Archive audit log"

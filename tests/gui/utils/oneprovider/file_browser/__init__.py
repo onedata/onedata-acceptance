@@ -65,7 +65,7 @@ class _FileBrowser(Browser):
         return f"file browser in {self.parent}"
 
     def names_of_visible_elems(self) -> list[str]:
-        files = self._data
+        files = self.files_list
         # make sure row is fully loaded in gui
         names = [f.text.split("\n")[0] for f in files if len(f.text.split("\n")) > 1]
         return names

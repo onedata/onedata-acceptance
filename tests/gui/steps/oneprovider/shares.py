@@ -15,6 +15,7 @@ from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import OPLoggedIn, Popups
+from tests.gui.utils.generic import ListElement
 from tests.gui.utils.oneprovider.shares import SharesContentPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -167,7 +168,7 @@ def no_shares_message(selenium: SeleniumDrivers, browser_id: str) -> None:
 def assert_not_share_in_shares_browser_in_shares_page(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name not in shares_browser, f"Share {share_name} in shares browser"
 
 
@@ -180,7 +181,7 @@ def assert_not_share_in_shares_browser_in_shares_page(
 def assert_share_in_shares_browser_in_shares_page(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
 
 
@@ -195,7 +196,7 @@ def assert_share_in_shares_browser_in_shares_page(
 def assert_share_point_to_del_dir_on_list(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
-    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    shares_browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     assert share_name in shares_browser, f"Share {share_name} not in shares browser"
     share = shares_browser[share_name]
     assert (
@@ -212,7 +213,7 @@ def assert_share_point_to_del_dir_on_list(
 def click_menu_for_elem_in_shares_browser(
     selenium: SeleniumDrivers, browser_id: str, item_name: str
 ) -> None:
-    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     browser[item_name].menu_button.click()
 
 
@@ -226,7 +227,7 @@ def click_menu_for_elem_in_shares_browser(
 def click_share_in_shares_browser(
     selenium: SeleniumDrivers, browser_id: str, share_name: str
 ) -> None:
-    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_browser
+    browser = OPLoggedIn(selenium[browser_id]).shares_page.shares_list
     browser[share_name].click()
 
 
@@ -366,7 +367,6 @@ def save_description_changes(selenium: SeleniumDrivers, browser_id: str) -> None
 def wt_assert_n_shares_in_shares_view(
     selenium: SeleniumDrivers, browser_id: str, number: int
 ) -> None:
-    items = "shares"
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     page = get_shares_page(driver)

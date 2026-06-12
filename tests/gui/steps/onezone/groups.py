@@ -12,7 +12,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ListElement, parse_seq, transform
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -47,7 +47,7 @@ def confirm_name_input_on_main_groups_page(
 
 
 def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
-    return list(filter(lambda g: g.name == group_name, page.elements_list))
+    return list(filter(lambda g: g.name == group_name, page.groups_list))
 
 
 @wt(

@@ -6,6 +6,7 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -76,3 +77,25 @@ class ArchiveRecallInformation(Modal):
             )
         except JavascriptException:
             pass
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_columns(
+        self, column_names: Optional[list[str]] = None
+    ) -> dict[str, list[str]]:
+        # This function concerns browsing logs with errors in archive recall
+        temp_columns = list(set((column_names or []) + ["source_file"]))
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
+        for row in self.error_file_rows:
+            values_in_row = [getattr(row, column) for column in temp_columns]
+            if any(value_in_row == "" for value_in_row in values_in_row):
+                continue
+
+            for column, value in zip(temp_columns, values_in_row):
+                column_values[column].append(value)
+
+        return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, param: str) -> list[str]:
+        column_values = self.get_visible_rows_of_columns([param])
+        return column_values[param]

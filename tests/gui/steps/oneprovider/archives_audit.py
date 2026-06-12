@@ -85,7 +85,9 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last: datetime | int, index: int = 0) -> None:
-        rows_of_columns = modal.get_rows_of_columns([column_name])
+        rows_of_columns: dict[str, list[str]] = modal.get_visible_rows_of_columns(
+            [column_name]
+        )
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             if column_name == "time":
@@ -120,8 +122,7 @@ def assert_ascending_file_or_dir_names(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last: int, index: int = 0) -> None:
-        rows_of_columns = modal.get_rows_of_columns()
-        currents = rows_of_columns["file"][index:]
+        currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
             err_msg = f"index {current_} following {last} is not bigger"
@@ -151,7 +152,9 @@ def assert_n_logs_about_archivisation_finished(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index: int = 0) -> None:
-        visible_events = modal.get_rows_of_columns(["event"])["event"][index:]
+        visible_events: list[str] = modal.get_visible_rows_of_single_column("event")[
+            index:
+        ]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -310,9 +313,9 @@ def assert_number_of_items_in_archive_audit_log(
     browser_id: str, number: int, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    visible_items: list[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
-        "file"
-    ]
+    visible_items: list[str] = Modals(
+        driver
+    ).archive_audit_log.get_visible_rows_of_single_column("file")
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "

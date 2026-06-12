@@ -108,7 +108,9 @@ def input_new_inventory_name_into_rename_inventory_input_box(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium: SeleniumDrivers, browser_id: str) -> None:
-    OZLoggedIn(selenium[browser_id])["automation"].elements_list[0].edit_box.confirm()
+    OZLoggedIn(selenium[browser_id])["automation"].automations_list[
+        0
+    ].edit_box.confirm()
 
 
 @wt(

@@ -136,7 +136,7 @@ def leave_spaces_in_oz_using_gui(
 
     if space_list == "all":
         space_names = [
-            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_header_list
+            elem.name for elem in OZLoggedIn(selenium[user])["data"].spaces_headers_list
         ]
     else:
         space_names = parse_seq(space_list)
@@ -374,7 +374,9 @@ def assert_space_is_supported_by_provider_in_oz_gui(
     click_element_on_lists_on_left_sidebar_menu(
         selenium, user, where.lower(), space_name
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
+    )
     assert_providers_list_contains_provider(selenium, user, provider_name, hosts)
 
 

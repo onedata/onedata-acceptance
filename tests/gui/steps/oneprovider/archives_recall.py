@@ -14,6 +14,7 @@ from datetime import datetime
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
@@ -242,13 +243,9 @@ def assert_entries_with_file_names_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        entries = modal.error_file_row
-        new_entries_names = [
-            entry.text.split("\n")[1]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
-        ]
-        new_entries_names = new_entries_names[index:]
+        new_entries_names: list[str] = modal.get_visible_rows_of_single_column(
+            "source_file"
+        )[index:]
         for entry_name in new_entries_names:
             file_name_p_ = entry_name.split(".")[0]
             file_name_s_ = entry_name.split(".")[1]
@@ -279,12 +276,10 @@ def assert_entries_with_error_messages_in_archive_recall(
     modal.move_to_error_logs_table(driver)
 
     def condition(index: int = 0) -> None:
-        entries = modal.error_file_row
-        new_entries_mes = [
-            entry.text.split("\n")[2]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
-        ]
+        new_entries_mes: list[str] = modal.get_visible_rows_of_single_column(
+            "error_message"
+        )
+
         new_entries_mes = new_entries_mes[index:]
         for entry_mes in new_entries_mes:
             err_msg = (

@@ -73,6 +73,22 @@ class Space(Element):
         return "active" in self.web_elem.get_attribute("class")
 
 
+class SpaceHeader(Element):
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(
+        ".status-toolbar-icon:last-of-type", scroll=False
+    )
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
+    menu_button = Button(".collapsible-toolbar-toggle", scroll=False)
+    clickable_field = WebElement(".item-name", scroll=False)
+
+    def click_menu(self) -> None:
+        self.click()
+        self.menu_button.click()
+
+
 class Provider(Element):
     id = name = Label(".one-label")
     support = Label(".outer-text")
@@ -264,7 +280,7 @@ class DataPage(GenericPage):
     error_header = Label(".content-info-content-container h1")
 
     def choose_space(self, name: str) -> None:
-        for space in self.elements_list:
+        for space in self.spaces_list:
             if space.name in (name, ""):
                 space.click()
                 if space.name == name:
@@ -272,4 +288,4 @@ class DataPage(GenericPage):
         raise RuntimeError(f"{name} space not found")
 
     def get_visible_spaces_list(self) -> list[object]:
-        return [el for el in self.spaces_header_list_web_elems if el.text != ""]
+        return [el for el in self.spaces_headers_list if el.text != ""]

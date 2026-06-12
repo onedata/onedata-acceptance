@@ -1090,7 +1090,7 @@ def assert_privilege_config_for_user(
     selenium: SeleniumDrivers,
     browser_id: str,
     item_name: str,
-    where: str,
+    item_type: str,
     name: str,
     config: str,
     target: str,

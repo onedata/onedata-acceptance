@@ -65,13 +65,23 @@ class Browser(ABC, PageObject):
 
     # GETTING VISIBLE ITEMS FROM BROWSER FUNCTIONS
 
-    def names_of_visible_elems(self) -> list[str]:
-        files = self.items_list_web_elems
-        names = [f.text.split("\n")[0] for f in files]
-        return names
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_file_rows(
+        elements_list: list[BrowserRow], main_field: str = "name"
+    ) -> list[BrowserRow]:
+        return [row for row in elements_list if getattr(row, main_field)]
 
-    def get_visible_items_list(self) -> list[object]:
-        return [el for el in self.items_list_web_elems if el.text != ""]
+    @staticmethod
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_field_value_from_visible_rows(
+        elements_list: list[BrowserRow], main_field: str = "name"
+    ) -> list[str]:
+        return [
+            getattr(row, main_field)
+            for row in elements_list
+            if getattr(row, main_field)
+        ]
 
     # CLICKING ON SPECIFIC OBJECTS FUNCTIONS
 

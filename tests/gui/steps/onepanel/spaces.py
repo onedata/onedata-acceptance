@@ -164,6 +164,7 @@ def wt_disable_option_box_in_space_support_form(
         " supported spaces overview panel in Onepanel"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_correct_supported_space_opened(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
 ) -> None:

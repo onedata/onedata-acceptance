@@ -2,12 +2,12 @@
 using web GUI
 """
 
+from selenium.webdriver.remote.webdriver import WebDriver
+
 __author__ = "Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
-from selenium.webdriver.common.keys import Keys
 
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
@@ -43,14 +43,62 @@ from tests.gui.steps.onezone.members import (
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
 from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.onezone import OZLoggedIn
+from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_confirmation_button_to_rename_group(group: Group) -> None:
+    group.edit_box.confirm()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
+    group.edit_box.value = text
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
+    page = OZLoggedIn(driver).get_page_and_click("groups")
+    return page.groups_list[group_name]
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_menu(driver: WebDriver, group: Group, option: str) -> None:
+    group.menu()
+    Popups(driver).menu_popup_with_text.menu[option]()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_group_and_click_menu_button(
+    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
+) -> Group:
+    driver = selenium[browser_id]
+    group_page = get_group_by_name_from_main_page(driver, group)
+    group_page.click()
+    click_on_option_in_group_menu(driver, group_page, option)
+    return group_page
+
+
 @wt(
     parsers.re(
-        'user of (?P<browser_id>.*) renames group "(?P<group>.*)" '
-        'to "(?P<new_group>.*)" using '
+        "user of (?P<browser_id>.*) clicks on "
+        '"(?P<option>Rename|Leave|Remove)" '
+        'button in group "(?P<group>.*)" menu in the sidebar'
+    )
+)
+def wt_get_group_and_click_menu_button(
+    selenium: SeleniumDrivers, browser_id: str, option: str, group: str
+) -> None:
+    _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
+
+
+@wt(
+    parsers.re(
+        'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
+        'to "(?P<new_group_name>.*)" using '
         "(?P<confirm_type>.*) to confirm"
     )
 )

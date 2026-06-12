@@ -15,7 +15,7 @@ from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, DynamicObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import parse_seq, transform
@@ -256,13 +256,24 @@ def click_element_on_lists_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
     driver = selenium[browser_id]
-    if option == "harvesters":
-        option = "discovery"
-
-    if option == "spaces":
+    page_name = option if option != "harvesters" else "discovery"
+    if page_name == "spaces":
         _choose_space_from_menu_list(driver, name)
     else:
-        OZLoggedIn(driver).get_page_and_click(option).elements_list[name].click()
+        if option == "automation":
+            option += "s"
+        get_list_element_on_subpage_in_oz_page(
+            driver, page_name, ListElement(option), name
+        ).click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def get_list_element_on_subpage_in_oz_page(
+    driver: WebDriver, page_name: str, option: ListElement, elem_name: str
+) -> DynamicObject:
+    page = OZLoggedIn(driver).get_page_and_click(page_name)
+    elements_list = getattr(page, f"{option.value}_list")
+    return elements_list[elem_name]
 
 
 @wt(
