@@ -80,12 +80,7 @@ class AuditLogDebugEntry(TypedDict):
 
 
 type AuditLogValue = (
-    str
-    | int
-    | float
-    | bool
-    | list["AuditLogValue"]
-    | dict[str, "AuditLogValue"]
+    str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]
 )
 type AuditLogContent = dict[str, AuditLogValue]
 

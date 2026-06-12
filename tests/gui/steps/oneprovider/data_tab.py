@@ -799,9 +799,7 @@ def click_choose_other_oneprovider_on_file_browser(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_current_provider_in_space(
-    selenium: SeleniumDrivers, browser_id: str
-) -> str:
+def check_current_provider_in_space(selenium: SeleniumDrivers, browser_id: str) -> str:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
