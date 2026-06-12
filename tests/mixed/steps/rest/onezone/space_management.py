@@ -7,10 +7,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Protocol
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
+from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
@@ -20,10 +22,27 @@ from tests.mixed.steps.rest.onezone.common import (
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.entities_setup.spaces import _create_space
 
+SpaceMap = MutableMapping[str, str]
+TmpMemory = MutableMapping[str, Any]
+
+
+class UserLike(Protocol):
+    password: str
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
 
 def create_spaces_in_oz_using_rest(
-    user: Any, users: Any, hosts: Any, zone_name: Any, space_list: Any, spaces: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    zone_name: str,
+    space_list: list[str],
+    spaces: SpaceMap,
+) -> None:
     for space_name in space_list:
         space_id = _create_space(
             hosts[zone_name]["hostname"], user, users[user].password, space_name
@@ -32,8 +51,13 @@ def create_spaces_in_oz_using_rest(
 
 
 def leave_spaces_in_oz_using_rest(
-    user: Any, users: Any, zone_name: Any, hosts: Any, space_list: Any, spaces: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
@@ -42,14 +66,14 @@ def leave_spaces_in_oz_using_rest(
 
 
 def rename_spaces_in_oz_using_rest(
-    user: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_list: Any,
-    new_names_list: Any,
-    spaces: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    new_names_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
     user_api = UserApi(user_client)
@@ -67,8 +91,13 @@ def rename_spaces_in_oz_using_rest(
 
 
 def remove_spaces_in_oz_using_rest(
-    user: Any, users: Any, zone_name: Any, hosts: Any, space_list: Any, spaces: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -81,15 +110,15 @@ def remove_spaces_in_oz_using_rest(
 
 
 def remove_provider_support_for_space_in_oz_using_rest(
-    user: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    provider_alias: Any,
-    space_name: Any,
-    spaces: Any,
-    admin_credentials: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    provider_alias: str,
+    space_name: str,
+    spaces: SpaceMap,
+    admin_credentials: CredentialsLike,
+) -> None:
     admin_client = login_to_oz(
         admin_credentials.username,
         admin_credentials.password,
@@ -103,14 +132,14 @@ def remove_provider_support_for_space_in_oz_using_rest(
 
 
 def request_space_support_using_rest(
-    user: Any,
-    users: Any,
-    space_name: Any,
-    zone_alias: Any,
-    hosts: Any,
-    tmp_memory: Any,
-    receiver: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    space_name: str,
+    zone_alias: str,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    receiver: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_alias]["hostname"])
 
     space_api = SpaceApi(user_client)
@@ -123,13 +152,13 @@ def request_space_support_using_rest(
 
 
 def join_space_in_oz_using_rest(
-    user_list: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    _space_name: Any,
-    tmp_memory: Any,
-) -> Any:
+    user_list: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    _space_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
     for user in parse_seq(user_list):
         user_client = login_to_oz(
             user, users[user].password, hosts[zone_name]["hostname"]
@@ -140,8 +169,12 @@ def join_space_in_oz_using_rest(
 
 
 def assert_spaces_have_appeared_in_oz_rest(
-    user: Any, users: Any, hosts: Any, zone_name: Any, space_list: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    zone_name: str,
+    space_list: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
 
     for space_name in parse_seq(space_list):
@@ -151,8 +184,13 @@ def assert_spaces_have_appeared_in_oz_rest(
 
 
 def assert_there_are_no_spaces_in_oz_rest(
-    user: Any, users: Any, zone_name: Any, hosts: Any, space_list: Any, spaces: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
     user_spaces = user_api.list_user_spaces()
@@ -164,14 +202,14 @@ def assert_there_are_no_spaces_in_oz_rest(
 
 
 def assert_spaces_have_been_renamed_in_oz_rest(
-    user: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_list: Any,
-    new_names_list: Any,
-    spaces: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_list: str,
+    new_names_list: str,
+    spaces: SpaceMap,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     user_api = UserApi(user_client)
 
@@ -185,15 +223,15 @@ def assert_spaces_have_been_renamed_in_oz_rest(
 
 
 def assert_there_is_no_provider_for_space_in_oz_rest(
-    user: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_name: Any,
-    spaces: Any,
-    providers_alias_list: Any,
-    admin_credentials: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: SpaceMap,
+    providers_alias_list: str,
+    admin_credentials: CredentialsLike,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
     space_providers = space_api.list_space_providers(spaces[space_name])
@@ -216,13 +254,13 @@ def assert_there_is_no_provider_for_space_in_oz_rest(
 
 
 def assert_space_is_supported_by_provider_in_oz_rest(
-    user: Any,
-    users: Any,
-    zone_host: Any,
-    hosts: Any,
-    space_name: Any,
-    provider_alias: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_host: str,
+    hosts: Hosts,
+    space_name: str,
+    provider_alias: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_host]["hostname"])
     provider_name = hosts[provider_alias]["name"]
 
@@ -236,13 +274,13 @@ def assert_space_is_supported_by_provider_in_oz_rest(
 
 
 def assert_provider_does_not_support_space_in_oz_rest(
-    user: Any,
-    users: Any,
-    zone_host: Any,
-    hosts: Any,
-    space_name: Any,
-    provider_alias: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_host: str,
+    hosts: Hosts,
+    space_name: str,
+    provider_alias: str,
+) -> None:
     user_client_oz = login_to_oz(
         user, users[user].password, hosts[zone_host]["hostname"]
     )
@@ -255,14 +293,14 @@ def assert_provider_does_not_support_space_in_oz_rest(
 
 
 def copy_id_of_space_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    space_name: Any,
-    tmp_memory: Any,
-    onepanel_credentials: Any,
-    admin_credentials: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    space_name: str,
+    tmp_memory: TmpMemory,
+    onepanel_credentials: CredentialsLike,
+    admin_credentials: CredentialsLike,
+) -> None:
     if user == onepanel_credentials.username:
         user = admin_credentials.username
     user_client = login_to_oz(user, users[user].password, hosts["onezone"]["hostname"])

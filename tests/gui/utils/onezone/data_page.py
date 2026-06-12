@@ -287,5 +287,5 @@ class DataPage(GenericPage):
                     return
         raise RuntimeError(f"{name} space not found")
 
-    def get_visible_spaces_list(self) -> list[object]:
-        return [el for el in self.spaces_headers_list if el.text != ""]
+    def get_visible_spaces_list(self) -> list[SpaceHeader]:
+        return [space for space in self.spaces_headers_list if space.name != ""]

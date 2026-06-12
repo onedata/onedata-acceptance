@@ -7,7 +7,8 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from abc import ABC
-from typing import ClassVar, Optional
+from collections.abc import Iterable
+from typing import ClassVar, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -68,15 +69,15 @@ class Browser(ABC, PageObject):
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_visible_file_rows(
-        elements_list: list[BrowserRow], main_field: str = "name"
-    ) -> list[BrowserRow]:
+        elements_list: Iterable[BrowserRow], main_field: str = "name"
+    ) -> List[BrowserRow]:
         return [row for row in elements_list if getattr(row, main_field)]
 
     @staticmethod
     @repeat_failed(timeout=WAIT_FRONTEND)
     def get_field_value_from_visible_rows(
-        elements_list: list[BrowserRow], main_field: str = "name"
-    ) -> list[str]:
+        elements_list: Iterable[BrowserRow], main_field: str = "name"
+    ) -> List[str]:
         return [
             getattr(row, main_field)
             for row in elements_list

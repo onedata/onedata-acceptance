@@ -9,6 +9,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
@@ -50,23 +54,23 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_confirmation_button_to_rename_group(group: Group) -> None:
+def click_on_confirmation_button_to_rename_group(group: Any) -> None:
     group.edit_box.confirm()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_group_name_into_rename_group_inpux_box(group: Group, text: str) -> None:
+def input_new_group_name_into_rename_group_inpux_box(group: Any, text: str) -> None:
     group.edit_box.value = text
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Group:
+def get_group_by_name_from_main_page(driver: WebDriver, group_name: str) -> Any:
     page = OZLoggedIn(driver).get_page_and_click("groups")
     return page.groups_list[group_name]
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_group_menu(driver: WebDriver, group: Group, option: str) -> None:
+def click_on_option_in_group_menu(driver: WebDriver, group: Any, option: str) -> None:
     group.menu()
     Popups(driver).menu_popup_with_text.menu[option]()
 
@@ -74,12 +78,12 @@ def click_on_option_in_group_menu(driver: WebDriver, group: Group, option: str) 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_group_and_click_menu_button(
     selenium: SeleniumDrivers, browser_id: str, option: str, group: str
-) -> Group:
+) -> Any:
     driver = selenium[browser_id]
-    group_page = get_group_by_name_from_main_page(driver, group)
-    group_page.click()
-    click_on_option_in_group_menu(driver, group_page, option)
-    return group_page
+    group_item = get_group_by_name_from_main_page(driver, group)
+    group_item.click()
+    click_on_option_in_group_menu(driver, group_item, option)
+    return group_item
 
 
 @wt(

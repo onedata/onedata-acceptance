@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Optional, cast
+from typing import Dict, List, Optional, cast
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains

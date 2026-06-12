@@ -235,7 +235,7 @@ def _check_entries_in_archive_audit_log(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_archive_audit_log(
-    browser_id: str, item_name: str, selenium: SeleniumDrivers
+    browser_id: str, item_name: str | int, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log.data_row[item_name]

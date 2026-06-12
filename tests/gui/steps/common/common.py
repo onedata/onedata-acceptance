@@ -4,8 +4,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Iterable
-from typing import Optional, Protocol
+from typing import Any, Dict, List, Union
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -37,7 +36,7 @@ class ScrollableColumns(Protocol):
 
 def assert_n_items_in_items_list(
     page: GenericPage | Browser,
-    selenium: SeleniumDrivers,
+    selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
     items_type: ListElement,
@@ -68,8 +67,10 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
-) -> list[DynamicObject]:
+    page: Union[GenericPage, Browser],
+    items_type: ListElement,
+    main_field: str = "name",
+) -> list[Any]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
@@ -78,11 +79,11 @@ def get_visible_items_list(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle: Checkable, toggle_name: str = "") -> None:
+def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where: str, driver: WebDriver) -> DynamicObject:
+def _get_page(where: str, driver: WebDriver) -> GenericPage | Browser:
     if where == "shares":
         return OZLoggedIn(driver)["shares"]
     if where == "groups":
@@ -99,7 +100,7 @@ def _get_page(where: str, driver: WebDriver) -> DynamicObject:
     )
 )
 def wt_assert_n_items_in_items_list(
-    selenium: SeleniumDrivers,
+    selenium: dict[str, WebDriver],
     browser_id: str,
     number: int,
     items_type: ListElement,
@@ -117,7 +118,7 @@ def get_last_item_number_in_table(driver: WebDriver) -> int:
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver: WebDriver) -> Optional[WebElement]:
+def get_last_item_in_table(driver: WebDriver) -> WebElement | None:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
@@ -141,7 +142,7 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
 
 
 def assert_logs_order_with_optional_logs(
-    logs_expected: list[dict[str, str]], logs_actual: list[str]
+    logs_expected: List[Dict[str, str]], logs_actual: List[str]
 ) -> None:
     """
 
@@ -188,7 +189,7 @@ def assert_logs_order_with_optional_logs(
 
 
 def scroll_and_get_columns(
-    modal: ScrollableColumns, columns: Iterable[str], main_column: str = "file"
+    modal: Any, columns: list[str], main_column: str = "file"
 ) -> list[str]:
     # The modal has to be a class that implements get_visible_rows_of_columns
     checked_names = set()

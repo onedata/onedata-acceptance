@@ -270,7 +270,7 @@ def click_element_on_lists_on_left_sidebar_menu(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
-) -> DynamicObject:
+) -> PageObject:
     page = OZLoggedIn(driver).get_page_and_click(page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]
