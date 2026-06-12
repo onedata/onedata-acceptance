@@ -8,8 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 from collections import Counter
+from collections.abc import Callable
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import cast
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
@@ -17,7 +18,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -74,7 +74,7 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
-    start_value: Union[datetime, int]
+    start_value: datetime | int
     column_name = transform(column_name)
     if column_name == "time":
         start_value = datetime.strptime("1 Dec 9999 1:1:1.1", "%d %b %Y %H:%M:%S.%f")
@@ -84,8 +84,8 @@ def assert_decreasing_creation_times_in_archives_audit_log(
         raise ValueError(f"Unknown column: {column_name}")
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition(last: GuiObject, index: int = 0) -> None:
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns([column_name])
+    def condition(last: datetime | int, index: int = 0) -> None:
+        rows_of_columns = modal.get_rows_of_columns([column_name])
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             if column_name == "time":
@@ -93,13 +93,13 @@ def assert_decreasing_creation_times_in_archives_audit_log(
                     current + "000", "%d %b %Y %H:%M:%S.%f"
                 )
                 err_msg = f"time {current_time} following {last} is not smaller"
-                assert current_time <= last, err_msg
+                assert current_time <= cast(datetime, last), err_msg
                 last = current_time
             elif column_name == "time_taken":
                 current_duration = parse_time(current)
                 err_msg = f"time {current_duration} following {last} is not smaller"
-                assert current_duration <= last, err_msg
-                last = current_duration
+                assert current_duration <= cast(int | float, last), err_msg
+                last = cast(int, current_duration)
 
     _scroll_and_check_condition(browser_id, selenium, condition, start_value)
 
@@ -119,8 +119,8 @@ def assert_ascending_file_or_dir_names(
     start_value = -1
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def condition(last: GuiObject, index: int = 0) -> None:
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
+    def condition(last: int, index: int = 0) -> None:
+        rows_of_columns = modal.get_rows_of_columns()
         currents = rows_of_columns["file"][index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
@@ -151,9 +151,7 @@ def assert_n_logs_about_archivisation_finished(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index: int = 0) -> None:
-        visible_events: Dict[str, List[str]] = modal.get_rows_of_columns(["event"])[
-            "event"
-        ][index:]
+        visible_events = modal.get_rows_of_columns(["event"])["event"][index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -165,12 +163,15 @@ def assert_n_logs_about_archivisation_finished(
 
 
 def _scroll_and_check_condition(
-    browser_id: str, selenium: SeleniumDrivers, condition: GuiObject, *args: GuiObject
-) -> GuiObject:
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    condition: Callable[..., None],
+    *args: object,
+) -> list[str]:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
+    rows_of_columns = modal.get_rows_of_columns()
     visible_elems = rows_of_columns["file"]
     new_elems = visible_elems
     last_index = 0
@@ -309,7 +310,7 @@ def assert_number_of_items_in_archive_audit_log(
     browser_id: str, number: int, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
-    visible_items: List[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
+    visible_items: list[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
         "file"
     ]
     assert number == len(visible_items), (

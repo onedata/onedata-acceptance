@@ -7,11 +7,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests import OZ_REST_PORT
 from tests.conftest import Users
-from tests.gui.types import GuiObject
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 
 
-def get_user_spaces(zone_hostname: GuiObject, user: str, users: Users) -> GuiObject:
+def get_user_spaces(zone_hostname: str, user: str, users: Users) -> list[str]:
     return http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
@@ -21,7 +20,7 @@ def get_user_spaces(zone_hostname: GuiObject, user: str, users: Users) -> GuiObj
 
 
 def leave_user_space(
-    zone_hostname: GuiObject, user: str, users: Users, space_id: GuiObject
+    zone_hostname: str, user: str, users: Users, space_id: str
 ) -> None:
     http_delete(
         ip=zone_hostname,

@@ -7,12 +7,15 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Iterable
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import parse_seq, transform
@@ -246,7 +249,7 @@ def click_button_in_share(
 
 
 def check_item_presence_in_dublin_core_metadata(
-    driver: WebDriver, item: GuiObject, data: GuiObject
+    driver: WebDriver, item: str, data: Iterable[WebElement]
 ) -> None:
     for info in data:
         if info.text == "":

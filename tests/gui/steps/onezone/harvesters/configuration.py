@@ -14,7 +14,6 @@ from _pytest._py.path import LocalPath
 from tests import ELASTICSEARCH_PORT
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -185,7 +184,7 @@ def unpause_elasticsearch_container(hosts: Hosts) -> None:
     set_elasticsearch_replicas_number(hosts)
 
 
-def set_elasticsearch_replicas_number(hosts: Hosts) -> GuiObject:
+def set_elasticsearch_replicas_number(hosts: Hosts) -> requests.Response:
     wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
     pods = get_pods_config()
     es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]

@@ -5,7 +5,10 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
+from collections.abc import Iterable
+
+from selenium.webdriver.remote.webelement import WebElement
+
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
@@ -18,8 +21,8 @@ class PowerSelect(PageObject):
     def _choose_items(
         self,
         property_name: str,
-        items: GuiObject,
-        str_prefix: GuiObject,
+        items: Iterable[WebElement],
+        str_prefix: str,
         require_full_match: bool,
     ) -> None:
         prop = property_name.casefold()

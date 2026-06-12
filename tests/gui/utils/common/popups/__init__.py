@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import DropdownSelector, MigrateDropdownSelector
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -150,7 +149,7 @@ class Popups:
         return len(self.upload_presenter) > 0
 
     @repeat_failed(timeout=10)
-    def get_query_builder_not_hidden_popup(self) -> GuiObject:
+    def get_query_builder_not_hidden_popup(self) -> ExpressionBuilderPopup:
         for popup in self.query_builder_popups:
             if popup.web_elem.is_displayed():
                 return popup

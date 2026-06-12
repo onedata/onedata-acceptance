@@ -338,7 +338,7 @@ class PrivilegeTree(PageObject):
         with_scroll: bool = False,
     ) -> bool:
         driver = selenium[browser_id]
-        privilege_row: Optional[Optional[PrivilegeGroup]] = None
+        privilege_row: Optional[PrivilegeGroup] = None
         # Tolerate loading of privileges table
         privilege_row_try = 0
         while privilege_row is None and privilege_row_try < 10:

@@ -15,7 +15,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import LoginPage, Modals, Onepanel, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -71,7 +71,7 @@ def wt_check_host_options_in_deployment_step1(
 def wt_check_host_options_list_in_deployment_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    options: GuiObject,
+    options: list[str],
     host_regexp: str,
 ) -> None:
     options = [transform(option) for option in options]
@@ -203,9 +203,7 @@ def wt_try_to_register_prov_using_register_btn(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_next_step_in_deployment(
-    driver: WebDriver, next_step_num: GuiObject
-) -> None:
+def wait_for_next_step_in_deployment(driver: WebDriver, next_step_num: int) -> None:
     assert (
         int(Onepanel(driver).content.deployment.num) == next_step_num
         or Modals(driver).error.is_displayed()

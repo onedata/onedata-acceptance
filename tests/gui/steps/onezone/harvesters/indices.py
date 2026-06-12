@@ -7,14 +7,17 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Iterable
 from datetime import datetime
+
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
@@ -191,7 +194,9 @@ def assert_not_text_on_data_discovery_page(
         assert name not in item.text, f"{name} in result list"
 
 
-def results_list_to_list_with_dictionaries(results_list: GuiObject) -> GuiObject:
+def results_list_to_list_with_dictionaries(
+    results_list: Iterable[WebElement],
+) -> list[dict[str, str]]:
     results = []
     for item in results_list:
         text = item.text.split("__onedata: ")[1]
@@ -205,7 +210,9 @@ def results_list_to_list_with_dictionaries(results_list: GuiObject) -> GuiObject
     return results
 
 
-def text_in_result_list(key: str, value: str, results_list: GuiObject) -> None:
+def text_in_result_list(
+    key: str, value: str, results_list: Iterable[WebElement]
+) -> None:
     results = results_list_to_list_with_dictionaries(results_list)
     for item in results:
         if value == item.get(key):

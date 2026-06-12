@@ -9,10 +9,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from functools import partial
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebItem, WebItemsSequence
-from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
+from tests.gui.utils.core.web_objects import (
+    ButtonWithTextPageObject,
+    PageObjectsSequence,
+)
 
 
 class _Breadcrumbs(PageObject):
@@ -76,7 +78,7 @@ class _Breadcrumbs(PageObject):
         breadcrumbs[len(breadcrumbs) - 2].click()
 
     @property
-    def breadcrumbs(self) -> GuiObject:
+    def breadcrumbs(self) -> PageObjectsSequence:
         return self._breadcrumbs
 
 

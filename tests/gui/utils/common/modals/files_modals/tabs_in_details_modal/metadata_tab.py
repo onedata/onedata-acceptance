@@ -5,11 +5,12 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Iterator
+
 from decorator import contextmanager
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -65,7 +66,7 @@ class AceEditorMetadataPanel(PageObject):
     area = WebElement(".ace_content")
 
     @contextmanager
-    def select_lines(self) -> GuiObject:
+    def select_lines(self) -> Iterator[ActionChains]:
         action = ActionChains(self.driver)
         action.backspace_down = lambda: action.key_down(Keys.BACKSPACE)
         yield action

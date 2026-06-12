@@ -6,8 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.web_elements import WebElementsSequence
 from tests.gui.utils.core.web_objects import PageObject
 from tests.gui.utils.homepage.documentation import APIPage, DocsPage
@@ -18,7 +18,7 @@ from tests.gui.utils.homepage.quick_start import QuickStartPage
 class Homepage:
     _panels = WebElementsSequence(".nav-list .nav-link")
 
-    panels_classes = {
+    panels_classes: dict[str, type[PageObject]] = {
         "how it works": HowItWorksPage,
         "quick Start": QuickStartPage,
         "api": APIPage,
@@ -31,17 +31,17 @@ class Homepage:
     def __str__(self) -> str:
         return "Onedata Docs page"
 
-    def __getitem__(self, item: str) -> GuiObject:
+    def __getitem__(self, item: str) -> PageObject:
         return get_page(self, item, False)
 
-    def get_page_and_click(self, item: str) -> GuiObject:
+    def get_page_and_click(self, item: str) -> PageObject:
         return get_page(self, item)
 
-    def get_panel_by_name(self, name: str) -> PageObject:
+    def get_panel_by_name(self, name: str) -> WebElement:
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
 
-def get_page(docs_page: "Homepage", item: str, click: bool = True) -> GuiObject:
+def get_page(docs_page: "Homepage", item: str, click: bool = True) -> PageObject:
     item = item.lower()
     cls = docs_page.panels_classes.get(item, None)
     if cls:

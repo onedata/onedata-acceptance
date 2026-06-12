@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -65,7 +64,7 @@ class AutomationPage(GenericPage):
 
     _upload_input_lambda = WebElement(".upload-atm-lambda-action-input")
 
-    def upload_workflow(self, files: GuiObject) -> None:
+    def upload_workflow(self, files: str) -> None:
         """This interaction is very hacky, because uploading files with Selenium
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.
@@ -73,6 +72,6 @@ class AutomationPage(GenericPage):
         with rm_css_cls(self.driver, self._upload_input_workflow, "hidden") as elem:
             elem.send_keys(files)
 
-    def upload_lambda(self, files: GuiObject) -> None:
+    def upload_lambda(self, files: str) -> None:
         with rm_css_cls(self.driver, self._upload_input_lambda, "hidden") as elem:
             elem.send_keys(files)

@@ -280,11 +280,7 @@ class CaveatField(PageObject):
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "GuiObject" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name":
                 value = hosts[value]["name"]
             self.set_consumer_in_consumer_caveat(
                 selenium, browser_id, popups, consumer_type, method, value
@@ -477,11 +473,7 @@ class CaveatField(PageObject):
                     value = users[value].user_id
                 elif consumer_type == "group":
                     value = groups[value]
-            if (
-                consumer_type == "oneprovider"
-                and method == "name"
-                and "GuiObject" not in value
-            ):
+            if consumer_type == "oneprovider" and method == "name":
                 value = hosts[value]["name"]
             self.assert_consumer_in_consumer_caveat(consumer_type, method, value)
 

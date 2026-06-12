@@ -6,6 +6,7 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from typing import cast
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_to_iframe
@@ -113,7 +114,7 @@ def assert_active_sidebar_link_in_docs_subpage(
 ) -> None:
     driver = selenium[browser_id]
     # inherits from DocumentationPage
-    page: DocumentationPage = Homepage(driver)[subpage]
+    page = cast(DocumentationPage, Homepage(driver)[subpage])
     active_links = page.sidebar.get_active_rows_names()
     assert (
         len(active_links) == 1
@@ -135,7 +136,7 @@ def assert_active_chapter_tab_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, chapter: str
 ) -> None:
     driver = selenium[browser_id]
-    page: DocumentationPage = Homepage(driver)[subpage]
+    page = cast(DocumentationPage, Homepage(driver)[subpage])
     active_tabs = page.chapters.get_active_chapter_tabs_names()
     assert (
         len(active_tabs) == 1
@@ -151,7 +152,7 @@ def assert_user_sees_name_in_header_in_docs_subpage(
     selenium: SeleniumDrivers, browser_id: str, subpage: str, name: str
 ) -> None:
     driver = selenium[browser_id]
-    page: DocumentationPage = Homepage(driver)[subpage]
+    page = cast(DocumentationPage, Homepage(driver)[subpage])
     assert (
         page.current_header == name
     ), f"Expected header: {name}, but found header: {page.current_header}"
@@ -176,7 +177,7 @@ def assert_expanded_folders_in_sidebar_in_docs_subpage(
 ) -> None:
     driver = selenium[browser_id]
     expected_folders = set(parse_seq(folders))
-    page: DocumentationPage = Homepage(driver)[subpage]
+    page = cast(DocumentationPage, Homepage(driver)[subpage])
     found_folders = set(page.sidebar.get_expanded_folders_names())
     assert (
         found_folders == expected_folders

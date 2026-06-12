@@ -12,8 +12,10 @@ import time
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_tab_on_active_element
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
+    XattrMetadataEntry,
+)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -198,7 +200,7 @@ def assert_textarea_contains_record(
 def assert_textarea_not_contain_record(
     selenium: SeleniumDrivers,
     browser_id: str,
-    expected_metadata: GuiObject,
+    expected_metadata: str,
     tab_name: str,
 ) -> None:
     modal = Modals(selenium[browser_id]).details_modal.metadata
@@ -275,7 +277,7 @@ def modify_existing_xattr_entry(
     modal.xattrs.click_on_background_in_xattrs_panel()
 
 
-def edit_xattr_entry_key(entry: GuiObject, new_key: str) -> None:
+def edit_xattr_entry_key(entry: XattrMetadataEntry, new_key: str) -> None:
     entry.edit_existing_key.click()
     time.sleep(0.5)
     # this sleep is necessary, because there is small delay between

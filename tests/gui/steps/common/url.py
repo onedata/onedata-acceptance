@@ -10,12 +10,13 @@ import re
 from typing import Union
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -150,7 +151,7 @@ def is_url_matching(selenium: SeleniumDrivers, browser_id: str, path: str) -> No
     err_msg = rf"expected url: {path} does not match current one: {{}}"
 
     @repeat_failed(timeout=WAIT_BACKEND)
-    def assert_url_match(d: GuiObject, regex: GuiObject, msg: GuiObject) -> None:
+    def assert_url_match(d: WebDriver, regex: str, msg: str) -> None:
         curr_url = d.current_url
         assert re.match(regex, curr_url), msg.format(curr_url)
 
@@ -172,7 +173,7 @@ def open_received_url_with_base_url(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    base_url: GuiObject,
+    base_url: str,
 ) -> None:
     url = tmp_memory[browser_id]["mailbox"]["url"]
     url = url.replace(parse_url(url).group("base_url"), base_url, 1)

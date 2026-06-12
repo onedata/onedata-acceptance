@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -57,6 +56,6 @@ class ConsumerCaveat(PageObject):
         return "Consumer caveat popup"
 
     @repeat_failed(timeout=20)
-    def select_type(self, consumer_type: GuiObject) -> None:
+    def select_type(self, consumer_type: str) -> None:
         button = getattr(self, f"{consumer_type}_consumer")
         button()

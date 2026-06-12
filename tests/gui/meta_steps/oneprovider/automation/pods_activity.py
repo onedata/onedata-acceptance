@@ -20,13 +20,17 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     click_on_link_in_task_box,
     click_on_task_in_lane,
 )
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals
+from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
+    FunctionPodsActivity,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def change_tab_in_function_pods_activity_modal(modal: GuiObject, tab_name: str) -> None:
+def change_tab_in_function_pods_activity_modal(
+    modal: FunctionPodsActivity, tab_name: str
+) -> None:
     tab_number = 0 if tab_name == "Current" else 1
 
     time.sleep(0.25)
@@ -102,7 +106,9 @@ def click_on_first_terminated_pod(selenium: SeleniumDrivers, browser_id: str) ->
     modal.pods_list[0].click()
 
 
-def gather_events_list(modal: GuiObject, driver: WebDriver, option: str) -> GuiObject:
+def gather_events_list(
+    modal: FunctionPodsActivity, driver: WebDriver, option: str
+) -> list[str]:
     gathered_list = []
     number = modal.get_number_of_data_rows(driver)
     for i in reversed(range(int(number) + 1)):

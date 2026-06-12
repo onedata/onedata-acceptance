@@ -35,7 +35,6 @@ from tests.gui.steps.oneprovider.automation.initial_values import (
 from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
     choose_time_resolution,
 )
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -51,7 +50,7 @@ def open_initial_modal(data_type: str, driver: WebDriver) -> None:
 
 def go_to_path_and_return_file_name_in_modal(
     path: str, driver: WebDriver, modal_name: str
-) -> GuiObject:
+) -> str:
     if "/" in path:
         modal = getattr(Modals(driver), transform(modal_name))
         file_name, path_list = get_item_name_and_containing_dir_path(path)

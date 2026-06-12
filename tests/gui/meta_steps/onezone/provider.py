@@ -29,7 +29,7 @@ from tests.gui.steps.onezone.providers import (
     click_on_provider_in_providers_sidebar_with_provider_name,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -37,10 +37,10 @@ def assert_provider_has_name_and_hostname_in_oz_gui(
     selenium: SeleniumDrivers,
     user: str,
     provider_name: str,
-    domain_provider: GuiObject,
+    domain_provider: str,
     hosts: Hosts,
-    with_refresh: GuiObject = False,
-    test_domain: GuiObject = False,
+    with_refresh: bool = False,
+    test_domain: bool = False,
 ) -> None:
     option = "Data"
 

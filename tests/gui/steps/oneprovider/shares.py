@@ -13,8 +13,9 @@ from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import OPLoggedIn, Popups
+from tests.gui.utils.oneprovider.shares import SharesContentPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -373,5 +374,5 @@ def wt_assert_n_shares_in_shares_view(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def get_shares_page(driver: WebDriver) -> GuiObject:
+def get_shares_page(driver: WebDriver) -> SharesContentPage:
     return OPLoggedIn(driver).shares_page

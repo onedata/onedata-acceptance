@@ -12,9 +12,11 @@ import time
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
+from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -51,7 +53,7 @@ def write_description_in_create_archive_modal(
     Modals(driver).create_archive.description = text
 
 
-def get_archive_with_description(browser: GuiObject, description: str) -> GuiObject:
+def get_archive_with_description(browser: _ArchiveBrowser, description: str) -> DataRow:
     for archive in browser.data:
         if description == archive.description:
             return archive
@@ -102,7 +104,7 @@ def assert_archive_full_state_status(
 
 
 def assert_archive_partial_state_status(
-    item_status: GuiObject, expected_status: GuiObject
+    item_status: str | int, expected_status: str | int
 ) -> None:
     assert (
         expected_status == item_status
@@ -175,7 +177,7 @@ def check_toggle_in_create_archive_modal(
 
 
 def compare_base_archive_name_with_archive_with_description(
-    browser: GuiObject, base_description: str, item_base_archive: GuiObject
+    browser: _ArchiveBrowser, base_description: str, item_base_archive: str
 ) -> None:
     base_archive_name = get_archive_with_description(browser, base_description).name
     err_msg = (

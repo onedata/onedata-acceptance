@@ -70,7 +70,7 @@ from tests.gui.steps.onezone.spaces import (
     _click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -1007,7 +1007,7 @@ def _create_link_in_file_browser(
     space: str,
     tmp_memory: TmpMemory,
     option: str,
-    button: GuiObject,
+    button: str,
     path: Optional[str] = None,
     go_to_file_browser: bool = True,
     new_name: Optional[str] = None,

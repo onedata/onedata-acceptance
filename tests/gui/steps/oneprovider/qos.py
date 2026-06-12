@@ -17,7 +17,6 @@ from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
@@ -242,9 +241,7 @@ def assert_expression_in_qos_panel(
     ), f'Not found "{expression}" QoS requirement in modal "Quality of Service"'
 
 
-def process_whole_nested_expression(
-    expression: str, hosts: Hosts, users: Users
-) -> GuiObject:
+def process_whole_nested_expression(expression: str, hosts: Hosts, users: Users) -> str:
     plain_exp = expression.replace("[", "").replace("]", "")
     provider1 = "oneprovider-1"
     provider2 = "oneprovider-2"
@@ -503,12 +500,12 @@ def assert_matching_storage(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def compare_matching_storages(driver: WebDriver, expected: GuiObject) -> None:
+def compare_matching_storages(driver: WebDriver, expected: list[str]) -> None:
     actual = [elem.text for elem in Popups(driver).storages_matching_popover.storages]
     compare_lists(expected, actual)
 
 
-def compare_lists(expected: GuiObject, actual: GuiObject) -> None:
+def compare_lists(expected: list[str], actual: list[str]) -> None:
     assert len(actual) == len(
         expected
     ), "Expected number of providers does not match actual"

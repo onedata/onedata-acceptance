@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
+from tests.gui.types import DynamicObject
 
 from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser
@@ -47,5 +47,5 @@ class OPLoggedIn:
     def __str__(self) -> str:
         return "Oneprovider page"
 
-    def __getattr__(self, item: GuiObject) -> GuiObject:
+    def __getattr__(self, item: str) -> DynamicObject:
         return self.tabs[item](self.web_elem, self.web_elem, self)

@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import stat
 import subprocess
-from typing import Optional
+from typing import Optional, cast
 
 import requests
 import yaml
@@ -17,7 +17,6 @@ from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import GuiObject
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -59,30 +58,29 @@ def create_dir_tree_structure_on_local_fs(structure: str, tmpdir: LocalPath) -> 
         _mkdirs(home_dir, home_dir_content)
 
 
-def _mkdirs(cwd: GuiObject, dir_content: Optional[GuiObject] = None) -> None:
+def _mkdirs(cwd: LocalPath, dir_content: Optional[DirectoryContent] = None) -> None:
     if not dir_content:
         return
 
-    try:
-        files_num = int(dir_content)
-    except (TypeError, ValueError):
-        for item in dir_content:
-            if item.startswith("dir"):
-                new_dir = cwd.join(item)
-                new_dir.mkdir()
-                new_dir.chmod(PERMS_777)
-                _mkdirs(new_dir, dir_content[item])
-            else:
-                content = dir_content[item].get("content", None)
-                size = dir_content[item].get("size", None)
-                if size:
-                    size = specify_size(size)
-                    content = size * "1"
-
-                _mkfile(cwd.join(item), content)
-    else:
-        for i in range(files_num):
+    if isinstance(dir_content, int):
+        for i in range(dir_content):
             _mkfile(cwd.join(f"file{i}.txt"))
+        return
+
+    for item, item_content in dir_content.items():
+        if item.startswith("dir"):
+            new_dir = cwd.join(item)
+            new_dir.mkdir()
+            new_dir.chmod(PERMS_777)
+            _mkdirs(new_dir, cast(DirectoryContent, item_content))
+        else:
+            file_description = cast(FileDescription, item_content)
+            content = file_description.get("content")
+            size = file_description.get("size")
+            if size:
+                content = specify_size(size) * "1"
+
+            _mkfile(cwd.join(item), content)
 
 
 def specify_size(size_string: str) -> int:
@@ -99,7 +97,7 @@ def specify_size(size_string: str) -> int:
         return int(size) * unit_dict[unit]
 
 
-def _mkfile(file_: GuiObject, file_content: Optional[GuiObject] = None) -> None:
+def _mkfile(file_: LocalPath, file_content: Optional[str] = None) -> None:
     if not file_content:
         file_content = "1" * 10
 
@@ -154,3 +152,7 @@ def remove_file_from_local_file_system(
 
     cmd = ["rm", home_dir + path]
     subprocess.check_call(cmd)
+
+
+type FileDescription = dict[str, str]
+type DirectoryContent = int | dict[str, "DirectoryContent | FileDescription"]

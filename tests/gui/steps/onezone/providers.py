@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Iterator
 from itertools import zip_longest
 
 import requests
@@ -15,7 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests import OP_REST_PORT
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, GuiObject
+from tests.gui.types import Clipboard, DisplayMap
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -649,7 +650,7 @@ def _start_and_wait_for_providers(
 
 @wt(parsers.re(r'provider named "(?P<provider_list>.*?)" is stopped'))
 @wt(parsers.re(r"providers named (?P<provider_list>.*?) are stopped"))
-def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> GuiObject:
+def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> Iterator[None]:
     _stop_providers(hosts, provider_list)
     yield
     _start_and_wait_for_providers(hosts, provider_list, users)

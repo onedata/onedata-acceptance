@@ -10,7 +10,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import DropdownSelector
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.core.base import PageObject
@@ -34,9 +33,7 @@ class DublinCoreMetadata(PageObject):
             self.header, 0, 0
         ).click().perform()
 
-    def write_to_last_input(
-        self, driver: WebDriver, val: GuiObject, which: GuiObject
-    ) -> None:
+    def write_to_last_input(self, driver: WebDriver, val: str, which: str) -> None:
         css_sel = f'.form-control[data-dc-element-type="{which}"]'
         # WebItemsSequence, WebElementsSequence were not working for this
         # case (because of weird selectors)

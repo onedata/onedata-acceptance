@@ -10,18 +10,17 @@ from tests.conftest import SeleniumDrivers
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
-from tests.gui.types import GuiObject
 from tests.gui.utils import Popups
 from tests.utils.bdd_utils import parsers, wt
 
 
 def get_run_indicators_for_lane(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
-) -> GuiObject:
+) -> list[int]:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
-    return [elem.number for elem in lane.run_indicators]
+    return [int(elem.number) for elem in lane.run_indicators]
 
 
 @wt(

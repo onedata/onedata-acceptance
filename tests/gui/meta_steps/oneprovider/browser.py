@@ -81,7 +81,7 @@ def create_xattr_columns_in_columns_menu_in_browser(
     tmp_memory: TmpMemory,
     name: str,
     with_label: bool = False,
-    label_name: Optional[Optional[str]] = None,
+    label_name: Optional[str] = None,
 ) -> None:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]

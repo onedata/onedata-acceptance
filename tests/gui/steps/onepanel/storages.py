@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
@@ -345,7 +344,7 @@ def copy_storage_id_to_clipboard(
 
 def close_all_expanded_storages(
     browser_id: str, selenium: SeleniumDrivers
-) -> GuiObject:
+) -> list[str]:
     driver = selenium[browser_id]
     storages_list = Onepanel(driver).content.storages.storages
 

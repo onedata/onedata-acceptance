@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject

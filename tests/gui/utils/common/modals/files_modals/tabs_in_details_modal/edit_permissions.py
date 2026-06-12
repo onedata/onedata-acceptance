@@ -5,7 +5,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
+from typing import Optional
+
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.popups import MenuPopupWithLabel
@@ -69,8 +70,10 @@ class AclPermissionGroup(PageObject):
         if not self.is_expanded():
             self.click()
 
-    def get_elem_id(self) -> GuiObject:
+    def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
+        if elem_id is None:
+            raise RuntimeError(f"ACL permission group {self.name} has no id")
         return elem_id
 
 
@@ -95,7 +98,7 @@ class MemberAclPermission(PageObject):
     def expand(self) -> None:
         self.click()
 
-    def subject_type(self) -> GuiObject:
+    def subject_type(self) -> Optional[str]:
         classes = self._subject_type.get_attribute("class")
         if "oneicon-user" in classes:
             return "user"
@@ -107,7 +110,7 @@ class MemberAclPermission(PageObject):
     def is_allow_option_checked(self) -> bool:
         return "active" in self.allow_option.get_attribute("class")
 
-    def scroll_to_elem_on_acl_permission_group(self, elem: GuiObject) -> None:
+    def scroll_to_elem_on_acl_permission_group(self, elem: AclPermissionGroup) -> None:
         css_sel = "#" + elem.get_elem_id()
         self.driver.execute_script(
             f"var el = (typeof $ === 'function' ? $('{css_sel}')[0] : "

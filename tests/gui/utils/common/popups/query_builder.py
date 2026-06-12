@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Input, Label, WebItemsSequence
 
@@ -51,7 +50,7 @@ class ExpressionBuilderPopup(PageObject):
         self.expand_properties()
         self.properties[property_name].click()
 
-    def assert_property(self, property_name: str) -> GuiObject:
+    def assert_property(self, property_name: str) -> bool:
         try:
             self.properties[property_name]
         except IndexError:
@@ -61,7 +60,7 @@ class ExpressionBuilderPopup(PageObject):
     def expand_comparators(self) -> None:
         self.comparator_choice()
 
-    def choose_comparator(self, comparator_name: GuiObject) -> None:
+    def choose_comparator(self, comparator_name: str) -> None:
         self.expand_comparators()
         for comparator in self.comparators:
             if comparator.get_name() == comparator_name:
@@ -72,7 +71,7 @@ class ExpressionBuilderPopup(PageObject):
     def expand_values(self) -> None:
         self.values_choice()
 
-    def choose_value(self, value_name: GuiObject) -> None:
+    def choose_value(self, value_name: str) -> None:
         self.expand_values()
         for value in self.values:
             if value.get_name() == value_name:

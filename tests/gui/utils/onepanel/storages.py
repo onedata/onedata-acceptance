@@ -10,7 +10,6 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -115,7 +114,7 @@ class POSIXEditor(Editor):
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
 
-    def change_mount_point(self, val: GuiObject) -> None:
+    def change_mount_point(self, val: str) -> None:
         input_box = self.mount_point
         self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
         input_box.clear()

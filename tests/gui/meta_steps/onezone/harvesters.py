@@ -53,7 +53,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -128,7 +128,7 @@ def create_harvester(
     browser_id: str,
     harvester_name: str,
     hosts: Hosts,
-    harvesters: GuiObject,
+    harvesters: dict[str, str],
     clipboard: Clipboard,
     displays: DisplayMap,
 ) -> None:

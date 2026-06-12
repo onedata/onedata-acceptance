@@ -19,22 +19,24 @@ from tests.gui.steps.oneprovider.data_tab import (
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
 )
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
 from tests.utils.bdd_utils import parsers, wt
 
+type TreeConfig = list[str | dict[str, "TreeConfig | str | int"]]
 
-def build_tree_config(data: GuiObject, root_path: GuiObject = "") -> GuiObject:
+
+def build_tree_config(data: TreeConfig, root_path: str = "") -> Node:
     root = Node("root")
     root.path = root_path
     _build_tree_config(data, root)
     return root
 
 
-def _build_tree_config(data: GuiObject, parent: Node) -> None:
+def _build_tree_config(data: TreeConfig, parent: Node) -> None:
     for item in data:
-        try:
+        if isinstance(item, dict):
             [(item_name, item_subtree)] = item.items()
             node = Node(item_name)
             node.set_parent(parent)
@@ -43,7 +45,7 @@ def _build_tree_config(data: GuiObject, parent: Node) -> None:
                 _build_tree_config(item_subtree, node)
             else:
                 node.content = item_subtree
-        except AttributeError:
+        else:
             node = Node(item)
             node.set_parent(parent)
             parent.nodes.append(node)

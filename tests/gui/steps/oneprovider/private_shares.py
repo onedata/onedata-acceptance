@@ -15,10 +15,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject, Numerals
+from tests.gui.types import Numerals
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
+from tests.gui.utils.oneprovider.shares.private_share import EDMBoxForm
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -210,8 +211,8 @@ def choose_option_in_edm_form_in_shares_interface(
     option: str,
     section_name: str,
     selenium: SeleniumDrivers,
-    is_group: GuiObject = False,
-    requires_group_selection: GuiObject = False,
+    is_group: bool = False,
+    requires_group_selection: bool = False,
 ) -> None:
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
@@ -236,7 +237,7 @@ def choose_option_in_edm_form_in_shares_interface(
 
 
 def _open_section_dropdown_and_choose(
-    driver: WebDriver, item: GuiObject, option: str, is_group: GuiObject
+    driver: WebDriver, item: EDMBoxForm, option: str, is_group: bool
 ) -> None:
     item_dropdown = item.dropdown
     try:
@@ -260,7 +261,7 @@ def _open_section_dropdown_and_choose(
     "share's private interface"
 )
 def choose_option_group_in_edm_form_in_shares_interface(
-    browser_id: str, option: str, section_name: GuiObject, selenium: SeleniumDrivers
+    browser_id: str, option: str, section_name: str, selenium: SeleniumDrivers
 ) -> None:
     choose_option_in_edm_form_in_shares_interface(
         browser_id,

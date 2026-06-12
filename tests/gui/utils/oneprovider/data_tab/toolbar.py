@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, WebElement
 from tests.gui.utils.generic import rm_css_cls
@@ -26,7 +25,7 @@ class DataTopToolBar(PageObject):
 
     _upload_input = WebElement("input#toolbar-file-browse")
 
-    def upload_files(self, files: GuiObject) -> None:
+    def upload_files(self, files: str) -> None:
         """This interaction is very hacky, because uploading files with Selenium
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.

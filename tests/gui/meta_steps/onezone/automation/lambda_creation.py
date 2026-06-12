@@ -32,7 +32,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_lambda_form,
 )
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
@@ -89,7 +89,7 @@ def create_lambda_manually(
 
 def _create_lambda_manually(
     browser_id: str, config: str, selenium: SeleniumDrivers
-) -> GuiObject:
+) -> None:
 
     button = "Add new lambda"
     name_field = "lambda name"
@@ -375,7 +375,7 @@ def download_and_remove_lambda_dump_from_inventory(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    lamda_name: GuiObject,
+    lamda_name: str,
 ) -> None:
     option = "Download (json)"
     option_unlink = "Unlink"

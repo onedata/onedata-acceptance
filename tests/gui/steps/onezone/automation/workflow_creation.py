@@ -13,9 +13,10 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import collapse_revision_list
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.workflows_subpage import JSONWorkflowsPanel
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -114,7 +115,7 @@ def choose_option_in_dropdown_menu_in_task_page(
 
 
 def clean_tab_textarea_in_json_argument_editor(
-    tab: GuiObject, selenium: SeleniumDrivers, browser_id: str
+    tab: JSONWorkflowsPanel, selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     tab.click()
     while tab.text_area:

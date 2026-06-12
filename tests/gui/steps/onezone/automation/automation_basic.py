@@ -12,7 +12,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     parse_seq,
@@ -21,6 +21,8 @@ from tests.gui.utils.generic import (
     upload_lambda_path,
     upload_workflow_path,
 )
+from tests.gui.utils.onezone.lambdas_subpage import Lambda
+from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualiser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -38,7 +40,7 @@ def click_create_automation_button_in_sidebar(
     OZLoggedIn(selenium[browser_id])["automation"].create_automation()
 
 
-def get_oz_workflow_visualizer(driver: WebDriver) -> GuiObject:
+def get_oz_workflow_visualizer(driver: WebDriver) -> WorkflowVisualiser:
     page = OZLoggedIn(driver)
     if page.is_panel_clicked("automation"):
         return page["automation"].workflows_page.workflow_visualiser
@@ -274,13 +276,13 @@ def click_on_create_new_revision_button(
     page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list(subpage: GuiObject) -> None:
+def collapse_revision_list(subpage: Lambda | Workflow) -> None:
     subpage.show_revisions_button.click()
 
 
 def get_lambda_or_workflow_bracket(
     selenium: SeleniumDrivers, browser_id: str, page: str, object_name: str
-) -> GuiObject:
+) -> Lambda | Workflow:
     page_name = page + "s_page"
     subpage = getattr(OZLoggedIn(selenium[browser_id])["automation"], page_name)
 

@@ -6,14 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List, Optional
+from typing import Optional, cast
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -60,15 +59,18 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(self, columns: Optional[list[str]] = None) -> GuiObject:
+    def get_rows_of_columns(
+        self, columns: Optional[list[str]] = None
+    ) -> dict[str, list[str]]:
         if columns is None:
             columns = []
         temp_columns = [column for column in columns if column != "file"]
         temp_columns.append("file")
 
-        column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
+        column_values: dict[str, list[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
+            row = cast(FilesLog, row)
             values_in_row = [getattr(row, column) for column in temp_columns]
             if any(param == "" for param in values_in_row):
                 continue

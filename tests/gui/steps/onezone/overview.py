@@ -12,7 +12,6 @@ import yaml
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -99,7 +98,7 @@ def assert_name_label_of_space_on_overview_page(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_mes_at_field_in_space_details_in_overview(
-    selenium: SeleniumDrivers, browser_id: str, text: str, field: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, text: str, field: str
 ) -> None:
     driver = selenium[browser_id]
     details_tile = OZLoggedIn(driver)["data"].overview_page.space_details_tile
@@ -111,7 +110,7 @@ def assert_mes_at_field_in_space_details_in_overview(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tags_in_space_details_in_overview(
-    selenium: SeleniumDrivers, browser_id: str, tags_to_check: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, tags_to_check: list[str]
 ) -> None:
     tags = "tags"
     driver = selenium[browser_id]

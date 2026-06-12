@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebItemsSequence
 
@@ -16,7 +15,7 @@ from tests.gui.utils.core.web_elements import Label, WebElement, WebItemsSequenc
 class Options(PageObject):
     name = id = Label(".one-label")
 
-    def get_state(self) -> GuiObject:
+    def get_state(self) -> str:
         return (
             "disabled"
             if "disabled" in self.web_elem.get_attribute("class")
@@ -35,7 +34,7 @@ class ArchiveRowMenu(PageObject):
             self.scroll_to_bottom()
         self.options[name].click()
 
-    def return_option(self, name: str) -> GuiObject:
+    def return_option(self, name: str) -> Options:
         if name not in self.options:
             self.scroll_to_bottom()
         return self.options[name]

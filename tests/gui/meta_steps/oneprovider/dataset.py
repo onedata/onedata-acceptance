@@ -32,7 +32,7 @@ from tests.gui.steps.oneprovider.dataset import (
     fail_to_click_button_in_modal,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.utils.bdd_utils import parsers, wt
 
@@ -275,7 +275,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
 def check_effective_protection_flag(
     browser_id: str,
     selenium: SeleniumDrivers,
-    kind: GuiObject,
+    kind: str,
     item_name: str,
     tmp_memory: TmpMemory,
 ) -> None:

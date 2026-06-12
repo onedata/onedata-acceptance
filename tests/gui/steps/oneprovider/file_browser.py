@@ -8,7 +8,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import tarfile
 import time
+from collections.abc import Mapping
 from datetime import datetime
+from typing import Optional, Protocol
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -21,12 +23,26 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.gui.utils.oneprovider.file_browser import FileSelector
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+class BrowserRows(Protocol):
+    def __getitem__(self, name: str) -> BrowserRow: ...
+
+
+class SelectableBrowser(Protocol):
+    data: BrowserRows
+    files: BrowserRows
+
+
+type TarTree = list[str | dict[str, "TarTree | str | int"]]
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
@@ -313,14 +329,18 @@ def deselect_items_from_file_browser(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _select_files(browser: GuiObject, selector: GuiObject, item_list: str) -> None:
+def _select_files(
+    browser: SelectableBrowser, selector: FileSelector, item_list: str
+) -> None:
     for item_name in parse_seq(item_list):
         item = browser.data[item_name]
         if not item.is_selected():
             selector.select(item)
 
 
-def _deselect_files(browser: GuiObject, selector: GuiObject, item_list: str) -> None:
+def _deselect_files(
+    browser: SelectableBrowser, selector: FileSelector, item_list: str
+) -> None:
     for item_name in parse_seq(item_list):
         item = browser.files[item_name]
         if item.is_selected():
@@ -618,20 +638,20 @@ def assert_contents_downloaded_tar_file(
     displays: DisplayMap,
     name: str,
 ) -> None:
-    configured_dir_contents: dict[GuiObject, GuiObject] = {}
+    configured_dir_contents: dict[str, Optional[str]] = {}
     if name == "archive":
         name = f"archive_{clipboard.paste(display=displays[browser_id])}.tar"
         contents = contents.replace("archive", name.split(".", maxsplit=1)[0])
 
-    def _get_directory_contents(directory_tree: GuiObject, path: str = "") -> None:
+    def _get_directory_contents(directory_tree: TarTree, path: str = "") -> None:
 
         if not directory_tree:
             return
 
         for item in directory_tree:
-            try:
+            if isinstance(item, Mapping):
                 [(name, content)] = item.items()
-            except AttributeError:
+            else:
                 name = item
                 content = None
 
@@ -643,7 +663,8 @@ def assert_contents_downloaded_tar_file(
             configured_dir_contents[item_path] = str(content)
             if name.startswith("dir") or name.startswith("archive"):
                 configured_dir_contents[item_path] = None
-                _get_directory_contents(content, item_path)
+                if isinstance(content, list):
+                    _get_directory_contents(content, item_path)
 
     download_path = tmpdir.join(browser_id, "download")
     extract_path = download_path.join("extract")

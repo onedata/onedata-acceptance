@@ -9,11 +9,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from collections.abc import Callable
 from datetime import datetime
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -296,8 +297,11 @@ def assert_entries_with_error_messages_in_archive_recall(
 
 
 def _scroll_and_check_condition(
-    browser_id: str, selenium: SeleniumDrivers, condition: GuiObject, *args: GuiObject
-) -> GuiObject:
+    browser_id: str,
+    selenium: SeleniumDrivers,
+    condition: Callable[..., None],
+    *args: object,
+) -> list[str]:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
     entries = modal.error_file_row

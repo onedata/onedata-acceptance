@@ -11,7 +11,6 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -22,9 +21,9 @@ def main_menu_tab_to_url(tab: str) -> str:
     return tab_to_url_mapping.get(tab, tab)
 
 
-def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> GuiObject:
-    def _load_main_menu_tab_page(tab: GuiObject) -> GuiObject:
-        def _check_url(_url: GuiObject) -> GuiObject:
+def _click_on_tab_in_main_menu_sidebar(driver: WebDriver, tab: str) -> None:
+    def _load_main_menu_tab_page(tab: str) -> bool:
+        def _check_url(_url: str) -> bool:
             return tab in driver.current_url
 
         current_url = driver.current_url

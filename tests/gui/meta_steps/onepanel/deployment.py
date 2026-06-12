@@ -30,7 +30,7 @@ from tests.gui.steps.onepanel.deployment import (
     wt_type_text_to_in_box_in_deployment_step5,
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -111,8 +111,8 @@ def _parse_zone_data(zone_name: str, zone_domain: str) -> Tuple[str, str]:
 def _setup_onezone_in_step1(
     selenium: SeleniumDrivers,
     browser_id: str,
-    zone_for_name: GuiObject,
-    zone_for_domain: GuiObject,
+    zone_for_name: str,
+    zone_for_domain: str,
     hosts: Hosts,
 ) -> None:
     step = "step 1"

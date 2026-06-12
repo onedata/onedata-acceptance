@@ -27,7 +27,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import DisplayMap, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
@@ -49,8 +49,8 @@ def login_using_gui(
     driver: WebDriver,
     tmpdir: LocalPath,
     tmp_memory: TmpMemory,
-    xvfb: GuiObject,
-    driver_type: GuiObject,
+    xvfb: list[str],
+    driver_type: str,
     displays: DisplayMap,
     screen_width: int,
     screen_height: int,
@@ -58,7 +58,7 @@ def login_using_gui(
     users: Users,
     browser_id_list: str,
     user_list: str,
-    test_type: GuiObject,
+    test_type: str,
     capabilities: Capabilities,
 ) -> None:
     create_instances_of_webdriver(

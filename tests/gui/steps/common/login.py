@@ -12,7 +12,6 @@ import time
 from tests.conftest import SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
-from tests.gui.types import GuiObject
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -21,7 +20,7 @@ from tests.utils.utils import repeat_failed
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def _login_using_basic_auth(
-    login_page: GuiObject, username: str, password: str
+    login_page: LoginPage, username: str, password: str
 ) -> None:
     login_page.username = username
     login_page.password = password
@@ -29,7 +28,7 @@ def _login_using_basic_auth(
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 2)
-def _login_using_passphrase(login_page: GuiObject, password: str) -> None:
+def _login_using_passphrase(login_page: LoginPage, password: str) -> None:
     login_page.passphrase = password
     login_page.sign_in()
 

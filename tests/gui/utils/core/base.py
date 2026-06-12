@@ -1,12 +1,11 @@
 """Utils and fixtures to facilitate operations on various web objects in web GUI."""
 
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Optional
+from typing import Optional, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.generic import click_on_web_elem
 
 __author__ = "Bartosz Walkowicz"
@@ -36,11 +35,12 @@ class AbstractWebElement(ABC):
 class AbstractWebItem(AbstractWebElement, ABC):
     __metaclass__ = ABCMeta
 
-    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
-        self.cls = kwargs.pop("cls", None)
-        if self.cls is None:
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        item_cls = kwargs.pop("cls", None)
+        if item_cls is None:
             raise ValueError("cls not specified")
-        super().__init__(*args, **kwargs)
+        self.cls = cast(type["PageObject"], item_cls)
+        super().__init__(*args, **kwargs)  # type: ignore[arg-type]
 
 
 class PageObjectMeta(ABCMeta):
@@ -85,9 +85,9 @@ class PageObject(AbstractPageObject):
         driver: WebDriver,
         web_elem: SeleniumWebElement,
         parent: Optional[object] = None,
-        **kwargs: GuiObject,
+        **kwargs: object,
     ) -> None:
-        super().__init__(driver, web_elem, parent, **kwargs)
+        super().__init__(driver, web_elem, parent, **kwargs)  # type: ignore[arg-type]
         if not hasattr(self, "_click_area"):
             self._click_area = web_elem
 

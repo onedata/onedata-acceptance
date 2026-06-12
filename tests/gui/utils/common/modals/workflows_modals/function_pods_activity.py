@@ -9,7 +9,6 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
@@ -75,4 +74,7 @@ class FunctionPodsActivity(Modal):
 
     def get_number_of_data_rows(self, driver: WebDriver) -> str:
         element = driver.find_elements(By.CSS_SELECTOR, ".audit-log-table-entry")[0]
-        return element.get_attribute("data-row-id")
+        number = element.get_attribute("data-row-id")
+        if number is None:
+            raise RuntimeError("event row has no data-row-id")
+        return number

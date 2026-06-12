@@ -15,8 +15,9 @@ from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.utils.bdd_utils import parsers, wt
@@ -233,7 +234,7 @@ def close_sidebar_by_click_on_background(
 @repeat_failed(timeout=WAIT_BACKEND)
 def _click_on_option_in_the_sidebar(
     selenium: SeleniumDrivers, browser_id: str, option: str, force: bool = True
-) -> GuiObject:
+) -> PageObject:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     name = str(option).lower()

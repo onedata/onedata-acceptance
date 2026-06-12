@@ -12,8 +12,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject, Numerals, TmpMemory
+from tests.gui.types import Numerals, TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
+    MemberAclPermission,
+)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -84,7 +87,7 @@ def fail_to_set_posix_permission(
 
 
 def _change_acl_options(
-    option_list: str, subject: GuiObject, change: GuiObject, driver: WebDriver
+    option_list: str, subject: MemberAclPermission, change: str, driver: WebDriver
 ) -> None:
     for option in parse_seq(option_list):
         if option in ["allow", "deny"]:
@@ -526,7 +529,7 @@ def assert_not_no_access_tag_on_file(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_unknown_user_id_from_acl_entry(
     selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
-) -> GuiObject:
+) -> str:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[n]

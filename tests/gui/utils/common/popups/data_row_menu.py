@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
@@ -13,7 +12,7 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 class Options(PageObject):
     name = id = Label(".one-label")
 
-    def get_state(self) -> GuiObject:
+    def get_state(self) -> str:
         return (
             "disabled"
             if "disabled" in self.web_elem.get_attribute("class")
@@ -31,7 +30,7 @@ class DataRowMenu(PageObject):
             self.scroll_to_bottom()
         self.options[name].click()
 
-    def return_option(self, name: str) -> GuiObject:
+    def return_option(self, name: str) -> Options:
         if name not in self.options:
             self.scroll_to_bottom()
         return self.options[name]

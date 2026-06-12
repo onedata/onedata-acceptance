@@ -20,7 +20,7 @@ from tests.gui.steps.common.docker import docker_ls
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import implicit_wait, parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -743,7 +743,7 @@ def see_released_size_in_cleaning_report(
 
 def toggle_in_storage_import_configuration_is_enabled(
     selenium: SeleniumDrivers, browser_id: str, toggle_name: str
-) -> GuiObject:
+) -> bool:
     storage_import_conf = Onepanel(
         selenium[browser_id]
     ).content.spaces.form.storage_import_configuration

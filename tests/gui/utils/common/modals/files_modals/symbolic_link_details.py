@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import Clipboard, DisplayMap, GuiObject
+from tests.gui.types import Clipboard, DisplayMap
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Label, NamedButton
 from tests.gui.utils.generic import transform
@@ -32,6 +32,6 @@ class SymbolicLinkDetailsModal(Modal):
         clipboard: Clipboard,
         displays: DisplayMap,
         browser_id: str,
-    ) -> GuiObject:
+    ) -> str:
         getattr(self, transform(property_name)).click()
         return clipboard.paste(display=displays[browser_id])

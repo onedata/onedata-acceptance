@@ -38,7 +38,7 @@ from tests.gui.steps.oneprovider_common import (
 )
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -60,7 +60,7 @@ def navigate_to_tab_in_op_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     provider: str,
-    main_menu_tab: GuiObject,
+    main_menu_tab: str,
     hosts: Hosts,
 ) -> None:
     title = selenium[user].title

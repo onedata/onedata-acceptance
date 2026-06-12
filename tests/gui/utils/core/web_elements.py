@@ -9,7 +9,7 @@ from functools import partial
 
 from selenium.webdriver.common.by import By
 
-from tests.gui.types import GuiObject
+from tests.gui.types import DynamicObject
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text
 
 from .base import AbstractWebElement, AbstractWebItem
@@ -17,11 +17,11 @@ from .web_objects import ButtonPageObject, ButtonWithTextPageObject, PageObjects
 
 
 class WebElement(AbstractWebElement):
-    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
+    def __init__(self, *args: DynamicObject, **kwargs: DynamicObject) -> None:
         self.parent_name = kwargs.pop("parent_name", "")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         if instance is None:
             return self
 
@@ -33,21 +33,21 @@ class WebElement(AbstractWebElement):
         )
 
     def _format_msg(
-        self, err_msg: GuiObject, parent: GuiObject, **kwargs: GuiObject
-    ) -> GuiObject:
+        self, err_msg: DynamicObject, parent: DynamicObject, **kwargs: DynamicObject
+    ) -> DynamicObject:
         name = self.name.replace("_", " ").strip().upper()
         p_name = self.parent_name if self.parent_name != "" else str(parent)
         return err_msg.format(item=name, parent=p_name, **kwargs)
 
 
 class WebElementWithText(WebElement):
-    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
+    def __init__(self, *args: DynamicObject, **kwargs: DynamicObject) -> None:
         self.text = kwargs.pop("text", None)
         if self.text is None:
             raise ValueError("text not specified")
         super().__init__(*args, **kwargs)
 
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         if instance is None:
             return self
 
@@ -62,7 +62,7 @@ class WebElementWithText(WebElement):
 
 
 class WebItem(AbstractWebItem, WebElement):
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         elem = super().__get__(instance, owner)
         return (
             elem
@@ -82,17 +82,17 @@ NamedButton = partial(WebItemWithText, cls=ButtonWithTextPageObject)
 class Label(WebElement):
     item_not_found_msg = "{item} label not found in {parent}"
 
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         item = super().__get__(instance, owner)
         return item.text if instance else item
 
 
 class Input(WebElement):
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         item = super().__get__(instance, owner)
         return item.get_attribute("value") if instance else item
 
-    def __set__(self, instance: GuiObject, val: GuiObject) -> None:
+    def __set__(self, instance: DynamicObject, val: DynamicObject) -> None:
         input_box = super().__get__(instance, type(instance))
         input_box.clear()
         if val != "":
@@ -103,13 +103,13 @@ class Input(WebElement):
 
 
 class AceEditor(WebElement):
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         selector = self.css_sel + " .ace_content"
         script = f"var textarea = document.querySelector('{selector}');return textarea"
         driver = instance.web_elem.parent
         return driver.execute_script(script).text
 
-    def __set__(self, instance: GuiObject, val: GuiObject) -> None:
+    def __set__(self, instance: DynamicObject, val: DynamicObject) -> None:
         driver = instance.web_elem.parent
         selector = self.css_sel + " .ace_text-input"
         script = (
@@ -124,7 +124,7 @@ class AceEditor(WebElement):
 
 
 class WebElementsSequence(AbstractWebElement):
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         if instance is None:
             return self
 
@@ -132,7 +132,7 @@ class WebElementsSequence(AbstractWebElement):
 
 
 class WebItemsSequence(AbstractWebItem, WebElementsSequence):
-    def __get__(self, instance: GuiObject, owner: object) -> GuiObject:
+    def __get__(self, instance: DynamicObject, owner: object) -> DynamicObject:
         seq = super().__get__(instance, owner)
         return (
             seq

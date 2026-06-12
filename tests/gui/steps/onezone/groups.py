@@ -10,10 +10,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -46,7 +46,7 @@ def confirm_name_input_on_main_groups_page(
     OZLoggedIn(selenium[browser_id])["groups"].input_box.confirm()
 
 
-def _find_groups(page: GuiObject, group_name: str) -> GuiObject:
+def _find_groups(page: GroupsPage, group_name: str) -> list[Group]:
     return list(filter(lambda g: g.name == group_name, page.elements_list))
 
 

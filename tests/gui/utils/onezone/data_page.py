@@ -10,7 +10,6 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -130,7 +129,7 @@ class ProvidersMap(Element):
 
     def get_provider_horizontal_position(
         self, provider_name: str, driver: WebDriver
-    ) -> GuiObject:
+    ) -> float:
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element(By.CSS_SELECTOR, ".tooltip-inner").text

@@ -5,7 +5,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.common.common import BaseContent, OnePage
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, Label, WebElement, WebItem
@@ -57,7 +56,7 @@ class Onepanel(OnePage):
     discard_button = Button(".modal-content .btn-toolbar button")
 
     @property
-    def sidebar(self) -> GuiObject:
+    def sidebar(self) -> Sidebar:
         sidebar = self._sub_sidebar
         if "ps-active-x" not in sidebar.get_attribute("class"):
             sidebar = self._main_sidebar

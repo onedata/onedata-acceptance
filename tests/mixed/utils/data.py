@@ -19,7 +19,9 @@ from tests.gui.utils.oneservices.cdmi import get_item_type
 class FileTreeNode(Protocol):
     path: str
     content: str | int | None
-    nodes: Iterable[FileTreeNode]
+
+    @property
+    def nodes(self) -> Iterable[FileTreeNode]: ...
 
     def get_items(self) -> Iterable[str]: ...
 
