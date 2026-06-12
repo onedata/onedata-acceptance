@@ -5,8 +5,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
+from tests.conftest import Users
 from tests.utils.bdd_utils import parsers, wt
 
 from . import multi_file_steps
@@ -18,18 +17,20 @@ from . import multi_file_steps
     )
 )
 def set_extended_attribute(
-    user: Any, file: Any, name: Any, value: Any, users: Any
-) -> Any:
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.set_xattr(user, file, name, value, "client1", users)
 
 
 @wt(parsers.cfparse("{user} removes extended attribute {name} from {file}"))
-def remove_extended_attribute(user: Any, file: Any, name: Any, users: Any) -> Any:
+def remove_extended_attribute(user: str, file: str, name: str, users: Users) -> None:
     multi_file_steps.remove_xattr(user, file, name, "client1", users)
 
 
 @wt(parsers.cfparse("{user} checks that {file} has extended attribute {name}"))
-def check_extended_attribute_exists(user: Any, file: Any, name: Any, users: Any) -> Any:
+def check_extended_attribute_exists(
+    user: str, file: str, name: str, users: Users
+) -> None:
     multi_file_steps.check_xattr_exists(user, file, name, "client1", users)
 
 
@@ -37,8 +38,8 @@ def check_extended_attribute_exists(user: Any, file: Any, name: Any, users: Any)
     parsers.cfparse("{user} checks that {file} does not have extended attribute {name}")
 )
 def check_extended_attribute_doesn_exist(
-    user: Any, file: Any, name: Any, users: Any
-) -> Any:
+    user: str, file: str, name: str, users: Users
+) -> None:
     multi_file_steps.check_xattr_doesnt_exist(user, file, name, "client1", users)
 
 
@@ -49,8 +50,8 @@ def check_extended_attribute_doesn_exist(
     )
 )
 def check_string_extended_attribute(
-    user: Any, file: Any, name: Any, value: Any, users: Any
-) -> Any:
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_string_xattr(user, file, name, value, "client1", users)
 
 
@@ -61,8 +62,8 @@ def check_string_extended_attribute(
     )
 )
 def check_numeric_extended_attribute(
-    user: Any, file: Any, name: Any, value: Any, users: Any
-) -> Any:
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_numeric_xattr(user, file, name, value, "client1", users)
 
 
@@ -73,6 +74,6 @@ def check_numeric_extended_attribute(
     )
 )
 def check_json_extended_attribute(
-    user: Any, file: Any, name: Any, value: Any, users: Any
-) -> Any:
+    user: str, file: str, name: str, value: str, users: Users
+) -> None:
     multi_file_steps.check_json_xattr(user, file, name, value, "client1", users)

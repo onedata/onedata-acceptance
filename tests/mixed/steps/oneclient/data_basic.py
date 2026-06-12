@@ -341,18 +341,19 @@ def assert_no_such_metadata_in_op_oneclient(
     else:
         attr = f"onedata_{tab_name.lower()}"
     try:
-        metadata = metadata[attr]
+        metadata_value = metadata[attr]
     except KeyError:
         pass
     else:
         if tab_name.lower() == "json":
             val = json.loads(val)
+            metadata = json.loads(metadata_value)
             for key in val:
                 assert (
                     key not in metadata or metadata[key] != val[key]
                 ), f"There is {val} {tab_name} metadata"
         else:
-            assert val != metadata, f"There is {val} {tab_name} metadata"
+            assert val != metadata_value, f"There is {val} {tab_name} metadata"
 
 
 def assert_ace_in_op_oneclient(
@@ -382,8 +383,8 @@ def grant_acl_privileges_in_op_oneclient(
     name: Any,
 ) -> Any:
     try:
-        acl = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
-        acl = json.loads(acl)
+        acl_json = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
+        acl = json.loads(acl_json)
     except KeyError:
         acl = []
     acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)

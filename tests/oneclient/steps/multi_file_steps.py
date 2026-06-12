@@ -16,13 +16,16 @@ import stat as stat_lib
 import string
 import subprocess as sp
 import time
-from typing import Any
+from collections.abc import Mapping
 
 import jsondiff
+import pytest
 
+from tests.conftest import Hosts, Users
 from tests.oneclient.steps.multi_dir_steps import create
 from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
+from tests.utils.client_utils import Client
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.utils import (
     assert_,
@@ -36,26 +39,26 @@ SYMLINKS_DIR = ".symlinks"
 
 
 def create_base(
-    user: Any,
-    files: Any,
-    client_node: Any,
-    users: Any,
-    request: Any,
-    should_fail: Any = False,
-) -> Any:
-    files = list_parser(files)
+    user: str,
+    files: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+    should_fail: bool = False,
+) -> None:
+    file_names = list_parser(files)
     user_ = users[user]
     client = user_.clients[client_node]
     mode = request.config.getoption("file_mode")
 
-    for file_name in files:
+    for file_name in file_names:
         # path for original file in hardlink/symlink mode
         # space_name/(.hardlinks or .symlinks)/(random string)
 
         path = client.absolute_path(file_name)
         if mode == "regular":
 
-            def condition() -> Any:
+            def condition() -> None:
                 client.create_file(path)
 
         elif mode == "hardlink":
@@ -63,7 +66,7 @@ def create_base(
                 user, client, client_node, users, file_name, HARDLINKS_DIR
             )
 
-            def condition() -> Any:
+            def condition() -> None:
                 client.create_file(target_file_path)
                 client.create_hardlink(target_file_path, path)
 
@@ -72,7 +75,7 @@ def create_base(
                 user, client, client_node, users, file_name, SYMLINKS_DIR
             )
 
-            def condition() -> Any:
+            def condition() -> None:
                 client.create_file(target_file_path)
                 client.create_symlink(target_file_path, path)
 
@@ -86,8 +89,8 @@ def create_base(
 
 
 def create_hardlink(
-    user: Any, file_path: Any, hardlink_path: Any, client_node: Any, users: Any
-) -> Any:
+    user: str, file_path: str, hardlink_path: str, client_node: str, users: Users
+) -> None:
     client = users[user].clients[client_node]
     client.create_hardlink(
         client.absolute_path(file_path), client.absolute_path(hardlink_path)
@@ -95,8 +98,8 @@ def create_hardlink(
 
 
 def create_symlink(
-    user: Any, file_path: Any, symlink_path: Any, client_node: Any, users: Any
-) -> Any:
+    user: str, file_path: str, symlink_path: str, client_node: str, users: Users
+) -> None:
     user_ = users[user]
     client = user_.clients[client_node]
     client.create_symlink(
@@ -105,8 +108,13 @@ def create_symlink(
 
 
 def create_target_file(
-    user: Any, client: Any, client_node: Any, users: Any, file_name: Any, dir_name: Any
-) -> Any:
+    user: str,
+    client: Client,
+    client_node: str,
+    users: Users,
+    file_name: str,
+    dir_name: str,
+) -> str:
     space = file_name.split("/")[0]
     create(user, f"[{space}/{dir_name}]", client_node, users, exists_ok=True)
     file_name_hash = "".join(
@@ -123,8 +131,12 @@ def create_target_file(
     )
 )
 def create_reg_file(
-    user: Any, files: Any, client_node: Any, users: Any, request: Any
-) -> Any:
+    user: str,
+    files: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     create_base(user, files, client_node, users, request)
 
 
@@ -135,8 +147,12 @@ def create_reg_file(
     )
 )
 def create_reg_file_fail(
-    user: Any, files: Any, client_node: Any, users: Any, request: Any
-) -> Any:
+    user: str,
+    files: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     create_base(user, files, client_node, users, request, should_fail=True)
 
 
@@ -148,14 +164,14 @@ def create_reg_file_fail(
     )
 )
 def create_many(
-    user: Any,
+    user: str,
     lower: int,
     upper: int,
-    parent_dir: Any,
-    client_node: Any,
-    users: Any,
-    request: Any,
-) -> Any:
+    parent_dir: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     for i in range(lower, upper):
         new_file = os.path.join(parent_dir, str(i))
         create_reg_file(user, make_arg_list(new_file), client_node, users, request)
@@ -167,14 +183,16 @@ def create_many(
         " on (?P<client_node>.*)"
     )
 )
-def stat_present(user: Any, path: Any, files: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def stat_present(
+    user: str, path: str, files: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(path)
-    files = list_parser(files)
+    file_names = list_parser(files)
 
-    def condition() -> Any:
-        for f in files:
+    def condition() -> None:
+        for f in file_names:
             client.stat(os.path.join(path, f))
 
     assert_(client.perform, condition)
@@ -185,26 +203,30 @@ def stat_present(user: Any, path: Any, files: Any, client_node: Any, users: Any)
         r"(?P<user>\w+) sees (?P<files>.*) in (?P<path>.*) on (?P<client_node>.*)"
     )
 )
-def ls_present(user: Any, files: Any, path: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def ls_present(
+    user: str, files: str, path: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(path)
-    files = list_parser(files)
+    file_names = list_parser(files)
 
-    def condition() -> Any:
+    def condition() -> None:
         listed_files = client.ls(path)
-        for file in files:
+        for file in file_names:
             assert file in listed_files, f"File {file} not in listed files"
 
     assert_(client.perform, condition)
 
 
-def ls_present_spaces(user: Any, spaces: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def ls_present_spaces(
+    user: str, spaces: list[str], client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path("")
 
-    def condition() -> Any:
+    def condition() -> None:
         listed_spaces = client.ls(path)
         for space in spaces:
             assert (
@@ -215,12 +237,12 @@ def ls_present_spaces(user: Any, spaces: Any, client_node: Any, users: Any) -> A
 
 
 @wt(parsers.re(r"(?P<directory>.*) is empty for (?P<user>\w+) on (?P<client_node>.*)"))
-def ls_empty(directory: Any, user: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     dir_path = client.absolute_path(directory)
 
-    def condition() -> Any:
+    def condition() -> None:
         assert len(client.ls(dir_path)) == 0
 
     assert_(client.perform, condition)
@@ -234,14 +256,14 @@ def ls_empty(directory: Any, user: Any, client_node: Any, users: Any) -> Any:
     )
 )
 def ls_children(
-    user: Any, parent_dir: Any, lower: int, upper: int, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, parent_dir: str, lower: int, upper: int, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(parent_dir)
     files_num = upper - lower
 
-    def condition() -> Any:
+    def condition() -> None:
         listed_files = client.ls(path)
 
         assert (
@@ -254,19 +276,19 @@ def ls_children(
 
 
 def mv_base(
-    user: Any,
-    file1: Any,
-    file2: Any,
-    client_node: Any,
-    users: Any,
-    should_fail: Any = False,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    file1: str,
+    file2: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     src = client.absolute_path(file1)
     dest = client.absolute_path(file2)
 
-    def condition() -> Any:
+    def condition() -> None:
         client.mv(src, dest)
 
     if should_fail:
@@ -281,24 +303,24 @@ def mv_base(
         " on (?P<client_node>.*)"
     )
 )
-def rename(user: Any, file1: Any, file2: Any, client_node: Any, users: Any) -> Any:
+def rename(user: str, file1: str, file2: str, client_node: str, users: Users) -> None:
     mv_base(user, file1, file2, client_node, users)
 
 
 def rename_base(
-    user: Any,
-    file1: Any,
-    file2: Any,
-    client_node: Any,
-    users: Any,
-    should_fail: Any = False,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    file1: str,
+    file2: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     src = client.absolute_path(file1)
     dest = client.absolute_path(file2)
 
-    def condition() -> Any:
+    def condition() -> None:
         client.osrename(src, dest)
 
     if should_fail:
@@ -313,7 +335,9 @@ def rename_base(
         "(?P<file2>.*) on (?P<client_node>.*)"
     )
 )
-def rename_fail(user: Any, file1: Any, file2: Any, client_node: Any, users: Any) -> Any:
+def rename_fail(
+    user: str, file1: str, file2: str, client_node: str, users: Users
+) -> None:
     rename_base(user, file1, file2, client_node, users, should_fail=True)
 
 
@@ -323,14 +347,16 @@ def rename_fail(user: Any, file1: Any, file2: Any, client_node: Any, users: Any)
         "(?P<client_node>.*)"
     )
 )
-def stat_absent(user: Any, path: Any, files: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def stat_absent(
+    user: str, path: str, files: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(path)
-    files = list_parser(files)
+    file_names = list_parser(files)
 
-    def condition() -> Any:
-        for f in files:
+    def condition() -> None:
+        for f in file_names:
             p = os.path.join(path, f)
             try:
                 client.stat(p)
@@ -347,36 +373,36 @@ def stat_absent(user: Any, path: Any, files: Any, client_node: Any, users: Any) 
         "on (?P<client_node>.*)"
     )
 )
-def ls_absent(user: Any, files: Any, path: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def ls_absent(user: str, files: str, path: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     path = client.absolute_path(path)
-    files = list_parser(files)
+    file_names = list_parser(files)
 
-    def condition() -> Any:
+    def condition() -> None:
         time.sleep(1)
         listed_files = client.ls(path)
-        for file in files:
+        for file in file_names:
             assert file not in listed_files, f"File {file} is in files list"
 
     assert_(client.perform, condition)
 
 
 def shell_move_base(
-    user: Any,
-    file1: Any,
-    file2: Any,
-    client_node: Any,
-    users: Any,
-    should_fail: Any = False,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    file1: str,
+    file2: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     src = client.absolute_path(file1)
     dest = client.absolute_path(file2)
     cmd = f"mv {src} {dest}"
 
-    def condition() -> Any:
+    def condition() -> None:
         ret = client.run_cmd(cmd, error=True)
         if ret != 0:
             raise OSError(f"Command ended with exit code {ret}")
@@ -394,21 +420,21 @@ def shell_move_base(
     )
 )
 def shell_move_fail(
-    user: Any, file1: Any, file2: Any, client_node: Any, users: Any
-) -> Any:
+    user: str, file1: str, file2: str, client_node: str, users: Users
+) -> None:
     shell_move_base(user, file1, file2, client_node, users, should_fail=True)
 
 
 def delete_file_base(
-    user: Any, files: Any, client_node: Any, users: Any, should_fail: Any = False
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
-    files = list_parser(files)
-    for file in files:
+    user: str, files: str, client_node: str, users: Users, should_fail: bool = False
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
+    file_names = list_parser(files)
+    for file in file_names:
         path = client.absolute_path(file)
 
-        def condition() -> Any:
+        def condition() -> None:
             client.rm(path)
 
         if should_fail:
@@ -418,7 +444,7 @@ def delete_file_base(
 
 
 @wt(parsers.re(r"(?P<user>\w+) deletes files (?P<files>.*) on (?P<client_node>.*)"))
-def delete_file(user: Any, files: Any, client_node: Any, users: Any) -> Any:
+def delete_file(user: str, files: str, client_node: str, users: Users) -> None:
     delete_file_base(user, files, client_node, users)
 
 
@@ -427,7 +453,7 @@ def delete_file(user: Any, files: Any, client_node: Any, users: Any) -> Any:
         r"(?P<user>\w+) fails to delete files (?P<files>.*) on (?P<client_node>.*)"
     )
 )
-def delete_file_fail(user: Any, files: Any, client_node: Any, users: Any) -> Any:
+def delete_file_fail(user: str, files: str, client_node: str, users: Users) -> None:
     delete_file_base(user, files, client_node, users, should_fail=True)
 
 
@@ -437,29 +463,31 @@ def delete_file_fail(user: Any, files: Any, client_node: Any, users: Any) -> Any
         "on (?P<client_node>.*)"
     )
 )
-def check_size(user: Any, file: Any, size: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def check_size(
+    user: str, file: str, size: str | int, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
-    size = int(size)
+    expected_size = int(size)
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_result.st_size == size
+        assert stat_result.st_size == expected_size
 
     assert_(client.perform, condition)
 
 
 def check_type_impl(
-    user: Any,
-    file: Any,
-    file_type: Any,
-    client_node: Any,
-    users: Any,
-    follow_symlinks: Any = True,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    file: str,
+    file_type: str,
+    client_node: str,
+    users: Users,
+    follow_symlinks: bool = True,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
     if file_type == "regular":
@@ -471,7 +499,7 @@ def check_type_impl(
     else:
         raise ValueError(f"unknown file type {file_type}")
 
-    def condition() -> Any:
+    def condition() -> None:
         if follow_symlinks:
             stat_result = client.stat(file_path)
         else:
@@ -488,8 +516,13 @@ def check_type_impl(
     )
 )
 def check_type(
-    user: Any, file: Any, file_type: Any, client_node: Any, users: Any, request: Any
-) -> Any:
+    user: str,
+    file: str,
+    file_type: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
     check_type_impl(
         user,
         file,
@@ -507,17 +540,23 @@ def check_type(
     )
 )
 def shell_check_type(
-    user: Any, file: Any, file_type: Any, client_node: Any, users: Any, request: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    file: str,
+    file_type: str,
+    client_node: str,
+    users: Users,
+    request: pytest.FixtureRequest,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
     mode = request.config.getoption("file_mode")
 
-    def condition() -> Any:
+    def condition() -> None:
         follow_links = "-L " if mode == "symlink" else ""
         cmd = f"stat --format=%F {follow_links}{file_path}"
         stat_file_type = client.run_cmd(cmd, output=True)
+        assert isinstance(stat_file_type, str)
         assert stat_file_type.strip() == file_type
 
     assert_(client.perform, condition)
@@ -530,34 +569,34 @@ def shell_check_type(
     )
 )
 @repeat_failed(interval=1, timeout=30, exceptions=AssertionError)
-def check_mode(user: Any, file: Any, mode: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def check_mode(user: str, file: str, mode: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
-    mode = int(mode, 8)
+    expected_mode = int(mode, 8)
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
-        assert stat_lib.S_IMODE(stat_result.st_mode) == mode
+        assert stat_lib.S_IMODE(stat_result.st_mode) == expected_mode
 
     assert_(client.perform, condition)
 
 
 def change_mode_base(
-    user: Any,
-    file: Any,
-    mode: Any,
-    client_node: Any,
-    users: Any,
-    should_fail: Any = False,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
-    mode = int(mode, 8)
+    user: str,
+    file: str,
+    mode: str,
+    client_node: str,
+    users: Users,
+    should_fail: bool = False,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
+    parsed_mode = int(mode, 8)
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
-        client.chmod(mode, file_path)
+    def condition() -> None:
+        client.chmod(parsed_mode, file_path)
 
     assert_generic(client.perform, should_fail, condition)
 
@@ -568,7 +607,9 @@ def change_mode_base(
         "(?P<client_node>.*)"
     )
 )
-def change_mode(user: Any, file: Any, mode: Any, client_node: Any, users: Any) -> Any:
+def change_mode(
+    user: str, file: str, mode: str, client_node: str, users: Users
+) -> None:
     change_mode_base(user, file, mode, client_node, users)
 
 
@@ -579,8 +620,8 @@ def change_mode(user: Any, file: Any, mode: Any, client_node: Any, users: Any) -
     )
 )
 def change_mode_fail(
-    user: Any, file: Any, mode: Any, client_node: Any, users: Any
-) -> Any:
+    user: str, file: str, mode: str, client_node: str, users: Users
+) -> None:
     change_mode_base(user, file, mode, client_node, users, should_fail=True)
 
 
@@ -599,21 +640,21 @@ def change_mode_fail(
     )
 )
 def check_time(
-    user: Any,
-    time1: Any,
-    time2: Any,
-    comparator: Any,
-    file: Any,
-    client_node: Any,
-    users: Any,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    time1: str,
+    time2: str,
+    comparator: str,
+    file: str,
+    client_node: str,
+    users: Users,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     attr1 = time_attr(time1)
     attr2 = time_attr(time2)
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
         t2 = getattr(stat_result, attr2)
@@ -629,23 +670,23 @@ def check_time(
 
 
 def check_files_time(
-    user: Any,
-    time1: Any,
-    time2: Any,
-    comparator: Any,
-    file: Any,
-    file2: Any,
-    client_node: Any,
-    users: Any,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    time1: str,
+    time2: str,
+    comparator: str,
+    file: str,
+    file2: str,
+    client_node: str,
+    users: Users,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     attr1 = time_attr(time1)
     attr2 = time_attr(time2)
     file_path = client.absolute_path(file)
     file2_path = client.absolute_path(file2)
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr1)
         stat_result2 = client.stat(file2_path)
@@ -670,21 +711,21 @@ def check_files_time(
     )
 )
 def cmp_time_to_previous(
-    user: Any,
-    time1: Any,
-    comparator: Any,
-    file1: Any,
-    file2: Any,
-    users: Any,
-    client_node: Any,
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str,
+    time1: str,
+    comparator: str,
+    file1: str,
+    file2: str,
+    users: Users,
+    client_node: str,
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     attr = time_attr(time1)
     file_path = client.absolute_path(file1)
     recorded_stats = client.file_stats[client.absolute_path(file2)]
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
         t1 = getattr(stat_result, attr)
         t2 = getattr(recorded_stats, attr)
@@ -694,16 +735,16 @@ def cmp_time_to_previous(
 
 
 def touch_file_base(
-    user: Any, files: Any, client_node: Any, users: Any, should_fail: Any = False
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
-    files = list_parser(files)
+    user: str, files: str, client_node: str, users: Users, should_fail: bool = False
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
+    file_names = list_parser(files)
 
-    for file in files:
+    for file in file_names:
         file_path = client.absolute_path(file)
 
-        def condition() -> Any:
+        def condition() -> bool:
             try:
                 client.touch(file_path)
             except OSError:
@@ -716,7 +757,7 @@ def touch_file_base(
 @when(
     parsers.re(r"(?P<user>\w+) updates (?P<files>.*) timestamps on (?P<client_node>.*)")
 )
-def touch_file(user: Any, files: Any, client_node: Any, users: Any) -> Any:
+def touch_file(user: str, files: str, client_node: str, users: Users) -> None:
     touch_file_base(user, files, client_node, users)
 
 
@@ -726,7 +767,7 @@ def touch_file(user: Any, files: Any, client_node: Any, users: Any) -> Any:
         "on (?P<client_node>.*)"
     )
 )
-def touch_file_fail(user: Any, files: Any, client_node: Any, users: Any) -> Any:
+def touch_file_fail(user: str, files: str, client_node: str, users: Users) -> None:
     touch_file_base(user, files, client_node, users, should_fail=True)
 
 
@@ -738,13 +779,13 @@ def touch_file_fail(user: Any, files: Any, client_node: Any, users: Any) -> Any:
     )
 )
 def set_xattr(
-    user: Any, file: Any, name: Any, value: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, value: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         if isinstance(value, str):
             value_bytes = value.encode("utf-8")
         else:
@@ -761,12 +802,12 @@ def set_xattr(
         r"from (?P<file>\w+) on (?P<client_node>.*)"
     )
 )
-def remove_all_xattr(user: Any, file: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def remove_all_xattr(user: str, file: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         client.clear_xattr(file_path)
 
     assert_(client.perform, condition)
@@ -778,12 +819,14 @@ def remove_all_xattr(user: Any, file: Any, client_node: Any, users: Any) -> Any:
         r"from (?P<file>\w+) on (?P<client_node>.*)"
     )
 )
-def remove_xattr(user: Any, file: Any, name: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def remove_xattr(
+    user: str, file: str, name: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         client.removexattr(file_path, name)
 
     assert_(client.perform, condition)
@@ -796,13 +839,13 @@ def remove_xattr(user: Any, file: Any, name: Any, client_node: Any, users: Any) 
     )
 )
 def check_xattr_exists(
-    user: Any, file: Any, name: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         xattrs = client.listxattr(file_path)
         assert name in xattrs
 
@@ -816,13 +859,13 @@ def check_xattr_exists(
     )
 )
 def check_xattr_doesnt_exist(
-    user: Any, file: Any, name: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         xattrs = client.listxattr(file_path)
         assert name not in xattrs
 
@@ -837,13 +880,13 @@ def check_xattr_doesnt_exist(
     )
 )
 def check_string_xattr(
-    user: Any, file: Any, name: Any, value: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, value: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
         if isinstance(value, str):
             value_utf = value.encode("utf-8")
@@ -863,13 +906,13 @@ def check_string_xattr(
     )
 )
 def check_numeric_xattr(
-    user: Any, file: Any, name: Any, value: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, value: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
         assert float(xattr_value) == float(value)
 
@@ -884,13 +927,13 @@ def check_numeric_xattr(
     )
 )
 def check_json_xattr(
-    user: Any, file: Any, name: Any, value: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, file: str, name: str, value: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(file)
 
-    def condition() -> Any:
+    def condition() -> None:
         xattr_value = client.getxattr(file_path, name)
         assert jsondiff.diff(json.loads(xattr_value), json.loads(value)) == {}
 
@@ -898,18 +941,20 @@ def check_json_xattr(
 
 
 @wt(parsers.re(r"(?P<user>\w+) records (?P<files>.*) stats on (?P<client_node>.*)"))
-def record_stats(user: Any, files: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def record_stats(user: str, files: str, client_node: str, users: Users) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
 
     for file_ in list_parser(files):
         file_path = client.absolute_path(file_)
         client.file_stats[file_path] = client.stat(file_path)
 
 
-def get_metadata(user: Any, path: Any, client_node: Any, users: Any) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+def get_metadata(
+    user: str, path: str, client_node: str, users: Users
+) -> Mapping[str, str]:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(path)
 
     xattr_value = client.get_all_xattr(file_path)
@@ -924,28 +969,32 @@ def get_metadata(user: Any, path: Any, client_node: Any, users: Any) -> Any:
     )
 )
 def assert_file_ownership(
-    user: Any, path: Any, res: Any, uid: Any, gid: Any, client_node: Any, users: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, path: str, res: str, uid: str, gid: str, client_node: str, users: Users
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     file_path = client.absolute_path(path)
-    uid = int(uid)
-    gid = int(gid)
+    expected_uid = int(uid)
+    expected_gid = int(gid)
 
-    def condition() -> Any:
+    def condition() -> None:
         stat_result = client.stat(file_path)
         if res == "equal":
             wrong_id_fmt = "Expected owner's {} of file {} to be {}, but found {}"
-            wrong_uid_msg = wrong_id_fmt.format("UID", path, uid, stat_result.st_uid)
-            wrong_gid_msg = wrong_id_fmt.format("GID", path, gid, stat_result.st_gid)
-            assert stat_result.st_uid == uid, wrong_uid_msg
-            assert stat_result.st_gid == gid, wrong_gid_msg
+            wrong_uid_msg = wrong_id_fmt.format(
+                "UID", path, expected_uid, stat_result.st_uid
+            )
+            wrong_gid_msg = wrong_id_fmt.format(
+                "GID", path, expected_gid, stat_result.st_gid
+            )
+            assert stat_result.st_uid == expected_uid, wrong_uid_msg
+            assert stat_result.st_gid == expected_gid, wrong_gid_msg
         else:
             wrong_id_fmt = "Expected owner's {} of file {} not to be {}"
-            wrong_uid_msg = wrong_id_fmt.format("UID", path, uid)
-            wrong_gid_msg = wrong_id_fmt.format("GID", path, gid)
-            assert stat_result.st_uid != uid, wrong_uid_msg
-            assert stat_result.st_gid != gid, wrong_gid_msg
+            wrong_uid_msg = wrong_id_fmt.format("UID", path, expected_uid)
+            wrong_gid_msg = wrong_id_fmt.format("GID", path, expected_gid)
+            assert stat_result.st_uid != expected_uid, wrong_uid_msg
+            assert stat_result.st_gid != expected_gid, wrong_gid_msg
 
     assert_(client.perform, condition)
 
@@ -957,8 +1006,8 @@ def assert_file_ownership(
     )
 )
 def assert_file_exists_on_storage(
-    path: Any, container: Any, provider: Any, hosts: Any
-) -> Any:
+    path: str, container: str, provider: str, hosts: Hosts
+) -> None:
     pod_name = hosts[provider]["pod-name"]
     filename = os.path.basename(path)
     dir_path = os.path.dirname(path)
@@ -979,8 +1028,8 @@ def assert_file_exists_on_storage(
     )
 )
 def assert_file_stats_on_storage(
-    path: Any, container: Any, provider: Any, hosts: Any, uid: Any, gid: Any
-) -> Any:
+    path: str, container: str, provider: str, hosts: Hosts, uid: str, gid: str
+) -> None:
     pod_name = hosts[provider]["pod-name"]
     cmd = ["sh", "-c", f"stat {path}"]
     file_stat = sp.check_output(cmd_exec(pod_name, cmd, container=container))
@@ -1007,35 +1056,35 @@ def assert_file_stats_on_storage(
 
 
 def try_to_create_file_in_root_dir(
-    user: Any, client_node: Any, users: Any, file_name: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, client_node: str, users: Users, file_name: str
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     client.create_file(os.path.join(client.get_mount_path(), file_name))
 
 
 def create_file_in_dir_by_id(
-    user: Any, client_node: Any, users: Any, file_id: Any, file_name: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    user: str, client_node: str, users: Users, file_id: str, file_name: str
+) -> None:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     client.create_file(
         f"{client.get_mount_path()}/.__onedata__file_id__{file_id}/{file_name}"
     )
 
 
 def assert_symlink_of_file(
-    user: Any,
-    client_node: Any,
-    users: Any,
-    symlink_path: Any,
-    file_path: Any,
-    request: Any,
-) -> Any:
+    user: str,
+    client_node: str,
+    users: Users,
+    symlink_path: str,
+    file_path: str,
+    request: pytest.FixtureRequest,
+) -> None:
 
     user_name = user
-    user = users[user_name]
-    client = user.clients[client_node]
+    user_obj = users[user_name]
+    client = user_obj.clients[client_node]
     symlink_path = client.absolute_path(symlink_path)
     file_path = client.absolute_path(file_path)
 
@@ -1053,16 +1102,16 @@ def assert_symlink_of_file(
 
 
 def assert_hardlink_between_files(
-    user: Any,
-    client_node: Any,
-    users: Any,
-    file_path1: Any,
-    file_path2: Any,
-    request: Any,
-) -> Any:
+    user: str,
+    client_node: str,
+    users: Users,
+    file_path1: str,
+    file_path2: str,
+    request: pytest.FixtureRequest,
+) -> None:
     user_name = user
-    user = users[user_name]
-    client = user.clients[client_node]
+    user_obj = users[user_name]
+    client = user_obj.clients[client_node]
     file1 = client.absolute_path(file_path1)
     file2 = client.absolute_path(file_path2)
 

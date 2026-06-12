@@ -152,10 +152,10 @@ class Client:
     def realpath(self, path: str) -> str:
         return self.rpyc_connection.modules.os.path.realpath(path)
 
-    def stat(self, path: str) -> object:
+    def stat(self, path: str) -> os.stat_result:
         return self.rpyc_connection.modules.os.stat(path)
 
-    def lstat(self, path: str) -> object:
+    def lstat(self, path: str) -> os.stat_result:
         return self.rpyc_connection.modules.os.lstat(path)
 
     def rm(
@@ -245,11 +245,11 @@ class Client:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         xattrs[name] = value
 
-    def getxattr(self, file: str, name: str) -> object:
+    def getxattr(self, file: str, name: str) -> str:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         return xattrs[name]
 
-    def get_all_xattr(self, file: str) -> Mapping[str, object]:
+    def get_all_xattr(self, file: str) -> Mapping[str, str]:
         return self.rpyc_connection.modules.xattr.xattr(file)
 
     def listxattr(self, file: str) -> list[str]:
