@@ -4,7 +4,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any, Dict, List, Union
+from collections.abc import Iterable
+from typing import Optional, Protocol
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
