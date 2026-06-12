@@ -56,15 +56,16 @@ from tests.gui.steps.onezone.tokens import (
     type_new_token_name,
     wt_click_on_btn_for_oz_token,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _paste_token_into_text_field(
-    selenium: SeleniumDrivers, browser_id: str, token: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, token: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id])["tokens"]
     page.input_name = token
@@ -245,7 +246,7 @@ def _create_token_of_type(
     selenium: SeleniumDrivers,
     browser_id: str,
     token_type: str,
-    iteration: Optional[GuiObject] = None,
+    iteration: Optional[int] = None,
 ) -> None:
     button = "Create new token"
     token_name = f"{token_type}_token"
@@ -287,7 +288,7 @@ def create_token_with_config(
     browser_id: str,
     config: str,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -353,7 +354,7 @@ def _create_token_with_config(
     browser_id: str,
     config: str,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -401,9 +402,9 @@ def _create_token_with_config(
 def _set_tokens_caveats(
     selenium: SeleniumDrivers,
     browser_id: str,
-    caveats: GuiObject,
+    caveats: TokenCaveats,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -476,10 +477,10 @@ def assert_token_configuration(
     browser_id: str,
     config: str,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    spaces: GuiObject,
+    spaces: dict[str, str],
 ) -> None:
     """Assert token is corresponding to given config.
 
@@ -544,10 +545,10 @@ def assert_token_configuration_gui(
     browser_id: str,
     config: str,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    spaces: GuiObject,
+    spaces: dict[str, str],
 ) -> None:
     token_name = yaml.load(config, yaml.Loader)["name"]
     click_on_token_on_tokens_list(selenium, browser_id, token_name)
@@ -568,11 +569,11 @@ def _assert_token_configuration(
     browser_id: str,
     config: str,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    spaces: GuiObject,
-    creation: GuiObject = False,
+    spaces: dict[str, str],
+    creation: bool = False,
 ) -> None:
     data = yaml.load(config, yaml.Loader)
     token_name = data.get("name", False)
@@ -618,12 +619,12 @@ def _assert_token_configuration(
 def assert_token_caveats(
     selenium: SeleniumDrivers,
     browser_id: str,
-    caveats: GuiObject,
+    caveats: TokenCaveats,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    creation: GuiObject,
+    creation: bool,
 ) -> None:
     expiration_caveat = caveats.get("expiration", False)
     region_caveats = caveats.get("region", False)
@@ -725,10 +726,10 @@ def create_and_check_token(
     config: str,
     selenium: SeleniumDrivers,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    spaces: GuiObject,
+    spaces: dict[str, str],
 ) -> None:
     _create_token_with_config(
         selenium,
@@ -790,7 +791,7 @@ def create_token_with_copied_object_id(
     user: str,
     selenium: SeleniumDrivers,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -847,7 +848,7 @@ def create_token_with_object_id(
     user: str,
     selenium: SeleniumDrivers,
     users: Users,
-    groups: GuiObject,
+    groups: dict[str, str],
     hosts: Hosts,
     tmp_memory: TmpMemory,
     name: str,

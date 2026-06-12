@@ -8,8 +8,8 @@ from functools import partial
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -20,6 +20,7 @@ from tests.gui.utils.core.web_elements import (
     WebItem,
     WebItemsSequence,
 )
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
 TransferStatusList = [
@@ -49,9 +50,9 @@ class TransferRecord(PageObject):
     def __init__(
         self,
         driver: WebDriver,
-        web_elem: GuiObject,
-        parent: GuiObject,
-        **kwargs: GuiObject,
+        web_elem: SeleniumWebElement,
+        parent: object,
+        **kwargs: object,
     ) -> None:
         super().__init__(driver, web_elem, parent, **kwargs)
         status_class = self.status_icon.get_attribute("class").split()
@@ -103,7 +104,7 @@ class TransferChart(PageObject):
     # We take only last point in the chart
     _speed = WebElement(".transfers-transfer-chart .ct-series line:last-of-type")
 
-    def get_speed(self) -> GuiObject:
+    def get_speed(self) -> str:
         return self._speed.get_attribute("ct:value").split(",")[1]
 
 
@@ -141,25 +142,25 @@ class _TransfersTab(PageObject):
     )
 
     @property
-    def ongoing(self) -> GuiObject:
+    def ongoing(self) -> PageObjectsSequence:
         self["ongoing"].click()
         return self._ongoing_list
 
     @property
-    def ended(self) -> GuiObject:
+    def ended(self) -> PageObjectsSequence:
         self["ended"].click()
         return self._ended_list
 
     @property
-    def waiting(self) -> GuiObject:
+    def waiting(self) -> PageObjectsSequence:
         self["waiting"].click()
         return self._waiting_list
 
     @property
-    def certain_file(self) -> GuiObject:
+    def certain_file(self) -> PageObjectsSequence:
         return self._transfers_list_for_certain_file
 
-    def __getitem__(self, name: str) -> GuiObject:
+    def __getitem__(self, name: str) -> TabHeader:
         for tab in self.tabs:
             if name in tab.name.lower():
                 return tab

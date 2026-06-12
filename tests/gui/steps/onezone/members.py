@@ -32,9 +32,12 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
+from tests.gui.utils.common.privilege_tree import PrivilegeTree
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -50,7 +53,7 @@ def _change_to_tab_name(element: str) -> str:
     return MENU_ELEM_TO_TAB_NAME.get(element, element + "s")
 
 
-def _find_members_page(driver: WebDriver, where: str) -> GuiObject:
+def _find_members_page(driver: WebDriver, where: str) -> MembersPage:
     tab_name = _change_to_tab_name(where)
     if tab_name == "clusters":
         return Onepanel(driver).content.members
@@ -69,7 +72,7 @@ def get_privilege_tree(
     where: str,
     list_type: str,
     member_name: str,
-) -> GuiObject:
+) -> PrivilegeTree:
     driver = selenium[browser_id]
     page = _find_members_page(driver, where)
     elem = getattr(page, list_type).items[member_name]
@@ -102,12 +105,12 @@ def assert_element_is_member_of_parent_in_memberships(
     member_type: str,
     parent_type: str,
     where: str,
-) -> GuiObject:
+) -> None:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def fun(_record: GuiObject, member_index: GuiObject) -> GuiObject:
+    def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
             return True
         if member_index == 0:
@@ -138,12 +141,12 @@ def assert_element_is_not_member_of_parent_in_memberships(
     parent_name: str,
     member_type: str,
     parent_type: str,
-) -> GuiObject:
+) -> None:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def fun(_record: GuiObject, member_index: GuiObject) -> GuiObject:
+    def fun(_record: MembershipRow, member_index: int) -> bool:
         if member_type != "user":
             raise RuntimeError(
                 f'found "{member_name}" {member_type} as a member of'
@@ -257,12 +260,12 @@ def assert_members_number_in_space_members_tile(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_relation_menu_button(
     selenium: SeleniumDrivers, browser_id: str, member_name: str, name: str, where: str
-) -> GuiObject:
+) -> None:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     records = OZLoggedIn(driver)[where].members_page.memberships
 
-    def click_on_menu(record: GuiObject, member_index: GuiObject) -> GuiObject:
+    def click_on_menu(record: MembershipRow, member_index: int) -> bool:
         record.relations[member_index].click_relation_menu_button(driver)
         return True
 
@@ -601,7 +604,9 @@ def assert_options_for_user_are_enabled_or_disabled(
             assert not enabled, error_msg
 
 
-def _get_cluster_members(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def _get_cluster_members(
+    selenium: SeleniumDrivers, browser_id: str
+) -> PageObjectsSequence:
     driver = selenium[browser_id]
     where = "cluster"
     members_page = _find_members_page(driver, where)
@@ -905,7 +910,11 @@ def click_button_on_element_header_in_members(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members_and_wait(
-    selenium: SeleniumDrivers, browser_id: str, option: str, where: str, tree: GuiObject
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    option: str,
+    where: str,
+    tree: PrivilegeTree,
 ) -> None:
     driver = selenium[browser_id]
     option_selector = f".{option.lower()}-btn"

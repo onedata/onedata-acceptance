@@ -14,7 +14,6 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -55,7 +54,7 @@ class Browser(ABC, PageObject):
 
     parent = ""
 
-    def __init_subclass__(cls, **kwargs: GuiObject) -> None:
+    def __init_subclass__(cls, **kwargs: object) -> None:
         super().__init_subclass__(**kwargs)
         if cls.row_cls is not None:
             cls.data = WebItemsSequence(".data-row.fb-table-row", cls=cls.row_cls)
@@ -106,7 +105,7 @@ class Browser(ABC, PageObject):
         )
 
     def scroll_to_number_file(
-        self, driver: WebDriver, number: int, browser: GuiObject
+        self, driver: WebDriver, number: int, browser: "Browser"
     ) -> None:
         selector = browser.get_css_selector() + " " + f".data-row:nth-of-type({number})"
         scroll_to_css_selector(driver, selector)
@@ -120,7 +119,7 @@ class Browser(ABC, PageObject):
 
     # OTHER UTILITIES FUNCTIONS
 
-    def move_to_elem(self, driver: WebDriver, elem: GuiObject) -> None:
+    def move_to_elem(self, driver: WebDriver, elem: str) -> None:
         element = getattr(self, elem + "_elem")
         ActionChains(driver).move_to_element(element).perform()
 

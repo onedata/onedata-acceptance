@@ -13,10 +13,11 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -24,7 +25,7 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)
-def _enter_text(input_box: GuiObject, text: str) -> None:
+def _enter_text(input_box: WebElement, text: str) -> None:
     input_box.clear()
     input_box.send_keys(text)
     if input_box.get_attribute("value") != text and input_box.text != text:
@@ -93,7 +94,7 @@ def wt_assert_title_contains(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_popup(
-    selenium: SeleniumDrivers, browser_id: str, btn: GuiObject, popup: str
+    selenium: SeleniumDrivers, browser_id: str, btn: str, popup: str
 ) -> None:
     getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
@@ -106,7 +107,7 @@ def wt_click_on_btn_in_popup(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_click_on_btn_in_popup(
-    selenium: SeleniumDrivers, browser_id: str, btn: GuiObject, popup: str
+    selenium: SeleniumDrivers, browser_id: str, btn: str, popup: str
 ) -> None:
     getattr(Popups(selenium[browser_id]), transform(popup)).buttons[btn].click()
 
@@ -134,7 +135,7 @@ def pass_test() -> None:
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
 def switch_to_iframe(
-    selenium: SeleniumDrivers, browser_id: str, _selector: Optional[GuiObject] = None
+    selenium: SeleniumDrivers, browser_id: str, _selector: Optional[str] = None
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -154,7 +155,7 @@ def set_env_variable_with_copied_val(
     _set_env_variable(var_name, var_value)
 
 
-def _set_env_variable(var_name: str, var_value: GuiObject) -> None:
+def _set_env_variable(var_name: str, var_value: str) -> None:
     os.environ[var_name] = var_value
 
 

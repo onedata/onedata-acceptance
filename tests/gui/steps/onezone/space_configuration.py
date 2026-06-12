@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -93,8 +92,8 @@ def assert_contact_email_address(
 def set_space_data_in_configuration_tab(
     selenium: SeleniumDrivers,
     browser_id: str,
-    data_type: GuiObject,
-    data_name: GuiObject,
+    data_type: str,
+    data_name: str,
     with_save: bool = True,
 ) -> None:
     driver = selenium[browser_id]
@@ -138,8 +137,8 @@ def set_description_of_a_space(
 def add_tags_in_space_configuration_tab(
     selenium: SeleniumDrivers,
     browser_id: str,
-    tag_type: GuiObject,
-    tags: GuiObject,
+    tag_type: str,
+    tags: list[str],
     with_save: bool = True,
 ) -> None:
     driver = selenium[browser_id]

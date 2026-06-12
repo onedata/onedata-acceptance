@@ -55,7 +55,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -164,7 +164,7 @@ def _create_archive(
     clipboard: Clipboard,
     displays: DisplayMap,
     option: str,
-    follow_symbolic_links: GuiObject = True,
+    follow_symbolic_links: bool = True,
 ) -> None:
     option_in_data_row_menu = "Create archive"
     button_name = "Create"
@@ -249,7 +249,7 @@ def _create_archive(
 def copy_archive_id_to_tmp_memory(
     selenium: SeleniumDrivers,
     browser_id: str,
-    client: GuiObject,
+    client: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
     displays: DisplayMap,
@@ -474,7 +474,7 @@ def assert_base_archive_for_archive_in_op_gui(
     space_name: str,
     tmp_memory: TmpMemory,
     description: str,
-    base_description: GuiObject,
+    base_description: str,
 ) -> None:
     go_to_and_assert_browser(
         selenium,
@@ -505,7 +505,7 @@ def assert_archive_callback_in_op_gui(
     tmp_memory: TmpMemory,
     description: str,
     selenium: SeleniumDrivers,
-    expected: GuiObject,
+    expected: str,
     option: str,
 ) -> None:
     modal = "Archive Details"
@@ -546,7 +546,7 @@ def recalled_archive_details_in_op_gui(
     browser_id: str,
     item_name: str,
     tmp_memory: TmpMemory,
-    data: GuiObject,
+    data: dict[str, str],
     selenium: SeleniumDrivers,
 ) -> None:
     status_type = "recalled"
@@ -557,11 +557,11 @@ def recalled_archive_details_in_op_gui(
 
     for key, expected_value in data.items():
         if key == "time":
-            expected_value = expected_value.split(" >= ")
-            start = expected_value[-1]
-            stop = expected_value[0]
-            if "cancelled" in expected_value:
-                cancelled = expected_value[1]
+            expected_times = expected_value.split(" >= ")
+            start = expected_times[-1]
+            stop = expected_times[0]
+            if "cancelled" in expected_times:
+                cancelled = expected_times[1]
                 assert_recall_duration_in_archive_recall_information_modal(
                     selenium, browser_id, start, cancelled
                 )

@@ -7,10 +7,14 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from collections.abc import Iterator
+from typing import Optional
+
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
 from tests.gui.utils.core.web_elements import (
     Label,
@@ -27,34 +31,41 @@ class DataTabSidebar(PageObject):
         ".data-files-tree ul:not(.dropdown-menu) li:not(.clickable)"
     )
 
-    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
-        self._resize_handler = kwargs.pop("resize_handler")
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        driver: WebDriver,
+        web_elem: SeleniumWebElement,
+        parent: Optional[object] = None,
+        *,
+        resize_handler: SeleniumWebElement,
+    ) -> None:
+        self._resize_handler = resize_handler
+        super().__init__(driver, web_elem, parent)
 
     def __str__(self) -> str:
         return f"sidebar in {self.parent}"
 
     @property
-    def width(self) -> GuiObject:
+    def width(self) -> int:
         return self._resize_handler.location["x"]
 
     @width.setter
-    def width(self, value: GuiObject) -> None:
+    def width(self, value: int) -> None:
         offset = value - self.width
         action = ActionChains(self.driver)
         action.drag_and_drop_by_offset(self._resize_handler, offset, 0)
         action.perform()
 
     @property
-    def root_dir(self) -> GuiObject:
+    def root_dir(self) -> "DirectoryTree":
         root, root_content = self._root_dir[:2]
         return DirectoryTree(self.driver, root, self, children=root_content)
 
     @property
-    def cwd(self) -> GuiObject:
+    def cwd(self) -> "DirectoryTree":
         return self._cwd(self.root_dir)
 
-    def _cwd(self, curr_dir: GuiObject) -> GuiObject:
+    def _cwd(self, curr_dir: "DirectoryTree") -> "DirectoryTree":
         if curr_dir.is_active():
             return curr_dir
         for directory in curr_dir:
@@ -73,21 +84,28 @@ class DirectoryTree(PageObject, ExpandableMixin):
         ".secondary-sidebar-item.dir-item .truncate-secondary-sidebar-item"
     )
 
-    def __init__(self, *args: GuiObject, **kwargs: GuiObject) -> None:
-        self._children = kwargs.pop("children")
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        driver: WebDriver,
+        web_elem: SeleniumWebElement,
+        parent: Optional[object] = None,
+        *,
+        children: SeleniumWebElement,
+    ) -> None:
+        self._children = children
+        super().__init__(driver, web_elem, parent)
 
     def __str__(self) -> str:
         return f"DirectoryTree({self.pwd()}) in {self.parent}"
 
-    def __iter__(self) -> GuiObject:
+    def __iter__(self) -> Iterator["DirectoryTree"]:
         css_sel = "ul.data-files-tree-list li:not(.clickable)"
         return (
             DirectoryTree(self.driver, dir_tree, self, children=dir_tree)
             for dir_tree in self._children.find_elements(By.CSS_SELECTOR, css_sel)
         )
 
-    def __getitem__(self, name: str) -> GuiObject:
+    def __getitem__(self, name: str) -> "DirectoryTree":
         for directory in self:
             if directory.name == name:
                 return directory

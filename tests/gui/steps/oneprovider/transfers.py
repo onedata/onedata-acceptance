@@ -19,18 +19,18 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.oneprovider.transfers import TransferRecord, _TransfersTab
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 def _assert_transfer(
-    transfer: GuiObject,
+    transfer: TransferRecord,
     item_type: str,
-    desc: GuiObject,
-    sufix: GuiObject,
+    desc: str,
+    sufix: str,
     hosts: Hosts,
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -39,8 +39,8 @@ def _assert_transfer(
         transfer, f"is_{item_type}"
     )(), f"Transferred item is not {item_type} in {sufix}"
 
-    desc = yaml.load(desc, yaml.Loader)
-    for key, val in desc.items():
+    parsed_desc = yaml.load(desc, yaml.Loader)
+    for key, val in parsed_desc.items():
         if key == "destination":
             val = hosts[val]["name"]
         transfer_val = None
@@ -212,9 +212,7 @@ def _expand_dropdown_in_migrate_record(driver: WebDriver) -> None:
     assert len(Popups(driver).migrate_dropdown.providers_list) > 0
 
 
-def check_provider_in_migrate_dropdown(
-    driver: WebDriver, provider_name: str
-) -> GuiObject:
+def check_provider_in_migrate_dropdown(driver: WebDriver, provider_name: str) -> bool:
     data_distribution_modal = Modals(driver).details_modal.data_distribution
     return provider_name == data_distribution_modal.migrate.target_provider
 
@@ -398,7 +396,7 @@ def _select_columns_to_be_visible_in_transfers(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_transfers_and_enable_initial_cols(
     browser_id: str, selenium: SeleniumDrivers
-) -> GuiObject:
+) -> _TransfersTab:
     columns = ["user", "type", "status"]
     _select_columns_to_be_visible_in_transfers(selenium, browser_id, columns)
     return OPLoggedIn(selenium[browser_id]).transfers

@@ -17,19 +17,19 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     search_for_task_in_parallel_box,
     switch_to_automation_page,
 )
-from tests.gui.types import GuiObject
+from tests.gui.utils.oneprovider.automation import ParallelBox, WorkflowExecutionPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_status_from_workflow_visualizer(page: GuiObject) -> str:
+def get_status_from_workflow_visualizer(page: WorkflowExecutionPage) -> str:
     return page.workflow_visualiser.status
 
 
 def get_parallel_box(
-    selenium: SeleniumDrivers, browser_id: str, ordinal: str, lane: GuiObject
-) -> GuiObject:
+    selenium: SeleniumDrivers, browser_id: str, ordinal: str, lane: str
+) -> ParallelBox:
     page = switch_to_automation_page(selenium, browser_id)
     number = from_ordinal_number_to_int(ordinal) - 1
     return search_for_lane_status(selenium[browser_id], page, lane, number)
@@ -58,20 +58,20 @@ def assert_task_status_in_parallel_box(
     browser_id: str,
     ordinal: str,
     lane: str,
-    task: GuiObject,
+    task: str,
     expected_status: str,
 ) -> None:
     driver = selenium[browser_id]
     box = get_parallel_box(selenium, browser_id, ordinal, lane)
-    task, task_id = search_for_task_in_parallel_box(driver, box, task)
+    task_page, task_id = search_for_task_in_parallel_box(driver, box, task)
     try:
         actual_status = driver.find_element(
             By.CSS_SELECTOR, f"#{task_id} .status-detail .detail-value"
-        )
+        ).text
     except NoSuchElementException:
-        actual_status = task.status
+        actual_status = task_page.status
 
-    assert_status(task, actual_status, expected_status)
+    assert_status(task_page, actual_status, expected_status)
 
 
 @repeat_failed(interval=1, timeout=90)
@@ -109,7 +109,7 @@ def assert_status_of_lane(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_status(page: GuiObject, option: str, name: str) -> str:
+def get_status(page: WorkflowExecutionPage, option: str, name: str) -> str:
     if option == "lane":
         return page.workflow_visualiser.workflow_lanes[name].status
     if option == "workflow":
@@ -159,7 +159,7 @@ def assert_status_of_workflow(
     assert_status(workflow, actual_status, expected_status)
 
 
-def assert_status(name: str, actual_status: GuiObject, expected_status: str) -> None:
+def assert_status(name: object, actual_status: str, expected_status: str) -> None:
     err_msg = (
         f'Actual "{name}" status: "{actual_status}" does not '
         f'match expected: "{expected_status}"'

@@ -7,13 +7,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import re
 import time
+from collections.abc import Callable, Collection
 from datetime import datetime
+from typing import Protocol
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     WhichBrowser,
@@ -21,8 +23,20 @@ from tests.gui.utils.generic import (
     sort_json_from_string,
     transform,
 )
+from tests.gui.utils.oneprovider.browser import Browser
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+class MenuOption(Protocol):
+    def get_state(self) -> str: ...
+
+
+class RowMenu(Protocol):
+    def choose_option(self, option: str) -> None: ...
+
+    def return_option(self, name: str) -> MenuOption: ...
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -74,7 +88,7 @@ def wt_click_and_press_enter_on_item_in_browser(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_and_enter_with_check(
-    driver: WebDriver, browser: GuiObject, which_browser: str, item_name: str
+    driver: WebDriver, browser: Browser, which_browser: str, item_name: str
 ) -> None:
     # this function does not check correctly if parent and children directory
     # have the same name
@@ -89,9 +103,7 @@ def click_and_enter_with_check(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def check_if_breadcrumbs_on_share_page(
-    driver: WebDriver, which_browser: str
-) -> GuiObject:
+def check_if_breadcrumbs_on_share_page(driver: WebDriver, which_browser: str) -> str:
     try:
         breadcrumbs = OPLoggedIn(driver).shares_page.breadcrumbs.pwd()
     except RuntimeError:
@@ -163,14 +175,14 @@ def _get_items_list_from_browser(
     browser_id: str,
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
-) -> GuiObject:
+) -> Collection[str]:
 
     browser = tmp_memory[browser_id][transform(which_browser)]
-    data = {f.name for f in browser.data if f.name}
+    data: Collection[str] = {f.name for f in browser.data if f.name}
     driver = selenium[browser_id]
     if len(data) != len(browser.data):
 
-        def condition(data_: GuiObject) -> GuiObject:
+        def condition(data_: dict[str, BrowserRow]) -> bool:
             return len(data_) != len(browser.data)
 
         data = _gather_data_from_browser(driver, browser, condition)
@@ -180,8 +192,10 @@ def _get_items_list_from_browser(
 
 
 def _gather_data_from_browser(
-    driver: WebDriver, browser: GuiObject, condition: GuiObject
-) -> GuiObject:
+    driver: WebDriver,
+    browser: Browser,
+    condition: Callable[[dict[str, BrowserRow]], bool],
+) -> dict[str, BrowserRow]:
     data = {f.name: f for f in browser.data if f.name}
     while condition(data):
         browser.scroll_to_number_file(driver, len(data), browser)
@@ -265,7 +279,7 @@ def check_if_item_is_dir_in_browser(
     item_name: str,
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
-) -> GuiObject:
+) -> bool:
     driver = selenium[browser_id]
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = [f.name for f in browser.data if f.name]
@@ -478,7 +492,7 @@ def assert_not_status_tag_for_file_in_browser(
 
 def _choose_menu(
     selenium: SeleniumDrivers, browser_id: str, which_browser: str
-) -> GuiObject:
+) -> RowMenu:
     if which_browser in ["archive browser", "dataset archive browser"]:
         return Popups(selenium[browser_id]).archive_row_menu
     if which_browser == "dataset browser":

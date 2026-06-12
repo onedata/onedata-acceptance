@@ -18,6 +18,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -45,7 +46,7 @@ def _choose_space_from_menu_list(driver: WebDriver, name: str) -> None:
 
 def click_on_space_in_menu_list(
     driver: WebDriver, name: str, force: bool = True
-) -> GuiObject:
+) -> DataPage:
     # function assumes data page is active
     page = OZLoggedIn(driver)["data"]
     if force:
@@ -206,7 +207,7 @@ def wt_assert_main_tabs_disabled(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_main_tab_disabled(
-    selenium: SeleniumDrivers, browser_id: str, tab: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, tab: str
 ) -> None:
     driver = selenium[browser_id]
     assert OZLoggedIn(driver).is_panel_disabled(
@@ -460,8 +461,8 @@ def _click_on_option_of_space_on_left_sidebar_menu(
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(
-    space: GuiObject,
-) -> GuiObject:
+    space: Space,
+) -> int:
     page_names = [
         "overview",
         "files",

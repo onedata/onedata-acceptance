@@ -6,24 +6,31 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
+from typing import Optional, Protocol, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.oneprovider.automation import InitialValueStore
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+
+class InitialValueOption(Protocol):
+    name: str
+
+    def click(self) -> None: ...
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_range_as_initial_workflow_value(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item: GuiObject,
-    add_new: GuiObject = True,
+    item: dict[str, object],
+    add_new: bool = True,
 ) -> None:
     driver = selenium[browser_id]
     if add_new:
@@ -36,9 +43,7 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(
-    driver: WebDriver, files: GuiObject
-) -> None:
+def check_if_select_files_modal_disappeared(driver: WebDriver, files: str) -> None:
     try:
         Modals(driver).select_files  # pylint: disable=expression-not-assigned
         raise AssertionError(
@@ -100,15 +105,16 @@ def open_select_initial_datasets_modal(driver: WebDriver) -> None:
 
 
 def get_select_option_from_initial_value_popup(
-    option: str, popup_menu: GuiObject
-) -> GuiObject:
+    option: str, popup_menu: PageObjectsSequence
+) -> InitialValueOption:
     for elem in popup_menu:
-        if option in elem.name:
-            return elem
+        option_elem = cast(InitialValueOption, elem)
+        if option in option_elem.name:
+            return option_elem
     raise ValueError(f"{option} not found in popup menu")
 
 
-def get_initial_value_store(driver: WebDriver, store_name: str) -> GuiObject:
+def get_initial_value_store(driver: WebDriver, store_name: str) -> InitialValueStore:
     initial_value_stores = OPLoggedIn(driver).automation_page.initial_value_store
     if store_name + ":" in initial_value_stores:
         return initial_value_stores[store_name + ":"]
@@ -135,16 +141,14 @@ def click_input_link_in_automation_page(
             OPLoggedIn(driver).automation_page.single_file_input_link.click()
 
 
-def get_data_type_in_initial_value_store(
-    driver: WebDriver, store_name: str
-) -> GuiObject:
+def get_data_type_in_initial_value_store(driver: WebDriver, store_name: str) -> str:
     store = get_initial_value_store(driver, store_name)
     return store.data_type
 
 
 def get_data_type_of_array_initial_value_store(
     driver: WebDriver, store_name: str
-) -> GuiObject:
+) -> str:
     store = get_initial_value_store(driver, store_name)
     link_name = store.input_link.web_elem.text
 

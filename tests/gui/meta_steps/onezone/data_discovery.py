@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import re
 import time
+from typing import cast
 
 import yaml
 
@@ -24,8 +25,9 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
+from tests.gui.utils.onezone.data_discovery_page import ResultSample
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -44,7 +46,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4, interval=2)
 def assert_data_discovery_files(
-    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
     button_name = "Query"
 
@@ -54,7 +56,7 @@ def assert_data_discovery_files(
 
 
 def assert_files(
-    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
     expected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
@@ -68,9 +70,11 @@ def assert_files(
             )
 
 
-def _assert_elem_num_equals(expected_data: GuiObject, data_dict: GuiObject) -> None:
+def _assert_elem_num_equals(
+    expected_data: dict[str, object], data_dict: dict[str, ResultSample]
+) -> None:
     expected_num = len(expected_data)
-    spaces = expected_data.get("spaces", [])
+    spaces = cast(list[str], expected_data.get("spaces", []))
     if spaces:
         expected_num = expected_num - 1 + len(spaces)
     assert expected_num == len(
@@ -78,12 +82,16 @@ def _assert_elem_num_equals(expected_data: GuiObject, data_dict: GuiObject) -> N
     ), f"There should be {expected_num} files visible but there is {len(data_dict)}"
 
 
-def _check_spaces_of_data_disc(expected: GuiObject, actual: GuiObject) -> None:
+def _check_spaces_of_data_disc(
+    expected: list[str], actual: dict[str, ResultSample]
+) -> None:
     for space in expected:
         assert space in actual, f"space {space} not harvested"
 
 
-def _unpack_files_data(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def _unpack_files_data(
+    selenium: SeleniumDrivers, browser_id: str
+) -> dict[str, ResultSample]:
     driver = selenium[browser_id]
     regex = r'fileName: "(?P<file_name>[^\s]+)"'
     files_data_dict = {}
@@ -94,13 +102,14 @@ def _unpack_files_data(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
 
 
 def _assert_data_discovery_files(
-    expected: GuiObject, actual: GuiObject, spaces: GuiObject
+    expected: dict[str, object], actual: str, spaces: dict[str, str]
 ) -> None:
     for item in expected.items():
         if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[item[1]]}"')
+            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            for sub_item in item[1].items():
+            xattrs = cast(dict[str, dict[str, object]], item[1])
+            for sub_item in xattrs.items():
                 if sub_item[0] == "unexpected":
                     for s_item in sub_item[1].items():
                         _assert_unexpected_xattr(s_item, actual)
@@ -112,24 +121,24 @@ def _assert_data_discovery_files(
             ), f"{item[0]}: {item[1]} not in {actual}"
 
 
-def _assert_unexpected_xattr(sub_item: GuiObject, actual: GuiObject) -> None:
+def _assert_unexpected_xattr(sub_item: tuple[str, object], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex not in actual, f"{regex} in {actual} but should not be"
 
 
-def _assert_expected_xattr(sub_item: GuiObject, actual: GuiObject) -> None:
+def _assert_expected_xattr(sub_item: tuple[str, object], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex in actual, f"{regex} not in {actual}"
 
 
 def _assert_unexpected_properties_of_files(
-    unexpected: GuiObject, actual: GuiObject, spaces: GuiObject
+    unexpected: dict[str, object], actual: str, spaces: dict[str, str]
 ) -> None:
     for item in unexpected.items():
         if item[0] == "spaceId":
-            item = ("spaceId", f'"{spaces[item[1]]}"')
+            item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            for sub_item in item[1].items():
+            for sub_item in cast(dict[str, object], item[1]).items():
                 _assert_unexpected_xattr(sub_item, actual)
         else:
             assert not (
@@ -144,7 +153,7 @@ def _assert_unexpected_properties_of_files(
     )
 )
 def assert_not_files_properties(
-    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, config: str, spaces: dict[str, str]
 ) -> None:
     unexpected_data = yaml.load(config, yaml.Loader)
     data_dict = _unpack_files_data(selenium, browser_id)
@@ -229,7 +238,7 @@ def choose_properties_to_filter(
     _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data: GuiObject, selenium: SeleniumDrivers, browser_id: str) -> None:
+def _parse_data(data: list[object], selenium: SeleniumDrivers, browser_id: str) -> None:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):
@@ -283,16 +292,21 @@ def compare_files_with_curl(
             if prop == "xattrs":
                 xattrs = expected_data[file_name][prop]
                 for xattr in xattrs:
-                    file_xattrs = curl_dict[file_name]["__onedata"]["xattrs"]
+                    onedata = cast(dict[str, object], curl_dict[file_name]["__onedata"])
+                    file_xattrs = cast(dict[str, dict[str, object]], onedata["xattrs"])
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
                 assert expected_data[file_name][prop] == curl_dict[file_name][prop], msg
 
 
-def _curl_data_to_dict(query_curl_data: GuiObject) -> GuiObject:
+def _curl_data_to_dict(
+    query_curl_data: list[dict[str, object]],
+) -> dict[str, dict[str, object]]:
     new_dict = {}
     for entry in query_curl_data:
-        file_name = entry["_source"]["__onedata"]["fileName"]
-        new_dict[file_name] = entry["_source"]
+        source = cast(dict[str, object], entry["_source"])
+        onedata = cast(dict[str, object], source["__onedata"])
+        file_name = cast(str, onedata["fileName"])
+        new_dict[file_name] = source
     return new_dict

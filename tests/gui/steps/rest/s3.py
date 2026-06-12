@@ -13,7 +13,7 @@ import requests
 from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
-from tests.gui.types import Clipboard, DisplayMap, GuiObject
+from tests.gui.types import Clipboard, DisplayMap
 from tests.utils.bdd_utils import given, parsers, wt
 
 # HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
@@ -81,13 +81,13 @@ def get_signature_key(key: str, date_stamp: str) -> bytes:
 
 
 def create_canonical_request(
-    method: GuiObject,
-    uri: GuiObject,
-    query_string: GuiObject,
-    headers: GuiObject,
-    signed_headers: GuiObject,
-    payload_hash: GuiObject,
-) -> GuiObject:
+    method: str,
+    uri: str,
+    query_string: str,
+    headers: dict[str, str],
+    signed_headers: str,
+    payload_hash: str,
+) -> str:
     canonical_headers = "".join(f"{k}:{v}\n" for k, v in sorted(headers.items()))
     return (
         f"{method}\n"
@@ -100,10 +100,10 @@ def create_canonical_request(
 
 
 def create_string_to_sign(
-    date_stamp: GuiObject,
-    credential_scope: GuiObject,
-    hashed_canonical_request: GuiObject,
-) -> GuiObject:
+    date_stamp: str,
+    credential_scope: str,
+    hashed_canonical_request: str,
+) -> str:
     return (
         "AWS4-HMAC-SHA256\n"
         f"{date_stamp}\n"
@@ -113,11 +113,11 @@ def create_string_to_sign(
 
 
 def create_authorization_header(
-    access_key: GuiObject,
-    credential_scope: GuiObject,
-    signed_headers: GuiObject,
-    signature: GuiObject,
-) -> GuiObject:
+    access_key: str,
+    credential_scope: str,
+    signed_headers: str,
+    signature: str,
+) -> str:
     return (
         f"AWS4-HMAC-SHA256 Credential={access_key}/{credential_scope}, "
         f"SignedHeaders={signed_headers}, Signature={signature}"
@@ -125,13 +125,13 @@ def create_authorization_header(
 
 
 def s3_authorization(
-    headers: GuiObject,
-    canonical_uri: GuiObject,
-    canonical_querystring: GuiObject,
-    payload_hash: GuiObject,
-    date_stamp: GuiObject,
-    amz_date: GuiObject,
-) -> GuiObject:
+    headers: dict[str, str],
+    canonical_uri: str,
+    canonical_querystring: str,
+    payload_hash: str,
+    date_stamp: str,
+    amz_date: str,
+) -> str:
     signed_headers = ";".join(headers.keys())
     canonical_request = create_canonical_request(
         "PUT",
@@ -188,7 +188,7 @@ def create_bucket(bucket_name: str) -> None:
     response.raise_for_status()
 
 
-def copy_item_between_buckets(dst_bucket: str, src: GuiObject, dst: GuiObject) -> None:
+def copy_item_between_buckets(dst_bucket: str, src: str, dst: str) -> None:
     amz_date = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     date_stamp = datetime.utcnow().strftime("%Y%m%d")
     payload_hash = "UNSIGNED-PAYLOAD"
@@ -218,7 +218,7 @@ def copy_item_between_buckets(dst_bucket: str, src: GuiObject, dst: GuiObject) -
     response.raise_for_status()
 
 
-def add_etc_hosts_entries(service_ip: GuiObject, service_host: GuiObject) -> None:
+def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
     sp.run(
         f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
         shell=True,

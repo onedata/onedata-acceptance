@@ -54,7 +54,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import GuiObject, Numerals, TmpMemory
+from tests.gui.types import Numerals, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -92,7 +92,7 @@ def _assert_posix_permissions(
     browser_id: str,
     space: str,
     path: str,
-    perm: GuiObject,
+    perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
     modal_name = "Details modal"
@@ -115,7 +115,7 @@ def assert_posix_permissions_in_op_gui(
     browser_id: str,
     space: str,
     path: str,
-    perm: GuiObject,
+    perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
     modal_name = "Details modal"
@@ -179,7 +179,7 @@ def fail_to_set_posix_permissions_in_op_gui(
     browser_id: str,
     space: str,
     path: str,
-    perm: GuiObject,
+    perm: str,
     tmp_memory: TmpMemory,
 ) -> None:
     button = "Save"

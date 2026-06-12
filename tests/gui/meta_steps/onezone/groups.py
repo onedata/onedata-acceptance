@@ -41,7 +41,7 @@ from tests.gui.steps.onezone.members import (
     remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -135,7 +135,7 @@ def see_groups_using_op_gui(
 
 
 def rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, new_names: GuiObject
+    selenium: SeleniumDrivers, user: str, group_list: str, new_names: str
 ) -> None:
     confirm_type = "enter"
 
@@ -160,9 +160,7 @@ def leave_groups_using_op_gui(
         leave_group(selenium, user, group)
 
 
-def _open_member_from_list(
-    selenium: SeleniumDrivers, user: str, parent: GuiObject
-) -> None:
+def _open_member_from_list(selenium: SeleniumDrivers, user: str, parent: str) -> None:
     where = "group"
     list_type = "users"
     subpage = "members"
@@ -172,7 +170,7 @@ def _open_member_from_list(
 
 
 def assert_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, parent: GuiObject
+    selenium: SeleniumDrivers, user: str, group_list: str, parent: str
 ) -> None:
     where = "group"
 
@@ -184,7 +182,7 @@ def assert_subgroups_using_op_gui(
 
 
 def fail_to_see_subgroups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, parent: GuiObject
+    selenium: SeleniumDrivers, user: str, group_list: str, parent: str
 ) -> None:
     where = "group"
 
@@ -204,7 +202,7 @@ def _create_group_token(
     tmp_memory: TmpMemory,
     displays: DisplayMap,
     clipboard: Clipboard,
-    member: GuiObject,
+    member: str,
 ) -> None:
     item_type = "token"
     where = "group"
@@ -286,7 +284,7 @@ def join_group_using_op_gui(
 def add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
     user: str,
-    parent: GuiObject,
+    parent: str,
     group_list: str,
     tmp_memory: TmpMemory,
     displays: DisplayMap,
@@ -310,7 +308,7 @@ def remove_subgroups_using_op_gui(
     user: str,
     group_list: str,
     tmp_memory: TmpMemory,
-    parent: GuiObject,
+    parent: str,
 ) -> None:
     member_type = "group"
 
@@ -327,7 +325,7 @@ def remove_subgroups_using_op_gui(
 
 
 def fail_to_rename_groups_using_op_gui(
-    selenium: SeleniumDrivers, user: str, group_list: str, new_names: GuiObject
+    selenium: SeleniumDrivers, user: str, group_list: str, new_names: str
 ) -> None:
     text = "failed"
 
@@ -339,7 +337,7 @@ def fail_to_rename_groups_using_op_gui(
 def fail_to_add_subgroups_using_op_gui(
     selenium: SeleniumDrivers,
     user: str,
-    parent: GuiObject,
+    parent: str,
     group_list: str,
     tmp_memory: TmpMemory,
     displays: DisplayMap,

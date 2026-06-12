@@ -6,14 +6,13 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from dataclasses import dataclass
 
-from tests.gui.types import GuiObject
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     ButtonWithTextPageObject,
     Label,
     WebItem,
     WebItemsSequence,
 )
-from tests.gui.utils.core.web_objects import PageObject
 
 
 @dataclass
@@ -28,13 +27,11 @@ class EndpointInfo:
         return f"{self.method}\n{self.name}"
 
     @classmethod
-    def space(cls, method: GuiObject, name: str) -> GuiObject:
+    def space(cls, method: str, name: str) -> "EndpointInfo":
         return cls(method, name, "Space", "Onezone REST API")
 
     @classmethod
-    def file_details(
-        cls, method: GuiObject, name: str, category: GuiObject
-    ) -> GuiObject:
+    def file_details(cls, method: str, name: str, category: str) -> "EndpointInfo":
         return cls(method, name, category, "Oneprovider REST API")
 
 
@@ -63,7 +60,7 @@ class DocumentationPage(PageObject):
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
 
-    def __getitem__(self, item: GuiObject) -> GuiObject:
+    def __getitem__(self, item: str) -> PageObject:
         if hasattr(self, "elements_list"):
             return self.elements_list[item]
         raise ValueError("there is not elements_list member in class instance")

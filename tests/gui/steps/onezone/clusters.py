@@ -7,14 +7,17 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import cast
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups, PrivacyPolicy, TermsOfUse
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.clusters_page import MenuItem
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -60,17 +63,17 @@ def assert_record_in_clusters_menu(
     assert record in records, f"{record} not in clusters"
 
 
-def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def _get_clusters(selenium: SeleniumDrivers, browser_id: str) -> PageObjectsSequence:
     driver = selenium[browser_id]
     return OZLoggedIn(driver).get_page_and_click("clusters").menu
 
 
 def _get_cluster_record(
     selenium: SeleniumDrivers, browser_id: str, record_name: str, hosts: Hosts
-) -> GuiObject:
+) -> MenuItem:
     menu = _get_clusters(selenium, browser_id)
     record = hosts[record_name]["name"]
-    return menu[record]
+    return cast(MenuItem, menu[record])
 
 
 @wt(parsers.parse('user of {browser_id} does not see "{record}" in clusters menu'))
@@ -223,7 +226,7 @@ def _get_old_or_new_cluster_record(
     age: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
-) -> GuiObject:
+) -> MenuItem:
     records = _get_clusters(selenium, browser_id)
     return get_old_or_new_cluster_record_from_list(
         provider, records, age, tmp_memory, hosts
@@ -232,15 +235,19 @@ def _get_old_or_new_cluster_record(
 
 def get_old_or_new_cluster_record_from_list(
     provider: str,
-    prov_list: GuiObject,
+    prov_list: PageObjectsSequence,
     age: str,
     tmp_memory: TmpMemory,
     hosts: Hosts,
-) -> GuiObject:
+) -> MenuItem:
     record_name = hosts[provider]["name"]
     old_id = tmp_memory[provider]["cluster id"]
 
-    selected = [row for row in prov_list if row.name == record_name]
+    selected = [
+        menu_item
+        for row in prov_list
+        if (menu_item := cast(MenuItem, row)).name == record_name
+    ]
     separator = CONFLICT_NAME_SEPARATOR
 
     # conflicted clusters have 4-letter cluster id digest added to label

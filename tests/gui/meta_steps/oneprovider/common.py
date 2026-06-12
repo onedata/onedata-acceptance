@@ -170,10 +170,10 @@ def wt_assert_file_chunks(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _assert_file_chunks(
-    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, hosts: Hosts, desc: str
 ) -> None:
-    desc = yaml.load(desc, yaml.Loader)
-    for provider, chunks in desc.items():
+    parsed_desc = yaml.load(desc, yaml.Loader)
+    for provider, chunks in parsed_desc.items():
         if chunks == "entirely empty":
             assert_provider_chunk_in_data_distribution_empty(
                 selenium, browser_id, provider, hosts

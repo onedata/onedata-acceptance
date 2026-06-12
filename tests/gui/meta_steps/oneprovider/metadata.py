@@ -36,7 +36,7 @@ from tests.gui.steps.oneprovider.metadata import (
     type_text_to_metadata_textarea,
     type_text_to_val_of_attr_in_new_xattr_entry,
 )
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
@@ -56,7 +56,7 @@ def add_xattr_entry(
     type_text_to_val_of_attr_in_new_xattr_entry(selenium, browser_id, value, key_name)
 
 
-def get_modal_name_from_item_name(item_name: str) -> GuiObject:
+def get_modal_name_from_item_name(item_name: str) -> str:
     if "file" in item_name:
         return "File details"
     return "Directory details"
@@ -225,8 +225,8 @@ def assert_such_metadata_not_exist_in_op_gui(
     tmp_memory: TmpMemory,
     space: str,
     tab_name: str,
-    val: GuiObject,
-    item: GuiObject,
+    val: str,
+    item: str,
 ) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"
@@ -270,7 +270,7 @@ def remove_all_metadata_in_op_gui(
     space: str,
     tmp_memory: TmpMemory,
     path: str,
-    item: GuiObject,
+    item: str,
 ) -> None:
     modal_name = get_modal_name_from_item_name(item)
     option = "Metadata"

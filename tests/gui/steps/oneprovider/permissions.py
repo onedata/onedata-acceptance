@@ -21,7 +21,7 @@ from tests.utils.utils import repeat_failed
 
 def _get_index(
     selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
-) -> GuiObject:
+) -> int:
     n = numerals[num]
     if n < 0:
         perm = Modals(
@@ -120,7 +120,7 @@ def select_acl_options(
     selenium: SeleniumDrivers,
     browser_id: str,
     option_list: str,
-    subject: GuiObject,
+    subject: str,
 ) -> None:
     # argument 'option_list' is one of the following patterns:
     # [<parent_permission>|<parent_permission>:<child_permission>, ...]
@@ -129,39 +129,39 @@ def select_acl_options(
 
     driver = selenium[browser_id]
     change = "check"
-    subject = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[
-        subject
-    ]
+    subject_page = Modals(
+        driver
+    ).details_modal.edit_permissions.acl.member_permission_list[subject]
 
     re_options = re.match("[Aa]ll( except )?(.*)", option_list)
     if re_options:
         option_list = re_options.group(2)
 
-        for parent_permission in subject.acl_permission_group:
+        for parent_permission in subject_page.acl_permission_group:
             parent_permission.toggle.check()
 
         change = f"un{change}"
 
-    _change_acl_options(option_list, subject, change, driver)
+    _change_acl_options(option_list, subject_page, change, driver)
 
 
 def assert_fail_to_select_acl_option(
     selenium: SeleniumDrivers,
     browser_id: str,
-    option_list: GuiObject,
-    subject: GuiObject,
+    option_list: str,
+    subject: str,
 ) -> None:
     driver = selenium[browser_id]
-    subject = Modals(driver).details_modal.edit_permissions.acl.member_permission_list[
-        subject
-    ]
+    subject_page = Modals(
+        driver
+    ).details_modal.edit_permissions.acl.member_permission_list[subject]
     option = parse_seq(option_list)[0]
     permissions = option.split(":")
     parent_permission_name = permissions[0].capitalize().replace("Acl", "ACL")
-    parent_permission = subject.acl_permission_group[parent_permission_name]
+    parent_permission = subject_page.acl_permission_group[parent_permission_name]
     child_permission = permissions[1].capitalize().replace("acl", "ACL")
     parent_permission.expand()
-    subject.scroll_to_elem_on_acl_permission_group(parent_permission)
+    subject_page.scroll_to_elem_on_acl_permission_group(parent_permission)
     child_permission_class = parent_permission.permissions[
         child_permission
     ].name_web_elem.get_attribute("class")

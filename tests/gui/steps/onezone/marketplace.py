@@ -10,9 +10,9 @@ from datetime import date
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.space_marketplace import MarketplaceSpace
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -49,7 +49,7 @@ def assert_marketplace_icon_in_space_sidebar(
 
 def get_space_from_marketplace_list(
     selenium: SeleniumDrivers, browser_id: str, space_name: str
-) -> GuiObject:
+) -> MarketplaceSpace:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"].space_marketplace_page
     return page.spaces_marketplace_list[space_name]
@@ -68,8 +68,8 @@ def assert_element_in_space_marketplace(
     selenium: SeleniumDrivers,
     browser_id: str,
     space_name: str,
-    element_type: GuiObject,
-    element_data: GuiObject,
+    element_type: str,
+    element_data: str,
 ) -> None:
 
     space = get_space_from_marketplace_list(selenium, browser_id, space_name)
@@ -91,8 +91,8 @@ def assert_elements_list_in_space_marketplace(
     selenium: SeleniumDrivers,
     browser_id: str,
     space_name: str,
-    element_type: GuiObject,
-    elements_data_list: GuiObject,
+    element_type: str,
+    elements_data_list: list[str],
 ) -> None:
     space = get_space_from_marketplace_list(selenium, browser_id, space_name)
     name_of_element = element_type.capitalize()

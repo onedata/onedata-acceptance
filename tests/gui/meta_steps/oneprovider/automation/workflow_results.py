@@ -32,7 +32,7 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.count_checksums import (
     adler32_sum,
@@ -40,7 +40,11 @@ from tests.gui.utils.common.count_checksums import (
     sha256_sum,
     sha512_sum,
 )
+from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_tab import (
+    MetadataTab,
+)
 from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -51,8 +55,8 @@ def get_store_details_json(
     clipboard: Clipboard,
     displays: DisplayMap,
     store_name: str,
-    store_type: GuiObject,
-) -> GuiObject:
+    store_type: str,
+) -> dict[str, object]:
     page = get_op_workflow_visualizer_page(driver)
     store_details = json.loads(
         open_modal_and_get_store_content(
@@ -72,13 +76,13 @@ def get_store_details_json(
 def open_modal_and_get_store_content(
     browser_id: str,
     driver: WebDriver,
-    page: GuiObject,
+    page: WorkflowVisualiser,
     clipboard: Clipboard,
     displays: DisplayMap,
     store_name: str,
-    store_type: GuiObject,
+    store_type: str,
     index: int = 0,
-) -> GuiObject:
+) -> str:
     page.stores_list[store_name].click()
     modal = Modals(driver).store_details
     store_value = get_store_content(
@@ -174,8 +178,8 @@ def count_checksums_for_file(
     tmp_memory["checksums_" + file_name] = results
 
 
-def checksums_counted_in_workflow(metadata_modal: GuiObject) -> GuiObject:
-    result = {}
+def checksums_counted_in_workflow(metadata_modal: MetadataTab) -> dict[str, str]:
+    result: dict[str, str] = {}
     # wait for modal to load
     time.sleep(0.5)
     for item in metadata_modal.xattrs.entries:

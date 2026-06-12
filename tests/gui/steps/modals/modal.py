@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import cast
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -14,13 +15,15 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -88,8 +91,8 @@ def assert_non_empty_token_in_add_storage_modal(
     tmp_memory[browser_id]["token"] = token
 
 
-def _find_modal(driver: WebDriver, modal_name: str) -> GuiObject:
-    def _find() -> GuiObject:
+def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
+    def _find() -> WebElement:
         elements_list = [
             "group",
             "token",
@@ -146,7 +149,7 @@ def _wait_for_modal_to_appear(
     tmp_memory[browser_id]["window"]["modal"] = modal
 
 
-def check_warning_modal(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def check_warning_modal(selenium: SeleniumDrivers, browser_id: str) -> bool:
     driver = selenium[browser_id]
     if not driver.find_elements(By.CSS_SELECTOR, ".question-modal"):
         return False
@@ -207,7 +210,7 @@ def wait_for_named_modal_to_disappear(
     selenium: SeleniumDrivers,
     browser_id: str,
     modal_name: str,
-    wait_time: GuiObject = WAIT_FRONTEND,
+    wait_time: int = WAIT_FRONTEND,
 ) -> None:
     driver = selenium[browser_id]
     modal_name = check_modal_name(modal_name)
@@ -248,7 +251,7 @@ def _click_on_confirmation_btn_in_modal(
     driver: WebDriver, browser_id: str, button_name: str, tmp_memory: TmpMemory
 ) -> None:
     @repeat_failed(attempts=WAIT_BACKEND, timeout=True)
-    def click_on_btn(d: GuiObject, elem: GuiObject, msg: GuiObject) -> None:
+    def click_on_btn(d: WebDriver, elem: WebElement, msg: str) -> None:
         click_on_web_elem(d, elem, msg)
 
     button_name = button_name.lower()
@@ -344,7 +347,7 @@ def click_on_button_in_active_modal(
         button = modal.find_element(By.CSS_SELECTOR, ".modal-footer button.btn-default")
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_btn(d: GuiObject, btn: GuiObject, err_msg: GuiObject) -> None:
+    def click_on_btn(d: WebDriver, btn: WebElement, err_msg: str) -> None:
         click_on_web_elem(d, btn, err_msg)
 
     click_on_btn(driver, button, f"{option} btn for displayed modal disabled")
@@ -443,8 +446,8 @@ def assert_element_text_in_modal(
     assert_element_text(getattr(Modals(driver), modal), element_sel, text)
 
 
-def assert_element_text(elem: GuiObject, selector: GuiObject, elem_text: str) -> None:
-    text = getattr(elem, selector).text
+def assert_element_text(elem: object, selector: str, elem_text: str) -> None:
+    text = cast(WebElement, getattr(elem, selector)).text
     assert elem_text in text, f"found {elem_text} text instead of {text}"
 
 
@@ -645,7 +648,7 @@ def assert_number_of_shares_in_modal(
     assert _assert_number_of_shares_in_modal(number, links, info), err_msg
 
 
-def look_for_tab_name(navigation: GuiObject, name: str) -> GuiObject:
+def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:
     for elem in navigation:
         if name in elem.name:
             return elem.name
@@ -653,9 +656,9 @@ def look_for_tab_name(navigation: GuiObject, name: str) -> GuiObject:
 
 
 def _assert_number_of_shares_in_modal(
-    number: int, links: GuiObject, info: GuiObject
-) -> GuiObject:
-    return number in info and len(links) == int(number)
+    number: int, links: PageObjectsSequence, info: str
+) -> bool:
+    return str(number) in info and len(links) == number
 
 
 @wt(
@@ -733,10 +736,10 @@ def assert_invalid_id_in_error_modal(
     browser_id: str,
     target_name: str,
     target_type: str,
-    groups: GuiObject,
-    spaces: GuiObject,
-    inventories: GuiObject,
-    harvesters: GuiObject,
+    groups: dict[str, str],
+    spaces: dict[str, str],
+    inventories: dict[str, str],
+    harvesters: dict[str, str],
 ) -> None:
     modal_text = Modals(selenium[browser_id]).error.content.lower()
     assert (

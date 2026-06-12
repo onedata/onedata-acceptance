@@ -7,13 +7,16 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 import time
+from os import PathLike
 
 import yaml
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
@@ -24,7 +27,7 @@ def _wait_for_op_session_to_start(
     selenium: SeleniumDrivers, browser_id_list: str
 ) -> None:
     @repeat_failed(timeout=WAIT_BACKEND)
-    def _assert_correct_url(d: GuiObject) -> None:
+    def _assert_correct_url(d: WebDriver) -> None:
         try:
             found = parse_url(d.current_url).group("where")
         except AttributeError as exc:
@@ -123,7 +126,7 @@ def _load_exceptions_for_input_files(tmp_memory: TmpMemory, config: str) -> None
         tmp_memory["exceptions"][file] = exceptions
 
 
-def wait_for_item_to_appear(item: GuiObject) -> None:
+def wait_for_item_to_appear(item: WebElement) -> None:
     for _ in range(50):
         try:
             if item.is_displayed():
@@ -135,7 +138,7 @@ def wait_for_item_to_appear(item: GuiObject) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_item_to_disappear(item: GuiObject) -> None:
+def wait_for_item_to_disappear(item: WebElement) -> None:
     try:
         item.is_displayed()
         raise AssertionError("Element is visible")
@@ -145,7 +148,7 @@ def wait_for_item_to_disappear(item: GuiObject) -> None:
 
 @repeat_failed(timeout=WAIT_NORMAL_DOWNLOAD)
 def wait_for_file_with_unknown_name_to_download(
-    n_files_before_download: GuiObject, dir_path: GuiObject
+    n_files_before_download: int, dir_path: str | PathLike[str]
 ) -> None:
     # wait for a file to download, we don`t know the name of the file
     # so there is a way we can check that file was downloaded

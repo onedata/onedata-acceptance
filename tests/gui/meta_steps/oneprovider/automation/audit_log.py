@@ -10,6 +10,7 @@ import json
 import os
 import time
 from ast import literal_eval
+from collections.abc import Mapping
 from datetime import date
 from typing import TypedDict, cast
 
@@ -57,9 +58,13 @@ from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals
+from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
+from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
@@ -74,8 +79,19 @@ class AuditLogDebugEntry(TypedDict):
     severity: str
 
 
+type AuditLogValue = (
+    str
+    | int
+    | float
+    | bool
+    | list["AuditLogValue"]
+    | dict[str, "AuditLogValue"]
+)
+type AuditLogContent = dict[str, AuditLogValue]
+
+
 def write_audit_logs_for_task_to_file(
-    task: GuiObject,
+    task: Task,
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
@@ -91,6 +107,7 @@ def write_audit_logs_for_task_to_file(
     if task.status == exp_status:
         modal, logs = get_modal_and_logs_for_task(path, task, driver)
         for log in logs:
+            log = cast(LogsEntry, log)
             if log.severity != "Info":
                 get_audit_log_json_and_write_to_file(
                     log, modal, clipboard, displays, browser_id, path
@@ -102,7 +119,7 @@ def write_audit_logs_for_task_to_file(
 
 
 def get_audit_logs_from_every_task_in_workflow(
-    lanes: GuiObject,
+    lanes: PageObjectsSequence,
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
@@ -111,6 +128,7 @@ def get_audit_logs_from_every_task_in_workflow(
     exp_status: str,
 ) -> None:
     for lane in lanes:
+        lane = cast(WorkflowLane, lane)
         for parallel_box in lane.parallel_boxes:
             for task in parallel_box.task_list:
                 write_audit_logs_for_task_to_file(
@@ -238,7 +256,7 @@ def assert_content_in_audit_log_in_store(
 
     for actual, expected in actual_expected.items():
         actual_elem = (
-            store_details[actual].split("/")[-1]
+            cast(str, store_details[actual]).split("/")[-1]
             if actual == "destinationPath"
             else store_details[actual]
         )
@@ -257,7 +275,7 @@ def get_store_audit_log(
     displays: DisplayMap,
     tmp_memory: TmpMemory,
     store_key: str,
-) -> GuiObject:
+) -> dict[str, object]:
     if store_key not in tmp_memory.keys():
         assert_audit_log_in_store(
             browser_id,
@@ -268,7 +286,7 @@ def get_store_audit_log(
             tmp_memory,
         )
 
-    return tmp_memory[store_key]
+    return cast(dict[str, object], tmp_memory[store_key])
 
 
 def compare_audit_log_to_store_log(
@@ -587,7 +605,7 @@ def assert_each_element_checksum_content_in_store(
 
 
 def check_visual_in_store_details_modal(
-    modal: GuiObject, variable_type: str, item_list: str, store_name: str
+    modal: StoreDetails, variable_type: str, item_list: str, store_name: str
 ) -> None:
     if variable_type == "booleans":
         boolean_items = cast(list[bool], json.loads(item_list))
@@ -600,7 +618,7 @@ def check_visual_in_store_details_modal(
         assert modal.raw_view == item_list, err_msg
     else:
         parsed_items = cast(
-            GuiObject,
+            list[object] | dict[object, object],
             (
                 literal_eval(item_list)
                 if variable_type != "files"
@@ -741,8 +759,8 @@ def assert_element_selected_in_new_browser_tab(
 
 
 def compare_to_expected_if_element_exist_for_store(
-    elem: GuiObject,
-    items: GuiObject,
+    elem: object,
+    items: dict[str, object],
     option: str,
     store_name: str,
     selenium: SeleniumDrivers,
@@ -753,7 +771,7 @@ def compare_to_expected_if_element_exist_for_store(
 ) -> None:
     if elem:
         if option == "fileId":
-            file_info = elem.split(" ")[1].replace(")", "").split("/")
+            file_info = cast(str, elem).split(" ")[1].replace(")", "").split("/")
             elem = get_file_id_from_details_modal(
                 selenium,
                 browser_id,
@@ -827,22 +845,25 @@ def assert_content_of_store(
 
 
 def compare_to_expected_if_elem_exist_audit_log(
-    data: GuiObject, label: GuiObject, actual_items: GuiObject, task_name: str
+    data: Mapping[str, object],
+    label: str,
+    actual_items: Mapping[str, object],
+    task_name: str,
 ) -> None:
     expected = data.get(label, False)
     if expected:
         actual = actual_items[label]
         if label == "timestamp":
             expected = date.today()
-            actual = date.fromtimestamp(actual_items["timestamp"] / 1000)
-        expected = expected.lower() if label == "severity" else expected
+            actual = date.fromtimestamp(cast(float, actual_items["timestamp"]) / 1000)
+        expected = cast(str, expected).lower() if label == "severity" else expected
         assert_elements_of_task_audit_log_are_the_same(
             expected, actual, label, task_name
         )
 
 
 def assert_elements_of_task_audit_log_are_the_same(
-    expected: GuiObject, actual: GuiObject, label: GuiObject, task_name: str
+    expected: object, actual: object, label: str, task_name: str
 ) -> None:
     assert expected == actual, (
         f'{label} "{actual}" in audit log for "{task_name}" task is '
@@ -851,8 +872,8 @@ def assert_elements_of_task_audit_log_are_the_same(
 
 
 def compare_content_reason_of_task_audit_log(
-    reason: GuiObject,
-    actual_reason: GuiObject,
+    reason: AuditLogValue,
+    actual_reason: AuditLogValue,
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
@@ -864,32 +885,33 @@ def compare_content_reason_of_task_audit_log(
         f'Reason: "{reason}" in audit log for "{task_name}" '
         f'task does not contain "{actual_reason}" as expected'
     )
-    if "contains" in reason:
+    if isinstance(reason, str) and "contains" in reason:
         reason_data = yaml.load(
             reason.split("contains ")[1].replace("])", "]"), yaml.Loader
         )
+        actual_reason_text = cast(str, actual_reason)
         for reason_elem in reason_data:
-            assert reason_elem in actual_reason, err_msg
-    elif "file checksum" in reason:
-        assert reason == actual_reason.replace(":", ""), err_msg
+            assert reason_elem in actual_reason_text, err_msg
+    elif isinstance(reason, str) and "file checksum" in reason:
+        assert reason == cast(str, actual_reason).replace(":", ""), err_msg
     else:
-        if not isinstance(reason, str):
-            placeholder_file_id = reason["details"]["specificError"]["details"][
-                "value"
-            ]["fileId"]
-            placeholder_file_id = (
+        if isinstance(reason, dict):
+            reason_details = cast(AuditLogContent, reason["details"])
+            specific_error = cast(AuditLogContent, reason_details["specificError"])
+            specific_details = cast(AuditLogContent, specific_error["details"])
+            value = cast(AuditLogContent, specific_details["value"])
+            placeholder_file_id = cast(str, value["fileId"])
+            placeholder_file_path = (
                 placeholder_file_id.split(" ")[1].replace(")", "").split("/")
             )
-            reason["details"]["specificError"]["details"]["value"]["fileId"] = (
-                get_file_id_from_details_modal(
-                    selenium,
-                    browser_id,
-                    placeholder_file_id[0],
-                    tmp_memory,
-                    placeholder_file_id[1],
-                    clipboard,
-                    displays,
-                )
+            value["fileId"] = get_file_id_from_details_modal(
+                selenium,
+                browser_id,
+                placeholder_file_path[0],
+                tmp_memory,
+                placeholder_file_path[1],
+                clipboard,
+                displays,
             )
         assert_elements_of_task_audit_log_are_the_same(
             reason, actual_reason, "Reason", task_name
@@ -897,8 +919,8 @@ def compare_content_reason_of_task_audit_log(
 
 
 def compare_content_of_task_audit_log(
-    content: GuiObject,
-    actual_content: GuiObject,
+    content: AuditLogContent,
+    actual_content: AuditLogContent,
     task_name: str,
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -907,10 +929,10 @@ def compare_content_of_task_audit_log(
     displays: DisplayMap,
 ) -> None:
     expected_identical = ["status", "fetchFileName", "description"]
-    actual_details = actual_content.get("details", False)
-    details = content.get("details", False)
+    actual_details = cast(AuditLogContent, actual_content.get("details", {}))
+    details = cast(AuditLogContent, content.get("details", {}))
     reason = details.get("reason", False) if details else False
-    item: GuiObject = details.get("item", False) if details else False
+    item = cast(AuditLogContent, details.get("item", {})) if details else {}
 
     for label in expected_identical:
         compare_to_expected_if_elem_exist_audit_log(
@@ -928,7 +950,7 @@ def compare_content_of_task_audit_log(
             task_name,
         )
     if item:
-        file_id = item["fileId"].split(" ")[1].replace(")", "").split("/")
+        file_id = cast(str, item["fileId"]).split(" ")[1].replace(")", "").split("/")
         item["fileId"] = get_file_id_from_details_modal(
             selenium,
             browser_id,
@@ -939,7 +961,10 @@ def compare_content_of_task_audit_log(
             displays,
         )
         assert_elements_of_task_audit_log_are_the_same(
-            item, actual_details["item"]["value"], "Item", task_name
+            item,
+            cast(AuditLogContent, actual_details["item"])["value"],
+            "Item",
+            task_name,
         )
 
 

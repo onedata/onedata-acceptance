@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
+from selenium.webdriver.remote.webelement import WebElement
+
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
@@ -58,9 +60,10 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.types import Clipboard, DisplayMap, GuiObject, TmpMemory
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.onezone.data_page import DataPage
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -71,7 +74,7 @@ def create_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers,
     user: str,
     space_list: str,
-    spaces: GuiObject,
+    spaces: dict[str, str],
     clipboard: Clipboard,
     displays: DisplayMap,
 ) -> None:
@@ -174,8 +177,8 @@ def remove_spaces_in_oz_using_gui(
 def rename_spaces_in_oz_using_gui(
     selenium: SeleniumDrivers,
     user: str,
-    space_list: GuiObject,
-    new_names_list: GuiObject,
+    space_list: str,
+    new_names_list: str,
 ) -> None:
     where = "spaces"
     option = "enter"
@@ -254,7 +257,7 @@ def request_space_support_using_gui(
     tmp_memory: TmpMemory,
     displays: DisplayMap,
     clipboard: Clipboard,
-    receiver: GuiObject,
+    receiver: str,
 ) -> None:
     where = "Data"
     option = "Providers"
@@ -285,14 +288,14 @@ def join_space_in_oz_using_gui(
 
 
 def assert_spaces_have_appeared_in_oz_gui(
-    selenium: SeleniumDrivers, user: str, space_list: GuiObject
+    selenium: SeleniumDrivers, user: str, space_list: str
 ) -> None:
     for space_name in parse_seq(space_list):
         assert_new_created_space_has_appeared_on_spaces(selenium, user, space_name)
 
 
 def assert_there_are_no_spaces_in_oz_gui(
-    selenium: SeleniumDrivers, user: str, space_list: GuiObject
+    selenium: SeleniumDrivers, user: str, space_list: str
 ) -> None:
     for space_name in parse_seq(space_list):
         assert_space_has_disappeared_on_spaces(selenium, user, space_name)
@@ -301,8 +304,8 @@ def assert_there_are_no_spaces_in_oz_gui(
 def assert_spaces_have_been_renamed_in_oz_gui(
     selenium: SeleniumDrivers,
     user: str,
-    space_list: GuiObject,
-    new_names_list: GuiObject,
+    space_list: str,
+    new_names_list: str,
 ) -> None:
     for space_name, new_space_name in zip(
         parse_seq(space_list), parse_seq(new_names_list)
@@ -565,7 +568,7 @@ def open_space_in_spaces_list(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _get_visible_spaces_list(page: GuiObject) -> GuiObject:
+def _get_visible_spaces_list(page: DataPage) -> list[WebElement]:
     return page.get_visible_spaces_list()
 
 

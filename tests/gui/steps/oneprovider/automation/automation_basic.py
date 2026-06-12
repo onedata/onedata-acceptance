@@ -6,11 +6,12 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Optional
+from typing import Optional, overload
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -19,27 +20,38 @@ from tests.gui.steps.common.miscellaneous import (
     switch_to_iframe,
 )
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
-from tests.gui.types import GuiObject
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
+from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import transform
+from tests.gui.utils.oneprovider.automation import (
+    ParallelBox,
+    Task,
+    WorkflowExecutionPage,
+    WorkflowVisualiser,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 # this step is created to avoid using repeat_failed in metasteps
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_op_workflow_visualizer_page(driver: WebDriver) -> GuiObject:
+def get_op_workflow_visualizer_page(driver: WebDriver) -> WorkflowVisualiser:
     return OPLoggedIn(driver).automation_page.workflow_visualiser
 
 
-def switch_to_automation_page(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def switch_to_automation_page(
+    selenium: SeleniumDrivers, browser_id: str
+) -> WorkflowExecutionPage:
     switch_to_iframe(selenium, browser_id)
     return OPLoggedIn(selenium[browser_id]).automation_page
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_input_element(driver: WebDriver, input_type: GuiObject) -> GuiObject:
+def get_input_element(
+    driver: WebDriver, input_type: str
+) -> PageObjectsSequence | list[WebElement]:
     OPLoggedIn(driver).automation_page.input_link.click()
     return getattr(OPLoggedIn(driver).automation_page, input_type)
 
@@ -89,16 +101,34 @@ def confirm_workflow_to_execute(selenium: SeleniumDrivers, browser_id: str) -> N
     page.run_workflow_button.click()
 
 
-def check_if_task_is_opened(task: GuiObject) -> bool:
+def check_if_task_is_opened(task: Task) -> bool:
     return task.status != ""
+
+
+@overload
+def search_for_lane_status(
+    driver: WebDriver,
+    page: WorkflowExecutionPage,
+    lane_name: str,
+    box_number: int,
+) -> ParallelBox: ...
+
+
+@overload
+def search_for_lane_status(
+    driver: WebDriver,
+    page: WorkflowExecutionPage,
+    lane_name: str,
+    box_number: None = None,
+) -> str: ...
 
 
 def search_for_lane_status(
     driver: WebDriver,
-    page: GuiObject,
+    page: WorkflowExecutionPage,
     lane_name: str,
-    box_number: Optional[GuiObject] = None,
-) -> GuiObject:
+    box_number: Optional[int] = None,
+) -> str | ParallelBox:
     workflow_visualiser = page.workflow_visualiser
     number_of_lanes = len(workflow_visualiser.workflow_lanes)
 
@@ -123,8 +153,8 @@ def search_for_lane_status(
 
 
 def search_for_task_in_parallel_box(
-    driver: WebDriver, parallel_box: GuiObject, task_name: str
-) -> GuiObject:
+    driver: WebDriver, parallel_box: ParallelBox, task_name: str
+) -> tuple[Task, str]:
     number_of_tasks = len(parallel_box.task_list)
     for j in range(number_of_tasks):
         task_id = parallel_box.task_list[j].name_web_elem.get_attribute("id")
@@ -365,7 +395,7 @@ def select_logging_level_in_automation_subpage(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_elem_in_store_details_modal(
-    modal: GuiObject, name: str, option: str = ""
+    modal: StoreDetails, name: str, option: str = ""
 ) -> None:
     if option == "archive":
         modal.store_content_list[name].file_name.click()

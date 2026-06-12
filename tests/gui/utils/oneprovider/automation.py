@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 
-from tests.gui.types import GuiObject
 from tests.gui.utils.core import scroll_to_css_selector, scroll_to_css_selector_bottom
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -66,8 +65,10 @@ class Task(Element):
     time_series = Button(".view-task-time-series-action-trigger")
     audit_log = Button(".view-task-audit-log-action-trigger")
 
-    def get_elem_id(self) -> GuiObject:
+    def get_elem_id(self) -> str:
         elem_id = self.web_elem.get_attribute("id")
+        if elem_id is None:
+            raise RuntimeError(f"Task {self.name} has no id")
         return elem_id
 
     def click_on_drag_handle(self) -> None:
@@ -91,7 +92,7 @@ class Task(Element):
 class ParallelBox(Element):
     task_list = WebItemsSequence(".box-elements .workflow-visualiser-task", cls=Task)
 
-    def scroll_to_bottom_of_task_in_parallel_box(self, task_id: GuiObject) -> None:
+    def scroll_to_bottom_of_task_in_parallel_box(self, task_id: str) -> None:
         box_sel = f"#{task_id} .detail-entry.actions-detail"
         scroll_to_css_selector(self.driver, box_sel)
 

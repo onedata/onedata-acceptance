@@ -24,9 +24,13 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
-from tests.gui.types import Clipboard, DisplayMap, GuiObject
+from tests.gui.types import Clipboard, DisplayMap
 from tests.gui.utils import Modals, Popups
+from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
+from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
+from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.oneprovider.automation import Task
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed
@@ -158,15 +162,15 @@ def assert_number_of_proceeded_files(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_task_audit_log(task: GuiObject) -> None:
+def click_on_task_audit_log(task: Task) -> None:
     if not check_if_task_is_opened(task):
         task.drag_handle.click()
     task.audit_log()
 
 
 def get_modal_and_logs_for_task(
-    path: str, task: GuiObject, driver: WebDriver
-) -> GuiObject:
+    path: str, task: Task, driver: WebDriver
+) -> tuple[AuditLog, PageObjectsSequence]:
     append_log_to_file(path, task.name)
     click_on_task_audit_log(task)
     # wait a moment for audit log modal to appear
@@ -176,7 +180,7 @@ def get_modal_and_logs_for_task(
     return modal, logs
 
 
-def close_modal_and_task(modal: GuiObject, task: GuiObject) -> None:
+def close_modal_and_task(modal: AuditLog, task: Task) -> None:
     modal.x()
     task.drag_handle.click()
     # wait for task to close
@@ -185,8 +189,8 @@ def close_modal_and_task(modal: GuiObject, task: GuiObject) -> None:
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_audit_log_json_and_write_to_file(
-    log: GuiObject,
-    modal: GuiObject,
+    log: LogsEntry,
+    modal: AuditLog,
     clipboard: Clipboard,
     displays: DisplayMap,
     browser_id: str,
@@ -202,7 +206,7 @@ def get_audit_log_json_and_write_to_file(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_store_details_modal(
     selenium: SeleniumDrivers, browser_id: str, store_name: str
-) -> GuiObject:
+) -> StoreDetails:
     driver = selenium[browser_id]
     page = get_op_workflow_visualizer_page(driver)
     page.stores_list[store_name].click()
@@ -212,7 +216,7 @@ def open_store_details_modal(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_datasets_in_store_details_modal(
-    item_list: str, modal: GuiObject, store_name: str
+    item_list: str, modal: StoreDetails, store_name: str
 ) -> None:
     parsed_items = parse_seq(item_list)
     actual_items = [elem.name for elem in modal.store_content_list]
@@ -223,7 +227,7 @@ def compare_datasets_in_store_details_modal(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_booleans_in_store_details_modal(
-    item_list: list[bool], modal: GuiObject
+    item_list: list[bool], modal: StoreDetails
 ) -> None:
     actual = [elem.value for elem in modal.store_content_list]
     err_msg = f"Actual boolean list {actual} does not match expected {item_list}"
@@ -234,7 +238,7 @@ def compare_booleans_in_store_details_modal(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_string_in_store_details_modal(
-    item: str, modal: GuiObject, variable_type: str, store_name: str
+    item: str, modal: StoreDetails, variable_type: str, store_name: str
 ) -> None:
     actual = modal.raw_view.replace('"', "")
     err_msg = (
@@ -245,7 +249,7 @@ def compare_string_in_store_details_modal(
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def compare_array_in_store_details_modal(modal: GuiObject, item_list: str) -> None:
+def compare_array_in_store_details_modal(modal: StoreDetails, item_list: str) -> None:
     item_list = json.loads(item_list)
     expected_num = str(len(item_list))
     actual_num = modal.array_view.header.replace(")", "").split(" (")[1]
@@ -266,7 +270,7 @@ def compare_array_in_store_details_modal(modal: GuiObject, item_list: str) -> No
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def open_raw_view_for_elem(
-    store_content_list: GuiObject, index: int, modal: GuiObject
+    store_content_list: PageObjectsSequence, index: int, modal: StoreDetails
 ) -> None:
     for _ in range(10):
         store_content_list[index].click()
@@ -284,13 +288,13 @@ def open_raw_view_for_elem(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_store_content(
-    modal: GuiObject,
-    store_type: GuiObject,
+    modal: StoreDetails,
+    store_type: str,
     index: int,
     clipboard: Clipboard,
     displays: DisplayMap,
     browser_id: str,
-) -> GuiObject:
+) -> str:
     store_content_type = "store_content_" + store_type
     store_content_list = getattr(modal, store_content_type)
     try:

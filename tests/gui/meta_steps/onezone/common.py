@@ -3,7 +3,9 @@ using web GUI
 """
 
 import time
+from collections.abc import Callable
 from itertools import zip_longest
+from typing import cast
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.common.action_chains import ActionChains
@@ -28,6 +30,8 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.types import DisplayMap, GuiObject, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.utils.core.web_objects import PageObjectsSequence
+from tests.gui.utils.onezone.members_subpage import MembershipRow
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -219,12 +223,13 @@ def wt_visit_file_browser(
 
 def search_for_members(
     driver: WebDriver,
-    records: GuiObject,
+    records: PageObjectsSequence,
     member_name: str,
     parent_name: str,
-    fun: GuiObject,
-) -> GuiObject:
+    fun: Callable[[MembershipRow, int], bool],
+) -> bool:
     for record in records:
+        record = cast(MembershipRow, record)
         record_id = record.clickable_name.get_attribute("id")
         scroll_to_css_selector(driver, f"#{record_id}")
         elements = driver.find_elements(

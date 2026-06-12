@@ -14,15 +14,18 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
+from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.token_caveats import CaveatField
+from tests.gui.utils.onezone.tokens_page import TokenRow
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_token_by_name(driver: WebDriver, token_name: str) -> GuiObject:
+def get_token_by_name(driver: WebDriver, token_name: str) -> TokenRow:
     return OZLoggedIn(driver).get_page_and_click("tokens").sidebar.tokens[token_name]
 
 
@@ -234,7 +237,7 @@ def choose_invite_type_in_oz_token_page(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_invite_select(
-    selenium: SeleniumDrivers, browser_id: str, target: GuiObject, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, target: str, hosts: Hosts
 ) -> None:
     if "oneprovider" in target:
         target = hosts[target]["name"]
@@ -247,7 +250,7 @@ def choose_invite_select(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_token_usage_limit(
-    selenium: SeleniumDrivers, browser_id: str, limit: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, limit: str
 ) -> None:
     driver = selenium[browser_id]
     limits = OZLoggedIn(driver)["tokens"].create_token_page.usage_limit
@@ -452,7 +455,7 @@ def assert_token_name(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_revoked(
-    selenium: SeleniumDrivers, browser_id: str, revoke_expectation: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, revoke_expectation: bool
 ) -> None:
     driver = selenium[browser_id]
     if revoke_expectation:
@@ -464,7 +467,7 @@ def assert_token_revoked(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_type(
-    selenium: SeleniumDrivers, browser_id: str, expected_type: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, expected_type: str
 ) -> None:
     driver = selenium[browser_id]
     actual_type = OZLoggedIn(driver)["tokens"].token_type
@@ -475,7 +478,7 @@ def assert_token_type(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_invite_type(
-    selenium: SeleniumDrivers, browser_id: str, expected_type: GuiObject
+    selenium: SeleniumDrivers, browser_id: str, expected_type: str
 ) -> None:
     driver = selenium[browser_id]
     actual_type = OZLoggedIn(driver)["tokens"].invite_type
@@ -488,9 +491,9 @@ def assert_invite_type(
 def assert_invite_target(
     selenium: SeleniumDrivers,
     browser_id: str,
-    expected_target: GuiObject,
+    expected_target: str,
     hosts: Hosts,
-    spaces: GuiObject,
+    spaces: dict[str, str],
 ) -> None:
     if "oneprovider" in expected_target:
         expected_target = hosts[expected_target]["name"]
@@ -515,7 +518,7 @@ def assert_token_usage_count_value(
     parse_and_compare_usage_count(text, count)
 
 
-def parse_and_compare_usage_count(text_given: GuiObject, text_expected: str) -> None:
+def parse_and_compare_usage_count(text_given: str, text_expected: str) -> None:
     no1, no2 = text_given.split("/")
     exp1, exp2 = text_expected.split("/")
     assert str(no1).strip() == str(exp1).strip(), f"First number should be {exp1}"
@@ -524,8 +527,8 @@ def parse_and_compare_usage_count(text_given: GuiObject, text_expected: str) -> 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_caveat_by_name(
-    selenium: SeleniumDrivers, browser_id: str, caveat_name: GuiObject
-) -> GuiObject:
+    selenium: SeleniumDrivers, browser_id: str, caveat_name: str
+) -> CaveatField:
     driver = selenium[browser_id]
     new_token_page = OZLoggedIn(driver)["tokens"].create_token_page
     return new_token_page.get_caveat(caveat_name)
@@ -539,7 +542,7 @@ def set_caveat_by_name(selenium: SeleniumDrivers, browser_id: str) -> None:
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_privileges_tree(selenium: SeleniumDrivers, browser_id: str) -> GuiObject:
+def get_privileges_tree(selenium: SeleniumDrivers, browser_id: str) -> PrivilegeTree:
     driver = selenium[browser_id]
     return OZLoggedIn(driver)["tokens"].privilege_tree
 

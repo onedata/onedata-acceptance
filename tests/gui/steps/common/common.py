@@ -4,29 +4,41 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Dict, List, Optional
+from collections.abc import Callable
+from typing import Optional, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import GuiObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
+class Checkable(Protocol):
+    def is_checked(self) -> bool: ...
+
+
+class ScrollableColumns(Protocol):
+    def get_rows_of_columns(self, columns: list[str]) -> dict[str, list[str]]: ...
+
+    def scroll_by_press_space(self) -> None: ...
+
+
 def assert_n_items_in_items_list(
-    page: GuiObject,
+    page: object,
     selenium: SeleniumDrivers,
     browser_id: str,
     number: int,
     items_names: str,
-    transform_fun: Optional[GuiObject] = None,
+    transform_fun: Optional[Callable[[WebElement], str]] = None,
 ) -> None:
     driver = selenium[browser_id]
     seen_items = set()
@@ -52,16 +64,20 @@ def assert_n_items_in_items_list(
 # there is a small chance that not all item will be loaded at time,
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
-def _get_visible_items_list(page: GuiObject, items_names: GuiObject) -> GuiObject:
-    return getattr(page, f"get_visible_{items_names}_list")()
+def _get_visible_items_list(page: object, items_names: str) -> list[WebElement]:
+    get_visible_items = cast(
+        Callable[[], list[WebElement]],
+        getattr(page, f"get_visible_{items_names}_list"),
+    )
+    return get_visible_items()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def wait_for_checking_toggle(toggle: GuiObject, toggle_name: str = "") -> None:
+def wait_for_checking_toggle(toggle: Checkable, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where: str, driver: WebDriver) -> GuiObject:
+def _get_page(where: str, driver: WebDriver) -> GenericPage:
     if where == "shares":
         return OZLoggedIn(driver)["shares"]
     if where == "groups":
@@ -96,12 +112,12 @@ def get_last_item_number_in_table(driver: WebDriver) -> int:
     return int(last_item.get_attribute("data-row-id")) + 1
 
 
-def get_last_item_in_table(driver: WebDriver) -> GuiObject:
+def get_last_item_in_table(driver: WebDriver) -> Optional[WebElement]:
     entries = driver.find_elements(By.CSS_SELECTOR, "tbody.table-body tr.table-entry")
     return entries[-1] if len(entries) > 0 else None
 
 
-def scroll_to_bottom_of_the_table(driver: WebDriver) -> GuiObject:
+def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
     while True:
         count = get_last_item_number_in_table(driver)
         if count == 0:
@@ -120,7 +136,7 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> GuiObject:
 
 
 def assert_logs_order_with_optional_logs(
-    logs_expected: List[Dict[str, str]], logs_actual: List[str]
+    logs_expected: list[dict[str, str]], logs_actual: list[str]
 ) -> None:
     """
 
@@ -166,13 +182,13 @@ def assert_logs_order_with_optional_logs(
                 idx += 1
 
 
-def scroll_and_get_columns(modal: GuiObject, columns: list[str]) -> GuiObject:
+def scroll_and_get_columns(modal: ScrollableColumns, columns: list[str]) -> list[str]:
     # The modal has to be a class that implements get_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        visible_elems: Dict[str, List[str]] = modal.get_rows_of_columns(columns)
+        visible_elems = modal.get_rows_of_columns(columns)
         visible_names = visible_elems["file"]
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(

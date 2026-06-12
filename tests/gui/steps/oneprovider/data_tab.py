@@ -21,9 +21,10 @@ from tests.gui.conftest import (
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
+from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
     DOWNLOAD_INACTIVITY_PERIOD_SEC,
@@ -39,7 +40,7 @@ def check_browser_to_load(
     selenium: SeleniumDrivers,
     browser_id: str,
     tmp_memory: TmpMemory,
-    browser: GuiObject,
+    browser: str,
 ) -> None:
     driver = selenium[browser_id]
     if transform(browser) == "shares_browser":
@@ -160,7 +161,7 @@ def go_one_back_using_breadcrumbs_in_data_tab_in_op(
 
 def _get_breadcrumbs(
     browser_id: str, selenium: SeleniumDrivers, which_browser: str
-) -> GuiObject:
+) -> _Breadcrumbs:
     try:
         breadcrumbs = getattr(
             OPLoggedIn(selenium[browser_id]), transform(which_browser)
@@ -202,7 +203,7 @@ def assert_absence_of_path_in_dir_tree(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _is_space_viewed_space_in_data_tab_in_op(
-    driver: WebDriver, is_home: GuiObject, space_name: str
+    driver: WebDriver, is_home: bool, space_name: str
 ) -> None:
     selector = OPLoggedIn(driver).data.sidebar.space_selector
     displayed_name = selector.selected_space_name
@@ -800,7 +801,7 @@ def click_choose_other_oneprovider_on_file_browser(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_current_provider_in_space(
     selenium: SeleniumDrivers, browser_id: str
-) -> GuiObject:
+) -> str:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
@@ -1126,8 +1127,8 @@ def check_content_for_providers(
 def check_size_statistic_in_dir_details(
     selenium: SeleniumDrivers,
     browser_id: str,
-    elem_type: GuiObject,
-    expected: GuiObject,
+    elem_type: str,
+    expected: str,
 ) -> None:
     driver = selenium[browser_id]
     size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))

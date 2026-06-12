@@ -14,7 +14,7 @@ import yaml
 from _pytest._py.path import LocalPath
 
 from tests.conftest import Hosts
-from tests.gui.types import GuiObject, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 
@@ -63,7 +63,7 @@ def _docker_configure_users(config: str, hosts: Hosts) -> None:
                     raise e
 
 
-def docker_create_group(group_name: str, gid: GuiObject, hosts: Hosts) -> None:
+def docker_create_group(group_name: str, gid: int, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
@@ -77,7 +77,7 @@ def docker_create_group(group_name: str, gid: GuiObject, hosts: Hosts) -> None:
 
 
 def docker_create_user_with_group(
-    user_name: GuiObject, uid: GuiObject, group_name: str, hosts: Hosts
+    user_name: str, uid: int, group_name: str, hosts: Hosts
 ) -> None:
     cmd = [
         "docker",
@@ -300,7 +300,7 @@ def wt_cp_files_to_dst_path_in_space(
     parsers.parse('user of {browser_id} copies "{space}" space directory to {dst_path}')
 )
 def wt_cp_space_to_dst_path(
-    dst_path: str, space: str, hosts: Hosts, spaces: GuiObject
+    dst_path: str, space: str, hosts: Hosts, spaces: dict[str, str]
 ) -> None:
     cmd = [
         "docker",
@@ -382,7 +382,7 @@ def wt_assert_file_in_path_with_content(path: str, content: str, hosts: Hosts) -
     assert output == content, err_msg
 
 
-def docker_ls(path: str, hosts: Hosts) -> GuiObject:
+def docker_ls(path: str, hosts: Hosts) -> list[str]:
     files = (
         _docker_ls(os.path.join(MOUNT_POINT, path), hosts).decode("utf-8").split("\n")
     )
