@@ -5,11 +5,13 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from collections.abc import Mapping, MutableMapping
 from typing import Any
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
 
+from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
@@ -23,8 +25,11 @@ from tests.mixed.utils.common import login_to_provider
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
+IdMap = Mapping[str, str]
+TmpMemory = MutableMapping[str, Any]
 
-def translate_config_for_archive(config: Any, tmp_memory: Any) -> Any:
+
+def translate_config_for_archive(config: dict[str, Any], tmp_memory: TmpMemory) -> None:
     for item in config:
         if isinstance(config[item], str):
             config[item] = config[item].lower()
@@ -39,28 +44,28 @@ def translate_config_for_archive(config: Any, tmp_memory: Any) -> Any:
 
 
 def create_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    item_name: Any,
-    config: Any,
-    spaces: Any,
-    tmp_memory: Any,
-    option: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    config: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    option: str,
+) -> None:
 
-    config = yaml.load(config, yaml.Loader)
-    translate_config_for_archive(config, tmp_memory)
+    archive_config: dict[str, Any] = yaml.load(config, yaml.Loader)
+    translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": config}
-    if "description" in config:
-        description = config["description"]
-        del config["description"]
+    data = {"datasetId": dataset_id, "config": archive_config}
+    if "description" in archive_config:
+        description = archive_config["description"]
+        del archive_config["description"]
         data["description"] = description
     else:
         description = "latest_created_archive"
@@ -78,24 +83,24 @@ def create_archive_in_op_rest(
 
 
 def create_n_archives_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    item_name: Any,
-    config: Any,
-    spaces: Any,
-    tmp_memory: Any,
-    number: Any,
-) -> Any:
-    config = yaml.load(config, yaml.Loader)
-    translate_config_for_archive(config, tmp_memory)
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    config: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    number: int,
+) -> None:
+    archive_config: dict[str, Any] = yaml.load(config, yaml.Loader)
+    translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": config}
+    data = {"datasetId": dataset_id, "config": archive_config}
 
     for i in range(number):
         description = f"archive number {i}"
@@ -104,17 +109,17 @@ def create_n_archives_in_op_rest(
 
 
 def assert_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    item_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-    option: Any,
-    description: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    option: str,
+    description: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -134,15 +139,15 @@ def assert_archive_in_op_rest(
 
 
 def assert_number_of_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    item_name: Any,
-    spaces: Any,
-    number: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    item_name: str,
+    spaces: IdMap,
+    number: int,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
@@ -157,14 +162,14 @@ def assert_number_of_archive_in_op_rest(
 
 
 def remove_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    description: Any,
-    tmp_memory: Any,
-    option: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    description: str,
+    tmp_memory: TmpMemory,
+    option: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -182,7 +187,12 @@ def remove_archive_in_op_rest(
 
 
 def get_archive_info(
-    user: Any, users: Any, hosts: Any, host: Any, tmp_memory: Any, description: Any
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
 ) -> Any:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
@@ -191,14 +201,14 @@ def get_archive_info(
 
 
 def assert_archive_with_option_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    option: Any,
-    tmp_memory: Any,
-    description: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    option: str,
+    tmp_memory: TmpMemory,
+    description: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     err_msg = f"archive is not {option}"
     if transform(option) == "bagit":
@@ -208,14 +218,14 @@ def assert_archive_with_option_in_op_rest(
 
 
 def assert_base_archive_for_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    description: Any,
-    base_description: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    base_description: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     err_msg = (
         f"Base archive: {info.base_archive_id} does not match expected "
@@ -234,14 +244,14 @@ def assert_base_archive_for_archive_in_op_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_archive_description_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    description: Any,
-    new_description: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    new_description: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -261,15 +271,15 @@ def change_archive_description_in_op_rest(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_archive_callback(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    description: Any,
-    option: Any,
-    new_callback: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+    new_callback: str,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -278,15 +288,15 @@ def change_archive_callback(
 
 
 def assert_archive_callback_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    description: Any,
-    option: Any,
-    expected_callback: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    option: str,
+    expected_callback: str,
+) -> None:
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f"{option}_callback"
     err_msg = (
@@ -301,16 +311,16 @@ def assert_archive_callback_in_op_rest(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recall_archive_for_archive_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    description: Any,
-    name: Any,
-    space_name: Any,
-    spaces: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    description: str,
+    name: str,
+    space_name: str,
+    spaces: IdMap,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
@@ -322,15 +332,15 @@ def recall_archive_for_archive_in_op_rest(
 
 
 def recalled_archive_details_in_op_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    data: Any,
-    name: Any,
-    space_name: Any,
-    spaces: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    data: Mapping[str, str],
+    name: str,
+    space_name: str,
+    spaces: IdMap,
+) -> None:
 
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)
@@ -376,14 +386,14 @@ def recalled_archive_details_in_op_rest(
 
 
 def assert_progress_of_recall_in_op_rest(
-    user: Any,
-    name: Any,
-    space_name: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    config: Any,
-) -> Any:
+    user: str,
+    name: str,
+    space_name: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    config: str,
+) -> None:
     data = yaml.load(config, yaml.Loader)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)
@@ -407,8 +417,13 @@ def assert_progress_of_recall_in_op_rest(
 
 
 def cancel_archive_for_archive_in_op_rest(
-    user: Any, users: Any, hosts: Any, host: Any, space_name: Any, target_name: Any
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    target_name: str,
+) -> None:
 
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)

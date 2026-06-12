@@ -4,12 +4,14 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from collections.abc import Mapping
 from typing import Any
 
 import yaml
 from oneprovider_client import TransferApi
 
 from tests import OP_REST_PORT
+from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
@@ -17,17 +19,20 @@ from tests.mixed.utils.common import login_to_provider
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
 
+IdMap = Mapping[str, str]
+JsonObject = dict[str, Any]
+
 
 def create_transfer_rest(
-    user: Any,
-    users: Any,
-    host: Any,
-    hosts: Any,
-    transfer_type: Any,
-    path: Any,
-    replicating_provider: Any = None,
-    evicting_provider: Any = None,
-) -> Any:
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    transfer_type: str,
+    path: str,
+    replicating_provider: str | None = None,
+    evicting_provider: str | None = None,
+) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     file_id = _lookup_file_id(path, client)
@@ -43,8 +48,8 @@ def create_transfer_rest(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_recent_transfer_status_rest(
-    user: Any, users: Any, host: Any, hosts: Any, space_id: Any
-) -> Any:
+    user: str, users: Users, host: str, hosts: Hosts, space_id: str
+) -> JsonObject:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)
     tid = transfer_api.get_all_transfers(space_id, state="ended").transfers[0]
@@ -59,8 +64,14 @@ def get_recent_transfer_status_rest(
 
 
 def assert_recent_transfer_details_rest(
-    user: Any, users: Any, host: Any, hosts: Any, space: Any, spaces: Any, config: Any
-) -> Any:
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    space: str,
+    spaces: IdMap,
+    config: str,
+) -> None:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )
@@ -90,8 +101,13 @@ def assert_recent_transfer_details_rest(
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_recent_transfer_finished_rest(
-    user: Any, users: Any, host: Any, hosts: Any, spaces: Any, space: Any
-) -> Any:
+    user: str,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    spaces: IdMap,
+    space: str,
+) -> None:
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )

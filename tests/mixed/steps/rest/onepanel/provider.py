@@ -1,22 +1,27 @@
-"""Utils and fixtures to facilitate provider operations in Onepanel
-using REST API.
-"""
+"""Utils and fixtures to facilitate provider operations in Onepanel using REST API."""
 
-from typing import Any
+from collections.abc import Mapping
+from typing import Protocol
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+HostsConfig = Mapping[str, Mapping[str, str]]
+
+
+class UserLike(Protocol):
+    password: str
+
 
 def modify_provider_in_op_panel_using_rest(
-    user: Any,
-    users: Any,
-    provider_host: Any,
-    hosts: Any,
-    new_provider_name: Any,
-    new_domain: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    provider_host: str,
+    hosts: HostsConfig,
+    new_provider_name: str,
+    new_domain: str,
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -31,8 +36,8 @@ def modify_provider_in_op_panel_using_rest(
 
 
 def deregister_provider_in_op_panel_using_rest(
-    user: Any, users: Any, provider_host: Any, hosts: Any
-) -> Any:
+    user: str, users: Mapping[str, UserLike], provider_host: str, hosts: HostsConfig
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # user_client = login_to_panel(
@@ -43,8 +48,8 @@ def deregister_provider_in_op_panel_using_rest(
 
 
 def register_provider_in_op_using_rest(
-    user: Any, users: Any, hosts: Any, config: Any
-) -> Any:
+    user: str, users: Mapping[str, UserLike], hosts: HostsConfig, config: str
+) -> None:
     raise NotImplementedError
     # TODO VFS-12393 uncomment after resolving issues with import OneproviderApi
     # options = yaml.load(config, yaml.Loader)

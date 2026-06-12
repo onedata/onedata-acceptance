@@ -4,11 +4,13 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Protocol
 
 import yaml
 from onezone_client.rest import ApiException
 
+from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
@@ -106,8 +108,18 @@ DEFAULT_GRANT = [
     "space_write_data",
 ]
 
+IdMap = Mapping[str, str]
+TmpMemory = MutableMapping[str, Any]
 
-def translate_privileges(privileges: Any, grant: Any, revoke: Any) -> Any:
+
+class UserLike(Protocol):
+    password: str
+    user_id: str
+
+
+def translate_privileges(
+    privileges: Mapping[str, Any], grant: list[str], revoke: list[str]
+) -> None:
     for privileges_group, privileges_group_items in privileges.items():
         if privileges_group_items["granted"] == "Partially":
             items = privileges_group_items["privilege subtypes"].items()
@@ -132,15 +144,15 @@ def translate_privileges(privileges: Any, grant: Any, revoke: Any) -> Any:
 
 
 def fail_to_set_privileges_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-    space_name: Any,
-    member_name: Any,
-    config: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+    config: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     grant: list[str] = []
@@ -163,15 +175,15 @@ def fail_to_set_privileges_using_rest(
 
 
 def assert_privileges_in_space_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-    space_name: Any,
-    member_name: Any,
-    config: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+    config: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
 
@@ -190,14 +202,14 @@ def assert_privileges_in_space_using_rest(
 
 
 def fail_to_create_invitation_in_space_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-    space_name: Any,
-    member_name: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     try:
@@ -212,14 +224,14 @@ def fail_to_create_invitation_in_space_using_rest(
 
 
 def assert_group_in_space_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    group_name: Any,
-    spaces: Any,
-    space_name: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    group_name: str,
+    spaces: IdMap,
+    space_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz).group_id
@@ -229,14 +241,14 @@ def assert_group_in_space_using_rest(
 
 
 def add_users_to_space_in_oz_using_rest(
-    user_list: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_name: Any,
-    spaces: Any,
-    user: Any,
-) -> Any:
+    user_list: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -245,14 +257,14 @@ def add_users_to_space_in_oz_using_rest(
 
 
 def add_group_to_space_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    group_name: Any,
-    spaces: Any,
-    space_name: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    group_name: str,
+    spaces: IdMap,
+    space_name: str,
+) -> None:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     group = get_group(group_name, user_client_oz)
@@ -260,14 +272,14 @@ def add_group_to_space_using_rest(
 
 
 def delete_users_from_space_in_oz_using_rest(
-    user_list: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_name: Any,
-    spaces: Any,
-    user: Any,
-) -> Any:
+    user_list: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
 
@@ -276,15 +288,15 @@ def delete_users_from_space_in_oz_using_rest(
 
 
 def invite_other_users_to_space_using_rest(
-    user: Any,
-    users: Any,
-    zone_name: Any,
-    hosts: Any,
-    space_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-    receiver: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    zone_name: str,
+    hosts: Hosts,
+    space_name: str,
+    spaces: IdMap,
+    tmp_memory: TmpMemory,
+    receiver: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     space_api = SpaceApi(user_client)
     token = space_api.create_space_user_invite_token(spaces[space_name])
@@ -292,14 +304,14 @@ def invite_other_users_to_space_using_rest(
 
 
 def assert_user_is_member_of_space_rest(
-    space_name: Any,
-    spaces: Any,
-    user: Any,
-    users: Any,
-    user_list: Any,
-    zone_name: Any,
-    hosts: Any,
-) -> Any:
+    space_name: str,
+    spaces: IdMap,
+    user: str,
+    users: Mapping[str, UserLike],
+    user_list: str,
+    zone_name: str,
+    hosts: Hosts,
+) -> None:
     space_users = get_users_id_list(user, users, hosts, zone_name, spaces, space_name)
 
     for username in parse_seq(user_list):
@@ -309,14 +321,14 @@ def assert_user_is_member_of_space_rest(
 
 
 def assert_not_user_in_space_using_rest(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-    space_name: Any,
-    member_name: Any,
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+    member_name: str,
+) -> None:
     users_id_list = get_users_id_list(user, users, hosts, host, spaces, space_name)
     assert (
         users[member_name].user_id not in users_id_list
@@ -324,8 +336,13 @@ def assert_not_user_in_space_using_rest(
 
 
 def get_users_id_list(
-    user: Any, users: Any, hosts: Any, host: Any, spaces: Any, space_name: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: IdMap,
+    space_name: str,
+) -> list[str]:
     user_client_oz = login_to_oz(user, users[user].password, hosts[host]["hostname"])
     space_api = SpaceApi(user_client_oz)
     return space_api.list_space_users(spaces[space_name]).users

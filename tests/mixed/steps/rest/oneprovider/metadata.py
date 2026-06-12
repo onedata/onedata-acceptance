@@ -7,17 +7,31 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import base64
 import json
-from typing import Any
+from collections.abc import Mapping
+from typing import Protocol
 
 from oneprovider_client import CustomFileMetadataApi
 
 from tests.gui.utils import CDMIClient as cdmi
 from tests.mixed.utils.common import login_to_provider
 
+HostsConfig = Mapping[str, Mapping[str, str]]
+
+
+class UserLike(Protocol):
+    password: str
+    token: str
+
 
 def assert_metadata_in_op_rest(
-    user: Any, users: Any, host: Any, hosts: Any, path: Any, tab_name: Any, val: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    host: str,
+    hosts: HostsConfig,
+    path: str,
+    tab_name: str,
+    val: str,
+) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name.lower() == "xattrs":
@@ -42,8 +56,14 @@ def assert_metadata_in_op_rest(
 
 
 def set_metadata_in_op_rest(
-    user: Any, users: Any, host: Any, hosts: Any, path: Any, tab_name: Any, val: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    host: str,
+    hosts: HostsConfig,
+    path: str,
+    tab_name: str,
+    val: str,
+) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if tab_name == "xattrs":
         (attr, val) = val.split("=")
@@ -55,23 +75,34 @@ def set_metadata_in_op_rest(
 
 
 def add_json_metadata_to_file_rest(
-    user: Any, users: Any, hosts: Any, host: Any, expression: Any, file_id: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    host: str,
+    expression: object,
+    file_id: str,
+) -> None:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])
     cfm_api = CustomFileMetadataApi(user_client_op)
     cfm_api.set_json_metadata(file_id, expression)
 
 
 def remove_all_metadata_in_op_rest(
-    user: Any, users: Any, host: Any, hosts: Any, path: Any
-) -> Any:
+    user: str, users: Mapping[str, UserLike], host: str, hosts: HostsConfig, path: str
+) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     client.write_metadata(path, {})
 
 
 def assert_no_such_metadata_in_op_rest(
-    user: Any, users: Any, host: Any, hosts: Any, path: Any, tab_name: Any, val: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    host: str,
+    hosts: HostsConfig,
+    path: str,
+    tab_name: str,
+    val: str,
+) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name == "xattrs":
@@ -84,10 +115,10 @@ def assert_no_such_metadata_in_op_rest(
         pass
     else:
         if tab_name.lower() == "json":
-            val = json.loads(val)
-            for key in val:
+            expected_metadata = json.loads(val)
+            for key in expected_metadata:
                 assert (
-                    key not in metadata or metadata[key] != val[key]
-                ), f"There is {val} {tab_name} metadata"
+                    key not in metadata or metadata[key] != expected_metadata[key]
+                ), f"There is {expected_metadata} {tab_name} metadata"
         else:
             assert val != metadata, f"There is {val} {tab_name} metadata"
