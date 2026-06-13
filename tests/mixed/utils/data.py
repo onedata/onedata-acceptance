@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
-from typing import Any, Protocol
+from typing import Protocol
 
 import yaml
 
@@ -26,14 +26,18 @@ class FileTreeNode(Protocol):
     def get_items(self) -> Iterable[str]: ...
 
 
+class UserLike(Protocol):
+    user_id: str
+
+
 ContentItem = str | Mapping[str, object]
 AclEntry = MutableMapping[str, str]
 Acl = list[AclEntry]
 ItemType = str
 IsDir = Callable[[str], bool]
 ListDir = Callable[[str], Sequence[str]]
-AssertFileContent = Callable[[str, str], Any]
-CreateItem = Callable[..., Any]
+AssertFileContent = Callable[[str, str], object]
+CreateItem = Callable[..., object]
 
 
 def _check_files_tree(
@@ -78,13 +82,13 @@ def check_files_tree(
 
 def create_content(
     user: str,
-    users: Any,
+    users: object,
     cwd: str,
     content: Iterable[ContentItem],
     create_item_fun: CreateItem,
     host: str,
-    hosts: Any,
-    request: Any,
+    hosts: object,
+    request: object,
 ) -> None:
     for item in content:
         if isinstance(item, Mapping):
@@ -171,9 +175,9 @@ def get_acl_metadata(
     curr_acl: Iterable[AclEntry],
     priv: str,
     item_type: ItemType,
-    groups: Any,
+    groups: Mapping[str, str],
     name: str,
-    users: Any,
+    users: Mapping[str, UserLike],
     path: str,
 ) -> Acl:
     acl = list(curr_acl)

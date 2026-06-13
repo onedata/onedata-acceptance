@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import Any
+from typing import cast
 
 import yaml
 from oneprovider_client import TransferApi
@@ -20,7 +20,10 @@ from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
 
 IdMap = Mapping[str, str]
-JsonObject = dict[str, Any]
+type JsonValue = None | str | int | float | bool | list["JsonValue"] | dict[
+    str, "JsonValue"
+]
+type JsonObject = dict[str, JsonValue]
 
 
 def create_transfer_rest(
@@ -60,7 +63,7 @@ def get_recent_transfer_status_rest(
         path=get_provider_rest_path("transfers", tid),
         headers={"X-Auth-Token": users[user].token},
     )
-    return res.json()
+    return cast(JsonObject, res.json())
 
 
 def assert_recent_transfer_details_rest(
@@ -75,7 +78,7 @@ def assert_recent_transfer_details_rest(
     transfer_status = get_recent_transfer_status_rest(
         user, users, host, hosts, spaces[space]
     )
-    details = yaml.load(config, yaml.Loader)
+    details = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     err_msg = "expected {} to be {} but got {}"
     for k, v in details.items():
         if k == "name":

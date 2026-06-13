@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import Any
+from typing import cast
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
@@ -17,6 +17,8 @@ from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.utils.common import login_to_provider
 
 IdMap = Mapping[str, str]
+type DatasetSubtree = list[str | dict[str, "DatasetSubtree"]]
+type DatasetTree = list[dict[str, DatasetSubtree]]
 
 
 def create_dataset_in_op_rest(
@@ -170,7 +172,7 @@ def check_dataset_structure_in_op_rest(
 ) -> None:
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
-    subtree = yaml.load(config, yaml.Loader)
+    subtree = cast(DatasetTree, yaml.load(config, yaml.Loader))
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     space_id = f"{spaces[space_name]}"
@@ -189,12 +191,12 @@ def check_dataset_structure_in_op_rest(
 
 
 def check_structure_of_dataset_children_in_op_rest(
-    dataset_api: DatasetApi, dataset_id: str, excepted_datasets_subtree: Any
+    dataset_api: DatasetApi, dataset_id: str, excepted_datasets_subtree: DatasetSubtree
 ) -> None:
     for child in excepted_datasets_subtree:
-        try:
+        if isinstance(child, dict):
             [(excepted_child_name, excepted_child_subtree)] = child.items()
-        except AttributeError:
+        else:
             excepted_child_name = child
             excepted_child_subtree = []
         dataset_children = dataset_api.list_dataset_children(dataset_id)

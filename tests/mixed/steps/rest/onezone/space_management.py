@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Mapping, MutableMapping
-from typing import Any, Protocol
+from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
@@ -23,7 +23,9 @@ from tests.mixed.utils.common import login_to_oz
 from tests.utils.entities_setup.spaces import _create_space
 
 SpaceMap = MutableMapping[str, str]
-TmpMemory = MutableMapping[str, Any]
+Mailbox = MutableMapping[str, str]
+TmpMemoryEntry = MutableMapping[str, Mailbox | str]
+TmpMemory = MutableMapping[str, TmpMemoryEntry]
 
 
 class UserLike(Protocol):
@@ -146,7 +148,7 @@ def request_space_support_using_rest(
     space = get_user_space_with_name(user_client, space_name)
     token = space_api.create_space_support_token(space.space_id).token
     if "mailbox" in tmp_memory[receiver]:
-        tmp_memory[receiver]["mailbox"]["token"] = token
+        cast(Mailbox, tmp_memory[receiver]["mailbox"])["token"] = token
     else:
         tmp_memory[receiver]["mailbox"] = {"token": token}
 
@@ -164,7 +166,8 @@ def join_space_in_oz_using_rest(
             user, users[user].password, hosts[zone_name]["hostname"]
         )
         user_api = UserApi(user_client)
-        token = SpaceInviteToken(tmp_memory[user]["mailbox"]["token"])
+        mailbox = cast(Mailbox, tmp_memory[user]["mailbox"])
+        token = SpaceInviteToken(mailbox["token"])
         user_api.join_space(token)
 
 

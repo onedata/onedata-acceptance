@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Mapping, MutableMapping
-from typing import Any
+from typing import Protocol, cast
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
@@ -26,21 +26,34 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 IdMap = Mapping[str, str]
-TmpMemory = MutableMapping[str, Any]
+TmpMemory = MutableMapping[str, str]
+ArchiveConfigValue = str | MutableMapping[str, str]
+ArchiveConfig = dict[str, ArchiveConfigValue]
 
 
-def translate_config_for_archive(config: dict[str, Any], tmp_memory: TmpMemory) -> None:
-    for item in config:
-        if isinstance(config[item], str):
-            config[item] = config[item].lower()
+class ArchiveInfoConfig(Protocol):
+    layout: str
+    include_dip: bool
+
+
+class ArchiveInfo(Protocol):
+    config: ArchiveInfoConfig
+    base_archive_id: str
+
+
+def translate_config_for_archive(config: ArchiveConfig, tmp_memory: TmpMemory) -> None:
+    for item, value in list(config.items()):
+        if isinstance(value, str):
+            config[item] = value.lower()
     if "create nested archives" in config:
         del config["create nested archives"]
         config["createNestedArchives"] = "true"
     if "include DIP" in config:
         del config["include DIP"]
         config["includeDip"] = "true"
-    if "incremental" in config and config["incremental"]["basedOn"]:
-        config["incremental"]["basedOn"] = tmp_memory[config["incremental"]["basedOn"]]
+    incremental_config = config.get("incremental")
+    if isinstance(incremental_config, MutableMapping) and incremental_config["basedOn"]:
+        incremental_config["basedOn"] = tmp_memory[incremental_config["basedOn"]]
 
 
 def create_archive_in_op_rest(
@@ -56,16 +69,15 @@ def create_archive_in_op_rest(
     option: str,
 ) -> None:
 
-    archive_config: dict[str, Any] = yaml.load(config, yaml.Loader)
+    archive_config = cast(ArchiveConfig, yaml.load(config, yaml.Loader))
     translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": archive_config}
+    data: dict[str, object] = {"datasetId": dataset_id, "config": archive_config}
     if "description" in archive_config:
-        description = archive_config["description"]
-        del archive_config["description"]
+        description = cast(str, archive_config.pop("description"))
         data["description"] = description
     else:
         description = "latest_created_archive"
@@ -94,13 +106,13 @@ def create_n_archives_in_op_rest(
     tmp_memory: TmpMemory,
     number: int,
 ) -> None:
-    archive_config: dict[str, Any] = yaml.load(config, yaml.Loader)
+    archive_config = cast(ArchiveConfig, yaml.load(config, yaml.Loader))
     translate_config_for_archive(archive_config, tmp_memory)
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data = {"datasetId": dataset_id, "config": archive_config}
+    data: dict[str, object] = {"datasetId": dataset_id, "config": archive_config}
 
     for i in range(number):
         description = f"archive number {i}"
@@ -193,11 +205,11 @@ def get_archive_info(
     host: str,
     tmp_memory: TmpMemory,
     description: str,
-) -> Any:
+) -> ArchiveInfo:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    return archive_api.get_archive(archive_id)
+    return cast(ArchiveInfo, archive_api.get_archive(archive_id))
 
 
 def assert_archive_with_option_in_op_rest(
@@ -394,7 +406,7 @@ def assert_progress_of_recall_in_op_rest(
     users: Users,
     config: str,
 ) -> None:
-    data = yaml.load(config, yaml.Loader)
+    data = cast(Mapping[str, str], yaml.load(config, yaml.Loader))
     client = login_to_provider(user, users, hosts[host]["hostname"])
     archive_api = ArchiveApi(client)
     path = f"{space_name}/{name}"

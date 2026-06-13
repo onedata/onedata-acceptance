@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Mapping, MutableMapping
-from typing import Any, Protocol
+from typing import Protocol
 
 import pytest
 from onezone_client import GroupApi, GroupCreateRequest, UserApi
@@ -18,7 +18,9 @@ from tests.mixed.steps.rest.onezone.common import get_group
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.bdd_utils import parsers, wt
 
-TmpMemory = MutableMapping[str, Any]
+Mailbox = MutableMapping[str, str]
+UserTmpMemory = MutableMapping[str, Mailbox]
+TmpMemory = MutableMapping[str, UserTmpMemory]
 
 
 class UserLike(Protocol):

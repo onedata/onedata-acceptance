@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import subprocess as sp
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, MutableMapping
 from typing import Any, Protocol
 
 import yaml
@@ -19,6 +19,7 @@ from tests import (
     PANEL_REST_PORT,
     PROVIDER_REST_PATH_PREFIX,
 )
+from tests.gui.types import Clipboard, DisplayMap
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -35,6 +36,8 @@ from tests.mixed.utils.privileges import (
 from tests.utils.bdd_utils import parsers, wt
 
 Resolver = Callable[[str], object]
+TmpMemory = MutableMapping[str, Any]
+UsersWithToken = Mapping[str, "UserWithToken"]
 
 
 class ConfigurationLike(Protocol):
@@ -43,6 +46,19 @@ class ConfigurationLike(Protocol):
     verify_ssl: bool
     safe_chars_for_path_param: str
     host: str
+
+
+class UserWithToken(Protocol):
+    @property
+    def token(self) -> Any: ...
+
+
+class FixtureRequestLike(Protocol):
+    def getfixturevalue(self, argname: str) -> Any: ...
+
+
+class TmpDirLike(Protocol):
+    def join(self, *args: object) -> object: ...
 
 
 class NoSuchClientException(Exception):
@@ -100,7 +116,7 @@ def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
 
 def login_to_cdmi(
     username: str,
-    users: Any,
+    users: UsersWithToken,
     host: str,
     access_token: str | None = None,
     identity_token: str | None = None,
@@ -123,7 +139,10 @@ def login_to_cdmi(
 
 
 def login_to_provider(
-    username: str, users: Any, host: str, access_token: str | None = None
+    username: str,
+    users: UsersWithToken,
+    host: str,
+    access_token: str | None = None,
 ) -> ApiClient_provider:
 
     header_value = access_token if access_token else users[username].token
@@ -146,7 +165,7 @@ def construct_curl_get_cmd(link: str) -> str:
 
 @wt(parsers.parse("{sender} sends token to {receiver}"))
 def send_copied_token_to_other_user(
-    sender: str, receiver: str, tmp_memory: Any
+    sender: str, receiver: str, tmp_memory: TmpMemory
 ) -> None:
     tmp_memory[receiver]["mailbox"]["token"] = tmp_memory[sender]["token"]
 
@@ -154,9 +173,9 @@ def send_copied_token_to_other_user(
 @wt(parsers.parse("user of {browser_id} executes copied command"))
 def execute_copied_curl_command(
     browser_id: str,
-    displays: Any,
-    clipboard: Any,
-    tmp_memory: Any,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
     config: Mapping[str, str] | None = None,
 ) -> None:
     _execute_curl_command(
@@ -168,7 +187,7 @@ def execute_copied_curl_command(
 
 def _execute_curl_command(
     command: str,
-    tmp_memory: Any,
+    tmp_memory: TmpMemory,
     config: Mapping[str, str] | None,
     flags: list[str] | None = None,
     file_out: object | None = None,
@@ -199,10 +218,10 @@ def _execute_curl_command(
 )
 def execute_copied_curl_command_with_env_vars(
     browser_id: str,
-    displays: Any,
-    clipboard: Any,
-    tmp_memory: Any,
-    selenium: Any,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    tmp_memory: TmpMemory,
+    selenium: Mapping[str, FixtureRequestLike],
     config: str,
 ) -> None:
     """
@@ -231,7 +250,7 @@ def replace_vars_in_cmd_if_exist(
     return new_cmd
 
 
-def try_to_resolve_items(val: str, request: Any) -> str:
+def try_to_resolve_items(val: str, request: FixtureRequestLike) -> str:
     if not isinstance(val, str):
         val = str(val)
     users = request.getfixturevalue("users")
@@ -277,7 +296,9 @@ def try_to_resolve_items(val: str, request: Any) -> str:
         "user of {browser_id} sees that output of executed command contains:\n{config}"
     )
 )
-def assert_command_output_contains(request: Any, tmp_memory: Any, config: str) -> None:
+def assert_command_output_contains(
+    request: FixtureRequestLike, tmp_memory: TmpMemory, config: str
+) -> None:
     output = tmp_memory["output"]
     output = yaml.load(output, yaml.Loader)
     expected = yaml.load(config, yaml.Loader)
@@ -304,7 +325,7 @@ def assert_command_output_contains(request: Any, tmp_memory: Any, config: str) -
         ' "{expected_output}"'
     )
 )
-def assert_command_output_equals(tmp_memory: Any, expected_output: str) -> None:
+def assert_command_output_equals(tmp_memory: TmpMemory, expected_output: str) -> None:
     output = tmp_memory["output"]
     err_msg = f"expected command output to be {expected_output}, but got {output}"
     assert expected_output == output, err_msg
@@ -316,7 +337,7 @@ def assert_command_output_equals(tmp_memory: Any, expected_output: str) -> None:
         " code"
     )
 )
-def assert_curl_command_successful_http_code(tmp_memory: Any) -> None:
+def assert_curl_command_successful_http_code(tmp_memory: TmpMemory) -> None:
     http_status_code = tmp_memory["http status code"]
     command_output = tmp_memory["output"]
     command_stderr = tmp_memory["stderr"]
@@ -338,11 +359,11 @@ def assert_curl_command_successful_http_code(tmp_memory: Any) -> None:
 )
 def wt_download_using_curl_with_forward(
     browser_id: str,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    tmpdir: Any,
-    browsers_to_users: Any,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    tmpdir: TmpDirLike,
+    browsers_to_users: Mapping[str, str],
     file_out: str,
 ) -> None:
     download_using_curl_with_forward(
@@ -353,11 +374,11 @@ def wt_download_using_curl_with_forward(
 @wt(parsers.parse("user of {browser_id} uses curl to get content from copied link"))
 def download_using_curl(
     browser_id: str,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    tmpdir: Any,
-    browsers_to_users: Any,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    tmpdir: TmpDirLike,
+    browsers_to_users: Mapping[str, str],
 ) -> None:
     download_using_curl_with_forward(
         browser_id,
@@ -372,21 +393,22 @@ def download_using_curl(
 
 def download_using_curl_with_forward(
     browser_id: str,
-    tmp_memory: Any,
-    clipboard: Any,
-    displays: Any,
-    tmpdir: Any,
-    browsers_to_users: Any,
+    tmp_memory: TmpMemory,
+    clipboard: Clipboard,
+    displays: DisplayMap,
+    tmpdir: TmpDirLike,
+    browsers_to_users: Mapping[str, str],
     file_out: str | None,
 ) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
+    output_path: object | None = file_out
     if file_out is not None:
-        file_out = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
+        output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 
     _execute_curl_command(
         construct_curl_get_cmd(download_link),
         tmp_memory,
         None,
         flags=["L"],  # -L flag is required to follow redirects (e.g., HTTP 307)
-        file_out=file_out,
+        file_out=output_path,
     )

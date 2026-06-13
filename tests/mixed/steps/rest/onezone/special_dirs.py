@@ -6,11 +6,12 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import Protocol, cast
 
 from oneprovider_client.rest import ApiException
 
+from tests.conftest import Hosts, Users
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
@@ -46,17 +47,28 @@ EX_ERR_MSGS_REST = [
 ]
 
 EX_ERR_MSG_OC = "Operation not supported"
+HostsConfig = Mapping[str, Mapping[str, str]]
+Spaces = Mapping[str, str]
+TmpMemory = MutableMapping[SpecialDir, dict[str, str]]
+
+
+class UserWithToken(Protocol):
+    password: str
+    token: str
+
+
+UserTokenMap = Mapping[str, UserWithToken]
 
 
 def get_space_dir_id(
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-) -> Any:
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Spaces,
+    tmp_memory: TmpMemory,
+) -> None:
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
     if tmp_memory[SpecialDir.SPACE_DIR]:
         tmp_memory[SpecialDir.SPACE_DIR][space_name] = space_details.dir_id
@@ -71,14 +83,14 @@ def get_space_dir_id(
     )
 )
 def get_space_archives_dir_id(
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-) -> Any:
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Spaces,
+    tmp_memory: TmpMemory,
+) -> None:
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
     if tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR]:
         tmp_memory[SpecialDir.SPACE_ARCHIVES_DIR][user] = space_details.archives_dir_id
@@ -95,14 +107,14 @@ def get_space_archives_dir_id(
     )
 )
 def get_trash_dir_id(
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-) -> Any:
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Spaces,
+    tmp_memory: TmpMemory,
+) -> None:
     space_details = get_space_details_rest(users, user, hosts, host, spaces[space_name])
     if tmp_memory[SpecialDir.TRASH_DIR]:
         tmp_memory[SpecialDir.TRASH_DIR][user] = space_details.trash_dir_id
@@ -117,14 +129,14 @@ def get_trash_dir_id(
     )
 )
 def get_share_container_id(
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    space_name: Any,
-    spaces: Any,
-    tmp_memory: Any,
-) -> Any:
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    space_name: str,
+    spaces: Spaces,
+    tmp_memory: TmpMemory,
+) -> None:
     get_space_dir_id(users, user, hosts, host, space_name, spaces, tmp_memory)
     share_id = create_share_rest(
         users,
@@ -141,13 +153,13 @@ def get_share_container_id(
         tmp_memory[SpecialDir.SHARE_CONTAINER] = {user: share_details.root_file_id}
 
 
-def _assert_ex_err_msg_rest(err_msg: Any) -> Any:
+def _assert_ex_err_msg_rest(err_msg: str) -> None:
     assert any(
         ex in err_msg for ex in EX_ERR_MSGS_REST
     ), f"Unexpected error occurred:\n {err_msg}"
 
 
-def _assert_ex_err_msg_oc(err_msg: Any) -> Any:
+def _assert_ex_err_msg_oc(err_msg: str) -> None:
     assert EX_ERR_MSG_OC in err_msg, f"Unexpected error occurred:\n {err_msg}"
 
 
@@ -158,14 +170,14 @@ def _assert_ex_err_msg_oc(err_msg: Any) -> Any:
     )
 )
 def try_to_remove_special_dir(
-    client: Any,
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    name: Any,
-) -> Any:
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    name: SpecialDir,
+) -> None:
     try_to_remove_special_dir_by_id(
         client,
         users,
@@ -178,14 +190,14 @@ def try_to_remove_special_dir(
 
 
 def try_to_remove_special_dir_by_id(
-    client: Any,
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    dir_id: Any,
-    err_msg: Any = "",
-) -> Any:
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    err_msg: str = "",
+) -> None:
     if client.lower() == "rest":
         try:
             remove_file_by_id_rest(users, user, hosts, host, dir_id)
@@ -209,7 +221,7 @@ def try_to_remove_special_dir_by_id(
         "directory using file path in {host}"
     )
 )
-def try_to_remove_user_root_dir_by_path(client: Any, users: Any, user: Any) -> Any:
+def try_to_remove_user_root_dir_by_path(client: str, users: Users, user: str) -> None:
     if "oneclient" in client.lower():
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
@@ -228,14 +240,14 @@ def try_to_remove_user_root_dir_by_path(client: Any, users: Any, user: Any) -> A
     )
 )
 def try_to_move_special_dir(
-    client: Any,
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    name: Any,
-) -> Any:
+    client: str,
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    name: SpecialDir,
+) -> None:
     try_to_move_special_dir_by_id(
         client,
         user,
@@ -248,18 +260,18 @@ def try_to_move_special_dir(
 
 
 def try_to_move_special_dir_by_id(
-    client: Any,
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    dir_id: Any,
-    err_msg: Any = None,
-) -> Any:
+    client: str,
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    err_msg: str | None = None,
+) -> None:
     if client.lower() == "rest":
         try:
-            client = cdmi(hosts[host]["ip"], users[user].token)
-            client.move_item_by_id(dir_id, "/new_name")
+            cdmi_client = cdmi(hosts[host]["ip"], users[user].token)
+            cdmi_client.move_item_by_id(dir_id, "/new_name")
             raise AssertionError(err_msg)
         except HTTPBadRequest as e:
             assert "Operation failed with POSIX error: enoent." in str(
@@ -285,7 +297,7 @@ def try_to_move_special_dir_by_id(
         "user root directory using file path in {host}"
     )
 )
-def try_to_move_user_root_dir_by_path(client: Any, user: Any, users: Any) -> Any:
+def try_to_move_user_root_dir_by_path(client: str, user: str, users: Users) -> None:
     if "oneclient" in client.lower():
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
@@ -305,15 +317,15 @@ def try_to_move_user_root_dir_by_path(client: Any, user: Any, users: Any) -> Any
     )
 )
 def try_to_create_file_in_special_dir(
-    client: Any,
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    file_name: Any,
-    name: Any,
-) -> Any:
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    file_name: str,
+    name: SpecialDir,
+) -> None:
     try_to_create_file_in_special_dir_by_id(
         client,
         users,
@@ -327,15 +339,15 @@ def try_to_create_file_in_special_dir(
 
 
 def try_to_create_file_in_special_dir_by_id(
-    client: Any,
-    users: Any,
-    user: Any,
-    hosts: Any,
-    host: Any,
-    dir_id: Any,
-    file_name: Any,
-    err_msg: Any = "",
-) -> Any:
+    client: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    file_name: str,
+    err_msg: str = "",
+) -> None:
     if client.lower() == "rest":
         try:
             create_empty_file_in_dir_rest(users, user, hosts, host, dir_id, file_name)
@@ -358,8 +370,8 @@ def try_to_create_file_in_special_dir_by_id(
     )
 )
 def try_to_create_file_in_user_root_dir_by_path(
-    client: Any, users: Any, user: Any, file_name: Any
-) -> Any:
+    client: str, users: Users, user: str, file_name: str
+) -> None:
     if "oneclient" in client.lower():
         try:
             oneclient_host = change_client_name_to_hostname(client.lower())
@@ -379,14 +391,14 @@ def try_to_create_file_in_user_root_dir_by_path(
     )
 )
 def try_to_add_qos_to_special_dir(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    expression: Any,
-    name: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    expression: str,
+    name: SpecialDir,
+) -> None:
     try_to_add_qos_to_special_dir_by_id(
         user,
         users,
@@ -399,17 +411,22 @@ def try_to_add_qos_to_special_dir(
 
 
 def try_to_add_qos_to_special_dir_by_id(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    dir_id: Any,
-    expression: Any,
-    err_msg: Any = "",
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    expression: str,
+    err_msg: str = "",
+) -> None:
     try:
         create_qos_requirement_in_op_by_id_rest(
-            user, users, hosts, host, expression, dir_id
+            user,
+            cast(UserTokenMap, users),
+            cast(HostsConfig, hosts),
+            host,
+            expression,
+            dir_id,
         )
         raise AssertionError(err_msg)
     except ApiException as e:
@@ -424,14 +441,14 @@ def try_to_add_qos_to_special_dir_by_id(
     )
 )
 def try_to_add_json_metadata_to_special_dir(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    tmp_memory: Any,
-    expression: Any,
-    name: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    expression: str,
+    name: SpecialDir,
+) -> None:
     try_to_add_json_metadata_to_special_dir_by_id(
         user,
         users,
@@ -444,16 +461,23 @@ def try_to_add_json_metadata_to_special_dir(
 
 
 def try_to_add_json_metadata_to_special_dir_by_id(
-    user: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    dir_id: Any,
-    expression: Any,
-    err_msg: Any = "",
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    expression: str,
+    err_msg: str = "",
+) -> None:
     try:
-        add_json_metadata_to_file_rest(user, users, hosts, host, expression, dir_id)
+        add_json_metadata_to_file_rest(
+            user,
+            cast(UserTokenMap, users),
+            cast(HostsConfig, hosts),
+            host,
+            expression,
+            dir_id,
+        )
         raise AssertionError(err_msg)
     except ApiException as e:
         _assert_ex_err_msg_rest(str(e))
@@ -467,8 +491,13 @@ def try_to_add_json_metadata_to_special_dir_by_id(
     )
 )
 def try_to_establish_dataset_on_special_dir(
-    user: Any, users: Any, hosts: Any, host: Any, tmp_memory: Any, name: Any
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    tmp_memory: TmpMemory,
+    name: SpecialDir,
+) -> None:
     try_to_establish_dataset_on_special_dir_by_id(
         user,
         users,
@@ -482,8 +511,13 @@ def try_to_establish_dataset_on_special_dir(
 
 
 def try_to_establish_dataset_on_special_dir_by_id(
-    user: Any, users: Any, hosts: Any, host: Any, dir_id: Any, err_msg: Any = ""
-) -> Any:
+    user: str,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    dir_id: str,
+    err_msg: str = "",
+) -> None:
     try:
         create_dataset_in_op_by_id_rest(user, users, hosts, host, dir_id, "")
         raise AssertionError(err_msg)

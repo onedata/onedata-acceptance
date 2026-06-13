@@ -8,25 +8,37 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import base64
 import time
-from typing import Any
+from collections.abc import Mapping, MutableMapping
+from typing import Any, Protocol
 
 import yaml
 from onezone_client import TokenApi
 
+from tests.conftest import Hosts, Tokens
 from tests.mixed.steps.rest.onezone.members import translate_privileges
 from tests.mixed.utils.common import login_to_oz
 
+GroupMap = Mapping[str, str]
+SpaceMap = Mapping[str, str]
+TmpMemory = MutableMapping[str, Any]
+TokenConfig = dict[str, Any]
+
+
+class UserLike(Protocol):
+    password: str
+    user_id: str
+
 
 def create_token_with_config_rest(
-    user: Any,
-    config: Any,
-    users: Any,
-    tokens: Any,
-    hosts: Any,
-    tmp_memory: Any,
-    groups: Any,
-    spaces: Any,
-) -> Any:
+    user: str,
+    config: str,
+    users: Mapping[str, UserLike],
+    tokens: Tokens,
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    groups: GroupMap,
+    spaces: SpaceMap,
+) -> None:
     """Create token according to given config.
 
     Config format given in yaml is as follows:
@@ -86,16 +98,16 @@ translation_dict = {
 
 
 def _create_token_with_config(
-    user: Any,
-    config: Any,
-    users: Any,
-    hosts: Any,
-    tmp_memory: Any,
-    tokens: Any,
-    groups: Any,
-    spaces: Any,
-    zone_name: Any,
-) -> Any:
+    user: str,
+    config: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    tokens: Tokens,
+    groups: GroupMap,
+    spaces: SpaceMap,
+    zone_name: str,
+) -> None:
     data = yaml.load(config, yaml.Loader)
     name = data["name"]
     token_type = data["type"]
@@ -138,13 +150,13 @@ def _create_token_with_config(
 
 
 def parse_token_caveats(
-    caveats: Any,
-    token_config: Any,
-    groups: Any,
-    users: Any,
-    spaces: Any,
-    tmp_memory: Any,
-) -> Any:
+    caveats: Mapping[str, Any],
+    token_config: TokenConfig,
+    groups: GroupMap,
+    users: Mapping[str, UserLike],
+    spaces: SpaceMap,
+    tmp_memory: TmpMemory,
+) -> None:
     token_config["caveats"] = []
     expiration = caveats.get("expiration", False)
     region = caveats.get("region", False)
@@ -182,7 +194,9 @@ def parse_token_caveats(
         set_object_id_caveat(token_config, object_id)
 
 
-def set_expiration_caveat(token_config: Any, expiration: Any, tmp_memory: Any) -> Any:
+def set_expiration_caveat(
+    token_config: TokenConfig, expiration: Mapping[str, Any], tmp_memory: TmpMemory
+) -> None:
     time_to = int(time.time()) + expiration["after"] * 60
     token_config["caveats"].append({"type": "time", "validUntil": time_to})
     tmp_memory["expire_time"] = time.strftime(
@@ -190,7 +204,9 @@ def set_expiration_caveat(token_config: Any, expiration: Any, tmp_memory: Any) -
     )
 
 
-def set_geo_caveat(token_config: Any, caveat: Any, geo_type: Any) -> Any:
+def set_geo_caveat(
+    token_config: TokenConfig, caveat: Mapping[str, Any], geo_type: str
+) -> None:
     regions = caveat.get(f"{geo_type} codes", [])
     if caveat.get("allow", False):
         token_config["caveats"].append(
@@ -202,20 +218,29 @@ def set_geo_caveat(token_config: Any, caveat: Any, geo_type: Any) -> Any:
         )
 
 
-def set_address_caveat(token_config: Any, caveat: Any, address_type: Any) -> Any:
+def set_address_caveat(
+    token_config: TokenConfig, caveat: list[str], address_type: str
+) -> None:
     token_config["caveats"].append({"type": address_type.lower(), "whitelist": caveat})
 
 
-def set_consumer_caveat(token_config: Any, caveat: Any, groups: Any, users: Any) -> Any:
+def set_consumer_caveat(
+    token_config: TokenConfig,
+    caveat: list[Mapping[str, str]],
+    groups: GroupMap,
+    users: Mapping[str, UserLike],
+) -> None:
     consumer_list = []
     for consumer in caveat:
         consumer_list.append(set_consumer_in_consumer_caveat(consumer, groups, users))
     token_config["caveats"].append({"type": "consumer", "whitelist": consumer_list})
 
 
-def set_consumer_in_consumer_caveat(consumer: Any, groups: Any, users: Any) -> Any:
+def set_consumer_in_consumer_caveat(
+    consumer: Mapping[str, str], groups: GroupMap, users: Mapping[str, UserLike]
+) -> str:
     cons_type = consumer.get("type", "user")
-    cons_name = consumer.get("consumer name")
+    cons_name = consumer.get("consumer name", "")
     if cons_type == "user":
         value = "usr-*" if "any" in cons_name else f"usr-{users[cons_name].user_id}"
     elif cons_type == "group":
@@ -225,10 +250,12 @@ def set_consumer_in_consumer_caveat(consumer: Any, groups: Any, users: Any) -> A
     return value
 
 
-def set_service_caveat(token_config: Any, given_service: Any) -> Any:
+def set_service_caveat(
+    token_config: TokenConfig, given_service: Mapping[str, list[str]]
+) -> None:
     services_list = []
-    service = given_service.get("Service", False)
-    op_service = given_service.get("Service Onepanel", False)
+    service = given_service.get("Service", [])
+    op_service = given_service.get("Service Onepanel", [])
     if service:
         for curr_service in service:
             if curr_service == "Any Oneprovider":
@@ -249,38 +276,45 @@ def set_service_caveat(token_config: Any, given_service: Any) -> Any:
     token_config["caveats"].append({"type": "service", "whitelist": services_list})
 
 
-def set_interface_caveat(token_config: Any, service: Any) -> Any:
+def set_interface_caveat(token_config: TokenConfig, service: str) -> None:
     token_config["caveats"].append({"type": "interface", "interface": service.lower()})
 
 
-def set_readonly_caveat(token_config: Any) -> Any:
+def set_readonly_caveat(token_config: TokenConfig) -> None:
     token_config["caveats"].append({"type": "data.readonly"})
 
 
-def set_path_caveat(token_config: Any, paths: Any, spaces: Any) -> Any:
+def set_path_caveat(
+    token_config: TokenConfig, paths: list[Mapping[str, str]], spaces: SpaceMap
+) -> None:
     whitelist = []
     for path in paths:
         whitelist.append(decode_path(path, spaces))
     token_config["caveats"].append({"type": "data.path", "whitelist": whitelist})
 
 
-def decode_path(path: Any, spaces: Any) -> Any:
+def decode_path(path: Mapping[str, str], spaces: SpaceMap) -> str:
     space = spaces[path["space"]]
-    path = path["path"]
-    path = "" if path == "/" else path
-    can_path = f"/{space}{path}"
+    file_path = path["path"]
+    file_path = "" if file_path == "/" else file_path
+    can_path = f"/{space}{file_path}"
     encoded = base64.b64encode(can_path.encode("ascii"))
     return encoded.decode("ascii")
 
 
-def set_object_id_caveat(token_config: Any, object_ids: Any) -> Any:
+def set_object_id_caveat(token_config: TokenConfig, object_ids: list[str]) -> None:
     whitelist = list(object_ids)
     token_config["caveats"].append({"type": "data.objectid", "whitelist": whitelist})
 
 
 def revoke_token_rest(
-    user: Any, users: Any, hosts: Any, zone_name: Any, tokens: Any, token_name: Any
-) -> Any:
+    user: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    zone_name: str,
+    tokens: Tokens,
+    token_name: str,
+) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[zone_name]["hostname"])
     token_api = TokenApi(user_client)
 
@@ -294,15 +328,15 @@ def revoke_token_rest(
 
 
 def assert_token_with_config_rest(
-    user: Any,
-    config: Any,
-    users: Any,
-    hosts: Any,
-    tmp_memory: Any,
-    groups: Any,
-    spaces: Any,
-    zone_name: Any = "onezone",
-) -> Any:
+    user: str,
+    config: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    tmp_memory: TmpMemory,
+    groups: GroupMap,
+    spaces: SpaceMap,
+    zone_name: str = "onezone",
+) -> None:
     data = yaml.load(config, yaml.Loader)
 
     name = data["name"]
@@ -324,13 +358,13 @@ def assert_token_with_config_rest(
         assert_token_privileges(privileges, response)
 
 
-def assert_token_type(token_type: Any, token: Any) -> Any:
+def assert_token_type(token_type: str, token: Any) -> None:
     assert (
         getattr(token.type, f"{token_type}_token") is not None
     ), f"token is not {token_type}"
 
 
-def assert_invite_type(invite_type: Any, token: Any) -> Any:
+def assert_invite_type(invite_type: str, token: Any) -> None:
     actual = token.type.invite_token.invite_type
     expected = translation_dict[invite_type]["type"]
     assert (
@@ -338,15 +372,20 @@ def assert_invite_type(invite_type: Any, token: Any) -> Any:
     ), f"Invite token invite type {actual} is not as expected {expected}"
 
 
-def get_caveat(caveat_name: Any, caveats: Any) -> Any:
+def get_caveat(caveat_name: str, caveats: list[dict[str, Any]]) -> dict[str, Any]:
     caveat = [cav for cav in caveats if cav["type"] == caveat_name][0]
     assert len(caveat), f"Caveat {caveat_name} not in token configuration"
     return caveat
 
 
 def assert_token_caveats(
-    caveats: Any, token: Any, groups: Any, users: Any, spaces: Any, tmp_memory: Any
-) -> Any:
+    caveats: Mapping[str, Any],
+    token: Any,
+    groups: GroupMap,
+    users: Mapping[str, UserLike],
+    spaces: SpaceMap,
+    tmp_memory: TmpMemory,
+) -> None:
     expiration = caveats.get("expiration", False)
     region = caveats.get("region", False)
     country = caveats.get("country", False)
@@ -388,8 +427,10 @@ def assert_token_caveats(
 
 
 def assert_expiration_caveat(
-    token_caveat: Any, expiration: Any, tmp_memory: Any
-) -> Any:
+    token_caveat: Mapping[str, Any],
+    expiration: Mapping[str, Any],
+    tmp_memory: TmpMemory,
+) -> None:
     if expiration["set"]:
         exp_time = tmp_memory["expire_time"]
         if "/" in exp_time:
@@ -400,7 +441,11 @@ def assert_expiration_caveat(
         ), f"Wrong expiration time caveat: exp: {exp_time}, given: {token_caveat}"
 
 
-def assert_geo_caveat(token_caveat: Any, expected_caveat: Any, geo_type: Any) -> Any:
+def assert_geo_caveat(
+    token_caveat: Mapping[str, Any],
+    expected_caveat: Mapping[str, Any],
+    geo_type: str,
+) -> None:
     regions = expected_caveat.get(f"{geo_type} codes", [])
     if expected_caveat.get("allow", False):
         assert (
@@ -419,8 +464,8 @@ def assert_geo_caveat(token_caveat: Any, expected_caveat: Any, geo_type: Any) ->
 
 
 def assert_address_caveat(
-    token_caveat: Any, expected_caveat: Any, address_type: Any
-) -> Any:
+    token_caveat: Mapping[str, Any], expected_caveat: list[str], address_type: str
+) -> None:
     assert len(token_caveat["whitelist"]) == len(expected_caveat), (
         f"Expected {address_type} caveat list {expected_caveat} is "
         "not as long as actual token_caveat whitelist "
@@ -433,8 +478,11 @@ def assert_address_caveat(
 
 
 def assert_consumer_caveat(
-    token_caveat: Any, expected_caveat: Any, groups: Any, users: Any
-) -> Any:
+    token_caveat: Mapping[str, Any],
+    expected_caveat: list[Mapping[str, str]],
+    groups: GroupMap,
+    users: Mapping[str, UserLike],
+) -> None:
     token_list = token_caveat["whitelist"]
     assert len(token_list) == len(expected_caveat), (
         f"Expected consumer caveat list {expected_caveat} is "
@@ -446,13 +494,18 @@ def assert_consumer_caveat(
 
 
 def assert_consumer_in_consumer_caveat(
-    consumer: Any, token_list: Any, groups: Any, users: Any
-) -> Any:
+    consumer: Mapping[str, str],
+    token_list: list[str],
+    groups: GroupMap,
+    users: Mapping[str, UserLike],
+) -> None:
     value = set_consumer_in_consumer_caveat(consumer, groups, users)
     assert value in token_list, f"{consumer} not in consumer token caveat"
 
 
-def assert_service_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
+def assert_service_caveat(
+    token_caveat: Mapping[str, Any], expected_caveat: list[str]
+) -> None:
     services_list = []
     token_list = token_caveat["whitelist"]
     services = [service for service in expected_caveat if "Onepanel" not in service]
@@ -480,13 +533,19 @@ def assert_service_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
         assert service in token_list, f"Expected service {service} not in {token_list}"
 
 
-def assert_interface_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
+def assert_interface_caveat(
+    token_caveat: Mapping[str, Any], expected_caveat: str
+) -> None:
     assert (
         token_caveat["interface"] == expected_caveat.lower()
     ), f"Interface {expected_caveat} not set in token caveat"
 
 
-def assert_path_caveat(token_caveat: Any, expected_caveat: Any, spaces: Any) -> Any:
+def assert_path_caveat(
+    token_caveat: Mapping[str, Any],
+    expected_caveat: list[Mapping[str, str]],
+    spaces: SpaceMap,
+) -> None:
     token_list = token_caveat["whitelist"]
     whitelist = []
     for path in expected_caveat:
@@ -500,7 +559,9 @@ def assert_path_caveat(token_caveat: Any, expected_caveat: Any, spaces: Any) -> 
     ), f"Expected {whitelist} and actual {token_list} paths lists have different length"
 
 
-def assert_object_id_caveat(token_caveat: Any, expected_caveat: Any) -> Any:
+def assert_object_id_caveat(
+    token_caveat: Mapping[str, Any], expected_caveat: list[str]
+) -> None:
     token_list = token_caveat["whitelist"]
     assert len(token_list) == len(expected_caveat), (
         f"Expected objectID caveat list {expected_caveat} is "
@@ -523,7 +584,7 @@ privileges_translation = {
 }
 
 
-def assert_token_privileges(privileges: Any, response: Any) -> Any:
+def assert_token_privileges(privileges: Mapping[str, Any], response: Any) -> None:
     actual_privs = response.metadata.privileges
     expected_privs = []
     for priv_group, priv_group_items in privileges.items():

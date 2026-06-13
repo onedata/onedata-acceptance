@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping, MutableMapping
-from typing import Any, Protocol
+from typing import Literal, NotRequired, Protocol, TypedDict, cast
 
 import yaml
 from onezone_client.rest import ApiException
@@ -109,7 +109,16 @@ DEFAULT_GRANT = [
 ]
 
 IdMap = Mapping[str, str]
-TmpMemory = MutableMapping[str, Any]
+Mailbox = MutableMapping[str, str]
+UserTmpMemory = MutableMapping[str, Mailbox]
+TmpMemory = MutableMapping[str, UserTmpMemory]
+PrivilegeGroupConfig = TypedDict(
+    "PrivilegeGroupConfig",
+    {
+        "granted": bool | Literal["Partially"],
+        "privilege subtypes": NotRequired[Mapping[str, bool]],
+    },
+)
 
 
 class UserLike(Protocol):
@@ -118,11 +127,13 @@ class UserLike(Protocol):
 
 
 def translate_privileges(
-    privileges: Mapping[str, Any], grant: list[str], revoke: list[str]
+    privileges: Mapping[str, PrivilegeGroupConfig],
+    grant: list[str],
+    revoke: list[str],
 ) -> None:
     for privileges_group, privileges_group_items in privileges.items():
         if privileges_group_items["granted"] == "Partially":
-            items = privileges_group_items["privilege subtypes"].items()
+            items = privileges_group_items.get("privilege subtypes", {}).items()
             for privilege, granted in items:
                 if granted:
                     grant.append(privilege)
@@ -157,7 +168,9 @@ def fail_to_set_privileges_using_rest(
     space_api = SpaceApi(user_client_oz)
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = yaml.load(config, yaml.Loader)
+    privileges = cast(
+        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
+    )
     translate_privileges(privileges, grant, revoke)
     data = {"grant": grant, "revoke": revoke}
     try:
@@ -192,7 +205,9 @@ def assert_privileges_in_space_using_rest(
     ).privileges
     grant: list[str] = []
     revoke: list[str] = []
-    privileges = yaml.load(config, yaml.Loader)
+    privileges = cast(
+        Mapping[str, PrivilegeGroupConfig], yaml.load(config, yaml.Loader)
+    )
     translate_privileges(privileges, grant, revoke)
     grant.sort()
     user_privileges.sort()
