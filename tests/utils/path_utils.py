@@ -12,7 +12,7 @@ import sys
 import time
 from collections.abc import Callable
 from types import ModuleType
-from typing import Any, Optional, Protocol
+from typing import Optional, Protocol
 
 
 class TestNodeLike(Protocol):
@@ -96,7 +96,7 @@ def get_module(name: str) -> ModuleType:
     return sys.modules[name]
 
 
-def get_function(module: ModuleType, function_name: str) -> Callable[..., Any]:
+def get_function(module: ModuleType, function_name: str) -> Callable[..., object]:
     """Returns function object from given module"""
     return getattr(module, function_name)
 

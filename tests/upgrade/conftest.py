@@ -8,28 +8,28 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Generator
-from typing import Any
+from typing import cast
 
 import pytest
 
-from tests.conftest import export_logs
-from tests.upgrade.utils.upgrade_utils import UpgradeTestsController
+from tests.conftest import EnvDesc, Hosts, TestConfig, Users, export_logs
+from tests.upgrade.utils.upgrade_utils import UpgradeConfig, UpgradeTestsController
 from tests.utils.environment_utils import clean_env
 
 
 @pytest.fixture()
 def tests_controller(
-    test_config: Any,
-    hosts: Any,
-    clients: Any,
-    request: Any,
-    users: Any,
-    env_desc: Any,
+    test_config: TestConfig,
+    hosts: Hosts,
+    clients: dict[str, object],
+    request: pytest.FixtureRequest,
+    users: Users,
+    env_desc: EnvDesc,
     scenario_abs_path: str,
     env_description_abs_path: str,
 ) -> UpgradeTestsController:
     return UpgradeTestsController(
-        test_config,
+        cast(UpgradeConfig, test_config),
         hosts,
         clients,
         request,
@@ -42,7 +42,7 @@ def tests_controller(
 
 @pytest.fixture(autouse=True, scope="module")
 def finalize(
-    request: Any, env_description_abs_path: str
+    request: pytest.FixtureRequest, env_description_abs_path: str
 ) -> Generator[None, None, None]:
     yield
     export_logs(request, env_description_abs_path, "after_upgrade")

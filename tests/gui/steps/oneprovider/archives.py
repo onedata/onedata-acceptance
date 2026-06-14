@@ -270,7 +270,7 @@ def wt_click_menu_for_archive(
     tmp_memory: TmpMemory,
     description: str,
     selenium: SeleniumDrivers,
-    which_browser: str,
+    which_browser: WhichBrowser,
 ) -> None:
     click_menu_for_archive(
         browser_id, tmp_memory, description, selenium, which_browser=which_browser

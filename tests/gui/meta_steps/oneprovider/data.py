@@ -648,7 +648,9 @@ def assert_mtime_not_earlier_than_op_gui(
         item_browser="file browser",
     )
     item_name = _select_item(selenium, browser_id, tmp_memory, path)
-    assert_item_in_file_browser_is_of_mdate(browser_id, item_name, mtime, tmp_memory)
+    assert_item_in_file_browser_is_of_mdate(
+        browser_id, item_name, float(mtime), tmp_memory
+    )
 
 
 def _select_item(

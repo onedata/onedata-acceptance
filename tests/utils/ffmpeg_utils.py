@@ -18,11 +18,19 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from itertools import chain, repeat
 from math import sqrt
-from typing import Any
+from typing import TypedDict
+
+import pytest
+from _pytest.reports import TestReport
 
 FfmpegProcess = sp.Popen[str]
 MoviePaths = list[str]
 Offset = tuple[int, int]
+
+
+class FfmpegDetails(TypedDict, total=False):
+    proc: FfmpegProcess
+    movies: MoviePaths
 
 
 def start_recording(
@@ -76,9 +84,9 @@ def stop_recording(proc: FfmpegProcess) -> None:
 
 
 class RecorderManager:
-    ffmpeg_details: dict[str, Any] = {}
+    ffmpeg_details: FfmpegDetails = {}
 
-    def __init__(self, request: Any) -> None:
+    def __init__(self, request: pytest.FixtureRequest) -> None:
         self.request = request
 
     def handle_start_recording(self) -> None:
@@ -112,15 +120,15 @@ class RecorderManager:
             )
             self.ffmpeg_details["proc"] = ffmpeg_proc
             self.ffmpeg_details["movies"] = movies
-            self.request.node._movies = movies  # pylint: disable=protected-access
+            setattr(self.request.node, "_movies", movies)
 
-    def handle_stop_recording(self, status: Any) -> None:
+    def handle_stop_recording(self, status: TestReport) -> None:
         recording = self.request.config.getoption("--xvfb-recording")
         if "proc" in self.ffmpeg_details:
             stop_recording(self.ffmpeg_details["proc"])
             # if setup and call of this given passed then whole test passed
             if hasattr(self.request.node, "setup_xvfb_recorder"):
-                setup_passed = self.request.node.setup_xvfb_recorder.passed
+                setup_passed = getattr(self.request.node, "setup_xvfb_recorder").passed
             else:
                 setup_passed = False
             call_passed = status.passed

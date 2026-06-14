@@ -8,6 +8,7 @@ import time
 import traceback
 from collections.abc import Callable, Mapping
 from itertools import chain
+from typing import Optional
 
 import requests
 import urllib3
@@ -27,11 +28,11 @@ from .http_exceptions import HTTPServiceUnavailable, raise_http_exception
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-Headers = Mapping[str, object] | None
-Params = Mapping[str, object] | None
-RequestData = object | None
-Certificate = object | None
-Auth = object | None
+Headers = Optional[Mapping[str, object]]
+Params = Optional[Mapping[str, object]]
+RequestData = Optional[object]
+Certificate = Optional[object]
+Auth = Optional[object]
 HttpMethod = Callable[..., requests.Response]
 
 

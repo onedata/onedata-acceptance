@@ -1043,7 +1043,7 @@ def assert_exception_in_element_content_in_task_audit_log(
     )
 )
 def assert_element_content_in_task_audit_log(
-    expected_data: str,
+    expected_data: str | list[str],
     element: str,
     selenium: SeleniumDrivers,
     browser_id: str,

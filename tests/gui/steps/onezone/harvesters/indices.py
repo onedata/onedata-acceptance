@@ -93,7 +93,7 @@ def assert_index_has_appeared_in_indices_page(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_index_record_in_indices_page(
-    selenium: SeleniumDrivers, browser_id: str, index_name: str
+    selenium: SeleniumDrivers, browser_id: str, index_name: str | int
 ) -> None:
     driver = selenium[browser_id]
     indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list
@@ -124,7 +124,7 @@ def assert_used_by_gui_tag_on_indices_page(
 )
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_progress_in_harvesting(
-    selenium: SeleniumDrivers, browser_id: str, index_name: str
+    selenium: SeleniumDrivers, browser_id: str, index_name: str | int
 ) -> None:
     driver = selenium[browser_id]
     value = "100%"

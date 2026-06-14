@@ -415,7 +415,7 @@ def copy_token_from_modal(selenium: SeleniumDrivers, browser_id: str) -> None:
 def assert_element_is_groups_child(
     selenium: SeleniumDrivers,
     browser_id: str,
-    option: str,
+    option: str | bool,
     child: str,
     parent: str,
 ) -> None:
@@ -857,7 +857,7 @@ def assert_privileges_in_members_subpage(
     member_type: str,
     where: str,
     config: str,
-    option: str,
+    option: str | bool,
 ) -> None:
     member_type = member_type + "s"
     privileges = yaml.load(config, yaml.Loader)

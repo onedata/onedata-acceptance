@@ -10,7 +10,7 @@ import os
 import re
 import subprocess as sp
 import sys
-from typing import Any, Literal, Optional, overload
+from typing import Literal, Optional, cast, overload
 
 import urllib3
 import yaml
@@ -18,6 +18,10 @@ from kubernetes import client, config  # pylint: disable=import-error
 
 type Command = list[str]
 type CommandResult = str | int
+type YamlValue = Optional[
+    str | int | float | bool | list["YamlValue"] | dict[str, "YamlValue"]
+]
+type YamlObject = dict[str, YamlValue]
 
 
 class OnenvError(BaseException):
@@ -27,11 +31,11 @@ class OnenvError(BaseException):
 @overload
 def run_onenv_command(
     command: str,
-    args: list[str] | None = None,
+    args: Optional[list[str]] = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[True] = True,
-    cwd: str | None = "one-env",
+    cwd: Optional[str] = "one-env",
     onenv_path: str = "./onenv",
 ) -> str: ...
 
@@ -39,11 +43,11 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: list[str] | None = None,
+    args: Optional[list[str]] = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: Literal[False] = False,
-    cwd: str | None = "one-env",
+    cwd: Optional[str] = "one-env",
     onenv_path: str = "./onenv",
 ) -> int: ...
 
@@ -51,22 +55,22 @@ def run_onenv_command(
 @overload
 def run_onenv_command(
     command: str,
-    args: list[str] | None = None,
+    args: Optional[list[str]] = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: str | None = "one-env",
+    cwd: Optional[str] = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult: ...
 
 
 def run_onenv_command(
     command: str,
-    args: list[str] | None = None,
+    args: Optional[list[str]] = None,
     fail_with_error: bool = True,
     sudo: bool = False,
     return_output: bool = True,
-    cwd: str | None = "one-env",
+    cwd: Optional[str] = "one-env",
     onenv_path: str = "./onenv",
 ) -> CommandResult:
     if sudo:
@@ -86,7 +90,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[True] = True,
-    cwd: str | None = None,
+    cwd: Optional[str] = None,
     verbose: bool = True,
 ) -> str: ...
 
@@ -96,7 +100,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: Literal[False] = False,
-    cwd: str | None = None,
+    cwd: Optional[str] = None,
     verbose: bool = True,
 ) -> int: ...
 
@@ -106,7 +110,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: str | None = None,
+    cwd: Optional[str] = None,
     verbose: bool = True,
 ) -> CommandResult: ...
 
@@ -115,7 +119,7 @@ def run_command(
     cmd: Command,
     fail_with_error: bool = True,
     return_output: bool = True,
-    cwd: str | None = None,
+    cwd: Optional[str] = None,
     verbose: bool = True,
 ) -> CommandResult:
     if verbose:
@@ -280,17 +284,20 @@ def match_pods(substring: str) -> list[client.V1Pod]:
 
 
 def get_current_namespace() -> str:
-    return get("currentNamespace")
+    namespace = get("currentNamespace")
+    if not isinstance(namespace, str):
+        raise TypeError("currentNamespace must be a string")
+    return namespace
 
 
-def get(key: str) -> Any:
+def get(key: str) -> YamlValue:
     loaded_config = load_yaml(user_config_path())
     return loaded_config[key]
 
 
-def load_yaml(path: str) -> dict[str, Any]:
+def load_yaml(path: str) -> YamlObject:
     with open(path) as f:
-        return yaml.load(f, yaml.Loader)
+        return cast(YamlObject, yaml.load(f, yaml.Loader))
 
 
 def user_config_path() -> str:

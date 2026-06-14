@@ -8,7 +8,7 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import Any, Dict, List, Mapping, Optional, cast
+from typing import Literal, Mapping, Optional, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -45,6 +45,65 @@ START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = "one-env"
 ENV_READY_TIMEOUT_SECONDS = 300
 
+type StringMapping = Mapping[str, str]
+
+
+PodConfig = TypedDict(
+    "PodConfig",
+    {
+        "name": str,
+        "ip": str,
+        "domain": str,
+        "hostname": str,
+        "container-id": str,
+        "service-type": str,
+        "provider-host": str,
+    },
+    total=False,
+)
+
+
+class DeploymentStatus(TypedDict, total=False):
+    ready: bool
+    pods: dict[str, PodConfig]
+
+
+class PatchUser(TypedDict, total=False):
+    name: str
+    password: str
+    idps: dict[str, object]
+
+
+PatchConfig = TypedDict(
+    "PatchConfig",
+    {"users": list[PatchUser], "global": dict[str, object]},
+    total=False,
+)
+
+
+class KubernetesMetadata(TypedDict):
+    name: str
+    namespace: str
+    labels: dict[str, str]
+
+
+class KubernetesContainerStatus(TypedDict, total=False):
+    containerID: str
+
+
+class KubernetesStatus(TypedDict, total=False):
+    podIP: str
+    containerStatuses: list[KubernetesContainerStatus]
+
+
+class KubernetesPod(TypedDict):
+    metadata: KubernetesMetadata
+    status: KubernetesStatus
+
+
+class KubernetesPods(TypedDict):
+    items: list[KubernetesPod]
+
 
 def start_environment(
     scenario_path: str,
@@ -61,7 +120,7 @@ def start_environment(
     wait_args = parse_wait_args(request)
     patch_args = parse_patch_args(request, patch_path) if patch_path else []
 
-    dep_status = {}
+    dep_status: DeploymentStatus = {}
     started = False
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
@@ -143,7 +202,7 @@ def update_etc_hosts() -> None:
     sp.call(["sudo", "cp", tmp_hosts_path, etc_hosts_path])
 
 
-def configure_os(scenario_path: str, dep_status: Dict[str, Any]) -> None:
+def configure_os(scenario_path: str, dep_status: DeploymentStatus) -> None:
     """
     Function responsible for creating system users and groups in containers for
     Onezone / Oneprovider / Oneclient.
@@ -198,27 +257,30 @@ def setup_hosts_cfg(hosts: Hosts, request: pytest.FixtureRequest) -> None:
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
-def setup_users(patch_cfg: Dict[str, Any], users: Users, zone_hostname: str) -> None:
+def setup_users(patch_cfg: PatchConfig, users: Users, zone_hostname: str) -> None:
     for user_cfg in patch_cfg.get("users", []):
         user_name = user_cfg.get("name")
+        if user_name is None:
+            raise ValueError("Patch user must have a name")
         password = user_cfg.get("password")
         new_user = User(
             username=user_name, zone_hostname=zone_hostname, password=password
         )
-        users[user_name] = cast(Any, new_user)
+        users[user_name] = cast(AdminUser, new_user)
         idps = user_cfg.get("idps", {})
         for idp_type in idps:
             new_user.idps.append(idp_type)
             if idp_type == "keycloak":
                 global_cfg = patch_cfg.get("global")
                 if global_cfg:
-                    keycloak_suffix = global_cfg.get("keycloakInstance", {}).get(
-                        "idpName"
+                    keycloak_cfg = cast(
+                        Mapping[str, str], global_cfg.get("keycloakInstance", {})
                     )
+                    keycloak_suffix = keycloak_cfg.get("idpName")
                     new_user.keycloak_name = f"keycloak-{keycloak_suffix}"
 
 
-def add_luma_mappings(patch_cfg: Dict[str, Any], users: Users, hosts: Hosts) -> None:
+def add_luma_mappings(patch_cfg: PatchConfig, users: Users, hosts: Hosts) -> None:
     admin_user = users["admin"]
 
     spaces = get_all_spaces_details(
@@ -230,17 +292,19 @@ def add_luma_mappings(patch_cfg: Dict[str, Any], users: Users, hosts: Hosts) -> 
 
     for user_cfg in patch_cfg.get("users", []):
         user_name = user_cfg.get("name")
+        if user_name is None:
+            raise ValueError("Patch user must have a name")
         new_user = users[user_name]
         add_user_luma_mapping(admin_user, new_user, local_feed_luma_storages)
 
     add_spaces_luma_mapping(admin_user, local_feed_luma_storages, spaces)
 
 
-def get_deployment_status() -> Dict[str, Any]:
-    return yaml.load(run_onenv_command("status"), yaml.Loader)
+def get_deployment_status() -> DeploymentStatus:
+    return cast(DeploymentStatus, yaml.load(run_onenv_command("status"), yaml.Loader))
 
 
-def check_deployment(deployment_status: Dict[str, Any]) -> None:
+def check_deployment(deployment_status: DeploymentStatus) -> None:
     env_ready = deployment_status.get("ready")
 
     if not env_ready:
@@ -249,7 +313,7 @@ def check_deployment(deployment_status: Dict[str, Any]) -> None:
         )
 
 
-def parse_patch_args(request: pytest.FixtureRequest, patch_path: str) -> List[str]:
+def parse_patch_args(request: pytest.FixtureRequest, patch_path: str) -> list[str]:
     patch_args = []
     local_charts_path = request.config.getoption("--local-charts-path")
 
@@ -260,7 +324,7 @@ def parse_patch_args(request: pytest.FixtureRequest, patch_path: str) -> List[st
     return patch_args
 
 
-def parse_wait_args(request: pytest.FixtureRequest) -> List[str]:
+def parse_wait_args(request: pytest.FixtureRequest) -> list[str]:
     wait_args = []
 
     timeout = request.config.getoption("--timeout")
@@ -271,7 +335,7 @@ def parse_wait_args(request: pytest.FixtureRequest) -> List[str]:
 
 def parse_up_args(
     request: pytest.FixtureRequest, test_config: Optional[TestConfig]
-) -> List[str]:
+) -> list[str]:
     up_args = []
 
     option_values = [
@@ -312,8 +376,9 @@ def parse_up_args(
             (request.config.getoption("--oc-image"), "-ci", "oneclient"),
         ]:
             if not image_value:
-                initial_versions = cast(Mapping[str, Any], test_config).get(
-                    "initialVersions", {}
+                initial_versions = cast(
+                    Mapping[str, str],
+                    cast(Mapping[str, object], test_config).get("initialVersions", {}),
                 )
                 version_val = initial_versions.get(service_name)
                 up_args.extend(
@@ -334,7 +399,7 @@ def config_image_spec_to_image(service: str, version: str) -> str:
     return f"docker.onedata.org/{service}-dev:{version}"
 
 
-def create_users_in_pod(pod_name: str, users: List[str]) -> None:
+def create_users_in_pod(pod_name: str, users: list[str]) -> None:
     """Creates system users on pod specified by 'pod_name'."""
 
     def _user_exists(user: str, pod_name: str) -> bool:
@@ -366,7 +431,7 @@ def create_users_in_pod(pod_name: str, users: List[str]) -> None:
             run_kubectl_command("exec", command)
 
 
-def create_groups_in_pod(pod_name: str, groups: Dict[str, List[str]]) -> None:
+def create_groups_in_pod(pod_name: str, groups: dict[str, list[str]]) -> None:
     """Creates system groups on pod specified by 'pod_name'."""
 
     def _group_exists(group: str, pod_name: str) -> bool:
@@ -391,9 +456,9 @@ def create_groups_in_pod(pod_name: str, groups: Dict[str, List[str]]) -> None:
                 run_kubectl_command("exec", command)
 
 
-def get_pods_config() -> Dict[str, Any]:
+def get_pods_config() -> dict[str, PodConfig]:
     pods_json = get_pods_with_kubectl()["items"]
-    pods = {}
+    pods: dict[str, PodConfig] = {}
     for pod in pods_json:
         pod_data = pod["metadata"]
         pod_title = pod_data["name"]
@@ -408,11 +473,14 @@ def get_pods_config() -> Dict[str, Any]:
         if pod_container_id:
             pod_container_id = pod_container_id.replace("docker://", "")
 
-        pods[pod_title] = {
-            "name": pod_name,
-            "ip": pod_ip,
-            "container-id": pod_container_id,
-        }
+        pods[pod_title] = cast(
+            PodConfig,
+            {
+                "name": pod_name,
+                "ip": pod_ip,
+                "container-id": pod_container_id,
+            },
+        )
 
         pod_domain = f"{pod_name}.{pod_namespace}.svc.cluster.local"
         pod_hostname = f"{pod_title}.{pod_domain}"
@@ -420,22 +488,26 @@ def get_pods_config() -> Dict[str, Any]:
         pods[pod_title]["domain"] = pod_domain
         pods[pod_title]["hostname"] = pod_hostname
 
-        pods[pod_title]["service-type"] = (
-            pod_service_type if pod_service_type else pod_service_name
+        pods[pod_title]["service-type"] = cast(
+            str, pod_service_type if pod_service_type else pod_service_name
         )
 
     return pods
 
 
-def get_pods_with_kubectl() -> Any:
+def get_pods_with_kubectl() -> KubernetesPods:
     cmd = ["pods", "-o", "json"]
     output = run_kubectl_command("get", cmd, verbose=False)
-    return json.loads(output)
+    return cast(KubernetesPods, json.loads(output))
 
 
 def parse_oz_op_cfg(
-    pod_name: Any, pod_cfg: Any, service_type: Any, add_test_domain: Any, hosts: Any
-) -> Any:
+    pod_name: str,
+    pod_cfg: PodConfig,
+    service_type: str,
+    add_test_domain: bool,
+    hosts: Hosts,
+) -> None:
     alias = service_name_to_alias_mapping(pod_name)
     name, hostname, ip, container_id = (
         pod_cfg.get("name"),
@@ -447,17 +519,17 @@ def parse_oz_op_cfg(
     hosts[alias] = {
         "pod-name": pod_name,
         "service-type": service_type,
-        "name": name,
-        "hostname": hostname,
-        "ip": ip,
-        "container-id": container_id,
+        "name": cast(str, name),
+        "hostname": cast(str, hostname),
+        "ip": cast(str, ip),
+        "container-id": cast(str, container_id),
         "panel": {"hostname": f"{hostname}:{PANEL_REST_PORT}"},
     }
     if add_test_domain and service_type == "oneprovider":
-        add_etc_hosts_entries(ip, f"{hostname}.test")
+        add_etc_hosts_entries(cast(str, ip), f"{hostname}.test")
 
 
-def parse_client_cfg(pod_name: Any, pod_cfg: Any, hosts: Any) -> Any:
+def parse_client_cfg(pod_name: str, pod_cfg: PodConfig, hosts: Hosts) -> None:
     ip, container_id, provider_host = (
         pod_cfg.get("ip"),
         pod_cfg.get("container-id"),
@@ -465,15 +537,17 @@ def parse_client_cfg(pod_name: Any, pod_cfg: Any, hosts: Any) -> Any:
     )
 
     client_alias = client_alias_to_pod_mapping().get(pod_name)
+    if client_alias is None:
+        raise ValueError(f"Missing client alias for pod {pod_name}")
     hosts[client_alias] = {
-        "ip": ip,
-        "container-id": container_id,
+        "ip": cast(str, ip),
+        "container-id": cast(str, container_id),
         "pod-name": pod_name,
-        "provider-host": provider_host,
+        "provider-host": cast(str, provider_host),
     }
 
 
-def parse_elasticsearch_cfg(pod_cfg: Any, hosts: Any) -> Any:
+def parse_elasticsearch_cfg(pod_cfg: PodConfig, hosts: Hosts) -> None:
     ip, container_id, name, hostname = (
         pod_cfg.get("ip"),
         pod_cfg.get("container-id"),
@@ -481,27 +555,47 @@ def parse_elasticsearch_cfg(pod_cfg: Any, hosts: Any) -> Any:
         pod_cfg.get("hostname"),
     )
     hosts["elasticsearch"] = {
-        "ip": ip,
-        "container-id": container_id,
-        "name": name,
-        "hostname": hostname,
+        "ip": cast(str, ip),
+        "container-id": cast(str, container_id),
+        "name": cast(str, name),
+        "hostname": cast(str, hostname),
     }
 
 
-def add_etc_hosts_entries(service_ip: Any, service_host: Any) -> Any:
+def add_etc_hosts_entries(service_ip: str, service_host: str) -> None:
     sp.call(
         f'sudo bash -c "echo {service_ip} {service_host} >> /etc/hosts"',
         shell=True,
     )
 
 
+@overload
 def run_kubectl_command(
-    command: Any,
-    args: Any = None,
-    fail_with_error: Any = True,
-    return_output: Any = True,
-    verbose: Any = True,
-) -> Any:
+    command: str,
+    args: Optional[list[str]] = None,
+    fail_with_error: bool = True,
+    return_output: Literal[True] = True,
+    verbose: bool = True,
+) -> str: ...
+
+
+@overload
+def run_kubectl_command(
+    command: str,
+    args: Optional[list[str]] = None,
+    fail_with_error: bool = True,
+    return_output: Literal[False] = False,
+    verbose: bool = True,
+) -> int: ...
+
+
+def run_kubectl_command(
+    command: str,
+    args: Optional[list[str]] = None,
+    fail_with_error: bool = True,
+    return_output: bool = True,
+    verbose: bool = True,
+) -> str | int:
     cmd = ["kubectl", command]
     if args:
         cmd.extend(args)
@@ -513,12 +607,13 @@ def run_kubectl_command(
     )
 
 
-def clean_env() -> Any:
+def clean_env() -> None:
     run_onenv_command("clean", ["-a", "-s", "-d", "-v"])
 
 
-def verify_env_ready(admin_user: Any, hosts: Any) -> Any:
-    zone_hostname = hosts["onezone"]["hostname"]
+def verify_env_ready(admin_user: AdminUser, hosts: Mapping[str, object]) -> None:
+    zone = cast(Mapping[str, str], hosts["onezone"])
+    zone_hostname = zone["hostname"]
     ready = False
     start = time.time()
     while not ready:
@@ -541,28 +636,30 @@ def verify_env_ready(admin_user: Any, hosts: Any) -> Any:
             pass
 
 
-def get_providers_list(admin_user: Any, zone_hostname: Any) -> Any:
+def get_providers_list(admin_user: AdminUser, zone_hostname: str) -> list[str]:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("providers"),
         headers={"X-Auth-Token": admin_user.token, "Content-Type": "application/json"},
     )
-    return json.loads(response.content)["providers"]
+    return cast(list[str], json.loads(response.content)["providers"])
 
 
-def is_provider_online(admin_user: Any, zone_hostname: Any, provider: Any) -> Any:
+def is_provider_online(
+    admin_user: AdminUser, zone_hostname: str, provider: str
+) -> bool:
     response = http_get(
         ip=zone_hostname,
         port=OZ_REST_PORT,
         path=get_zone_rest_path("providers", provider),
         headers={"X-Auth-Token": admin_user.token, "Content-Type": "application/json"},
     )
-    return json.loads(response.content)["online"]
+    return cast(bool, json.loads(response.content)["online"])
 
 
 @repeat_failed(timeout=60 * 4)
-def wait_for_pod_running_phase(pod_name: Any) -> Any:
+def wait_for_pod_running_phase(pod_name: str) -> None:
     out = run_kubectl_command(
         "get", ["pod", pod_name, "--no-headers", "-o", "json"], verbose=False
     )
@@ -571,7 +668,7 @@ def wait_for_pod_running_phase(pod_name: Any) -> Any:
 
 
 @repeat_failed(timeout=60 * 4)
-def wait_for_pod_to_stop(pod_name: Any) -> Any:
+def wait_for_pod_to_stop(pod_name: str) -> None:
     try:
         _ = run_kubectl_command("get", ["pod", pod_name], verbose=False)
         raise AssertionError(f"pod: {pod_name} is still visible")

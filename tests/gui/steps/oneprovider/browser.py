@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import re
 import time
-from collections.abc import Callable, Collection
+from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
 from typing import Protocol
 
@@ -256,19 +256,20 @@ def assert_items_presence_in_browser(
 def assert_only_expected_items_presence_in_browser(
     selenium: SeleniumDrivers,
     browser_id: str,
-    item_list: str,
+    item_list: str | Sequence[str],
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:
     data = _get_items_list_from_browser(selenium, browser_id, tmp_memory, which_browser)
 
-    assert len(item_list) == len(data), (
+    expected_items = parse_seq(item_list) if isinstance(item_list, str) else item_list
+    assert len(expected_items) == len(data), (
         f"there is different number of items in {which_browser}, "
         f"actual items: {data}, expected items: {item_list}"
     )
 
     assert_items_presence_in_browser(
-        selenium, browser_id, item_list, tmp_memory, which_browser
+        selenium, browser_id, ",".join(expected_items), tmp_memory, which_browser
     )
 
 
@@ -595,7 +596,7 @@ def wt_click_menu_for_elem_in_browser(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_browser(
     browser_id: str,
-    item_name: str,
+    item_name: str | int,
     tmp_memory: TmpMemory,
     which_browser: str = "file browser",
 ) -> None:

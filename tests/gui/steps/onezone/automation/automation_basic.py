@@ -371,7 +371,7 @@ def click_option_in_revision_menu_button_ordinal(
         browser_id,
         option,
         object_name,
-        ordinal[:-2],
+        int(ordinal[:-2]),
         page,
     )
 

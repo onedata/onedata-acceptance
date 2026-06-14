@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import time
 from ast import literal_eval
-from typing import Optional
+from typing import Optional, cast
 
 import yaml
 
@@ -59,6 +59,7 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
+from tests.gui.utils.oneprovider.automation import NumberInput
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -371,23 +372,25 @@ def execute_workflow(
     # wait a moment for workflow revision to open
     time.sleep(1)
     if "range" in data_type:
-        item_list = literal_eval(item_list)
-        if isinstance(item_list, list):
-            for item in item_list:
-                choose_range_as_initial_workflow_value(selenium, browser_id, item)
+        range_items = literal_eval(item_list)
+        if isinstance(range_items, list):
+            for item in range_items:
+                choose_range_as_initial_workflow_value(
+                    selenium, browser_id, cast(dict[str, object], item)
+                )
         else:
             choose_range_as_initial_workflow_value(
-                selenium, browser_id, item_list, False
+                selenium, browser_id, cast(dict[str, object], range_items), False
             )
     elif "number" in data_type:
         items = literal_eval(item_list)
         if isinstance(items, list):
             for number in items:
                 numbers = get_input_element(driver, "numbers_input")
-                numbers[len(numbers) - 1].input = str(number)
+                cast(NumberInput, numbers[len(numbers) - 1]).input = str(number)
         else:
             numbers = OPLoggedIn(driver).automation_page.numbers_input
-            numbers[len(numbers) - 1].input = str(item_list)
+            cast(NumberInput, numbers[len(numbers) - 1]).input = str(item_list)
     elif "string" in data_type:
         OPLoggedIn(driver).automation_page.string_input.input = item_list
     elif "boolean" in data_type:

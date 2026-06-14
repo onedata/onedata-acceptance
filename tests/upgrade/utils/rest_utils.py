@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Iterable, Mapping
-from typing import Any
+from typing import Optional
 
 from requests import Response
 
@@ -26,9 +26,25 @@ from tests.utils.utils import repeat_failed
 
 DEFAULT_REST_QUERY_TIMEOUT = 60
 
-JsonObject = dict[str, Any]
+type JsonValue = Optional[
+    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
+]
+JsonObject = dict[str, JsonValue]
 JsonList = list[JsonObject]
-JsonPayload = Mapping[str, Any]
+JsonPayload = Mapping[str, JsonValue]
+
+
+def json_str(value: JsonValue) -> str:
+    if not isinstance(value, str):
+        raise TypeError(f"Expected JSON string, got {type(value).__name__}")
+    return value
+
+
+def json_list(value: JsonValue) -> list[JsonValue]:
+    if not isinstance(value, list):
+        raise TypeError(f"Expected JSON list, got {type(value).__name__}")
+    return value
+
 
 EXAMPLE_HANDLE_METADATA = {
     "handleServiceId": "$handle_service_id",
@@ -63,7 +79,7 @@ def get_space_id(space_name: str, provider_host: str, token: str) -> str:
     spaces = list_all_user_spaces(provider_host, token)
     for space in spaces:
         if space["name"] == space_name:
-            return space["spaceId"]
+            return json_str(space["spaceId"])
     raise ValueError(f"space {space_name} not found")
 
 
@@ -229,7 +245,7 @@ def set_file_extended_attribute(
 
 
 def get_file_extended_attributes(
-    provider_host: str, token: str, file_id: str, attribute: str | None = None
+    provider_host: str, token: str, file_id: str, attribute: Optional[str] = None
 ) -> Response:
     res = http_get(
         ip=provider_host,
@@ -283,9 +299,12 @@ def create_archive(
     token: str,
     dataset_id: str,
     description: str,
-    config: JsonPayload | None = None,
+    config: Optional[JsonPayload] = None,
 ) -> JsonObject:
-    data = {"datasetId": dataset_id, "description": description}
+    data: dict[str, JsonValue] = {
+        "datasetId": dataset_id,
+        "description": description,
+    }
     if config:
         data.update(config)
     res = http_post(
@@ -320,7 +339,7 @@ def get_archive_information(
 
 def create_share(provider_host: str, token: str, file_id: str, name: str) -> str:
     prov_version = int(
-        get_provider_configuration(provider_host)["version"].split(".")[0]
+        json_str(get_provider_configuration(provider_host)["version"]).split(".")[0]
     )
     res = http_post(
         ip=provider_host,
@@ -377,7 +396,10 @@ def list_handle_services(zone_host: str, token: str) -> JsonObject:
 
 
 def register_handle(zone_host: str, token: str, share_id: str) -> Response:
-    handle_service_id = list_handle_services(zone_host, token)["handle_services"][0]
+    handle_services = json_list(
+        list_handle_services(zone_host, token)["handle_services"]
+    )
+    handle_service_id = json_str(handle_services[0])
     EXAMPLE_HANDLE_METADATA.update(
         {"handleServiceId": handle_service_id, "resourceId": share_id}
     )
@@ -416,9 +438,9 @@ def create_view(
     view_name: str,
     data: str,
     spatial: bool = False,
-    providers: list[str] | None = None,
+    providers: Optional[list[str]] = None,
 ) -> Response:
-    query_params: dict[str, Any] = {}
+    query_params: dict[str, str | list[str]] = {}
     if providers:
         query_params.update({"providers[]": providers})
     if spatial:
@@ -443,8 +465,8 @@ def query_view(
     space_id: str,
     view_name: str,
     spatial: bool = False,
-    start_range: str | None = None,
-    end_range: str | None = None,
+    start_range: Optional[str] = None,
+    end_range: Optional[str] = None,
 ) -> JsonList:
     if spatial:
         query_params = {

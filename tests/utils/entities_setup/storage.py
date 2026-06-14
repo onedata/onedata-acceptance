@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol, cast
 
 import yaml
 
@@ -16,6 +16,10 @@ from tests.gui.meta_steps.onepanel.storages import (
 )
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import get_panel_rest_path, http_post
+from tests.utils.user_utils import AdminUser
+
+if TYPE_CHECKING:
+    from tests.conftest import Hosts
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 
@@ -76,7 +80,12 @@ def _create_storage(
 ) -> None:
     options = yaml.load(config, yaml.Loader)
 
-    _remove_storage_in_op_panel_using_rest(name, host, hosts, onepanel_credentials)
+    _remove_storage_in_op_panel_using_rest(
+        name,
+        host,
+        cast("Hosts", hosts),
+        cast(AdminUser, onepanel_credentials),
+    )
     storage_data = {name: options}
     http_post(
         ip=hosts[host]["hostname"],

@@ -27,7 +27,7 @@ def write_rand_text(
     megabytes: str,
     file: str,
     users: Users,
-    context: dict[str, object],
+    context: multi_reg_file_steps.OneclientContext,
 ) -> None:
     multi_reg_file_steps.write_rand_text(
         user, megabytes, file, "client1", users, context
@@ -65,7 +65,12 @@ def copy_reg_file(user: str, file: str, path: str, users: Users) -> None:
 
 
 @then(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*)"))
-def check_md5(user: str, file: str, users: Users, context: dict[str, object]) -> None:
+def check_md5(
+    user: str,
+    file: str,
+    users: Users,
+    context: multi_reg_file_steps.OneclientContext,
+) -> None:
     multi_reg_file_steps.check_md5(user, file, "client1", users, context)
 
 

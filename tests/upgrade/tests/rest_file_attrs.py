@@ -14,6 +14,7 @@ from tests.upgrade.utils.rest_utils import (
     JsonObject,
     get_directory_size_statistics,
     get_file_attributes,
+    json_str,
     lookup_file_id,
 )
 from tests.upgrade.utils.upgrade_utils import (
@@ -195,7 +196,7 @@ def _wait_for_file_size_attr(
 
 def format_attr_val(attr: str, old_attrs: JsonObject) -> object:
     if attr == "type":
-        return old_attrs[attr].upper()
+        return json_str(old_attrs[attr]).upper()
     if attr == "mode":
-        return old_attrs[attr][1:]
+        return json_str(old_attrs[attr])[1:]
     return old_attrs[attr]

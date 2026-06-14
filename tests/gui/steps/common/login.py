@@ -59,15 +59,16 @@ def _login_to_service(
         parse_seq(service_list),
     ):
         driver = selenium[browser_id]
+        password = users[username].password
+        if password is None:
+            raise ValueError(f"User {username} has no password")
 
         if "emergency interface" in service:
             click_sign_in_to_emergency_interface(selenium, browser_id)
             time.sleep(1)
-            _login_using_passphrase(LoginPage(driver), users[username].password)
+            _login_using_passphrase(LoginPage(driver), password)
         else:
-            _login_using_basic_auth(
-                LoginPage(driver), username, users[username].password
-            )
+            _login_using_basic_auth(LoginPage(driver), username, password)
         assert_main_page_loaded(selenium, browser_id)
 
 

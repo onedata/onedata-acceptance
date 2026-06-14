@@ -12,10 +12,13 @@ import traceback
 from collections.abc import Callable, Sequence
 from time import sleep, time
 from types import ModuleType
-from typing import Any, Optional
+from typing import Optional, ParamSpec, TypeVar, cast
 
 import pytest
 from decorator import decorator  # pylint: disable=import-error
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 def check_call_with_logging(cmd: str | Sequence[str]) -> None:
@@ -75,7 +78,7 @@ def repeat_failed(
     timeout: Optional[float] = None,
     interval: float = 0.1,
     exceptions: type[BaseException] | tuple[type[BaseException], ...] = (Exception,),
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Returns wrapper on function, which keeps calling it until timeout or
     for attempts times in case of failure (exception).
 
@@ -85,14 +88,14 @@ def repeat_failed(
     :type interval: float
     :param timeout: time limit of now when to stop repeating fun,
                     if set alongside attempts take precedence
-    :type timeout: float | None
+    :type timeout: Optional[float]
     :param exceptions: in case of which consider failure of call
     :type exceptions: list[Exception]
     :return: wrapper decorator
     """
 
     @decorator
-    def wrapper(fun: Callable[..., object], *args: object, **kwargs: object) -> object:
+    def wrapper(fun: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
         now = time()
         limit, i = (now + timeout, now) if timeout else (attempts, 0)
 
@@ -107,7 +110,7 @@ def repeat_failed(
                 return result
         return fun(*args, **kwargs)
 
-    return wrapper
+    return cast(Callable[[Callable[P, T]], Callable[P, T]], decorator(wrapper))
 
 
 def get_copyright(mod: ModuleType) -> str:
@@ -119,5 +122,5 @@ def get_authors(mod: ModuleType) -> list[str]:
     return re.split(r"\s*,\s*", author)
 
 
-def get_suite_description(mod: ModuleType) -> str | None:
+def get_suite_description(mod: ModuleType) -> Optional[str]:
     return mod.__doc__

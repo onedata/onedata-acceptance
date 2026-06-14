@@ -16,6 +16,7 @@ from xml.etree import ElementTree as ET
 
 from tests.upgrade.utils.rest_utils import (
     JsonObject,
+    JsonPayload,
     create_archive,
     create_share,
     download_file_content,
@@ -23,6 +24,7 @@ from tests.upgrade.utils.rest_utils import (
     get_archive_information,
     get_handle,
     get_share_info,
+    json_str,
     lookup_file_id,
     register_handle,
 )
@@ -114,9 +116,11 @@ def setup_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
         provider_host, token, SHARE_NAME_TO_ID["dir1_shared"]
     )
     RESULTS["share_details"] = share_details
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])[
+            "rootFileId"
+        ]
+    )
     RESULTS["share_content"] = download_file_content(
         provider_host, token, share_root_dir_id
     )
@@ -136,9 +140,11 @@ def verify_shares_handles(tests_controller: UpgradeTestsControllerLike) -> None:
     )
     compare_share_details(RESULTS["share_details"], share_details)
 
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["file1_shared"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["file1_shared"])[
+            "rootFileId"
+        ]
+    )
     assert RESULTS["share_content"] == download_file_content(
         provider_host, token, share_root_dir_id
     )
@@ -167,35 +173,41 @@ def setup_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) ->
 
     file_id = lookup_file_id("space_posix/dir2_datasets", provider_host, token)
 
-    dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
-    ARCHIVE_NAME_TO_ID["archive"] = create_archive(
-        provider_host, token, dataset_id, "test"
-    )["archiveId"]
+    dataset_id = json_str(establish_dataset(provider_host, token, file_id)["datasetId"])
+    ARCHIVE_NAME_TO_ID["archive"] = json_str(
+        create_archive(provider_host, token, dataset_id, "test")["archiveId"]
+    )
     wait_for_preserved_archive_state(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
     )
-    root_dir_id = get_archive_information(
-        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
-    )["rootDirectoryId"]
+    root_dir_id = json_str(
+        get_archive_information(provider_host, token, ARCHIVE_NAME_TO_ID["archive"])[
+            "rootDirectoryId"
+        ]
+    )
     archive_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_content, "downloaded_archive_s")
 
     create_additional_content_in_dir(client, "space_posix", "dir2_datasets")
 
-    archive_config = {
+    archive_config: JsonPayload = {
         "config": {
             "incremental": {"enabled": True, "basedOn": ARCHIVE_NAME_TO_ID["archive"]}
         }
     }
-    ARCHIVE_NAME_TO_ID["archive_incremental"] = create_archive(
-        provider_host, token, dataset_id, "test", archive_config
-    )["archiveId"]
+    ARCHIVE_NAME_TO_ID["archive_incremental"] = json_str(
+        create_archive(provider_host, token, dataset_id, "test", archive_config)[
+            "archiveId"
+        ]
+    )
     wait_for_preserved_archive_state(
         provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
     )
-    root_dir_id = get_archive_information(
-        provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
-    )["rootDirectoryId"]
+    root_dir_id = json_str(
+        get_archive_information(
+            provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
+        )["rootDirectoryId"]
+    )
     archive_inc_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_s")
 
@@ -204,15 +216,19 @@ def verify_datasets_and_archives(tests_controller: UpgradeTestsControllerLike) -
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
-    root_dir_id = get_archive_information(
-        provider_host, token, ARCHIVE_NAME_TO_ID["archive"]
-    )["rootDirectoryId"]
+    root_dir_id = json_str(
+        get_archive_information(provider_host, token, ARCHIVE_NAME_TO_ID["archive"])[
+            "rootDirectoryId"
+        ]
+    )
     archive_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_content, "downloaded_archive_v")
 
-    root_dir_id = get_archive_information(
-        provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
-    )["rootDirectoryId"]
+    root_dir_id = json_str(
+        get_archive_information(
+            provider_host, token, ARCHIVE_NAME_TO_ID["archive_incremental"]
+        )["rootDirectoryId"]
+    )
     archive_inc_content = download_file_content(provider_host, token, root_dir_id)
     unpack_tarball_from_payload(archive_inc_content, "downloaded_archive_inc_v")
     compare_downloaded_dirs_content(
@@ -236,22 +252,26 @@ def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> N
     )
     _ = register_handle(zone_host, admin_token, SHARE_NAME_TO_ID["dir3_shared"])
 
-    dataset_id = establish_dataset(provider_host, token, file_id)["datasetId"]
-    archive_id = create_archive(provider_host, token, dataset_id, "test")["archiveId"]
+    dataset_id = json_str(establish_dataset(provider_host, token, file_id)["datasetId"])
+    archive_id = json_str(
+        create_archive(provider_host, token, dataset_id, "test")["archiveId"]
+    )
     wait_for_preserved_archive_state(provider_host, token, archive_id)
 
     create_additional_content_in_dir(client, "space_posix", "dir3_shared")
 
-    archive_config = {
+    archive_config: JsonPayload = {
         "config": {"incremental": {"enabled": True, "basedOn": archive_id}}
     }
-    archive_inc_id = create_archive(
-        provider_host, token, dataset_id, "test", archive_config
-    )["archiveId"]
+    archive_inc_id = json_str(
+        create_archive(provider_host, token, dataset_id, "test", archive_config)[
+            "archiveId"
+        ]
+    )
     wait_for_preserved_archive_state(provider_host, token, archive_inc_id)
-    root_dir_id = get_archive_information(provider_host, token, archive_inc_id)[
-        "rootDirectoryId"
-    ]
+    root_dir_id = json_str(
+        get_archive_information(provider_host, token, archive_inc_id)["rootDirectoryId"]
+    )
     SHARE_NAME_TO_ID["dir3_archive_incremental"] = create_share(
         provider_host, token, root_dir_id, "dir3_archive_incremental"
     )
@@ -259,15 +279,19 @@ def setup_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> N
         zone_host, admin_token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
     )
 
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir3_shared"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])[
+            "rootFileId"
+        ]
+    )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_s")
 
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(
+            provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
+        )["rootFileId"]
+    )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_s")
 
@@ -276,15 +300,19 @@ def verify_all_functionalities(tests_controller: UpgradeTestsControllerLike) -> 
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
 
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir3_shared"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(provider_host, token, SHARE_NAME_TO_ID["dir3_shared"])[
+            "rootFileId"
+        ]
+    )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_shared_v")
 
-    share_root_dir_id = get_share_info(
-        provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
-    )["rootFileId"]
+    share_root_dir_id = json_str(
+        get_share_info(
+            provider_host, token, SHARE_NAME_TO_ID["dir3_archive_incremental"]
+        )["rootFileId"]
+    )
     share_content = download_file_content(provider_host, token, share_root_dir_id)
     unpack_tarball_from_payload(share_content, "downloaded_dir3_archive_incremental_v")
 
@@ -425,17 +453,17 @@ def compare_handle_details(
 ) -> None:
     # update xml metadata by publicHandle identifier
     if is_version_lower_than(tests_controller.initial_prov_version, "21.02.5"):
-        public_handle = details_s["publicHandle"]
-        root = ET.fromstring(details_s["metadata"])
+        public_handle = json_str(details_s["publicHandle"])
+        root = ET.fromstring(json_str(details_s["metadata"]))
         ET.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
         identifier = ET.Element("{http://purl.org/dc/elements/1.1/}identifier")
         identifier.text = public_handle
         root.append(identifier)
         metadata_s = ET.tostring(root, encoding="unicode")
     else:
-        metadata_s = details_s["metadata"]
+        metadata_s = json_str(details_s["metadata"])
     # compare metadata in xml format
-    assert_xmls_equal(metadata_s, details_v["metadata"])
+    assert_xmls_equal(metadata_s, json_str(details_v["metadata"]))
     # remove metadata and compare other details
     _ = details_s.pop("metadata") if "metadata" in details_s else None
     _ = details_v.pop("metadata") if "metadata" in details_v else None

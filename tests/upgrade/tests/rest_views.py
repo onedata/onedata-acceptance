@@ -13,11 +13,13 @@ import yaml
 from tests.upgrade.utils.rest_utils import (
     DEFAULT_REST_QUERY_TIMEOUT,
     JsonList,
+    JsonObject,
     JsonPayload,
     configure_file_popularity_mechanism_in_the_space,
     create_view,
     get_provider_configuration,
     get_space_id,
+    json_str,
     lookup_file_id,
     query_view,
     set_file_extended_attribute,
@@ -264,8 +266,8 @@ def setup_views_multiprovider(tests_controller: UpgradeTestsControllerLike) -> N
 
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     provider_host2 = tests_controller.hosts["oneprovider-2"]["hostname"]
-    prov1_id = get_provider_configuration(provider_host)["providerId"]
-    prov2_id = get_provider_configuration(provider_host2)["providerId"]
+    prov1_id = json_str(get_provider_configuration(provider_host)["providerId"])
+    prov2_id = json_str(get_provider_configuration(provider_host2)["providerId"])
 
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
@@ -330,7 +332,7 @@ def setup_subscribe_changes(tests_controller: UpgradeTestsControllerLike) -> Non
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
 
-    data = {
+    data: JsonPayload = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
@@ -350,7 +352,7 @@ def verify_subscribe_changes(tests_controller: UpgradeTestsControllerLike) -> No
     provider_host = tests_controller.hosts["oneprovider-1"]["hostname"]
     token = tests_controller.users["user1"].token
     space_id = get_space_id(SPACE_NAME, provider_host, token)
-    data = {
+    data: JsonPayload = {
         "triggers": ["customMetadata"],
         "customMetadata": {"always": True, "fields": ["string"], "exists": ["string"]},
     }
@@ -469,7 +471,7 @@ def create_example_content_in_space(client: OneClientLike) -> None:
 def add_example_metadata_to_files_in_space(provider_host: str, token: str) -> None:
     xattrs_meta: dict[str, str | int] = {}
     file_id = lookup_file_id(f"{SPACE_NAME}/file_json", provider_host, token)
-    json_meta = {"coordinates": [5, 10]}
+    json_meta: JsonObject = {"coordinates": [5, 10]}
     set_file_json_metadata(provider_host, token, file_id, json_meta)
     file_id = lookup_file_id(f"{SPACE_NAME}/file_rdf", provider_host, token)
     rdf_meta = (

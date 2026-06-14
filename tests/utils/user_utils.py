@@ -9,13 +9,13 @@ import hashlib
 import json
 import os
 from collections.abc import Mapping
-from typing import Any
+from typing import Optional, cast
 
 import rpyc  # pylint: disable=import-error
 
 from tests import HTTP_PORT, OZ_REST_PORT
 from tests.utils import ONECLIENT_LOGS_DIR, ONECLIENT_MOUNT_DIR, RPYC_LOGS_DIR
-from tests.utils.client_utils import Client, get_client_conf
+from tests.utils.client_utils import Client, RpycConnectionLike, get_client_conf
 from tests.utils.docker_utils import run_cmd as docker_run_cmd
 from tests.utils.onenv_utils import get_ip, match_pods, run_onenv_command
 from tests.utils.rest_utils import (
@@ -36,23 +36,23 @@ class User:  # pylint: disable=too-many-instance-attributes
         self,
         zone_hostname: str,
         username: str,
-        password: str | None = None,
-        user_id: str | None = None,
+        password: Optional[str] = None,
+        user_id: Optional[str] = None,
     ) -> None:
         self.username = username
         self.password = password
         self._user_id = user_id
-        self._token = None
+        self._token: Optional[str] = None
         self.idps: list[str] = []
         self.keycloak_name = ""
         self.zone_hostname = zone_hostname
 
         self.last_operation_failed = False
         self.clients: dict[str, Client] = {}
-        self._rpyc_connections: dict[str, Any] = {}
+        self._rpyc_connections: dict[str, RpycConnectionLike] = {}
 
     @property
-    def token(self) -> Any:
+    def token(self) -> str:
         if self._token:
             return self._token
         self._token = self._create_token()
@@ -65,7 +65,9 @@ class User:  # pylint: disable=too-many-instance-attributes
         self._user_id = self._retrieve_onedata_id()
         return self._user_id
 
-    def get_rpyc_connection(self, client_host_dict: Mapping[str, str]) -> Any:
+    def get_rpyc_connection(
+        self, client_host_dict: Mapping[str, str]
+    ) -> RpycConnectionLike:
         client_host = client_host_dict["pod-name"]
         if self._rpyc_connections.get(client_host, None):
             return self._rpyc_connections[client_host]
@@ -85,10 +87,10 @@ class User:  # pylint: disable=too-many-instance-attributes
         client_host_alias: str,
         client_id: str,
         hosts: Mapping[str, Mapping[str, str]],
-        env_desc: Any,
+        env_desc: Mapping[str, object],
         token: str = CORRECT_TOKEN,
-        opts: list[str] | None = None,
-    ) -> Client | None:
+        opts: Optional[list[str]] = None,
+    ) -> Optional[Client]:
         rpyc_connection = self.get_rpyc_connection(hosts[client_host_alias])
         client_conf = get_client_conf(client_id, client_host_alias, env_desc)
         client_key = str(client_conf["id"])
@@ -113,7 +115,7 @@ class User:  # pylint: disable=too-many-instance-attributes
         return None
 
     @repeat_failed(attempts=5)
-    def _create_token(self) -> Any:
+    def _create_token(self) -> str:
         if "keycloak" in self.idps:
             token_dispenser_pod = match_pods("token-dispenser")[0]
             token_dispenser_ip = get_ip(token_dispenser_pod)
@@ -125,7 +127,7 @@ class User:  # pylint: disable=too-many-instance-attributes
                 default_headers=False,
                 use_ssl=False,
             )
-            return response.content
+            return response.content.decode()
         response = http_post(
             ip=self.zone_hostname,
             port=OZ_REST_PORT,
@@ -144,7 +146,9 @@ class User:  # pylint: disable=too-many-instance-attributes
         )
         return json.loads(response.content)["userId"]
 
-    def _create_rpyc_connection(self, client_host_dict: Mapping[str, str]) -> Any:
+    def _create_rpyc_connection(
+        self, client_host_dict: Mapping[str, str]
+    ) -> RpycConnectionLike:
         client_host = client_host_dict["pod-name"]
         client_host_ip = client_host_dict["ip"]
         cointainer_id = client_host_dict["container-id"]
@@ -175,8 +179,8 @@ class User:  # pylint: disable=too-many-instance-attributes
         return rpyc_connection
 
     @repeat_failed(attempts=10, interval=1, exceptions=ConnectionRefusedError)
-    def _connect_to_rpyc(self, ip: str, port: int) -> Any:
-        return rpyc.classic.connect(ip, port=port)
+    def _connect_to_rpyc(self, ip: str, port: int) -> RpycConnectionLike:
+        return cast(RpycConnectionLike, rpyc.classic.connect(ip, port=port))
 
 
 class AdminUser(User):

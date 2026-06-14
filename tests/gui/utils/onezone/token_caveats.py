@@ -40,10 +40,15 @@ class PathCaveatConfig(TypedDict):
     path: str
 
 
+ExpirationCaveat = TypedDict(
+    "ExpirationCaveat", {"after": int, "set": bool}, total=False
+)
+
+
 TokenCaveats = TypedDict(
     "TokenCaveats",
     {
-        "expiration": dict[str, bool],
+        "expiration": ExpirationCaveat,
         "region": RegionCaveat,
         "country": CountryCaveat,
         "ASN": list[int],
@@ -51,8 +56,9 @@ TokenCaveats = TypedDict(
         "consumer": list[ConsumerCaveatConfig],
         "service": dict[str, list[str]],
         "interface": str,
+        "read only": bool,
         "path": list[PathCaveatConfig],
-        "object id": list[str],
+        "object ID": list[str],
     },
     total=False,
 )
@@ -185,7 +191,7 @@ class CaveatField(PageObject):
     # expiration caveat
     def set_expiration_caveat(
         self,
-        expire_caveat: dict[str, int],
+        expire_caveat: ExpirationCaveat,
         tmp_memory: dict[str, object],
     ) -> None:
         self.activate()
@@ -392,7 +398,7 @@ class CaveatField(PageObject):
 
     # expiration caveat
     def assert_expiration_caveat(
-        self, exp_caveat: dict[str, bool], tmp_memory: TmpMemory
+        self, exp_caveat: ExpirationCaveat, tmp_memory: TmpMemory
     ) -> None:
         value_set = exp_caveat.get("set", False)
         if value_set:

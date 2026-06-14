@@ -63,7 +63,7 @@ def _add_qos_requirement_in_modal(
     confirm_entering_text(selenium, browser_id)
     if replicas_number != 1:
         write_name_into_text_field_in_panel(
-            selenium, browser_id, replicas_number, panel, replicas_field
+            selenium, browser_id, str(replicas_number), panel, replicas_field
         )
     click_panel_button(selenium, browser_id, save_button, panel)
     click_modal_button(selenium, browser_id, close_button, details_modal)

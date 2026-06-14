@@ -8,14 +8,15 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import time
 import traceback
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, Protocol, TypeGuard, cast
+from typing import Optional, Protocol, TypedDict, TypeGuard, cast
 
+import pytest
 from packaging.version import Version
 
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
-from tests.conftest import export_logs
+from tests.conftest import EnvDesc, Hosts, Users, export_logs
 from tests.upgrade.utils.rest_utils import get_provider_configuration
 from tests.utils.environment_utils import (
     configure_os,
@@ -25,16 +26,35 @@ from tests.utils.environment_utils import (
     verify_env_ready,
 )
 from tests.utils.onenv_utils import run_onenv_command
+from tests.utils.user_utils import AdminUser
 
-type TestCallback = Callable[..., Any]
-type HostConfig = dict[str, Any]
-type HostsConfig = dict[str, HostConfig]
-type VersionSpec = str | dict[str, Any]
+type TestCallback = Callable[[], None]
+type HostsConfig = Mapping[str, Mapping[str, str]]
 type ClientKey = tuple[str, str, str]
 
 
-class UserLike(Protocol):
-    token: str
+class SourcesSpec(TypedDict):
+    baseImage: str
+    components: list[str]
+
+
+class SourceVersionSpec(TypedDict):
+    sources: SourcesSpec
+
+
+type VersionSpec = str | SourceVersionSpec
+
+
+class UpgradeConfig(TypedDict):
+    scenarios: list[str]
+    initialVersions: dict[str, VersionSpec]
+    targetVersions: dict[str, VersionSpec]
+
+
+class UpgradeEnvironment(TypedDict):
+    env_desc: EnvDesc
+    scenario_abs_path: str
+    env_description_abs_path: str
 
 
 class OneClientLike(Protocol):
@@ -58,8 +78,8 @@ class OneClientLike(Protocol):
 
 
 class UpgradeTestsControllerLike(Protocol):
-    hosts: Mapping[str, Mapping[str, str]]
-    users: Mapping[str, UserLike]
+    hosts: Hosts
+    users: Users
     initial_prov_version: str
 
     def get_client(
@@ -73,7 +93,7 @@ class UpgradeTest:
         name: str,
         setup: TestCallback,
         verify: TestCallback,
-        min_prov_version: int | None = None,
+        min_prov_version: Optional[int] = None,
     ) -> None:
         self.__name = name
         self.__setup = setup  # function executed before any upgrade is performed
@@ -83,17 +103,17 @@ class UpgradeTest:
     def get_name(self) -> str:
         return self.__name
 
-    def get_required_min_prov_version(self) -> int | None:
+    def get_required_min_prov_version(self) -> Optional[int]:
         return self.__min_prov_version
 
-    def run_setup(self, *args: Any, **kwargs: Any) -> None:
+    def run_setup(self) -> None:
         print(f'\nRunning setup for test "{self.__name}"\n')
-        self.__setup(*args, **kwargs)
+        self.__setup()
         print(f'\nSetup for test "{self.__name}" finished\n')
 
-    def run_verify(self, *args: Any, **kwargs: Any) -> None:
+    def run_verify(self) -> None:
         print(f'\nRunning verify for test "{self.__name}"\n')
-        self.__verify(*args, **kwargs)
+        self.__verify()
         print(f'\nVerify for test "{self.__name}" finished\n')
 
 
@@ -101,27 +121,27 @@ class UpgradeTest:
 class UpgradeTestsController:
     def __init__(
         self,
-        test_config: Any,
-        hosts: Any,
-        clients: Any,
-        request: Any,
-        users: Any,
-        env_desc: Any,
+        test_config: UpgradeConfig,
+        hosts: Hosts,
+        clients: dict[str, object],
+        request: pytest.FixtureRequest,
+        users: Users,
+        env_desc: EnvDesc,
         scenario_abs_path: str,
         env_description_abs_path: str,
     ) -> None:
         self.__tests_list: list[UpgradeTest] = []
         self.__test_results: dict[str, str] = {}
-        self.test_config = test_config
-        self.env = {
+        self.test_config: UpgradeConfig = test_config
+        self.env: UpgradeEnvironment = {
             "env_desc": env_desc,
             "scenario_abs_path": scenario_abs_path,
             "env_description_abs_path": env_description_abs_path,
         }
-        self.hosts = hosts
+        self.hosts: Hosts = hosts
         self.clients = clients
         self.request = request
-        self.users = users
+        self.users: Users = users
         self.user_clients: dict[ClientKey, OneClientLike] = {}
         self.initial_prov_version = ""
 
@@ -145,7 +165,7 @@ class UpgradeTestsController:
         client = self.users[username].mount_client(
             client_host_alias,
             client_instance,
-            self.hosts,
+            cast(Mapping[str, Mapping[str, str]], self.hosts),
             self.env["env_desc"],
             opts=[],
         )
@@ -190,7 +210,7 @@ class UpgradeTestsController:
                 upgrade_service(
                     service_name,
                     admin_user,
-                    self.hosts,
+                    cast(Mapping[str, Mapping[str, str]], self.hosts),
                     self.test_config["targetVersions"][service_name],
                     self.test_config["initialVersions"][service_name],
                 )
@@ -248,7 +268,7 @@ class UpgradeTestsController:
 
 def upgrade_service(
     service_name: str,
-    admin_user: Any,
+    admin_user: AdminUser,
     hosts: HostsConfig,
     version_spec: VersionSpec,
     prev_version_spec: VersionSpec,
@@ -299,7 +319,7 @@ def get_service_image(service: str, version_spec: VersionSpec) -> str:
     return f"docker.onedata.org/{service}-dev:{version_spec}"
 
 
-def is_upgrade_from_sources(version_spec: VersionSpec) -> TypeGuard[dict[str, Any]]:
+def is_upgrade_from_sources(version_spec: VersionSpec) -> TypeGuard[SourceVersionSpec]:
     return isinstance(version_spec, dict)
 
 

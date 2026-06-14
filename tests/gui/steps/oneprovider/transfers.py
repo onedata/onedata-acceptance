@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import cast
+
 import yaml
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -21,7 +23,12 @@ from tests.gui.steps.common.miscellaneous import (
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
-from tests.gui.utils.oneprovider.transfers import TransferRecord, _TransfersTab
+from tests.gui.utils.oneprovider.transfers import (
+    TransferRecord,
+    TransferRecordActive,
+    TransferRecordHistory,
+    _TransfersTab,
+)
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -89,7 +96,7 @@ def assert_ended_transfer(
     hosts: Hosts,
 ) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer = transfers.ended[0]
+    transfer = cast(TransferRecordHistory, transfers.ended[0])
     _assert_transfer(
         transfer,
         item_type,
@@ -116,7 +123,7 @@ def assert_waiting_transfer(
     hosts: Hosts,
 ) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfer = transfers.waiting[0]
+    transfer = cast(TransferRecordHistory, transfers.waiting[0])
     _assert_transfer(
         transfer,
         item_type,
@@ -149,7 +156,7 @@ def cancel_or_rerun_transfer(
         try:
             getattr(transfers, state)[0].menu_button()
         except RuntimeError:
-            transfers.ongoing[0].menu_button()
+            cast(TransferRecordActive, transfers.ongoing[0]).menu_button()
     else:
         getattr(transfers, transform(state))[0].menu_button()
 
@@ -189,7 +196,7 @@ def wait_for_ongoing_tranfers_to_finish(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    transfers.ended[0].expand()
+    cast(TransferRecordHistory, transfers.ended[0]).expand()
 
 
 @wt(
@@ -201,7 +208,7 @@ def expand_transfer_record(selenium: SeleniumDrivers, browser_id: str) -> None:
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_zero_transfer_speed(selenium: SeleniumDrivers, browser_id: str) -> None:
     transfers = _get_transfers_and_enable_initial_cols(browser_id, selenium)
-    chart = transfers.ended[0].get_chart()
+    chart = cast(TransferRecordHistory, transfers.ended[0]).get_chart()
     assert chart.get_speed() != "0", "Transfer throughput is 0"
 
 

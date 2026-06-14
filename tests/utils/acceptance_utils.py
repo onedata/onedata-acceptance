@@ -12,7 +12,7 @@ import os
 import subprocess
 import time
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import NotRequired, Optional, Protocol, TypedDict, cast
 
 from tests.gui.utils.generic import (
     upload_file_path,
@@ -28,7 +28,59 @@ TIME_ATTR_MAPPING = {
 }
 
 type Command = Sequence[str]
-type JsonObject = dict[str, Any]
+type JsonValue = Optional[
+    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
+]
+type Comparable = int | float
+
+
+class OperationStatus(Protocol):
+    last_operation_failed: bool
+
+
+class StoreData(TypedDict):
+    id: str
+    name: str
+
+
+class Store(TypedDict):
+    _data: StoreData
+
+
+class WorkflowRevisionData(TypedDict):
+    stores: list[Store]
+
+
+class AtmWorkflowSchemaRevision(TypedDict):
+    _data: WorkflowRevisionData
+
+
+class WorkflowRevision(TypedDict):
+    atmWorkflowSchemaRevision: AtmWorkflowSchemaRevision
+    originalRevisionNumber: int
+
+
+class WorkflowDump(TypedDict):
+    name: str
+    revision: WorkflowRevision
+
+
+class LambdaData(TypedDict):
+    name: str
+    checksum: NotRequired[str]
+
+
+class AtmLambdaRevision(TypedDict):
+    _data: LambdaData
+
+
+class LambdaRevision(TypedDict):
+    atmLambdaRevision: AtmLambdaRevision
+
+
+class LambdaDump(TypedDict):
+    revision: LambdaRevision
+    originalAtmLambdaId: NotRequired[str]
 
 
 def list_parser(arg: str) -> list[str]:
@@ -40,7 +92,7 @@ def make_arg_list(arg: str) -> str:
 
 
 def execute_command(
-    cmd: Command, error: str | None = None, should_fail: bool = False
+    cmd: Command, error: Optional[str] = None, should_fail: bool = False
 ) -> bytes:
     with subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -94,12 +146,12 @@ def wait_given_time(seconds: str | float) -> None:
 
 
 @wt(parsers.parse("last operation by {user} succeeds"))
-def success(user: str, users: Mapping[str, Any]) -> None:
+def success(user: str, users: Mapping[str, OperationStatus]) -> None:
     assert not users[user].last_operation_failed
 
 
 @wt(parsers.parse("last operation by {user} fails"))
-def failure(user: str, users: Mapping[str, Any]) -> None:
+def failure(user: str, users: Mapping[str, OperationStatus]) -> None:
     assert users[user].last_operation_failed
 
 
@@ -107,7 +159,7 @@ def time_attr(parameter: str, prefix: str = "st") -> str:
     return f"{prefix}_{TIME_ATTR_MAPPING[parameter]}"
 
 
-def compare(val1: Any, val2: Any, comparator: str) -> bool:
+def compare(val1: Comparable, val2: Comparable, comparator: str) -> bool:
     if comparator == "equal":
         return val1 == val2
     if comparator == "not equal":
@@ -123,7 +175,7 @@ def compare(val1: Any, val2: Any, comparator: str) -> bool:
     raise ValueError("Wrong argument comparator to function compare")
 
 
-def get_workflow_dump(workflow_name: str) -> JsonObject:
+def get_workflow_dump(workflow_name: str) -> WorkflowDump:
     if os.path.isfile(upload_workflow_path(f"{workflow_name}.json")):
         path = upload_workflow_path(f"{workflow_name}.json")
     elif os.path.isfile(upload_workflow_path(f"{workflow_name}/{workflow_name}.json")):
@@ -134,15 +186,15 @@ def get_workflow_dump(workflow_name: str) -> JsonObject:
         raise FileNotFoundError(f"Path to {workflow_name} not found")
     with open(path) as f:
         data = json.load(f)
-    return data
+    return cast(WorkflowDump, data)
 
 
-def get_lambda_dump(lambda_name: str) -> JsonObject:
+def get_lambda_dump(lambda_name: str) -> LambdaDump:
     with open(
         upload_lambda_path("".join([lambda_name, "/", lambda_name, ".json"]))
     ) as f:
         data = json.load(f)
-    return data
+    return cast(LambdaDump, data)
 
 
 def num_to_ordinal(n: int) -> str:

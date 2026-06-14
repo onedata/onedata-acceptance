@@ -171,9 +171,13 @@ endef
 
 ALL_FILES := tests/gui/steps tests/gui/meta_steps tests/gui/utils tests/gui/__init__.py tests/__init__.py \
  tests/mixed/steps tests/mixed/utils tests/mixed/__init__.py \
+ tests/onedata_fs/steps tests/onedata_fs/unit_tests tests/onedata_fs/__init__.py \
+ tests/performance/__init__.py tests/performance/types.py tests/performance/test_*.py \
  tests/oneclient/steps tests/oneclient/__init__.py tests/utils tests/upgrade
-ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py tests/oneclient/conftest.py
-ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/oneclient/scenarios
+ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/conftest.py \
+ tests/onedata_fs/conftest.py tests/oneclient/conftest.py tests/performance/conftest.py
+ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/onedata_fs/scenarios \
+ tests/oneclient/scenarios
 FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
 FILES_TO_TYPE_CHECK := $(ALL_FILES) $(ALL_CONFTEST_FILES)
 

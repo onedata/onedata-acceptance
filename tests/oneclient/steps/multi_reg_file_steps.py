@@ -12,6 +12,8 @@ from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 
 from . import multi_file_steps
 
+type OneclientContext = dict[str, str]
+
 
 def write_text_base(
     user: str,
@@ -99,7 +101,7 @@ def count_md5(
     file_path: str,
     client_node: str,
     users: Users,
-    context: dict[str, object],
+    context: OneclientContext,
 ) -> None:
     user_obj = users[user_name]
     client = user_obj.clients[client_node]
@@ -125,7 +127,7 @@ def write_rand_text(
     file: str,
     client_node: str,
     users: Users,
-    context: dict[str, object],
+    context: OneclientContext,
 ) -> None:
     user_obj = users[user_name]
     client = user_obj.clients[client_node]
@@ -260,7 +262,7 @@ def copy_reg_file(
 
 @wt(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"))
 def check_md5(
-    user: str, file: str, client_node: str, users: Users, context: dict[str, object]
+    user: str, file: str, client_node: str, users: Users, context: OneclientContext
 ) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]

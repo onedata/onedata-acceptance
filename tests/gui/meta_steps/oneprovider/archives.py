@@ -319,7 +319,7 @@ def assert_archive_in_op_gui(
         )
     else:
         try:
-            number = "0"
+            number = 0
             assert_number_of_archives_for_item_in_dataset_browser(
                 browser_id, item_name, number, tmp_memory
             )

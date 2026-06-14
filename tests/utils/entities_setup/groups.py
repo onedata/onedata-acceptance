@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping, MutableMapping
-from typing import NotRequired, Protocol, TypedDict, cast
+from typing import NotRequired, Optional, Protocol, TypedDict, cast
 
 import yaml
 
@@ -166,7 +166,7 @@ def _groups_creation(
             )
 
 
-def _unpack_member_entry(entry: MemberEntry) -> tuple[str, list[str] | None]:
+def _unpack_member_entry(entry: MemberEntry) -> tuple[str, Optional[list[str]]]:
     if isinstance(entry, str):
         return entry, None
     [(name, options)] = entry.items()
@@ -196,7 +196,7 @@ def _add_user_to_group(
     admin_credentials: CredentialsLike,
     group_id: str,
     user_id: str,
-    privileges: list[str] | None,
+    privileges: Optional[list[str]],
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -217,7 +217,7 @@ def _add_child_group(
     admin_credentials: CredentialsLike,
     parent_id: str,
     child_id: str,
-    privileges: list[str] | None,
+    privileges: Optional[list[str]],
 ) -> None:
     if privileges:
         data = json.dumps({"privileges": privileges})
@@ -235,7 +235,7 @@ def _add_child_group(
 
 def _get_group_id(
     hosts: HostsConfig, users: Mapping[str, UserLike], user: str, group_name: str
-) -> str | None:
+) -> Optional[str]:
     service = "onezone"
     zone_hostname = hosts[service]["hostname"]
     groups_id_list = get_group_id_list(user, users, zone_hostname)

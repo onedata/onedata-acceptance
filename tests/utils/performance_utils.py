@@ -1,5 +1,7 @@
 """This file contains utility functions for performance tests."""
 
+from __future__ import annotations
+
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -8,15 +10,15 @@ import itertools
 import sys
 import time
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any
+from typing import Optional, cast
 
 import pytest
 
 from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
-type ReportData = dict[str, Any]
-type ConfigData = Mapping[str, Any]
-type PerformanceTest = Callable[..., Any]
+type ReportData = dict
+type ConfigData = Mapping
+type PerformanceTest = Callable
 
 
 def performance(
@@ -39,13 +41,13 @@ def performance(
     def wrap(test_function: PerformanceTest) -> PerformanceTest:
 
         def wrapped_test_function(  # pylint: disable=unused-argument
-            self: Any,
-            clients: Any,
-            suite_report: Any,
-            request: Any,
-            hosts: Any,
-            users: Any,
-            env_desc: Any,
+            self: object,
+            clients: object,
+            suite_report: Report,
+            request: object,
+            hosts: object,
+            users: dict,
+            env_desc: object,
         ) -> None:
             test_case_name = test_function.__name__
             test_case_report = TestCaseReport(
@@ -89,7 +91,9 @@ def performance(
                         failed_repeats += 1
                         failed_details[str(repeats)] = str(e)
                     else:
-                        test_results = ensure_list(test_results)
+                        test_results = ensure_list(
+                            cast(Optional[Result | list[Result]], test_results)
+                        )
                         test_result_report.add_single_test_results(
                             test_results, repeats
                         )
@@ -272,7 +276,7 @@ class ResultReport:
         self.summary[name]["value"] += val
 
 
-def update_dict(base: Mapping[str, Any], updating: Mapping[str, Any]) -> ReportData:
+def update_dict(base: Mapping, updating: Mapping) -> ReportData:
     new_dict = dict(base)
     for key in updating.keys():
         if (
@@ -296,7 +300,7 @@ def dict_to_list(dict_: Mapping[str, ReportData]) -> list[ReportData]:
     return list_
 
 
-def ensure_list(elem: Result | list[Result] | None) -> list[Result]:
+def ensure_list(elem: Optional[Result | list[Result]]) -> list[Result]:
     if not elem:
         return []
     if not isinstance(elem, list):
@@ -315,7 +319,7 @@ def generate_configs(
     {"param_name": [val1, val2, val3]}
     """
     keys = params.keys()
-    configs: dict[str, Any] = {}
+    configs: dict[str, dict] = {}
     combinations = itertools.product(*params.values())
 
     for i, combination in enumerate(combinations):

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Generator, Mapping, MutableMapping
-from typing import Protocol, TypedDict
+from typing import Optional, Protocol, TypedDict
 
 import yaml
 from pytest import skip
@@ -251,7 +251,7 @@ def _add_user_to_zone_cluster(
     zone_hostname: str,
     admin_credentials: CredentialsLike,
     user_credentials: User,
-    cluster_privileges: list[str] | None,
+    cluster_privileges: Optional[list[str]],
 ) -> User:
     username, password = user_credentials.username, user_credentials.password
     admin_username = admin_credentials.username

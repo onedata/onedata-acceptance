@@ -409,16 +409,16 @@ def _set_tokens_caveats(
     tmp_memory: TmpMemory,
 ) -> None:
     expiration_caveat = caveats.get("expiration")
-    region_caveats = caveats.get("region", False)
-    country_caveats = caveats.get("country", False)
-    asn_caveats = caveats.get("ASN", False)
-    ip_caveats = caveats.get("IP", False)
-    consumer_caveats = caveats.get("consumer", False)
-    service_caveats = caveats.get("service", False)
-    interface_caveat = caveats.get("interface", False)
-    readonly_caveat = caveats.get("read only", False)
-    path_caveats = caveats.get("path", False)
-    object_id_caveats = caveats.get("object ID", False)
+    region_caveats = caveats.get("region")
+    country_caveats = caveats.get("country")
+    asn_caveats = caveats.get("ASN")
+    ip_caveats = caveats.get("IP")
+    consumer_caveats = caveats.get("consumer")
+    service_caveats = caveats.get("service")
+    interface_caveat = caveats.get("interface")
+    readonly_caveat = caveats.get("read only")
+    path_caveats = caveats.get("path")
+    object_id_caveats = caveats.get("object ID")
 
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "expiration")
@@ -626,17 +626,17 @@ def assert_token_caveats(
     tmp_memory: TmpMemory,
     creation: bool,
 ) -> None:
-    expiration_caveat = caveats.get("expiration", False)
-    region_caveats = caveats.get("region", False)
-    country_caveats = caveats.get("country", False)
-    asn_caveats = caveats.get("ASN", False)
-    ip_caveats = caveats.get("IP", False)
-    consumer_caveats = caveats.get("consumer", False)
-    service_caveats = caveats.get("service", False)
-    interface_caveat = caveats.get("interface", False)
-    readonly_caveat = caveats.get("read only", False)
-    path_caveats = caveats.get("path", False)
-    object_id_caveats = caveats.get("object ID", False)
+    expiration_caveat = caveats.get("expiration")
+    region_caveats = caveats.get("region")
+    country_caveats = caveats.get("country")
+    asn_caveats = caveats.get("ASN")
+    ip_caveats = caveats.get("IP")
+    consumer_caveats = caveats.get("consumer")
+    service_caveats = caveats.get("service")
+    interface_caveat = caveats.get("interface")
+    readonly_caveat = caveats.get("read only")
+    path_caveats = caveats.get("path")
+    object_id_caveats = caveats.get("object ID")
 
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, "expiration")
