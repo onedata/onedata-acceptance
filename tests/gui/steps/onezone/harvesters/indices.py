@@ -107,7 +107,7 @@ def expand_index_record_in_indices_page(
     )
 )
 def assert_used_by_gui_tag_on_indices_page(
-    selenium: SeleniumDrivers, browser_id: str, index: int
+    selenium: SeleniumDrivers, browser_id: str, index: str | int
 ) -> None:
     driver = selenium[browser_id]
     indices_list = OZLoggedIn(driver)["discovery"].indices_page.indices_list

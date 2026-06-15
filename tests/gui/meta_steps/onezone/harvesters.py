@@ -425,7 +425,7 @@ def configure_harvester_as_public(
     )
 )
 def check_harvesting_process_in_harvester(
-    selenium: SeleniumDrivers, browser_id: str, harvester: str, index: int
+    selenium: SeleniumDrivers, browser_id: str, harvester: str, index: str | int
 ) -> None:
     discovery_tab = "Discovery"
     scope = "harvesters"
