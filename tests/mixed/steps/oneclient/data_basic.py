@@ -15,11 +15,12 @@ from typing import cast
 import pytest
 import yaml
 
-from tests.conftest import EnvDesc, Hosts, Users
+from tests.conftest import EnvDesc, Hosts, JsonValue, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.types import Numerals, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
+    Content,
     ContentItem,
     CreateItem,
     ItemType,
@@ -47,7 +48,7 @@ def change_client_name_to_hostname(client_name: str) -> str:
 def mount_new_oneclient_with_token(
     user: str, hosts: Hosts, users: Users, env_desc: EnvDesc, tmp_memory: TmpMemory
 ) -> None:
-    token = cast(str, cast(Mapping[str, object], tmp_memory[user]["mailbox"])["token"])
+    token = cast(Mapping[str, str], tmp_memory[user]["mailbox"])["token"]
     users[user].mount_client(
         "oneclient-1",
         "client1",
@@ -66,13 +67,13 @@ def mount_new_oneclient_with_token_fail(
     client: str = "oneclient",
 ) -> None:
     if "oneclient" in client:
-        token = tmp_memory[user]["mailbox"]["token"]
+        token = cast(Mapping[str, str], tmp_memory[user]["mailbox"])["token"]
         users[user].mount_client(
             "oneclient-1",
             "client1",
             cast(Mapping[str, Mapping[str, str]], hosts),
             env_desc,
-            cast(str, token),
+            token,
         )
         failure(user, users)
 
@@ -202,7 +203,7 @@ def create_item_in_op_oneclient(
     users: Users,
     cwd: str,
     name: str,
-    content: object,
+    content: Content,
     create_item_fun: CreateItem,
     host: str,
     hosts: Hosts,
@@ -219,7 +220,7 @@ def create_item_in_op_oneclient(
         user,
         users,
         cwd,
-        cast(Iterable[ContentItem], content),
+        content,
         create_item_fun,
         host,
         hosts,
@@ -396,8 +397,8 @@ def assert_no_such_metadata_in_op_oneclient(
         pass
     else:
         if tab_name.lower() == "json":
-            expected_metadata = cast(Mapping[str, object], json.loads(val))
-            actual_metadata = cast(Mapping[str, object], json.loads(metadata_value))
+            expected_metadata = cast(Mapping[str, JsonValue], json.loads(val))
+            actual_metadata = cast(Mapping[str, JsonValue], json.loads(metadata_value))
             for key in expected_metadata:
                 assert (
                     key not in actual_metadata

@@ -47,6 +47,26 @@ class StorageMappings(TypedDict):
 type LumaMappings = dict[str, dict[str, StorageMappings]]
 
 
+class StorageCredentials(TypedDict):
+    type: str
+    uid: MappingValue
+
+
+class StorageUser(TypedDict):
+    storageCredentials: StorageCredentials
+    displayUid: NotRequired[MappingValue]
+
+
+class OnedataUser(TypedDict):
+    mappingScheme: str
+    onedataUserId: str
+
+
+class OnedataUserMapping(TypedDict):
+    onedataUser: OnedataUser
+    storageUser: StorageUser
+
+
 @wt(
     parsers.parse(
         "LUMA local feed mappings are created with following configuration:\n{config}"
@@ -181,14 +201,14 @@ def _set_onedata_user_mapping(
     user_id: str,
     storage_uid: MappingValue,
     display_uid: MappingValue,
-) -> dict[str, object]:
-    storage_user: dict[str, object] = {
+) -> OnedataUserMapping:
+    storage_user: StorageUser = {
         "storageCredentials": {
             "type": storage_type,
             "uid": storage_uid,
         }
     }
-    scheme: dict[str, object] = {
+    scheme: OnedataUserMapping = {
         "onedataUser": {
             "mappingScheme": "onedataUser",
             "onedataUserId": user_id,

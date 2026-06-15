@@ -34,7 +34,7 @@ DEFAULT_FILE_EVENT_TIMEOUT: int = 30
 NUMBER_OF_EVENTS_TO_LOOK_BACK: int = 10
 
 type EventResult = str | tuple[str, float] | dict[str, FileAttrs]
-type EventMemory = MutableMapping[str, object]
+type EventMemory = MutableMapping[str, SpaceFilesMonitorClientImpl]
 type ExpectedAttrs = Mapping[str, Optional[str | int]]
 
 
@@ -283,7 +283,7 @@ def get_file_action_in_observed_directory(
     async_loop_in_thread: asyncio.AbstractEventLoop,
     file_action: ObservedFileAction,
 ) -> EventResult:
-    monitor = cast(SpaceFilesMonitorClientImpl, tmp_memory["monitor"])
+    monitor = tmp_memory["monitor"]
     coroutine: Coroutine[object, object, EventResult]
     if file_action == ObservedFileAction.CREATION:
         coroutine = cast(

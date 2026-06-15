@@ -20,6 +20,8 @@ from tests.utils.path_utils import escape_path
 from tests.utils.utils import log_exception
 
 type Command = str | list[str]
+type Condition = Callable[[], Optional[bool]]
+type XattrValue = str | bytes
 
 
 class PathProxy(Protocol):
@@ -87,7 +89,7 @@ class TempfileProxy(Protocol):
 
 class XattrsProxy(Protocol):
     def __getitem__(self, name: str) -> str: ...
-    def __setitem__(self, name: str, value: object) -> None: ...
+    def __setitem__(self, name: str, value: XattrValue) -> None: ...
     def __delitem__(self, name: str) -> None: ...
     def list(self) -> list[str]: ...
     def clear(self) -> None: ...
@@ -134,8 +136,8 @@ class Client:
         self._mount_path = os.path.join(ONECLIENT_MOUNT_DIR, self._id)
         self.rpyc_connection = rpyc_connection
         self.timeout = timeout if timeout is not None else 40
-        self.opened_files: dict[object, IO] = {}
-        self.file_stats: dict[str, object] = {}
+        self.opened_files: dict[str, IO] = {}
+        self.file_stats: dict[str, os.stat_result] = {}
 
     def mount(
         self,
@@ -180,18 +182,16 @@ class Client:
         self.fusermount(self._mount_path, unmount=True, lazy=True)
         self.rm(path=self._mount_path, recursive=True, force=True)
 
-    def absolute_path(self, path: object) -> str:
-        return os.path.join(self._mount_path, str(path))
+    def absolute_path(self, path: str) -> str:
+        return os.path.join(self._mount_path, path)
 
-    def perform(
-        self, condition: Callable[[], object], timeout: Optional[int] = None
-    ) -> bool:
+    def perform(self, condition: Condition, timeout: Optional[int] = None) -> bool:
         if timeout is None:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
 
     @staticmethod
-    def _repeat_until(condition: Callable[[], object], timeout: int) -> bool:
+    def _repeat_until(condition: Condition, timeout: int) -> bool:
         condition_satisfied = False
         while not condition_satisfied and timeout >= 0:
             try:
@@ -313,20 +313,20 @@ class Client:
     def open_file(self, file: str, mode: str = "w+") -> IO:
         return self.rpyc_connection.builtins.open(file, mode)
 
-    def close_file(self, file: object) -> None:
+    def close_file(self, file: str) -> None:
         self.opened_files[file].close()
 
-    def write_to_opened_file(self, file: object, text: str | bytes) -> None:
+    def write_to_opened_file(self, file: str, text: str | bytes) -> None:
         self.opened_files[file].write(cast(str, text))
         self.opened_files[file].flush()
 
-    def read_from_opened_file(self, file: object) -> str:
+    def read_from_opened_file(self, file: str) -> str:
         return self.opened_files[file].read()
 
-    def seek(self, file: object, offset: int) -> None:
+    def seek(self, file: str, offset: int) -> None:
         self.opened_files[file].seek(offset)
 
-    def setxattr(self, file: str, name: str, value: object) -> None:
+    def setxattr(self, file: str, name: str, value: XattrValue) -> None:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         xattrs[name] = value
 
@@ -412,7 +412,7 @@ class Client:
         error: bool = False,
         retries: int = 0,
         retry_sleep: int | float = 8,
-        on_retry: Optional[Callable[[], object]] = None,
+        on_retry: Optional[Callable[[], None]] = None,
         verbose: bool = False,
     ) -> CommandResult:
         """Run command on oneself docker using rpyc

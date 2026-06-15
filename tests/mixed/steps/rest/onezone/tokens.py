@@ -14,7 +14,7 @@ from typing import Optional, Protocol, cast
 import yaml
 from onezone_client import TokenApi
 
-from tests.conftest import Hosts, Tokens
+from tests.conftest import Hosts, JsonValue, Tokens
 from tests.gui.types import TmpMemory
 from tests.mixed.steps.rest.onezone.members import (
     PrivilegeGroupConfig,
@@ -24,9 +24,10 @@ from tests.mixed.utils.common import login_to_oz
 
 GroupMap = Mapping[str, str]
 SpaceMap = Mapping[str, str]
-type ConfigMap = Mapping[str, object]
-type TokenCaveat = dict[str, object]
-type TokenConfig = dict[str, object]
+type TokenValue = JsonValue | list[str] | list["TokenCaveat"] | dict[str, TokenValue]
+type ConfigMap = Mapping[str, TokenValue]
+type TokenCaveat = dict[str, TokenValue]
+type TokenConfig = dict[str, TokenValue]
 
 
 class UserLike(Protocol):
@@ -142,10 +143,11 @@ def _create_token_with_config(
     caveats = data.get("caveats", False)
     privileges = data.get("privileges", False)
 
-    token_variant: dict[str, object] = {}
+    token_variant: dict[str, TokenValue] = {}
+    token_type_config: dict[str, TokenValue] = {f"{token_type}Token": token_variant}
     token_config: TokenConfig = {
         "name": name,
-        "type": {f"{token_type}Token": token_variant},
+        "type": token_type_config,
     }
     if token_type == "invite":
         invite_type = cast(str, data["invite type"])

@@ -12,7 +12,7 @@ from typing import cast
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
+from tests.conftest import JsonValue, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     assert_data_discovery_page,
@@ -30,6 +30,8 @@ from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils.onezone.data_discovery_page import ResultSample
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
+type JsonObject = dict[str, JsonValue]
 
 
 @wt(
@@ -71,7 +73,7 @@ def assert_files(
 
 
 def _assert_elem_num_equals(
-    expected_data: dict[str, object], data_dict: dict[str, ResultSample]
+    expected_data: JsonObject, data_dict: dict[str, ResultSample]
 ) -> None:
     expected_num = len(expected_data)
     spaces = cast(list[str], expected_data.get("spaces", []))
@@ -102,13 +104,13 @@ def _unpack_files_data(
 
 
 def _assert_data_discovery_files(
-    expected: dict[str, object], actual: str, spaces: dict[str, str]
+    expected: JsonObject, actual: str, spaces: dict[str, str]
 ) -> None:
     for item in expected.items():
         if item[0] == "spaceId":
             item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            xattrs = cast(dict[str, dict[str, object]], item[1])
+            xattrs = cast(dict[str, JsonObject], item[1])
             for sub_item in xattrs.items():
                 if sub_item[0] == "unexpected":
                     for s_item in sub_item[1].items():
@@ -121,24 +123,24 @@ def _assert_data_discovery_files(
             ), f"{item[0]}: {item[1]} not in {actual}"
 
 
-def _assert_unexpected_xattr(sub_item: tuple[str, object], actual: str) -> None:
+def _assert_unexpected_xattr(sub_item: tuple[str, JsonValue], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex not in actual, f"{regex} in {actual} but should not be"
 
 
-def _assert_expected_xattr(sub_item: tuple[str, object], actual: str) -> None:
+def _assert_expected_xattr(sub_item: tuple[str, JsonValue], actual: str) -> None:
     regex = f"{sub_item[0]}: {{__value: {sub_item[1]}}}"
     assert regex in actual, f"{regex} not in {actual}"
 
 
 def _assert_unexpected_properties_of_files(
-    unexpected: dict[str, object], actual: str, spaces: dict[str, str]
+    unexpected: JsonObject, actual: str, spaces: dict[str, str]
 ) -> None:
     for item in unexpected.items():
         if item[0] == "spaceId":
             item = ("spaceId", f'"{spaces[cast(str, item[1])]}"')
         if item[0] == "xattrs":
-            for sub_item in cast(dict[str, object], item[1]).items():
+            for sub_item in cast(JsonObject, item[1]).items():
                 _assert_unexpected_xattr(sub_item, actual)
         else:
             assert not (
@@ -238,13 +240,15 @@ def choose_properties_to_filter(
     _parse_data(data, selenium, browser_id)
 
 
-def _parse_data(data: list[object], selenium: SeleniumDrivers, browser_id: str) -> None:
+def _parse_data(
+    data: list[JsonValue], selenium: SeleniumDrivers, browser_id: str
+) -> None:
     page = DataDiscovery(selenium[browser_id])
     for item in data:
         if isinstance(item, dict):
             if [*item][0] == "__onedata":
                 page.filter_properties_tree.tree_nodes["__onedata"].expander()
-                attrs = item["__onedata"]
+                attrs = cast(list[JsonValue], item["__onedata"])
                 for attr in attrs:
                     if isinstance(attr, dict):
                         if [*attr][0] == "xattrs":
@@ -253,7 +257,7 @@ def _parse_data(data: list[object], selenium: SeleniumDrivers, browser_id: str) 
                             ].onedata_tree_nodes["xattrs"]
                             node.expander()
                             nodes = node.xattrs_tree_nodes
-                            for prop in attr["xattrs"]:
+                            for prop in cast(list[str], attr["xattrs"]):
                                 nodes[prop].checkbox.click()
                         else:
                             raise RuntimeError(f"Do not support {attr}")
@@ -292,8 +296,8 @@ def compare_files_with_curl(
             if prop == "xattrs":
                 xattrs = expected_data[file_name][prop]
                 for xattr in xattrs:
-                    onedata = cast(dict[str, object], curl_dict[file_name]["__onedata"])
-                    file_xattrs = cast(dict[str, dict[str, object]], onedata["xattrs"])
+                    onedata = cast(JsonObject, curl_dict[file_name]["__onedata"])
+                    file_xattrs = cast(dict[str, JsonObject], onedata["xattrs"])
                     assert file_xattrs[xattr]["__value"] == xattrs[xattr], msg
 
             else:
@@ -301,12 +305,12 @@ def compare_files_with_curl(
 
 
 def _curl_data_to_dict(
-    query_curl_data: list[dict[str, object]],
-) -> dict[str, dict[str, object]]:
+    query_curl_data: list[JsonObject],
+) -> dict[str, JsonObject]:
     new_dict = {}
     for entry in query_curl_data:
-        source = cast(dict[str, object], entry["_source"])
-        onedata = cast(dict[str, object], source["__onedata"])
+        source = cast(JsonObject, entry["_source"])
+        onedata = cast(JsonObject, source["__onedata"])
         file_name = cast(str, onedata["fileName"])
         new_dict[file_name] = source
     return new_dict

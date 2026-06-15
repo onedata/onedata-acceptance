@@ -270,7 +270,7 @@ def get_store_audit_log(
     displays: DisplayMap,
     tmp_memory: TmpMemory,
     store_key: str,
-) -> dict[str, object]:
+) -> AuditLogContent:
     if store_key not in tmp_memory.keys():
         assert_audit_log_in_store(
             browser_id,
@@ -281,7 +281,7 @@ def get_store_audit_log(
             tmp_memory,
         )
 
-    return cast(dict[str, object], tmp_memory[store_key])
+    return cast(AuditLogContent, tmp_memory[store_key])
 
 
 def compare_audit_log_to_store_log(
@@ -613,7 +613,7 @@ def check_visual_in_store_details_modal(
         assert modal.raw_view == item_list, err_msg
     else:
         parsed_items = cast(
-            list[object] | dict[object, object],
+            list[AuditLogValue] | AuditLogContent,
             (
                 literal_eval(item_list)
                 if variable_type != "files"
@@ -754,8 +754,8 @@ def assert_element_selected_in_new_browser_tab(
 
 
 def compare_to_expected_if_element_exist_for_store(
-    elem: object,
-    items: dict[str, object],
+    elem: AuditLogValue,
+    items: AuditLogContent,
     option: str,
     store_name: str,
     selenium: SeleniumDrivers,
@@ -840,25 +840,32 @@ def assert_content_of_store(
 
 
 def compare_to_expected_if_elem_exist_audit_log(
-    data: Mapping[str, object],
+    data: Mapping[str, AuditLogValue],
     label: str,
-    actual_items: Mapping[str, object],
+    actual_items: Mapping[str, AuditLogValue],
     task_name: str,
 ) -> None:
     expected = data.get(label, False)
     if expected:
-        actual = actual_items[label]
+        comparable_expected: AuditLogValue | date = expected
+        comparable_actual: AuditLogValue | date = actual_items[label]
         if label == "timestamp":
-            expected = date.today()
-            actual = date.fromtimestamp(cast(float, actual_items["timestamp"]) / 1000)
-        expected = cast(str, expected).lower() if label == "severity" else expected
+            comparable_expected = date.today()
+            comparable_actual = date.fromtimestamp(
+                cast(float, actual_items["timestamp"]) / 1000
+            )
+        elif label == "severity":
+            comparable_expected = cast(str, expected).lower()
         assert_elements_of_task_audit_log_are_the_same(
-            expected, actual, label, task_name
+            comparable_expected, comparable_actual, label, task_name
         )
 
 
 def assert_elements_of_task_audit_log_are_the_same(
-    expected: object, actual: object, label: str, task_name: str
+    expected: AuditLogValue | date,
+    actual: AuditLogValue | date,
+    label: str,
+    task_name: str,
 ) -> None:
     assert expected == actual, (
         f'{label} "{actual}" in audit log for "{task_name}" task is '
@@ -1308,7 +1315,7 @@ def assert_workflow_audit_log_contains_entry(
     raise RuntimeError(err_msg)
 
 
-def _assert_all_items_in_json(item_list: list[str], data: dict[str, object]) -> bool:
+def _assert_all_items_in_json(item_list: list[str], data: AuditLogContent) -> bool:
     for item in item_list:
         if not data.get(item, False):
             return False
@@ -1326,7 +1333,7 @@ def assert_no_debug_entry_in_workflow_audit_log(
 ) -> None:
     file_path = _get_workflow_audit_log(browser_id, selenium, tmp_memory, tmpdir)
     with open(file_path) as f:
-        data_file: list[dict[str, object]] = json.load(f)
+        data_file: list[AuditLogContent] = json.load(f)
         err_msg = "workflow audit log contains debug entry"
         assert not any(
             entry.get("severity", "") == "debug" for entry in data_file

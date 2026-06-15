@@ -12,6 +12,7 @@ from typing import Protocol
 
 from oneprovider_client import CustomFileMetadataApi
 
+from tests.conftest import JsonValue
 from tests.gui.utils import CDMIClient as cdmi
 from tests.mixed.utils.common import login_to_provider
 
@@ -79,7 +80,7 @@ def add_json_metadata_to_file_rest(
     users: Mapping[str, UserLike],
     hosts: HostsConfig,
     host: str,
-    expression: object,
+    expression: JsonValue,
     file_id: str,
 ) -> None:
     user_client_op = login_to_provider(user, users, hosts[host]["hostname"])

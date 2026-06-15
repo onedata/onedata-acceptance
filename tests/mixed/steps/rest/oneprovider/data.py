@@ -35,6 +35,7 @@ from tests.mixed.steps.rest.oneprovider.basic import UserLike as BasicUserLike
 from tests.mixed.steps.rest.oneprovider.basic import see_item_is_dir_op_rest
 from tests.mixed.utils.common import login_to_cdmi, login_to_provider
 from tests.mixed.utils.data import (
+    Content,
     ContentItem,
     CreateItem,
     ItemType,
@@ -284,7 +285,7 @@ def create_item_in_op_rest(
     users: Users,
     cwd: str,
     name: str,
-    content: object,
+    content: Content,
     create_item_fun: CreateItem,
     host: str,
     hosts: Hosts,
@@ -301,7 +302,7 @@ def create_item_in_op_rest(
         user,
         users,
         cwd,
-        cast(Iterable[ContentItem], content),
+        content,
         create_item_fun,
         host,
         hosts,

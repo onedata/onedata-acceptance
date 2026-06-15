@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from collections.abc import Mapping, MutableMapping
-from typing import Protocol, cast
+from typing import NotRequired, Protocol, TypedDict, cast
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
@@ -29,6 +29,12 @@ IdMap = Mapping[str, str]
 TmpMemory = MutableMapping[str, str]
 ArchiveConfigValue = str | MutableMapping[str, str]
 ArchiveConfig = dict[str, ArchiveConfigValue]
+
+
+class ArchiveData(TypedDict):
+    datasetId: str
+    config: ArchiveConfig
+    description: NotRequired[str]
 
 
 class ArchiveInfoConfig(Protocol):
@@ -75,7 +81,7 @@ def create_archive_in_op_rest(
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data: dict[str, object] = {"datasetId": dataset_id, "config": archive_config}
+    data: ArchiveData = {"datasetId": dataset_id, "config": archive_config}
     if "description" in archive_config:
         description = cast(str, archive_config.pop("description"))
         data["description"] = description
@@ -112,7 +118,7 @@ def create_n_archives_in_op_rest(
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    data: dict[str, object] = {"datasetId": dataset_id, "config": archive_config}
+    data: ArchiveData = {"datasetId": dataset_id, "config": archive_config}
 
     for i in range(number):
         description = f"archive number {i}"

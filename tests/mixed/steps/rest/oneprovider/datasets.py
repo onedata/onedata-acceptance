@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import cast
+from typing import NotRequired, TypedDict, cast
 
 import yaml
 from oneprovider_client.rest import ApiException as OPException
@@ -19,6 +19,11 @@ from tests.mixed.utils.common import login_to_provider
 IdMap = Mapping[str, str]
 type DatasetSubtree = list[str | dict[str, "DatasetSubtree"]]
 type DatasetTree = list[dict[str, DatasetSubtree]]
+
+
+class DatasetData(TypedDict):
+    rootFileId: str
+    protectionFlags: NotRequired[list[str]]
 
 
 def create_dataset_in_op_rest(
@@ -41,7 +46,7 @@ def create_dataset_in_op_by_id_rest(
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     dataset_api = DatasetApi(client)
-    data: dict[str, object] = {"rootFileId": f"{file_id}"}
+    data: DatasetData = {"rootFileId": f"{file_id}"}
     flags = get_flags(option)
     if len(flags) != 0:
         data["protectionFlags"] = flags

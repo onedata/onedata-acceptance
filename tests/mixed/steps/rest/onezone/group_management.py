@@ -141,7 +141,6 @@ def remove_groups_using_rest(
     users: Mapping[str, UserLike],
     hosts: Hosts,
     group_list: str,
-    _user_clients: object,
     host: str = "onezone",
 ) -> None:
     user_client = login_to_oz(user, users[user].password, hosts[host]["hostname"])

@@ -260,7 +260,7 @@ def _upload_workflow_rest(
     owner: CredentialsLike,
     inventory_id: str,
     workflow_name: str,
-    workflow_dump: object,
+    workflow_dump: JsonValue,
     workflows: MutableIdMap,
 ) -> None:
     workflow_schema_details = json.dumps(
@@ -659,7 +659,7 @@ def execute_part_of_the_workflows(
 
 
 def check_to_run_workflow(
-    workflow_name: str, file_name: object, archive_types: Optional[str]
+    workflow_name: str, file_name: str | list[str], archive_types: Optional[str]
 ) -> bool:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
@@ -676,7 +676,7 @@ def execute_workflow_rest(
     spaces: IdMap,
     space_name: str,
     workflow_name: str,
-    stores_content: Mapping[str, object],
+    stores_content: Mapping[str, JsonValue],
     workflows: IdMap,
     rev_number: int = 1,
     loglevel: str = "info",

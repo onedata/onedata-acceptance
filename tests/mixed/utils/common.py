@@ -10,6 +10,7 @@ from collections.abc import Callable, Mapping
 from typing import Optional, Protocol
 
 import yaml
+from _pytest._py.path import LocalPath
 
 from tests import (
     CDMI_REST_PATH_PREFIX,
@@ -35,7 +36,8 @@ from tests.mixed.utils.privileges import (
 )
 from tests.utils.bdd_utils import parsers, wt
 
-Resolver = Callable[[str], object]
+type ResolverResult = str | list[str]
+type Resolver = Callable[[str], ResolverResult]
 UsersWithToken = Mapping[str, "UserWithToken"]
 
 
@@ -57,7 +59,7 @@ class FixtureRequestLike(Protocol):
 
 
 class TmpDirLike(Protocol):
-    def join(self, *args: object) -> object: ...
+    def join(self, *args: str) -> LocalPath: ...
 
 
 class NoSuchClientException(Exception):
@@ -189,7 +191,7 @@ def _execute_curl_command(
     tmp_memory: TmpMemory,
     config: Optional[Mapping[str, str]],
     flags: Optional[list[str]] = None,
-    file_out: Optional[object] = None,
+    file_out: Optional[str | LocalPath] = None,
 ) -> None:
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
@@ -400,7 +402,7 @@ def download_using_curl_with_forward(
     file_out: Optional[str],
 ) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
-    output_path: Optional[object] = file_out
+    output_path: Optional[str | LocalPath] = file_out
     if file_out is not None:
         output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 

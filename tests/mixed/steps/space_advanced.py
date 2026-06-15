@@ -11,6 +11,7 @@ from tests.conftest import Hosts, Users
 from tests.gui.steps.rest.shares import create_share_using_rest
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
+    ProviderEntry,
     _create_space,
     _get_support,
     create_empty_file,
@@ -55,7 +56,9 @@ def create_n_spaces_with_shares(
     host = "oneprovider-1"
     zone_hostname = hosts[zone_host]["hostname"]
     users_to_add: list[str] = []
-    providers = [{"oneprovider-1": {"storage": "posix", "size": 1000000}}]
+    providers: list[ProviderEntry] = [
+        {"oneprovider-1": {"storage": "posix", "size": 1000000}}
+    ]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
     for i in range(number):

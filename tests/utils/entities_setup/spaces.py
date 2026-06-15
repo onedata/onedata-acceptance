@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import time
-from collections.abc import Callable, Mapping, MutableMapping, Sequence
+from collections.abc import Mapping, MutableMapping, Sequence
 from functools import cache
 from typing import Optional, Protocol, TypedDict, cast
 
@@ -14,6 +14,7 @@ import requests
 import yaml
 
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
+from tests.conftest import HostDescription, JsonValue
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
@@ -34,16 +35,17 @@ from tests.utils.rest_utils import (
 )
 from tests.utils.utils import repeat_failed
 
-type Hosts = Mapping[str, object]
+type Hosts = Mapping[str, HostDescription]
 type Users = Mapping[str, "UserLike"]
 type Groups = Mapping[str, str]
 type Storages = MutableMapping
 type Spaces = MutableMapping[str, str]
 type MemberEntry = str | dict[str, "MemberOptions"]
 type ProviderEntry = dict[str, "ProviderOptions"]
-type TreeEntry = str | dict[str, object]
+type Metadata = dict[str, JsonValue]
+type TreeValue = JsonValue | "DirectoryTree" | "FileDetails"
+type TreeEntry = str | dict[str, TreeValue]
 type DirectoryTree = list[TreeEntry]
-type CdmiCreator = Callable[..., Optional[requests.Response]]
 
 
 class CredentialsLike(Protocol):
@@ -69,6 +71,24 @@ class MemberOptions(TypedDict):
 class ProviderOptions(TypedDict):
     storage: str
     size: int | str
+
+
+class FileDetails(TypedDict, total=False):
+    provider: str
+    content: JsonValue
+    metadata: Metadata
+
+
+class CdmiCreator(Protocol):
+    def __call__(
+        self,
+        path: str,
+        data: Optional[str] = None,
+        repeats: int = 10,
+        auth: Optional[tuple[str, Optional[str]]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        **extra: str,
+    ) -> Optional[requests.Response]: ...
 
 
 StorageConfig = TypedDict(
@@ -121,7 +141,7 @@ def create_and_configure_spaces_step(
 
 
 def create_and_configure_spaces(
-    config: object,
+    config: SpacesConfig,
     zone_host: str,
     admin_credentials: CredentialsLike,
     onepanel_credentials: CredentialsLike,
@@ -407,7 +427,7 @@ def _get_support(
     space_id: str,
     storages_db: Storages,
     hosts: Hosts,
-    providers: Sequence[Mapping[str, Mapping[str, object]]],
+    providers: Sequence[ProviderEntry],
     members: Sequence[MemberEntry],
     users: Users,
 ) -> None:
@@ -570,11 +590,11 @@ def init_storage(
 
     def create_cdmi_object(
         path: str,
-        data: Optional[object] = None,
+        data: Optional[str] = None,
         repeats: int = 10,
-        auth: Optional[object] = None,
-        headers: Optional[Mapping[str, object]] = None,
-        **_extra: object,
+        auth: Optional[tuple[str, Optional[str]]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        **_extra: str,
     ) -> Optional[requests.Response]:
         if headers is None:
             headers = {"X-Auth-Token": owner_credentials.token}
@@ -656,11 +676,11 @@ def set_file_metadata(
     owner_credentials: UserLike,
     provider_hostname: str,
     users: Users,
-    metadata: Optional[dict[str, object]] = None,
+    metadata: Optional[Metadata] = None,
 ) -> None:
     if metadata is None:
         return
-    metadata_type = metadata.pop("type", "json")
+    metadata_type = cast(str, metadata.pop("type", "json"))
     metadata_type = "xattrs" if metadata_type == "basic" else metadata_type
     user = owner_credentials.username
     file_id = get_file_id_by_rest(file_path, provider_hostname, users[user].token)
@@ -680,18 +700,19 @@ def _mkfile(
     owner_credentials: UserLike,
     provider_hostname: str,
     users: Users,
-    file_content: Optional[object] = None,
+    file_content: Optional[TreeValue] = None,
 ) -> None:
     if file_content:
         if not isinstance(file_content, dict):
             create_cdmi_obj(file_path, str(file_content))
         else:
-            provider = file_content.get("provider")
+            details = cast(FileDetails, file_content)
+            provider = details.get("provider")
             if provider:
-                provider_host = cast(Mapping[str, str], hosts[str(provider)])
+                provider_host = hosts[provider]
                 create_cdmi_obj(
                     file_path,
-                    data=str(file_content.get("content", None)),
+                    data=str(details.get("content", None)),
                     url=f"https://{provider_host["hostname"]}:{OP_REST_PORT}/cdmi/",
                 )
                 set_file_metadata(
@@ -699,16 +720,16 @@ def _mkfile(
                     owner_credentials,
                     provider_hostname,
                     users,
-                    cast(Optional[dict[str, object]], file_content.get("metadata")),
+                    details.get("metadata"),
                 )
             else:
-                create_cdmi_obj(file_path, str(file_content.get("content", None)))
+                create_cdmi_obj(file_path, str(details.get("content", None)))
                 set_file_metadata(
                     file_path,
                     owner_credentials,
                     provider_hostname,
                     users,
-                    cast(Optional[dict[str, object]], file_content.get("metadata")),
+                    details.get("metadata"),
                 )
     else:
         create_cdmi_obj(file_path)

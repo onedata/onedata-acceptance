@@ -9,8 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
 from typing import Optional, Protocol
 
+import pytest
 import yaml
 
+from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
@@ -30,14 +32,29 @@ class UserLike(Protocol):
     user_id: str
 
 
-ContentItem = str | Mapping[str, object]
+type Content = Optional[Iterable["ContentItem"]]
+type ContentItem = str | Mapping[str, Content]
 AclEntry = MutableMapping[str, str]
 Acl = list[AclEntry]
 ItemType = str
 IsDir = Callable[[str], bool]
 ListDir = Callable[[str], Sequence[str]]
-AssertFileContent = Callable[[str, str], object]
-CreateItem = Callable[..., object]
+AssertFileContent = Callable[[str, str], None]
+
+
+class CreateItem(Protocol):
+    def __call__(
+        self,
+        user: str,
+        users: Users,
+        cwd: str,
+        name: str,
+        content: Content,
+        create_item_fun: CreateItem,
+        host: str,
+        hosts: Hosts,
+        request: pytest.FixtureRequest,
+    ) -> None: ...
 
 
 def _check_files_tree(
@@ -82,13 +99,13 @@ def check_files_tree(
 
 def create_content(
     user: str,
-    users: object,
+    users: Users,
     cwd: str,
     content: Iterable[ContentItem],
     create_item_fun: CreateItem,
     host: str,
-    hosts: object,
-    request: object,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
 ) -> None:
     for item in content:
         if isinstance(item, Mapping):

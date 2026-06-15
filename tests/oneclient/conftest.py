@@ -16,6 +16,7 @@ from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
 from tests.utils.client_utils import Client
 from tests.utils.entities_setup.groups import CredentialsLike, GroupsConfig, UserLike
 from tests.utils.entities_setup.groups import groups_creation as setup_groups
+from tests.utils.entities_setup.spaces import SpacesConfig
 from tests.utils.entities_setup.spaces import (
     create_and_configure_spaces as setup_spaces,
 )
@@ -109,7 +110,7 @@ def setup_entities(
         groups,
     )
     setup_spaces(
-        config.get("spaces"),
+        cast(SpacesConfig, config.get("spaces")),
         "onezone",
         admin_credentials,
         onepanel_credentials,

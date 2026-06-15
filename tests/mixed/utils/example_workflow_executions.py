@@ -12,13 +12,14 @@ import os
 from collections.abc import Callable
 from typing import Optional
 
+from tests.conftest import JsonValue
 from tests.gui.utils.generic import upload_workflow_path
 
-type StoreContent = dict[str, object]
+type StoreContent = dict[str, JsonValue]
 type InputFiles = list[str]
 type ExecutionResult = tuple[list[StoreContent], InputFiles | list[InputFiles]]
 type ResolveId = Callable[[str], str]
-type UploadFile = Callable[[str, str], object]
+type UploadFile = Callable[[str, str], None]
 
 
 class ExampleWorkflowExecutionInitialStoreContent:

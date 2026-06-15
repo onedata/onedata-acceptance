@@ -28,31 +28,32 @@ from .http_exceptions import HTTPServiceUnavailable, raise_http_exception
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-Headers = Optional[Mapping[str, object]]
-Params = Optional[Mapping[str, object]]
-RequestData = Optional[object]
-Certificate = Optional[object]
-Auth = Optional[object]
+type PathPart = str | int
+Headers = Optional[Mapping[str, str]]
+Params = Optional[Mapping[str, Optional[str | int | list[str]]]]
+RequestData = Optional[str | bytes]
+Certificate = Optional[str | tuple[str, str]]
+Auth = Optional[tuple[str, Optional[str]]]
 HttpMethod = Callable[..., requests.Response]
 
 
-def get_zone_rest_path(*args: object) -> str:
+def get_zone_rest_path(*args: PathPart) -> str:
     return "/".join(chain([OZ_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_panel_rest_path(*args: object) -> str:
+def get_panel_rest_path(*args: PathPart) -> str:
     return "/".join(chain([PANEL_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_provider_rest_path(*args: object) -> str:
+def get_provider_rest_path(*args: PathPart) -> str:
     return "/".join(chain([PROVIDER_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_luma_rest_path(*args: object) -> str:
+def get_luma_rest_path(*args: PathPart) -> str:
     return "/".join(chain([LUMA_REST_PATH_PREFIX], map(str, args)))
 
 
-def get_token_dispenser_rest_path(*args: object) -> str:
+def get_token_dispenser_rest_path(*args: PathPart) -> str:
     return "/".join(chain([TOKEN_DISPENSER_PATH_PREFIX], map(str, args)))
 
 
@@ -220,9 +221,7 @@ def http_request(  # pylint: disable=inconsistent-return-statements
     retries: int = 5,
 ) -> requests.Response:
     protocol = "https" if use_ssl else "http"
-    request_headers: dict[str, object] = (
-        dict(DEFAULT_HEADERS) if default_headers else {}
-    )
+    request_headers: dict[str, str] = dict(DEFAULT_HEADERS) if default_headers else {}
     if headers:
         request_headers.update(headers)
     for i in range(retries):
