@@ -1,5 +1,7 @@
 """This module provides utility functions for test environment management"""
 
+from __future__ import annotations
+
 __author__ = "Jakub Kudzia, Michal Cwiertnia, Michal Stanisz"
 __copyright__ = "Copyright (C) 2016-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -8,7 +10,7 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import Literal, Mapping, Optional, TypedDict, cast, overload
+from typing import TYPE_CHECKING, Literal, Mapping, Optional, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -19,7 +21,6 @@ from requests.exceptions import ConnectTimeout
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
-from tests.conftest import Hosts, TestConfig, Users
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
@@ -40,6 +41,9 @@ from tests.utils.onenv_utils import (
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.user_utils import AdminUser, User
 from tests.utils.utils import repeat_failed
+
+if TYPE_CHECKING:
+    from tests.conftest import Hosts, TestConfig, Users
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = "one-env"

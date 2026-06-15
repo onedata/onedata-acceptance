@@ -7,9 +7,11 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import inspect
+from types import NoneType, UnionType
 from collections.abc import Callable, Iterable, Mapping
 from functools import wraps
-from typing import Optional, Protocol, cast, get_origin
+from typing import Any, Literal, Optional, Protocol, TypeAliasType, Union, cast
+from typing import get_args, get_origin, is_typeddict
 
 from pytest_bdd import given as pytest_bdd_given
 from pytest_bdd import parsers, scenario, scenarios
@@ -38,6 +40,34 @@ class StepDecorator(Protocol):
     ](self, fun: StepFunction[params, return_type]) -> StepFunction[
         params, return_type
     ]: ...
+
+
+def _get_runtime_cast_target(ann: object) -> Optional[type]:
+    while isinstance(ann, TypeAliasType):
+        ann = ann.__value__
+
+    if (
+        ann is Any
+        or is_typeddict(ann)
+        or (
+            getattr(ann, "_is_protocol", False)
+            and not getattr(ann, "_is_runtime_protocol", False)
+        )
+    ):
+        return None
+
+    origin = get_origin(ann)
+    if origin in (Union, UnionType):
+        possible_types = tuple(arg for arg in get_args(ann) if arg is not NoneType)
+        if len(possible_types) == 1:
+            return _get_runtime_cast_target(possible_types[0])
+        return None
+
+    if origin is Literal:
+        return None
+
+    target_type = ann if origin is None else origin
+    return cast(Optional[type], target_type if isinstance(target_type, type) else None)
 
 
 def given(
@@ -90,10 +120,12 @@ def sanitize_arguments[
         for param in parameters.values():
             ann = param.annotation
             if ann is not inspect.Parameter.empty and param.name in ba.arguments:
+                target_type = _get_runtime_cast_target(ann)
+                if target_type is None:
+                    continue
+
                 value = ba.arguments[param.name]
                 try:
-                    origin = get_origin(ann)
-                    target_type = ann if origin is None else origin
                     if not isinstance(value, target_type):
                         ba.arguments[param.name] = target_type(value)
                 except Exception as ex:

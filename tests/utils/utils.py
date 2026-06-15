@@ -110,7 +110,7 @@ def repeat_failed(
                 return result
         return fun(*args, **kwargs)
 
-    return cast(Callable[[Callable[P, T]], Callable[P, T]], decorator(wrapper))
+    return cast(Callable[[Callable[P, T]], Callable[P, T]], wrapper)
 
 
 def get_copyright(mod: ModuleType) -> str:
