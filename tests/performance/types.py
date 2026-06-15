@@ -1,4 +1,9 @@
-"""Shared, concrete types for performance benchmarks."""
+"""Shared, concrete types for performance benchmarks"""
+
+__author__ = "Mateusz Zając"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 
 from collections.abc import Mapping
 from queue import Queue

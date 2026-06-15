@@ -1,4 +1,9 @@
-"""Shared types for dynamic GUI test helpers and fixtures."""
+"""Shared types for dynamic GUI test helpers and fixtures"""
+
+__author__ = "Mateusz Zając"
+__copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 
 from collections import defaultdict
 from collections.abc import Iterator
