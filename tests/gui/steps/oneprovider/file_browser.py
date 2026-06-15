@@ -155,7 +155,7 @@ def assert_item_in_file_browser_is_of_mdate(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_size(
-    browser_id: str, item_name: str, size: int, tmp_memory: TmpMemory
+    browser_id: str, item_name: str, size: str, tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     item_size = browser.data[item_name].size
@@ -175,7 +175,7 @@ def wait_for_size_to_be_displayed_in_data_row(
     browser_id: str,
     tmp_memory: TmpMemory,
     item_name: str,
-    size: int,
+    size: str,
 ) -> None:
     # refresh site after enabling size statistics to see displayed size
     # in data row
@@ -286,8 +286,9 @@ def select_files_from_file_list_using_ctrl(
     ),
 )
 def select_first_n_files(
-    browser_id: str, num_files_to_select: int, tmp_memory: TmpMemory
+    browser_id: str, num_files_to_select: str, tmp_memory: TmpMemory
 ) -> None:
+    files_number = int(num_files_to_select)
     browser = tmp_memory[browser_id]["file_browser"]
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
@@ -298,8 +299,8 @@ def select_first_n_files(
             f"there are {len(new_files)} files in file browser"
             f" should be at least {num_files_to_select}"
         )
-        assert len(new_files) >= num_files_to_select, err_msg
-        new_files = new_files[:num_files_to_select]
+        assert len(new_files) >= files_number, err_msg
+        new_files = new_files[:files_number]
         for new_file in new_files:
             item = browser.data[new_file]
             if not item.is_selected():
@@ -309,7 +310,7 @@ def select_first_n_files(
             f"There are {len(selected_files)} selected files in"
             f" file browser when should be {num_files_to_select}"
         )
-        assert len(selected_files) == num_files_to_select, err_msg
+        assert len(selected_files) == files_number, err_msg
 
 
 @wt(
@@ -479,7 +480,7 @@ def confirm_rename_directory(
     )
 )
 def count_files_while_scrolling(
-    browser_id: str, count: int, tmp_memory: TmpMemory, which_browser: WhichBrowser
+    browser_id: str, count: str, tmp_memory: TmpMemory, which_browser: WhichBrowser
 ) -> None:
     """
     In order to stabilize this function, func does not scroll too much at once
@@ -510,7 +511,7 @@ def count_files_while_scrolling(
         f"There are {len(detected_files)} files in file browser "
         f"when should be {count}, file list: {detected_files}"
     )
-    assert len(detected_files) == count, err_msg
+    assert len(detected_files) == int(count), err_msg
 
 
 @wt(
@@ -531,7 +532,7 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(
     selenium: SeleniumDrivers, browser_id: str, number: int
 ) -> None:
     name = Modals(selenium[browser_id]).details_modal.hardlinks.tab.text
-    actual_num = name.split()[-1].strip("(").strip(")")
+    actual_num = int(name.split()[-1].strip("(").strip(")"))
     assert (
         number == actual_num
     ), f"Expected {number}, got {actual_num} in hardlinks tab name"
@@ -541,8 +542,8 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
     selenium: SeleniumDrivers, browser_id: str, number: int
 ) -> None:
     entries = Modals(selenium[browser_id]).details_modal.hardlinks.files
-    assert len(entries) == int(
-        number
+    assert (
+        len(entries) == number
     ), f"Expected {number} hardlinks entries, got {len(entries)}"
 
 
@@ -553,10 +554,15 @@ def assert_num_of_hardlinks_entry_in_file_dets_modal(
     )
 )
 def assert_num_of_hardlinks_in_file_dets_modal(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
-    assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id, number)
-    assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id, number)
+    hardlinks_number = int(number)
+    assert_num_of_hardlinks_in_file_dets_tab_name_modal(
+        selenium, browser_id, hardlinks_number
+    )
+    assert_num_of_hardlinks_entry_in_file_dets_modal(
+        selenium, browser_id, hardlinks_number
+    )
 
 
 @wt(

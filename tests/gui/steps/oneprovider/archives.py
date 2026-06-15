@@ -29,7 +29,7 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_archives_for_item_in_dataset_browser(
-    browser_id: str, name: str, number: int, tmp_memory: TmpMemory
+    browser_id: str, name: str, number: str, tmp_memory: TmpMemory
 ) -> None:
     browser = tmp_memory[browser_id]["dataset_browser"]
     item_number = browser.data[name].number_of_archives.text
@@ -90,7 +90,7 @@ def assert_archive_full_state_status(
     tmp_memory: TmpMemory,
     status: str,
     files_count: str,
-    size: int,
+    size: str,
     description: str,
 ) -> None:
     browser = tmp_memory[browser_id]["archive_browser"]

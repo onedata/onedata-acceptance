@@ -214,10 +214,10 @@ def select_acl_subject(
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_amount_of_acls(selenium: SeleniumDrivers, browser_id: str, val: int) -> None:
+def assert_amount_of_acls(selenium: SeleniumDrivers, browser_id: str, val: str) -> None:
     driver = selenium[browser_id]
     perm = Modals(driver).details_modal.edit_permissions.acl.member_permission_list
-    assert val == len(perm), f"There are {len(perm)} instead of {val} ACL records"
+    assert int(val) == len(perm), f"There are {len(perm)} instead of {val} ACL records"
 
 
 @wt(

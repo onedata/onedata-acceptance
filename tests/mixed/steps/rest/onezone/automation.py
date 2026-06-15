@@ -496,13 +496,13 @@ def rerun_workflow_rest(
     host: str,
     workflow_name: str,
     workflow_executions: WorkflowExecutions,
-    lane_id: int,
-    lane_run: int,
+    lane_id: str,
+    lane_run: str,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
-    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    data = {"laneIndex": int(lane_id), "laneRunNumber": int(lane_run)}
     workflow_execution_api.rerun_workflow_execution(wid, data)
 
 
@@ -521,13 +521,13 @@ def retry_workflow_rest(
     host: str,
     workflow_name: str,
     workflow_executions: WorkflowExecutions,
-    lane_id: int,
-    lane_run: int,
+    lane_id: str,
+    lane_run: str,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
     workflow_execution_api = WorkflowExecutionApi(client)
-    data = {"laneIndex": lane_id, "laneRunNumber": lane_run}
+    data = {"laneIndex": int(lane_id), "laneRunNumber": int(lane_run)}
     workflow_execution_api.retry_workflow_execution(wid, data)
 
 
@@ -799,12 +799,13 @@ def assert_num_workflow_executions_in_phase(
     space: str,
     spaces: IdMap,
     phase: str,
-    num: int,
+    num: str,
 ) -> None:
+    expected_num = int(num)
     executions = list_workflow_executions(
         user, users, host, hosts, space, spaces, phase=phase
     )
-    if len(executions) != num:
+    if len(executions) != expected_num:
         raise AssertionError(
             f"Expected {num} of workflows executions to be in "
             f"phase {phase}, but there are {len(executions)}"
@@ -853,9 +854,10 @@ def assert_num_workflow_executions_in_status(
     host: str,
     hosts: Hosts,
     status: str,
-    num: int,
+    num: str,
     workflow_executions: WorkflowExecutions,
 ) -> None:
+    expected_num = int(num)
     executions = []
     for wid in workflow_executions.keys():
         mes = get_workflow_execution_details(
@@ -863,7 +865,7 @@ def assert_num_workflow_executions_in_status(
         )
         if mes["status"] == status:
             executions.append((workflow_executions[wid], mes["status"]))
-    if len(executions) != num:
+    if len(executions) != expected_num:
         raise AssertionError(
             f"Expected {num} of workflows executions to be of "
             f"status {status}, but there are {len(executions)}"

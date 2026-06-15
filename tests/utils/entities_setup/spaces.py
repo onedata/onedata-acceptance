@@ -780,7 +780,7 @@ def create_nested_directory(
     user: str,
     path: str,
     provider: str,
-    number: int,
+    number: str,
     name: str,
     users: Users,
     hosts: Hosts,
@@ -789,7 +789,7 @@ def create_nested_directory(
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
     nested_path = f"{path}"
-    for i in range(min_index, min_index + number, 1):
+    for i in range(min_index, min_index + int(number), 1):
         nested_path += f"/{name_prefix}_{i}"
         create_empty_file(nested_path + "/", users, user, provider, hosts)
 
@@ -805,7 +805,7 @@ def create_file_in_nested_directory(
     user: str,
     path: str,
     provider: str,
-    number: int,
+    number: str,
     dir_name: str,
     file_name: str,
     users: Users,
@@ -815,7 +815,7 @@ def create_file_in_nested_directory(
     min_index = int(names_list[0].split("_")[1])
     name_prefix = names_list[0].split("_")[0]
     nested_path = f"{path}"
-    for i in range(min_index, min_index + number, 1):
+    for i in range(min_index, min_index + int(number), 1):
         nested_path += f"/{name_prefix}_{i}"
     nested_path += f"/{file_name}"
     create_empty_file(nested_path, users, user, provider, hosts)

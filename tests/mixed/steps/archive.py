@@ -116,7 +116,7 @@ def wt_create_n_archives_in_op(
     config: str,
     spaces: Mapping[str, str],
     tmp_memory: TmpMemory,
-    number: int,
+    number: str,
 ) -> None:
     create_n_archives_in_op_rest(
         user,
@@ -128,7 +128,7 @@ def wt_create_n_archives_in_op(
         config,
         spaces,
         tmp_memory,
-        number,
+        int(number),
     )
 
 
@@ -284,8 +284,9 @@ def assert_number_of_archive_in_op(
     users: Users,
     hosts: Hosts,
     spaces: Mapping[str, str],
-    number: int,
+    number: str,
 ) -> None:
+    expected_number = int(number)
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_number_of_archive_in_op_gui(
@@ -294,11 +295,11 @@ def assert_number_of_archive_in_op(
             item_name,
             space_name,
             tmp_memory,
-            number,
+            expected_number,
         )
     elif client_lower == "rest":
         assert_number_of_archive_in_op_rest(
-            user, users, hosts, host, space_name, item_name, spaces, number
+            user, users, hosts, host, space_name, item_name, spaces, expected_number
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found")

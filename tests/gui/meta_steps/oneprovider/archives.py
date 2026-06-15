@@ -321,7 +321,7 @@ def assert_archive_in_op_gui(
         try:
             number = 0
             assert_number_of_archives_for_item_in_dataset_browser(
-                browser_id, item_name, number, tmp_memory
+                browser_id, item_name, str(number), tmp_memory
             )
         except AssertionError:
             click_on_dataset(browser_id, tmp_memory, item_name)
@@ -440,7 +440,7 @@ def assert_number_of_archive_in_op_gui(
             DATASET_BROWSER,
         )
     assert_number_of_archives_for_item_in_dataset_browser(
-        browser_id, item_name, number, tmp_memory
+        browser_id, item_name, str(number), tmp_memory
     )
 
 
@@ -454,7 +454,7 @@ def assert_number_of_archive_in_op_gui(
 def assert_number_of_archives_with_scrolling(
     browser_id: str,
     selenium: SeleniumDrivers,
-    number: int,
+    number: str,
     tmp_memory: TmpMemory,
     which_browser: WhichBrowser,
 ) -> None:
@@ -463,7 +463,7 @@ def assert_number_of_archives_with_scrolling(
         item.text.split("\n")[1] if len(item.text.split("\n")) > 2 else ""
     )
     assert_n_items_in_items_list(
-        browser, selenium, browser_id, number, "items", transform_fun=transform_fun
+        browser, selenium, browser_id, int(number), ListElement.FILES, "description"
     )
 
 

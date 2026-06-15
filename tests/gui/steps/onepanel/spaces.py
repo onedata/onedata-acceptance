@@ -504,7 +504,7 @@ def assert_correct_number_displayed_on_sync_charts(
     selenium: SeleniumDrivers,
     browser_id: str,
     bar_type: str,
-    num: int,
+    num: str,
     hosts: Hosts,
 ) -> None:
     files_mount_point = docker_ls("", hosts)
@@ -517,10 +517,10 @@ def assert_correct_number_displayed_on_sync_charts(
     except CalledProcessError:
         files_dir2 = []
 
-    num = int(num)
+    expected_num = int(num)
     record = Onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
-    assert displayed_num == num, (
+    assert displayed_num == expected_num, (
         f"Displayed {displayed_num} as number of {bar_type} files on sync "
         f"chart instead of expected {num}. Files in mount point: "
         f"{files_mount_point}. Files in dir1: {files_dir1}."
@@ -719,7 +719,7 @@ def click_start_cleaning_now(selenium: SeleniumDrivers, browser_id: str) -> None
     exceptions=(AssertionError, StaleElementReferenceException),
 )
 def see_released_size_in_cleaning_report(
-    selenium: SeleniumDrivers, browser_id: str, size: int
+    selenium: SeleniumDrivers, browser_id: str, size: str
 ) -> None:
     driver = selenium[browser_id]
     cleaning_reports = Onepanel(

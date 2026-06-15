@@ -169,12 +169,12 @@ def click_on_first_link_with_file_name_in_qos_audit_log(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_replicas_number_in_qualities_of_service_modal(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     replicas_number = Modals(driver).details_modal.qos.replicas_number
     assert (
-        number == replicas_number
+        int(number) == replicas_number
     ), f"Found {replicas_number} instead of {number} replicas number"
 
 

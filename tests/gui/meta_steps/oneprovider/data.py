@@ -1207,7 +1207,7 @@ def delete_first_n_files(
     option_to_select = "Delete"
     modal = "Delete modal"
     modal_option = "Yes"
-    select_first_n_files(browser_id, num_files_to_delete, tmp_memory)
+    select_first_n_files(browser_id, str(num_files_to_delete), tmp_memory)
     if num_files_to_delete > 1:
         choose_option_from_selection_menu(
             browser_id, selenium, option_to_select, tmp_memory
@@ -1226,16 +1226,17 @@ def delete_first_n_files(
 )
 def delete_first_n_files_with_fixed_step(
     browser_id: str,
-    num_files_to_delete: int,
+    num_files_to_delete: str,
     tmp_memory: TmpMemory,
     selenium: SeleniumDrivers,
 ) -> None:
+    files_number = int(num_files_to_delete)
     deleted_files = 0
     fixed_step = 5
-    while deleted_files + fixed_step <= num_files_to_delete:
+    while deleted_files + fixed_step <= files_number:
         delete_first_n_files(browser_id, fixed_step, tmp_memory, selenium)
         deleted_files += fixed_step
-    num_remaining_files_to_delete = num_files_to_delete - deleted_files
+    num_remaining_files_to_delete = files_number - deleted_files
     if num_remaining_files_to_delete > 0:
         delete_first_n_files(
             browser_id,
@@ -1245,7 +1246,7 @@ def delete_first_n_files_with_fixed_step(
         )
         deleted_files += num_remaining_files_to_delete
     err_msg = f"deleted {deleted_files} files instead of {num_files_to_delete}"
-    assert deleted_files == num_files_to_delete, err_msg
+    assert deleted_files == files_number, err_msg
 
 
 @wt(

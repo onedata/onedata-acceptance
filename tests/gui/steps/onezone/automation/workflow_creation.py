@@ -388,7 +388,7 @@ def add_lambda_revision_to_workflow(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_another_parallel_box_to_lane(
-    selenium: SeleniumDrivers, browser_id: str, lane_name: str, position: int
+    selenium: SeleniumDrivers, browser_id: str, lane_name: str, position: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id])["automation"]
     workflow_visualiser = page.workflows_page.workflow_visualiser

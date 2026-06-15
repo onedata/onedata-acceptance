@@ -170,7 +170,7 @@ def assert_element_is_not_member_of_parent_in_memberships(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_count_membership_rows(
-    selenium: SeleniumDrivers, browser_id: str, number: int, where: str
+    selenium: SeleniumDrivers, browser_id: str, number: str, where: str
 ) -> None:
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
@@ -196,10 +196,10 @@ def assert_count_membership_rows(
 def assert_all_members_number_in_space_members_tile(
     selenium: SeleniumDrivers,
     browser_id: str,
-    number_direct_groups: int,
-    number_effective_groups: int,
-    number_direct_users: int,
-    number_effective_users: int,
+    number_direct_groups: str,
+    number_effective_groups: str,
+    number_direct_users: str,
+    number_effective_users: str,
 ) -> None:
     direct = "direct"
     effective = "effective"
@@ -235,7 +235,7 @@ def assert_all_members_number_in_space_members_tile(
 def assert_members_number_in_space_members_tile(
     selenium: SeleniumDrivers,
     browser_id: str,
-    number: int,
+    number: str,
     membership_type: str,
     subject_type: str,
 ) -> None:
@@ -247,7 +247,7 @@ def assert_members_number_in_space_members_tile(
     error_msg = (
         f"found {number} {membership_type} {subject_type} instead of {members_count}"
     )
-    assert int(members_count) == number, error_msg
+    assert int(members_count) == int(number), error_msg
 
 
 @wt(
@@ -1069,14 +1069,14 @@ def check_list_length_on_members_subpage(
     browser_id: str,
     member_type: str,
     where: str,
-    number: int,
+    number: str,
 ) -> None:
     driver = selenium[browser_id]
     member_type = member_type + "s"
     page = _find_members_page(driver, where)
     members_list = getattr(page, member_type)
     error_msg = f"Wrong number of {member_type} in {where} members subpage"
-    assert len(members_list.items) == number, error_msg
+    assert len(members_list.items) == int(number), error_msg
 
 
 @wt(
@@ -1195,13 +1195,13 @@ def assert_ownership_privileges_warning_appeared_for_user(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_items_in_members_onezone(
-    selenium: SeleniumDrivers, browser_id: str, number: int, item_type: str
+    selenium: SeleniumDrivers, browser_id: str, number: str, item_type: str
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["clusters"].members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
-    assert (
-        actual_number == number
+    assert actual_number == int(
+        number
     ), f"expected {number} but got {actual_number} of {item_type}"
 
 

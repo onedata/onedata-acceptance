@@ -25,13 +25,13 @@ from tests.utils.user_utils import AdminUser
     )
 )
 def create_n_spaces_without_support(
-    zone_host: str, users: Users, user: str, hosts: Hosts, number: int
+    zone_host: str, users: Users, user: str, hosts: Hosts, number: str
 ) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(number):
+    for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         _create_space(zone_hostname, owner.username, owner.password, space_name)
 
@@ -47,7 +47,7 @@ def create_n_spaces_with_shares(
     users: Users,
     user: str,
     hosts: Hosts,
-    number: int,
+    number: str,
     onepanel_credentials: AdminUser,
     storages: dict,
     shares: dict[str, str],
@@ -61,7 +61,7 @@ def create_n_spaces_with_shares(
     ]
     # let spaces names be space0, space1, ... space(n-1)
     owner = users[user]
-    for i in range(number):
+    for i in range(int(number)):
         space_name = f"{name_prefix}{i}"
         space_id = _create_space(
             zone_hostname, owner.username, owner.password, space_name

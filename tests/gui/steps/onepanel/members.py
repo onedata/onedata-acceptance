@@ -37,10 +37,10 @@ def click_btn_on_members_panel(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_equal_direct_user_number(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     interface = Onepanel(driver).content.members_emergency_interface
     user_number = interface.direct_users_number
     message_error = f"found {user_number} direct users instead of {number}"
-    assert user_number == number, message_error
+    assert user_number == int(number), message_error

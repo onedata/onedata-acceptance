@@ -76,13 +76,13 @@ def confirm_rename_the_space(
     )
 )
 def assert_number_of_shares_on_overview_page(
-    browser_id: str, selenium: SeleniumDrivers, number: int
+    browser_id: str, selenium: SeleniumDrivers, number: str
 ) -> None:
     driver = selenium[browser_id]
     shares_count = int(OZLoggedIn(driver)["data"].overview_page.info_tile.shares_count)
     assert (
-        number == shares_count
-    ), f"number of shares equals {shares_count}, not {{number}} as expected"
+        int(number) == shares_count
+    ), f"number of shares equals {shares_count}, not {number} as expected"
 
 
 @wt(parsers.parse('user of {browser_id} sees "{space_name}" label on overview page'))

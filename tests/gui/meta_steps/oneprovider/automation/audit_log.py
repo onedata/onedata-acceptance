@@ -411,11 +411,11 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     )
 )
 def assert_number_of_elements_in_store_details(
-    selenium: SeleniumDrivers, browser_id: str, store_name: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, store_name: str, number: str
 ) -> None:
     _ = open_store_details_modal(selenium, browser_id, store_name)
     check_number_of_elements_in_store_details_modal(
-        selenium, browser_id, number, store_name
+        selenium, browser_id, int(number), store_name
     )
 
 

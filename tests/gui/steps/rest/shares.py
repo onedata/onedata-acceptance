@@ -127,11 +127,11 @@ def create_n_shares_in_space(
     user: str,
     hosts: Hosts,
     host: str,
-    number: int,
+    number: str,
     space_name: str,
     shares: dict[str, str],
 ) -> None:
-    for i in range(number):
+    for i in range(int(number)):
         create_empty_file(f"{space_name}/file{i}", users, user, host, hosts)
         create_share_using_rest(
             f"{space_name}/file{i}", host, user, f"share{i}", hosts, users, shares

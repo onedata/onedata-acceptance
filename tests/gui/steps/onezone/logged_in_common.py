@@ -261,7 +261,7 @@ def assert_item_counter_match_given_num(
     counter_type: str,
     item_type: str,
     item_name: str,
-    number: int,
+    number: str,
     oz_panel: str,
     hosts: Hosts,
 ) -> None:

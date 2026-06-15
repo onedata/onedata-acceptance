@@ -21,11 +21,11 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_cancel_upload_button_on_popup(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    Popups(driver).upload_presenter[number - 1].cancel_button.click()
+    Popups(driver).upload_presenter[int(number) - 1].cancel_button.click()
 
 
 @wt(parsers.parse("user of {browser_id} confirms canceling the upload"))
@@ -39,14 +39,14 @@ def click_on_confirm_cancel_upload(selenium: SeleniumDrivers, browser_id: str) -
 @wt(parsers.parse("user of {browser_id} sees that number of uploads is equal {number}"))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def assert_number_of_files_in_uploaded_files_list(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     uploaded_files_list = OZLoggedIn(driver)[
         "uploads"
     ].uploaded_content_page.uploaded_items_list
-    assert number == len(
+    assert int(number) == len(
         uploaded_files_list
     ), f"number of files uploaded {len(uploaded_files_list)} is not equal {number}"
 

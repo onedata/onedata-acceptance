@@ -377,7 +377,7 @@ def assert_number_of_supporting_providers_of_space(
 @wt(parsers.parse('user of {browser_id} sees {number} size of the "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_size_of_space_on_left_sidebar_menu(
-    selenium: SeleniumDrivers, browser_id: str, number: int, space_name: str
+    selenium: SeleniumDrivers, browser_id: str, number: str, space_name: str
 ) -> None:
     driver = selenium[browser_id]
     assert (

@@ -363,7 +363,7 @@ def close_all_expanded_storages(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_storages_with_same_name(
-    selenium: SeleniumDrivers, browser_id: str, name: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, name: str, number: str
 ) -> None:
     storages_names = close_all_expanded_storages(browser_id, selenium)
 
@@ -374,7 +374,7 @@ def assert_number_storages_with_same_name(
     ]
     ids = [row_name.split(CONFLICT_NAME_SEPARATOR)[1] for row_name in rows_with_name]
 
-    assert (
-        len(rows_with_name) == number
+    assert len(rows_with_name) == int(
+        number
     ), f"{name} not visible {number} times on storages list"
     assert check_ids_different(ids), f"IDs are not unique, {ids}"

@@ -518,7 +518,7 @@ def assert_space_is_in_spaces_list_in_provider_popover(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_supported_spaces_in_data_sidebar(
-    selenium: SeleniumDrivers, browser_id: str, provider: str, number: int, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, provider: str, number: str, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
@@ -526,7 +526,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
         OZLoggedIn(driver)["providers"].elements_list[provider].supported_spaces_number
     )
     assert (
-        number == supported_spaces_number
+        int(number) == supported_spaces_number
     ), f"number of supported spaces is not equal {number}"
 
 
@@ -537,7 +537,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
     )
 )
 def assert_len_of_spaces_list_in_provider_popover(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     spaces_list = Popups(driver).provider_map_popover.spaces_list

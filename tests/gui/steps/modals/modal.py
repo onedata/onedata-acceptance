@@ -636,7 +636,7 @@ def write_name_into_text_field_in_modal(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_shares_in_modal(
-    selenium: SeleniumDrivers, browser_id: str, item_name: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, item_name: str, number: str
 ) -> None:
     name = "Shares"
     driver = selenium[browser_id]
@@ -645,7 +645,7 @@ def assert_number_of_shares_in_modal(
     links = shares_tab.share_options
     info = look_for_tab_name(navigation, name)
     err_msg = f"Item {item_name} is not shared {number} times"
-    assert _assert_number_of_shares_in_modal(number, links, info), err_msg
+    assert _assert_number_of_shares_in_modal(int(number), links, info), err_msg
 
 
 def look_for_tab_name(navigation: PageObjectsSequence, name: str) -> str:

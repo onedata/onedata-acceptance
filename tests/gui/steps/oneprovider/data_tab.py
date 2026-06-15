@@ -369,12 +369,12 @@ def assert_diff_in_len_of_dir_name_before_and_now(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resize_data_tab_sidebar(
-    selenium: SeleniumDrivers, browser_id: str, direction: str, offset: int
+    selenium: SeleniumDrivers, browser_id: str, direction: str, offset: str
 ) -> None:
     driver = selenium[browser_id]
     sidebar = OPLoggedIn(driver).data.sidebar
-    offset = (-1 if direction == "left" else 1) * int(offset)
-    sidebar.width += offset
+    offset_px = (-1 if direction == "left" else 1) * int(offset)
+    sidebar.width += offset_px
 
 
 @wt(parsers.re("user of (?P<browser_id>.*) waits for file uploads? to finish"))
@@ -529,7 +529,7 @@ def upload_number_of_files_to_cwd_in_data_tab(
     browser_id: str,
     file_path: str,
     tmpdir: LocalPath,
-    number: int,
+    number: str,
 ) -> None:
     for _ in range(int(number)):
         upload_file_to_cwd_in_data_tab_no_waiting(
@@ -605,14 +605,14 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunk_in_data_distribution_size(
-    selenium: SeleniumDrivers, browser_id: str, size: int, provider: str, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, size: str, provider: str, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]
     prov_rec = Modals(driver).details_modal.data_distribution.providers[provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
-    assert displayed_size == size, (
+    assert displayed_size == int(size), (
         f"displayed chunk size {displayed_size} in data distribution modal "
         f"does not match expected {size}"
     )
@@ -968,7 +968,7 @@ def check_data_distribution_percentage_for_provider(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_data_distribution_size_for_provider(
-    selenium: SeleniumDrivers, browser_id: str, provider: str, size: int, hosts: Hosts
+    selenium: SeleniumDrivers, browser_id: str, provider: str, size: str, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
     provider = hosts[provider]["name"]

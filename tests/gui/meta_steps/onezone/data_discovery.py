@@ -219,11 +219,11 @@ def go_to_source_of_file(
 @wt(parsers.parse("user of {browser_id} sees {number} files on data discovery page"))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_files_on_data_disc(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     files_dict = _unpack_files_data(selenium, browser_id)
-    assert (
-        len(files_dict) == number
+    assert len(files_dict) == int(
+        number
     ), f"Expected: {number} files but only {len(files_dict)} given"
 
 

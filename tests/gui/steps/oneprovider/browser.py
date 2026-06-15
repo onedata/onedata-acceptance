@@ -351,10 +351,10 @@ def assert_items_absence_in_browser(
     )
 )
 def assert_num_of_files_are_displayed_in_browser_(
-    browser_id: str, num: int, tmp_memory: TmpMemory, which_browser: str
+    browser_id: str, num: str, tmp_memory: TmpMemory, which_browser: str
 ) -> None:
     assert_num_of_files_are_displayed_in_browser(
-        browser_id, num, tmp_memory, which_browser=which_browser
+        browser_id, int(num), tmp_memory, which_browser=which_browser
     )
 
 

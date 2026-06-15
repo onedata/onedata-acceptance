@@ -32,8 +32,9 @@ from tests.utils.utils import repeat_failed
     )
 )
 def assert_number_of_first_non_empty_column_content(
-    selenium: SeleniumDrivers, fields: str, browser_id: str, number: int
+    selenium: SeleniumDrivers, fields: str, browser_id: str, number: str
 ) -> None:
+    expected_number = int(number)
     driver = selenium[browser_id]
     columns_names = [transform(field) for field in parse_seq(fields)]
 
@@ -47,7 +48,7 @@ def assert_number_of_first_non_empty_column_content(
     elems_counter = Counter(checked_elems)
     non_unique_elems = [elem for elem in elems_counter if elems_counter[elem] > 1]
 
-    assert len(checked_elems) == number, (
+    assert len(checked_elems) == expected_number, (
         f"There are {len(checked_elems)} entries instead of {number} "
         "in archive audit log.\n\n"
         f"Number of non unique entries: {len(non_unique_elems)}\n\n"
@@ -140,8 +141,9 @@ def assert_ascending_file_or_dir_names(
     )
 )
 def assert_n_logs_about_archivisation_finished(
-    browser_id: str, number: int, selenium: SeleniumDrivers
+    browser_id: str, number: str, selenium: SeleniumDrivers
 ) -> None:
+    expected_number = int(number)
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     expected_events = [
@@ -161,7 +163,7 @@ def assert_n_logs_about_archivisation_finished(
 
     checked_elems = _scroll_and_check_condition(browser_id, selenium, condition)
     assert (
-        len(checked_elems) == number
+        len(checked_elems) == expected_number
     ), f"there are {len(checked_elems)} items instead of {number} in archive audit log"
 
 
@@ -310,13 +312,13 @@ def click_on_top_item_in_archive_audit_log(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(
-    browser_id: str, number: int, selenium: SeleniumDrivers
+    browser_id: str, number: str, selenium: SeleniumDrivers
 ) -> None:
     driver = selenium[browser_id]
     visible_items: list[str] = Modals(
         driver
     ).archive_audit_log.get_visible_rows_of_single_column("file")
-    assert number == len(visible_items), (
+    assert int(number) == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "
         "in archive audit log"
@@ -500,7 +502,7 @@ def assert_archived_file_path_and_archive_name(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_unique_hashes_and_number_of_logs(
-    browser_id: str, selenium: SeleniumDrivers, file_name: str, number: int
+    browser_id: str, selenium: SeleniumDrivers, file_name: str, number: str
 ) -> None:
     driver = selenium[browser_id]
     logs = Modals(driver).archive_audit_log.data_row
@@ -513,6 +515,6 @@ def assert_unique_hashes_and_number_of_logs(
             ), f"There are at least two identical hashes: {log_hash}"
             hashes.append(log_hash)
 
-    assert (
-        len(hashes) == number
+    assert len(hashes) == int(
+        number
     ), f"Expected number of logs: {number} is different than actual: {len(hashes)}"

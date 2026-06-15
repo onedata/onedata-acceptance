@@ -30,8 +30,8 @@ def create_reg_file(
 )
 def create_many(
     user: str,
-    lower: int,
-    upper: int,
+    lower: str,
+    upper: str,
     parent_dir: str,
     users: Users,
     request: pytest.FixtureRequest,
@@ -58,7 +58,7 @@ def ls_present(user: str, files: str, path: str, users: Users) -> None:
     )
 )
 def ls_children(
-    user: str, parent_dir: str, lower: int, upper: int, users: Users
+    user: str, parent_dir: str, lower: str, upper: str, users: Users
 ) -> None:
     multi_file_steps.ls_children(user, parent_dir, lower, upper, "client1", users)
 

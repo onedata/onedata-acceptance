@@ -257,12 +257,12 @@ def assert_lambda_exists(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_lambdas(
-    selenium: SeleniumDrivers, browser_id: str, number: int
+    selenium: SeleniumDrivers, browser_id: str, number: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id])["automation"]
     lambdas_number = len(page.lambdas_page.elements_list)
     err_msg = f"number of lambdas is {lambdas_number} instead of {number}"
-    assert lambdas_number == number, err_msg
+    assert lambdas_number == int(number), err_msg
 
 
 @wt(

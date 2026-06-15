@@ -165,14 +165,14 @@ def create_reg_file_fail(
 )
 def create_many(
     user: str,
-    lower: int,
-    upper: int,
+    lower: str,
+    upper: str,
     parent_dir: str,
     client_node: str,
     users: Users,
     request: pytest.FixtureRequest,
 ) -> None:
-    for i in range(lower, upper):
+    for i in range(int(lower), int(upper)):
         new_file = os.path.join(parent_dir, str(i))
         create_reg_file(user, make_arg_list(new_file), client_node, users, request)
 
@@ -256,12 +256,14 @@ def ls_empty(directory: str, user: str, client_node: str, users: Users) -> None:
     )
 )
 def ls_children(
-    user: str, parent_dir: str, lower: int, upper: int, client_node: str, users: Users
+    user: str, parent_dir: str, lower: str, upper: str, client_node: str, users: Users
 ) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
     path = client.absolute_path(parent_dir)
-    files_num = upper - lower
+    lower_int = int(lower)
+    upper_int = int(upper)
+    files_num = upper_int - lower_int
 
     def condition() -> None:
         listed_files = client.ls(path)
@@ -269,7 +271,7 @@ def ls_children(
         assert (
             len(listed_files) == files_num
         ), f"Listed {len(listed_files)} files instead of expected {files_num}"
-        for i in range(lower, upper):
+        for i in range(lower_int, upper_int):
             assert str(i) in listed_files, f"File {i} not in listed files"
 
     assert_(client.perform, condition)

@@ -136,7 +136,7 @@ def assert_number_of_proceeded_files(
     browser_id: str,
     selenium: SeleniumDrivers,
     option: str,
-    number: int,
+    number: str,
     compare_option: str,
 ) -> None:
     switch_to_iframe(selenium, browser_id)

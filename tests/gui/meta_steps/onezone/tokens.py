@@ -271,9 +271,9 @@ def _create_token_of_type(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(
-    selenium: SeleniumDrivers, browser_id: str, number: int, token_type: str
+    selenium: SeleniumDrivers, browser_id: str, number: str, token_type: str
 ) -> None:
-    for i in range(number):
+    for i in range(int(number)):
         _create_token_of_type(selenium, browser_id, token_type, i)
 
 

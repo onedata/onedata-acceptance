@@ -320,11 +320,11 @@ def create_n_groups_using_rest(
     user: str,
     users: Mapping[str, UserLike],
     hosts: HostsConfig,
-    number: int,
+    number: str,
     host: str = "onezone",
 ) -> None:
     zone_hostname = hosts[host]["hostname"]
-    for i in range(number):
+    for i in range(int(number)):
         group_name = f"group{i}"
         _ = _create_group(
             zone_hostname, users[user].username, users[user].password, group_name
