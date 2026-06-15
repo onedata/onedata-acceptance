@@ -6,8 +6,12 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+from collections.abc import Mapping
+from typing import Protocol, cast
 
+from _pytest._py.path import LocalPath
+
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onepanel.account_management import (
     change_user_password_in_oz_panel_using_gui,
@@ -46,6 +50,7 @@ from tests.gui.steps.common.docker import (
     wt_rm_files_to_space_root_dir,
     wt_rm_files_to_storage_mount_point,
 )
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.mixed.steps.rest.onepanel.account_management import (
     change_user_password_in_oz_panel_using_rest,
     login_to_oz_panel_using_new_password_rest,
@@ -79,7 +84,32 @@ from tests.utils.entities_setup.spaces import (
     wait_for_space_support,
     wait_for_storage_scan_to_finish,
 )
+from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed
+
+type Spaces = Mapping[str, str]
+type HostsConfig = Mapping[str, Mapping[str, str]]
+
+
+class RestUserLike(Protocol):
+    password: str
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: str
+
+
+def _as_rest_users(users: Users) -> Mapping[str, RestUserLike]:
+    return cast(Mapping[str, RestUserLike], users)
+
+
+def _as_rest_hosts(hosts: Hosts) -> HostsConfig:
+    return cast(HostsConfig, hosts)
+
+
+def _as_credentials(credentials: AdminUser) -> CredentialsLike:
+    return cast(CredentialsLike, credentials)
 
 
 @wt(
@@ -90,14 +120,14 @@ from tests.utils.utils import repeat_failed
     )
 )
 def change_user_password_in_oz_panel(
-    client: Any,
-    user: Any,
-    new_password: Any,
-    host: Any,
-    selenium: Any,
-    users: Any,
-    hosts: Any,
-) -> Any:
+    client: str,
+    user: str,
+    new_password: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+) -> None:
 
     if client.lower() == "web gui":
 
@@ -105,7 +135,7 @@ def change_user_password_in_oz_panel(
     elif client.lower() == "rest":
 
         change_user_password_in_oz_panel_using_rest(
-            user, new_password, host, users, hosts
+            user, new_password, host, _as_rest_users(users), hosts
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -117,7 +147,7 @@ def change_user_password_in_oz_panel(
         '"(?P<host>.+?)" Onezone panel service'
     )
 )
-def log_out_from_oz_panel(client: Any, user: Any, selenium: Any) -> Any:
+def log_out_from_oz_panel(client: str, user: str, selenium: SeleniumDrivers) -> None:
 
     if client.lower() == "web gui":
 
@@ -137,8 +167,13 @@ def log_out_from_oz_panel(client: Any, user: Any, selenium: Any) -> Any:
     )
 )
 def login_to_oz_panel_using_new_password(
-    client: Any, user: Any, host: Any, selenium: Any, hosts: Any, password: Any
-) -> Any:
+    client: str,
+    user: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    hosts: Hosts,
+    password: str,
+) -> None:
 
     if client.lower() == "web gui":
 
@@ -159,22 +194,27 @@ def login_to_oz_panel_using_new_password(
     )
 )
 def modify_provider_using_test_hostname_in_op_panel(
-    client: Any,
-    user: Any,
-    provider_name: Any,
-    new_provider_name: Any,
-    host: Any,
-    users: Any,
-    hosts: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider_name: str,
+    new_provider_name: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+) -> None:
 
     test_domain = f"{hosts[provider_name]['hostname']}.test"
 
     if client.lower() == "rest":
 
         modify_provider_in_op_panel_using_rest(
-            user, users, host, hosts, new_provider_name, test_domain
+            user,
+            _as_rest_users(users),
+            host,
+            _as_rest_hosts(hosts),
+            new_provider_name,
+            test_domain,
         )
     elif client.lower() == "web gui":
 
@@ -199,23 +239,23 @@ def modify_provider_using_test_hostname_in_op_panel(
     )
 )
 def modify_provider_using_known_hostname_in_op_panel(
-    client: Any,
-    user: Any,
-    provider_name: Any,
-    target_provider: Any,
-    host: Any,
-    users: Any,
-    hosts: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider_name: str,
+    target_provider: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
 
         modify_provider_in_op_panel_using_rest(
             user,
-            users,
+            _as_rest_users(users),
             host,
-            hosts,
+            _as_rest_hosts(hosts),
             hosts[target_provider]["name"],
             hosts[target_provider]["hostname"],
         )
@@ -241,22 +281,27 @@ def modify_provider_using_known_hostname_in_op_panel(
     )
 )
 def assert_provider_has_given_name_and_test_hostname_in_oz(
-    client: Any,
-    user: Any,
-    provider_name: Any,
-    provider: Any,
-    host: Any,
-    users: Any,
-    hosts: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider_name: str,
+    provider: str,
+    host: str,
+    users: Users,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+) -> None:
 
     test_domain = f"{hosts[provider]['hostname']}.test"
 
     if client.lower() == "rest":
 
         assert_provider_has_name_and_hostname_in_oz_rest(
-            user, users, host, hosts, provider_name, test_domain
+            user,
+            _as_rest_users(users),
+            host,
+            _as_rest_hosts(hosts),
+            provider_name,
+            test_domain,
         )
     elif client.lower() == "web gui":
 
@@ -280,17 +325,19 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(
     )
 )
 def deregister_provider_in_op_panel(
-    client: Any,
-    user: Any,
-    host: Any,
-    hosts: Any,
-    selenium: Any,
-    users: Any,
-) -> Any:
+    client: str,
+    user: str,
+    host: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    users: Users,
+) -> None:
 
     if client.lower() == "rest":
 
-        deregister_provider_in_op_panel_using_rest(user, users, host, hosts)
+        deregister_provider_in_op_panel_using_rest(
+            user, _as_rest_users(users), host, _as_rest_hosts(hosts)
+        )
     elif client.lower() == "web gui":
 
         deregister_provider_in_op_panel_using_gui(selenium, user, host, hosts)
@@ -306,18 +353,24 @@ def deregister_provider_in_op_panel(
     )
 )
 def assert_there_is_no_provider_in_oz(
-    client: Any,
-    user: Any,
-    provider_name: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider_name: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
 
-        assert_there_is_no_provider_in_oz_rest(user, users, host, hosts, provider_name)
+        assert_there_is_no_provider_in_oz_rest(
+            user,
+            _as_rest_users(users),
+            host,
+            _as_rest_hosts(hosts),
+            provider_name,
+        )
     elif client.lower() == "web gui":
 
         assert_there_is_no_provider_in_oz_gui(selenium, user, provider_name, hosts)
@@ -334,20 +387,20 @@ def assert_there_is_no_provider_in_oz(
     )
 )
 def assert_provider_does_not_support_space_in_oz(
-    client: Any,
-    user: Any,
-    provider_name: Any,
-    space_name: Any,
-    host: Any,
-    hosts: Any,
-    selenium: Any,
-    users: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider_name: str,
+    space_name: str,
+    host: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    users: Users,
+) -> None:
 
     if client.lower() == "rest":
 
         assert_provider_does_not_support_space_in_oz_rest(
-            user, users, host, hosts, space_name, provider_name
+            user, _as_rest_users(users), host, hosts, space_name, provider_name
         )
     elif client.lower() == "web gui":
 
@@ -366,14 +419,14 @@ def assert_provider_does_not_support_space_in_oz(
     )
 )
 def register_provider_in_op(
-    client: Any,
-    user: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    config: Any,
-    tmp_memory: Any,
-) -> Any:
+    client: str,
+    user: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    config: str,
+    tmp_memory: TmpMemory,
+) -> None:
     """Register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -407,7 +460,9 @@ def register_provider_in_op(
 
     if client.lower() == "rest":
 
-        register_provider_in_op_using_rest(user, users, hosts, config)
+        register_provider_in_op_using_rest(
+            user, _as_rest_users(users), _as_rest_hosts(hosts), config
+        )
     elif client.lower() == "web gui":
 
         register_provider_in_op_using_gui(selenium, user, hosts, config, tmp_memory)
@@ -424,23 +479,29 @@ def register_provider_in_op(
     )
 )
 def request_space_support(
-    client: Any,
-    user: Any,
-    space_name: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-    supporting_user: Any,
-) -> Any:
+    client: str,
+    user: str,
+    space_name: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    supporting_user: str,
+) -> None:
 
     if client.lower() == "rest":
 
         request_space_support_using_rest(
-            user, users, space_name, host, hosts, tmp_memory, supporting_user
+            user,
+            _as_rest_users(users),
+            space_name,
+            host,
+            hosts,
+            tmp_memory,
+            supporting_user,
         )
     elif client.lower() == "web gui":
 
@@ -474,16 +535,16 @@ def request_space_support(
     )
 )
 def support_space_in_op_panel(
-    client: Any,
-    user: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    config: Any,
-    space_name: Any,
-) -> Any:
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    host: str,
+    config: str,
+    space_name: str,
+) -> None:
     """Support space according to given config.
 
     Config format given in yaml is as follows:
@@ -517,7 +578,7 @@ def support_space_in_op_panel(
     elif client.lower() == "rest":
 
         support_space_in_op_panel_using_rest(
-            user, host, hosts, users, tmp_memory, config
+            user, host, hosts, _as_rest_users(users), tmp_memory, config
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -532,15 +593,15 @@ def support_space_in_op_panel(
     )
 )
 def w_assert_space_is_supported_by_provider_in_oz(
-    client: Any,
-    user: Any,
-    space_name: Any,
-    provider_name: Any,
-    host: Any,
-    selenium: Any,
-    hosts: Any,
-    users: Any,
-) -> Any:
+    client: str,
+    user: str,
+    space_name: str,
+    provider_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    hosts: Hosts,
+    users: Users,
+) -> None:
 
     if client.lower() == "web gui":
 
@@ -550,7 +611,7 @@ def w_assert_space_is_supported_by_provider_in_oz(
     elif client.lower() == "rest":
 
         assert_space_is_supported_by_provider_in_oz_rest(
-            user, users, host, hosts, space_name, provider_name
+            user, _as_rest_users(users), host, hosts, space_name, provider_name
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -565,17 +626,17 @@ def w_assert_space_is_supported_by_provider_in_oz(
     )
 )
 def revoke_space_support_in_op_panel(
-    client: Any,
-    user: Any,
-    space_name: Any,
-    provider_name: Any,
-    host: Any,
-    selenium: Any,
-    users: Any,
-    hosts: Any,
-    admin_credentials: Any,
-    onepanel_credentials: Any,
-) -> Any:
+    client: str,
+    user: str,
+    space_name: str,
+    provider_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    admin_credentials: AdminUser,
+    onepanel_credentials: AdminUser,
+) -> None:
 
     if client.lower() == "web gui":
 
@@ -590,12 +651,12 @@ def revoke_space_support_in_op_panel(
 
         revoke_space_support_in_op_panel_using_rest(
             user,
-            users,
+            _as_rest_users(users),
             host,
             hosts,
             space_name,
-            admin_credentials,
-            onepanel_credentials,
+            _as_credentials(admin_credentials),
+            _as_credentials(onepanel_credentials),
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -608,8 +669,8 @@ def revoke_space_support_in_op_panel(
     )
 )
 def cp_files_to_storage_mount_point(
-    user: Any, src_path: Any, tmpdir: Any, hosts: Any
-) -> Any:
+    user: str, src_path: str, tmpdir: LocalPath, hosts: Hosts
+) -> None:
 
     wt_cp_files_to_storage_mount_point(user, src_path, tmpdir, hosts)
 
@@ -621,8 +682,8 @@ def cp_files_to_storage_mount_point(
     )
 )
 def cp_files_to_path_in_storage_mount_point(
-    user: Any, src_path: Any, tmpdir: Any, hosts: Any, dst_path: Any
-) -> Any:
+    user: str, src_path: str, tmpdir: LocalPath, hosts: Hosts, dst_path: str
+) -> None:
 
     wt_cp_files_to_dir_in_storage_mount_point(user, src_path, tmpdir, hosts, dst_path)
 
@@ -634,8 +695,13 @@ def cp_files_to_path_in_storage_mount_point(
     )
 )
 def cp_files_to_space_root_dir(
-    user: Any, src_path: Any, space_name: Any, tmpdir: Any, tmp_memory: Any, hosts: Any
-) -> Any:
+    user: str,
+    src_path: str,
+    space_name: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+) -> None:
 
     wt_cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory, hosts)
 
@@ -648,14 +714,14 @@ def cp_files_to_space_root_dir(
     )
 )
 def cp_files_to_path_in_space_root_dir(
-    user: Any,
-    src_path: Any,
-    dst_path: Any,
-    space_name: Any,
-    tmpdir: Any,
-    tmp_memory: Any,
-    hosts: Any,
-) -> Any:
+    user: str,
+    src_path: str,
+    dst_path: str,
+    space_name: str,
+    tmpdir: LocalPath,
+    tmp_memory: TmpMemory,
+    hosts: Hosts,
+) -> None:
 
     wt_cp_files_to_dst_path_in_space(
         user, src_path, dst_path, space_name, tmpdir, tmp_memory, hosts
@@ -671,18 +737,18 @@ def cp_files_to_path_in_space_root_dir(
     )
 )
 def assert_proper_space_configuration_in_op_panel(
-    client: Any,
-    user: Any,
-    sync_type: Any,
-    space: Any,
-    config: Any,
-    selenium: Any,
-    users: Any,
-    host: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    admin_credentials: Any,
-) -> Any:
+    client: str,
+    user: str,
+    sync_type: str,
+    space: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    users: Users,
+    host: str,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    admin_credentials: AdminUser,
+) -> None:
     """Assert configuration displayed in space record in panel.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -707,12 +773,12 @@ def assert_proper_space_configuration_in_op_panel(
         assert_proper_space_configuration_in_op_panel_rest(
             space,
             user,
-            users,
+            _as_rest_users(users),
             host,
             hosts,
             config,
-            onepanel_credentials,
-            admin_credentials,
+            _as_credentials(onepanel_credentials),
+            _as_credentials(admin_credentials),
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -727,17 +793,17 @@ def assert_proper_space_configuration_in_op_panel(
     )
 )
 def configure_sync_parameters_for_space_in_op_panel(
-    client: Any,
-    user: Any,
-    space_name: Any,
-    host: Any,
-    config: Any,
-    selenium: Any,
-    users: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    admin_credentials: Any,
-) -> Any:
+    client: str,
+    user: str,
+    space_name: str,
+    host: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    users: Users,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    admin_credentials: AdminUser,
+) -> None:
     """Configure synchronization parameters for space.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -759,13 +825,13 @@ def configure_sync_parameters_for_space_in_op_panel(
 
         configure_sync_parameters_for_space_in_op_panel_rest(
             user,
-            users,
+            _as_rest_users(users),
             host,
             hosts,
             config,
             space_name,
-            onepanel_credentials,
-            admin_credentials,
+            _as_credentials(onepanel_credentials),
+            _as_credentials(admin_credentials),
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -780,18 +846,18 @@ def configure_sync_parameters_for_space_in_op_panel(
 )
 @repeat_failed(timeout=4 * WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(
-    client: Any,
-    config: Any,
-    selenium: Any,
-    user: Any,
-    tmp_memory: Any,
-    tmpdir: Any,
-    users: Any,
-    hosts: Any,
-    space_name: Any,
-    spaces: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    config: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    tmp_memory: TmpMemory,
+    tmpdir: LocalPath,
+    users: Users,
+    hosts: Hosts,
+    space_name: str,
+    spaces: Spaces,
+    host: str,
+) -> None:
     """Assert space has given content in provider.
 
     space content format given in yaml is as follow:
@@ -834,8 +900,8 @@ def assert_space_content_in_op(
     )
 )
 def rm_files_from_space_root_dir(
-    src_path: Any, space_name: Any, tmp_memory: Any, hosts: Any
-) -> Any:
+    src_path: str, space_name: str, tmp_memory: TmpMemory, hosts: Hosts
+) -> None:
 
     wt_rm_files_to_space_root_dir(src_path, space_name, tmp_memory, hosts)
 
@@ -846,7 +912,7 @@ def rm_files_from_space_root_dir(
         "from provider's storage mount point"
     )
 )
-def rm_files_from_storage_mount_point(src_path: Any, hosts: Any) -> Any:
+def rm_files_from_storage_mount_point(src_path: str, hosts: Hosts) -> None:
 
     wt_rm_files_to_storage_mount_point(src_path, hosts)
 
@@ -858,16 +924,16 @@ def rm_files_from_storage_mount_point(src_path: Any, hosts: Any) -> Any:
     )
 )
 def copy_id_of_space(
-    client: Any,
-    user: Any,
-    space_name: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    users: Any,
-    hosts: Any,
-    admin_credentials: Any,
-    onepanel_credentials: Any,
-) -> Any:
+    client: str,
+    user: str,
+    space_name: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+    admin_credentials: AdminUser,
+    onepanel_credentials: AdminUser,
+) -> None:
 
     if client.lower() == "web gui":
 
@@ -876,12 +942,12 @@ def copy_id_of_space(
 
         copy_id_of_space_rest(
             user,
-            users,
+            _as_rest_users(users),
             hosts,
             space_name,
             tmp_memory,
-            onepanel_credentials,
-            admin_credentials,
+            _as_credentials(onepanel_credentials),
+            _as_credentials(admin_credentials),
         )
     else:
         raise NoSuchClientException(f"Client: {client} not found.")
@@ -895,14 +961,14 @@ def copy_id_of_space(
     )
 )
 def send_copied_invite_token(
-    client: Any,
-    user: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-    send_to: Any,
-) -> Any:
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+    send_to: str,
+) -> None:
     if client.lower() == "web gui":
 
         send_copied_invite_token_in_oz_gui(
@@ -919,8 +985,12 @@ def send_copied_invite_token(
     )
 )
 def force_start_storage_import_scan(
-    provider: Any, space: Any, spaces: Any, hosts: Any, onepanel_credentials: Any
-) -> Any:
+    provider: str,
+    space: str,
+    spaces: Spaces,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+) -> None:
     space_id = spaces[space]
     force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
 
@@ -932,15 +1002,15 @@ def force_start_storage_import_scan(
     )
 )
 def force_start_and_wait_to_finish_storage_import_scan(
-    client: Any,
-    user: Any,
-    provider: Any,
-    space: Any,
-    spaces: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    provider: str,
+    space: str,
+    spaces: Spaces,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    selenium: SeleniumDrivers,
+) -> None:
     if client.lower() == "rest":
         space_id = spaces[space]
         force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
@@ -957,8 +1027,13 @@ def force_start_and_wait_to_finish_storage_import_scan(
     )
 )
 def wt_wait_for_space_support_rest(
-    space: Any, spaces: Any, user: Any, users: Any, provider_name: Any, hosts: Any
-) -> Any:
+    space: str,
+    spaces: Spaces,
+    user: str,
+    users: Users,
+    provider_name: str,
+    hosts: Hosts,
+) -> None:
     wait_for_space_support(
         spaces[space], hosts[provider_name]["hostname"], [user], users
     )

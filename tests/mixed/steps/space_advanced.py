@@ -7,8 +7,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from typing import Any
-
+from tests.conftest import Hosts, Users
 from tests.gui.steps.rest.shares import create_share_using_rest
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
@@ -16,6 +15,7 @@ from tests.utils.entities_setup.spaces import (
     _get_support,
     create_empty_file,
 )
+from tests.utils.user_utils import AdminUser
 
 
 @wt(
@@ -24,8 +24,8 @@ from tests.utils.entities_setup.spaces import (
     )
 )
 def create_n_spaces_without_support(
-    zone_host: Any, users: Any, user: Any, hosts: Any, number: int
-) -> Any:
+    zone_host: str, users: Users, user: str, hosts: Hosts, number: int
+) -> None:
     name_prefix = "space"
     zone_hostname = hosts[zone_host]["hostname"]
     # let spaces names be space0, space1, ... space(n-1)
@@ -42,15 +42,15 @@ def create_n_spaces_without_support(
     )
 )
 def create_n_spaces_with_shares(
-    zone_host: Any,
-    users: Any,
-    user: Any,
-    hosts: Any,
+    zone_host: str,
+    users: Users,
+    user: str,
+    hosts: Hosts,
     number: int,
-    onepanel_credentials: Any,
-    storages: Any,
-    shares: Any,
-) -> Any:
+    onepanel_credentials: AdminUser,
+    storages: dict,
+    shares: dict[str, str],
+) -> None:
     name_prefix = "space"
     host = "oneprovider-1"
     zone_hostname = hosts[zone_host]["hostname"]

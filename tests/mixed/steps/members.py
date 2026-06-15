@@ -6,8 +6,9 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+from collections.abc import Mapping
 
+from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import (
     assert_group_in_space_using_op_gui,
@@ -18,6 +19,7 @@ from tests.gui.meta_steps.onezone.members import (
 )
 from tests.gui.meta_steps.onezone.spaces import add_group_to_space_or_group
 from tests.mixed.steps.rest.onezone.members import (
+    UserLike,
     add_group_to_space_using_rest,
     assert_group_in_space_using_rest,
     assert_not_user_in_space_using_rest,
@@ -40,18 +42,18 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_set_privileges_in_space_in_oz(
-    client: Any,
-    user: Any,
-    member_name: Any,
-    member_type: Any,
-    config: Any,
-    hosts: Any,
-    selenium: Any,
-    space_name: Any,
-    users: Any,
-    spaces: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    user: str,
+    member_name: str,
+    member_type: str,
+    config: str,
+    hosts: Hosts,
+    selenium: SeleniumDrivers,
+    space_name: str,
+    users: Mapping[str, UserLike],
+    spaces: Mapping[str, str],
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_set_privileges_using_op_gui(
@@ -81,18 +83,18 @@ def fail_to_set_privileges_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_privileges_in_space_in_oz(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space_name: Any,
-    hosts: Any,
-    member_name: Any,
-    users: Any,
-    member_type: Any,
-    config: Any,
-    spaces: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    hosts: Hosts,
+    member_name: str,
+    users: Mapping[str, UserLike],
+    member_type: str,
+    config: str,
+    spaces: Mapping[str, str],
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_privileges_in_space_using_op_gui(
@@ -120,16 +122,16 @@ def assert_privileges_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_create_invitation_in_space_in_oz(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space_name: Any,
-    users: Any,
-    hosts: Any,
-    member_name: Any,
-    spaces: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    member_name: str,
+    spaces: Mapping[str, str],
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         fail_to_create_invitation_in_space_using_op_gui(user, space_name, selenium)
@@ -150,16 +152,16 @@ def fail_to_create_invitation_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_user_in_space_in_oz(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    member_name: Any,
-    space_name: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    member_name: str,
+    space_name: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_not_user_in_space_using_op_gui(user, space_name, member_name, selenium)
@@ -182,16 +184,16 @@ def assert_not_user_in_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_in_oz(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space_name: Any,
-    group_name: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-    spaces: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    group_name: str,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    host: str,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         where = "space"
@@ -220,16 +222,16 @@ def add_group_to_space_in_oz(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_group_in_space_in_oz(
-    client: Any,
-    user: Any,
-    group_name: Any,
-    space_name: Any,
-    host: Any,
-    selenium: Any,
-    users: Any,
-    hosts: Any,
-    spaces: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_name: str,
+    space_name: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    users: Mapping[str, UserLike],
+    hosts: Hosts,
+    spaces: Mapping[str, str],
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_group_in_space_using_op_gui(selenium, user, space_name, group_name)

@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 from collections.abc import Callable
+from typing import Optional
 
 from tests.gui.utils.generic import upload_workflow_path
 
@@ -26,7 +27,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         self,
         resolve_file_id: ResolveId,
         upload_file: UploadFile,
-        resolve_group_id: ResolveId | None = None,
+        resolve_group_id: Optional[ResolveId] = None,
     ) -> None:
         self.resolve_file_id = resolve_file_id
         self.upload_file = upload_file
@@ -41,7 +42,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ]
 
     def bagit_uploader(
-        self, input_file: InputFiles | None = None, dest_dir: str = "space1/dir1"
+        self, input_file: Optional[InputFiles] = None, dest_dir: str = "space1/dir1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("bagit-uploader") if not input_file else input_file
@@ -60,7 +61,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def detect_file_formats(
-        self, input_file: InputFiles | None = None, space: str = "space1"
+        self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-formats")
@@ -77,7 +78,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def detect_file_mime_formats(
-        self, input_file: InputFiles | None = None, space: str = "space1"
+        self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("detect-file-mime-formats")
@@ -94,7 +95,9 @@ class ExampleWorkflowExecutionInitialStoreContent:
         ], input_files
 
     def download_files(
-        self, input_file: InputFiles | None = None, destination: str = "space1/dir1"
+        self,
+        input_file: Optional[InputFiles] = None,
+        destination: str = "space1/dir1",
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("download-files") if not input_file else input_file
@@ -153,7 +156,7 @@ class ExampleWorkflowExecutionInitialStoreContent:
         return [{"input-store": {"name": name}}], []
 
     def annotate_images(
-        self, input_file: InputFiles | None = None, space: str = "space1"
+        self, input_file: Optional[InputFiles] = None, space: str = "space1"
     ) -> ExecutionResult:
         input_files = (
             self.gather_input_files("annotate-images") if not input_file else input_file

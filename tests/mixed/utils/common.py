@@ -6,8 +6,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import subprocess as sp
-from collections.abc import Callable, Mapping, MutableMapping
-from typing import Any, Protocol
+from collections.abc import Callable, Mapping
+from typing import Optional, Protocol
 
 import yaml
 
@@ -19,7 +19,7 @@ from tests import (
     PANEL_REST_PORT,
     PROVIDER_REST_PATH_PREFIX,
 )
-from tests.gui.types import Clipboard, DisplayMap
+from tests.gui.types import Clipboard, DisplayMap, DynamicObject, TmpMemory
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -36,7 +36,6 @@ from tests.mixed.utils.privileges import (
 from tests.utils.bdd_utils import parsers, wt
 
 Resolver = Callable[[str], object]
-TmpMemory = MutableMapping[str, Any]
 UsersWithToken = Mapping[str, "UserWithToken"]
 
 
@@ -50,11 +49,11 @@ class ConfigurationLike(Protocol):
 
 class UserWithToken(Protocol):
     @property
-    def token(self) -> Any: ...
+    def token(self) -> str: ...
 
 
 class FixtureRequestLike(Protocol):
-    def getfixturevalue(self, argname: str) -> Any: ...
+    def getfixturevalue(self, argname: str) -> DynamicObject: ...
 
 
 class TmpDirLike(Protocol):
@@ -118,8 +117,8 @@ def login_to_cdmi(
     username: str,
     users: UsersWithToken,
     host: str,
-    access_token: str | None = None,
-    identity_token: str | None = None,
+    access_token: Optional[str] = None,
+    identity_token: Optional[str] = None,
 ) -> ApiClient_CDMI:
 
     configuration = Conf_CDMI()
@@ -142,7 +141,7 @@ def login_to_provider(
     username: str,
     users: UsersWithToken,
     host: str,
-    access_token: str | None = None,
+    access_token: Optional[str] = None,
 ) -> ApiClient_provider:
 
     header_value = access_token if access_token else users[username].token
@@ -176,7 +175,7 @@ def execute_copied_curl_command(
     displays: DisplayMap,
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
-    config: Mapping[str, str] | None = None,
+    config: Optional[Mapping[str, str]] = None,
 ) -> None:
     _execute_curl_command(
         clipboard.paste(display=displays[browser_id]),
@@ -188,9 +187,9 @@ def execute_copied_curl_command(
 def _execute_curl_command(
     command: str,
     tmp_memory: TmpMemory,
-    config: Mapping[str, str] | None,
-    flags: list[str] | None = None,
-    file_out: object | None = None,
+    config: Optional[Mapping[str, str]],
+    flags: Optional[list[str]] = None,
+    file_out: Optional[object] = None,
 ) -> None:
     cmd = (
         replace_vars_in_cmd_if_exist(command, config=config)
@@ -240,7 +239,7 @@ def execute_copied_curl_command_with_env_vars(
 
 
 def replace_vars_in_cmd_if_exist(
-    cmd: str, config: Mapping[str, str] | None = None
+    cmd: str, config: Optional[Mapping[str, str]] = None
 ) -> str:
     if config is None:
         return cmd
@@ -398,10 +397,10 @@ def download_using_curl_with_forward(
     displays: DisplayMap,
     tmpdir: TmpDirLike,
     browsers_to_users: Mapping[str, str],
-    file_out: str | None,
+    file_out: Optional[str],
 ) -> None:
     download_link = clipboard.paste(display=displays[browser_id])
-    output_path: object | None = file_out
+    output_path: Optional[object] = file_out
     if file_out is not None:
         output_path = tmpdir.join(browsers_to_users[browser_id], "download", file_out)
 

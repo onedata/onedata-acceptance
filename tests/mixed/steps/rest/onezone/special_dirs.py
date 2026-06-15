@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping, MutableMapping
-from typing import Protocol, cast
+from typing import Optional, Protocol, cast
 
 from oneprovider_client.rest import ApiException
 
@@ -266,7 +266,7 @@ def try_to_move_special_dir_by_id(
     hosts: Hosts,
     host: str,
     dir_id: str,
-    err_msg: str | None = None,
+    err_msg: Optional[str] = None,
 ) -> None:
     if client.lower() == "rest":
         try:

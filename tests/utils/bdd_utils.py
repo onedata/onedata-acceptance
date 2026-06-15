@@ -1,5 +1,7 @@
 """This module provides utility functions for bdd tests."""
 
+# pylint: disable=invalid-name,redefined-outer-name
+
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
@@ -27,11 +29,15 @@ __all__ = [
 
 type Converter = Callable[[str], object]
 type Converters = Mapping[str, Converter]
-type StepFunction[**P, T] = Callable[P, T]
+type StepFunction[**params, return_type] = Callable[params, return_type]
 
 
 class StepDecorator(Protocol):
-    def __call__[**P, T](self, fun: StepFunction[P, T]) -> StepFunction[P, T]: ...
+    def __call__[
+        **params, return_type
+    ](self, fun: StepFunction[params, return_type]) -> StepFunction[
+        params, return_type
+    ]: ...
 
 
 def given(
@@ -68,7 +74,9 @@ def wt(name: object, converters: Optional[Converters] = None) -> StepDecorator:
     return _create_decorator(wt, wrappers)
 
 
-def sanitize_arguments[**P, T](fun: StepFunction[P, T]) -> StepFunction[P, T]:
+def sanitize_arguments[
+    **params, return_type
+](fun: StepFunction[params, return_type],) -> StepFunction[params, return_type]:
     sig = inspect.signature(fun)
     parameters = sig.parameters
     is_gen = inspect.isgeneratorfunction(fun)
@@ -108,7 +116,7 @@ def sanitize_arguments[**P, T](fun: StepFunction[P, T]) -> StepFunction[P, T]:
             ba = _cast_arguments(args, kwargs)
             return fun(*ba.args, **ba.kwargs)
 
-    return cast(StepFunction[P, T], wrapper)
+    return cast(StepFunction[params, return_type], wrapper)
 
 
 def _create_decorator(
@@ -116,7 +124,13 @@ def _create_decorator(
 ) -> StepDecorator:
 
     @wraps(wrapped)
-    def decorator[**P, T](original_fun: StepFunction[P, T]) -> StepFunction[P, T]:
+    def decorator[
+        **params, return_type
+    ](
+        original_fun: StepFunction[params, return_type],
+    ) -> StepFunction[
+        params, return_type
+    ]:
         fun = original_fun
         for wrapper in wrappers:
             fun = wrapper(fun)

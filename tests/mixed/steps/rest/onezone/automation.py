@@ -8,14 +8,15 @@ import json
 import os
 from collections.abc import Mapping, MutableMapping
 from functools import partial
-from typing import Any
+from typing import Optional, Protocol, TypedDict, cast
 
 import yaml
 from oneprovider_client.rest import ApiException
 
 from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.conftest import Hosts, Users
+from tests.conftest import Hosts, JsonValue, Users, WorkflowExecutions
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
@@ -44,9 +45,25 @@ BAGIT_ARCHIVES = {
 
 IdMap = Mapping[str, str]
 MutableIdMap = MutableMapping[str, str]
-TmpMemory = MutableMapping[str, Any]
-WorkflowExecutions = MutableMapping[str, Any]
-JsonObject = dict[str, Any]
+JsonObject = dict[str, JsonValue]
+
+
+class CredentialsLike(Protocol):
+    username: str
+    password: Optional[str]
+
+
+class WorkflowRun(TypedDict, total=False):
+    exceptionStoreId: str
+    iteratedStoreId: str
+
+
+class WorkflowLane(TypedDict):
+    runs: list[WorkflowRun]
+
+
+class WorkflowExecutionDetails(TypedDict):
+    lanes: list[WorkflowLane]
 
 
 @given(
@@ -240,10 +257,10 @@ def upload_workflow_rest(
 
 def _upload_workflow_rest(
     zone_hostname: str,
-    owner: Any,
+    owner: CredentialsLike,
     inventory_id: str,
     workflow_name: str,
-    workflow_dump: Any,
+    workflow_dump: object,
     workflows: MutableIdMap,
 ) -> None:
     workflow_schema_details = json.dumps(
@@ -594,7 +611,7 @@ def execute_part_of_the_workflows(
     groups: IdMap,
     workflow_executions: WorkflowExecutions,
     tmp_memory: TmpMemory,
-    archive_types: str | None,
+    archive_types: Optional[str],
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     example_execution = ExampleWorkflowExecutionInitialStoreContent(
@@ -642,7 +659,7 @@ def execute_part_of_the_workflows(
 
 
 def check_to_run_workflow(
-    workflow_name: str, file_name: object, archive_types: str | None
+    workflow_name: str, file_name: object, archive_types: Optional[str]
 ) -> bool:
     if archive_types is None:
         return workflow_name != "bagit-uploader"
@@ -659,7 +676,7 @@ def execute_workflow_rest(
     spaces: IdMap,
     space_name: str,
     workflow_name: str,
-    stores_content: Mapping[str, Any],
+    stores_content: Mapping[str, object],
     workflows: IdMap,
     rev_number: int = 1,
     loglevel: str = "info",
@@ -918,7 +935,10 @@ def compare_stores_id_after_retry_from_workflow_execution_details(
     workflow_executions: WorkflowExecutions,
 ) -> None:
     wid = get_workflow_execution_id(workflow_name, workflow_executions)
-    details = get_workflow_execution_details(user, users, host, hosts, wid)
+    details = cast(
+        WorkflowExecutionDetails,
+        get_workflow_execution_details(user, users, host, hosts, wid),
+    )
     # first run
     exception_store_id = details["lanes"][0]["runs"][1]["exceptionStoreId"]
     # second run
@@ -973,7 +993,7 @@ def get_workflow_execution_details(
     host: str,
     hosts: Hosts,
     workflow_execution_id: str,
-    details: list[str] | None = None,
+    details: Optional[list[str]] = None,
 ) -> JsonObject:
     provider_hostname = hosts[host]["hostname"]
     # calling using swagger api does not work, because

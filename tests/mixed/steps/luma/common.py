@@ -6,15 +6,45 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import json
-from typing import Any
+from collections.abc import Mapping
+from typing import NotRequired, Optional, TypedDict, cast
 
 import yaml
 
 from tests import PANEL_REST_PORT
+from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.onepanel.storages import get_first_storage_id_by_name
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
+from tests.utils.user_utils import AdminUser
+
+type MappingValue = Optional[str | int]
+
+
+UserMapping = TypedDict(
+    "UserMapping",
+    {
+        "storage uid": MappingValue,
+        "display uid": NotRequired[MappingValue],
+    },
+)
+SpaceMapping = TypedDict(
+    "SpaceMapping",
+    {
+        "space POSIX storage defaults": MappingValue,
+        "space display defaults": NotRequired[MappingValue],
+    },
+)
+
+
+class StorageMappings(TypedDict):
+    type: str
+    users: NotRequired[dict[str, UserMapping]]
+    spaces: NotRequired[dict[str, SpaceMapping]]
+
+
+type LumaMappings = dict[str, dict[str, StorageMappings]]
 
 
 @wt(
@@ -23,8 +53,12 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
     )
 )
 def wt_create_luma_mappings(
-    config: Any, users: Any, spaces: Any, hosts: Any, onepanel_credentials: Any
-) -> Any:
+    config: str,
+    users: Users,
+    spaces: Mapping[str, str],
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+) -> None:
     """Create LUMA mappings according to given config.
 
     Config format given in yaml is as follows:
@@ -49,9 +83,13 @@ def wt_create_luma_mappings(
 
 
 def create_luma_mappings(
-    config: Any, users: Any, spaces: Any, hosts: Any, onepanel_credentials: Any
-) -> Any:
-    mappings = yaml.load(config, yaml.Loader)
+    config: str,
+    users: Users,
+    spaces: Mapping[str, str],
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+) -> None:
+    mappings = cast(LumaMappings, yaml.load(config, yaml.Loader))
     for provider in mappings:
         storages = mappings[provider]
         for storage, storage_mappings in storages.items():
@@ -78,6 +116,8 @@ def create_luma_mappings(
             for space, space_data in space_mappings.items():
                 default_gid = space_data.get("space POSIX storage defaults")
                 display_gid = space_data.get("space display defaults")
+                if default_gid is None:
+                    raise ValueError(f"Missing POSIX storage defaults for {space}")
                 set_default_posix_credentials_luma_lf(
                     provider,
                     storage_id,
@@ -100,16 +140,16 @@ def create_luma_mappings(
 
 
 def set_user_luma_local_feed_mappings(
-    provider: Any,
-    hosts: Any,
-    users: Any,
-    onepanel_credentials: Any,
-    storage_id: Any,
-    storage_type: Any,
-    user: Any,
-    storage_uid: Any,
-    display_uid: Any,
-) -> Any:
+    provider: str,
+    hosts: Hosts,
+    users: Users,
+    onepanel_credentials: AdminUser,
+    storage_id: str,
+    storage_type: str,
+    user: str,
+    storage_uid: MappingValue,
+    display_uid: MappingValue,
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -137,34 +177,38 @@ def set_user_luma_local_feed_mappings(
 
 
 def _set_onedata_user_mapping(
-    storage_type: Any, user_id: Any, storage_uid: Any, display_uid: Any
-) -> Any:
-    scheme = {
+    storage_type: str,
+    user_id: str,
+    storage_uid: MappingValue,
+    display_uid: MappingValue,
+) -> dict[str, object]:
+    storage_user: dict[str, object] = {
+        "storageCredentials": {
+            "type": storage_type,
+            "uid": storage_uid,
+        }
+    }
+    scheme: dict[str, object] = {
         "onedataUser": {
             "mappingScheme": "onedataUser",
             "onedataUserId": user_id,
         },
-        "storageUser": {
-            "storageCredentials": {
-                "type": storage_type,
-                "uid": storage_uid,
-            }
-        },
+        "storageUser": storage_user,
     }
     if display_uid:
-        scheme["storageUser"]["displayUid"] = display_uid
+        storage_user["displayUid"] = display_uid
     return scheme
 
 
 def set_default_posix_credentials_luma_lf(
-    provider: Any,
-    storage_id: Any,
-    space: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    spaces: Any,
-    default_gid: Any,
-) -> Any:
+    provider: str,
+    storage_id: str,
+    space: str,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    spaces: Mapping[str, str],
+    default_gid: str | int,
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -190,14 +234,14 @@ def set_default_posix_credentials_luma_lf(
 
 
 def set_default_display_credentials_luma_lf(
-    provider: Any,
-    storage_id: Any,
-    space: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    spaces: Any,
-    display_gid: Any,
-) -> Any:
+    provider: str,
+    storage_id: str,
+    space: str,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    spaces: Mapping[str, str],
+    display_gid: str | int,
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
@@ -230,14 +274,14 @@ def set_default_display_credentials_luma_lf(
     )
 )
 def create_imported_storage_luma_mappings_lf(
-    storage: Any,
-    provider: Any,
-    uid_list: Any,
-    user_list: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    users: Any,
-) -> Any:
+    storage: str,
+    provider: str,
+    uid_list: str,
+    user_list: str,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    users: Users,
+) -> None:
     uids = parse_seq(uid_list)
     users_list = parse_seq(user_list)
     storage_id = get_first_storage_id_by_name(
@@ -252,14 +296,14 @@ def create_imported_storage_luma_mappings_lf(
 
 
 def _insert_mapping_of_uid_into_lf(
-    uid: Any,
-    user: Any,
-    provider: Any,
-    hosts: Any,
-    onepanel_credentials: Any,
-    storage_id: Any,
-    users: Any,
-) -> Any:
+    uid: str,
+    user: str,
+    provider: str,
+    hosts: Hosts,
+    onepanel_credentials: AdminUser,
+    storage_id: str,
+    users: Users,
+) -> None:
     provider_hostname = hosts[provider]["hostname"]
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password

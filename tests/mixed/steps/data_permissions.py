@@ -7,8 +7,9 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from typing import Any
+from collections.abc import Mapping
 
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     assert_ace_in_op_gui,
@@ -17,6 +18,7 @@ from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui,
     set_posix_permissions_in_op_gui,
 )
+from tests.gui.types import Numerals, TmpMemory
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     assert_ace_in_op_oneclient,
@@ -35,7 +37,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def _remove_parent_acl_from_string(priv: Any) -> Any:
+def _remove_parent_acl_from_string(priv: str) -> str:
     return re.sub("[a-zA-Z]+:", "", priv)
 
 
@@ -48,20 +50,20 @@ def _remove_parent_acl_from_string(priv: Any) -> Any:
     )
 )
 def grant_acl_privileges_in_op(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space: Any,
-    path: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    priv: Any,
-    item_type: Any,
-    name: Any,
-    groups: Any,
-    tmp_memory: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    priv: str,
+    item_type: str,
+    name: str,
+    groups: Mapping[str, str],
+    tmp_memory: TmpMemory,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -114,21 +116,21 @@ def grant_acl_privileges_in_op(
     )
 )
 def assert_ace_in_op(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space: Any,
-    path: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    num: Any,
-    priv: Any,
-    item_type: Any,
-    name: Any,
-    numerals: Any,
-    tmp_memory: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space: str,
+    path: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    num: str,
+    priv: str,
+    item_type: str,
+    name: str,
+    numerals: Numerals,
+    tmp_memory: TmpMemory,
+) -> None:
     full_path = f"{space}/{path}"
     client_lower = client.lower()
 
@@ -186,17 +188,17 @@ def assert_ace_in_op(
 )
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op(
-    client: Any,
-    user: Any,
-    item_path: Any,
-    space: Any,
-    mode: Any,
-    host: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    users: Any,
-    hosts: Any,
-) -> Any:
+    client: str,
+    user: str,
+    item_path: str,
+    space: str,
+    mode: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":
@@ -227,18 +229,18 @@ def assert_posix_permissions_in_op(
     )
 )
 def set_posix_permissions_in_op(
-    client: Any,
-    user: Any,
-    item_path: Any,
-    space: Any,
-    mode: Any,
-    result: Any,
-    host: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    users: Any,
-    hosts: Any,
-) -> Any:
+    client: str,
+    user: str,
+    item_path: str,
+    space: str,
+    mode: str,
+    result: str,
+    host: str,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    users: Users,
+    hosts: Hosts,
+) -> None:
     full_path = f"{space}/{item_path}"
     client_lower = client.lower()
     if client_lower == "web gui":

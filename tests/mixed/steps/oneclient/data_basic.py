@@ -8,14 +8,22 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import os
+from collections.abc import Iterable, Mapping
 from functools import partial
-from typing import Any
+from typing import cast
 
+import pytest
 import yaml
 
+from tests.conftest import EnvDesc, Hosts, Users
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.types import Numerals, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
+    ContentItem,
+    CreateItem,
+    ItemType,
+    UserLike,
     assert_ace,
     check_files_tree,
     create_content,
@@ -31,41 +39,53 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
 
-def change_client_name_to_hostname(client_name: Any) -> Any:
+def change_client_name_to_hostname(client_name: str) -> str:
     return client_name.replace("oneclient", "client")
 
 
 @wt(parsers.parse("{user} mounts oneclient using received token"))
 def mount_new_oneclient_with_token(
-    user: Any, hosts: Any, users: Any, env_desc: Any, tmp_memory: Any
-) -> Any:
-    token = tmp_memory[user]["mailbox"]["token"]
-    users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
+    user: str, hosts: Hosts, users: Users, env_desc: EnvDesc, tmp_memory: TmpMemory
+) -> None:
+    token = cast(str, cast(Mapping[str, object], tmp_memory[user]["mailbox"])["token"])
+    users[user].mount_client(
+        "oneclient-1",
+        "client1",
+        cast(Mapping[str, Mapping[str, str]], hosts),
+        env_desc,
+        token,
+    )
 
 
 def mount_new_oneclient_with_token_fail(
-    user: Any,
-    hosts: Any,
-    users: Any,
-    env_desc: Any,
-    tmp_memory: Any,
-    client: Any = "oneclient",
-) -> Any:
+    user: str,
+    hosts: Hosts,
+    users: Users,
+    env_desc: EnvDesc,
+    tmp_memory: TmpMemory,
+    client: str = "oneclient",
+) -> None:
     if "oneclient" in client:
         token = tmp_memory[user]["mailbox"]["token"]
-        users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
+        users[user].mount_client(
+            "oneclient-1",
+            "client1",
+            cast(Mapping[str, Mapping[str, str]], hosts),
+            env_desc,
+            cast(str, token),
+        )
         failure(user, users)
 
 
 def mount_new_oneclient_result(
-    user: Any,
-    hosts: Any,
-    users: Any,
-    env_desc: Any,
-    tmp_memory: Any,
-    result: Any,
-    client: Any = "oneclient",
-) -> Any:
+    user: str,
+    hosts: Hosts,
+    users: Users,
+    env_desc: EnvDesc,
+    tmp_memory: TmpMemory,
+    result: str,
+    client: str = "oneclient",
+) -> None:
     if result == "succeeds":
         mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
     else:
@@ -75,8 +95,8 @@ def mount_new_oneclient_result(
 
 
 def create_dir_in_op_oneclient(
-    user: Any, full_path: Any, users: Any, result: Any, host: Any
-) -> Any:
+    user: str, full_path: str, users: Users, result: str, host: str
+) -> None:
     if result == "fails":
         multi_dir_steps.fail_to_create(user, full_path, host, users)
     else:
@@ -84,8 +104,13 @@ def create_dir_in_op_oneclient(
 
 
 def create_file_in_op_oneclient(
-    user: Any, path: Any, users: Any, result: Any, host: Any, request: Any
-) -> Any:
+    user: str,
+    path: str,
+    users: Users,
+    result: str,
+    host: str,
+    request: pytest.FixtureRequest,
+) -> None:
     if result == "fails":
         multi_file_steps.create_reg_file_fail(user, path, host, users, request)
     else:
@@ -93,16 +118,16 @@ def create_file_in_op_oneclient(
 
 
 def create_file_in_op_oneclient_with_tokens(
-    user: Any,
-    hosts: Any,
-    users: Any,
-    env_desc: Any,
-    tmp_memory: Any,
-    result: Any,
-    full_path: Any,
-    client_lower: Any,
-    request: Any,
-) -> Any:
+    user: str,
+    hosts: Hosts,
+    users: Users,
+    env_desc: EnvDesc,
+    tmp_memory: TmpMemory,
+    result: str,
+    full_path: str,
+    client_lower: str,
+    request: pytest.FixtureRequest,
+) -> None:
     try:
         mount_new_oneclient_result(
             user, hosts, users, env_desc, tmp_memory, result, client="oneclient"
@@ -124,8 +149,8 @@ def create_file_in_op_oneclient_with_tokens(
 
 
 def see_items_in_op_oneclient(
-    items: Any, space: Any, user: Any, users: Any, result: Any, host: Any
-) -> Any:
+    items: str, space: str, user: str, users: Users, result: str, host: str
+) -> None:
     for item in parse_seq(items):
         last_elem_in_path = os.path.basename(item)
         if last_elem_in_path.startswith("dir"):
@@ -142,17 +167,23 @@ def see_items_in_op_oneclient(
 
 
 def assert_num_of_files_in_path_in_op_oneclient(
-    num: Any, path: Any, user: Any, users: Any, host: Any
-) -> Any:
+    num: int, path: str, user: str, users: Users, host: str
+) -> None:
     items = multi_dir_steps.list_dirs_base(user, path, host, users)
     assert_msg = f"Expected exactly {num} items in {path} but found {len(items)} items"
     assert len(items) == num, assert_msg
 
 
 def create_directory_structure_in_op_oneclient(
-    user: Any, users: Any, config: Any, space: Any, host: Any, hosts: Any, request: Any
-) -> Any:
-    items = yaml.load(config, yaml.Loader)
+    user: str,
+    users: Users,
+    config: str,
+    space: str,
+    host: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+) -> None:
+    items = cast(Iterable[ContentItem], yaml.load(config, yaml.Loader))
     cwd = space
     create_content(
         user,
@@ -167,16 +198,16 @@ def create_directory_structure_in_op_oneclient(
 
 
 def create_item_in_op_oneclient(
-    user: Any,
-    users: Any,
-    cwd: Any,
-    name: Any,
-    content: Any,
-    create_item_fun: Any,
-    host: Any,
-    hosts: Any,
-    request: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    cwd: str,
+    name: str,
+    content: object,
+    create_item_fun: CreateItem,
+    host: str,
+    hosts: Hosts,
+    request: pytest.FixtureRequest,
+) -> None:
     if name.startswith("dir"):
         multi_dir_steps.create(user, f"{cwd}/{name}", host, users)
     else:
@@ -184,24 +215,33 @@ def create_item_in_op_oneclient(
     if not content:
         return
     cwd += "/" + name
-    create_content(user, users, cwd, content, create_item_fun, host, hosts, request)
+    create_content(
+        user,
+        users,
+        cwd,
+        cast(Iterable[ContentItem], content),
+        create_item_fun,
+        host,
+        hosts,
+        request,
+    )
 
 
 def assert_file_content_in_op_oneclient(
-    path: Any, text: Any, user: Any, users: Any, host: Any
-) -> Any:
+    path: str, text: str, user: str, users: Users, host: str
+) -> None:
     multi_reg_file_steps.read_text(user, text, path, host, users)
 
 
-def ls_dir_in_op_oneclient(path: Any, user: Any, users: Any, host: Any) -> Any:
+def ls_dir_in_op_oneclient(path: str, user: str, users: Users, host: str) -> list[str]:
     return multi_dir_steps.list_dirs_base(user, path, host, users)
 
 
 def get_time_for_file_in_op_oneclient(
-    users: Any, user: Any, client_node: Any, time_name: Any, file: Any
-) -> Any:
-    user = users[user]
-    client = user.clients[client_node]
+    users: Users, user: str, client_node: str, time_name: str, file: str
+) -> float:
+    user_obj = users[user]
+    client = user_obj.clients[client_node]
     attr = time_attr(time_name)
     file_path = client.absolute_path(file)
     stat_result = client.stat(file_path)
@@ -211,15 +251,15 @@ def get_time_for_file_in_op_oneclient(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def compare_file_time_with_copied_time_in_op_oneclient(
-    users: Any,
-    user: Any,
-    client_node: Any,
-    time_name1: Any,
-    file: Any,
-    time2: Any,
-    time_name2: Any,
-    comparator: Any,
-) -> Any:
+    users: Users,
+    user: str,
+    client_node: str,
+    time_name1: str,
+    file: str,
+    time2: float,
+    time_name2: str,
+    comparator: str,
+) -> None:
     time1 = get_time_for_file_in_op_oneclient(
         users, user, client_node, time_name1, file
     )
@@ -231,8 +271,8 @@ def compare_file_time_with_copied_time_in_op_oneclient(
 
 
 def assert_space_content_in_op_oneclient(
-    config: Any, space_name: Any, user: Any, users: Any, host: Any
-) -> Any:
+    config: str, space_name: str, user: str, users: Users, host: str
+) -> None:
     cwd = space_name
     ls_fun = partial(ls_dir_in_op_oneclient, user=user, users=users, host=host)
     assert_file_content_fun = partial(
@@ -255,8 +295,8 @@ def assert_space_content_in_op_oneclient(
 
 
 def delete_empty_directory_in_op_oneclient(
-    path: Any, user: Any, users: Any, result: Any, host: Any
-) -> Any:
+    path: str, user: str, users: Users, result: str, host: str
+) -> None:
     if result == "fails":
         multi_dir_steps.fail_to_delete_empty(user, path, host, users)
     else:
@@ -264,8 +304,13 @@ def delete_empty_directory_in_op_oneclient(
 
 
 def copy_item_in_op_oneclient(
-    item_type: Any, src_path: Any, dst_path: Any, user: Any, users: Any, host: Any
-) -> Any:
+    item_type: str,
+    src_path: str,
+    dst_path: str,
+    user: str,
+    users: Users,
+    host: str,
+) -> None:
     if item_type == "directory":
         multi_dir_steps.copy_dir(user, src_path, dst_path, host, users)
     else:
@@ -273,8 +318,13 @@ def copy_item_in_op_oneclient(
 
 
 def move_item_in_op_oneclient(
-    user: Any, src_path: Any, dst_path: Any, users: Any, result: Any, host: Any
-) -> Any:
+    user: str,
+    src_path: str,
+    dst_path: str,
+    users: Users,
+    result: str,
+    host: str,
+) -> None:
     if result == "fails":
         multi_file_steps.rename_fail(user, src_path, dst_path, host, users)
     else:
@@ -283,14 +333,14 @@ def move_item_in_op_oneclient(
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_oneclient(
-    user: Any, path: Any, perm: Any, host: Any, users: Any
-) -> Any:
+    user: str, path: str, perm: str, host: str, users: Users
+) -> None:
     multi_file_steps.check_mode(user, path, perm, host, users)
 
 
 def set_posix_permissions_in_op_oneclient(
-    user: Any, path: Any, perm: Any, host: Any, users: Any, result: Any
-) -> Any:
+    user: str, path: str, perm: str, host: str, users: Users, result: str
+) -> None:
     if result == "fails":
         multi_file_steps.change_mode_fail(user, path, perm, host, users)
     else:
@@ -298,8 +348,8 @@ def set_posix_permissions_in_op_oneclient(
 
 
 def set_metadata_in_op_oneclient(
-    attr_val: Any, attr_type: Any, path: Any, user: Any, users: Any, host: Any
-) -> Any:
+    attr_val: str, attr_type: str, path: str, user: str, users: Users, host: str
+) -> None:
     if attr_type == "xattrs":
         (attr, attr_val) = attr_val.split("=")
     else:
@@ -309,8 +359,8 @@ def set_metadata_in_op_oneclient(
 
 
 def assert_metadata_in_op_oneclient(
-    attr_val: Any, attr_type: Any, path: Any, user: Any, users: Any, host: Any
-) -> Any:
+    attr_val: str, attr_type: str, path: str, user: str, users: Users, host: str
+) -> None:
     if attr_type == "xattrs":
         attr, val = attr_val.split("=")
         multi_file_steps.check_string_xattr(user, path, attr, val, host, users)
@@ -325,16 +375,16 @@ def assert_metadata_in_op_oneclient(
 
 
 def remove_all_metadata_in_op_oneclient(
-    user: Any, users: Any, host: Any, path: Any
-) -> Any:
+    user: str, users: Users, host: str, path: str
+) -> None:
     multi_file_steps.remove_xattr(user, path, "onedata_rdf", host, users)
     multi_file_steps.remove_xattr(user, path, "onedata_json", host, users)
     multi_file_steps.remove_all_xattr(user, path, host, users)
 
 
 def assert_no_such_metadata_in_op_oneclient(
-    user: Any, users: Any, host: Any, path: Any, tab_name: Any, val: Any
-) -> Any:
+    user: str, users: Users, host: str, path: str, tab_name: str, val: str
+) -> None:
     metadata = multi_file_steps.get_metadata(user, path, host, users)
     if tab_name == "xattrs":
         attr, val = val.split("=")
@@ -346,54 +396,63 @@ def assert_no_such_metadata_in_op_oneclient(
         pass
     else:
         if tab_name.lower() == "json":
-            val = json.loads(val)
-            metadata = json.loads(metadata_value)
-            for key in val:
+            expected_metadata = cast(Mapping[str, object], json.loads(val))
+            actual_metadata = cast(Mapping[str, object], json.loads(metadata_value))
+            for key in expected_metadata:
                 assert (
-                    key not in metadata or metadata[key] != val[key]
-                ), f"There is {val} {tab_name} metadata"
+                    key not in actual_metadata
+                    or actual_metadata[key] != expected_metadata[key]
+                ), f"There is {expected_metadata} {tab_name} metadata"
         else:
             assert val != metadata_value, f"There is {val} {tab_name} metadata"
 
 
 def assert_ace_in_op_oneclient(
-    user: Any,
-    users: Any,
-    host: Any,
-    path: Any,
-    num: Any,
-    priv: Any,
-    item_type: Any,
-    name: Any,
-    numerals: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    host: str,
+    path: str,
+    num: str,
+    priv: str,
+    item_type: ItemType,
+    name: str,
+    numerals: Numerals,
+) -> None:
     ace = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
     ace = json.loads(ace)[numerals[num]]
     assert_ace(priv, item_type, ace, name, num, path)
 
 
 def grant_acl_privileges_in_op_oneclient(
-    user: Any,
-    users: Any,
-    host: Any,
-    path: Any,
-    priv: Any,
-    item_type: Any,
-    groups: Any,
-    name: Any,
-) -> Any:
+    user: str,
+    users: Users,
+    host: str,
+    path: str,
+    priv: str,
+    item_type: ItemType,
+    groups: Mapping[str, str],
+    name: str,
+) -> None:
     try:
         acl_json = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
         acl = json.loads(acl_json)
     except KeyError:
         acl = []
-    acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
+    acl = get_acl_metadata(
+        acl,
+        priv,
+        item_type,
+        groups,
+        name,
+        cast(Mapping[str, UserLike], users),
+        path,
+    )
     multi_file_steps.set_xattr(user, path, "cdmi_acl", json.dumps(acl), host, users)
 
 
 def remove_file_in_op_oneclient(
-    user: Any, path: Any, host: Any, users: Any, res: Any
-) -> Any:
+    user: str, path: str, host: str, users: Users, res: str
+) -> None:
     if res == "fails":
         multi_file_steps.delete_file_fail(user, path, host, users)
     else:
@@ -401,7 +460,7 @@ def remove_file_in_op_oneclient(
 
 
 @wt(parsers.re(r"(?P<user>\w+) lists children of (?P<name>.*)"))
-def list_children_in_op_oneclient(name: Any, user: Any, users: Any) -> Any:
+def list_children_in_op_oneclient(name: str, user: str, users: Users) -> None:
     user1 = users[user]
     client = user1.clients["client1"]
     path = client.get_mount_path() + "/" + name
@@ -410,15 +469,14 @@ def list_children_in_op_oneclient(name: Any, user: Any, users: Any) -> Any:
 
 @given(parsers.parse("{user} mounts oneclient using received token"))
 def given_mount_new_oneclient_with_token(
-    user: Any, hosts: Any, users: Any, env_desc: Any, tmp_memory: Any
-) -> Any:
-    token = tmp_memory[user]["mailbox"]["token"]
-    users[user].mount_client("oneclient-1", "client1", hosts, env_desc, token)
+    user: str, hosts: Hosts, users: Users, env_desc: EnvDesc, tmp_memory: TmpMemory
+) -> None:
+    mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
 
 
 def check_file_is_of_type_oc(
-    file: Any, file_type: Any, user: Any, users: Any, host: Any
-) -> Any:
+    file: str, file_type: str, user: str, users: Users, host: str
+) -> bool:
     try:
         multi_file_steps.check_type_impl(user, file, file_type, host, users)
     except AssertionError:

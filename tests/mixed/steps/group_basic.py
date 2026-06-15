@@ -7,9 +7,11 @@ __copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import json
-from typing import Any
+from collections.abc import Mapping
+from typing import cast
 
 from tests import OZ_REST_PORT
+from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.meta_steps.onezone.groups import (
     add_subgroups_using_op_gui,
     assert_subgroups_using_op_gui,
@@ -26,7 +28,9 @@ from tests.gui.meta_steps.onezone.groups import (
     rename_groups_using_op_gui,
     see_groups_using_op_gui,
 )
+from tests.gui.types import Clipboard, DisplayMap, TmpMemory
 from tests.mixed.steps.rest.onezone.group_management import (
+    UserLike,
     add_subgroups_using_rest,
     assert_subgroups_using_rest,
     create_group_token_using_rest,
@@ -49,6 +53,10 @@ from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post
 
 
+def _as_rest_users(users: Users) -> Mapping[str, UserLike]:
+    return cast(Mapping[str, UserLike], users)
+
+
 @wt(
     parsers.re(
         r"using (?P<client>.*), (?P<user>\w+) creates groups? "
@@ -56,17 +64,17 @@ from tests.utils.rest_utils import get_zone_rest_path, http_post
     )
 )
 def create_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        create_groups_using_rest(user, users, hosts, group_list, host)
+        create_groups_using_rest(user, _as_rest_users(users), hosts, group_list, host)
     elif client.lower() == "web gui":
         create_groups_using_op_gui(selenium, user, group_list)
     else:
@@ -81,8 +89,8 @@ def create_groups(
     )
 )
 def create_groups_with_token(
-    user: Any, group_name: Any, host: Any, tmp_memory: Any, hosts: Any
-) -> Any:
+    user: str, group_name: str, host: str, tmp_memory: TmpMemory, hosts: Hosts
+) -> None:
     group_type = "team"
     zone_hostname = hosts[host]["hostname"]
     token = tmp_memory[user]["mailbox"].get("token", None)
@@ -105,8 +113,8 @@ def create_groups_with_token(
     )
 )
 def fail_to_create_group_with_token(
-    user: Any, group_name: Any, host: Any, tmp_memory: Any, hosts: Any
-) -> Any:
+    user: str, group_name: str, host: str, tmp_memory: TmpMemory, hosts: Hosts
+) -> None:
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
         raise AssertionError(
@@ -125,17 +133,17 @@ def fail_to_create_group_with_token(
     )
 )
 def assert_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        see_groups_using_rest(user, users, hosts, group_list, host)
+        see_groups_using_rest(user, _as_rest_users(users), hosts, group_list, host)
     elif client.lower() == "web gui":
         see_groups_using_op_gui(selenium, user, group_list)
     else:
@@ -150,18 +158,20 @@ def assert_groups(
     )
 )
 def rename_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    new_names: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    new_names: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
+        rename_groups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, new_names, host
+        )
     elif client.lower() == "web gui":
         rename_groups_using_op_gui(selenium, user, group_list, new_names)
     else:
@@ -176,17 +186,19 @@ def rename_groups(
     )
 )
 def fail_to_see_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        fail_to_see_groups_using_rest(user, users, hosts, group_list, host)
+        fail_to_see_groups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, host
+        )
     elif client.lower() == "web gui":
         fail_to_see_groups_using_op_gui(selenium, user, group_list)
     else:
@@ -200,17 +212,17 @@ def fail_to_see_groups(
     )
 )
 def remove_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        remove_groups_using_rest(user, users, hosts, group_list, host)
+        remove_groups_using_rest(user, _as_rest_users(users), hosts, group_list, host)
     elif client.lower() == "web gui":
         remove_group(selenium, user, group_list)
     else:
@@ -224,17 +236,17 @@ def remove_groups(
     )
 )
 def leave_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+) -> None:
 
     if client.lower() == "rest":
-        leave_groups_using_rest(user, users, hosts, group_list, host)
+        leave_groups_using_rest(user, _as_rest_users(users), hosts, group_list, host)
     elif client.lower() == "web gui":
         leave_groups_using_op_gui(selenium, user, group_list)
     else:
@@ -249,21 +261,23 @@ def leave_groups(
     )
 )
 def add_subgroups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    parent: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    parent: str,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
-        add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
+        add_subgroups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, parent, host
+        )
     elif client.lower() == "web gui":
         add_subgroups_using_op_gui(
             selenium,
@@ -286,19 +300,21 @@ def add_subgroups(
     )
 )
 def remove_subgroups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    parent: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    parent: str,
+) -> None:
 
     if client.lower() == "rest":
-        remove_subgroups_using_rest(user, users, hosts, group_list, parent, host)
+        remove_subgroups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, parent, host
+        )
     elif client.lower() == "web gui":
         remove_subgroups_using_op_gui(
             selenium,
@@ -319,18 +335,20 @@ def remove_subgroups(
     )
 )
 def assert_subgroups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    parent: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+) -> None:
 
     if client.lower() == "rest":
-        assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
+        assert_subgroups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, parent, host
+        )
     elif client.lower() == "web gui":
         assert_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
@@ -345,18 +363,20 @@ def assert_subgroups(
     )
 )
 def fail_to_see_subgroups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    parent: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+) -> None:
 
     if client.lower() == "rest":
-        fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts, host)
+        fail_to_see_subgroups_using_rest(
+            user, _as_rest_users(users), group_list, parent, hosts, host
+        )
     elif client.lower() == "web gui":
         fail_to_see_subgroups_using_op_gui(selenium, user, group_list, parent)
     else:
@@ -371,22 +391,22 @@ def fail_to_see_subgroups(
     )
 )
 def invite_to_group(
-    client: Any,
-    user1: Any,
-    user2: Any,
-    group: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    client: str,
+    user1: str,
+    user2: str,
+    group: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
         create_group_token_using_rest(
-            user1, user2, group, tmp_memory, users, hosts, host
+            user1, user2, group, tmp_memory, _as_rest_users(users), hosts, host
         )
     elif client.lower() == "web gui":
         create_group_token_to_invite_user_using_op_gui(
@@ -409,17 +429,17 @@ def invite_to_group(
     )
 )
 def join_group(
-    client: Any,
-    user: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    tmp_memory: Any,
-) -> Any:
+    client: str,
+    user: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    tmp_memory: TmpMemory,
+) -> None:
 
     if client.lower() == "rest":
-        join_group_using_rest(user, tmp_memory, hosts, users, host)
+        join_group_using_rest(user, tmp_memory, hosts, _as_rest_users(users), host)
     elif client.lower() == "web gui":
         join_group_using_op_gui(selenium, user, tmp_memory)
     else:
@@ -434,19 +454,19 @@ def join_group(
     )
 )
 def fail_to_rename_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    new_names: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    new_names: str,
+) -> None:
 
     if client.lower() == "rest":
         fail_to_rename_groups_using_rest(
-            user, users, hosts, group_list, new_names, host
+            user, _as_rest_users(users), hosts, group_list, new_names, host
         )
     elif client.lower() == "web gui":
         fail_to_rename_groups_using_op_gui(selenium, user, group_list, new_names)
@@ -461,16 +481,18 @@ def fail_to_rename_groups(
     )
 )
 def fail_to_remove_groups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+) -> None:
 
     if client.lower() == "rest":
-        fail_to_remove_groups_using_rest(user, users, hosts, group_list, host)
+        fail_to_remove_groups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, host
+        )
     # TODO VFS-12393 uncomment after implementing function: "fail_to_remove_groups_using_op_gui"
     #  and writing suitable scenario
     # elif client.lower() == 'web gui':
@@ -488,21 +510,23 @@ def fail_to_remove_groups(
     )
 )
 def fail_to_add_subgroups(
-    client: Any,
-    user: Any,
-    group_list: Any,
-    host: Any,
-    hosts: Any,
-    users: Any,
-    selenium: Any,
-    parent: Any,
-    tmp_memory: Any,
-    displays: Any,
-    clipboard: Any,
-) -> Any:
+    client: str,
+    user: str,
+    group_list: str,
+    host: str,
+    hosts: Hosts,
+    users: Users,
+    selenium: SeleniumDrivers,
+    parent: str,
+    tmp_memory: TmpMemory,
+    displays: DisplayMap,
+    clipboard: Clipboard,
+) -> None:
 
     if client.lower() == "rest":
-        fail_to_add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
+        fail_to_add_subgroups_using_rest(
+            user, _as_rest_users(users), hosts, group_list, parent, host
+        )
     elif client.lower() == "web gui":
         fail_to_add_subgroups_using_op_gui(
             selenium,

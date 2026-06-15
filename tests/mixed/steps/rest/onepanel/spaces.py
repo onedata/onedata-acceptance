@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
-from collections.abc import Mapping, MutableMapping
-from typing import Any, Protocol
+from collections.abc import Mapping
+from typing import Protocol
 
 import yaml
 from onepanel_client import (
@@ -22,11 +22,10 @@ from onepanel_client import (
 
 from tests.conftest import Hosts
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.types import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.utils.common import login_to_oz, login_to_panel
 from tests.utils.utils import repeat_failed
-
-TmpMemory = MutableMapping[str, Any]
 
 
 class CredentialsLike(Protocol):

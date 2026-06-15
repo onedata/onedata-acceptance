@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
-from typing import Protocol
+from typing import Optional, Protocol
 
 import yaml
 
@@ -18,7 +18,7 @@ from tests.gui.utils.oneservices.cdmi import get_item_type
 
 class FileTreeNode(Protocol):
     path: str
-    content: str | int | None
+    content: Optional[str | int]
 
     @property
     def nodes(self) -> Iterable[FileTreeNode]: ...

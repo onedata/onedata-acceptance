@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Mapping
-from typing import cast
+from typing import Optional, cast
 
 import yaml
 from oneprovider_client import TransferApi
@@ -20,8 +20,8 @@ from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
 
 IdMap = Mapping[str, str]
-type JsonValue = None | str | int | float | bool | list["JsonValue"] | dict[
-    str, "JsonValue"
+type JsonValue = Optional[
+    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
 ]
 type JsonObject = dict[str, JsonValue]
 
@@ -33,8 +33,8 @@ def create_transfer_rest(
     hosts: Hosts,
     transfer_type: str,
     path: str,
-    replicating_provider: str | None = None,
-    evicting_provider: str | None = None,
+    replicating_provider: Optional[str] = None,
+    evicting_provider: Optional[str] = None,
 ) -> None:
     client = login_to_provider(user, users, hosts[host]["hostname"])
     transfer_api = TransferApi(client)

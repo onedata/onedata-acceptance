@@ -6,15 +6,19 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import Any
+from collections.abc import Mapping
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.qos import (
     add_qos_requirement_in_modal,
     assert_qos_file_status_in_op_gui,
     delete_qos_requirement_in_op_gui,
 )
+from tests.gui.types import TmpMemory
 from tests.mixed.steps.rest.oneprovider.qos import (
+    HostsConfig,
+    UserLike,
     assert_qos_file_status_in_op_rest,
     create_qos_requirement_in_op_rest,
     delete_qos_requirement_in_op_rest,
@@ -33,17 +37,17 @@ from tests.utils.utils import repeat_failed
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_requirement_in_op(
-    client: Any,
-    user: Any,
-    selenium: Any,
-    file_name: Any,
-    tmp_memory: Any,
-    expression: Any,
-    space_name: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    user: str,
+    selenium: SeleniumDrivers,
+    file_name: str,
+    tmp_memory: TmpMemory,
+    expression: str,
+    space_name: str,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         add_qos_requirement_in_modal(
@@ -71,17 +75,17 @@ def create_qos_requirement_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_file_status_in_op(
-    client: Any,
-    user: Any,
-    file_name: Any,
-    space_name: Any,
-    host: Any,
-    tmp_memory: Any,
-    selenium: Any,
-    users: Any,
-    hosts: Any,
-    option: Any,
-) -> Any:
+    client: str,
+    user: str,
+    file_name: str,
+    space_name: str,
+    host: str,
+    tmp_memory: TmpMemory,
+    selenium: SeleniumDrivers,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    option: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         assert_qos_file_status_in_op_gui(
@@ -109,16 +113,16 @@ def assert_qos_file_status_in_op(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_qos_requirement_in_op(
-    client: Any,
-    selenium: Any,
-    user: Any,
-    space_name: Any,
-    file_name: Any,
-    tmp_memory: Any,
-    users: Any,
-    hosts: Any,
-    host: Any,
-) -> Any:
+    client: str,
+    selenium: SeleniumDrivers,
+    user: str,
+    space_name: str,
+    file_name: str,
+    tmp_memory: TmpMemory,
+    users: Mapping[str, UserLike],
+    hosts: HostsConfig,
+    host: str,
+) -> None:
     client_lower = client.lower()
     if client_lower == "web gui":
         delete_qos_requirement_in_op_gui(

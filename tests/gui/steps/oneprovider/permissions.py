@@ -23,7 +23,7 @@ from tests.utils.utils import repeat_failed
 
 
 def _get_index(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
 ) -> int:
     n = numerals[num]
     if n < 0:
@@ -183,7 +183,7 @@ def assert_fail_to_select_acl_option(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_acl_modal(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -232,7 +232,7 @@ def assert_subject_type(
     selenium: SeleniumDrivers,
     browser_id: str,
     subject_type: str,
-    num: int,
+    num: str,
     numerals: Numerals,
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
@@ -252,7 +252,7 @@ def assert_subject_type(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -273,7 +273,7 @@ def assert_lack_of_subject(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_editable(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals, name: str
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals, name: str
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -297,7 +297,7 @@ def assert_acl_record_editable(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_not_editable(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals, name: str
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals, name: str
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -322,7 +322,7 @@ def assert_acl_record_not_editable(
 def assert_set_acl_privileges(
     selenium: SeleniumDrivers,
     browser_id: str,
-    num: int,
+    num: str,
     numerals: Numerals,
     option_list: str,
 ) -> None:
@@ -365,7 +365,7 @@ def assert_set_acl_privileges(
     )
 )
 def assert_set_all_acl_privileges(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
 ) -> None:
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
     assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
@@ -382,7 +382,7 @@ def assert_set_all_acl_privileges(
 def assert_acl_subject(
     selenium: SeleniumDrivers,
     browser_id: str,
-    num: int,
+    num: str,
     numerals: Numerals,
     sub_type: str,
     name: str,
@@ -412,7 +412,7 @@ def click_on_btn_in_acl_record(
     selenium: SeleniumDrivers,
     browser_id: str,
     btn: str,
-    num: int,
+    num: str,
     numerals: Numerals,
 ) -> None:
     driver = selenium[browser_id]
@@ -451,7 +451,7 @@ def assert_subject_not_in_list_in_acl_record(
     selenium: SeleniumDrivers,
     browser_id: str,
     subjects: str,
-    num: int,
+    num: str,
     numerals: Numerals,
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
@@ -528,7 +528,7 @@ def assert_not_no_access_tag_on_file(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_unknown_user_id_from_acl_entry(
-    selenium: SeleniumDrivers, browser_id: str, num: int, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
 ) -> str:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)

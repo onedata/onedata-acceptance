@@ -10,7 +10,7 @@ import json
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Final, NotRequired, TypedDict, cast
+from typing import Final, NotRequired, Optional, TypedDict, cast
 
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
@@ -59,8 +59,8 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         # fileId -> attrs
         self.files: dict[str, FileAttrs] = {}
         self.deleted_files: set[str] = set()
-        self.last_event_id: str | None = None
-        self.first_event_id: str | None = None
+        self.last_event_id: Optional[str] = None
+        self.first_event_id: Optional[str] = None
 
         self.changed_or_created_events: asyncio.Queue[dict[str, FileAttrs]] = (
             asyncio.Queue()
