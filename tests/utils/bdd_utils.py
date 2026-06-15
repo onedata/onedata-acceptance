@@ -7,11 +7,21 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import inspect
-from types import NoneType, UnionType
 from collections.abc import Callable, Iterable, Mapping
 from functools import wraps
-from typing import Any, Literal, Optional, Protocol, TypeAliasType, Union, cast
-from typing import get_args, get_origin, is_typeddict
+from types import NoneType, UnionType
+from typing import (
+    Any,
+    Literal,
+    Optional,
+    Protocol,
+    TypeAliasType,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+    is_typeddict,
+)
 
 from pytest_bdd import given as pytest_bdd_given
 from pytest_bdd import parsers, scenario, scenarios
@@ -125,6 +135,9 @@ def sanitize_arguments[
                     continue
 
                 value = ba.arguments[param.name]
+                if not isinstance(value, str):
+                    continue
+
                 try:
                     if not isinstance(value, target_type):
                         ba.arguments[param.name] = target_type(value)
