@@ -406,6 +406,7 @@ Atm examples workflows 1: &acceptance-tests-in-chrome-job
       required: false
   requirements:
     - minikube
+    - bk-test
   artifact-subscriptions: []
 
 Atm examples workflows 2:
