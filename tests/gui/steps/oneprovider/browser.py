@@ -9,7 +9,7 @@ import re
 import time
 from collections.abc import Callable, Collection, Sequence
 from datetime import datetime
-from typing import Protocol
+from typing import Optional, Protocol
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -351,10 +351,11 @@ def assert_items_absence_in_browser(
     )
 )
 def assert_num_of_files_are_displayed_in_browser_(
-    browser_id: str, num: str, tmp_memory: TmpMemory, which_browser: str
+    browser_id: str, num: Optional[str], tmp_memory: TmpMemory, which_browser: str
 ) -> None:
+    expected_num = 1 if num is None else int(num)
     assert_num_of_files_are_displayed_in_browser(
-        browser_id, int(num), tmp_memory, which_browser=which_browser
+        browser_id, expected_num, tmp_memory, which_browser=which_browser
     )
 
 
@@ -368,7 +369,6 @@ def assert_num_of_files_are_displayed_in_browser(
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = "displayed number of files {} does not match expected {}"
     files_num = browser.data.count()
-    num = 1 if num is None else int(num)
     assert files_num == num, err_msg.format(files_num, num)
 
 
