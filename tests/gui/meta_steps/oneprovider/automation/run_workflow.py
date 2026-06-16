@@ -63,10 +63,8 @@ def go_to_path_and_return_file_name_in_modal(
 def select_initial_items_for_workflow_in_modal(
     files: str, driver: WebDriver, data_type: str
 ) -> None:
-    if not isinstance(files, list):
-        parsed_files = parse_seq(files)
-    else:
-        parsed_files = files
+    parsed_files = parse_seq(files)
+    last_file_name = parsed_files[-1].split("/")[-1]
 
     for path in parsed_files:
         modal_name = "select files"
@@ -81,7 +79,7 @@ def select_initial_items_for_workflow_in_modal(
                 select_files_modal.confirm_button.click()
                 # wait a moment for modal to close
                 time.sleep(0.25)
-                if file_name != files[-1].split("/")[-1]:
+                if file_name != last_file_name:
                     open_initial_modal(data_type, driver)
                     # wait a moment for modal to open
                     time.sleep(0.25)

@@ -16,11 +16,11 @@ from tests.utils.bdd_utils import parsers, wt
 
 def get_run_indicators_for_lane(
     selenium: SeleniumDrivers, browser_id: str, lane_name: str
-) -> list[int]:
+) -> list[str]:
     page = switch_to_automation_page(selenium, browser_id)
     workflow_visualiser = page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
-    return [int(elem.number) for elem in lane.run_indicators]
+    return [elem.number for elem in lane.run_indicators]
 
 
 @wt(
