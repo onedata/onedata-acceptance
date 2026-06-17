@@ -18,6 +18,10 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.utils.bdd_utils import parsers, wt
+from tests.utils.entities_setup import (
+    DOWNLOAD_INACTIVITY_PERIOD_SEC,
+    GUI_DOWNLOAD_CHUNK_SIZE,
+)
 from tests.utils.utils import repeat_failed
 
 
@@ -520,35 +524,6 @@ def click_tag_for_elem_in_browser(
 @wt(
     parsers.re(
         r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
-        r"(?P<which_browser>archive file browser|file browser)"
-    )
-)
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees that item named "
-        r'"(?P<item_name>.*)" has (?P<value>.*) (?P<option>replication '
-        r"rate) in (?P<which_browser>archive file browser|file browser)"
-    )
-)
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_value_in_column_for_item(
-    browser_id, item_name, value, option, which_browser, selenium
-):
-    driver = selenium[browser_id]
-    browser = getattr(OPLoggedIn(driver), transform(which_browser))
-    item_elem = getattr(browser.data[item_name], transform(option))
-    err_msg = (
-        f"displayed {option} {item_elem} for {item_name} does not "
-        f"match expected {value}"
-    )
-
-    assert value == item_elem, err_msg
-
-
-@wt(
-    parsers.re(
-        r"user of (?P<browser_id>.*) sees that item named "
         r'"(?P<item_name>.*)" (?P<res>has|does not have)'
         r' "(?P<value>.*)" value in (?P<option>xattr)'
         r" column in (?P<which_browser>archive file browser|"
@@ -702,3 +677,31 @@ def navigate_to_root_from_error_page(
 ):
     browser = tmp_memory[browser_id]["file_browser"]
     browser.navigate_root_btn.click()
+
+
+def network_throttling_download(driver):
+    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=float(download_kb) / 8 * 1024,
+        upload_throughput=500 * 1024,
+    )
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} downloads item named "{item_name}" '
+        "with slow connection in {which_browser}"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def download_file_with_network_throttling(
+    selenium, browser_id, item_name, tmp_memory, which_browser
+):
+    driver = selenium[browser_id]
+    network_throttling_download(driver)
+
+    click_and_press_enter_on_item_in_browser(
+        selenium, browser_id, item_name, tmp_memory, which_browser
+    )

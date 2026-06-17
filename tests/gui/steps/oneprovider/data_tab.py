@@ -17,13 +17,11 @@ from tests.gui.conftest import (
     WAIT_NORMAL_UPLOAD,
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
+from tests.gui.steps.common.url import refresh_site_and_wait
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
-    DOWNLOAD_INACTIVITY_PERIOD_SEC,
-    GUI_DOWNLOAD_CHUNK_SIZE,
     GUI_UPLOAD_CHUNK_SIZE,
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
@@ -802,32 +800,6 @@ def fail_to_click_file_browser_button(browser_id, button, which_browser, tmp_mem
     raise AssertionError(f"{transform(button)}_button is not supposed to be clickable")
 
 
-def network_throttling_download(driver):
-    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
-
-    driver.set_network_conditions(
-        latency=5,
-        download_throughput=float(download_kb) / 8 * 1024,
-        upload_throughput=500 * 1024,
-    )
-
-
-@wt(
-    parsers.parse(
-        'user of {browser_id} downloads item named "{item_name}" '
-        "with slow connection in {which_browser}"
-    )
-)
-@repeat_failed(timeout=WAIT_BACKEND)
-def download_file_with_network_throttling(selenium, browser_id, item_name, tmp_memory):
-    driver = selenium[browser_id]
-    network_throttling_download(driver)
-
-    click_and_press_enter_on_item_in_browser(
-        selenium, browser_id, item_name, tmp_memory, "file browser"
-    )
-
-
 @wt(
     parsers.parse(
         "user of {browser_id} sees that data distribution for "
@@ -989,3 +961,44 @@ def check_size_statistic_in_dir_details(selenium, browser_id, elem_type, expecte
     size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))
 
     assert size == expected, f"{elem_type} is {size} instead of {expected}!"
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
+        r"(?P<which_browser>archive file browser|file browser)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has (?P<value>.*) (?P<option>replication '
+        r"rate) in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_value_in_column_for_item(
+    browser_id,
+    item_name,
+    value,
+    option,
+    which_browser,
+    selenium,
+    tmp_memory,
+):
+    if option == "replication rate":
+        # Values for replication rates do not update without refreshing
+        refresh_site_and_wait(selenium, browser_id)
+        assert_browser_in_tab_in_op(
+            selenium, browser_id, tmp_memory, WhichBrowser.FILE_BROWSER.value
+        )
+
+    browser = tmp_memory["browser"][transform(which_browser)]
+    item_elem = getattr(browser.data[item_name], transform(option))
+    err_msg = (
+        f"displayed {option} {item_elem} for {item_name} does not "
+        f"match expected {value}"
+    )
+
+    assert value == item_elem, err_msg
