@@ -977,7 +977,6 @@ def check_size_statistic_in_dir_details(selenium, browser_id, elem_type, expecte
         r"rate) in (?P<which_browser>archive file browser|file browser)"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_value_in_column_for_item(
     browser_id,
     item_name,

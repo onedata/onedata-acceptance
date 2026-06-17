@@ -10,6 +10,7 @@ import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import network_throttling_download
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     WhichBrowser,
@@ -18,10 +19,6 @@ from tests.gui.utils.generic import (
     transform,
 )
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.entities_setup import (
-    DOWNLOAD_INACTIVITY_PERIOD_SEC,
-    GUI_DOWNLOAD_CHUNK_SIZE,
-)
 from tests.utils.utils import repeat_failed
 
 
@@ -677,16 +674,6 @@ def navigate_to_root_from_error_page(
 ):
     browser = tmp_memory[browser_id]["file_browser"]
     browser.navigate_root_btn.click()
-
-
-def network_throttling_download(driver):
-    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
-
-    driver.set_network_conditions(
-        latency=5,
-        download_throughput=float(download_kb) / 8 * 1024,
-        upload_throughput=500 * 1024,
-    )
 
 
 @wt(
