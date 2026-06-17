@@ -206,6 +206,7 @@ def assert_error_message_in_physical_location_in_details_modal(
     )
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_for_browser_link_on_details_modal(driver, link_type: str):
     copy_icon = (
         Modals(driver).details_modal.browser_links.links[link_type].clipboard_icon

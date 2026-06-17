@@ -984,7 +984,7 @@ def check_content_for_providers(selenium, hosts, browser_id, providers, contents
         check_content_for_provider(selenium, hosts, browser_id, provider, content)
 
 
-@repeat_failed(interval=1, timeout=40, exceptions=AssertionError)
+@repeat_failed(timeout=40)
 def check_size_statistic_in_dir_details(selenium, browser_id, elem_type, expected):
     driver = selenium[browser_id]
     size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))

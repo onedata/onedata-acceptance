@@ -5,13 +5,14 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from contextlib import suppress
 from typing import Dict, List
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -191,3 +192,13 @@ def wait_for_sliding_panel_to_stop_moving(driver, timeout, css_sel):
     WebDriverWait(driver=driver, timeout=timeout).until(
         element_rect_stable(css_sel=css_sel)
     )
+
+
+def try_click_without_throwing_error(elem):
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    def click(_elem):
+        _elem.click()
+
+    with suppress(Exception):
+        click(elem)

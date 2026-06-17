@@ -81,6 +81,9 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 
 def _find_modal(driver, modal_name):
+
+    # TODO: VFS-13648 Refactor find modal function
+
     def _find():
         elements_list = [
             "group",

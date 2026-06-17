@@ -19,6 +19,7 @@ from selenium.webdriver.support.expected_conditions import (
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
@@ -294,7 +295,7 @@ def wait_till_authentication_info_disappear(driver):
     except TimeoutException:
         pass
     else:
-        Popups(driver).authentication_succeeded.close.click()
+        try_click_without_throwing_error(Popups(driver).authentication_succeeded.close)
 
         Wait(driver, WAIT_FRONTEND).until(
             invisibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
