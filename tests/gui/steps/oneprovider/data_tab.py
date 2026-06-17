@@ -986,6 +986,8 @@ def assert_value_in_column_for_item(
     selenium,
     tmp_memory,
 ):
+    browser = tmp_memory["browser"][transform(which_browser)]
+    item_elem = getattr(browser.data[item_name], transform(option))
     if option == "replication rate":
         # Values for replication rates do not update without refreshing
         refresh_site_and_wait(selenium, browser_id)
@@ -993,11 +995,30 @@ def assert_value_in_column_for_item(
             selenium, browser_id, tmp_memory, WhichBrowser.FILE_BROWSER.value
         )
 
-    browser = tmp_memory["browser"][transform(which_browser)]
-    item_elem = getattr(browser.data[item_name], transform(option))
     err_msg = (
         f"displayed {option} {item_elem} for {item_name} does not "
         f"match expected {value}"
     )
 
     assert value == item_elem, err_msg
+
+
+def refresh_and_check_value_in_column_for_item(
+    selenium, browser_id, tmp_memory, item_name, which_browser, column, expected_val
+):
+    for _ in range(20):
+        browser = tmp_memory["browser"][transform(which_browser)]
+        item_val = getattr(browser.data[item_name], transform(column))
+        if item_val == expected_val:
+            break
+
+        # Values for replication rates do not update without refreshing
+        refresh_site_and_wait(selenium, browser_id)
+        assert_browser_in_tab_in_op(
+            selenium, browser_id, tmp_memory, WhichBrowser.FILE_BROWSER.value
+        )
+    else:
+        raise AssertionError(
+            f"displayed {column} {item_val} for {item_name} does not "
+            f"match expected {expected_val}"
+        )
