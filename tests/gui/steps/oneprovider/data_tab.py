@@ -612,7 +612,7 @@ def assert_provider_chunk_in_data_distribution_size(
     prov_rec = Modals(driver).details_modal.data_distribution.providers[provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
-    assert displayed_size == int(size), (
+    assert displayed_size == size, (
         f"displayed chunk size {displayed_size} in data distribution modal "
         f"does not match expected {size}"
     )

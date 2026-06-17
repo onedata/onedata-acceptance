@@ -276,8 +276,7 @@ def _execute_workflow_with_input_config(
                 store,
             )
         elif data_type == "ARRAY":
-            item_list = data[store]
-            file_list = "\n".join(data[store])
+            item_list = "\n".join(data[store])
             array_store_type = get_data_type_of_array_initial_value_store(driver, store)
             if array_store_type == "group":
                 choose_group_as_initial_workflow_value_for_store(
