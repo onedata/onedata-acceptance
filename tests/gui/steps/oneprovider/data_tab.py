@@ -17,7 +17,6 @@ from tests.gui.conftest import (
     WAIT_NORMAL_UPLOAD,
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.common.url import refresh_site_and_wait
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.utils.bdd_utils import given, parsers, wt
@@ -977,22 +976,12 @@ def check_size_statistic_in_dir_details(selenium, browser_id, elem_type, expecte
         r"rate) in (?P<which_browser>archive file browser|file browser)"
     )
 )
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_value_in_column_for_item(
-    browser_id,
-    item_name,
-    value,
-    option,
-    which_browser,
-    selenium,
-    tmp_memory,
+    browser_id, item_name, value, option, which_browser, selenium
 ):
-    if option == "replication rate":
-        refresh_and_check_value_in_column_for_item(
-            selenium, browser_id, tmp_memory, item_name, which_browser, option, value
-        )
-        return
-
-    browser = tmp_memory["browser"][transform(which_browser)]
+    driver = selenium[browser_id]
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
     item_elem = getattr(browser.data[item_name], transform(option))
     err_msg = (
         f"displayed {option} {item_elem} for {item_name} does not "
@@ -1000,24 +989,3 @@ def assert_value_in_column_for_item(
     )
 
     assert value == item_elem, err_msg
-
-
-def refresh_and_check_value_in_column_for_item(
-    selenium, browser_id, tmp_memory, item_name, which_browser, column, expected_val
-):
-    for _ in range(20):
-        browser = tmp_memory["browser"][transform(which_browser)]
-        item_val = getattr(browser.data[item_name], transform(column))
-
-        if item_val == expected_val:
-            break
-
-        # Values for replication rates do not update without refreshing
-        refresh_site_and_wait(selenium, browser_id)
-        assert_browser_in_tab_in_op(selenium, browser_id, tmp_memory, which_browser)
-        time.sleep(0.1)
-    else:
-        raise AssertionError(
-            f"displayed {column} {item_val} for {item_name} does not "
-            f"match expected {expected_val}"
-        )
