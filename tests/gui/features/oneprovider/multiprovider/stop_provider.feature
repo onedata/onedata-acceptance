@@ -54,9 +54,7 @@ Feature: Operations when current provider stops
     And user of browser goes to "/dir1" in file browser
 
     And user of browser replicates "file1" to provider "oneprovider-2"
-    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
-    And user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
+    And user of browser waits until "oneprovider-1" transfers complete for "space1" space
 
     And provider named "oneprovider-2" is stopped
 

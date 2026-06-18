@@ -17,6 +17,10 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup import (
+    DOWNLOAD_INACTIVITY_PERIOD_SEC,
+    GUI_DOWNLOAD_CHUNK_SIZE,
+)
 from tests.utils.utils import repeat_failed
 
 
@@ -187,3 +191,13 @@ def assert_curl_result_with_config(browser_id, tmp_memory, config):
 def _camel_transform(phrase: str):
     output = phrase.title().replace(" ", "")
     return output[0].lower() + output[1:]
+
+
+def network_throttling_download(driver):
+    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=float(download_kb) / 8 * 1024,
+        upload_throughput=500 * 1024,
+    )
