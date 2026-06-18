@@ -61,9 +61,12 @@ def go_to_path_and_return_file_name_in_modal(
 
 
 def select_initial_items_for_workflow_in_modal(
-    files: str, driver: WebDriver, data_type: str
+    files: str | list[str], driver: WebDriver, data_type: str
 ) -> None:
-    parsed_files = parse_seq(files)
+    if isinstance(files, str):
+        parsed_files = parse_seq(files)
+    else:
+        parsed_files = files
     last_file_name = parsed_files[-1].split("/")[-1]
 
     for path in parsed_files:
@@ -96,7 +99,10 @@ def select_initial_items_for_workflow_in_modal(
     )
 )
 def choose_file_as_initial_workflow_value_for_store(
-    selenium: SeleniumDrivers, browser_id: str, file_list: str, store_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    file_list: str | list[str],
+    store_name: str,
 ) -> None:
     data_type = "file"
 
@@ -107,7 +113,10 @@ def choose_file_as_initial_workflow_value_for_store(
 
 
 def choose_group_as_initial_workflow_value_for_store(
-    selenium: SeleniumDrivers, browser_id: str, group_list: str, store_name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    group_list: str | list[str],
+    store_name: str,
 ) -> None:
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -117,8 +126,14 @@ def choose_group_as_initial_workflow_value_for_store(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _select_groups_from_select_groups_modal(driver: WebDriver, group_list: str) -> None:
-    Modals(driver).select_groups.select(group_list)
+def _select_groups_from_select_groups_modal(
+    driver: WebDriver, group_list: str | list[str]
+) -> None:
+    if isinstance(group_list, str):
+        parsed_list = parse_seq(group_list)
+    else:
+        parsed_list = group_list
+    Modals(driver).select_groups.select(parsed_list)
 
 
 def provide_text_to_object_initial_workflow_value_store(

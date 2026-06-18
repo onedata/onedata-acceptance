@@ -43,7 +43,9 @@ def choose_range_as_initial_workflow_value(
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_if_select_files_modal_disappeared(driver: WebDriver, files: str) -> None:
+def check_if_select_files_modal_disappeared(
+    driver: WebDriver, files: str | list[str]
+) -> None:
     try:
         Modals(driver).select_files  # pylint: disable=expression-not-assigned
         raise AssertionError(
