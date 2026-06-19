@@ -783,6 +783,7 @@ def scroll_to_top_in_file_browser(browser_id: str, tmp_memory: TmpMemory) -> Non
         " file details and copies it into the clipboard"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_physical_location_path_and_copy_in_file_details(
     selenium: SeleniumDrivers,
     browser_id: str,

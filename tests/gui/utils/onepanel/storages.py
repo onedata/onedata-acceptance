@@ -110,7 +110,7 @@ class Editor(PageObject):
     cancel_button = NamedButton("button", text="Cancel")
 
     def change_field_in_editor(
-        self, driver: SeleniumDrivers, field_name: str, new_val: str
+        self, driver: WebDriver, field_name: str, new_val: str
     ) -> None:
         input_box = getattr(self, field_name)
         driver.execute_script("arguments[0].scrollIntoView();", input_box)
@@ -124,13 +124,13 @@ class Editor(PageObject):
 
 class POSIXEditor(Editor):
     mount_point = WebElement(".mountPoint-field input")
-    timeout = Input(".timeout-field input")
+    timeout = WebElement(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
 
 
 class S3Editor(Editor):
     bucket_name = WebElement(".bucketName-field input")
-    admin_secret_key = Input(".secretKey-field input")
+    admin_secret_key = WebElement(".secretKey-field input")
 
 
 class CephEditor(Editor):
