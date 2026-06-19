@@ -318,7 +318,8 @@ class PrivilegeTree(PageObject):
             priv_group.deactivate()
 
     def wait_for_load_privileges(self):
-        for _ in range(50):
+
+        for _ in range(100):
             try:
                 self.spinner  # pylint: disable=pointless-statement
                 time.sleep(0.1)

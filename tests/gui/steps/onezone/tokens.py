@@ -104,6 +104,7 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, button):
 def click_create_custom_token(selenium, browser_id):
     driver = selenium[browser_id]
     OZLoggedIn(driver)["tokens"].create_token_page.create_custom_token()
+    assert "custom" in OZLoggedIn(driver)["tokens"].create_token_page.header.lower()
 
 
 @wt(

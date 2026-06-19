@@ -477,7 +477,7 @@ def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name)
 def click_modal_button(selenium, browser_id, button, modal_name):
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     button = button.replace(".", "")
-    getattr(modal, transform(button))()
+    getattr(modal, transform(button)).click()
 
 
 @wt(

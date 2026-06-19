@@ -46,8 +46,8 @@ from tests.gui.steps.oneprovider.permissions import (
     set_posix_permission,
 )
 from tests.gui.steps.onezone.spaces import (
+    _click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
 from tests.gui.utils import Modals
@@ -280,7 +280,7 @@ def grant_acl_privileges_in_op_gui(
     option_in_submenu = "Files"
     path = item_list.replace('"', "")
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu)
+    _click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, force=False)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option, space)
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, browser_id, space, option_in_submenu

@@ -88,6 +88,7 @@ class UsageLimitBar(PageObject):
 
 class CreateNewTokenPage(PageObject):
     create_custom_token = Button(".template-custom")
+    header = Label(".resource-name")
 
     create_token = NamedButton(".submit-token", text="Create token")
     access_option = WebElement(".option-access .one-way-radio-control")

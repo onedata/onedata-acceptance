@@ -11,7 +11,7 @@ import time
 import requests
 
 from tests import ELASTICSEARCH_PORT
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import parsers, wt
@@ -90,6 +90,7 @@ def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir):
         "{tab_name} of harvester configuration page"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_tab_of_harvester_config_page(
     selenium, browser_id, button, tab_name
 ):
