@@ -16,6 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests import OP_REST_PORT
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.types import Clipboard, DisplayMap
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
@@ -226,7 +227,8 @@ def assert_no_provider_popup_next_to_provider_circle(
     selenium: SeleniumDrivers, browser_id: str, ordinal: str
 ) -> None:
     driver = selenium[browser_id]
-    prov_circle = OZLoggedIn(driver)["world map"].providers[int(ordinal[:-2]) - 1]
+    number = from_ordinal_number_to_int(ordinal) - 1
+    prov_circle = OZLoggedIn(driver)["world map"].providers[number]
     assert (
         not prov_circle.is_displayed()
     ), f"provider popup for {ordinal} circle is displayed while it should not be"
@@ -263,7 +265,8 @@ def click_on_provider_circle(
     selenium: SeleniumDrivers, browser_id: str, ordinal: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["world map"].providers[int(ordinal[:-2]) - 1].click()
+    number = from_ordinal_number_to_int(ordinal) - 1
+    OZLoggedIn(driver)["world map"].providers[number].click()
 
 
 @wt(
@@ -290,7 +293,8 @@ def assert_provider_popup_next_to_provider_circle(
     selenium: SeleniumDrivers, browser_id: str, ordinal: str
 ) -> None:
     driver = selenium[browser_id]
-    prov_circle = OZLoggedIn(driver)["world map"].providers[int(ordinal[:-2]) - 1]
+    number = from_ordinal_number_to_int(ordinal) - 1
+    prov_circle = OZLoggedIn(driver)["world map"].providers[number]
     assert (
         prov_circle.is_displayed()
     ), f"provider popup for {ordinal} circle is not displayed while it should be"

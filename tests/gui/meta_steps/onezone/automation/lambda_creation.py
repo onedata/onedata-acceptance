@@ -379,7 +379,6 @@ def download_and_remove_lambda_dump_from_inventory(
 ) -> None:
     option = "Download (json)"
     option_unlink = "Unlink"
-    number = 0
     page_name = "lambda"
     modal = "Unlink lambda"
     driver = selenium[browser_id]
@@ -390,7 +389,6 @@ def download_and_remove_lambda_dump_from_inventory(
         browser_id,
         option,
         lamda_name,
-        number,
         page_name,
     )
 

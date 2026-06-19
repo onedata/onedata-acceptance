@@ -85,7 +85,7 @@ def choose_workflow_revision_to_run(
     selenium: SeleniumDrivers, browser_id: str, ordinal: str, workflow: str
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
-    revision = int(ordinal[:-2]) - 1
+    revision = from_ordinal_number_to_int(ordinal) - 1
     page.available_workflow_list[workflow].revision_list[revision].click()
 
 
@@ -377,8 +377,8 @@ def click_on_workflow_in_inventory_subpage(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["automation"]
-    revision = int(ordinal[:-2]) - 1
-    page.workflows_page.elements_list[workflow].revision_list[revision].click()
+    revision = from_ordinal_number_to_int(ordinal) - 1
+    page.workflows_page.workflows_list[workflow].revision_list[revision].click()
     # wait for page to open
     time.sleep(1)
 

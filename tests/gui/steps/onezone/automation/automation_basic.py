@@ -6,12 +6,14 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
+from typing import Optional
 
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import (
@@ -367,12 +369,7 @@ def click_option_in_revision_menu_button_ordinal(
     page: str,
 ) -> None:
     click_option_in_revision_menu_button(
-        selenium,
-        browser_id,
-        option,
-        object_name,
-        int(ordinal[:-2]),
-        page,
+        selenium, browser_id, option, object_name, page, ordinal
     )
 
 
@@ -382,11 +379,15 @@ def click_option_in_revision_menu_button(
     browser_id: str,
     option: str,
     object_name: str,
-    number: int,
     page: str,
+    ordinal: Optional[str] = None,
 ) -> None:
     item = get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name)
-    item.revision_list[number].menu_button.click()
+    if ordinal is None:
+        item.revision_list[0].menu_button.click()
+    else:
+        ordinal_parsed = str(from_ordinal_number_to_int(ordinal))
+        item.revision_list[ordinal_parsed].menu_button.click()
     Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
