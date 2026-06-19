@@ -10,6 +10,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.conftest import SeleniumDrivers
 from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import ExpandableMixin, PageObject
@@ -108,24 +109,27 @@ class Editor(PageObject):
     save_button = Button("button.btn-primary")
     cancel_button = NamedButton("button", text="Cancel")
 
+    def change_field_in_editor(
+        self, driver: SeleniumDrivers, field_name: str, new_val: str
+    ) -> None:
+        input_box = getattr(self, field_name)
+        driver.execute_script("arguments[0].scrollIntoView();", input_box)
+        input_box.clear()
+        if new_val != "":
+            input_box.send_keys(new_val)
+            assert (
+                input_box.get_attribute("value") == new_val
+            ), f'entering "{new_val}" failed'
+
 
 class POSIXEditor(Editor):
     mount_point = WebElement(".mountPoint-field input")
     timeout = Input(".timeout-field input")
     read_only = Toggle(".readonly-field .one-way-toggle")
 
-    def change_mount_point(self, val: str) -> None:
-        input_box = self.mount_point
-        self.driver.execute_script("arguments[0].scrollIntoView();", input_box)
-        input_box.clear()
-
-        if val != "":
-            input_box.send_keys(val)
-            assert input_box.get_attribute("value") == val, f'entering "{val}" failed'
-
 
 class S3Editor(Editor):
-    bucket_name = Input(".bucketName-field input")
+    bucket_name = WebElement(".bucketName-field input")
     admin_secret_key = Input(".secretKey-field input")
 
 

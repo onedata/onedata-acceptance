@@ -303,11 +303,7 @@ def type_name_to_form_in_storages_page(
     )
 
     input_box = transform(input_box)
-
-    if input_box == "mount_point":
-        form.change_mount_point(name)
-    else:
-        setattr(form, input_box, name)
+    form.change_field_in_editor(driver, input_box, name)
 
 
 @wt(
