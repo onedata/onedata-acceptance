@@ -1132,3 +1132,37 @@ def check_size_statistic_in_dir_details(
     size = getattr(Modals(driver).details_modal.size_statistics, transform(elem_type))
 
     assert size == expected, f"{elem_type} is {size} instead of {expected}!"
+
+
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" is of (?P<value>.*) (?P<option>size) in '
+        r"(?P<which_browser>archive file browser|file browser)"
+    )
+)
+@wt(
+    parsers.re(
+        r"user of (?P<browser_id>.*) sees that item named "
+        r'"(?P<item_name>.*)" has (?P<value>.*) (?P<option>replication '
+        r"rate) in (?P<which_browser>archive file browser|file browser)"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
+def assert_value_in_column_for_item(
+    browser_id: str,
+    item_name: str,
+    value: str,
+    option: str,
+    which_browser: str,
+    selenium: SeleniumDrivers,
+) -> None:
+    driver = selenium[browser_id]
+    browser = getattr(OPLoggedIn(driver), transform(which_browser))
+    item_elem = getattr(browser.data[item_name], transform(option))
+    err_msg = (
+        f"displayed {option} {item_elem} for {item_name} does not "
+        f"match expected {value}"
+    )
+
+    assert value == item_elem, err_msg

@@ -13,6 +13,7 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
@@ -221,3 +222,13 @@ def assert_curl_result_with_config(
 def _camel_transform(phrase: str) -> str:
     output = phrase.title().replace(" ", "")
     return output[0].lower() + output[1:]
+
+
+def network_throttling_download(driver: WebDriver) -> None:
+    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=float(download_kb) / 8 * 1024,
+        upload_throughput=500 * 1024,
+    )

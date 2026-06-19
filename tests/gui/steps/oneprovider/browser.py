@@ -837,3 +837,24 @@ def navigate_to_root_from_error_page(
 ) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
     browser.navigate_root_btn.click()
+
+
+@wt(
+    parsers.parse(
+        'user of {browser_id} downloads item named "{item_name}" '
+        "with slow connection in {which_browser}"
+    )
+)
+@repeat_failed(timeout=WAIT_BACKEND)
+def download_file_with_network_throttling(
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    item_name: str,
+    tmp_memory: TmpMemory,
+) -> None:
+    driver = selenium[browser_id]
+    network_throttling_download(driver)
+
+    click_and_press_enter_on_item_in_browser(
+        selenium, browser_id, item_name, tmp_memory, WhichBrowser.FILE_BROWSER.value
+    )

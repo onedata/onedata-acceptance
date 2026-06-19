@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+import pytest
 from pytest_bdd import scenarios
 
 from tests.gui.conftest import *
@@ -56,7 +57,7 @@ from tests.utils.entities_setup.users import *
 
 
 @pytest.fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 
