@@ -174,7 +174,7 @@ def assert_replicas_number_in_qualities_of_service_modal(
     driver = selenium[browser_id]
     replicas_number = Modals(driver).details_modal.qos.replicas_number
     assert (
-        int(number) == replicas_number
+        number == replicas_number
     ), f"Found {replicas_number} instead of {number} replicas number"
 
 

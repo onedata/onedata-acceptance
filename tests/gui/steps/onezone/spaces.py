@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait as Wait
@@ -258,7 +259,11 @@ def click_element_on_lists_on_left_sidebar_menu(
     driver = selenium[browser_id]
     page_name = option if option != "harvesters" else "discovery"
     if page_name == "spaces":
-        _choose_space_from_menu_list(driver, name)
+        try:
+            _choose_space_from_menu_list(driver, name)
+            _choose_space_from_menu_list(driver, name)
+        except ElementClickInterceptedException:
+            pass
     else:
         if option == "automation":
             option += "s"

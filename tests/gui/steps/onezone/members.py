@@ -1200,8 +1200,8 @@ def assert_number_items_in_members_onezone(
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["clusters"].members_page
     actual_number = getattr(page, f"{transform(item_type)}_number")
-    assert actual_number == int(
-        number
+    assert (
+        actual_number == number
     ), f"expected {number} but got {actual_number} of {item_type}"
 
 

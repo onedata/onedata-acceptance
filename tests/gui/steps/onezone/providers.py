@@ -530,7 +530,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(
         OZLoggedIn(driver)["providers"].elements_list[provider].supported_spaces_number
     )
     assert (
-        int(number) == supported_spaces_number
+        number == supported_spaces_number
     ), f"number of supported spaces is not equal {number}"
 
 
