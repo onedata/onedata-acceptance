@@ -144,12 +144,8 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
         except json.JSONDecodeError:
             print(f"Cannot decode data: {data_raw!r}")
             return
-        if not isinstance(raw_data, dict):
-            print(f"Unexpected event data={raw_data!r}")
-            return
-        data = cast(dict[str, object], raw_data)
 
-        # Only put heartbeat event to the queue as event id is saved above
+        # Heartbeat events carry JSON null rather than an object.
         if event_type == SSEEvent.HEARTBEAT.value:
             await self.heartbeat_events.put(
                 (
@@ -158,6 +154,12 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
                 )
             )
             return
+
+        if not isinstance(raw_data, dict):
+            print(f"Unexpected event data={raw_data!r}")
+            return
+        data = cast(dict[str, object], raw_data)
+
         if event_type == SSEEvent.CHANGED_OR_CREATED.value:
             await self._handle_changed_or_created(cast(ChangedOrCreatedEventData, data))
         elif event_type == SSEEvent.DELETED.value:
