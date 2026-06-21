@@ -628,14 +628,17 @@ def assert_spaces_in_mount_point(
 @wt(
     parsers.parse(
         'using {client}, {user} sees spaces "{expected_spaces}" in mount point, waiting'
-        " up to 60s"
+        " up to {timeout:d}s"
     )
 )
-@repeat_failed(timeout=60)
 def assert_spaces_in_mount_point_with_waiting(
-    client: str, user: str, users: Users, expected_spaces: str
+    client: str, user: str, users: Users, expected_spaces: str, timeout: int
 ) -> None:
-    assert_spaces_in_mount_point(client, user, users, expected_spaces)
+    @repeat_failed(timeout=timeout)
+    def assert_with_timeout() -> None:
+        assert_spaces_in_mount_point(client, user, users, expected_spaces)
+
+    assert_with_timeout()
 
 
 @wt(
@@ -677,10 +680,10 @@ def assert_spaces_with_ids_in_mount_point(
 @wt(
     parsers.parse(
         'using {client}, {user} sees spaces "{expected_spaces}" from "{zone_name}"'
-        " Onezone service, annotated with their ids in mount point, waiting up to 60s"
+        " Onezone service, annotated with their ids in mount point, waiting up to"
+        " {timeout:d}s"
     )
 )
-@repeat_failed(timeout=60)
 def assert_spaces_with_ids_in_mount_point_with_waiting(
     client: str,
     user: str,
@@ -688,7 +691,12 @@ def assert_spaces_with_ids_in_mount_point_with_waiting(
     expected_spaces: str,
     zone_name: str,
     hosts: Hosts,
+    timeout: int,
 ) -> None:
-    assert_spaces_with_ids_in_mount_point(
-        client, user, users, expected_spaces, zone_name, hosts
-    )
+    @repeat_failed(timeout=timeout)
+    def assert_with_timeout() -> None:
+        assert_spaces_with_ids_in_mount_point(
+            client, user, users, expected_spaces, zone_name, hosts
+        )
+
+    assert_with_timeout()
