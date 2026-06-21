@@ -367,13 +367,8 @@ def assert_space_is_supported_by_provider_in_oz_gui(
     provider_name: str,
     hosts: Hosts,
 ) -> None:
-    where = "Data"
-    option = "Providers"
-
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
-    )
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "Spaces", space_name)
     click_on_option_of_space_on_left_sidebar_menu(
         selenium, user, space_name, "Providers"
     )

@@ -28,6 +28,7 @@ from .common import EditBox, InputBox
 from .members_subpage import MembersPage
 from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
+from typing import Optional
 
 
 class Space(Element):
@@ -213,15 +214,26 @@ class GetSupportPage(PageObject):
     insufficient_privileges = Label(".text-center .col-xs-12")
 
 
+class SpaceProvidersHeader(PageObject):
+    providers_tab = WebElementsSequence(".provider-online")
+    overview_tab = WebElement(".item-overview")
+    map = WebItem(".space-providers-atlas", cls=ProvidersMap)
+
+    def get_current_active_tab(self)-> Optional[str]:
+        for tab in self.providers_tab + [self.overview_tab]:
+            if "active" in tab.get_attribute("class"):
+                return tab.text
+        return None
+
+
 class SpaceProvidersPage(PageObject):
-    current_provider_tab = Label(".provider-info-container.active")
+    header = WebItem(".content-header-section", cls=SpaceProvidersHeader)
     settings_message = Label(".space-settings-info")
     providers_list = WebItemsSequence(
         ".space-providers-list li.one-collapsible-list-item", cls=Provider
     )
-    add_support = Button(".btn-add-support")
     get_support_page = WebItem(".ember-view", cls=GetSupportPage)
-    map = WebItem(".space-providers-atlas", cls=ProvidersMap)
+    add_support = Button(".btn-add-support")
 
 
 class _Provider(PageObject):

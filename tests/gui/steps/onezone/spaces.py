@@ -256,6 +256,7 @@ def _click_on_option_in_the_sidebar(
 def click_element_on_lists_on_left_sidebar_menu(
     selenium: SeleniumDrivers, browser_id: str, option: str, name: str
 ) -> None:
+    option = option.lower()
     driver = selenium[browser_id]
     page_name = option if option != "harvesters" else "discovery"
     if page_name == "spaces":
@@ -600,7 +601,16 @@ def assert_providers_list_contains_provider(
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]["name"]
-    providers_list = OZLoggedIn(driver)["data"].providers_page.providers_list
+    providers_page = OZLoggedIn(driver)["data"].providers_page
+    header = providers_page.header
+
+    if header.get_current_active_tab().lower() != "overview":
+        header.overview_tab.click()
+        assert (
+            header.get_current_active_tab.lower() == "overview"
+        ), "Overview tab is not opened"
+
+    providers_list = providers_page.providers_list
     assert provider in providers_list, f'provider "{provider}" not found'
 
 
@@ -652,10 +662,10 @@ def assert_selected_provider_name_on_space_provider_header(
     browser_id: str, provider: str, selenium: SeleniumDrivers, hosts: Hosts
 ) -> None:
     driver = selenium[browser_id]
-    provider_name = hosts[provider]["name"]
-    header_label = OZLoggedIn(driver)["data"].providers_page.current_provider_tab
+    provider_name = hosts[provider]["name"].lower()
+    header = OZLoggedIn(driver)["data"].providers_page.header
     assert (
-        header_label == provider_name
+        header.get_current_active_tab().lower() == provider_name
     ), f'provider "{provider}" not found in header label'
 
 

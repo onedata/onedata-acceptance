@@ -49,6 +49,11 @@ def assert_there_is_no_provider_in_oz_rest(
     user_client = login_to_oz(user, users[user].password, hosts[host_name]["hostname"])
     provider_name = hosts[provider_alias]["name"]
 
-    assert not get_provider_with_name(
-        user_client, provider_name
-    ), f"There is provider {provider_name} in {host_name} oz service"
+    try:
+        get_provider_with_name(user_client, provider_name)
+    except AssertionError:
+        return
+
+    raise AssertionError(
+        f"There is provider {provider_name} in {host_name} oz service"
+    )
