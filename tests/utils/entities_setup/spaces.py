@@ -38,7 +38,7 @@ from tests.utils.utils import repeat_failed
 type Hosts = Mapping[str, HostDescription]
 type Users = Mapping[str, "UserLike"]
 type Groups = Mapping[str, str]
-type Storages = MutableMapping
+type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Spaces = MutableMapping[str, str]
 type MemberEntry = str | dict[str, "MemberOptions"]
 type ProviderEntry = dict[str, "ProviderOptions"]
@@ -442,16 +442,14 @@ def _get_support(
         provider_hostname = host["hostname"]
         storage_name = cast(str, options["storage"])
 
+        provider_storages = storages_db.setdefault(provider_name, {})
         try:
-            provider_storages = cast(dict[str, str], storages_db[provider_name])
             storage_id = provider_storages[storage_name]
-        except (KeyError, TypeError):
-            provider_storages = {}
-            storages_db[provider_name] = provider_storages
-            provider_storages[storage_name] = _get_storage_id(
+        except KeyError:
+            storage_id = _get_storage_id(
                 provider_hostname, onepanel_username, onepanel_password, storage_name
             )
-            storage_id = provider_storages[storage_name]
+            provider_storages[storage_name] = storage_id
 
         token = http_post(
             ip=zone_hostname,

@@ -11,6 +11,7 @@ import os
 import re
 import warnings
 from collections import defaultdict
+from collections.abc import MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,6 +73,7 @@ type TestConfig = dict[str, JsonValue]
 type SeleniumDrivers = dict[str, WebDriver]
 type SeleniumFixtureState = dict[str, WebDriver | pytest.FixtureRequest]
 type Users = dict[str, AdminUser]
+type Storages = MutableMapping[str, MutableMapping[str, str]]
 type Tokens = dict[str, dict[str, str]]
 type WorkflowExecutions = dict[str, dict[str, object]]
 type PreviousEnv = dict[str, str | bool]
@@ -435,7 +437,7 @@ def space_aliases() -> dict[str, dict[str, str]]:
 
 
 @pytest.fixture
-def storages() -> dict[str, str]:
+def storages() -> Storages:
     return {}
 
 

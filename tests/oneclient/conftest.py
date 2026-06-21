@@ -11,7 +11,7 @@ from typing import Protocol, cast
 
 import pytest
 
-from tests.conftest import Hosts, TestConfig, Users, export_logs
+from tests.conftest import Hosts, Storages, TestConfig, Users, export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
 from tests.utils.client_utils import Client
 from tests.utils.entities_setup.groups import CredentialsLike, GroupsConfig, UserLike
@@ -61,7 +61,7 @@ def run_around_testcase(
     hosts: Hosts,
     users: Users,
     groups: dict[str, str],
-    storages: dict[str, str],
+    storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
 ) -> Generator[None, None, None]:
@@ -88,7 +88,7 @@ def setup_entities(
     hosts: Hosts,
     users: Users,
     groups: dict[str, str],
-    storages: dict[str, str],
+    storages: Storages,
     spaces: dict[str, str],
     rm_users: bool,
 ) -> None:
