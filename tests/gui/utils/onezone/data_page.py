@@ -217,7 +217,6 @@ class GetSupportPage(PageObject):
 class SpaceProvidersHeader(PageObject):
     providers_tab = WebElementsSequence(".provider-online")
     overview_tab = WebElement(".item-overview")
-    map = WebItem(".space-providers-atlas", cls=ProvidersMap)
 
     def get_current_active_tab(self) -> Optional[str]:
         for tab in self.providers_tab + [self.overview_tab]:
@@ -234,6 +233,7 @@ class SpaceProvidersPage(PageObject):
     )
     get_support_page = WebItem(".ember-view", cls=GetSupportPage)
     add_support = Button(".btn-add-support")
+    map = WebItem(".space-providers-atlas", cls=ProvidersMap)
 
 
 class _Provider(PageObject):
