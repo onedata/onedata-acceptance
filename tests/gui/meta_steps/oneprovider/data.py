@@ -449,17 +449,18 @@ def assert_file_content_in_op_gui(
     tmpdir: LocalPath,
 ) -> None:
     cwd = "space root"
+    last_elem = path.split("/")[-1]
     try:
         assert_browser_in_tab_in_op(selenium, user, tmp_memory, "file browser")
         go_to_path_without_last_elem(selenium, user, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, tmp_memory, space)
         go_to_path_without_last_elem(selenium, user, tmp_memory, path)
-    item_name = _select_item(selenium, user, tmp_memory, path)
+    _ = _select_item(selenium, user, tmp_memory, last_elem)
     click_and_press_enter_on_item_in_browser(
-        selenium, user, item_name, tmp_memory, "file browser"
+        selenium, user, last_elem, tmp_memory, "file browser"
     )
-    has_downloaded_file_content(user, item_name, text, tmpdir)
+    has_downloaded_file_content(user, last_elem, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user, cwd)
 
 
