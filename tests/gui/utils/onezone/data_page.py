@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import re
+from typing import Optional
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -28,7 +29,6 @@ from .common import EditBox, InputBox
 from .members_subpage import MembersPage
 from .space_configuration_subpage import SpaceConfigurationPage
 from .space_marketplace import SpaceMarketplacePage
-from typing import Optional
 
 
 class Space(Element):
@@ -219,7 +219,7 @@ class SpaceProvidersHeader(PageObject):
     overview_tab = WebElement(".item-overview")
     map = WebItem(".space-providers-atlas", cls=ProvidersMap)
 
-    def get_current_active_tab(self)-> Optional[str]:
+    def get_current_active_tab(self) -> Optional[str]:
         for tab in self.providers_tab + [self.overview_tab]:
             if "active" in tab.get_attribute("class"):
                 return tab.text

@@ -54,6 +54,4 @@ def assert_there_is_no_provider_in_oz_rest(
     except AssertionError:
         return
 
-    raise AssertionError(
-        f"There is provider {provider_name} in {host_name} oz service"
-    )
+    raise AssertionError(f"There is provider {provider_name} in {host_name} oz service")
