@@ -60,15 +60,18 @@ class DocumentationPage(PageObject):
     sidebar = WebItem(".sidebar-root-list", cls=DocsSidebar)
     chapters = WebItem(".docs-tabs-row", cls=Chapters)
 
-    def __getitem__(self, item):
-        if hasattr(self, "elements_list"):
-            return self.elements_list[item]
-        raise ValueError("there is not elements_list member in class instance")
-
 
 class APIPage(DocumentationPage):
     pass
 
 
 class DocsPage(DocumentationPage):
+    pass
+
+
+class HowItWorksPage(PageObject):
+    pass
+
+
+class QuickStartPage(PageObject):
     pass

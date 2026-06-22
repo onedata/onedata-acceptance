@@ -12,7 +12,6 @@ from datetime import datetime
 from typing import Dict, List, Union
 
 import yaml
-from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
@@ -83,7 +82,9 @@ def assert_decreasing_creation_times_in_archives_audit_log(
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns([column_name])
+        rows_of_columns: Dict[str, List[str]] = modal.get_visible_rows_of_columns(
+            [column_name]
+        )
         currents = rows_of_columns[column_name][index:]
         for current in currents:
             current_ = None
@@ -114,8 +115,7 @@ def assert_ascending_file_or_dir_names(browser_id, selenium):
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(last, index=0):
-        rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
-        currents = rows_of_columns["file"][index:]
+        currents = modal.get_visible_rows_of_single_column("file")[index:]
         for current in currents:
             current_ = int(current.strip("dirfile_"))
             err_msg = f"index {current_} following {last} is not bigger"
@@ -143,9 +143,9 @@ def assert_n_logs_about_archivisation_finished(browser_id, number: int, selenium
 
     @repeat_failed(timeout=WAIT_FRONTEND)
     def condition(index=0):
-        visible_events: Dict[str, List[str]] = modal.get_rows_of_columns(["event"])[
+        visible_events: Dict[str, List[str]] = modal.get_visible_rows_of_single_column(
             "event"
-        ][index:]
+        )[index:]
         for event in visible_events:
             err_msg = f"visible event {event} is not expected"
             assert event in expected_events, err_msg
@@ -160,16 +160,18 @@ def _scroll_and_check_condition(browser_id, selenium, condition, *args):
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns: Dict[str, List[str]] = modal.get_rows_of_columns()
-    visible_elems = rows_of_columns["file"]
+    visible_elems = modal.get_visible_rows_of_single_column("file")
     new_elems = visible_elems
     last_index = 0
+
     while new_elems:
         condition(*args, index=last_index)
-        modal.scroll_by_press_space()
         checked_elems.extend(new_elems)
-        rows_of_columns = modal.get_rows_of_columns()
-        visible_elems = rows_of_columns["file"]
+        driver.execute_script(
+            "arguments[0].scrollIntoView();",
+            modal.data_row[new_elems[-1]].clickable_field,
+        )
+        visible_elems = modal.get_visible_rows_of_single_column("file")
         for index, elem in enumerate(visible_elems):
             if elem not in checked_elems:
                 last_index = index
@@ -238,39 +240,23 @@ def click_on_entry_with_file_name_using_scroll_in_archive_audit_log(
     seen_rows = set()
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        try:
-            new_rows_names = []
-            for row in modal.data_row:
-                if row.file:
-                    new_rows_names.append(row.file)
-
-        except StaleElementReferenceException:
-            pass
-
-            # This try/except block handles cases where some rows exist in the `data_row` structure,
-            # but not all of their fields are fully loaded.
-            # This can result in the following exception:
-            # "StaleElementReferenceException:
-            #  Message: stale element reference: stale element not found in the current frame"
+        new_rows_names = modal.get_visible_rows_of_single_column("file")
 
         if file_name in new_rows_names:
-            try:
-                modal.data_row[file_name].clickable_field.click()
-            except StaleElementReferenceException:
-                modal.scroll_by_press_space()
-                modal.data_row[file_name].clickable_field.click()
-
-                # This try/except block handles cases where the page doesn't load properly.
-                # Sometimes, when the user tries to click on one of the
-                # last elements in the audit log,
-                # the clickable area is hidden, causing an exception.
-                # To work around this, the page is scrolled down one more time.
+            driver.execute_script(
+                "arguments[0].scrollIntoView();",
+                modal.data_row[file_name].clickable_field,
+            )
+            modal.data_row[file_name].clickable_field.click()
             return
 
-        # if there is at least 1 new row keep scrolling
         stop_scrolling_flag = not any(el not in seen_rows for el in new_rows_names)
         seen_rows.update(new_rows_names)
-        modal.scroll_by_press_space()
+
+        driver.execute_script(
+            "arguments[0].scrollIntoView();",
+            modal.data_row[new_rows_names[-1]].clickable_field,
+        )
 
     raise AssertionError(f"entry {file_name} not found in archive audit log")
 
@@ -289,9 +275,9 @@ def click_on_top_item_in_archive_audit_log(browser_id, selenium):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_items_in_archive_audit_log(browser_id, number: int, selenium):
     driver = selenium[browser_id]
-    visible_items: List[str] = Modals(driver).archive_audit_log.get_rows_of_columns()[
-        "file"
-    ]
+    visible_items: List[str] = Modals(
+        driver
+    ).archive_audit_log.get_visible_rows_of_single_column("file")
     assert number == len(visible_items), (
         f"there are {len(visible_items)} "
         f"items visible instead of {number} "

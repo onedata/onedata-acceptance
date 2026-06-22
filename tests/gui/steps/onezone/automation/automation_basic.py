@@ -69,8 +69,8 @@ def confirm_name_input_on_main_automation_page(selenium, browser_id):
 def click_option_in_inventory_menu(selenium, browser_id, option, inventory):
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("automation")
-    page.elements_list[inventory]()
-    page.elements_list[inventory].menu()
+    page.automations_list[inventory]()
+    page.automations_list[inventory].menu()
     Popups(driver).menu_popup_with_text.menu[option]()
 
 
@@ -84,7 +84,7 @@ def input_new_inventory_name_into_rename_inventory_input_box(
     selenium, browser_id, text
 ):
     page = OZLoggedIn(selenium[browser_id])["automation"]
-    page.elements_list[0].edit_box.value = text
+    page.automations_list[0].edit_box.value = text
 
 
 @wt(
@@ -94,7 +94,9 @@ def input_new_inventory_name_into_rename_inventory_input_box(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id):
-    OZLoggedIn(selenium[browser_id])["automation"].elements_list[0].edit_box.confirm()
+    OZLoggedIn(selenium[browser_id])["automation"].automations_list[
+        0
+    ].edit_box.confirm()
 
 
 @wt(
@@ -106,7 +108,7 @@ def confirm_rename_the_inventory(selenium, browser_id):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_inventory_exists(selenium, browser_ids, option, inventory):
     for browser_id in parse_seq(browser_ids):
-        elem_list = OZLoggedIn(selenium[browser_id])["automation"].elements_list
+        elem_list = OZLoggedIn(selenium[browser_id])["automation"].automations_list
 
         if option == "does not see":
             assert inventory not in elem_list, f"inventory: {inventory} found"
@@ -127,9 +129,9 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, tmp_memory
     except KeyError:
         page = OZLoggedIn(selenium[browser_id]).get_page_and_click("automation")
         tmp_memory[browser_id]["oz_page"] = page
-    page.elements_list[inventory]()
+    page.automations_list[inventory]()
     if subpage != "main":
-        getattr(page.elements_list[inventory], subpage)()
+        getattr(page.automations_list[inventory], subpage)()
 
 
 @wt(
@@ -190,11 +192,11 @@ def assert_workflow_exists(selenium, browser_id, workflow, option):
 
     if option == "does not see":
         assert (
-            workflow not in page.workflows_page.elements_list
+            workflow not in page.workflows_page.workflows_list
         ), f"Workflow: {workflow} found "
     else:
         assert (
-            workflow in page.workflows_page.elements_list
+            workflow in page.workflows_page.workflows_list
         ), f"Workflow: {workflow} not found "
 
 
@@ -209,7 +211,7 @@ def assert_lambda_exists(selenium, browser_id, lambda_name):
     page = OZLoggedIn(selenium[browser_id])["automation"]
 
     assert (
-        lambda_name in page.lambdas_page.elements_list
+        lambda_name in page.lambdas_page.lambdas_list
     ), f"Lambda: {lambda_name} not found "
 
 
@@ -222,7 +224,7 @@ def assert_lambda_exists(selenium, browser_id, lambda_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_lambdas(selenium, browser_id, number: int):
     page = OZLoggedIn(selenium[browser_id])["automation"]
-    lambdas_number = len(page.lambdas_page.elements_list)
+    lambdas_number = len(page.lambdas_page.lambdas_list)
     err_msg = f"number of lambdas is {lambdas_number} instead of {number}"
     assert lambdas_number == number, err_msg
 
@@ -235,7 +237,7 @@ def assert_number_of_lambdas(selenium, browser_id, number: int):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_create_new_revision_button(selenium, browser_id, lambda_name):
     page = OZLoggedIn(selenium[browser_id])["automation"]
-    page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
+    page.lambdas_page.lambdas_list[lambda_name].create_new_revision.click()
 
 
 def collapse_revision_list(subpage):
@@ -245,8 +247,8 @@ def collapse_revision_list(subpage):
 def get_lambda_or_workflow_bracket(selenium, browser_id, page, object_name):
     page_name = page + "s_page"
     subpage = getattr(OZLoggedIn(selenium[browser_id])["automation"], page_name)
-
-    bracket = subpage.elements_list[object_name]
+    list_name = page + "s_list"
+    bracket = getattr(subpage, list_name)[object_name]
 
     try:
         collapse_revision_list(bracket)
@@ -340,7 +342,7 @@ def click_option_in_revision_menu_button(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_workflow_menu_button(selenium, browser_id, workflow, option):
     page = OZLoggedIn(selenium[browser_id])["automation"]
-    page.workflows_page.elements_list[workflow].menu_button.click()
+    page.workflows_page.workflows_list[workflow].menu_button.click()
     Popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
@@ -375,7 +377,7 @@ def click_on_option_of_inventory_on_left_sidebar_menu(
 ):
     driver = selenium[browser_id]
     getattr(
-        OZLoggedIn(driver)["automation"].elements_list[inventory_name],
+        OZLoggedIn(driver)["automation"].automations_list[inventory_name],
         transform(option),
     ).click()
 

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 import time
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
@@ -59,30 +59,35 @@ class ArchiveAuditLog(Modal):
             pass
 
     @repeat_failed(timeout=WAIT_FRONTEND)
-    def get_rows_of_columns(self, columns=None):
-        if columns is None:
-            columns = []
-        temp_columns = [column for column in columns if column != "file"]
-        temp_columns.append("file")
+    def get_visible_rows_of_columns(
+        self, column_names: Optional[List[str]] = None
+    ) -> Dict[str, List[str]]:
 
+        temp_columns = list(set((column_names or []) + ["file"]))
         column_values: Dict[str, List[str]] = {column: [] for column in temp_columns}
 
         for row in self.data_row:
             values_in_row = [getattr(row, column) for column in temp_columns]
-            if any(param == "" for param in values_in_row):
+            if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
-            try:
-                name_hash = row.duplicated_name_hash
-            except RuntimeError:
-                name_hash = None
-
-            if name_hash:
-                values_in_row[temp_columns.index("file")] += name_hash
 
             for column, param in zip(temp_columns, values_in_row):
                 column_values[column].append(param)
 
+            try:
+                name_hash = getattr(row, "duplicated_name_hash")
+            except RuntimeError:
+                name_hash = ""
+
+            column_values["file"][-1] += name_hash
+            # adding hash to last file name to make it unique in case of duplicated names
+
         return column_values
+
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_visible_rows_of_single_column(self, column_name: str) -> List[str]:
+        column_values = self.get_visible_rows_of_columns([column_name])
+        return column_values[column_name]
 
     def __str__(self):
         return "Archive audit log"

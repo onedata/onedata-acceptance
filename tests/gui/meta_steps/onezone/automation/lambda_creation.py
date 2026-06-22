@@ -374,7 +374,7 @@ def download_and_remove_lambda_dump_from_inventory(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_lambda_menu(driver, lambda_name):
     page = OZLoggedIn(driver)["automation"]
-    page.lambdas_page.elements_list[lambda_name].lambda_menu.click()
+    page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
