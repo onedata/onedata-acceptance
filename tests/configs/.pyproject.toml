@@ -23,11 +23,72 @@ skip = ["tests/gui/utils/__init__.py"]
 known_first_party = ["tests", "bamboos"]
 
 [tool.mypy]
+python_version = "3.12"
+disallow_untyped_defs = true      # every function must be annotated
+disallow_incomplete_defs = true   # …and partially-annotated functions are an error too
+
+# TODO: uncomment after final typing fixes
+# warn_redundant_casts = true       # flag casts that do nothing
+# warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
+# warn_unused_configs = true        # flag a config/override section that matches no files
+# warn_return_any = true            # flag returning Any from a typed function
+# no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
+# strict_equality = true            # flag comparisons between non-overlapping types
+
+# TODO: remove after final typing fixes
 follow_imports = "skip"
-ignore_missing_imports = true
-follow_imports_for_stubs = false
-check_untyped_defs = true
-disallow_untyped_defs = true
+
 pretty = true
 show_error_codes = true
-warn_unused_configs = true
+
+exclude = '''
+(
+  ^(bamboos|onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
+  | ^tests/mixed/(onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
+)
+'''
+
+[[tool.mypy.overrides]]
+module = [
+    "onezone_client.*",
+    "onepanel_client.*",
+    "oneprovider_client.*",
+    "cdmi_client.*",
+    "tests.mixed.onezone_client.*",
+    "tests.mixed.onepanel_client.*",
+    "tests.mixed.oneprovider_client.*",
+    "tests.mixed.cdmi_client.*",
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["bamboos.*"]
+follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = [
+    "py.xml",
+    "jsondiff",
+    "fs.onedatafs",
+    "environment",
+    "environment.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "kubernetes",
+    "kubernetes.*",
+    "rpyc",
+    "rpyc.*",
+    "aiohttp_sse_client",
+    "aiohttp_sse_client.*",
+    "xmlrunner",
+    "xmlrunner.*",
+    "tests.utils.onenv_utils",
+    "tests.utils.user_utils",
+    "tests.mixed.utils.sse_utils",
+    "tests.onedata_fs.unit_tests.test_onedatafs",
+]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
