@@ -194,11 +194,11 @@ def wait_for_sliding_panel_to_stop_moving(driver, timeout, css_sel):
     )
 
 
-def try_click_without_throwing_error(elem):
+def try_click_without_throwing_error(action):
 
     @repeat_failed(timeout=WAIT_FRONTEND // 2)
-    def click(_elem):
-        _elem.click()
+    def perform(_action):
+        _action()
 
     with suppress(Exception):
-        click(elem)
+        perform(action)

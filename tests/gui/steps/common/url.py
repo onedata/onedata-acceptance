@@ -295,7 +295,11 @@ def wait_till_authentication_info_disappear(driver):
     except TimeoutException:
         pass
     else:
-        try_click_without_throwing_error(Popups(driver).authentication_succeeded.close)
+        try_click_without_throwing_error(
+            lambda: Popups(  # pylint: disable=unnecessary-lambda
+                driver
+            ).authentication_succeeded.close.click()
+        )
 
         Wait(driver, WAIT_FRONTEND).until(
             invisibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
