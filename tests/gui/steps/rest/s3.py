@@ -15,7 +15,7 @@ from requests.exceptions import HTTPError
 from tests.conftest import REQUEST_TIMEOUT
 from tests.utils.bdd_utils import parsers, wt
 
-HOST_URL = "volume-s3:9000"
+HOST_URL = "dev-volume-s3-krakow.default:9000"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
