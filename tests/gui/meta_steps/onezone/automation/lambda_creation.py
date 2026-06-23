@@ -13,6 +13,7 @@ import time
 import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import ElementNotInteractableException
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
@@ -372,10 +373,7 @@ def download_and_remove_all_lambda_dumps_from_inventory(
 
 
 def download_and_remove_lambda_dump_from_inventory(
-    selenium: SeleniumDrivers,
-    browser_id: str,
-    tmp_memory: TmpMemory,
-    lamda_name: str,
+    selenium: SeleniumDrivers, browser_id: str, tmp_memory: TmpMemory, lambda_name: str
 ) -> None:
     option = "Download (json)"
     option_unlink = "Unlink"
@@ -388,7 +386,7 @@ def download_and_remove_lambda_dump_from_inventory(
         selenium,
         browser_id,
         option,
-        lamda_name,
+        lambda_name,
         page_name,
     )
 
@@ -396,6 +394,17 @@ def download_and_remove_lambda_dump_from_inventory(
     Popups(driver).menu_popup_with_label.menu[option_unlink].click()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal, tmp_memory)
     click_modal_button(selenium, browser_id, option_unlink, modal)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_lambda_menu(driver: WebDriver, lambda_name: str) -> None:
+    page = OZLoggedIn(driver)["automation"]
+    page.lambdas_page.lambdas_list[lambda_name].lambda_menu.click()
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_lambda_menu(driver: WebDriver, option: str) -> None:
+    Popups(driver).menu_popup_with_label.menu[option].click()
 
 
 @wt(

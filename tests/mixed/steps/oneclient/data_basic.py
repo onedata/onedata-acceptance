@@ -352,7 +352,7 @@ def set_metadata_in_op_oneclient(
     attr_val: str, attr_type: str, path: str, user: str, users: Users, host: str
 ) -> None:
     if attr_type == "xattrs":
-        (attr, attr_val) = attr_val.split("=")
+        attr, attr_val = attr_val.split("=")
     else:
         attr = f"onedata_{attr_type.lower()}"
 

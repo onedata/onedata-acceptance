@@ -36,7 +36,7 @@ def assert_metadata_in_op_rest(
     client = cdmi(hosts[host]["hostname"], users[user].token)
     metadata = client.read_metadata(path)["metadata"]
     if tab_name.lower() == "xattrs":
-        (attr, val) = val.split("=")
+        attr, val = val.split("=")
         assert attr in metadata, f"{path} has no {attr} {tab_name} metadata"
         assert val == metadata[attr], f"{path} has no {attr} = {val} {tab_name}"
     else:
@@ -67,7 +67,7 @@ def set_metadata_in_op_rest(
 ) -> None:
     client = cdmi(hosts[host]["hostname"], users[user].token)
     if tab_name == "xattrs":
-        (attr, val) = val.split("=")
+        attr, val = val.split("=")
     else:
         attr = f"onedata_{tab_name.lower()}"
         if tab_name.lower() == "json":

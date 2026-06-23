@@ -246,16 +246,14 @@ def http_request(  # pylint: disable=inconsistent-return-statements
             time.sleep(5.0)
         # pylint: disable=line-too-long,duplicate-except
         except (ConnectTimeout, ReadTimeout, HTTPServiceUnavailable):
-            print(
-                r"""
+            print(r"""
              _    _ _______ _______ _____           _____          _      _              _    _ _    _ _   _  _____    _ _ _ 
             | |  | |__   __|__   __|  __ \         / ____|   /\   | |    | |            | |  | | |  | | \ | |/ ____|  | | | |
             | |__| |  | |     | |  | |__) |       | |       /  \  | |    | |            | |__| | |  | |  \| | |  __   | | | |
             |  __  |  | |     | |  |  ___/        | |      / /\ \ | |    | |            |  __  | |  | | . ` | | |_ |  | | | |
             | |  | |  | |     | |  | |            | |____ / ____ \| |____| |____        | |  | | |__| | |\  | |__| |  |_|_|_|
             |_|  |_|  |_|     |_|  |_|             \_____/_/    \_\______|______|       |_|  |_|\____/|_| \_|\_____/  (_|_|_)
-            """
-            )
+            """)
             traceback.print_stack()
             print("Test will freeze to allow debugging!")
             while True:

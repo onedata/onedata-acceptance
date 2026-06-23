@@ -4,7 +4,9 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Iterable
+import time
+from collections.abc import Callable, Iterable
+from contextlib import suppress
 from typing import Optional, Protocol
 
 from selenium.common.exceptions import TimeoutException
@@ -205,3 +207,41 @@ def scroll_and_get_columns(
         )
         checked_names.update(visible_names)
     return list(checked_names)
+
+
+def element_rect_stable(
+    css_sel: str, checks: int = 5, interval: float = 0.1
+) -> Callable[[WebDriver], bool]:
+    def _predicate(driver: WebDriver) -> bool:
+        web_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+
+        last_rect = web_element.rect
+        for _ in range(checks):
+            time.sleep(interval)
+            current_rect = web_element.rect
+            if current_rect != last_rect:
+                return False
+            last_rect = current_rect
+
+        return True
+
+    return _predicate
+
+
+# TODO: VFS-12424 Add class to fully-transitioned file details panel
+def wait_for_sliding_panel_to_stop_moving(
+    driver: WebDriver, timeout: int, css_sel: str
+) -> None:
+    WebDriverWait(driver=driver, timeout=timeout).until(
+        element_rect_stable(css_sel=css_sel)
+    )
+
+
+def try_click_without_throwing_error(action: Callable[[], object]) -> None:
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    def perform(_action: Callable[[], object]) -> None:
+        _action()
+
+    with suppress(Exception):
+        perform(action)

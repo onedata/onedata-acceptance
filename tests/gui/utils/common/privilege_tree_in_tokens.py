@@ -140,11 +140,13 @@ class PrivilegeTree(PageObject):
     def get_privilege_row(self, name: str) -> PrivilegeRow:
         return self.privileges[name]
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_privilege_group_row(self, name: str) -> PrivilegeGroup:
+        # Tolerate loading of privileges table
+        return self.privilege_groups[name]
+
     def assert_privileges(
-        self,
-        selenium: SeleniumDrivers,
-        browser_id: str,
-        privileges: PrivilegesConfig,
+        self, selenium: SeleniumDrivers, browser_id: str, privileges: PrivilegesConfig
     ) -> None:
         """Assert privileges according to given config.
         For this method only dict should be passed!

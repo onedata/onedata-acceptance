@@ -45,11 +45,9 @@ type StepFunction[**params, return_type] = Callable[params, return_type]
 
 
 class StepDecorator(Protocol):
-    def __call__[
-        **params, return_type
-    ](self, fun: StepFunction[params, return_type]) -> StepFunction[
-        params, return_type
-    ]: ...
+    def __call__[**params, return_type](
+        self, fun: StepFunction[params, return_type]
+    ) -> StepFunction[params, return_type]: ...
 
 
 def _get_runtime_cast_target(ann: object) -> Optional[type]:
@@ -114,9 +112,9 @@ def wt(name: object, converters: Optional[Converters] = None) -> StepDecorator:
     return _create_decorator(wt, wrappers)
 
 
-def sanitize_arguments[
-    **params, return_type
-](fun: StepFunction[params, return_type],) -> StepFunction[params, return_type]:
+def sanitize_arguments[**params, return_type](
+    fun: StepFunction[params, return_type],
+) -> StepFunction[params, return_type]:
     sig = inspect.signature(fun)
     parameters = sig.parameters
     is_gen = inspect.isgeneratorfunction(fun)
@@ -169,13 +167,9 @@ def _create_decorator(
 ) -> StepDecorator:
 
     @wraps(wrapped)
-    def decorator[
-        **params, return_type
-    ](
+    def decorator[**params, return_type](
         original_fun: StepFunction[params, return_type],
-    ) -> StepFunction[
-        params, return_type
-    ]:
+    ) -> StepFunction[params, return_type]:
         fun = original_fun
         for wrapper in wrappers:
             fun = wrapper(fun)

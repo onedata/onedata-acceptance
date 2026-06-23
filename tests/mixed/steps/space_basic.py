@@ -38,12 +38,16 @@ from tests.mixed.steps.rest.onezone.members import (
     delete_users_from_space_in_oz_using_rest,
     invite_other_users_to_space_using_rest,
 )
-from tests.mixed.steps.rest.onezone.provider import HostsConfig
+from tests.mixed.steps.rest.onezone.provider import (
+    HostsConfig,
+)
 from tests.mixed.steps.rest.onezone.provider import UserLike as ProviderUserLike
 from tests.mixed.steps.rest.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_rest,
 )
-from tests.mixed.steps.rest.onezone.space_management import CredentialsLike
+from tests.mixed.steps.rest.onezone.space_management import (
+    CredentialsLike,
+)
 from tests.mixed.steps.rest.onezone.space_management import UserLike as SpaceUserLike
 from tests.mixed.steps.rest.onezone.space_management import (
     assert_spaces_have_appeared_in_oz_rest,

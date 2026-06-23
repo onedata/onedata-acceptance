@@ -136,12 +136,11 @@ def click_on_navigation_tab_in_panel(
 def assert_tab_in_modal(
     selenium: SeleniumDrivers, browser_id: str, tab: str, modal_name: str
 ) -> None:
-    # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
-    # trying to get active tab, when file details panel is being animated. There are
-    # plans to add special class to the modal/panel saying that the transition ended, so
-    # the tests could wait for it. For now, we can wait some time to be sure, that
-    # animation has ended. However, this hack does not guarantee that the browser will
-    # not crash (although the probability is lower), so for now we use Chrome < 128.
+    # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests were
+    # crashing when trying to get active tab, when file details panel is being
+    # animated. There are plans to add special class to the modal/panel saying that
+    # the transition ended. Currently we check that rectangle position of modal stops
+    # changing.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
     sleep(2)
     active_tab = getattr(

@@ -51,13 +51,15 @@ EXAMPLE_HANDLE_METADATA = {
     "resourceType": "Share",
     "resourceId": "$share_id",
     "metadataPrefix": "oai_dc",
-    "metadata": """<?xml version="1.0" encoding="utf-8"?>
+    "metadata": (
+        """<?xml version="1.0" encoding="utf-8"?>
 <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>Test dataset</dc:title>
     <dc:creator>Jane Doe</dc:creator>
     <dc:subject>Test</dc:subject>
-</metadata>""",
+</metadata>"""
+    ),
 }
 
 # Spaces

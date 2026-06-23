@@ -321,7 +321,7 @@ def assert_consistent_list_of_spaces_for_provider(
     provider = hosts[provider]["name"]
     provider_record_spaces = {
         (space.name, space.is_home())
-        for space in (OZLoggedIn(driver)["go to your files"].providers[provider].spaces)
+        for space in OZLoggedIn(driver)["go to your files"].providers[provider].spaces
     }
     provider_popup_spaces = {
         (space.name, space.is_home())

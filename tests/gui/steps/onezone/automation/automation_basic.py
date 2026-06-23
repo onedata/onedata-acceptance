@@ -453,3 +453,16 @@ def try_to_close_workflow_creation_popup(driver: WebDriver) -> None:
         Popups(driver).workflow_creation_alert.close()
     except Exception:  # pylint: disable=broad-exception-caught
         pass
+
+
+@wt(parsers.parse("user of {browser_id} sees that workflow editor appeared"))
+def wt_wait_for_workflow_editor_to_expand(
+    selenium: SeleniumDrivers, browser_id: str
+) -> None:
+    wait_for_workflow_editor_to_expand(selenium[browser_id])
+
+
+def wait_for_workflow_editor_to_expand(driver: WebDriver) -> None:
+    wait_for_sliding_panel_to_stop_moving(
+        driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="editor"]'
+    )

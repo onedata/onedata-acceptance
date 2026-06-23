@@ -92,6 +92,9 @@ def assert_non_empty_token_in_add_storage_modal(
 
 
 def _find_modal(driver: WebDriver, modal_name: str) -> WebElement:
+
+    # TODO: VFS-13648 Refactor find modal function
+
     def _find() -> WebElement:
         elements_list = [
             "group",

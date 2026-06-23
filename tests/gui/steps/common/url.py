@@ -313,12 +313,39 @@ def refresh_site_and_wait(selenium: SeleniumDrivers, browser_id_list: str) -> No
         assert_main_page_loaded(selenium, browser_id)
 
 
-@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_main_page_loaded(selenium: SeleniumDrivers, browser_id: str) -> None:
-    elems = selenium[browser_id].find_elements(
+    driver = selenium[browser_id]
+    wait_till_main_content_loaded(driver)
+    wait_till_authentication_info_disappear(driver)
+
+
+@repeat_failed(timeout=WAIT_BACKEND * 2)
+def wait_till_main_content_loaded(driver: WebDriver) -> None:
+    elems = driver.find_elements(
         By.CSS_SELECTOR, ".main-menu-content li.main-menu-item"
     )
     assert len(elems) > 0, "did not manage to load main page"
+
+
+def wait_till_authentication_info_disappear(driver: WebDriver) -> None:
+    # If popup don't appear don't throw error
+    # If appeared and not closed raise
+    try:
+        Wait(driver, WAIT_FRONTEND).until(
+            visibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+        )
+    except TimeoutException:
+        pass
+    else:
+        try_click_without_throwing_error(
+            lambda: Popups(  # pylint: disable=unnecessary-lambda
+                driver
+            ).authentication_succeeded.close.click()
+        )
+
+        Wait(driver, WAIT_FRONTEND).until(
+            invisibility_of_element_located((By.CSS_SELECTOR, ".alert-info"))
+        )
 
 
 @wt(parsers.parse("if {client} is web GUI, {user} refreshes site"))
