@@ -13,26 +13,12 @@ import requests
 from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.bdd_utils import parsers, wt
 
-# HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
 HOST_URL = "dev-volume-s3-krakow.default:9000"
 
 ACCESS_KEY = "accessKey"
 SECRET_KEY = "verySecretKey"
-
-
-@given(parsers.parse("S3 host entry is added to /etc/hosts"))
-def add_s3_host_entry():
-    # temporary solution when s3 host entry will be added by onenv remove this function
-    ip = sp.check_output(
-        "kubectl get pods -o wide | grep dev-volume-s3-krakow |"
-        " grep -v dev-volume-s3-krakow-init | awk '{print $6}'",
-        shell=True,
-        text=True,
-    )
-    ip = ip.replace("\n", "")
-    add_etc_hosts_entries(ip, "dev-volume-s3-krakow.default")
 
 
 @wt(parsers.parse('using REST, user creates S3 bucket "{bucket_name}"'))
