@@ -53,7 +53,7 @@ def wt_assert_value_of_provider_attribute_is_known(
     host: str,
     hosts: Hosts,
 ) -> None:
-    expected_val = cast(str, cast(dict[str, str], hosts[host])[prop])
+    expected_val = cast(dict[str, str], hosts[host])[prop]
     details = Onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))
     assert displayed_val == expected_val, (
@@ -112,7 +112,7 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(
     setattr(
         form,
         transform(attr),
-        cast(str, cast(dict[str, str], hosts[host])[host_property]),
+        cast(dict[str, str], hosts[host])[host_property],
     )
 
 

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 from datetime import datetime, timedelta
-from typing import Callable, Iterable, Protocol, TypedDict, cast
+from typing import Callable, Iterable, Protocol, TypedDict
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -278,9 +278,9 @@ class CaveatField(PageObject):
         self.activate()
         oz_page(selenium[browser_id])["tokens"].create_token_page.hide_caveats()
         for consumer in consumer_caveats:
-            consumer_type = cast(str, consumer.get("type"))
-            method = cast(str, consumer.get("by"))
-            value = cast(str, consumer.get("consumer name"))
+            consumer_type = consumer.get("type")
+            method = consumer.get("by")
+            value = consumer.get("consumer name")
             if method == "id":
                 if consumer_type == "user":
                     value = users[value].user_id

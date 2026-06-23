@@ -378,7 +378,7 @@ def recalled_archive_details_in_op_rest(
     expected_files = int(data["files_recalled"].split(" / ")[0])
     files = recall_details.total_file_count
     expected_data = int(data["data_recalled"].split(" / ")[0].replace("B", ""))
-    data = recall_details.total_byte_size
+    size_data = recall_details.total_byte_size
 
     assert dataset_id == expected_dataset_id, err_msg.format(
         key="dataset",
@@ -394,8 +394,8 @@ def recalled_archive_details_in_op_rest(
         expected_value=expected_files,
     )
 
-    assert data == expected_data, err_msg.format(
-        key="data recalled", name=name, value=data, expected_value=expected_data
+    assert size_data == expected_data, err_msg.format(
+        key="data recalled", name=name, value=size_data, expected_value=expected_data
     )
 
     assert (

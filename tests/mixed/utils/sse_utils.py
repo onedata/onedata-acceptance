@@ -170,7 +170,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
     async def _handle_changed_or_created(self, data: ChangedOrCreatedEventData) -> None:
         file_id: str = data["fileId"]
         parent_file_id: str = data["parentFileId"]
-        attrs = cast(FileAttrs, data.get("attributes", {}))
+        attrs = data.get("attributes", {})
 
         # If file is deleted ignore
         if file_id in self.deleted_files:

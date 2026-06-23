@@ -75,7 +75,7 @@ def _get_runtime_cast_target(ann: object) -> Optional[type]:
         return None
 
     target_type = ann if origin is None else origin
-    return cast(Optional[type], target_type if isinstance(target_type, type) else None)
+    return target_type if isinstance(target_type, type) else None
 
 
 def given(

@@ -882,7 +882,7 @@ def check_xattr_doesnt_exist(
     )
 )
 def check_string_xattr(
-    user: str, file: str, name: str, value: str, client_node: str, users: Users
+    user: str, file: str, name: str, value: str | bytes, client_node: str, users: Users
 ) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]
@@ -895,7 +895,7 @@ def check_string_xattr(
         else:
             value_utf = value
 
-        assert xattr_value == value_utf
+        assert xattr_value.encode("utf-8") == value_utf
 
     assert_(client.perform, condition)
 

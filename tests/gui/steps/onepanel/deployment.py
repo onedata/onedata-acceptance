@@ -145,7 +145,7 @@ def wt_type_property_to_in_box_in_deployment_step(
     step: str,
     hosts: Hosts,
 ) -> None:
-    text = cast(str, cast(dict[str, str], hosts[alias])[name_property])
+    text = cast(dict[str, str], hosts[alias])[name_property]
     step = getattr(
         Onepanel(selenium[browser_id]).content.deployment, step.replace(" ", "")
     )

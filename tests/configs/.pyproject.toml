@@ -24,16 +24,16 @@ known_first_party = ["tests", "bamboos"]
 
 [tool.mypy]
 python_version = "3.12"
+warn_unused_configs = true        # flag a config/override section that matches no files
+warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
 disallow_untyped_defs = true      # every function must be annotated
 disallow_incomplete_defs = true   # …and partially-annotated functions are an error too
+strict_equality = true            # flag comparisons between non-overlapping types
+no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
 
 # TODO: uncomment after final typing fixes
-# warn_redundant_casts = true       # flag casts that do nothing
-# warn_unused_ignores = true        # flag a `# type: ignore` that no longer applies
-# warn_unused_configs = true        # flag a config/override section that matches no files
+warn_redundant_casts = true       # flag casts that do nothing
 # warn_return_any = true            # flag returning Any from a typed function
-# no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
-# strict_equality = true            # flag comparisons between non-overlapping types
 
 # TODO: remove after final typing fixes
 follow_imports = "skip"

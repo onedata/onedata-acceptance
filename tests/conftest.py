@@ -672,7 +672,7 @@ def pytest_runtest_makereport(
     when = item.config.getini("selenium_capture_debug").lower()
     capture_debug = when == "always" or (when == "failure" and failure)
     RecorderManager(request).handle_stop_recording(report)
-    for name, driver in cast(dict[str, WebDriver], drivers).items():
+    for name, driver in drivers.items():
         if capture_debug:
             exclude = item.config.getini("selenium_exclude_debug").lower()
             if "url" not in exclude:

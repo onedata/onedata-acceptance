@@ -224,7 +224,7 @@ def create_and_configure_spaces(
                               year: 2020
     """
     _create_and_configure_spaces(
-        cast(SpacesConfig, config),
+        config,
         zone_host,
         admin_credentials,
         onepanel_credentials,
@@ -440,7 +440,7 @@ def _get_support(
         host = cast(Mapping[str, str], hosts[provider])
         provider_name = host["name"]
         provider_hostname = host["hostname"]
-        storage_name = cast(str, options["storage"])
+        storage_name = options["storage"]
 
         provider_storages = storages_db.setdefault(provider_name, {})
         try:
@@ -460,7 +460,7 @@ def _get_support(
 
         space_support_details = {
             "token": token,
-            "size": int(cast(int | str, options["size"])),
+            "size": int(options["size"]),
             "storageId": storage_id,
         }
         http_post(
