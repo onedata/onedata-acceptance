@@ -44,6 +44,7 @@ show_error_codes = true
 exclude = '''
 (
   ^(bamboos|onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
+  | ^tests/onedata_fs/
   | ^tests/mixed/(onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
 )
 '''

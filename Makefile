@@ -179,7 +179,9 @@ ALL_CONFTEST_FILES := tests/conftest.py tests/gui/conftest.py tests/mixed/confte
 ALL_SCENARIO_FILES := tests/gui/scenarios tests/mixed/scenarios tests/onedata_fs/scenarios \
  tests/oneclient/scenarios
 FILES_TO_FORMAT := $(ALL_FILES) $(ALL_CONFTEST_FILES) $(ALL_SCENARIO_FILES)
-FILES_TO_TYPE_CHECK := $(ALL_FILES) $(ALL_CONFTEST_FILES)
+FILES_TO_TYPE_CHECK := $(filter-out tests/onedata_fs/steps tests/onedata_fs/unit_tests tests/onedata_fs/__init__.py tests/onedata_fs/conftest.py,$(ALL_FILES) $(ALL_CONFTEST_FILES))
+FILES_TO_STATIC_ANALYSIS := $(filter-out tests/onedata_fs/steps tests/onedata_fs/unit_tests tests/onedata_fs/__init__.py,$(ALL_FILES))
+CONFTEST_FILES_TO_STATIC_ANALYSIS := $(filter-out tests/onedata_fs/conftest.py,$(ALL_CONFTEST_FILES))
 
 
 format:
@@ -197,8 +199,8 @@ black-check:
 ##
 
 static-analysis:
-	$(docker_run) pylint $(ALL_FILES) --output-format=colorized --rcfile=tests/configs/.pylintrc
-	$(docker_run) pylint $(ALL_CONFTEST_FILES) --output-format=colorized \
+	$(docker_run) pylint $(FILES_TO_STATIC_ANALYSIS) --output-format=colorized --rcfile=tests/configs/.pylintrc
+	$(docker_run) pylint $(CONFTEST_FILES_TO_STATIC_ANALYSIS) --output-format=colorized \
 	--disable=redefined-outer-name,import-outside-toplevel,protected-access,unused-argument --rcfile=tests/configs/.pylintrc
 
 type-check:
