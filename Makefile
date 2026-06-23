@@ -160,7 +160,7 @@ codetag-tracker:
 ## Formatting
 ##
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v11"
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v12"
 UID := $(shell id -u)
 GID := $(shell id -g)
 

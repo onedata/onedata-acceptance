@@ -14,7 +14,7 @@ from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.types import Clipboard, DisplayMap
-from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.bdd_utils import parsers, wt
 
 # HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
 HOST_URL = "dev-volume-s3-krakow.default:9000"

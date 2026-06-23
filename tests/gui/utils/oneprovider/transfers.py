@@ -23,7 +23,7 @@ from tests.gui.utils.core.web_elements import (
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 
-TransferStatusList = [
+TRANSFER_STATUS_LIST = [
     "completed",
     "skipped",
     "cancelled",
@@ -33,7 +33,7 @@ TransferStatusList = [
     "scheduled",
     "enqueued",
 ]
-TransferTypeList = ["migration", "replication", "eviction"]
+TRANSFER_TYPE_LIST = ["migration", "replication", "eviction"]
 
 
 # before initializing transfer record make sure,
@@ -57,8 +57,8 @@ class TransferRecord(PageObject):
         super().__init__(driver, web_elem, parent, **kwargs)
         status_class = self.status_icon.get_attribute("class").split()
         type_class = self.type_icon.get_attribute("class").split()
-        self.status = [x for x in status_class if x in TransferStatusList][0]
-        self.type = [x for x in type_class if x in TransferTypeList][0]
+        self.status = [x for x in status_class if x in TRANSFER_STATUS_LIST][0]
+        self.type = [x for x in type_class if x in TRANSFER_TYPE_LIST][0]
 
     def get_chart(self) -> "TransferChart":
         return TransferChart(

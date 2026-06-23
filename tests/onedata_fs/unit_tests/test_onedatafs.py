@@ -11,7 +11,7 @@ from typing import ClassVar, cast
 import pytz  # type: ignore[import-untyped]  # pylint: disable=import-error
 import xmlrunner  # pylint: disable=import-error
 import yaml
-from fs.onedatafs import OnedataFS  # pylint: disable=import-error
+from fs.onedatafs import OnedataFS  # pylint: disable=import-error,no-name-in-module
 from fs.test import FSTestCases  # pylint: disable=import-error
 
 from . import (
