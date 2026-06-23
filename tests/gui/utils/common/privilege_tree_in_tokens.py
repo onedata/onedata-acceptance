@@ -9,6 +9,7 @@ import time
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -17,6 +18,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.utils.utils import repeat_failed
 
 
 class PrivilegeRow(PageObject):
@@ -122,6 +124,11 @@ class PrivilegeTree(PageObject):
     def get_privilege_row(self, name):
         return self.privileges[name]
 
+    @repeat_failed(timeout=WAIT_FRONTEND)
+    def get_privilege_group_row(self, name):
+        # Tolerate loading of privileges table
+        return self.privilege_groups[name]
+
     def assert_privileges(self, selenium, browser_id, privileges):
         """Assert privileges according to given config.
         For this method only dict should be passed!
@@ -153,7 +160,7 @@ class PrivilegeTree(PageObject):
 
     def _assert_privilege_group(self, selenium, browser_id, group, name):
         driver = selenium[browser_id]
-        privilege_row = self.privilege_groups[name]
+        privilege_row = self.get_privilege_group_row(name)
         granted = group["granted"]
         if granted == "Partially":
             sub_privileges = group["privilege subtypes"]
@@ -202,7 +209,7 @@ class PrivilegeTree(PageObject):
         self, selenium, browser_id, group, name, with_scroll=False
     ):
         driver = selenium[browser_id]
-        privilege_row = self.privilege_groups[name]
+        privilege_row = self.get_privilege_group_row(name)
         granted = group["granted"]
         if granted == "Partially":
             sub_privileges = group["privilege subtypes"]

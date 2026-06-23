@@ -11,6 +11,7 @@ import time
 from selenium.common.exceptions import ElementNotInteractableException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import transform
@@ -104,6 +105,9 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, button):
 def click_create_custom_token(selenium, browser_id):
     driver = selenium[browser_id]
     OZLoggedIn(driver)["tokens"].create_token_page.create_custom_token()
+    wait_for_sliding_panel_to_stop_moving(
+        driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
+    )
 
 
 @wt(

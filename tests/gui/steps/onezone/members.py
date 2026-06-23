@@ -796,6 +796,7 @@ def assert_privileges_in_members_subpage(
         r"\n(?P<config>(.|\s)*)"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)  # wait because modal can load with a delay
 def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config):
     driver = selenium[browser_id]
     privileges = yaml.load(config, yaml.Loader)
@@ -820,7 +821,6 @@ def click_button_on_element_header_in_members(selenium, browser_id, option, wher
     driver.find_element(By.CSS_SELECTOR, ".list-header-row " + option_selector).click()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members_and_wait(
     selenium, browser_id, option, where, tree
 ):

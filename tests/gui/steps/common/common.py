@@ -4,13 +4,15 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+import time
+from contextlib import suppress
 from typing import Dict, List, Union
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import ListElement, transform
 from tests.gui.utils.oneprovider.browser import Browser
@@ -179,3 +181,37 @@ def scroll_and_get_columns(modal, columns, main_column="file"):
         )
         checked_names.update(visible_names)
     return list(checked_names)
+
+
+def element_rect_stable(css_sel, checks=5, interval=0.1):
+    def _predicate(driver):
+        web_element = driver.find_element(By.CSS_SELECTOR, css_sel)
+
+        last_rect = web_element.rect
+        for _ in range(checks):
+            time.sleep(interval)
+            current_rect = web_element.rect
+            if current_rect != last_rect:
+                return False
+            last_rect = current_rect
+
+        return True
+
+    return _predicate
+
+
+# TODO: VFS-12424 Add class to fully-transitioned file details panel
+def wait_for_sliding_panel_to_stop_moving(driver, timeout, css_sel):
+    WebDriverWait(driver=driver, timeout=timeout).until(
+        element_rect_stable(css_sel=css_sel)
+    )
+
+
+def try_click_without_throwing_error(action):
+
+    @repeat_failed(timeout=WAIT_FRONTEND // 2)
+    def perform(_action):
+        _action()
+
+    with suppress(Exception):
+        perform(action)

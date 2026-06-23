@@ -6,9 +6,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from datetime import datetime
-from time import sleep
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.modals.modal import check_modal_name
 from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
@@ -114,17 +114,20 @@ def click_on_navigation_tab_in_panel(selenium, browser_id, tab_name, modal):
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tab_in_modal(selenium, browser_id, tab, modal_name):
-    # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests crash when
-    # trying to get active tab, when file details panel is being animated. There are
-    # plans to add special class to the modal/panel saying that the transition ended, so
-    # the tests could wait for it. For now, we can wait some time to be sure, that
-    # animation has ended. However, this hack does not guarantee that the browser will
-    # not crash (although the probability is lower), so for now we use Chrome < 128.
+    # For Google Chrome run in xvfb at version >= 128.0.6613.119, tests were
+    # crashing when trying to get active tab, when file details panel is being
+    # animated. There are plans to add special class to the modal/panel saying that
+    # the transition ended. Currently we check that rectangle position of modal stops
+    # changing.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
-    sleep(2)
-    active_tab = getattr(
-        Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
-    ).active_tab
+    driver = selenium[browser_id]
+    modal_name_transformed = check_modal_name(transform(modal_name))
+    if modal_name_transformed == "details_modal":
+        wait_for_sliding_panel_to_stop_moving(
+            driver, WAIT_FRONTEND, ".modal-content .modal-body"
+        )
+
+    active_tab = getattr(Modals(driver), modal_name_transformed).active_tab
     err_msg = (
         f"Expected tab: {tab} does not match actual active tab: "
         f"{active_tab} on modal {modal_name}"
@@ -203,6 +206,7 @@ def assert_error_message_in_physical_location_in_details_modal(
     )
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_for_browser_link_on_details_modal(driver, link_type: str):
     copy_icon = (
         Modals(driver).details_modal.browser_links.links[link_type].clipboard_icon

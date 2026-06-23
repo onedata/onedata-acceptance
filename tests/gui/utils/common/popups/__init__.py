@@ -14,6 +14,7 @@ from tests.gui.utils.core.web_elements import (
 from tests.utils.utils import repeat_failed
 
 from .archive_row_menu import ArchiveRowMenu
+from .authentication_succeeded import AuthenticationSucceeded
 from .boolean_values import BooleanValues
 from .chart_statistics import ChartStatistics
 from .configure_columns_menu import ConfigureColumnsMenu
@@ -135,6 +136,7 @@ class Popups:
     workflow_creation_alert = WebItem(".alert.alert-success", cls=WorkflowCreationAlert)
     info = WebItem(".switchable-popover-body", cls=Info)
     space_provider_details = WebItem(".oneprovider-actions", cls=MenuPopupWithLabel)
+    authentication_succeeded = WebItem(".alert-info", cls=AuthenticationSucceeded)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
