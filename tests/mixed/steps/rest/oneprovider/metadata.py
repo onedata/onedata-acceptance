@@ -14,9 +14,8 @@ from oneprovider_client import CustomFileMetadataApi
 
 from tests.conftest import JsonValue
 from tests.gui.utils import CDMIClient as cdmi
+from tests.mixed.types import HostsConfig
 from tests.mixed.utils.common import login_to_provider
-
-HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class UserLike(Protocol):

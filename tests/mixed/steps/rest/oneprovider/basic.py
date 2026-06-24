@@ -9,9 +9,8 @@ from typing import Protocol
 
 from oneprovider_client import BasicFileOperationsApi, FilePathResolutionApi
 
+from tests.mixed.types import HostsConfig
 from tests.mixed.utils.common import login_to_provider
-
-HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class UserLike(Protocol):

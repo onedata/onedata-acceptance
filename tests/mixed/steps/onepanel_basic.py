@@ -77,6 +77,7 @@ from tests.mixed.steps.rest.onezone.space_management import (
     copy_id_of_space_rest,
     request_space_support_using_rest,
 )
+from tests.mixed.types import HostsConfig, Spaces
 from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
@@ -86,9 +87,6 @@ from tests.utils.entities_setup.spaces import (
 )
 from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed
-
-type Spaces = Mapping[str, str]
-type HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class RestUserLike(Protocol):

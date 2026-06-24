@@ -14,11 +14,8 @@ from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.oneprovider.dataset import get_flags
 from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
+from tests.mixed.types import DatasetSubtree, DatasetTree, IdMap
 from tests.mixed.utils.common import login_to_provider
-
-IdMap = Mapping[str, str]
-type DatasetSubtree = list[str | dict[str, "DatasetSubtree"]]
-type DatasetTree = list[dict[str, DatasetSubtree]]
 
 
 class DatasetData(TypedDict):

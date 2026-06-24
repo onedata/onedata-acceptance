@@ -3,11 +3,11 @@
 from collections.abc import Mapping
 from typing import Protocol
 
+from tests.mixed.types import HostsConfig
+
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
-
-HostsConfig = Mapping[str, Mapping[str, str]]
 
 
 class UserLike(Protocol):

@@ -6,8 +6,8 @@ __author__ = "Wojciech Szmelich"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Mapping, MutableMapping
-from typing import Optional, Protocol, cast
+from collections.abc import Mapping
+from typing import Optional, cast
 
 from oneprovider_client.rest import ApiException
 
@@ -26,6 +26,12 @@ from tests.mixed.steps.rest.oneprovider.datasets import create_dataset_in_op_by_
 from tests.mixed.steps.rest.oneprovider.metadata import add_json_metadata_to_file_rest
 from tests.mixed.steps.rest.oneprovider.qos import (
     create_qos_requirement_in_op_by_id_rest,
+)
+from tests.mixed.types import (
+    HostsConfig,
+    SpecialDirsTmpMemory as TmpMemory,
+    Spaces,
+    UsersWithToken as UserTokenMap,
 )
 from tests.mixed.utils.common import NoSuchClientException
 from tests.oneclient.steps.multi_dir_steps import (
@@ -47,17 +53,6 @@ EX_ERR_MSGS_REST = [
 ]
 
 EX_ERR_MSG_OC = "Operation not supported"
-HostsConfig = Mapping[str, Mapping[str, str]]
-Spaces = Mapping[str, str]
-TmpMemory = MutableMapping[SpecialDir, dict[str, str]]
-
-
-class UserWithToken(Protocol):
-    password: str
-    token: str
-
-
-UserTokenMap = Mapping[str, UserWithToken]
 
 
 def get_space_dir_id(

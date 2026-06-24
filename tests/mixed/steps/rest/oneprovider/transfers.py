@@ -15,15 +15,10 @@ from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
+from tests.mixed.types import IdMap, JsonObject
 from tests.mixed.utils.common import login_to_provider
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
-
-IdMap = Mapping[str, str]
-type JsonValue = Optional[
-    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
-]
-type JsonObject = dict[str, JsonValue]
 
 
 def create_transfer_rest(

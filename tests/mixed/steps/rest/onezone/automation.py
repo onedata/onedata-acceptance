@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import os
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping
 from functools import partial
 from typing import Optional, Protocol, TypedDict, cast
 
@@ -22,6 +22,7 @@ from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
+from tests.mixed.types import IdMap, JsonObject, MutableIdMap
 from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
@@ -42,11 +43,6 @@ BAGIT_ARCHIVES = {
     "fetch": ["bagit_archive_fetch.tar.gz", "bagit_archive_fetch_xrootd.zip"],
     "unpack": ["bagit_archive_unpack.tar", "bagit_archive_unpack_and_fetch.zip"],
 }
-
-IdMap = Mapping[str, str]
-MutableIdMap = MutableMapping[str, str]
-JsonObject = dict[str, JsonValue]
-
 
 class CredentialsLike(Protocol):
     username: str

@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping
 from typing import Protocol
 
 import pytest
@@ -15,12 +15,9 @@ from onezone_client.rest import ApiException
 from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import get_group
+from tests.mixed.types import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.bdd_utils import parsers, wt
-
-Mailbox = MutableMapping[str, str]
-UserTmpMemory = MutableMapping[str, Mailbox]
-TmpMemory = MutableMapping[str, UserTmpMemory]
 
 
 class UserLike(Protocol):

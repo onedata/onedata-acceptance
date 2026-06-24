@@ -15,11 +15,11 @@ from typing import Final, NotRequired, Optional, TypedDict, cast
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
 
+from tests.mixed.types import FileAttrs
+
 INITIAL_BACKOFF_TIMEOUT: Final[int] = 1
 MAX_BACKOFF_TIMEOUT: Final[int] = 60
 BACKOFF_INCREASE_FACTOR: Final[int] = 2
-
-type FileAttrs = dict[str, str | int]
 
 
 class ChangedOrCreatedEventData(TypedDict):
@@ -170,7 +170,7 @@ class SpaceFilesMonitorClient(ABC):  # pylint: disable=too-many-instance-attribu
     async def _handle_changed_or_created(self, data: ChangedOrCreatedEventData) -> None:
         file_id: str = data["fileId"]
         parent_file_id: str = data["parentFileId"]
-        attrs = data.get("attributes", {})
+        attrs: FileAttrs = data.get("attributes", {})
 
         # If file is deleted ignore
         if file_id in self.deleted_files:

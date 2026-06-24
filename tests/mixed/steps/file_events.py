@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import asyncio
 import time
-from collections.abc import Coroutine, Mapping, MutableMapping
+from collections.abc import Coroutine, Mapping
 from enum import Enum
-from typing import Optional, Protocol, cast
+from typing import Protocol, cast
 
 import yaml
 
@@ -17,8 +17,9 @@ from tests import OP_REST_PORT
 from tests.conftest import Hosts
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.utils.generic import parse_seq
+from tests.mixed.types import EventMemory, EventResult, ExpectedAttrs, FileAttrs
 from tests.mixed.utils.common import UsersWithToken
-from tests.mixed.utils.sse_utils import FileAttrs, SpaceFilesMonitorClientImpl
+from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import get_file_id_by_rest, get_file_id_cached
 
@@ -32,10 +33,6 @@ class ObservedFileAction(Enum):
 
 DEFAULT_FILE_EVENT_TIMEOUT: int = 30
 NUMBER_OF_EVENTS_TO_LOOK_BACK: int = 10
-
-type EventResult = str | tuple[str, float] | dict[str, FileAttrs]
-type EventMemory = MutableMapping[str, SpaceFilesMonitorClientImpl]
-type ExpectedAttrs = Mapping[str, Optional[str | int]]
 
 
 class SpaceFilesMonitorFactory(Protocol):

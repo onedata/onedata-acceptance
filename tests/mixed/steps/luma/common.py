@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 from collections.abc import Mapping
-from typing import NotRequired, Optional, TypedDict, cast
+from typing import NotRequired, TypedDict, cast
 
 import yaml
 
@@ -15,37 +15,10 @@ from tests import PANEL_REST_PORT
 from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.onepanel.storages import get_first_storage_id_by_name
 from tests.gui.utils.generic import parse_seq
+from tests.mixed.types import LumaMappings, MappingValue
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
 from tests.utils.user_utils import AdminUser
-
-type MappingValue = Optional[str | int]
-
-
-UserMapping = TypedDict(
-    "UserMapping",
-    {
-        "storage uid": MappingValue,
-        "display uid": NotRequired[MappingValue],
-    },
-)
-SpaceMapping = TypedDict(
-    "SpaceMapping",
-    {
-        "space POSIX storage defaults": MappingValue,
-        "space display defaults": NotRequired[MappingValue],
-    },
-)
-
-
-class StorageMappings(TypedDict):
-    type: str
-    users: NotRequired[dict[str, UserMapping]]
-    spaces: NotRequired[dict[str, SpaceMapping]]
-
-
-type LumaMappings = dict[str, dict[str, StorageMappings]]
-
 
 class StorageCredentials(TypedDict):
     type: str

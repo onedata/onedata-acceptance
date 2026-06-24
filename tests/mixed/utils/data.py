@@ -6,7 +6,7 @@ __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
+from collections.abc import Iterable, Mapping
 from typing import Optional, Protocol
 
 import pytest
@@ -16,6 +16,16 @@ from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
+from tests.mixed.types import (
+    Acl,
+    AclEntry,
+    AssertFileContent,
+    Content,
+    ContentItem,
+    IsDir,
+    ItemType,
+    ListDir,
+)
 
 
 class FileTreeNode(Protocol):
@@ -30,16 +40,6 @@ class FileTreeNode(Protocol):
 
 class UserLike(Protocol):
     user_id: str
-
-
-type Content = Optional[Iterable["ContentItem"]]
-type ContentItem = str | Mapping[str, Content]
-AclEntry = MutableMapping[str, str]
-Acl = list[AclEntry]
-ItemType = str
-IsDir = Callable[[str], bool]
-ListDir = Callable[[str], Sequence[str]]
-AssertFileContent = Callable[[str, str], None]
 
 
 class CreateItem(Protocol):

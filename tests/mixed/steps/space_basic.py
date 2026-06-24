@@ -61,14 +61,13 @@ from tests.mixed.steps.rest.onezone.space_management import (
     remove_spaces_in_oz_using_rest,
     rename_spaces_in_oz_using_rest,
 )
+from tests.mixed.types import MutableSpaces as Spaces
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed
-
-type Spaces = dict[str, str]
 
 
 def _as_space_users(users: Users) -> Mapping[str, SpaceUserLike]:

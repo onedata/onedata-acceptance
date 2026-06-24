@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Mapping, MutableMapping
-from typing import TypedDict, cast
+from collections.abc import Mapping
+from typing import cast
 
 import pytest
 from onezone_client import SpaceApi, UserApi
@@ -22,26 +22,14 @@ from tests.mixed.steps.rest.onezone.space_management import (
     UserLike,
     create_spaces_in_oz_using_rest,
 )
+from tests.mixed.types import (
+    DataAdvancedTmpMemory as TmpMemory,
+    MutableSpaces as Spaces,
+    SpaceAliases,
+)
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
 from tests.utils.bdd_utils import parsers, wt
-
-type Spaces = MutableMapping[str, str]
-
-
-class SpaceAlias(TypedDict):
-    name: str
-    sid: str
-
-
-type SpaceAliases = MutableMapping[str, SpaceAlias]
-
-
-class UserMemory(TypedDict):
-    mailbox: MutableMapping[str, str]
-
-
-type TmpMemory = MutableMapping[str, UserMemory]
 
 
 @wt(

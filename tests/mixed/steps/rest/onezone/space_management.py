@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping
 from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
@@ -19,13 +19,13 @@ from tests.mixed.steps.rest.onezone.common import (
     get_space_with_name,
     get_user_space_with_name,
 )
+from tests.mixed.types import (
+    Mailbox,
+    MutableSpaces as SpaceMap,
+    SpaceManagementTmpMemory as TmpMemory,
+)
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.entities_setup.spaces import _create_space
-
-SpaceMap = MutableMapping[str, str]
-Mailbox = MutableMapping[str, str]
-TmpMemoryEntry = MutableMapping[str, Mailbox | str]
-TmpMemory = MutableMapping[str, TmpMemoryEntry]
 
 
 class UserLike(Protocol):

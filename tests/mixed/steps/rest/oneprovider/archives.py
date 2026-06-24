@@ -21,14 +21,15 @@ from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
 from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
+from tests.mixed.types import (
+    ArchiveConfig,
+    ArchiveConfigValue,
+    ArchiveTmpMemory as TmpMemory,
+    IdMap,
+)
 from tests.mixed.utils.common import login_to_provider
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-
-IdMap = Mapping[str, str]
-TmpMemory = MutableMapping[str, str]
-ArchiveConfigValue = str | MutableMapping[str, str]
-ArchiveConfig = dict[str, ArchiveConfigValue]
 
 
 class ArchiveData(TypedDict):

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import json
 import subprocess as sp
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from typing import Optional, Protocol
 
 import yaml
@@ -21,6 +21,7 @@ from tests import (
     PROVIDER_REST_PATH_PREFIX,
 )
 from tests.gui.types import Clipboard, DynamicObject, TmpMemory
+from tests.mixed.types import Resolver, ResolverResult, UsersWithToken
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -36,10 +37,6 @@ from tests.mixed.utils.privileges import (
 )
 from tests.utils.bdd_utils import parsers, wt
 
-type ResolverResult = str | list[str]
-type Resolver = Callable[[str], ResolverResult]
-UsersWithToken = Mapping[str, "UserWithToken"]
-
 
 class ConfigurationLike(Protocol):
     username: str
@@ -47,11 +44,6 @@ class ConfigurationLike(Protocol):
     verify_ssl: bool
     safe_chars_for_path_param: str
     host: str
-
-
-class UserWithToken(Protocol):
-    @property
-    def token(self) -> str: ...
 
 
 class FixtureRequestLike(Protocol):
