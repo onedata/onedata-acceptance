@@ -42,14 +42,6 @@ pretty = true
 show_error_codes = true
 
 # TODO: VFS-13661 move all submodules into one place
-exclude = '''
-(
-  ^(bamboos|onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
-  | ^tests/onedata_fs/
-  | ^tests/mixed/(onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
-)
-'''
-
 [[tool.mypy.overrides]]
 module = [
     "onezone_client.*",
