@@ -5,13 +5,14 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from typing import Literal, TypedDict
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.types import PrivilegeGranted, PrivilegeGroupConfig, PrivilegesConfig
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -20,17 +21,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-
-PrivilegeGranted = Literal[True, False, "Partially"]
-type PrivilegeSubtypes = dict[str, bool]
-PrivilegeGroupConfig = TypedDict(
-    "PrivilegeGroupConfig",
-    {
-        "granted": PrivilegeGranted,
-        "privilege subtypes": PrivilegeSubtypes,
-    },
-)
-type PrivilegesConfig = dict[str, PrivilegeGroupConfig]
+from tests.utils.utils import repeat_failed
 
 
 class PrivilegeRow(PageObject):

@@ -23,8 +23,8 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from tests import gui
 from tests.conftest import JsonValue
+from tests.gui.types import WebElemRoot
 
-type WebElemRoot = WebDriver | WebElement
 
 T = TypeVar("T")
 

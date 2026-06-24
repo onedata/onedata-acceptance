@@ -23,7 +23,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.types import Clipboard, TarTree, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
@@ -40,10 +40,6 @@ class BrowserRows(Protocol):
 class SelectableBrowser(Protocol):
     data: BrowserRows
     files: BrowserRows
-
-
-type TarTree = list[str | dict[str, "TarTree | str | int"]]
-
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)

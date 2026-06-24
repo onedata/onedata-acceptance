@@ -19,6 +19,10 @@ from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.types import (
+    FileDescription,
+    LocalDirectoryContent as DirectoryContent,
+)
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -154,7 +158,3 @@ def remove_file_from_local_file_system(
 
     cmd = ["rm", home_dir + path]
     subprocess.check_call(cmd)
-
-
-type FileDescription = dict[str, str]
-type DirectoryContent = int | dict[str, "DirectoryContent | FileDescription"]

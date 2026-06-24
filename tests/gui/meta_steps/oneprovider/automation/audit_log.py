@@ -58,7 +58,7 @@ from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.types import AuditLogContent, AuditLogValue, Clipboard, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
@@ -77,12 +77,6 @@ class AuditLogDebugContent(TypedDict):
 class AuditLogDebugEntry(TypedDict):
     content: AuditLogDebugContent
     severity: str
-
-
-type AuditLogValue = (
-    str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]
-)
-type AuditLogContent = dict[str, AuditLogValue]
 
 
 def write_audit_logs_for_task_to_file(

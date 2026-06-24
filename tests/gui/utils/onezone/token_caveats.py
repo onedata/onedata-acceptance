@@ -12,9 +12,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import Hosts, SeleniumDrivers, Users
-from tests.gui.types import TmpMemory
+from tests.gui.types import PopupFactory, TmpMemory
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -62,10 +61,6 @@ TokenCaveats = TypedDict(
     },
     total=False,
 )
-
-
-type PopupFactory = Callable[[WebDriver], Popups]
-
 
 class CreateTokenPage(Protocol):
     def hide_caveats(self) -> None: ...

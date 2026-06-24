@@ -9,6 +9,7 @@ from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
 from tests.conftest import Hosts, JsonValue, Users
+from tests.gui.types import ProviderResponse
 from tests.gui.utils.generic import OnedataService
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
@@ -19,8 +20,6 @@ from tests.utils.rest_utils import (
     http_post,
 )
 from tests.utils.user_utils import AdminUser
-
-type ProviderResponse = dict[str, JsonValue]
 
 
 def get_provider_id(provider: str, hosts: Hosts, users: Users) -> str:

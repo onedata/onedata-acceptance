@@ -70,15 +70,16 @@ from tests.gui.steps.onezone.spaces import (
     _click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.types import (
+    Clipboard,
+    DataDirectoryContent as DirectoryContent,
+    TmpMemory,
+)
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
-
-type DirectoryContent = list[str | dict[str, "DirectoryContent"]]
-
 
 def _click_menu_for_elem_somewhere_in_file_browser(
     selenium: SeleniumDrivers,

@@ -25,14 +25,11 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.types import JsonObject, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils.onezone.data_discovery_page import ResultSample
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-
-type JsonObject = dict[str, JsonValue]
-
 
 @wt(
     parsers.parse(

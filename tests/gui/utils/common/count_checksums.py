@@ -5,10 +5,9 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import hashlib
-from os import PathLike
 from zlib import adler32
 
-FilePath = str | bytes | PathLike[str] | PathLike[bytes]
+from tests.gui.types import FilePath
 
 
 def md5_sum(file_name: FilePath) -> str:

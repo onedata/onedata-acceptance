@@ -221,7 +221,7 @@ def assert_provider_cluster_ones3_node_status_rest(
     onepanel_credentials: AdminUser,
     status: str,
 ) -> None:
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     res = get_provider_service_nodes_statuses(
         hosts, provider, onepanel_credentials, OnedataService.ONES3
     )
@@ -236,7 +236,7 @@ def add_provider_cluster_ones3_node_rest(
     provider: str,
     onepanel_credentials: AdminUser,
 ) -> None:
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     data: dict[str, JsonValue] = {"hosts": [host]}
     add_provider_service_node(
         hosts, provider, onepanel_credentials, data, OnedataService.ONES3
@@ -255,7 +255,7 @@ def stop_provider_cluster_ones3_node_rest(
     provider: str,
     onepanel_credentials: AdminUser,
 ) -> None:
-    host = f"{hosts[provider]['pod-name']}.{hosts[provider]["hostname"]}"
+    host = f"{hosts[provider]["pod_name"]}.{hosts[provider]["hostname"]}"
     start_stop_provider_service_node(
         hosts,
         host,

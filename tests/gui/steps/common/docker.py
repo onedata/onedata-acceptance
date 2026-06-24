@@ -118,7 +118,7 @@ def _docker_cp(
         "docker",
         "cp",
         src_path,
-        f"{hosts[PROVIDER_CONTAINER_NAME]['container-id']}:{dst_path}",
+        f"{hosts[PROVIDER_CONTAINER_NAME]["container_id"]}:{dst_path}",
     ]
     subprocess.check_call(cmd)
 
