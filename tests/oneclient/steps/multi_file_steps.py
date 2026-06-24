@@ -1010,7 +1010,7 @@ def assert_file_ownership(
 def assert_file_exists_on_storage(
     path: str, container: str, provider: str, hosts: Hosts
 ) -> None:
-    pod_name = hosts[provider]["pod-name"]
+    pod_name = hosts[provider]["pod_name"]
     filename = os.path.basename(path)
     dir_path = os.path.dirname(path)
     cmd = ["sh", "-c", f"ls {dir_path}"]
@@ -1032,7 +1032,7 @@ def assert_file_exists_on_storage(
 def assert_file_stats_on_storage(
     path: str, container: str, provider: str, hosts: Hosts, uid: str, gid: str
 ) -> None:
-    pod_name = hosts[provider]["pod-name"]
+    pod_name = hosts[provider]["pod_name"]
     cmd = ["sh", "-c", f"stat {path}"]
     file_stat = sp.check_output(cmd_exec(pod_name, cmd, container=container))
     file_stat_str = file_stat.decode("utf-8")

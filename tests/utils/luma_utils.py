@@ -144,8 +144,8 @@ def get_providers_ips(hosts: Mapping[str, Mapping[str, str]]) -> list[str]:
     providers_ips = []
     for service in hosts.values():
         if (
-            "service-type" in service.keys()
-            and service["service-type"] == "oneprovider"
+            "service_type" in service.keys()
+            and service["service_type"] == "oneprovider"
         ):
             providers_ips.append(service["ip"])
     return providers_ips

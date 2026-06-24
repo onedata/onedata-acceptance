@@ -52,17 +52,21 @@ type JsonValue = Optional[
 ]
 type Capabilities = dict[str, JsonValue]
 
-HostPanel = TypedDict("HostPanel", {"hostname": str})
+
+class HostPanel(TypedDict):
+    hostname: str
+
+
 HostDescription = TypedDict(
     "HostDescription",
     {
-        "pod-name": str,
-        "service-type": str,
+        "pod_name": str,
+        "service_type": str,
         "name": str,
         "hostname": str,
         "ip": str,
-        "container-id": str,
-        "provider-host": str,
+        "container_id": str,
+        "provider_host": str,
         "panel": HostPanel,
     },
     total=False,
@@ -380,7 +384,7 @@ def emergency_passphrase(
     users: Users,
     hosts: Hosts,
 ) -> str:
-    zone_pod_name = hosts["onezone"]["pod-name"]
+    zone_pod_name = hosts["onezone"]["pod_name"]
     zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
     passphrase = onenv_utils.get_env_variable(zone_pod, "ONEPANEL_EMERGENCY_PASSPHRASE")
     if passphrase is None:

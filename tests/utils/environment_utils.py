@@ -59,9 +59,9 @@ PodConfig = TypedDict(
         "ip": str,
         "domain": str,
         "hostname": str,
-        "container-id": str,
-        "service-type": str,
-        "provider-host": str,
+        "container_id": str,
+        "service_type": str,
+        "provider_host": str,
     },
     total=False,
 )
@@ -228,7 +228,7 @@ def configure_os(scenario_path: str, dep_status: DeploymentStatus) -> None:
         return
 
     for pod_name, pod_cfg in pods_cfg.items():
-        service_type = pod_cfg["service-type"]
+        service_type = pod_cfg["service_type"]
         if service_type in ["onezone", "oneprovider"]:
             alias = service_name_to_alias_mapping(pod_name)
             os_config = os_configs.get("services").get(alias)
@@ -245,7 +245,7 @@ def configure_os(scenario_path: str, dep_status: DeploymentStatus) -> None:
 def setup_hosts_cfg(hosts: Hosts, request: pytest.FixtureRequest) -> None:
     pods_cfg = get_pods_config()
     for pod_name, pod_cfg in pods_cfg.items():
-        service_type = pod_cfg["service-type"]
+        service_type = pod_cfg["service_type"]
         if service_type in ["onezone", "oneprovider"]:
             parse_oz_op_cfg(
                 pod_name,
@@ -482,7 +482,7 @@ def get_pods_config() -> dict[str, PodConfig]:
             {
                 "name": pod_name,
                 "ip": pod_ip,
-                "container-id": pod_container_id,
+                "container_id": pod_container_id,
             },
         )
 
@@ -492,7 +492,7 @@ def get_pods_config() -> dict[str, PodConfig]:
         pods[pod_title]["domain"] = pod_domain
         pods[pod_title]["hostname"] = pod_hostname
 
-        pods[pod_title]["service-type"] = cast(
+        pods[pod_title]["service_type"] = cast(
             str, pod_service_type if pod_service_type else pod_service_name
         )
 
@@ -517,16 +517,16 @@ def parse_oz_op_cfg(
         pod_cfg.get("name"),
         pod_cfg.get("domain"),
         pod_cfg.get("ip"),
-        pod_cfg.get("container-id"),
+        pod_cfg.get("container_id"),
     )
 
     hosts[alias] = {
-        "pod-name": pod_name,
-        "service-type": service_type,
+        "pod_name": pod_name,
+        "service_type": service_type,
         "name": cast(str, name),
         "hostname": cast(str, hostname),
         "ip": cast(str, ip),
-        "container-id": cast(str, container_id),
+        "container_id": cast(str, container_id),
         "panel": {"hostname": f"{hostname}:{PANEL_REST_PORT}"},
     }
     if add_test_domain and service_type == "oneprovider":
@@ -536,8 +536,8 @@ def parse_oz_op_cfg(
 def parse_client_cfg(pod_name: str, pod_cfg: PodConfig, hosts: Hosts) -> None:
     ip, container_id, provider_host = (
         pod_cfg.get("ip"),
-        pod_cfg.get("container-id"),
-        pod_cfg.get("provider-host"),
+        pod_cfg.get("container_id"),
+        pod_cfg.get("provider_host"),
     )
 
     client_alias = client_alias_to_pod_mapping().get(pod_name)
@@ -545,22 +545,22 @@ def parse_client_cfg(pod_name: str, pod_cfg: PodConfig, hosts: Hosts) -> None:
         raise ValueError(f"Missing client alias for pod {pod_name}")
     hosts[client_alias] = {
         "ip": cast(str, ip),
-        "container-id": cast(str, container_id),
-        "pod-name": pod_name,
-        "provider-host": cast(str, provider_host),
+        "container_id": cast(str, container_id),
+        "pod_name": pod_name,
+        "provider_host": cast(str, provider_host),
     }
 
 
 def parse_elasticsearch_cfg(pod_cfg: PodConfig, hosts: Hosts) -> None:
     ip, container_id, name, hostname = (
         pod_cfg.get("ip"),
-        pod_cfg.get("container-id"),
+        pod_cfg.get("container_id"),
         pod_cfg.get("name"),
         pod_cfg.get("hostname"),
     )
     hosts["elasticsearch"] = {
         "ip": cast(str, ip),
-        "container-id": cast(str, container_id),
+        "container_id": cast(str, container_id),
         "name": cast(str, name),
         "hostname": cast(str, hostname),
     }

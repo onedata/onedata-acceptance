@@ -275,7 +275,7 @@ def upgrade_service(
 ) -> None:
     for service in hosts.keys():
         if service.startswith(service_name):
-            pod_name = hosts[service]["pod-name"]
+            pod_name = hosts[service]["pod_name"]
             run_upgrade_command(pod_name, service_name, version_spec, prev_version_spec)
 
     # etc hosts update needed so it is possible to connect

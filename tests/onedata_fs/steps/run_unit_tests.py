@@ -38,7 +38,7 @@ class UnitTestConfig(TypedDict):
 
 @given(parsers.re('onedata_fs unit tests directory in "(?P<client>.*)" container'))
 def unit_tests_directory_in_client_container(hosts: Hosts, client: str) -> None:
-    container_id = hosts[client]["container-id"]
+    container_id = hosts[client]["container_id"]
     run_cmd(ROOT_USER, container_id, f"mkdir -p {CONTAINER_ONEDATA_FS_DIR}")
 
     cmd = [
@@ -69,7 +69,7 @@ def run_tests_in_container(
     }
 
     dump_test_cfg_cmd = f"echo '{yaml.dump(test_cfg)}' > {CONTAINER_TEST_CFG_FILE}"
-    container_id = hosts[client]["container-id"]
+    container_id = hosts[client]["container_id"]
     run_cmd(ROOT_USER, container_id, dump_test_cfg_cmd)
 
     run_tests_cmd = f"python{python_version} -m {TEST_MODULE} --verbose"
@@ -92,7 +92,7 @@ def fetch_test_results(client: str, python_version: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "cp",
-        f'{hosts[client]["container-id"]}:{CONTAINER_REPORTS_XML_DIR}',
+        f'{hosts[client]["container_id"]}:{CONTAINER_REPORTS_XML_DIR}',
         results_path,
     ]
     check_call_with_logging(cmd)

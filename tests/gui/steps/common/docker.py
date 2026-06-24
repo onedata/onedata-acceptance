@@ -67,7 +67,7 @@ def docker_create_group(group_name: str, gid: int, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "groupadd",
         group_name,
         "-g",
@@ -82,7 +82,7 @@ def docker_create_user_with_group(
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "useradd",
         "-u",
         str(uid),
@@ -105,7 +105,7 @@ def _docker_cp(
         cmd = [
             "docker",
             "exec",
-            hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+            hosts[PROVIDER_CONTAINER_NAME]["container_id"],
             "mkdir",
             "-p",
             dst_path,
@@ -127,7 +127,7 @@ def _docker_rm(path: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "rm",
         "-rf",
         path,
@@ -139,7 +139,7 @@ def _docker_mv(path: str, new_path: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "mv",
         path,
         new_path,
@@ -151,7 +151,7 @@ def _docker_cat(path: str, hosts: Hosts) -> bytes:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "cat",
         path,
     ]
@@ -163,7 +163,7 @@ def _docker_ls(path: str, hosts: Hosts) -> bytes:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "ls",
         "-a",
         path,
@@ -176,7 +176,7 @@ def _docker_mkdir(path: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "mkdir",
         "-p",
         path,
@@ -188,7 +188,7 @@ def _docker_append_text_to_file(text: str, path: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "sh",
         "-c",
         f"echo {text} >> {path}",
@@ -205,7 +205,7 @@ def docker_set_file_uid(hosts: Hosts, file: str, ownership: str) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "chown",
         ownership,
         os.path.join(MOUNT_POINT, file),
@@ -218,7 +218,7 @@ def docker_set_mount_point_ownership(ownership: str, hosts: Hosts) -> None:
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "chown",
         ownership,
         MOUNT_POINT,
@@ -305,7 +305,7 @@ def wt_cp_space_to_dst_path(
     cmd = [
         "docker",
         "exec",
-        hosts[PROVIDER_CONTAINER_NAME]["container-id"],
+        hosts[PROVIDER_CONTAINER_NAME]["container_id"],
         "cp",
         "-r",
         f"/volumes/posix/{spaces[space]}/",

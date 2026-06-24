@@ -25,7 +25,7 @@ def replace_cert_in_op(
 ) -> None:
     cmd_args = [
         os.path.join(PROJECT_DIR, CERT_PATH_TESTS, cert_path_in_tests),
-        f"{hosts[prov]["pod-name"]}:{os.path.join(CERT_PATH_OP, cert_name_in_op)}",
+        f"{hosts[prov]["pod_name"]}:{os.path.join(CERT_PATH_OP, cert_name_in_op)}",
     ]
     run_kubectl_command("cp", cmd_args)
 

@@ -187,7 +187,7 @@ def unpause_elasticsearch_container(hosts: Hosts) -> None:
 def set_elasticsearch_replicas_number(hosts: Hosts) -> requests.Response:
     wait_for_pod_running_phase(hosts["elasticsearch"]["hostname"].split(".")[0])
     pods = get_pods_config()
-    es_pod = [el for _, el in pods.items() if el["service-type"] == "elasticsearch"][0]
+    es_pod = [el for _, el in pods.items() if el["service_type"] == "elasticsearch"][0]
     hosts["elasticsearch"]["ip"] = es_pod["ip"]
     url = f"http://{hosts['elasticsearch']['ip']}:{ELASTICSEARCH_PORT}/_settings?pretty"
     # even after reaching running phase by pod, ip address may not be accessible,

@@ -280,7 +280,7 @@ def create_in_container(
     uid: str, gid: str, paths: str, container: str, provider: str, hosts: Hosts
 ) -> None:
     for path in list_parser(paths):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         mkdir_cmd = ["sh", "-c", f"mkdir {path}"]
         sp.call(cmd_exec(pod_name, mkdir_cmd, container=container))
         chown_cmd = ["sh", "-c", f"chown {uid}:{gid} {path}"]
@@ -298,6 +298,6 @@ def remove_in_container(
     paths: str, container: str, provider: str, hosts: Hosts
 ) -> None:
     for path in list_parser(paths):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         cmd = ["sh", "-c", f"rm -rf {path}"]
         sp.call(cmd_exec(pod_name, cmd, container=container))

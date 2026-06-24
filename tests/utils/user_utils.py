@@ -68,7 +68,7 @@ class User:  # pylint: disable=too-many-instance-attributes
     def get_rpyc_connection(
         self, client_host_dict: Mapping[str, str]
     ) -> RpycConnectionLike:
-        client_host = client_host_dict["pod-name"]
+        client_host = client_host_dict["pod_name"]
         if self._rpyc_connections.get(client_host, None):
             return self._rpyc_connections[client_host]
         self._rpyc_connections[client_host] = self._create_rpyc_connection(
@@ -149,9 +149,9 @@ class User:  # pylint: disable=too-many-instance-attributes
     def _create_rpyc_connection(
         self, client_host_dict: Mapping[str, str]
     ) -> RpycConnectionLike:
-        client_host = client_host_dict["pod-name"]
+        client_host = client_host_dict["pod_name"]
         client_host_ip = client_host_dict["ip"]
-        cointainer_id = client_host_dict["container-id"]
+        cointainer_id = client_host_dict["container_id"]
         port = gen_port_number(self.username)
         create_required_dirs(client_host)
         cmd = (

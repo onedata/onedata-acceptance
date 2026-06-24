@@ -662,12 +662,12 @@ def wt_stop_providers(provider_list: str, hosts: Hosts, users: Users) -> Iterato
 
 def _stop_providers(hosts: Hosts, provider_list: str) -> None:
     for provider in parse_seq(provider_list):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["stop", pod_name])
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def start_providers(hosts: Hosts, provider_list: str) -> None:
     for provider in parse_seq(provider_list):
-        pod_name = hosts[provider]["pod-name"]
+        pod_name = hosts[provider]["pod_name"]
         run_onenv_command("service", ["start", pod_name])

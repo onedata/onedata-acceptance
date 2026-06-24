@@ -28,7 +28,7 @@ def restart_provider(name: str, users: Users, hosts: Hosts) -> None:
     )
 )
 def restart_network(name: str, stop_time: str, hosts: Hosts) -> None:
-    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
         "cp",
@@ -52,7 +52,7 @@ def restart_network(name: str, stop_time: str, hosts: Hosts) -> None:
 
 @wt(parsers.re(r"(?P<user>\w+) stops network on oneprovider (?P<name>.*)"))
 def stop_network(name: str, hosts: Hosts) -> None:
-    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
         "cp",
@@ -73,7 +73,7 @@ def stop_network(name: str, hosts: Hosts) -> None:
 
 @wt(parsers.re(r"(?P<user>\w+) starts network on oneprovider (?P<name>.*)"))
 def start_network(name: str, hosts: Hosts) -> None:
-    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
         "cp",
@@ -97,7 +97,7 @@ def start_network(name: str, hosts: Hosts) -> None:
 @wt(parsers.re("user mocks archive verifiction on (?P<name>.*) Oneprovider to fail"))
 def mock_archive_verification(name: str, hosts: Hosts, run_unmock: object) -> None:
     _ = run_unmock
-    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
         "cp",
@@ -122,7 +122,7 @@ def mock_archive_verification(name: str, hosts: Hosts, run_unmock: object) -> No
 # only for krakow oneprovider (TODO VFS-11324)
 @wt(parsers.re("Archive verification is unmocked on (?P<name>.*) Oneprovider"))
 def unmock_archive_verification(name: str, hosts: Hosts) -> None:
-    pod_name = hosts[service_name_to_alias_mapping(name)]["pod-name"]
+    pod_name = hosts[service_name_to_alias_mapping(name)]["pod_name"]
     # TODO VFS-11325 do not copy escripts for each function invocation
     run_kubectl_command(
         "cp",
