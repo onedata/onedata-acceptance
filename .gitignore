@@ -46,8 +46,3 @@ warnings.log
 *~
 
 venv/*
-myenv/*
-tests/mixed/cdmi_swagger/*
-tests/mixed/onepanel_swagger/*
-tests/mixed/oneprovider_swagger/*
-tests/mixed/onezone_swagger/*
