@@ -73,7 +73,9 @@ def open_onedata_service_page(
         if "panel" in service:
             hostname = hosts[alias]["panel"]["hostname"]
 
-            if node_number != "":
+            if node_number == 0:
+                driver.get(f"https://{hostname}")
+            elif node_number != "":
                 driver.get(f"https://{hostname.split('.')[0]}-{node_number}.{hostname}")
             else:
                 driver.get(f"https://{hostname}")
