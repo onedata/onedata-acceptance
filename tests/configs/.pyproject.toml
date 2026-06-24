@@ -41,20 +41,6 @@ follow_imports = "skip"
 pretty = true
 show_error_codes = true
 
-# TODO: VFS-13661 move all submodules into one place
-[[tool.mypy.overrides]]
-module = [
-    "onezone_client.*",
-    "onepanel_client.*",
-    "oneprovider_client.*",
-    "cdmi_client.*",
-    "tests.mixed.onezone_client.*",
-    "tests.mixed.onepanel_client.*",
-    "tests.mixed.oneprovider_client.*",
-    "tests.mixed.cdmi_client.*",
-]
-ignore_errors = true
-
 [[tool.mypy.overrides]]
 module = ["bamboos.*"]
 follow_imports = "skip"
@@ -86,3 +72,28 @@ module = [
 ]
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
+
+# TODO: VFS-13661 move all submodules into one place
+# Ignore generated / external REST clients reported by mypy logs.
+[[tool.mypy.overrides]]
+module = [
+    "onezone_client",
+    "onezone_client.*",
+    "onepanel_client",
+    "onepanel_client.*",
+    "oneprovider_client",
+    "oneprovider_client.*",
+    "cdmi_client",
+    "cdmi_client.*",
+    "tests.mixed.onezone_client",
+    "tests.mixed.onezone_client.*",
+    "tests.mixed.onepanel_client",
+    "tests.mixed.onepanel_client.*",
+    "tests.mixed.oneprovider_client",
+    "tests.mixed.oneprovider_client.*",
+    "tests.mixed.cdmi_client",
+    "tests.mixed.cdmi_client.*",
+]
+ignore_missing_imports = true
+follow_imports = "skip"
+ignore_errors = true
