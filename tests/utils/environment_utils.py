@@ -10,7 +10,8 @@ import json
 import re
 import subprocess as sp
 import time
-from typing import TYPE_CHECKING, Literal, Mapping, Optional, TypedDict, cast, overload
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Literal, Optional, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -305,7 +306,28 @@ def add_luma_mappings(patch_cfg: PatchConfig, users: Users, hosts: Hosts) -> Non
 
 
 def get_deployment_status() -> DeploymentStatus:
-    return cast(DeploymentStatus, yaml.load(run_onenv_command("status"), yaml.Loader))
+    status = yaml.load(run_onenv_command("status"), yaml.Loader)
+    if isinstance(status, dict):
+        pods = status.get("pods")
+        if isinstance(pods, dict):
+            status["pods"] = {
+                pod_name: _normalize_pod_config(pod_cfg)
+                for pod_name, pod_cfg in pods.items()
+                if isinstance(pod_cfg, Mapping)
+            }
+    return cast(DeploymentStatus, status)
+
+
+def _normalize_pod_config(pod_cfg: Mapping[str, object]) -> dict[str, object]:
+    normalized = dict(pod_cfg)
+    for raw_key, normalized_key in {
+        "container-id": "container_id",
+        "service-type": "service_type",
+        "provider-host": "provider_host",
+    }.items():
+        if normalized_key not in normalized and raw_key in normalized:
+            normalized[normalized_key] = normalized[raw_key]
+    return normalized
 
 
 def check_deployment(deployment_status: DeploymentStatus) -> None:
