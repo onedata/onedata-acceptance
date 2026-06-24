@@ -32,15 +32,16 @@ disallow_incomplete_defs = true   # …and partially-annotated functions are an 
 strict_equality = true            # flag comparisons between non-overlapping types
 no_implicit_optional = true       # `x: int = None` is an error, not implicit Optional
 
-# TODO: uncomment after final typing fixes
+# TODO: VFS-13659 uncomment after final typing fixes
 # warn_return_any = true            # flag returning Any from a typed function
 
-# TODO: remove after final typing fixes
+# TODO: VFS-13660 remove after final typing fixes
 follow_imports = "skip"
 
 pretty = true
 show_error_codes = true
 
+# TODO: VFS-13661 move all submodules into one place
 exclude = '''
 (
   ^(bamboos|onezone_client|onepanel_client|oneprovider_client|cdmi_client)/
