@@ -11,7 +11,6 @@ from typing import Callable, Iterable, Protocol, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.types import PopupFactory, TmpMemory
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
@@ -22,6 +21,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.types import Hosts, SeleniumDrivers, Users
 
 RegionCaveat = TypedDict(
     "RegionCaveat", {"allow": bool, "region codes": list[str]}, total=False
@@ -61,6 +61,7 @@ TokenCaveats = TypedDict(
     },
     total=False,
 )
+
 
 class CreateTokenPage(Protocol):
     def hide_caveats(self) -> None: ...

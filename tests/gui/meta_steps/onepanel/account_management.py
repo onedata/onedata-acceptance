@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.login import (
     wt_assert_login_page,
@@ -28,6 +27,7 @@ from tests.gui.steps.onepanel.emergency_passphrase import (
     click_button_on_emergency_passphrase_page,
     type_text_to_input_on_emergency_passphrase_page,
 )
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

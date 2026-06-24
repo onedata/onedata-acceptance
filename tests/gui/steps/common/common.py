@@ -15,12 +15,12 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
-from tests.conftest import SeleniumDrivers
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.types import DynamicObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.generic_page import GenericPage
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

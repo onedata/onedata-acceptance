@@ -12,7 +12,13 @@ import os
 from typing import Optional
 
 from tests.gui.utils.generic import upload_workflow_path
-from tests.mixed.types import ExecutionResult, InputFiles, ResolveId, UploadFile
+from tests.types import JsonValue
+
+type StoreContent = dict[str, JsonValue]
+type InputFiles = list[str]
+type ExecutionResult = tuple[list[StoreContent], InputFiles | list[InputFiles]]
+type ResolveId = Callable[[str], str]
+type UploadFile = Callable[[str, str], None]
 
 
 class ExampleWorkflowExecutionInitialStoreContent:

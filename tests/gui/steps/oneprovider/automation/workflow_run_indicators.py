@@ -6,11 +6,11 @@ __copyright__ = "Copyright (C) 2023 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
 from tests.gui.utils import Popups
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

@@ -11,21 +11,11 @@ import os
 import re
 import warnings
 from collections import defaultdict
-from collections.abc import MutableMapping
+from collections.abc import Generator
 from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import (
-    Callable,
-    Generator,
-    Literal,
-    Optional,
-    ParamSpec,
-    Protocol,
-    TypedDict,
-    TypeVar,
-    cast,
-)
+from typing import cast
 
 import pytest
 import yaml
@@ -40,80 +30,34 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
+from tests.types import (
+    Capabilities,
+    EnvDesc,
+    FactoryCallable,
+    FactoryFunction,
+    FactoryParams,
+    FactoryResult,
+    HookOutcome,
+    Hosts,
+    LogEntry,
+    PreviousEnv,
+    SeleniumFixtureState,
+    Storages,
+    TestConfig,
+    TestType,
+    Tokens,
+    Users,
+    WebDriverConfigurator,
+    WebDriverFactory,
+    WebDriverWithAllLogs,
+    WorkflowExecutions,
+)
 from tests.utils import CLIENT_POD_LOGS_DIR, onenv_utils
 from tests.utils.bdd_utils import scenarios_to_rerun
 from tests.utils.environment_utils import clean_env, start_environment
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import absolute_path_to_env_file, get_file_name, make_logdir
 from tests.utils.user_utils import AdminUser
-
-type JsonValue = Optional[
-    str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]
-]
-type Capabilities = dict[str, JsonValue]
-
-
-class HostPanel(TypedDict):
-    hostname: str
-
-
-class HostDescription(TypedDict, total=False):
-    pod_name: str
-    service_type: str
-    name: str
-    hostname: str
-    ip: str
-    container_id: str
-    provider_host: str
-    panel: HostPanel
-
-
-type Hosts = dict[str, HostDescription]
-type TestConfig = dict[str, JsonValue]
-type SeleniumDrivers = dict[str, WebDriver]
-type SeleniumFixtureState = dict[str, WebDriver | pytest.FixtureRequest]
-type Users = dict[str, AdminUser]
-type Storages = MutableMapping[str, MutableMapping[str, str]]
-type Tokens = dict[str, dict[str, str]]
-type WorkflowExecutions = dict[str, dict[str, object]]
-type PreviousEnv = dict[str, str | bool]
-type TestType = Literal[
-    "gui", "oneclient", "mixed", "onedata_fs", "performance", "upgrade"
-]
-type WebDriverConfigurator = Callable[[WebDriver], WebDriver]
-P = ParamSpec("P")
-T = TypeVar("T")
-T_co = TypeVar("T_co", covariant=True)
-
-
-class FactoryCallable(Protocol[P, T_co]):
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T_co: ...
-
-    def get_instance(self, *args: P.args, **kwargs: P.kwargs) -> T_co: ...
-
-
-type WebDriverFactory = FactoryCallable[[], WebDriver]
-
-
-class HookOutcome(Protocol):
-    def get_result(self) -> object: ...
-
-
-class LogEntry(TypedDict):
-    timestamp: int
-    level: str
-    message: str
-
-
-class WebDriverWithAllLogs(Protocol):
-    def get_all_logs(self) -> defaultdict[str, list[LogEntry]]: ...
-
-
-class EnvDesc(TypedDict, total=False):
-    scenario: str
-    patch: str
-    entities_config: str
-
 
 html.__tagspec__.update({x: 1 for x in ("video", "source")})
 VIDEO_ATTRS = {
@@ -523,7 +467,7 @@ def driver(request: pytest.FixtureRequest) -> WebDriverFactory:
     """Return a factory function creating WebDriver instances."""
     driver_factory: WebDriverFactory = request.getfixturevalue("chrome_driver")
     event_listener_path = request.config.getoption("event_listener")
-    event_listener_cls: Optional[type] = None
+    event_listener_cls: type | None = None
 
     if event_listener_path:
         mod_name, class_name = event_listener_path.rsplit(".", 1)
@@ -582,13 +526,15 @@ class ChromeWithAllLogs(Chrome):
         return self.all_logs
 
 
-def factory(fun: Callable[P, T]) -> FactoryCallable[P, T]:
+def factory(
+    fun: FactoryFunction[FactoryParams, FactoryResult],
+) -> FactoryCallable[FactoryParams, FactoryResult]:
     if "get_instance" in dir(fun):
         raise AttributeError(
             f'object {fun.__name__} already has "get_instance" attribute'
         )
     setattr(fun, "get_instance", fun)
-    return cast(FactoryCallable[P, T], fun)
+    return cast(FactoryCallable[FactoryParams, FactoryResult], fun)
 
 
 # ============================================================================
@@ -601,7 +547,7 @@ _movies: set[str] = set()
 
 def get_log_dir_path(
     request: pytest.FixtureRequest,
-    env_description_abs_path: Optional[str] = None,
+    env_description_abs_path: str | None = None,
     logdir_prefix: str = "",
 ) -> str:
     test_type = get_test_type(request)
@@ -633,7 +579,7 @@ def get_log_dir_path(
 
 def export_logs(
     request: pytest.FixtureRequest,
-    env_description_abs_path: Optional[str] = None,
+    env_description_abs_path: str | None = None,
     logdir_prefix: str = "",
 ) -> None:
     logdir_path = get_log_dir_path(

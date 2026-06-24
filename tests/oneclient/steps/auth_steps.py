@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
-from tests.conftest import EnvDesc, Hosts, Users
+from tests.types import EnvDesc, Hosts, Users
 from tests.utils.acceptance_utils import make_arg_list
 from tests.utils.bdd_utils import given, parsers, wt
 

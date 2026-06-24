@@ -22,7 +22,6 @@ from oneprovider_client import (
 from oneprovider_client.rest import ApiException as OPException
 
 from tests import OP_REST_PORT
-from tests.conftest import Hosts, Users
 from tests.gui.types import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import parse_seq
@@ -45,6 +44,7 @@ from tests.mixed.utils.data import (
     create_content,
     get_acl_metadata,
 )
+from tests.types import Hosts, Users
 from tests.utils.acceptance_utils import compare, time_attr
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.rest_utils import get_provider_rest_path, http_post

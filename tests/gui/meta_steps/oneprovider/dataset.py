@@ -10,7 +10,6 @@ import re
 
 from _pytest._py.path import LocalPath
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
     go_to_path_without_last_elem,
@@ -34,6 +33,7 @@ from tests.gui.steps.oneprovider.dataset import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.types import TmpMemory
 from tests.gui.utils import OPLoggedIn
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 DATA_PROTECTION = "data_protection"

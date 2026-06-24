@@ -13,7 +13,6 @@ from typing import cast
 import pytest
 from onezone_client import SpaceApi, UserApi
 
-from tests.conftest import Hosts, Users
 from tests.mixed.steps.oneclient.data_basic import (
     change_client_name_to_hostname,
     create_file_in_op_oneclient,
@@ -29,6 +28,7 @@ from tests.mixed.types import (
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
+from tests.types import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 
 

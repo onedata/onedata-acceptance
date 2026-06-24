@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Mapping
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.members import (
     assert_group_in_space_using_op_gui,
@@ -28,6 +27,7 @@ from tests.mixed.steps.rest.onezone.members import (
     fail_to_set_privileges_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

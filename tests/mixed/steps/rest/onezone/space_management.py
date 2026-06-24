@@ -12,7 +12,6 @@ from typing import Protocol, cast
 
 from onezone_client import ProviderApi, SpaceApi, SpaceInviteToken, UserApi
 
-from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.rest.onezone.common import (
     get_provider_with_name,
@@ -25,6 +24,7 @@ from tests.mixed.types import (
     SpaceManagementTmpMemory as TmpMemory,
 )
 from tests.mixed.utils.common import login_to_oz
+from tests.types import Hosts
 from tests.utils.entities_setup.spaces import _create_space
 
 

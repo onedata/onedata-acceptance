@@ -8,12 +8,12 @@ import json
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
 from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

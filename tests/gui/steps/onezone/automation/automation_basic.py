@@ -11,7 +11,6 @@ from typing import Optional
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.types import TmpMemory
@@ -25,6 +24,7 @@ from tests.gui.utils.generic import (
 )
 from tests.gui.utils.onezone.lambdas_subpage import Lambda
 from tests.gui.utils.onezone.workflows_subpage import Workflow, WorkflowVisualiser
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

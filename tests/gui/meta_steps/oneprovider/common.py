@@ -5,7 +5,6 @@ using web GUI
 import pytest
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
@@ -40,6 +39,7 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

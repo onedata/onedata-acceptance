@@ -13,12 +13,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.types import TmpMemory
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import parse_seq, transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

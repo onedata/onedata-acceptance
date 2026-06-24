@@ -12,7 +12,6 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -24,6 +23,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
     FunctionPodsActivity,
 )
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

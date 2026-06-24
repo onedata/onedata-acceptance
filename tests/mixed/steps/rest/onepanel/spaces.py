@@ -20,11 +20,11 @@ from onepanel_client import (
     StoragesApi,
 )
 
-from tests.conftest import Hosts
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.types import TmpMemory
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.utils.common import login_to_oz, login_to_panel
+from tests.types import Hosts
 from tests.utils.utils import repeat_failed
 
 

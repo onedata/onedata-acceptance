@@ -14,7 +14,6 @@ import yaml
 from selenium.common.exceptions import NoSuchElementException
 
 from tests import PANEL_REST_PORT
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (
     _camel_transform,
@@ -46,6 +45,7 @@ from tests.gui.steps.onepanel.storages import (
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils import Onepanel
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_delete, http_get, http_post
 from tests.utils.user_utils import AdminUser

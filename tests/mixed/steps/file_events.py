@@ -14,12 +14,12 @@ from typing import Protocol, cast
 import yaml
 
 from tests import OP_REST_PORT
-from tests.conftest import Hosts
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.types import EventMemory, EventResult, ExpectedAttrs, FileAttrs
 from tests.mixed.utils.common import UsersWithToken
-from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
+from tests.mixed.utils.sse_utils import FileAttrs, SpaceFilesMonitorClientImpl
+from tests.types import Hosts
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import get_file_id_by_rest, get_file_id_cached
 

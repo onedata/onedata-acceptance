@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_filebrowser,
@@ -38,6 +37,7 @@ from tests.gui.steps.oneprovider.metadata import (
 )
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

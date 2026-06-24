@@ -6,8 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 # pylint: disable=deprecated-method
 
 
-from tests.conftest import Users
-from tests.oneclient.types import OneclientContext
+from tests.types import Users
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.utils import assert_, assert_expected_failure, assert_generic
 

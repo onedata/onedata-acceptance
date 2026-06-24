@@ -12,7 +12,6 @@ import pytest
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import (
     WAIT_BACKEND,
     WAIT_EXTENDED_UPLOAD,
@@ -25,6 +24,7 @@ from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
     DOWNLOAD_INACTIVITY_PERIOD_SEC,

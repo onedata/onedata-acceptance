@@ -12,7 +12,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import get_item_name_and_containing_dir_path
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
@@ -37,6 +36,7 @@ from tests.gui.steps.oneprovider.automation.workflow_results_modals import (
 )
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import parse_seq, transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

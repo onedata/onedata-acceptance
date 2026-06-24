@@ -14,7 +14,6 @@ from typing import Optional, Protocol, cast
 import yaml
 from onezone_client import TokenApi
 
-from tests.conftest import Hosts, Tokens
 from tests.gui.types import TmpMemory
 from tests.mixed.steps.rest.onezone.members import (
     translate_privileges,
@@ -29,6 +28,14 @@ from tests.mixed.types import (
     TokenValue,
 )
 from tests.mixed.utils.common import login_to_oz
+from tests.types import Hosts, JsonValue, Tokens
+
+GroupMap = Mapping[str, str]
+SpaceMap = Mapping[str, str]
+type TokenValue = JsonValue | list[str] | list["TokenCaveat"] | dict[str, TokenValue]
+type ConfigMap = Mapping[str, TokenValue]
+type TokenCaveat = dict[str, TokenValue]
+type TokenConfig = dict[str, TokenValue]
 
 
 class UserLike(Protocol):

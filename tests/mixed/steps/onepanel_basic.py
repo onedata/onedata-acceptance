@@ -11,7 +11,6 @@ from typing import Protocol, cast
 
 from _pytest._py.path import LocalPath
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onepanel.account_management import (
     change_user_password_in_oz_panel_using_gui,
@@ -79,6 +78,7 @@ from tests.mixed.steps.rest.onezone.space_management import (
 )
 from tests.mixed.types import HostsConfig, Spaces
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     force_start_storage_scan,

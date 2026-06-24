@@ -11,7 +11,6 @@ from typing import cast
 
 from onezone_client import UserApi
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.meta_steps.onezone.provider import (
     assert_provider_has_name_and_hostname_in_oz_gui,
 )
@@ -64,6 +63,7 @@ from tests.mixed.steps.rest.onezone.space_management import (
 from tests.mixed.types import MutableSpaces as Spaces
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import AdminUser

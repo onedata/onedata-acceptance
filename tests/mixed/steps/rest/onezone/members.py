@@ -10,7 +10,6 @@ from typing import Protocol, cast
 import yaml
 from onezone_client.rest import ApiException
 
-from tests.conftest import Hosts
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
@@ -20,6 +19,7 @@ from tests.mixed.types import (
     RestOnezoneTmpMemory as TmpMemory,
 )
 from tests.mixed.utils.common import login_to_oz
+from tests.types import Hosts
 
 PRIVILEGES_TRANSLATION = {
     "View space": "space_view",

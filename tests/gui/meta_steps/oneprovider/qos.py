@@ -5,8 +5,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import SeleniumDrivers
-from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
     click_modal_button,
@@ -31,6 +29,7 @@ from tests.gui.steps.oneprovider.qos import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.types import Clipboard, TmpMemory
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

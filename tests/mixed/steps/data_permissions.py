@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from collections.abc import Mapping
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     assert_ace_in_op_gui,
@@ -33,6 +32,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_posix_permissions_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

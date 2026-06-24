@@ -19,7 +19,7 @@ from tests.utils.rest_utils import get_panel_rest_path, http_post
 from tests.utils.user_utils import AdminUser
 
 if TYPE_CHECKING:
-    from tests.conftest import Hosts
+    from tests.types import Hosts
 
 HostsConfig = Mapping[str, Mapping[str, str]]
 

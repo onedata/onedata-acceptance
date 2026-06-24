@@ -14,9 +14,9 @@ from _pytest._py.path import LocalPath
 from botocore.config import Config  # pylint: disable=import-error
 
 from tests import ONES3_PORT
-from tests.conftest import Hosts, Tokens
 from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
+from tests.types import Hosts, Tokens
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

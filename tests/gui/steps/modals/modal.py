@@ -19,12 +19,12 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

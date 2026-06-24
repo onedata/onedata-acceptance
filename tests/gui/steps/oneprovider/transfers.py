@@ -14,7 +14,6 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import (
     click_option_in_popup_labeled_menu,
@@ -29,6 +28,7 @@ from tests.gui.utils.oneprovider.transfers import (
     TransferRecordHistory,
     _TransfersTab,
 )
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

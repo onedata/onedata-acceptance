@@ -15,13 +15,11 @@ import pytest
 import yaml
 
 from tests import LOGDIRS, PERFORMANCE_LOGDIR
-from tests.conftest import (
+from tests.conftest import export_logs, get_test_type, make_logdir
+from tests.types import (
     EnvDesc,
     Hosts,
     Users,
-    export_logs,
-    get_test_type,
-    make_logdir,
 )
 from tests.utils.client_utils import Client
 from tests.utils.git_utils import get_branch_name, get_commit, get_repository

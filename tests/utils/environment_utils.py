@@ -43,7 +43,7 @@ from tests.utils.user_utils import AdminUser, User
 from tests.utils.utils import repeat_failed
 
 if TYPE_CHECKING:
-    from tests.conftest import Hosts, TestConfig, Users
+    from tests.types import Hosts, TestConfig, Users
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = "one-env"

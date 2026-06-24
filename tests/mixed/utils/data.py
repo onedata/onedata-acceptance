@@ -12,20 +12,10 @@ from typing import Optional, Protocol
 import pytest
 import yaml
 
-from tests.conftest import Hosts, Users
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
-from tests.mixed.types import (
-    Acl,
-    AclEntry,
-    AssertFileContent,
-    Content,
-    ContentItem,
-    IsDir,
-    ItemType,
-    ListDir,
-)
+from tests.types import Hosts, Users
 
 
 class FileTreeNode(Protocol):

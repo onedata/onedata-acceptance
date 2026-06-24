@@ -10,7 +10,6 @@ import time
 
 from selenium.webdriver.remote.webelement import WebElement
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_received_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -64,6 +63,7 @@ from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone.data_page import DataPage
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

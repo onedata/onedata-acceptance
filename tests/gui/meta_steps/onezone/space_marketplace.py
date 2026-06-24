@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.steps.onezone.marketplace import (
     assert_element_in_space_marketplace,
     assert_elements_list_in_space_marketplace,
@@ -19,6 +18,7 @@ from tests.gui.steps.onezone.space_configuration import (
     set_description_of_a_space,
     set_space_data_in_configuration_tab,
 )
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

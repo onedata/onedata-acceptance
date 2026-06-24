@@ -10,7 +10,6 @@ import time
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.onezone.automation.workflow_creation import (
@@ -24,6 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

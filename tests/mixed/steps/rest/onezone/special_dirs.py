@@ -11,7 +11,6 @@ from typing import Optional, cast
 
 from oneprovider_client.rest import ApiException
 
-from tests.conftest import Hosts, Users
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import SpecialDir
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
@@ -44,6 +43,7 @@ from tests.oneclient.steps.multi_file_steps import (
     create_file_in_dir_by_id,
     try_to_create_file_in_root_dir,
 )
+from tests.types import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 

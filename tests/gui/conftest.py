@@ -20,13 +20,7 @@ from pytest import fixture, hookimpl, skip
 from selenium import webdriver
 
 from tests import LOGDIRS
-from tests.conftest import (
-    Capabilities,
-    HookOutcome,
-    Hosts,
-    export_logs,
-    get_log_dir_path,
-)
+from tests.conftest import export_logs, get_log_dir_path
 from tests.gui.sse_fixtures import (
     async_loop_in_thread,
     monitors,
@@ -34,6 +28,11 @@ from tests.gui.sse_fixtures import (
 )
 from tests.gui.types import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
+from tests.types import (
+    Capabilities,
+    HookOutcome,
+    Hosts,
+)
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir

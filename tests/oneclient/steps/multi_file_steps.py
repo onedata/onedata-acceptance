@@ -21,8 +21,8 @@ from collections.abc import Mapping
 import jsondiff
 import pytest
 
-from tests.conftest import Hosts, Users
 from tests.oneclient.steps.multi_dir_steps import create
+from tests.types import Hosts, Users
 from tests.utils.acceptance_utils import compare, list_parser, make_arg_list, time_attr
 from tests.utils.bdd_utils import parsers, then, when, wt
 from tests.utils.client_utils import Client

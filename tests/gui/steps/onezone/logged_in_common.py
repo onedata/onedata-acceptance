@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

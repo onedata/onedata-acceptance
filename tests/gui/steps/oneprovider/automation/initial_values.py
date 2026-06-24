@@ -10,11 +10,11 @@ from typing import Optional, Protocol, cast
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.oneprovider.automation import InitialValueStore
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

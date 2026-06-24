@@ -7,8 +7,8 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import Hosts, Users
 from tests.gui.steps.rest.shares import create_share_using_rest
+from tests.types import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     ProviderEntry,

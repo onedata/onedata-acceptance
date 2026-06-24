@@ -12,7 +12,6 @@ import time
 from _pytest._py.path import LocalPath
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import click_modal_button
@@ -45,6 +44,7 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_t
 )
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import WorkflowVisualiser
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

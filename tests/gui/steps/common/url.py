@@ -14,12 +14,12 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import try_click_without_throwing_error
 from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, parse_url
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

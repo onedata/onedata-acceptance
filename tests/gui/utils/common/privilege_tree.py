@@ -10,7 +10,6 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.types import PrivilegeGranted, PrivilegeGroupConfig, PrivilegesConfig
 from tests.gui.utils.common.common import Toggle
@@ -21,6 +20,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
+from tests.types import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
 

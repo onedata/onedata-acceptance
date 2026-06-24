@@ -11,7 +11,7 @@ import errno
 import os.path
 import subprocess as sp
 
-from tests.conftest import Hosts, Users
+from tests.types import Hosts, Users
 from tests.utils import ONECLIENT_MOUNT_DIR
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, when, wt

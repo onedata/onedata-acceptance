@@ -10,7 +10,6 @@ import time
 
 from selenium.common.exceptions import TimeoutException
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import consume_token_from_copied_token
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -39,6 +38,7 @@ from tests.gui.steps.onezone.members import (
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.types import Clipboard, TmpMemory
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

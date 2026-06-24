@@ -6,8 +6,8 @@ __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from tests.conftest import Hosts, Storages
 from tests.oneclient.steps.rest.onepanel.storages import modify_storage_parameters
+from tests.types import Hosts, Storages
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import AdminUser
 

@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from selenium.webdriver.remote.webdriver import WebDriver
     from selenium.webdriver.remote.webelement import WebElement
 
-    from tests.conftest import JsonValue
     from tests.gui.utils.common.popups import Popups
+    from tests.types import JsonValue
 else:
     WebDriver = Any
     WebElement = Any
@@ -48,9 +48,8 @@ type BrowserTmpMemory = dict[str, dict[str, object]]
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 type WebElemRoot = WebDriver | WebElement
 
-type FileDescription = dict[str, str]
 type LocalDirectoryContent = int | dict[
-    str, "LocalDirectoryContent | FileDescription"
+    str, "LocalDirectoryContent | dict[str, str]"
 ]
 type DataDirectoryContent = list[str | dict[str, "DataDirectoryContent"]]
 
@@ -68,12 +67,11 @@ type AuditLogContent = dict[str, AuditLogValue]
 type PopupFactory = Callable[[WebDriver], Popups]
 
 type PrivilegeGranted = Literal[True, False, "Partially"]
-type PrivilegeSubtypes = dict[str, bool]
 PrivilegeGroupConfig = TypedDict(
     "PrivilegeGroupConfig",
     {
         "granted": PrivilegeGranted,
-        "privilege subtypes": PrivilegeSubtypes,
+        "privilege subtypes": dict[str, bool],
     },
 )
 type PrivilegesConfig = dict[str, PrivilegeGroupConfig]

@@ -14,7 +14,6 @@ from typing import Optional, cast
 import pytest
 from _pytest._py.path import LocalPath
 
-from tests.conftest import EnvDesc, Hosts, SeleniumDrivers, Tokens, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     assert_file_content_in_op_gui,
@@ -98,6 +97,7 @@ from tests.mixed.steps.rest.oneprovider.metadata import (
     set_metadata_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import EnvDesc, Hosts, SeleniumDrivers, Tokens, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.path_utils import get_first_path_element

@@ -12,7 +12,6 @@ from typing import cast
 
 import yaml
 
-from tests.conftest import JsonValue, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     assert_data_discovery_page,
@@ -28,8 +27,10 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.types import JsonObject, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils.onezone.data_discovery_page import ResultSample
+from tests.types import JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
+
 
 @wt(
     parsers.parse(

@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 import time
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.types import TmpMemory
@@ -17,6 +16,7 @@ from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.gui.utils.oneprovider.archive_browser import _ArchiveBrowser
 from tests.gui.utils.oneprovider.archive_browser.data_row import DataRow
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

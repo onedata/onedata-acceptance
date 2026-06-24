@@ -11,7 +11,6 @@ from collections.abc import Mapping
 from typing import cast
 
 from tests import OZ_REST_PORT
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.meta_steps.onezone.groups import (
     add_subgroups_using_op_gui,
     assert_subgroups_using_op_gui,
@@ -48,6 +47,7 @@ from tests.mixed.steps.rest.onezone.group_management import (
     see_groups_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post

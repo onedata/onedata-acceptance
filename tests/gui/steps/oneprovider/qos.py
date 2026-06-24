@@ -13,7 +13,6 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_logs_order_with_optional_logs
 from tests.gui.steps.rest.provider import get_provider_id
@@ -21,6 +20,7 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 

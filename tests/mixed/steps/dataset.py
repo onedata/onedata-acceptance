@@ -11,7 +11,6 @@ from collections.abc import Mapping
 
 from _pytest._py.path import LocalPath
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.gui.meta_steps.oneprovider.dataset import (
@@ -44,6 +43,7 @@ from tests.mixed.steps.rest.oneprovider.datasets import (
     set_protection_flags_for_dataset_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

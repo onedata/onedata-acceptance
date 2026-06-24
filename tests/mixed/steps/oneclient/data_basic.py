@@ -15,7 +15,6 @@ from typing import cast
 import pytest
 import yaml
 
-from tests.conftest import EnvDesc, Hosts, JsonValue, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
@@ -35,6 +34,7 @@ from tests.oneclient.steps import (
     multi_file_steps,
     multi_reg_file_steps,
 )
+from tests.types import EnvDesc, Hosts, JsonValue, Users
 from tests.utils.acceptance_utils import compare, failure, time_attr
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

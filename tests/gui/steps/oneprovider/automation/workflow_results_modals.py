@@ -13,7 +13,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import url_to_be
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import (
     get_last_item_number_in_table,
@@ -31,6 +30,7 @@ from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDe
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import Task
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed

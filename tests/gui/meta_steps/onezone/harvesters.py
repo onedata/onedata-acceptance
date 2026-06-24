@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import click_modal_button, close_modal
@@ -54,6 +53,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
 )
 from tests.gui.types import Clipboard, TmpMemory
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

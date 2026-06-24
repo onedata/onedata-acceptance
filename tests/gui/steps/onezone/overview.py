@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

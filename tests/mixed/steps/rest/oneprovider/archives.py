@@ -11,7 +11,6 @@ from typing import NotRequired, Protocol, TypedDict, cast
 import yaml
 from oneprovider_client.rest import ApiException as OPException
 
-from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
@@ -28,6 +27,7 @@ from tests.mixed.types import (
     IdMap,
 )
 from tests.mixed.utils.common import login_to_provider
+from tests.types import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

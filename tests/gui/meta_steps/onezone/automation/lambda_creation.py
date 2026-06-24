@@ -15,7 +15,6 @@ from _pytest._py.path import LocalPath
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import (
@@ -37,6 +36,7 @@ from tests.gui.types import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
+from tests.types import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

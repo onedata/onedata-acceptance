@@ -11,7 +11,6 @@ from typing import Optional
 
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser,
@@ -59,6 +58,7 @@ from tests.gui.steps.onezone.tokens import (
 from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

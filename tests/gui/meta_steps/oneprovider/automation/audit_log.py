@@ -20,7 +20,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests import GUI_LOGDIR
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
     get_store_details_json,
@@ -65,6 +64,7 @@ from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDe
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed

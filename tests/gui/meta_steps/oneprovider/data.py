@@ -15,7 +15,6 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.common import navigate_to_tab_in_op_using_gui
 from tests.gui.meta_steps.oneprovider.files_tree import check_file_structure_in_browser
@@ -72,14 +71,18 @@ from tests.gui.steps.onezone.spaces import (
 )
 from tests.gui.types import (
     Clipboard,
-    DataDirectoryContent as DirectoryContent,
+)
+from tests.gui.types import DataDirectoryContent as DirectoryContent
+from tests.gui.types import (
     TmpMemory,
 )
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed
+
 
 def _click_menu_for_elem_somewhere_in_file_browser(
     selenium: SeleniumDrivers,

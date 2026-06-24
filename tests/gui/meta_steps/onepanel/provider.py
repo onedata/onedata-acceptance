@@ -11,7 +11,6 @@ import time
 
 import yaml
 
-from tests.conftest import Hosts, JsonValue, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import wt_click_on_btn_in_popup
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -41,6 +40,7 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
+from tests.types import Hosts, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed

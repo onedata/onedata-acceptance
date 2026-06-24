@@ -13,12 +13,12 @@ from selenium.common.exceptions import (
 )
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.shares.private_share import EDMBoxForm
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

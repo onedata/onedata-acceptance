@@ -12,10 +12,10 @@ import requests
 from _pytest._py.path import LocalPath
 
 from tests import ELASTICSEARCH_PORT
-from tests.conftest import Hosts, SeleniumDrivers
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import (
     get_pods_config,

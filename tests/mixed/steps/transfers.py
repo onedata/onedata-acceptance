@@ -8,7 +8,6 @@ from collections.abc import Mapping
 
 from _pytest._py.path import LocalPath
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.meta_steps.oneprovider.common import (
     migrate_file_to_provider,
     replicate_files_to_provider,
@@ -29,6 +28,7 @@ from tests.mixed.steps.rest.oneprovider.transfers import (
     create_transfer_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 
 

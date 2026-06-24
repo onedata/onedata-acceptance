@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections.abc import Mapping
 from typing import cast
 
-from tests.conftest import Hosts, SeleniumDrivers, Tokens, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     assert_token_configuration_gui,
@@ -28,6 +27,7 @@ from tests.mixed.steps.rest.onezone.tokens import (
     revoke_token_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Tokens, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

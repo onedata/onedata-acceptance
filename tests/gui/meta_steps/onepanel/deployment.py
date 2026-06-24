@@ -12,7 +12,6 @@ from typing import Tuple
 
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.meta_steps.onezone.provider import send_copied_invite_token_in_oz_gui
 from tests.gui.steps.common.login import login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -31,6 +30,7 @@ from tests.gui.steps.onepanel.deployment import (
 )
 from tests.gui.steps.onepanel.provider import deactivate_request_subdomain_toggle
 from tests.gui.types import Clipboard, TmpMemory
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 
 

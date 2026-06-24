@@ -16,7 +16,6 @@ import yaml
 from _pytest._py.path import LocalPath
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
@@ -29,6 +28,7 @@ from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.oneprovider.file_browser import FileSelector
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -40,6 +40,7 @@ class BrowserRows(Protocol):
 class SelectableBrowser(Protocol):
     data: BrowserRows
     files: BrowserRows
+
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" instead of {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)

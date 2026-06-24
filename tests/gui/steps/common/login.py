@@ -9,11 +9,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from tests.conftest import SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.url import assert_main_page_loaded
 from tests.gui.utils import LoginPage, OnePage
 from tests.gui.utils.generic import parse_seq, transform
+from tests.types import SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

@@ -10,7 +10,6 @@ from time import sleep
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import check_modal_name
 from tests.gui.steps.oneprovider.browser import (
@@ -20,6 +19,7 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

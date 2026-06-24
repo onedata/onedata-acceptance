@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Optional, Protocol, cast
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
@@ -16,6 +15,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.types import BrowserTmpMemory as TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

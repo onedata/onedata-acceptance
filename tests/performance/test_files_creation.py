@@ -12,9 +12,9 @@ import os.path
 import time
 from functools import partial
 
-from tests.conftest import EnvDesc, Hosts, Users
 from tests.performance.conftest import AbstractPerformanceTest, mount_performance_client
 from tests.performance.types import PerformanceParams, bool_parameter, int_parameter
+from tests.types import EnvDesc, Hosts, Users
 from tests.utils.client_utils import Client, user_home_dir
 from tests.utils.performance_utils import (
     Result,

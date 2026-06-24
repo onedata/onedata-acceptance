@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from collections.abc import Mapping
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.qos import (
     add_qos_requirement_in_modal,
@@ -24,6 +23,7 @@ from tests.mixed.steps.rest.oneprovider.qos import (
     delete_qos_requirement_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

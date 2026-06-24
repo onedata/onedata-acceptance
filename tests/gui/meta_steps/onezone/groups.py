@@ -9,7 +9,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.tokens import (
     add_element_with_copied_token,
@@ -46,6 +45,7 @@ from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.groups.groups_page import Group
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

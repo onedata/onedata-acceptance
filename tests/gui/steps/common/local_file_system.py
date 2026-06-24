@@ -19,10 +19,7 @@ from _pytest._py.path import LocalPath
 
 from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import (
-    FileDescription,
-    LocalDirectoryContent as DirectoryContent,
-)
+from tests.gui.types import LocalDirectoryContent as DirectoryContent
 from tests.gui.utils.generic import suppress
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -80,7 +77,7 @@ def _mkdirs(cwd: LocalPath, dir_content: Optional[DirectoryContent] = None) -> N
             new_dir.chmod(PERMS_777)
             _mkdirs(new_dir, cast(DirectoryContent, item_content))
         else:
-            file_description = cast(FileDescription, item_content)
+            file_description = cast(dict[str, str], item_content)
             content = file_description.get("content")
             size = file_description.get("size")
             if size:

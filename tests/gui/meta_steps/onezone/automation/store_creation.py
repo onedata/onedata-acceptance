@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.steps.modals.modal import (
     choose_option_in_dropdown_menu_in_modal,
     click_modal_button,
@@ -17,6 +16,7 @@ from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import click_add_store_button
+from tests.types import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

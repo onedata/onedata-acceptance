@@ -11,7 +11,6 @@ import time
 
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_and_assert_browser,
@@ -57,7 +56,8 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import WhichBrowser, transform
+from tests.gui.utils.generic import ListElement, WhichBrowser, transform
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

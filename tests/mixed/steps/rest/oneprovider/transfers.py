@@ -11,12 +11,12 @@ import yaml
 from oneprovider_client import TransferApi
 
 from tests import OP_REST_PORT
-from tests.conftest import Hosts, Users
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.types import IdMap, JsonObject
 from tests.mixed.utils.common import login_to_provider
+from tests.types import Hosts, Users
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests.utils.utils import repeat_failed
 

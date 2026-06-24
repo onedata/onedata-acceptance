@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modals.modal import (
@@ -72,6 +71,7 @@ from tests.gui.utils.common.xml_addons import (
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
+from tests.types import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

@@ -11,7 +11,6 @@ from typing import cast
 
 import yaml
 
-from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.archives import (
     assert_archive_callback_in_op_gui,
@@ -40,6 +39,7 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     remove_archive_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
+from tests.types import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

@@ -12,7 +12,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Capabilities, Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.gui.steps.common.login import login_using_basic_auth
@@ -32,6 +31,7 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
+from tests.types import Capabilities, Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import time
 
-from tests.conftest import Hosts, Users
+from tests.types import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import run_kubectl_command, verify_env_ready
 from tests.utils.onenv_utils import run_onenv_command, service_name_to_alias_mapping

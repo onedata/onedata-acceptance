@@ -8,9 +8,9 @@ import json
 from requests import Response
 
 from tests import ONES3_PORT, OP_REST_PORT, PANEL_REST_PORT
-from tests.conftest import Hosts, JsonValue, Users
 from tests.gui.types import ProviderResponse
 from tests.gui.utils.generic import OnedataService
+from tests.types import Hosts, JsonValue, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import (
     get_panel_rest_path,

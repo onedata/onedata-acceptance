@@ -12,7 +12,6 @@ import yaml
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modals.modal import (
@@ -38,6 +37,7 @@ from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
+from tests.types import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

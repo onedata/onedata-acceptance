@@ -13,7 +13,6 @@ from typing import Optional, cast
 
 import yaml
 
-from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.automation.run_workflow import (
     choose_file_as_initial_workflow_value,
@@ -60,6 +59,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.oneprovider.automation import NumberInput
+from tests.types import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

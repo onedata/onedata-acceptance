@@ -15,7 +15,6 @@ from itertools import chain, repeat
 from queue import Empty, Queue
 from threading import Thread
 
-from tests.conftest import EnvDesc, Hosts, Users
 from tests.performance.conftest import AbstractPerformanceTest, mount_performance_client
 from tests.performance.types import (
     ExceptionQueue,
@@ -23,6 +22,7 @@ from tests.performance.types import (
     bool_parameter,
     int_parameter,
 )
+from tests.types import EnvDesc, Hosts, Users
 from tests.utils.client_utils import Client, user_home_dir
 from tests.utils.performance_utils import (
     Result,

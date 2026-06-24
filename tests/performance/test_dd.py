@@ -9,9 +9,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import re
 
-from tests.conftest import EnvDesc, Hosts, Users
 from tests.performance.conftest import AbstractPerformanceTest, mount_performance_client
 from tests.performance.types import PerformanceParams, int_parameter, str_parameter
+from tests.types import EnvDesc, Hosts, Users
 from tests.utils.client_utils import Client, user_home_dir
 from tests.utils.performance_utils import Result, generate_configs, performance
 

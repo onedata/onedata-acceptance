@@ -14,7 +14,6 @@ import yaml
 from oneprovider_client.rest import ApiException
 
 from tests import OP_REST_PORT, OZ_REST_PORT
-from tests.conftest import Hosts, JsonValue, Users, WorkflowExecutions
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
@@ -27,6 +26,7 @@ from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
 )
+from tests.types import Hosts, JsonValue, Users, WorkflowExecutions
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound
