@@ -7,9 +7,10 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 from collections.abc import Callable, Generator, Mapping
-from typing import Protocol, cast
+from typing import cast
 
 import pytest
+from pytest_bdd.parser import Feature, Scenario, Step
 
 from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
@@ -32,10 +33,6 @@ from tests.utils.luma_utils import (
     get_local_feed_luma_storages,
 )
 from tests.utils.user_utils import AdminUser
-
-
-class HasName(Protocol):
-    name: str
 
 
 @pytest.fixture(autouse=True)
@@ -166,7 +163,7 @@ def purge_spaces(client: Client) -> None:
 
 
 def pytest_bdd_before_scenario(
-    request: pytest.FixtureRequest, feature: HasName, scenario: HasName
+    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
 ) -> None:
     print("\n=================================================================")
     print(f"- Executing scenario '{scenario.name}'")
@@ -176,9 +173,9 @@ def pytest_bdd_before_scenario(
 
 def pytest_bdd_before_step_call(
     request: pytest.FixtureRequest,
-    feature: object,
-    scenario: object,
-    step: object,
+    feature: Feature,
+    scenario: Scenario,
+    step: Step,
     step_func: Callable[..., object],
     step_func_args: dict[str, object],
 ) -> None:
@@ -187,9 +184,9 @@ def pytest_bdd_before_step_call(
 
 def pytest_bdd_step_error(
     request: pytest.FixtureRequest,
-    feature: object,
-    scenario: object,
-    step: object,
+    feature: Feature,
+    scenario: Scenario,
+    step: Step,
     step_func: Callable[..., object],
     step_func_args: dict[str, object],
     exception: BaseException,
@@ -198,6 +195,6 @@ def pytest_bdd_step_error(
 
 
 def pytest_bdd_after_scenario(
-    request: pytest.FixtureRequest, feature: object, scenario: object
+    request: pytest.FixtureRequest, feature: Feature, scenario: Scenario
 ) -> None:
     print("=================================================================\n")

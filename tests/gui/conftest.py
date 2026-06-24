@@ -11,12 +11,13 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import Generator, Protocol, cast
+from typing import Generator, cast
 
 import pytest
 from _pytest.config.argparsing import Parser
 from _pytest.reports import TestReport
 from pytest import fixture, hookimpl, skip
+from pytest_bdd.parser import Feature, Scenario, Step
 from selenium import webdriver
 
 from tests import LOGDIRS
@@ -67,10 +68,6 @@ WAIT_NORMAL_DOWNLOAD = 10
 # =============================================================================
 
 
-class HasName(Protocol):
-    name: str
-
-
 def pytest_configure(config: pytest.Config) -> None:
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
     htmlpath = config.option.htmlpath
@@ -105,8 +102,8 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
 
 def pytest_bdd_before_scenario(
     request: pytest.FixtureRequest,
-    feature: HasName,
-    scenario: HasName,
+    feature: Feature,
+    scenario: Scenario,
 ) -> None:
     RecorderManager(request).handle_start_recording()
     print("\n" + "=" * 65)
@@ -115,7 +112,7 @@ def pytest_bdd_before_scenario(
     print("-" * 65)
 
 
-def pytest_bdd_before_step_call(step: HasName) -> None:
+def pytest_bdd_before_step_call(step: Step) -> None:
     print(f"-- Executing step: {format_step_name(step)}")
 
 
@@ -141,12 +138,12 @@ def pytest_bdd_after_scenario(request: pytest.FixtureRequest) -> None:
     print("=================================================================")
 
 
-def pytest_bdd_step_error(step: HasName, exception: BaseException) -> None:
+def pytest_bdd_step_error(step: Step, exception: BaseException) -> None:
     print(f"--- STEP FAILED on {step}")
     print(f"--- Exception: {exception}\n")
 
 
-def format_step_name(step: HasName) -> str:
+def format_step_name(step: Step) -> str:
     step_name = step.name.split("\n")
     if len(step_name) > 1:
         return step_name[0] + " (...)"
