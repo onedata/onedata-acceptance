@@ -99,7 +99,7 @@ def count_md5(
     file_path: str,
     client_node: str,
     users: Users,
-    context: OneclientContext,
+    context: dict[str, str],
 ) -> None:
     user_obj = users[user_name]
     client = user_obj.clients[client_node]
@@ -125,7 +125,7 @@ def write_rand_text(
     file: str,
     client_node: str,
     users: Users,
-    context: OneclientContext,
+    context: dict[str, str],
 ) -> None:
     user_obj = users[user_name]
     client = user_obj.clients[client_node]
@@ -260,7 +260,7 @@ def copy_reg_file(
 
 @wt(parsers.re(r"(?P<user>\w+) checks MD5 of (?P<file>.*) on (?P<client_node>.*)"))
 def check_md5(
-    user: str, file: str, client_node: str, users: Users, context: OneclientContext
+    user: str, file: str, client_node: str, users: Users, context: dict[str, str]
 ) -> None:
     user_obj = users[user]
     client = user_obj.clients[client_node]

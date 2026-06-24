@@ -27,7 +27,7 @@ def write_rand_text(
     megabytes: str,
     file: str,
     users: Users,
-    context: multi_reg_file_steps.OneclientContext,
+    context: dict[str, str],
 ) -> None:
     multi_reg_file_steps.write_rand_text(
         user, megabytes, file, "client1", users, context
@@ -69,7 +69,7 @@ def check_md5(
     user: str,
     file: str,
     users: Users,
-    context: multi_reg_file_steps.OneclientContext,
+    context: dict[str, str],
 ) -> None:
     multi_reg_file_steps.check_md5(user, file, "client1", users, context)
 
