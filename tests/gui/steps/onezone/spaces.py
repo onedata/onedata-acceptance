@@ -16,7 +16,7 @@ from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.types import Clipboard, DisplayMap, DynamicObject, TmpMemory
+from tests.gui.types import Clipboard, DynamicObject, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import parse_seq, transform
@@ -807,7 +807,7 @@ def remove_harvester_from_harvesters_list(
 def click_copy_button_on_request_support_page(
     selenium: SeleniumDrivers,
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
 ) -> None:
@@ -856,7 +856,7 @@ def generate_and_send_support_token(
     space_name: str,
     browser_id2: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id1])["data"]

@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -25,7 +25,7 @@ from tests.utils.utils import repeat_failed
 def send_invitation_token_to_browser(
     browser_id: str,
     item_type: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     browser_list: str,
     tmp_memory: TmpMemory,

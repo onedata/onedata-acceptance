@@ -18,7 +18,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -150,7 +150,7 @@ def switch_to_iframe(
     )
 )
 def set_env_variable_with_copied_val(
-    clipboard: Clipboard, var_name: str, displays: DisplayMap, browser_id: str
+    clipboard: Clipboard, var_name: str, displays: dict[str, str], browser_id: str
 ) -> None:
     var_value = clipboard.paste(display=displays[browser_id])
     _set_env_variable(var_name, var_value)
@@ -163,7 +163,7 @@ def _set_env_variable(var_name: str, var_value: str) -> None:
 @wt(parsers.parse("user of {browser_id} runs curl command copied from {page} page"))
 def run_curl_command(
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
     tmp_memory: TmpMemory,
     page: str,

@@ -13,7 +13,7 @@ from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import assert_n_items_in_items_list
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import OPLoggedIn, Popups
 from tests.gui.utils.generic import ListElement
 from tests.gui.utils.oneprovider.shares import SharesContentPage
@@ -97,7 +97,7 @@ def copy_current_url(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     clipboard.copy(driver.current_url, display=displays[browser_id])
@@ -279,7 +279,7 @@ def check_urls_are_equal(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     share_url = OPLoggedIn(selenium[browser_id]).shares_page.url
     modal_url = clipboard.paste(display=displays[browser_id])

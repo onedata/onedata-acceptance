@@ -17,7 +17,7 @@ from tests import OP_REST_PORT
 from tests.conftest import Hosts, SeleniumDrivers, Users
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
-from tests.gui.types import Clipboard, DisplayMap
+from tests.gui.types import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -59,7 +59,7 @@ def assert_popup_for_provider_has_appeared_on_map(
     provider: str,
     hosts: Hosts,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" instead of "{}"'
@@ -103,7 +103,7 @@ def assert_provider_hostname_matches_test_hostname(
     browser_id: str,
     provider: str,
     hosts: Hosts,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     driver = selenium[browser_id]

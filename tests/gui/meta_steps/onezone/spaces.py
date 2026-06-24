@@ -60,7 +60,7 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone.data_page import DataPage
@@ -76,7 +76,7 @@ def create_spaces_in_oz_using_gui(
     space_list: str,
     spaces: dict[str, str],
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     option = "enter"
     button = "Create space"
@@ -103,7 +103,7 @@ def send_support_token_in_oz_using_gui(
     space_name: str,
     browser_id: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     option = "spaces"
@@ -222,7 +222,7 @@ def invite_other_users_to_space_using_gui(
     space_name: str,
     user_list: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     option = "spaces"
@@ -255,7 +255,7 @@ def request_space_support_using_gui(
     user: str,
     space_name: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     receiver: str,
 ) -> None:

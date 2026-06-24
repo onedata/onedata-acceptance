@@ -32,7 +32,7 @@ from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.count_checksums import (
     adler32_sum,
@@ -53,7 +53,7 @@ def get_store_details_json(
     driver: WebDriver,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     store_name: str,
     store_type: str,
 ) -> dict[str, object]:
@@ -78,7 +78,7 @@ def open_modal_and_get_store_content(
     driver: WebDriver,
     page: WorkflowVisualiser,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     store_name: str,
     store_type: str,
     index: int = 0,
@@ -105,7 +105,7 @@ def compare_store_contents(
     store1: str,
     store2: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
 ) -> None:
     switch_to_iframe(selenium, browser_id)

@@ -28,7 +28,7 @@ from tests.gui.meta_steps.onezone.groups import (
     rename_groups_using_op_gui,
     see_groups_using_op_gui,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.mixed.steps.rest.onezone.group_management import (
     UserLike,
     add_subgroups_using_rest,
@@ -270,7 +270,7 @@ def add_subgroups(
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
     parent: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
 
@@ -400,7 +400,7 @@ def invite_to_group(
     users: Users,
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
 
@@ -519,7 +519,7 @@ def fail_to_add_subgroups(
     selenium: SeleniumDrivers,
     parent: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
 

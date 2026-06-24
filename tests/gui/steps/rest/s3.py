@@ -13,7 +13,7 @@ import requests
 from requests.exceptions import HTTPError
 
 from tests.conftest import REQUEST_TIMEOUT
-from tests.gui.types import Clipboard, DisplayMap
+from tests.gui.types import Clipboard
 from tests.utils.bdd_utils import parsers, wt
 
 # HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
@@ -60,7 +60,7 @@ def copy_item_s3_bucket(
     dst_bucket: str,
     src_bucket: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     path = clipboard.paste(display=displays[browser_id])
     copy_item_between_buckets(

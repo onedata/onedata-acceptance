@@ -57,20 +57,16 @@ class HostPanel(TypedDict):
     hostname: str
 
 
-HostDescription = TypedDict(
-    "HostDescription",
-    {
-        "pod_name": str,
-        "service_type": str,
-        "name": str,
-        "hostname": str,
-        "ip": str,
-        "container_id": str,
-        "provider_host": str,
-        "panel": HostPanel,
-    },
-    total=False,
-)
+class HostDescription(TypedDict, total=False):
+    pod_name: str
+    service_type: str
+    name: str
+    hostname: str
+    ip: str
+    container_id: str
+    provider_host: str
+    panel: HostPanel
+
 
 type Hosts = dict[str, HostDescription]
 type TestConfig = dict[str, JsonValue]

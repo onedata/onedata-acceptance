@@ -32,7 +32,7 @@ from tests.gui.sse_fixtures import (
     monitors,
     space_files_monitor_factory,
 )
-from tests.gui.types import Clipboard, DisplayMap, Numerals, TmpMemory
+from tests.gui.types import Clipboard, Numerals, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
@@ -142,7 +142,7 @@ def pytest_bdd_after_scenario(request: pytest.FixtureRequest) -> None:
     print("=================================================================")
 
 
-def pytest_bdd_step_error(step: object, exception: BaseException) -> None:
+def pytest_bdd_step_error(step: HasName, exception: BaseException) -> None:
     print(f"--- STEP FAILED on {step}")
     print(f"--- Exception: {exception}\n")
 
@@ -229,7 +229,7 @@ def tmp_memory() -> TmpMemory:
 
 
 @fixture
-def displays() -> DisplayMap:
+def displays() -> dict[str, str]:
     """Dict mapping browser to used display (e.g. {'browser1': ':0.0'} )"""
     return {}
 

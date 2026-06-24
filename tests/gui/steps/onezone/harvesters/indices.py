@@ -17,7 +17,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_button_on_data_disc_page,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
@@ -234,7 +234,7 @@ def assert_rejection_reason_on_data_discovery_page(
     field_name: str,
     field_type: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     file_id = clipboard.paste(display=displays[browser_id])
@@ -258,7 +258,7 @@ def assert_id_on_data_discovery_page(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     archive_id = f'"{clipboard.paste(display=displays[browser_id])}"'

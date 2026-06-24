@@ -28,7 +28,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     remove_provider_support_for_space_in_oz_using_gui,
     rename_spaces_in_oz_using_gui,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import UserLike as MemberUserLike
@@ -108,7 +108,7 @@ def create_spaces_in_oz(
     selenium: SeleniumDrivers,
     spaces: Spaces,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
 
     if client.lower() == "rest":
@@ -342,7 +342,7 @@ def invite_other_users_to_space(
     users: Users,
     hosts: Hosts,
     spaces: Mapping[str, str],
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
 

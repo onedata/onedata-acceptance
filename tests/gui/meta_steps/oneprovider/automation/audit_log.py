@@ -58,7 +58,7 @@ from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
@@ -90,7 +90,7 @@ def write_audit_logs_for_task_to_file(
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
     exp_status: str,
 ) -> None:
@@ -118,7 +118,7 @@ def get_audit_logs_from_every_task_in_workflow(
     driver: WebDriver,
     clipboard: Clipboard,
     path: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
     exp_status: str,
 ) -> None:
@@ -148,7 +148,7 @@ def save_audit_logs_to_logs(
     browser_id: str,
     exp_status: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     page = switch_to_automation_page(selenium, browser_id)
     act_status = get_status_from_workflow_visualizer(page)
@@ -178,7 +178,7 @@ def assert_audit_log_in_store(
     selenium: SeleniumDrivers,
     store_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
 
@@ -218,7 +218,7 @@ def assert_content_in_audit_log_in_store(
     selenium: SeleniumDrivers,
     store_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     content: str,
 ) -> None:
     driver = selenium[browser_id]
@@ -267,7 +267,7 @@ def get_store_audit_log(
     selenium: SeleniumDrivers,
     store_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
     store_key: str,
 ) -> AuditLogContent:
@@ -287,7 +287,7 @@ def get_store_audit_log(
 def compare_audit_log_to_store_log(
     driver: WebDriver,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
     elem_name: str,
     elem_type: str,
@@ -334,7 +334,7 @@ def assert_task_audit_log_is_like_store_audit_log(
     task_name: str,
     ordinal: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
     store_name: str,
 ) -> None:
@@ -380,7 +380,7 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     browser_id: str,
     store_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
     workflow: str,
 ) -> None:
@@ -440,7 +440,7 @@ def assert_file_id_in_store_details(
     selenium: SeleniumDrivers,
     store_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
     file_list: str,
     space_name: str,
@@ -522,7 +522,7 @@ def assert_each_element_contains_some_information(
     store_name: str,
     content: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
 ) -> None:
     driver = selenium[browser_id]
@@ -568,7 +568,7 @@ def assert_each_element_checksum_content_in_store(
     store_name: str,
     content: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     store_type = "object"
@@ -762,7 +762,7 @@ def compare_to_expected_if_element_exist_for_store(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     if elem:
         if option == "fileId":
@@ -794,7 +794,7 @@ def assert_content_of_store(
     store_name: str,
     config: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
 
@@ -880,7 +880,7 @@ def compare_content_reason_of_task_audit_log(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     task_name: str,
 ) -> None:
     err_msg = (
@@ -928,7 +928,7 @@ def compare_content_of_task_audit_log(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     expected_identical = ["status", "fetchFileName", "description"]
     actual_details = cast(AuditLogContent, actual_content.get("details", {}))
@@ -1023,7 +1023,7 @@ def assert_exception_in_element_content_in_task_audit_log(
     task_name: str,
     ordinal: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
     file_name = file_name.replace('"', "")
@@ -1058,7 +1058,7 @@ def assert_element_content_in_task_audit_log(
     task_name: str,
     ordinal: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     click = "click"
     link = "Audit log"
@@ -1114,7 +1114,7 @@ def assert_content_of_task_audit_log(
     task_name: str,
     ordinal: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
     expected_identical = ["source", "severity", "timestamp"]
@@ -1193,7 +1193,7 @@ def assert_log_entries_in_json_same_as_visible_in_workflow_audit_log(
     tmpdir: LocalPath,
     selenium: SeleniumDrivers,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     driver = selenium[browser_id]
     modal = Modals(driver).audit_log

@@ -23,7 +23,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
@@ -612,7 +612,7 @@ def assert_property_in_symlink_dets_modal(
     link_property: str,
     value: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     modal = Modals(selenium[browser_id]).symbolic_link_details
     actual_value = modal.get_property(link_property, clipboard, displays, browser_id)
@@ -641,7 +641,7 @@ def assert_contents_downloaded_tar_file(
     contents: str,
     tmpdir: LocalPath,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     name: str,
 ) -> None:
     configured_dir_contents: dict[str, Optional[str]] = {}
@@ -789,7 +789,7 @@ def assert_physical_location_path_and_copy_in_file_details(
     browser_id: str,
     provider: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     hosts: Hosts,
 ) -> None:
     driver = selenium[browser_id]

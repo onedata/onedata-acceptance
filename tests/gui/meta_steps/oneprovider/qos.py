@@ -30,7 +30,7 @@ from tests.gui.steps.oneprovider.qos import (
     delete_all_qualities_of_service,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -138,7 +138,7 @@ def add_id_qos_requirement_in_modal(
     item_name: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     expression = "storageId=" + clipboard.paste(display=displays[browser_id])
     replicas_number = 1
@@ -166,7 +166,7 @@ def add_no_id_qos_requirement_in_modal(
     item_name: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     expression = r"anyStorage \ storageId=" + clipboard.paste(
         display=displays[browser_id]

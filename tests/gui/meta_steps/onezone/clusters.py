@@ -38,7 +38,7 @@ from tests.gui.steps.onezone.members import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -56,7 +56,7 @@ def invite_user_to_cluster(
     cluster: str,
     hosts: Hosts,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     option = "Clusters"
@@ -84,7 +84,7 @@ def invite_user_to_cluster(
 def join_to_cluster(
     selenium: SeleniumDrivers,
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
@@ -210,7 +210,7 @@ def remember_cluster_id(
     hosts: Hosts,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     option = "Copy ID"
     click_on_record_in_clusters_menu(selenium, browser_id, provider, hosts)

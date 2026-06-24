@@ -29,7 +29,7 @@ from tests.gui.steps.onezone.providers import (
     click_on_provider_in_providers_sidebar_with_provider_name,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -87,7 +87,7 @@ def send_copied_invite_token_in_oz_gui(
     user: str,
     browser_list: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     item_type = "token"
@@ -133,7 +133,7 @@ def revoke_support_of_provider_in_list(
 def assert_file_with_content_in_provider_storage(
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     content: str,
     hosts: Hosts,
 ) -> None:

@@ -20,7 +20,7 @@ from tests import (
     PANEL_REST_PORT,
     PROVIDER_REST_PATH_PREFIX,
 )
-from tests.gui.types import Clipboard, DisplayMap, DynamicObject, TmpMemory
+from tests.gui.types import Clipboard, DynamicObject, TmpMemory
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -174,7 +174,7 @@ def send_copied_token_to_other_user(
 @wt(parsers.parse("user of {browser_id} executes copied command"))
 def execute_copied_curl_command(
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
     config: Optional[Mapping[str, str]] = None,
@@ -219,7 +219,7 @@ def _execute_curl_command(
 )
 def execute_copied_curl_command_with_env_vars(
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     tmp_memory: TmpMemory,
     selenium: Mapping[str, FixtureRequestLike],
@@ -362,7 +362,7 @@ def wt_download_using_curl_with_forward(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmpdir: TmpDirLike,
     browsers_to_users: Mapping[str, str],
     file_out: str,
@@ -377,7 +377,7 @@ def download_using_curl(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmpdir: TmpDirLike,
     browsers_to_users: Mapping[str, str],
 ) -> None:
@@ -396,7 +396,7 @@ def download_using_curl_with_forward(
     browser_id: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmpdir: TmpDirLike,
     browsers_to_users: Mapping[str, str],
     file_out: Optional[str],

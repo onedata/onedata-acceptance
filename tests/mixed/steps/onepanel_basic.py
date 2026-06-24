@@ -50,7 +50,7 @@ from tests.gui.steps.common.docker import (
     wt_rm_files_to_space_root_dir,
     wt_rm_files_to_storage_mount_point,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.mixed.steps.rest.onepanel.account_management import (
     change_user_password_in_oz_panel_using_rest,
     login_to_oz_panel_using_new_password_rest,
@@ -487,7 +487,7 @@ def request_space_support(
     users: Users,
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     supporting_user: str,
 ) -> None:
@@ -965,7 +965,7 @@ def send_copied_invite_token(
     user: str,
     selenium: SeleniumDrivers,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     send_to: str,
 ) -> None:

@@ -55,7 +55,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -83,7 +83,7 @@ def create_archive(
     space_name: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
 ) -> None:
     """Create archive according to given config.
@@ -134,7 +134,7 @@ def create_archive_with_follow_symbolic_link(
     space_name: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
     follow_symbolic_links: str,
 ) -> None:
@@ -162,7 +162,7 @@ def _create_archive(
     space_name: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
     follow_symbolic_links: bool = True,
 ) -> None:
@@ -252,7 +252,7 @@ def copy_archive_id_to_tmp_memory(
     client: str,
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     description: str,
 ) -> None:
     if client.lower() == "web gui":

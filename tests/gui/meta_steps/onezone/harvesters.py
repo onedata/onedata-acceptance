@@ -53,7 +53,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_in_the_sidebar,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -130,7 +130,7 @@ def create_harvester(
     hosts: Hosts,
     harvesters: dict[str, str],
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     where = "Discovery"
     input_name = "name"
@@ -267,7 +267,7 @@ def send_invitation_token(
     harvester_name: str,
     browser_id2: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     where = "Discovery"

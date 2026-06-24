@@ -16,7 +16,9 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.steps.common.common import try_click_without_throwing_error
+from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -204,7 +206,7 @@ def change_app_path_with_copied_item(
     selenium: SeleniumDrivers,
     browser_id: str,
     path: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     driver = selenium[browser_id]
@@ -242,7 +244,7 @@ def change_app_path_with_recv_item(
 def copy_site_url(
     selenium: SeleniumDrivers,
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     driver = selenium[browser_id]
@@ -253,7 +255,7 @@ def copy_site_url(
 def open_site_url(
     selenium: SeleniumDrivers,
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     driver = selenium[browser_id]
@@ -282,7 +284,7 @@ def open_received_url_without_waiting(
 def cp_part_of_url(
     selenium: SeleniumDrivers,
     browser_id: str,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     driver = selenium[browser_id]

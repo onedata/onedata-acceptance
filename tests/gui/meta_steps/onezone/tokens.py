@@ -56,7 +56,7 @@ from tests.gui.steps.onezone.tokens import (
     type_new_token_name,
     wt_click_on_btn_for_oz_token,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
 from tests.utils.bdd_utils import given, parsers, wt
@@ -77,7 +77,7 @@ def paste_copied_token_into_text_field(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     token = clipboard.paste(display=displays[browser_id])
     _paste_token_into_text_field(selenium, browser_id, token)
@@ -127,7 +127,7 @@ def consume_token_from_copied_token(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     option = "Tokens"
     button = "Consume token"
@@ -156,7 +156,7 @@ def add_element_with_copied_token(
     browser_id: str,
     elem_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     option = "Tokens"
     button = "Consume token"
@@ -180,7 +180,7 @@ def result_to_consume_token_for_elem(
     elem_name: str,
     result: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     add_element_with_copied_token(selenium, browser_id, elem_name, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result)
@@ -197,7 +197,7 @@ def assert_alert_while_consuming_token(
     selenium: SeleniumDrivers,
     browser_id: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     text: str,
 ) -> None:
     option = "Tokens"
@@ -219,7 +219,7 @@ def result_to_consume_token(
     browser_id: str,
     result: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     consume_token_from_copied_token(selenium, browser_id, clipboard, displays)
     _result_to_consume_token(selenium, browser_id, result)
@@ -786,7 +786,7 @@ def create_token_with_basic_template(
     )
 )
 def create_token_with_copied_object_id(
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     user: str,
     selenium: SeleniumDrivers,
@@ -813,7 +813,7 @@ def create_token_with_copied_object_id(
 
 
 def _copy_object_id(
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     user: str,
     selenium: SeleniumDrivers,
@@ -843,7 +843,7 @@ def _copy_object_id(
     )
 )
 def create_token_with_object_id(
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     user: str,
     selenium: SeleniumDrivers,
@@ -892,7 +892,7 @@ def copy_token_and_store_value(
     browser_id: str,
     token_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     tmp_memory: TmpMemory,
 ) -> None:
     option = "Tokens"

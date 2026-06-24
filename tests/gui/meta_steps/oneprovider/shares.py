@@ -59,7 +59,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, DisplayMap, Numerals, TmpMemory
+from tests.gui.types import Clipboard, Numerals, TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
@@ -208,7 +208,7 @@ def hand_share_url_to_another_user(
     share_name: str,
     item_name: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     modal_name = "Details modal"
@@ -428,7 +428,7 @@ def send_public_handle_link_to_user(
     browser_id: str,
     browser2_id: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     item_type = "URL"

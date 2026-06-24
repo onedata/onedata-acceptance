@@ -41,7 +41,8 @@ from tests.gui.steps.onezone.members import (
     remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.groups.groups_page import Group
@@ -248,7 +249,7 @@ def _create_group_token(
     user2: str,
     name: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
     member: str,
 ) -> None:
@@ -280,7 +281,7 @@ def create_group_token_to_invite_user_using_op_gui(
     user2: str,
     name: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     member = "user"
@@ -302,7 +303,7 @@ def create_group_token_to_invite_group_using_op_gui(
     user2: str,
     name: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     member = "group"
@@ -335,7 +336,7 @@ def add_subgroups_using_op_gui(
     parent: str,
     group_list: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     for child in parse_seq(group_list):
@@ -388,7 +389,7 @@ def fail_to_add_subgroups_using_op_gui(
     parent: str,
     group_list: str,
     tmp_memory: TmpMemory,
-    displays: DisplayMap,
+    displays: dict[str, str],
     clipboard: Clipboard,
 ) -> None:
     create_group_token_to_invite_group_using_op_gui(

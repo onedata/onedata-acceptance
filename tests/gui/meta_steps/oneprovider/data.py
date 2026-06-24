@@ -70,7 +70,7 @@ from tests.gui.steps.onezone.spaces import (
     _click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -1153,7 +1153,7 @@ def get_file_id_from_details_modal(
     tmp_memory: TmpMemory,
     file_name: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> str:
     option_in_space = "Files"
     option_in_menu = "Information"

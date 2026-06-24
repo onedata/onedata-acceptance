@@ -24,7 +24,7 @@ from tests.gui.meta_steps.oneprovider.archives import (
     recalled_archive_details_in_op_gui,
     remove_archive_in_op_gui,
 )
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.mixed.steps.rest.oneprovider.archives import (
     assert_archive_callback_in_op_rest,
     assert_archive_in_op_rest,
@@ -67,7 +67,7 @@ def create_archive_in_op(
     config: str,
     spaces: Mapping[str, str],
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     option: str,
 ) -> None:
     client_lower = client.lower()

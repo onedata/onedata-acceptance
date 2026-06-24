@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from tests.conftest import Hosts, SeleniumDrivers
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import given, parsers, wt
@@ -326,7 +326,7 @@ def assert_value_in_info_tile_in_overview_onepanel_view(
     property_name: str,
     property_value: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
     nav = getattr(Onepanel(selenium[browser_id]).content, transform(view_name))
     properties = nav.tile_info.properties

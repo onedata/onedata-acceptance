@@ -24,7 +24,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
-from tests.gui.types import Clipboard, DisplayMap
+from tests.gui.types import Clipboard
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
@@ -192,7 +192,7 @@ def get_audit_log_json_and_write_to_file(
     log: LogsEntry,
     modal: AuditLog,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
     path: str,
 ) -> None:
@@ -292,7 +292,7 @@ def get_store_content(
     store_type: str,
     index: int,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
     browser_id: str,
 ) -> str:
     store_content_type = "store_content_" + store_type
@@ -319,7 +319,7 @@ def open_url_from_store_content(
     store_name: str,
     selenium: SeleniumDrivers,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
 
     modal = open_store_details_modal(selenium, browser_id, store_name)

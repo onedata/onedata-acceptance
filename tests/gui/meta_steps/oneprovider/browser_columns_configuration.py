@@ -11,7 +11,7 @@ import yaml
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_appear
-from tests.gui.types import Clipboard, DisplayMap, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, sort_json_from_string, transform
 from tests.utils.bdd_utils import parsers, wt
@@ -253,7 +253,7 @@ def assert_json_column_content(
     item_name: str,
     value: str,
     clipboard: Clipboard,
-    displays: DisplayMap,
+    displays: dict[str, str],
 ) -> None:
 
     driver = selenium[browser_id]
