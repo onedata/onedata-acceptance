@@ -54,7 +54,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import Numerals, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import parsers, wt
@@ -345,7 +345,7 @@ def assert_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     modal_name = "Details modal"
     close_button = "X"
@@ -378,7 +378,7 @@ def assert_user_id_in_ace_in_op_gui(
     space: str,
     path: str,
     tmp_memory: TmpMemory,
-    numerals: Numerals,
+    numerals: dict[str, int],
     users: Users,
 ) -> None:
     modal_name = "Details modal"

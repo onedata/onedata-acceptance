@@ -12,7 +12,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Numerals, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.edit_permissions import (
     MemberAclPermission,
@@ -23,7 +23,7 @@ from tests.utils.utils import repeat_failed
 
 
 def _get_index(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> int:
     n = numerals[num]
     if n < 0:
@@ -183,7 +183,7 @@ def assert_fail_to_select_acl_option(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_acl_modal(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -233,7 +233,7 @@ def assert_subject_type(
     browser_id: str,
     subject_type: str,
     num: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -252,7 +252,7 @@ def assert_subject_type(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -273,7 +273,11 @@ def assert_lack_of_subject(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_editable(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals, name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    num: str,
+    numerals: dict[str, int],
+    name: str,
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -297,7 +301,11 @@ def assert_acl_record_editable(
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_not_editable(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals, name: str
+    selenium: SeleniumDrivers,
+    browser_id: str,
+    num: str,
+    numerals: dict[str, int],
+    name: str,
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -323,7 +331,7 @@ def assert_set_acl_privileges(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
     option_list: str,
 ) -> None:
     driver = selenium[browser_id]
@@ -365,7 +373,7 @@ def assert_set_acl_privileges(
     )
 )
 def assert_set_all_acl_privileges(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> None:
     option_list = "[allow, Content, Acl, Metadata, Attributes, Deletion]"
     assert_set_acl_privileges(selenium, browser_id, num, numerals, option_list)
@@ -383,7 +391,7 @@ def assert_acl_subject(
     selenium: SeleniumDrivers,
     browser_id: str,
     num: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
     sub_type: str,
     name: str,
 ) -> None:
@@ -413,7 +421,7 @@ def click_on_btn_in_acl_record(
     browser_id: str,
     btn: str,
     num: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)
@@ -452,7 +460,7 @@ def assert_subject_not_in_list_in_acl_record(
     browser_id: str,
     subjects: str,
     num: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     n = _get_index(selenium, browser_id, num, numerals)
 
@@ -528,7 +536,7 @@ def assert_not_no_access_tag_on_file(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_unknown_user_id_from_acl_entry(
-    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, num: str, numerals: dict[str, int]
 ) -> str:
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, numerals)

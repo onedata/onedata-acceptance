@@ -32,7 +32,7 @@ from tests.gui.sse_fixtures import (
     monitors,
     space_files_monitor_factory,
 )
-from tests.gui.types import Clipboard, Numerals, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
@@ -166,7 +166,7 @@ def finalize(request: pytest.FixtureRequest) -> Generator[None, None, None]:
 
 
 @fixture(scope="session")
-def numerals() -> Numerals:
+def numerals() -> dict[str, int]:
     return {
         "first": 0,
         "second": 1,

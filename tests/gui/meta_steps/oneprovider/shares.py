@@ -59,7 +59,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, Numerals, TmpMemory
+from tests.gui.types import Clipboard, TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
@@ -449,7 +449,7 @@ def send_public_handle_link_to_user(
     )
 )
 def fill_inputs_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
 ) -> None:
     """
     Fill EDM metadata form according to given config.
@@ -545,7 +545,7 @@ def fill_inputs_in_edm_metadata_form(
     )
 )
 def assert_properties_in_edm_metadata_form(
-    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: Numerals
+    selenium: SeleniumDrivers, browser_id: str, config: str, numerals: dict[str, int]
 ) -> None:
     """
     Assert EDM metadata values according to given config.

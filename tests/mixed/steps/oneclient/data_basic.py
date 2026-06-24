@@ -17,7 +17,7 @@ import yaml
 
 from tests.conftest import EnvDesc, Hosts, JsonValue, Users
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import Numerals, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
     Content,
@@ -417,7 +417,7 @@ def assert_ace_in_op_oneclient(
     priv: str,
     item_type: ItemType,
     name: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     ace = multi_file_steps.get_metadata(user, path, host, users)["cdmi_acl"]
     ace = json.loads(ace)[numerals[num]]

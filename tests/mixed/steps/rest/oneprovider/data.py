@@ -23,7 +23,7 @@ from oneprovider_client.rest import ApiException as OPException
 
 from tests import OP_REST_PORT
 from tests.conftest import Hosts, Users
-from tests.gui.types import Numerals, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.gui.utils import CDMIClient as cdmi
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.oneprovider_client import ApiClient
@@ -315,7 +315,7 @@ def assert_ace_in_op_rest(
     users: Users,
     host: str,
     hosts: Hosts,
-    numerals: Numerals,
+    numerals: dict[str, int],
     path: str,
     num: str,
     priv: str,

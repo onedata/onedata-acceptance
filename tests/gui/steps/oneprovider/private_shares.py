@@ -15,7 +15,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.conftest import SeleniumDrivers
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Numerals
 from tests.gui.utils import Popups
 from tests.gui.utils import PrivateShareView as private_share
 from tests.gui.utils.generic import transform
@@ -156,7 +155,7 @@ def write_input_in_edm_form_in_shares_interface(
     text: str,
     which_input: str,
     selenium: SeleniumDrivers,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     numeral = "first"
     write_to_nth_input_in_edm_form_in_shares_interface(
@@ -178,7 +177,7 @@ def write_to_nth_input_in_edm_form_in_shares_interface(
     which_input: str,
     selenium: SeleniumDrivers,
     numeral: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
     form = private_share(driver).edm_metadata_form
@@ -284,7 +283,7 @@ def assert_val_edm_form_in_shares_interface(
     expected_value: str,
     section_name: str,
     selenium: SeleniumDrivers,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     numeral = "first"
     assert_nth_val_edm_form_in_shares_interface(
@@ -305,7 +304,7 @@ def assert_nth_val_edm_form_in_shares_interface(
     section_name: str,
     selenium: SeleniumDrivers,
     numeral: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
 ) -> None:
     driver = selenium[browser_id]
     items = private_share(driver).edm_public_view.items

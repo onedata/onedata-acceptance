@@ -31,11 +31,7 @@ class DynamicObject(Protocol):
 
     def __contains__(self, item: object) -> bool: ...
 
-
-type DriverMap = dict[str, WebDriver]
-type Numerals = dict[str, int]
 type TmpMemory = defaultdict[str, dict[str, DynamicObject]]
-
 
 class Clipboard(Protocol):
     def copy(self, text: str, display: str) -> None: ...

@@ -18,7 +18,7 @@ from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui,
     set_posix_permissions_in_op_gui,
 )
-from tests.gui.types import Numerals, TmpMemory
+from tests.gui.types import TmpMemory
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     assert_ace_in_op_oneclient,
@@ -128,7 +128,7 @@ def assert_ace_in_op(
     priv: str,
     item_type: str,
     name: str,
-    numerals: Numerals,
+    numerals: dict[str, int],
     tmp_memory: TmpMemory,
 ) -> None:
     full_path = f"{space}/{path}"
