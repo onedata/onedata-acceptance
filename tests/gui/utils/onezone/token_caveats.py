@@ -11,8 +11,9 @@ from typing import Callable, Iterable, Protocol, TypedDict
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from tests.gui.types import PopupFactory, TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.common.common import Toggle
+from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -131,7 +132,7 @@ class CaveatField(PageObject):
 
     def set_allow(
         self,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
@@ -141,7 +142,7 @@ class CaveatField(PageObject):
 
     def set_deny(
         self,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
@@ -152,7 +153,7 @@ class CaveatField(PageObject):
     def set_allowance(
         self,
         allow: bool,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         selenium: SeleniumDrivers,
         browser_id: str,
     ) -> None:
@@ -208,7 +209,7 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         region_caveat: RegionCaveat,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         caveat_allow = region_caveat.get("allow", True)
@@ -222,7 +223,7 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         region: str,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.new_item()
         driver = selenium[browser_id]
@@ -234,7 +235,7 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         country_caveat: CountryCaveat,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         caveat_allow = country_caveat.get("allow", True)
@@ -264,7 +265,7 @@ class CaveatField(PageObject):
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         consumer_caveats: Iterable[ConsumerCaveatConfig],
         users: Users,
         groups: dict[str, str],
@@ -297,7 +298,7 @@ class CaveatField(PageObject):
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         consumer_type: str,
         method: str,
         value: str,
@@ -321,7 +322,7 @@ class CaveatField(PageObject):
         selenium: SeleniumDrivers,
         browser_id: str,
         service_caveats: dict[str, list[str]],
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
     ) -> None:
         self.activate()
         service_cav = service_caveats.get("Service", [])
@@ -339,7 +340,7 @@ class CaveatField(PageObject):
         self,
         selenium: SeleniumDrivers,
         browser_id: str,
-        popups: PopupFactory,
+        popups: Callable[[WebDriver], Popups],
         consumer_type: str,
         value: str,
     ) -> None:

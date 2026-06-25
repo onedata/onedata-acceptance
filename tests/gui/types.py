@@ -14,13 +14,7 @@ if TYPE_CHECKING:
     from selenium.webdriver.remote.webdriver import WebDriver
     from selenium.webdriver.remote.webelement import WebElement
 
-    from tests.gui.utils.common.popups import Popups
-    from tests.types import JsonValue
-else:
-    WebDriver = Any
-    WebElement = Any
-    JsonValue = Any
-    Popups = Any
+from tests.type_definitions import JsonValue
 
 
 type TmpMemory = defaultdict[str, dict[str, Any]]
@@ -44,8 +38,6 @@ type AuditLogValue = (
     str | int | float | bool | list["AuditLogValue"] | dict[str, "AuditLogValue"]
 )
 type AuditLogContent = dict[str, AuditLogValue]
-
-type PopupFactory = Callable[[WebDriver], Popups]
 
 type PrivilegeGranted = Literal[True, False, "Partially"]
 PrivilegeGroupConfig = TypedDict(

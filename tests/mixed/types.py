@@ -6,16 +6,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections.abc import Callable, Iterable, Mapping, MutableMapping, Sequence
-from typing import TYPE_CHECKING, Any, Literal, NotRequired, Optional, Protocol, TypedDict
+from typing import Any, Literal, NotRequired, Optional, Protocol, TypedDict
 
-if TYPE_CHECKING:
-    from tests.conftest import JsonValue
-    from tests.gui.utils.generic import SpecialDir
-    from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
-else:
-    JsonValue = Any
-    SpecialDir = Any
-    SpaceFilesMonitorClientImpl = Any
+from tests.type_definitions import JsonValue
 
 
 type IdMap = Mapping[str, str]
@@ -31,7 +24,7 @@ type UserTmpMemory = MutableMapping[str, Mailbox]
 type RestOnezoneTmpMemory = MutableMapping[str, UserTmpMemory]
 type SpaceManagementTmpMemoryEntry = MutableMapping[str, Mailbox | str]
 type SpaceManagementTmpMemory = MutableMapping[str, SpaceManagementTmpMemoryEntry]
-type SpecialDirsTmpMemory = MutableMapping[SpecialDir, dict[str, str]]
+type SpecialDirsTmpMemory = MutableMapping[Any, dict[str, str]]
 
 type StoreContent = dict[str, JsonValue]
 type InputFiles = list[str]
@@ -53,7 +46,7 @@ type Resolver = Callable[[str], ResolverResult]
 
 type FileAttrs = dict[str, str | int]
 type EventResult = str | tuple[str, float] | dict[str, FileAttrs]
-type EventMemory = MutableMapping[str, SpaceFilesMonitorClientImpl]
+type EventMemory = MutableMapping[str, Any]
 type ExpectedAttrs = Mapping[str, Optional[str | int]]
 
 type MappingValue = Optional[str | int]
