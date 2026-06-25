@@ -32,6 +32,7 @@ from tests.mixed.types import (
     Spaces,
     UsersWithToken as UserTokenMap,
 )
+from tests.mixed.type_definitions import SpecialDirsTmpMemory as TmpMemory
 from tests.mixed.utils.common import NoSuchClientException
 from tests.oneclient.steps.multi_dir_steps import (
     delete_dir_by_id,
@@ -417,7 +418,7 @@ def try_to_add_qos_to_special_dir_by_id(
     try:
         create_qos_requirement_in_op_by_id_rest(
             user,
-            cast(UserTokenMap, users),
+            users,
             cast(HostsConfig, hosts),
             host,
             expression,
@@ -467,7 +468,7 @@ def try_to_add_json_metadata_to_special_dir_by_id(
     try:
         add_json_metadata_to_file_rest(
             user,
-            cast(UserTokenMap, users),
+            users,
             cast(HostsConfig, hosts),
             host,
             expression,

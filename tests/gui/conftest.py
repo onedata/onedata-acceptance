@@ -236,8 +236,6 @@ def clipboard() -> Clipboard:
     from collections import namedtuple
     from platform import system as get_system
 
-    Clipboard = namedtuple("Clipboard", ["copy", "paste"])
-
     def copy(text: str, display: str) -> None:
         if get_system() == "Darwin":
             cmd = ["pbcopy"]

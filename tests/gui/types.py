@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2026 Onedata (onedata.org)"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from collections.abc import Callable, Iterator
 from os import PathLike
 from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict
@@ -77,7 +77,4 @@ PrivilegeGroupConfig = TypedDict(
 type PrivilegesConfig = dict[str, PrivilegeGroupConfig]
 
 
-class Clipboard(Protocol):
-    def copy(self, text: str, display: str) -> None: ...
-
-    def paste(self, display: str) -> str: ...
+Clipboard = namedtuple("Clipboard", ["copy", "paste"])

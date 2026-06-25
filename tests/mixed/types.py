@@ -51,14 +51,6 @@ type AssertFileContent = Callable[[str, str], None]
 type ResolverResult = str | list[str]
 type Resolver = Callable[[str], ResolverResult]
 
-
-class UserWithToken(Protocol):
-    @property
-    def token(self) -> str: ...
-
-
-type UsersWithToken = Mapping[str, UserWithToken]
-
 type FileAttrs = dict[str, str | int]
 type EventResult = str | tuple[str, float] | dict[str, FileAttrs]
 type EventMemory = MutableMapping[str, SpaceFilesMonitorClientImpl]

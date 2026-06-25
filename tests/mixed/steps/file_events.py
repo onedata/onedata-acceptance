@@ -16,10 +16,14 @@ import yaml
 from tests import OP_REST_PORT
 from tests.gui.sse_fixtures import MonitorEntry
 from tests.gui.utils.generic import parse_seq
-from tests.mixed.types import EventMemory, EventResult, ExpectedAttrs, FileAttrs
-from tests.mixed.utils.common import UsersWithToken
-from tests.mixed.utils.sse_utils import FileAttrs, SpaceFilesMonitorClientImpl
-from tests.types import Hosts
+from tests.mixed.type_definitions import (
+    EventMemory,
+    EventResult,
+    ExpectedAttrs,
+    FileAttrs,
+)
+from tests.mixed.utils.sse_utils import SpaceFilesMonitorClientImpl
+from tests.type_definitions import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import get_file_id_by_rest, get_file_id_cached
 
@@ -63,7 +67,7 @@ def wt_start_observing_file_events(
     hosts: Hosts,
     host: str,
     spaces: Mapping[str, str],
-    users: UsersWithToken,
+    users: Users,
 ) -> None:
     space_id = spaces[space]
     token = users[user].token
@@ -110,7 +114,7 @@ def start_observing_file_events(
 )
 def wt_assert_new_file_event_in_observed_directory(
     user: str,
-    users: UsersWithToken,
+    users: Users,
     host: str,
     hosts: Hosts,
     path: str,
@@ -136,7 +140,7 @@ def wt_assert_new_file_event_in_observed_directory(
 )
 def wt_assert_deleted_file_event_in_observed_directory(
     user: str,
-    users: UsersWithToken,
+    users: Users,
     host: str,
     hosts: Hosts,
     path: str,
@@ -183,7 +187,7 @@ def assert_new_heartbeat_event(
 )
 def wt_assert_updated_file_events_in_observed_directory(
     user: str,
-    users: UsersWithToken,
+    users: Users,
     config: str,
     path: str,
     space: str,

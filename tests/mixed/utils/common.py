@@ -30,11 +30,13 @@ from tests.mixed.oneprovider_client import ApiClient as ApiClient_provider
 from tests.mixed.oneprovider_client.configuration import Configuration as Conf_provider
 from tests.mixed.onezone_client import ApiClient as ApiClient_OZ
 from tests.mixed.onezone_client.configuration import Configuration as Conf_OZ
+from tests.mixed.type_definitions import Resolver
 from tests.mixed.utils.privileges import (
     space_manager_privileges,
     space_member_privileges,
     space_owner_privileges,
 )
+from tests.type_definitions import Users
 from tests.utils.bdd_utils import parsers, wt
 
 
@@ -109,7 +111,7 @@ def login_to_panel(username: str, password: str, host: str) -> ApiClient_panel:
 
 def login_to_cdmi(
     username: str,
-    users: UsersWithToken,
+    users: Users,
     host: str,
     access_token: Optional[str] = None,
     identity_token: Optional[str] = None,
@@ -133,7 +135,7 @@ def login_to_cdmi(
 
 def login_to_provider(
     username: str,
-    users: UsersWithToken,
+    users: Users,
     host: str,
     access_token: Optional[str] = None,
 ) -> ApiClient_provider:
