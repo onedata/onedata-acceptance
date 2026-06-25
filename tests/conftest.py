@@ -73,6 +73,12 @@ VIDEO_ATTRS = {
     "class": "visible",
 }
 
+DEFAULT_ENV_FILES: dict[TestType, str] = {
+    "gui": "1oz_1op_deployed",
+    "mixed": "1oz_1op_1oc",
+    "oneclient": "singleprovider_singleclient_proxyio",
+}
+
 REQUEST_TIMEOUT = 10
 
 # ============================================================================
@@ -234,7 +240,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
         return
 
     if not env_file:
-        env_file = "1oz_1op_deployed" if test_type == "gui" else "1oz_1op_1oc"
+        env_file = DEFAULT_ENV_FILES.get(test_type, "1oz_1op_1oc")
 
     metafunc.parametrize("env_description_file", [env_file], scope="session")
 

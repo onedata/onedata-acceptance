@@ -330,7 +330,7 @@ class Client:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         xattrs[name] = value
 
-    def getxattr(self, file: str, name: str) -> str:
+    def getxattr(self, file: str, name: str) -> bytes:
         xattrs = self.rpyc_connection.modules.xattr.xattr(file)
         return xattrs[name]
 

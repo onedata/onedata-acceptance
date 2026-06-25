@@ -889,13 +889,12 @@ def check_string_xattr(
     file_path = client.absolute_path(file)
 
     def condition() -> None:
-        xattr_value = client.getxattr(file_path, name)
+        xattr_value: bytes = client.getxattr(file_path, name)
         if isinstance(value, str):
             value_utf = value.encode("utf-8")
         else:
             value_utf = value
-
-        assert xattr_value.encode("utf-8") == value_utf
+        assert xattr_value == value_utf
 
     assert_(client.perform, condition)
 

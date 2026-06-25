@@ -50,7 +50,6 @@ ignore_missing_imports = true
 module = [
     "py.xml",
     "jsondiff",
-    "fs.onedatafs",
     "environment",
     "environment.*",
 ]
@@ -69,7 +68,6 @@ module = [
     "tests.utils.onenv_utils",
     "tests.utils.user_utils",
     "tests.mixed.utils.sse_utils",
-    "tests.onedata_fs.unit_tests.test_onedatafs",
 ]
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
