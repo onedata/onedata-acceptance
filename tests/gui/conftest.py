@@ -11,9 +11,10 @@ import os
 import re
 import subprocess as sp
 from collections import defaultdict
-from typing import Generator, cast
+from typing import TYPE_CHECKING, Generator, cast
 
 import pytest
+from _pytest._py.path import LocalPath
 from _pytest.config.argparsing import Parser
 from _pytest.reports import TestReport
 from pytest import fixture, hookimpl, skip
@@ -37,6 +38,10 @@ from tests.type_definitions import (
 from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir
+
+# avoid cyclic imports
+if TYPE_CHECKING:
+    from tests.gui.utils import DataDiscoveryPage, OZLoggedIn, Popups
 
 SELENIUM_IMPLICIT_WAIT = 0
 
@@ -194,21 +199,21 @@ def test_type(request: pytest.FixtureRequest) -> str:
 
 
 @fixture(scope="session")
-def oz_page() -> type:
+def oz_page() -> type["OZLoggedIn"]:
     from tests.gui.utils import OZLoggedIn
 
     return OZLoggedIn
 
 
 @fixture(scope="session")
-def popups() -> type:
+def popups() -> type["Popups"]:
     from tests.gui.utils import Popups
 
     return Popups
 
 
 @fixture(scope="session")
-def data_discovery() -> type:
+def data_discovery() -> type["DataDiscoveryPage"]:
     from tests.gui.utils import DataDiscoveryPage
 
     return DataDiscoveryPage
@@ -280,7 +285,7 @@ def _skip_sensitive(request: pytest.FixtureRequest, sensitive_url: object) -> No
 def capabilities(
     request: pytest.FixtureRequest,
     capabilities: Capabilities,
-    tmpdir: object,
+    tmpdir: LocalPath,
 ) -> Capabilities:
     """Add --no-sandbox argument for Chrome headless
     Should be the same as adding

@@ -51,10 +51,6 @@ class FixtureRequestLike(Protocol):
     def getfixturevalue(self, argname: str) -> Any: ...
 
 
-class TmpDirLike(Protocol):
-    def join(self, *args: str) -> LocalPath: ...
-
-
 class NoSuchClientException(Exception):
     def __init__(self, value: object) -> None:
         self.value = value
@@ -356,7 +352,7 @@ def wt_download_using_curl_with_forward(
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
     displays: dict[str, str],
-    tmpdir: TmpDirLike,
+    tmpdir: LocalPath,
     browsers_to_users: Mapping[str, str],
     file_out: str,
 ) -> None:
@@ -371,7 +367,7 @@ def download_using_curl(
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
     displays: dict[str, str],
-    tmpdir: TmpDirLike,
+    tmpdir: LocalPath,
     browsers_to_users: Mapping[str, str],
 ) -> None:
     download_using_curl_with_forward(
@@ -390,7 +386,7 @@ def download_using_curl_with_forward(
     tmp_memory: TmpMemory,
     clipboard: Clipboard,
     displays: dict[str, str],
-    tmpdir: TmpDirLike,
+    tmpdir: LocalPath,
     browsers_to_users: Mapping[str, str],
     file_out: Optional[str],
 ) -> None:

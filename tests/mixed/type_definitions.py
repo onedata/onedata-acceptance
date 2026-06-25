@@ -46,7 +46,6 @@ type Resolver = Callable[[str], ResolverResult]
 
 type FileAttrs = dict[str, str | int]
 type EventResult = str | tuple[str, float] | dict[str, FileAttrs]
-type EventMemory = MutableMapping[str, Any]
 type ExpectedAttrs = Mapping[str, Optional[str | int]]
 
 type MappingValue = Optional[str | int]

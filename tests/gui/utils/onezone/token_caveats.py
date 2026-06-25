@@ -189,7 +189,7 @@ class CaveatField(PageObject):
     def set_expiration_caveat(
         self,
         expire_caveat: ExpirationCaveat,
-        tmp_memory: dict[str, object],
+        tmp_memory: TmpMemory,
     ) -> None:
         self.activate()
         min_delta = expire_caveat["after"]

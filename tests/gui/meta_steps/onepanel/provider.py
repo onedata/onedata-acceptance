@@ -38,6 +38,7 @@ from tests.gui.steps.rest.provider import (
     get_provider_service_nodes_statuses,
     start_stop_provider_service_node,
 )
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
 from tests.type_definitions import Hosts, JsonValue, SeleniumDrivers
@@ -116,7 +117,7 @@ def register_provider_in_op_using_gui(
     user: str,
     hosts: Hosts,
     config: str,
-    tmp_memory: dict[str, dict[str, object]],
+    tmp_memory: TmpMemory,
 ) -> None:
     step2 = "step 2"
     options = yaml.load(config, yaml.Loader)

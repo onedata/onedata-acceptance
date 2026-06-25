@@ -60,7 +60,7 @@ from . import BROWSER
 
 
 @fixture(scope="module")
-def screens():
+def screens() -> list[int]:
     return [0, 1]
 
 

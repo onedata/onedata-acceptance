@@ -15,9 +15,9 @@ import yaml
 
 from tests import OP_REST_PORT
 from tests.gui.sse_fixtures import MonitorEntry
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.type_definitions import (
-    EventMemory,
     EventResult,
     ExpectedAttrs,
     FileAttrs,
@@ -63,7 +63,7 @@ def wt_start_observing_file_events(
     dir_path: str,
     space: str,
     space_files_monitor_factory: SpaceFilesMonitorFactory,
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     hosts: Hosts,
     host: str,
     spaces: Mapping[str, str],
@@ -90,7 +90,7 @@ def wt_start_observing_file_events(
 
 def start_observing_file_events(
     space_files_monitor_factory: SpaceFilesMonitorFactory,
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     op_authority: str,
     space_id: str,
     token: str,
@@ -119,7 +119,7 @@ def wt_assert_new_file_event_in_observed_directory(
     hosts: Hosts,
     path: str,
     space: str,
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
 ) -> None:
     provider_hostname = hosts[host]["hostname"]
@@ -145,7 +145,7 @@ def wt_assert_deleted_file_event_in_observed_directory(
     hosts: Hosts,
     path: str,
     space: str,
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
 ) -> None:
     provider_hostname = hosts[host]["hostname"]
@@ -164,7 +164,7 @@ def wt_assert_deleted_file_event_in_observed_directory(
     )
 )
 def assert_new_heartbeat_event(
-    tmp_memory: EventMemory, async_loop_in_thread: asyncio.AbstractEventLoop
+    tmp_memory: TmpMemory, async_loop_in_thread: asyncio.AbstractEventLoop
 ) -> None:
     for _ in range(NUMBER_OF_EVENTS_TO_LOOK_BACK):
         try:
@@ -193,7 +193,7 @@ def wt_assert_updated_file_events_in_observed_directory(
     space: str,
     host: str,
     hosts: Hosts,
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
 ) -> None:
     """
@@ -224,7 +224,7 @@ def wt_assert_updated_file_events_in_observed_directory(
 
 
 def assert_file_actions_in_observed_directory(
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
     file_id: str,
     expected_attrs: ExpectedAttrs,
@@ -260,7 +260,7 @@ def assert_file_actions_in_observed_directory(
 
 
 def assert_file_action_in_observed_directory(
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
     file_action: ObservedFileAction,
     expected_result: str,
@@ -280,7 +280,7 @@ def assert_file_action_in_observed_directory(
 
 
 def get_file_action_in_observed_directory(
-    tmp_memory: EventMemory,
+    tmp_memory: TmpMemory,
     async_loop_in_thread: asyncio.AbstractEventLoop,
     file_action: ObservedFileAction,
 ) -> EventResult:
