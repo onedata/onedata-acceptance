@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from abc import ABCMeta
 from collections.abc import Iterable
+from typing import Any
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import DynamicObject
 from tests.gui.utils.core.base import PageObject, PageObjectMeta
 from tests.gui.utils.core.web_elements import Label, NamedButton
 
@@ -29,7 +29,7 @@ class GenericPage(PageObject, metaclass=GenericPageMeta):
     name = id = Label(".row-heading .col-title")
     get_started = NamedButton(".btn-default", text="Get started")
 
-    def __getitem__(self, item: int | str) -> object:
+    def __getitem__(self, item: int | str) -> Any:
         for attr in ListElement:
             attr_list = f"{attr.value}_list"
             if hasattr(self, attr_list):

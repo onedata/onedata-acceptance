@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from typing import Any
+
 from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -15,7 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
-from tests.gui.types import Clipboard, DynamicObject, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import parse_seq, transform
@@ -276,7 +278,7 @@ def click_element_on_lists_on_left_sidebar_menu(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def get_list_element_on_subpage_in_oz_page(
     driver: WebDriver, page_name: str, option: ListElement, elem_name: str
-) -> PageObject:
+) -> Any:
     page = OZLoggedIn(driver).get_page_and_click(page_name)
     elements_list = getattr(page, f"{option.value}_list")
     return elements_list[elem_name]

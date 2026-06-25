@@ -5,9 +5,9 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from selenium.webdriver.remote.webdriver import WebDriver
+from typing import Any
 
-from tests.gui.types import DynamicObject
+from selenium.webdriver.remote.webdriver import WebDriver
 
 from ..core.web_elements import Label, WebItem
 from .archive_browser import ArchiveBrowser
@@ -47,5 +47,5 @@ class OPLoggedIn:
     def __str__(self) -> str:
         return "Oneprovider page"
 
-    def __getattr__(self, item: str) -> DynamicObject:
+    def __getattr__(self, item: str) -> Any:
         return self.tabs[item](self.web_elem, self.web_elem, self)

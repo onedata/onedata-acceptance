@@ -6,9 +6,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from collections import defaultdict, namedtuple
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from os import PathLike
-from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict
+from typing import Any, Literal, TypedDict, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from selenium.webdriver.remote.webdriver import WebDriver
@@ -23,26 +23,7 @@ else:
     Popups = Any
 
 
-class DynamicObject(Protocol):
-    """Structural type for dynamically composed page and plugin objects."""
-
-    def __getattr__(self, name: str) -> "DynamicObject": ...
-
-    def __call__(self, *args: object, **kwargs: object) -> "DynamicObject": ...
-
-    def __getitem__(self, key: object) -> "DynamicObject": ...
-
-    def __setitem__(self, key: object, value: object) -> None: ...
-
-    def __iter__(self) -> Iterator["DynamicObject"]: ...
-
-    def __len__(self) -> int: ...
-
-    def __bool__(self) -> bool: ...
-
-    def __contains__(self, item: object) -> bool: ...
-
-type TmpMemory = defaultdict[str, dict[str, DynamicObject]]
+type TmpMemory = defaultdict[str, dict[str, Any]]
 
 type BrowserTmpMemory = dict[str, dict[str, object]]
 type FilePath = str | bytes | PathLike[str] | PathLike[bytes]

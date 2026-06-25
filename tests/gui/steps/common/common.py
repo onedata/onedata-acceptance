@@ -5,9 +5,9 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from contextlib import suppress
-from typing import Optional, Protocol
+from typing import Any, Optional, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -16,7 +16,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import DynamicObject
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.generic_page import GenericPage
@@ -35,6 +34,13 @@ class ScrollableColumns(Protocol):
     ) -> dict[str, list[str]]: ...
 
     def scroll_by_press_space(self) -> None: ...
+
+
+class VisibleItem(Protocol):
+    name: str
+    web_elem: WebElement
+
+    def __getattr__(self, name: str) -> Any: ...
 
 
 def assert_n_items_in_items_list(
@@ -70,15 +76,19 @@ def assert_n_items_in_items_list(
 # so there is a need to add repeats
 @repeat_failed(timeout=WAIT_BACKEND)
 def get_visible_items_list(
-    page: Union[GenericPage, Browser],
-    items_type: ListElement,
-    main_field: str = "name",
-) -> list[Any]:
+    page: GenericPage | Browser, items_type: ListElement, main_field: str = "name"
+) -> Sequence[VisibleItem]:
     items_type_str = transform(items_type.value)
     elements_list = getattr(page, f"{items_type_str}_list")
     if isinstance(page, Browser):
-        return page.get_visible_file_rows(elements_list, main_field)
-    return page.get_visible_elements_list(elements_list, main_field)
+        return cast(
+            Sequence[VisibleItem],
+            page.get_visible_file_rows(elements_list, main_field),
+        )
+    return cast(
+        Sequence[VisibleItem],
+        page.get_visible_elements_list(elements_list, main_field),
+    )
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -86,7 +96,7 @@ def wait_for_checking_toggle(toggle: Any, toggle_name: str = "") -> None:
     assert toggle.is_checked(), f"did not manage to check a toggle {toggle_name}"
 
 
-def _get_page(where: str, driver: WebDriver) -> GenericPage | Browser:
+def _get_page(where: str, driver: WebDriver) -> Any:
     if where == "shares":
         return OZLoggedIn(driver)["shares"]
     if where == "groups":

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import json
 import subprocess as sp
 from collections.abc import Mapping
-from typing import Optional, Protocol
+from typing import Any, Optional, Protocol
 
 import yaml
 from _pytest._py.path import LocalPath
@@ -20,8 +20,7 @@ from tests import (
     PANEL_REST_PORT,
     PROVIDER_REST_PATH_PREFIX,
 )
-from tests.gui.types import Clipboard, DynamicObject, TmpMemory
-from tests.mixed.types import Resolver, ResolverResult, UsersWithToken
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.cdmi_client import ApiClient as ApiClient_CDMI
 from tests.mixed.cdmi_client.configuration import Configuration as Conf_CDMI
 from tests.mixed.onepanel_client import ApiClient as ApiClient_panel
@@ -49,7 +48,7 @@ class ConfigurationLike(Protocol):
 
 
 class FixtureRequestLike(Protocol):
-    def getfixturevalue(self, argname: str) -> DynamicObject: ...
+    def getfixturevalue(self, argname: str) -> Any: ...
 
 
 class TmpDirLike(Protocol):

@@ -5,11 +5,11 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Any
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement as SeleniumWebElement
 
-from tests.gui.types import DynamicObject
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, WebElementsSequence
 
@@ -64,10 +64,10 @@ class OZLoggedIn:
     def __str__(self) -> str:
         return "Onezone page"
 
-    def __getitem__(self, item: str) -> DynamicObject:
+    def __getitem__(self, item: str) -> Any:
         return get_page(self, item, False)
 
-    def get_page_and_click(self, item: str) -> DynamicObject:
+    def get_page_and_click(self, item: str) -> Any:
         return get_page(self, item)
 
     def is_panel_clicked(self, item: str) -> bool:
@@ -90,7 +90,7 @@ class OZLoggedIn:
         return self._profile
 
 
-def get_page(oz_page: OZLoggedIn, item: str, click: bool = True) -> DynamicObject:
+def get_page(oz_page: OZLoggedIn, item: str, click: bool = True) -> Any:
     item = item.lower()
     cls = oz_page.panels.get(item, None)
     if cls:
