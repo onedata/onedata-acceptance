@@ -13,9 +13,9 @@ from typing import Optional
 import yaml
 from _pytest._py.path import LocalPath
 
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import parse_seq
-from tests.types import Hosts
+from tests.type_definitions import Hosts
 from tests.utils.bdd_utils import given, parsers, wt
 
 PROVIDER_CONTAINER_NAME = "oneprovider-1"

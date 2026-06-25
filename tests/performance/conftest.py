@@ -16,7 +16,7 @@ import yaml
 
 from tests import LOGDIRS, PERFORMANCE_LOGDIR
 from tests.conftest import export_logs, get_test_type, make_logdir
-from tests.types import (
+from tests.type_definitions import (
     EnvDesc,
     Hosts,
     Users,

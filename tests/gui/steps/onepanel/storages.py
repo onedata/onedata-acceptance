@@ -11,7 +11,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import Onepanel, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

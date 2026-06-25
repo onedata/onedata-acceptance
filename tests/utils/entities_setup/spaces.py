@@ -16,7 +16,7 @@ import yaml
 from tests import OP_REST_PORT, OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
-from tests.types import HostDescription, JsonValue
+from tests.type_definitions import HostDescription, JsonValue
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import (
     HTTPBadRequest,

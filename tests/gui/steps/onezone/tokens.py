@@ -13,13 +13,13 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree_in_tokens import PrivilegeTree
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.token_caveats import CaveatField
 from tests.gui.utils.onezone.tokens_page import TokenRow
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

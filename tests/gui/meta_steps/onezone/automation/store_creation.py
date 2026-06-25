@@ -16,7 +16,7 @@ from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import click_add_store_button
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

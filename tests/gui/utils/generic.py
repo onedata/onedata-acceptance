@@ -22,8 +22,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests import gui
-from tests.gui.types import WebElemRoot
-from tests.types import JsonValue
+from tests.gui.type_definitions import WebElemRoot
+from tests.type_definitions import JsonValue
 
 T = TypeVar("T")
 

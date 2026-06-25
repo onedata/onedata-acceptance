@@ -17,10 +17,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

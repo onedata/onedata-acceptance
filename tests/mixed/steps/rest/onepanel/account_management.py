@@ -5,7 +5,7 @@ using REST API.
 from collections.abc import Mapping
 from typing import NoReturn, Protocol
 
-from tests.types import Hosts
+from tests.type_definitions import Hosts
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"

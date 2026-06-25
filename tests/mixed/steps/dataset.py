@@ -26,7 +26,7 @@ from tests.gui.meta_steps.oneprovider.dataset import (
 )
 from tests.gui.steps.oneprovider.browser import assert_status_tag_for_file_in_browser
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.datasets import (
     assert_dataset_detached_in_op_rest,
     assert_top_level_dataset_in_space_in_op_rest,
@@ -43,7 +43,7 @@ from tests.mixed.steps.rest.oneprovider.datasets import (
     set_protection_flags_for_dataset_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

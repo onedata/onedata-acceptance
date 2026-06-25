@@ -20,7 +20,7 @@ from urllib3.exceptions import HTTPError
 
 from tests.gui.conftest import DRIVER_CREATION_RETRIES, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import parse_seq, redirect_display
-from tests.types import Capabilities, SeleniumDrivers, WebDriverFactory
+from tests.type_definitions import Capabilities, SeleniumDrivers, WebDriverFactory
 from tests.utils.bdd_utils import parsers
 
 

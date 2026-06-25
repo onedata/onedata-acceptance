@@ -23,14 +23,14 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
     get_op_workflow_visualizer_page,
 )
-from tests.gui.types import Clipboard
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.common.modals.workflows_modals.audit_log import AuditLog, LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneprovider.automation import Task
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed

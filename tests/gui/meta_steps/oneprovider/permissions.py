@@ -53,10 +53,10 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq
-from tests.types import SeleniumDrivers, Users
+from tests.type_definitions import SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

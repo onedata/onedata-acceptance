@@ -49,7 +49,7 @@ from tests.gui.steps.common.docker import (
     wt_rm_files_to_space_root_dir,
     wt_rm_files_to_storage_mount_point,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.steps.rest.onepanel.account_management import (
     change_user_password_in_oz_panel_using_rest,
     login_to_oz_panel_using_new_password_rest,
@@ -76,9 +76,9 @@ from tests.mixed.steps.rest.onezone.space_management import (
     copy_id_of_space_rest,
     request_space_support_using_rest,
 )
-from tests.mixed.types import HostsConfig, Spaces
+from tests.mixed.type_definitions import HostsConfig, Spaces
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.entities_setup.spaces import (
     force_start_storage_scan,

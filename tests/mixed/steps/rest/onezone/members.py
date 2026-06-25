@@ -13,13 +13,14 @@ from onezone_client.rest import ApiException
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.steps.rest.onezone.common import get_group
-from tests.mixed.types import (
+from tests.mixed.type_definitions import (
     IdMap,
     PrivilegeGroupConfig,
     RestOnezoneTmpMemory as TmpMemory,
 )
+from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
-from tests.types import Hosts
+from tests.type_definitions import Hosts
 
 PRIVILEGES_TRANSLATION = {
     "View space": "space_view",
@@ -112,6 +113,7 @@ DEFAULT_GRANT = [
     "space_view_transfers",
     "space_write_data",
 ]
+
 
 class UserLike(Protocol):
     password: str

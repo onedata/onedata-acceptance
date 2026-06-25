@@ -16,10 +16,10 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import try_click_without_throwing_error
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, parse_url
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

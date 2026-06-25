@@ -9,10 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.clusters import get_old_or_new_cluster_record_from_list
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import LoginPage, Modals, OnePage, Onepanel
 from tests.gui.utils.generic import parse_seq, transform
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

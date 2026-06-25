@@ -23,7 +23,7 @@ from tests.gui.meta_steps.oneprovider.archives import (
     recalled_archive_details_in_op_gui,
     remove_archive_in_op_gui,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.steps.rest.oneprovider.archives import (
     assert_archive_callback_in_op_rest,
     assert_archive_in_op_rest,
@@ -39,7 +39,7 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     remove_archive_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

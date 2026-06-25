@@ -20,11 +20,12 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import TmpMemory
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import click_on_web_elem, transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

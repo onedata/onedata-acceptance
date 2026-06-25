@@ -11,7 +11,7 @@ import re
 import subprocess as sp
 import time
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Literal, Optional, TypedDict, cast, overload
+from typing import Literal, Optional, TypedDict, cast, overload
 
 import pytest
 import requests
@@ -22,6 +22,7 @@ from requests.exceptions import ConnectTimeout
 # pylint: disable=import-error,no-name-in-module
 from bamboos.docker.images_branch_config import resolve_image
 from tests import OZ_REST_PORT, PANEL_REST_PORT
+from tests.type_definitions import Hosts, TestConfig, Users
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.luma_utils import (
     add_spaces_luma_mapping,
@@ -42,9 +43,6 @@ from tests.utils.onenv_utils import (
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.user_utils import AdminUser, User
 from tests.utils.utils import repeat_failed
-
-if TYPE_CHECKING:
-    from tests.types import Hosts, TestConfig, Users
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = "one-env"

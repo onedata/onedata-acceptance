@@ -26,7 +26,7 @@ from tests.mixed.steps.rest.oneprovider.metadata import add_json_metadata_to_fil
 from tests.mixed.steps.rest.oneprovider.qos import (
     create_qos_requirement_in_op_by_id_rest,
 )
-from tests.mixed.types import (
+from tests.mixed.type_definitions import (
     HostsConfig,
     SpecialDirsTmpMemory as TmpMemory,
     Spaces,
@@ -44,7 +44,7 @@ from tests.oneclient.steps.multi_file_steps import (
     create_file_in_dir_by_id,
     try_to_create_file_in_root_dir,
 )
-from tests.types import Hosts, Users
+from tests.type_definitions import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 

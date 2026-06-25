@@ -40,7 +40,7 @@ from tests.gui.meta_steps.oneprovider.metadata import (
 )
 from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.oneclient.data_basic import (
     assert_metadata_in_op_oneclient,
     assert_no_such_metadata_in_op_oneclient,
@@ -97,7 +97,7 @@ from tests.mixed.steps.rest.oneprovider.metadata import (
     set_metadata_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import EnvDesc, Hosts, SeleniumDrivers, Tokens, Users
+from tests.type_definitions import EnvDesc, Hosts, SeleniumDrivers, Tokens, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPBadRequest
 from tests.utils.path_utils import get_first_path_element

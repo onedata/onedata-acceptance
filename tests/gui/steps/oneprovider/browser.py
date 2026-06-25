@@ -14,7 +14,8 @@ from typing import Optional, Protocol
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.types import TmpMemory
+from tests.gui.steps.common.miscellaneous import network_throttling_download
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import (
     WhichBrowser,
@@ -24,7 +25,7 @@ from tests.gui.utils.generic import (
 )
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

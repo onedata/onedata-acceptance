@@ -30,7 +30,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver
 from urllib3.exceptions import MaxRetryError
 
 from tests import ENTITIES_CONFIG_DIR, ENV_DIRS, LOGDIRS, PATCHES_DIR, SCENARIO_DIRS
-from tests.types import (
+from tests.type_definitions import (
     Capabilities,
     EnvDesc,
     FactoryCallable,

@@ -16,10 +16,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from tests import OP_REST_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
-from tests.gui.types import Clipboard
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq, transform
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.rest_utils import get_provider_rest_path, http_get

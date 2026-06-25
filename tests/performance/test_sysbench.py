@@ -8,8 +8,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.performance.conftest import AbstractPerformanceTest, mount_performance_client
-from tests.performance.types import PerformanceParams, int_parameter, str_parameter
-from tests.types import EnvDesc, Hosts, Users
+from tests.performance.type_definitions import (
+    PerformanceParams,
+    int_parameter,
+    str_parameter,
+)
+from tests.type_definitions import EnvDesc, Hosts, Users
 from tests.utils.client_utils import Client, CommandResult
 from tests.utils.performance_utils import generate_configs, performance
 

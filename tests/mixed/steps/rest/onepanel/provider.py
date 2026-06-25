@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 from typing import Protocol
 
-from tests.mixed.types import HostsConfig
+from tests.mixed.type_definitions import HostsConfig
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"

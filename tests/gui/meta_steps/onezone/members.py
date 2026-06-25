@@ -16,7 +16,7 @@ from tests.gui.steps.onezone.members import (
     try_setting_privileges_in_members_subpage,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 
 
 def fail_to_set_privileges_using_op_gui(

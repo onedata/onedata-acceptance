@@ -27,7 +27,7 @@ from tests.gui.meta_steps.onezone.groups import (
     rename_groups_using_op_gui,
     see_groups_using_op_gui,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.steps.rest.onezone.group_management import (
     UserLike,
     add_subgroups_using_rest,
@@ -47,7 +47,7 @@ from tests.mixed.steps.rest.onezone.group_management import (
     see_groups_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.http_exceptions import HTTPUnauthorized
 from tests.utils.rest_utils import get_zone_rest_path, http_post

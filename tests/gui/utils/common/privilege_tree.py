@@ -11,7 +11,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import PrivilegeGranted, PrivilegeGroupConfig, PrivilegesConfig
+from tests.gui.type_definitions import (
+    PrivilegeGranted,
+    PrivilegeGroupConfig,
+    PrivilegesConfig,
+)
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
@@ -20,7 +24,7 @@ from tests.gui.utils.core.web_elements import (
     WebElement,
     WebItemsSequence,
 )
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.utils import repeat_failed
 
 

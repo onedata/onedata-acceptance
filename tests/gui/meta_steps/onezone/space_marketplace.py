@@ -18,7 +18,7 @@ from tests.gui.steps.onezone.space_configuration import (
     set_description_of_a_space,
     set_space_data_in_configuration_tab,
 )
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

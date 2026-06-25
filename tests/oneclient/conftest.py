@@ -14,7 +14,7 @@ from pytest_bdd.parser import Feature, Scenario, Step
 
 from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
-from tests.types import Hosts, Storages, TestConfig, Users
+from tests.type_definitions import Hosts, Storages, TestConfig, Users
 from tests.utils.client_utils import Client
 from tests.utils.entities_setup.groups import CredentialsLike, GroupsConfig, UserLike
 from tests.utils.entities_setup.groups import groups_creation as setup_groups

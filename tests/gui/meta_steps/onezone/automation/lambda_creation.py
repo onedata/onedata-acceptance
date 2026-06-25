@@ -32,11 +32,11 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_lambda_form,
 )
 from tests.gui.steps.onezone.spaces import click_on_automation_option_in_the_sidebar
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.generic import transform, upload_lambda_path
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_lambda_dump
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

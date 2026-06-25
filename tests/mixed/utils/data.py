@@ -15,7 +15,17 @@ import yaml
 from tests.gui.meta_steps.oneprovider.files_tree import build_tree_config
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.oneservices.cdmi import get_item_type
-from tests.types import Hosts, Users
+from tests.mixed.type_definitions import (
+    Acl,
+    AclEntry,
+    AssertFileContent,
+    Content,
+    ContentItem,
+    IsDir,
+    ItemType,
+    ListDir,
+)
+from tests.type_definitions import Hosts, Users
 
 
 class FileTreeNode(Protocol):

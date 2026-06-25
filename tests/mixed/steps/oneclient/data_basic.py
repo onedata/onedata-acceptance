@@ -16,7 +16,7 @@ import pytest
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
     Content,
@@ -34,7 +34,7 @@ from tests.oneclient.steps import (
     multi_file_steps,
     multi_reg_file_steps,
 )
-from tests.types import EnvDesc, Hosts, JsonValue, Users
+from tests.type_definitions import EnvDesc, Hosts, JsonValue, Users
 from tests.utils.acceptance_utils import compare, failure, time_attr
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

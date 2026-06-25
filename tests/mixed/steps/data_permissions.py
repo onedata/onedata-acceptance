@@ -17,7 +17,7 @@ from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui,
     set_posix_permissions_in_op_gui,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     assert_ace_in_op_oneclient,
@@ -32,7 +32,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_posix_permissions_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

@@ -40,12 +40,12 @@ from tests.gui.steps.onezone.members import (
     remove_member_from_parent,
 )
 from tests.gui.steps.rest.groups import get_user_groups, leave_user_group
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
 from tests.gui.utils.onezone.groups.groups_page import Group
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

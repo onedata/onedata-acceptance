@@ -18,10 +18,10 @@ from tests.gui.steps.oneprovider.data_tab import (
     go_one_back_using_breadcrumbs_in_data_tab_in_op,
     has_downloaded_file_content,
 )
-from tests.gui.types import TmpMemory, TreeConfig
+from tests.gui.type_definitions import TmpMemory, TreeConfig
 from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.file_browser.file_tree_node import Node
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

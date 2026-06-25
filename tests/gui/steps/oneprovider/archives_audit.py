@@ -19,7 +19,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import parse_seq, transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

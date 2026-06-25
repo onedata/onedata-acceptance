@@ -15,7 +15,7 @@ from typing import Final, NotRequired, Optional, TypedDict, cast
 from aiohttp_sse_client import client as sse_client  # pylint: disable=import-error
 from aiohttp_sse_client.client import MessageEvent  # pylint: disable=import-error
 
-from tests.mixed.types import FileAttrs
+from tests.mixed.type_definitions import FileAttrs
 
 INITIAL_BACKOFF_TIMEOUT: Final[int] = 1
 MAX_BACKOFF_TIMEOUT: Final[int] = 60

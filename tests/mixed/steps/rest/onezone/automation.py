@@ -15,18 +15,18 @@ from oneprovider_client.rest import ApiException
 
 from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils.generic import upload_file_path, upload_workflow_path
 from tests.mixed.oneprovider_client.api.workflow_execution_api import (
     WorkflowExecutionApi,
 )
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id, upload_file_rest
-from tests.mixed.types import IdMap, JsonObject, MutableIdMap
+from tests.mixed.type_definitions import IdMap, JsonObject, MutableIdMap
 from tests.mixed.utils.common import login_to_provider
 from tests.mixed.utils.example_workflow_executions import (
     ExampleWorkflowExecutionInitialStoreContent,
 )
-from tests.types import Hosts, JsonValue, Users, WorkflowExecutions
+from tests.type_definitions import Hosts, JsonValue, Users, WorkflowExecutions
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.http_exceptions import HTTPNotFound

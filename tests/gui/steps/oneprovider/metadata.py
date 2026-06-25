@@ -16,7 +16,7 @@ from tests.gui.utils.common.modals.files_modals.tabs_in_details_modal.metadata_t
     XattrMetadataEntry,
 )
 from tests.gui.utils.generic import parse_seq
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

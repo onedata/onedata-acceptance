@@ -22,7 +22,7 @@ from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.onezone.data_page import DataPage, Space
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

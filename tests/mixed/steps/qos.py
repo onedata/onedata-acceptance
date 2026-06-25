@@ -14,7 +14,7 @@ from tests.gui.meta_steps.oneprovider.qos import (
     assert_qos_file_status_in_op_gui,
     delete_qos_requirement_in_op_gui,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.qos import (
     HostsConfig,
     UserLike,
@@ -23,7 +23,7 @@ from tests.mixed.steps.rest.oneprovider.qos import (
     delete_qos_requirement_in_op_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

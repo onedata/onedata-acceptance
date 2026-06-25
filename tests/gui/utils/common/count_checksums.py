@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import hashlib
 from zlib import adler32
 
-from tests.gui.types import FilePath
+from tests.gui.type_definitions import FilePath
 
 
 def md5_sum(file_name: FilePath) -> str:

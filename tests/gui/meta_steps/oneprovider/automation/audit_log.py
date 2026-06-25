@@ -57,14 +57,19 @@ from tests.gui.steps.oneprovider.common import (
     wait_for_file_with_unknown_name_to_download,
 )
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import AuditLogContent, AuditLogValue, Clipboard, TmpMemory
+from tests.gui.type_definitions import (
+    AuditLogContent,
+    AuditLogValue,
+    Clipboard,
+    TmpMemory,
+)
 from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.audit_log import LogsEntry
 from tests.gui.utils.common.modals.workflows_modals.store_details import StoreDetails
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.oneprovider.automation import Task, WorkflowLane
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.path_utils import append_log_to_file
 from tests.utils.utils import repeat_failed

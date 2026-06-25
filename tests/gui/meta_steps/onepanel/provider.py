@@ -40,7 +40,7 @@ from tests.gui.steps.rest.provider import (
 )
 from tests.gui.utils import Onepanel
 from tests.gui.utils.generic import OnedataService
-from tests.types import Hosts, JsonValue, SeleniumDrivers
+from tests.type_definitions import Hosts, JsonValue, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.user_utils import AdminUser
 from tests.utils.utils import repeat_failed

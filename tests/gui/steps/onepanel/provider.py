@@ -12,7 +12,7 @@ from typing import cast
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, Onepanel, Popups
 from tests.gui.utils.generic import transform
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

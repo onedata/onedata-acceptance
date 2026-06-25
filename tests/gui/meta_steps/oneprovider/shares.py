@@ -58,7 +58,7 @@ from tests.gui.steps.oneprovider.shares import (
     is_selected_share_named,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.common.xml_addons import (
@@ -71,7 +71,7 @@ from tests.gui.utils.common.xml_addons import (
     resolve_xml_tag_for_et_search,
 )
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import num_to_ordinal
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

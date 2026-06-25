@@ -21,14 +21,14 @@ from tests.gui.meta_steps.oneprovider.transfers import (
 from tests.gui.meta_steps.onezone.common import wt_visit_file_browser
 from tests.gui.steps.oneprovider.data_tab import upload_file_to_cwd_in_data_tab
 from tests.gui.steps.oneprovider.transfers import assert_ended_transfer
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.rest.oneprovider.transfers import (
     assert_recent_transfer_details_rest,
     assert_recent_transfer_finished_rest,
     create_transfer_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import parsers, wt
 
 

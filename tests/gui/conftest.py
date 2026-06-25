@@ -27,9 +27,9 @@ from tests.gui.sse_fixtures import (
     monitors,
     space_files_monitor_factory,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.oneclient.steps.environment_steps import unmock_archive_verification
-from tests.types import (
+from tests.type_definitions import (
     Capabilities,
     HookOutcome,
     Hosts,

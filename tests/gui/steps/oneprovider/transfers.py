@@ -28,7 +28,7 @@ from tests.gui.utils.oneprovider.transfers import (
     TransferRecordHistory,
     _TransfersTab,
 )
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

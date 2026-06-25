@@ -12,7 +12,7 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils import DataDiscoveryPage as DataDiscovery
 from tests.gui.utils import Popups
 from tests.gui.utils.generic import parse_seq, transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

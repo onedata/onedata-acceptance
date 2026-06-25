@@ -55,10 +55,10 @@ from tests.gui.steps.onezone.tokens import (
     type_new_token_name,
     wt_click_on_btn_for_oz_token,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.onezone.token_caveats import TokenCaveats
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

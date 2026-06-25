@@ -27,7 +27,7 @@ from tests.gui.meta_steps.onezone.spaces import (
     remove_provider_support_for_space_in_oz_using_gui,
     rename_spaces_in_oz_using_gui,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.onezone.members import UserLike as MemberUserLike
@@ -60,10 +60,10 @@ from tests.mixed.steps.rest.onezone.space_management import (
     remove_spaces_in_oz_using_rest,
     rename_spaces_in_oz_using_rest,
 )
-from tests.mixed.types import MutableSpaces as Spaces
+from tests.mixed.type_definitions import MutableSpaces as Spaces
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps.multi_file_steps import ls_present_spaces
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.user_utils import AdminUser

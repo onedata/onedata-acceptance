@@ -23,7 +23,7 @@ from tests.gui.utils import Modals
 from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import (
     FunctionPodsActivity,
 )
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

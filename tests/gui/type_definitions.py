@@ -8,11 +8,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections import defaultdict, namedtuple
 from collections.abc import Callable
 from os import PathLike
-from typing import Any, Literal, TypedDict, TYPE_CHECKING
+from typing import Any, Literal, TypedDict
 
-if TYPE_CHECKING:
-    from selenium.webdriver.remote.webdriver import WebDriver
-    from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 
 from tests.type_definitions import JsonValue
 

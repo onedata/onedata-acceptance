@@ -59,11 +59,11 @@ from tests.gui.steps.onezone.spaces import (
     wt_wait_for_modal_to_appear,
 )
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone.data_page import DataPage
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

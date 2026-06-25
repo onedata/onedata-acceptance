@@ -13,9 +13,9 @@ from typing import Protocol
 from oneprovider_client import CustomFileMetadataApi
 
 from tests.gui.utils import CDMIClient as cdmi
-from tests.mixed.types import HostsConfig
+from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
-from tests.types import JsonValue
+from tests.type_definitions import JsonValue
 
 
 class UserLike(Protocol):

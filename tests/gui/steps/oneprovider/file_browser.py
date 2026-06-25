@@ -22,13 +22,13 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.types import Clipboard, TarTree, TmpMemory
+from tests.gui.type_definitions import Clipboard, TarTree, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils import PublicShareView as public_share
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 from tests.gui.utils.oneprovider.file_browser import FileSelector
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

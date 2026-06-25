@@ -19,12 +19,11 @@ from tests.gui.conftest import (
     WAIT_NORMAL_UPLOAD,
 )
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
 from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
     DOWNLOAD_INACTIVITY_PERIOD_SEC,

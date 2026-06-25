@@ -9,7 +9,7 @@ from typing import Protocol
 
 from tests.mixed.oneprovider_client import QoSApi
 from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
-from tests.mixed.types import HostsConfig
+from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
 
 

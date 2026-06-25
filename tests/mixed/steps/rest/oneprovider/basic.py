@@ -9,7 +9,7 @@ from typing import Protocol
 
 from oneprovider_client import BasicFileOperationsApi, FilePathResolutionApi
 
-from tests.mixed.types import HostsConfig
+from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_provider
 
 

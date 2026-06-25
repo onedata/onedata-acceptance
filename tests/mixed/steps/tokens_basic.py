@@ -18,7 +18,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.onezone.spaces import (
     assert_new_created_space_has_appeared_on_spaces,
 )
-from tests.gui.types import Clipboard, TmpMemory
+from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.mixed.steps.rest.onezone.space_management import join_space_in_oz_using_rest
 from tests.mixed.steps.rest.onezone.tokens import (
     UserLike,
@@ -27,7 +27,7 @@ from tests.mixed.steps.rest.onezone.tokens import (
     revoke_token_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers, Tokens, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Tokens, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

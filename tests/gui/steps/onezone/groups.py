@@ -13,7 +13,7 @@ from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
 from tests.gui.utils.generic import ListElement, parse_seq, transform
 from tests.gui.utils.onezone.groups.groups_page import Group, GroupsPage
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

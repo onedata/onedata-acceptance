@@ -16,10 +16,10 @@ from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

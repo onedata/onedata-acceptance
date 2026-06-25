@@ -31,13 +31,13 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Onepanel, OZLoggedIn, Popups
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.onezone.members_subpage import MembershipRow, MembersPage
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

@@ -8,7 +8,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from collections import defaultdict
 from collections.abc import Callable, MutableMapping
 from typing import (
-    TYPE_CHECKING,
     Any,
     Literal,
     Optional,
@@ -18,15 +17,10 @@ from typing import (
     TypeVar,
 )
 
-if TYPE_CHECKING:
-    from _pytest.fixtures import FixtureRequest
-    from selenium.webdriver.remote.webdriver import WebDriver
+from _pytest.fixtures import FixtureRequest
+from selenium.webdriver.remote.webdriver import WebDriver
 
-    from tests.utils.user_utils import AdminUser
-else:
-    AdminUser = Any
-    FixtureRequest = Any
-    WebDriver = Any
+from tests.utils.user_utils import AdminUser
 
 type JsonValue = Optional[
     str | int | float | bool | list["JsonValue"] | dict[str, "JsonValue"]

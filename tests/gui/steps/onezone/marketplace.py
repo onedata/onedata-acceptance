@@ -12,7 +12,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.space_marketplace import MarketplaceSpace
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

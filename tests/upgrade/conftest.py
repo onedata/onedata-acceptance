@@ -13,7 +13,7 @@ from typing import cast
 import pytest
 
 from tests.conftest import export_logs
-from tests.types import EnvDesc, Hosts, TestConfig, Users
+from tests.type_definitions import EnvDesc, Hosts, TestConfig, Users
 from tests.upgrade.utils.upgrade_utils import UpgradeConfig, UpgradeTestsController
 from tests.utils.environment_utils import clean_env
 

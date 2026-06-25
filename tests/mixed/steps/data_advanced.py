@@ -21,14 +21,14 @@ from tests.mixed.steps.rest.onezone.space_management import (
     UserLike,
     create_spaces_in_oz_using_rest,
 )
-from tests.mixed.types import (
-    DataAdvancedTmpMemory as TmpMemory,
-    MutableSpaces as Spaces,
+from tests.mixed.type_definitions import DataAdvancedTmpMemory as TmpMemory
+from tests.mixed.type_definitions import MutableSpaces as Spaces
+from tests.mixed.type_definitions import (
     SpaceAliases,
 )
 from tests.mixed.utils.common import NoSuchClientException, login_to_oz
 from tests.oneclient.steps import multi_reg_file_steps
-from tests.types import Hosts, Users
+from tests.type_definitions import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 
 

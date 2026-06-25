@@ -17,7 +17,7 @@ from tests.gui.steps.oneprovider.automation.automation_basic import (
     switch_to_automation_page,
 )
 from tests.gui.utils.oneprovider.automation import ParallelBox, WorkflowExecutionPage
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

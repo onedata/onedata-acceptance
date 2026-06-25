@@ -69,16 +69,16 @@ from tests.gui.steps.onezone.spaces import (
     _click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu,
 )
-from tests.gui.types import (
+from tests.gui.type_definitions import (
     Clipboard,
 )
-from tests.gui.types import DataDirectoryContent as DirectoryContent
-from tests.gui.types import (
+from tests.gui.type_definitions import DataDirectoryContent as DirectoryContent
+from tests.gui.type_definitions import (
     TmpMemory,
 )
 from tests.gui.utils import Modals, OPLoggedIn
 from tests.gui.utils.generic import WhichBrowser, transform
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup.spaces import init_storage
 from tests.utils.utils import repeat_failed

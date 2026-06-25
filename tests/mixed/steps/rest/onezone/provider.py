@@ -6,7 +6,7 @@ from typing import Protocol
 from onezone_client import ProviderApi
 
 from tests.mixed.steps.rest.onezone.common import get_provider_with_name
-from tests.mixed.types import HostsConfig
+from tests.mixed.type_definitions import HostsConfig
 from tests.mixed.utils.common import login_to_oz
 
 

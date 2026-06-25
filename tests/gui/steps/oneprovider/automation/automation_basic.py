@@ -30,7 +30,7 @@ from tests.gui.utils.oneprovider.automation import (
     WorkflowExecutionPage,
     WorkflowVisualiser,
 )
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

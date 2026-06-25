@@ -9,10 +9,10 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modals.modal import click_modal_button
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
 from tests.gui.utils.generic import transform
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

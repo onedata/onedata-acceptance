@@ -27,7 +27,7 @@ from tests.mixed.steps.rest.onezone.members import (
     fail_to_set_privileges_using_rest,
 )
 from tests.mixed.utils.common import NoSuchClientException
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

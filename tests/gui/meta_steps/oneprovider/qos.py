@@ -28,8 +28,8 @@ from tests.gui.steps.oneprovider.qos import (
     delete_all_qualities_of_service,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.types import Clipboard, TmpMemory
-from tests.types import SeleniumDrivers
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

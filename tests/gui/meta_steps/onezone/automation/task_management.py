@@ -23,7 +23,7 @@ from tests.gui.steps.onezone.automation.workflow_creation import (
     write_text_into_editor_bracket,
 )
 from tests.gui.utils import OZLoggedIn, Popups
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

@@ -6,7 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests import OZ_REST_PORT
-from tests.types import Users
+from tests.type_definitions import Users
 from tests.utils.rest_utils import get_zone_rest_path, http_delete, http_get
 
 

@@ -15,7 +15,7 @@ from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.environment_utils import (
     get_pods_config,

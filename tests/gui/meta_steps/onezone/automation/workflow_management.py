@@ -56,10 +56,10 @@ from tests.gui.steps.onezone.spaces import (
     click_on_automation_option_in_the_sidebar,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.oneprovider.automation import NumberInput
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.acceptance_utils import get_workflow_dump
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

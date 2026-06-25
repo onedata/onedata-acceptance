@@ -28,8 +28,8 @@ from tests.gui.steps.onezone.providers import (
     click_on_provider_in_providers_sidebar_with_provider_name,
 )
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.types import Clipboard, TmpMemory
-from tests.types import Hosts, SeleniumDrivers
+from tests.gui.type_definitions import Clipboard, TmpMemory
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 
 

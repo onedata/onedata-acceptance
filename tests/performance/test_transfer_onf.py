@@ -15,8 +15,12 @@ from queue import Empty, Queue
 from threading import Thread
 
 from tests.performance.conftest import AbstractPerformanceTest, mount_performance_client
-from tests.performance.types import ExceptionQueue, PerformanceParams, int_parameter
-from tests.types import EnvDesc, Hosts, Users
+from tests.performance.type_definitions import (
+    ExceptionQueue,
+    PerformanceParams,
+    int_parameter,
+)
+from tests.type_definitions import EnvDesc, Hosts, Users
 from tests.utils.client_utils import Client
 from tests.utils.performance_utils import (
     Result,

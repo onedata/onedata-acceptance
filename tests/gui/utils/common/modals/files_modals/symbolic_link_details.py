@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.gui.types import Clipboard
+from tests.gui.type_definitions import Clipboard
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Button, Label, NamedButton
 from tests.gui.utils.generic import transform

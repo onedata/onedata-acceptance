@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
-from tests.types import Users
+from tests.type_definitions import Users
 from tests.utils.bdd_utils import parsers, then, when, wt
 
 from . import multi_reg_file_steps

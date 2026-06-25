@@ -15,10 +15,10 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND, WAIT_NORMAL_DOWNLOAD
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OPLoggedIn
 from tests.gui.utils.generic import parse_seq, parse_url
-from tests.types import Hosts, SeleniumDrivers
+from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
 

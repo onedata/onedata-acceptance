@@ -17,7 +17,7 @@ from packaging.version import Version
 from bamboos.docker.environment.docker import pull_image_with_retries
 from bamboos.docker.images_branch_config import resolve_image
 from tests.conftest import export_logs
-from tests.types import EnvDesc, Hosts, Users
+from tests.type_definitions import EnvDesc, Hosts, Users
 from tests.upgrade.utils.rest_utils import get_provider_configuration
 from tests.utils.environment_utils import (
     configure_os,

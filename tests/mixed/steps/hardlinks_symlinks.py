@@ -14,7 +14,7 @@ from tests.gui.meta_steps.oneprovider.data import (
     create_hardlink_of_file_located_outside_current_location_and_place_it_in_path,
     create_symlinks_of_file_with_path,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.mixed.steps.oneclient.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.rest.oneprovider.data import (
     _lookup_file_id,
@@ -31,7 +31,7 @@ from tests.oneclient.steps.multi_file_steps import (
     create_hardlink,
     create_symlink,
 )
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import parsers, wt
 

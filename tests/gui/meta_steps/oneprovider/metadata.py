@@ -35,9 +35,9 @@ from tests.gui.steps.oneprovider.metadata import (
     type_text_to_metadata_textarea,
     type_text_to_val_of_attr_in_new_xattr_entry,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

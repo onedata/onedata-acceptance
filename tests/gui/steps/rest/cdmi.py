@@ -2,7 +2,7 @@
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils import CDMIClient as cdmi
-from tests.types import Hosts, Users
+from tests.type_definitions import Hosts, Users
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 

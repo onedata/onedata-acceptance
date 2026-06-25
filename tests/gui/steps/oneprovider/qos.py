@@ -20,7 +20,7 @@ from tests.gui.utils import Modals, OPLoggedIn, Popups
 from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
-from tests.types import Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 

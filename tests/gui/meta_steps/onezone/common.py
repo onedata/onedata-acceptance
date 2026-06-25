@@ -26,12 +26,12 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
 )
-from tests.gui.types import TmpMemory
+from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.web_objects import PageObjectsSequence
 from tests.gui.utils.onezone.members_subpage import MembershipRow
-from tests.types import Capabilities, Hosts, SeleniumDrivers, Users
+from tests.type_definitions import Capabilities, Hosts, SeleniumDrivers, Users
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed

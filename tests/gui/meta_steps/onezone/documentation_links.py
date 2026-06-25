@@ -12,7 +12,7 @@ from tests.gui.steps.common.miscellaneous import assert_title_contains, switch_t
 from tests.gui.utils import Homepage, Modals, Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.homepage.documentation import DocumentationPage, EndpointInfo
-from tests.types import SeleniumDrivers
+from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
