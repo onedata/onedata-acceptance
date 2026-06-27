@@ -30,12 +30,12 @@ class Homepage:
         return "Onedata Docs page"
 
     def open_page_and_click(self, item):
-        return self.open_page(item, True)
+        return self.get_page(item, True)
 
     def get_panel_by_name(self, name):
         return [p for p in self._panels if p.text.lower() == name.lower()][0]
 
-    def open_page(self, item, click=False):
+    def get_page(self, item, click=False):
         item = item.lower()
         cls = self.panels_classes.get(item, None)
         if cls:
@@ -47,16 +47,16 @@ class Homepage:
 
     @property
     def how_it_works(self):
-        return self.open_page("how_it_works")
+        return self.get_page("how_it_works")
 
     @property
     def quick_start(self):
-        return self.open_page("quick_start")
+        return self.get_page("quick_start")
 
     @property
     def api(self):
-        return self.open_page("api")
+        return self.get_page("api")
 
     @property
     def docs(self):
-        return self.open_page("docs")
+        return self.get_page("docs")

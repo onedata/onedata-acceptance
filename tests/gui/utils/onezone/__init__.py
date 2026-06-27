@@ -52,15 +52,24 @@ class OZLoggedIn:
         return "Onezone page"
 
     def open_page_and_click(self, item):
-        return self.open_page(item, True)
-
-    def is_panel_expanded(self):
-        return self._panels[0].text == "DATA"
-
+        return self.get_page(item, True)
+    
+    def find_panels_with_name(self, name):
+        return [p for p in self._panels if p.text.lower() == name.lower()]
+            
     def get_panel_by_name(self, name):
-        if not self.is_panel_expanded():
-            ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
-        return [p for p in self._panels if p.text.lower() == name.lower()][0]
+        panel_found = self.find_panels_with_name(name) 
+        if panel_found:
+            return panel_found[0]
+
+        alternate_name = {
+            "cluster": "clusters",
+            "clusters": "cluster",
+        }.get(name)
+
+        if alternate_name:
+            return self.find_panels_with_name(alternate_name)[0]
+        return self.find_panels_with_name(name)[0]
 
     def is_panel_clicked(self, item):
         panel = self.get_panel_by_name(item)
@@ -73,67 +82,72 @@ class OZLoggedIn:
     def click_on_sidebar_menu_panel(self, name):
         panel = self.get_panel_by_name(name)
         panel.click()
+    
+    def is_panel_expanded(self):
+        return self._panels[0].text == "DATA"
 
-    def get_profile(self):
-        return self._profile
-
-    def wait_for_panel_to_expand(self):
+    def expand_panel(self):
+        if self.is_panel_expanded():
+            return
+        ActionChains(self.web_elem).move_to_element(self._sidebar_menu).perform()
         for _ in range(20):
             if self.is_panel_expanded():
                 return
             time.sleep(0.1)
         raise RuntimeError("did not manage to expand main panel")
 
-    def open_page(self, item, click=False):
+    def get_page(self, item, click=False):
         item = item.lower()
         cls = self.panels_classes.get(item, None)
         if cls:
             if click:
+                self.expand_panel()
                 self.click_on_sidebar_menu_panel(item)
-                self.wait_for_panel_to_expand()
             return cls(self.web_elem, self.web_elem, parent=self)
         if item == "profile":
-            return ManageAccountPage(self.web_elem, self.get_profile(), self)
+            self.expand_panel()
+            return ManageAccountPage(self.web_elem, self._profile, self)
         if item == "uploads":
+            self.expand_panel()
             return UploadsPage(self.web_elem, self.web_elem, self)
         raise RuntimeError(f'no "{item}" on {self} found')
 
     @property
     def data(self):
-        return self.open_page("data")
+        return self.get_page("data")
 
     @property
     def shares(self):
-        return self.open_page("shares")
+        return self.get_page("shares")
 
     @property
     def providers(self):
-        return self.open_page("providers")
+        return self.get_page("providers")
 
     @property
     def groups(self):
-        return self.open_page("groups")
+        return self.get_page("groups")
 
     @property
     def tokens(self):
-        return self.open_page("tokens")
+        return self.get_page("tokens")
 
     @property
     def discovery(self):
-        return self.open_page("discovery")
+        return self.get_page("discovery")
 
     @property
     def automation(self):
-        return self.open_page("automation")
+        return self.get_page("automation")
 
     @property
     def clusters(self):
-        return self.open_page("clusters")
+        return self.get_page("clusters")
 
     @property
     def profile(self):
-        return self.open_page("profile")
+        return self.get_page("profile")
 
     @property
     def uploads(self):
-        return self.open_page("uploads")
+        return self.get_page("uploads")
