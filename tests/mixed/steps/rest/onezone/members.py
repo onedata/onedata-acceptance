@@ -18,7 +18,6 @@ from tests.mixed.type_definitions import (
     PrivilegeGroupConfig,
     RestOnezoneTmpMemory as TmpMemory,
 )
-from tests.mixed.type_definitions import RestOnezoneTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
 

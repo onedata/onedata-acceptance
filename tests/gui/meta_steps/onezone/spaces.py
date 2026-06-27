@@ -62,7 +62,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.steps.rest.spaces import get_user_spaces, leave_user_space
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import ListElement, parse_seq
 from tests.gui.utils.onezone.data_page import DataPage
 from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
@@ -262,10 +262,6 @@ def request_space_support_using_gui(
 ) -> None:
     where = "Data"
     option = "Providers"
-    notify_type = "info"
-    text_regexp = ".*copied.*"
-    item_type = "token"
-
     click_on_option_in_the_sidebar(selenium, user, where)
     click_element_on_lists_on_left_sidebar_menu(
         selenium, user, where.lower(), space_name

@@ -18,7 +18,11 @@ from tests.gui.conftest import (
     WAIT_FRONTEND,
     WAIT_NORMAL_UPLOAD,
 )
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.miscellaneous import (
+    network_throttling_download,
+    switch_to_iframe,
+)
+from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.generic import WhichBrowser, parse_seq, transform, upload_file_path
@@ -903,16 +907,6 @@ def fail_to_click_file_browser_button(
     except RuntimeError:
         return
     raise AssertionError(f"{transform(button)}_button is not supposed to be clickable")
-
-
-def network_throttling_download(driver: WebDriver) -> None:
-    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
-
-    driver.set_network_conditions(
-        latency=5,
-        download_throughput=float(download_kb) / 8 * 1024,
-        upload_throughput=500 * 1024,
-    )
 
 
 @wt(

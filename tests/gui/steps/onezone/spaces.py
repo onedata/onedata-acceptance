@@ -20,7 +20,7 @@ from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn, OZLoggedIn, Popups
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import ListElement, parse_seq, transform
 from tests.gui.utils.onezone.data_page import DataPage, Space
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt

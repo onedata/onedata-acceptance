@@ -14,7 +14,6 @@ from datetime import datetime
 from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.common import scroll_and_get_columns
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, Popups
 from tests.gui.utils.generic import transform

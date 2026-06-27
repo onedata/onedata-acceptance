@@ -4,7 +4,6 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from collections.abc import Mapping
 from typing import NotRequired, TypedDict, cast
 
 import yaml

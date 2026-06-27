@@ -76,4 +76,4 @@ class GroupsPage(GenericPage):
     selected_group_name = Label(".sidebar-groups .active .one-label .item-name")
 
     def get_visible_groups_list(self) -> list[object]:
-        return [el for el in self.groups_list_web_elems if el.text != ""]
+        return [group for group in self.groups_list if group.name != ""]

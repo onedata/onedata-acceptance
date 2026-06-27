@@ -2,6 +2,8 @@
 using web GUI
 """
 
+from typing import Any
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 __author__ = "Agnieszka Warchol"
@@ -41,7 +43,6 @@ from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils.common.popups import Popups
 from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.onezone import OZLoggedIn
-from tests.gui.utils.onezone.groups.groups_page import Group
 from tests.type_definitions import Hosts, SeleniumDrivers, Users
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.utils import repeat_failed
@@ -106,8 +107,8 @@ def wt_get_group_and_click_menu_button(
 def rename_group(
     selenium: SeleniumDrivers,
     browser_id: str,
-    group: str,
-    new_group: str,
+    group_name: str,
+    new_group_name: str,
     confirm_type: str,
 ) -> None:
     option = "Rename"

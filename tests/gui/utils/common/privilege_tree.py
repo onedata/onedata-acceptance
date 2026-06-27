@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
+from typing import Optional
 
 from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By

@@ -248,7 +248,6 @@ def _create_token_of_type(
     token_type: str,
     iteration: Optional[int] = None,
 ) -> None:
-    button = "Create new token"
     token_name = f"{token_type}_token"
     if iteration:
         token_name = token_name + str(iteration)

@@ -56,7 +56,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.gui.utils import Modals, OPLoggedIn
-from tests.gui.utils.generic import ListElement, ListElement, WhichBrowser, transform
+from tests.gui.utils.generic import ListElement, WhichBrowser, transform
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed

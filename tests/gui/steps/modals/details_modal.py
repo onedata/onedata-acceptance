@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from datetime import datetime
-from time import sleep
 
 from selenium.webdriver.remote.webdriver import WebDriver
 

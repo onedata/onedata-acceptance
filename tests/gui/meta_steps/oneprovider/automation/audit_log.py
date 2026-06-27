@@ -284,7 +284,6 @@ def get_store_audit_log(
 
 
 def compare_audit_log_to_store_log(
-    driver: WebDriver,
     clipboard: Clipboard,
     displays: dict[str, str],
     browser_id: str,

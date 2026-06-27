@@ -50,4 +50,4 @@ class SharesContentPage(Browser):
     link_type_selector = Button(".share-link-type-selector-trigger")
 
     def get_visible_shares_list(self) -> list[object]:
-        return [el for el in self.shares_list_web_elems if el.text != ""]
+        return [share for share in self.shares_list if share.name != ""]

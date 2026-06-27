@@ -5,9 +5,9 @@ __copyright__ = "Copyright (C) 2025 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import time
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Sequence
 from contextlib import suppress
-from typing import Any, Optional, Protocol, cast
+from typing import Any, Protocol, cast
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -16,11 +16,10 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import ListElement, transform
+from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
-from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
 
@@ -158,7 +157,7 @@ def scroll_to_bottom_of_the_table(driver: WebDriver) -> int:
 
 
 def assert_logs_order_with_optional_logs(
-    logs_expected: List[Dict[str, str]], logs_actual: List[str]
+    logs_expected: list[dict[str, str]], logs_actual: list[str]
 ) -> None:
     """
 
@@ -213,7 +212,7 @@ def scroll_and_get_columns(
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
         visible_elems = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems["file"]
+        visible_names = visible_elems[transform(main_column)]
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(
             name not in checked_names for name in visible_names
