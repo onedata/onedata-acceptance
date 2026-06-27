@@ -95,12 +95,9 @@ def wt_get_group_and_click_menu_button(
 
 
 @wt(
-    parsers.re(
-        'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
-        'to "(?P<new_group_name>.*)" using '
-        'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
-        'to "(?P<new_group_name>.*)" using '
-        "(?P<confirm_type>.*) to confirm"
+    parsers.parse(
+        'user of {browser_id} renames group "{group_name}" '
+        'to "{new_group_name}" using {confirm_type} to confirm'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
