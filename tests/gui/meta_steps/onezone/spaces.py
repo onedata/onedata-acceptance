@@ -260,13 +260,11 @@ def request_space_support_using_gui(
     clipboard: Clipboard,
     receiver: str,
 ) -> None:
-    where = "Data"
-    option = "Providers"
-    click_on_option_in_the_sidebar(selenium, user, where)
-    click_element_on_lists_on_left_sidebar_menu(
-        selenium, user, where.lower(), space_name
+    click_on_option_in_the_sidebar(selenium, user, "Data")
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, "spaces", space_name)
+    click_on_option_of_space_on_left_sidebar_menu(
+        selenium, user, space_name, "Providers"
     )
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user, space_name, option)
     click_get_support_button_on_providers_page(selenium, user)
     click_copy_button_on_request_support_page(
         selenium, user, displays, clipboard, tmp_memory
