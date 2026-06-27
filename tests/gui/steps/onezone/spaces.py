@@ -507,7 +507,7 @@ def assert_option_of_space_on_left_sidebar_menu_disabled(
 ) -> None:
     driver = selenium[browser_id]
     elements = _parse_tabs_list(element_list)
-    space = OZLoggedIn(driver)["data"].elements_list[space_name]
+    space = OZLoggedIn(driver)["data"].spaces_list[space_name]
     error_msg = "Number of disabled elements is incorrect"
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
         elements
