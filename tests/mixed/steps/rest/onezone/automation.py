@@ -44,6 +44,7 @@ BAGIT_ARCHIVES = {
     "unpack": ["bagit_archive_unpack.tar", "bagit_archive_unpack_and_fetch.zip"],
 }
 
+
 class CredentialsLike(Protocol):
     username: str
     password: Optional[str]

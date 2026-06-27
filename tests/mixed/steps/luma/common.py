@@ -20,6 +20,7 @@ from tests.utils.bdd_utils import parsers, wt
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put
 from tests.utils.user_utils import AdminUser
 
+
 class StorageCredentials(TypedDict):
     type: str
     uid: MappingValue

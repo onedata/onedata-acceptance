@@ -27,9 +27,9 @@ from tests.mixed.steps.rest.oneprovider.qos import (
 )
 from tests.mixed.type_definitions import (
     HostsConfig,
-    SpecialDirsTmpMemory as TmpMemory,
     Spaces,
 )
+from tests.mixed.type_definitions import SpecialDirsTmpMemory as TmpMemory
 from tests.mixed.utils.common import NoSuchClientException
 from tests.oneclient.steps.multi_dir_steps import (
     delete_dir_by_id,

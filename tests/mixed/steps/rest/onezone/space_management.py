@@ -20,9 +20,9 @@ from tests.mixed.steps.rest.onezone.common import (
 )
 from tests.mixed.type_definitions import (
     Mailbox,
-    MutableSpaces as SpaceMap,
-    SpaceManagementTmpMemory as TmpMemory,
 )
+from tests.mixed.type_definitions import MutableSpaces as SpaceMap
+from tests.mixed.type_definitions import SpaceManagementTmpMemory as TmpMemory
 from tests.mixed.utils.common import login_to_oz
 from tests.type_definitions import Hosts
 from tests.utils.entities_setup.spaces import _create_space
