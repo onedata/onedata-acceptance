@@ -26,8 +26,6 @@ from tests.gui.utils.oneprovider.breadcrumbs import _Breadcrumbs
 from tests.type_definitions import Hosts, SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.entities_setup import (
-    DOWNLOAD_INACTIVITY_PERIOD_SEC,
-    GUI_DOWNLOAD_CHUNK_SIZE,
     GUI_UPLOAD_CHUNK_SIZE,
     UPLOAD_INACTIVITY_PERIOD_SEC,
 )
@@ -43,7 +41,7 @@ def check_browser_to_load(
 ) -> None:
     driver = selenium[browser_id]
     if transform(browser) == "shares_browser":
-        items_browser = OPLoggedIn(driver).shares_page.shares_browser
+        items_browser = OPLoggedIn(driver).shares_page.shares_list
     elif transform(browser) == "shares_file_browser":
         items_browser = OPLoggedIn(driver).shares_page.shares_file_browser
     else:

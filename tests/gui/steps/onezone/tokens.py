@@ -12,6 +12,7 @@ from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.oneprovider.common import wait_for_item_to_disappear
 from tests.gui.type_definitions import TmpMemory
 from tests.gui.utils import Modals, OZLoggedIn, Popups
@@ -102,7 +103,7 @@ def click_on_button_in_tokens_sidebar(
                 button_clean.click()
                 return
             time.sleep(0.1)
-        raise RuntimeError(f"did not menage to click {button} button")
+        raise RuntimeError(f"Did not manage to click {button} button")
     else:
         sidebar = OZLoggedIn(driver)["tokens"].sidebar
         getattr(sidebar, transform(button))()
@@ -118,6 +119,9 @@ def click_on_button_in_tokens_sidebar(
 def click_create_custom_token(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
     OZLoggedIn(driver)["tokens"].create_token_page.create_custom_token()
+    wait_for_sliding_panel_to_stop_moving(
+        driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="form"]'
+    )
 
 
 @wt(
@@ -189,7 +193,7 @@ def click_create_token_button_in_create_token_page(
 ) -> None:
     driver = selenium[browser_id]
     # prevent clicking when there is ongoing animation
-    time.sleep(0.1)
+    time.sleep(0.2)
     create_token_button = OZLoggedIn(driver)["tokens"].create_token_page.create_token
     create_token_button.click()
     # ensure clicking at create token succeeded
@@ -428,9 +432,10 @@ def assert_token_on_tokens_list(
 
 
 @wt(
-    parsers.parse(
-        'user of {browser_id} types "{token_name}" to token name '
-        'input box in "Create new token" view'
+    parsers.re(
+        r'user of (?P<browser_id>.*?) succeeds to type "(?P<token_name>.*?)" to token'
+        r" name "
+        r'input box in "Create new token" view'
     )
 )
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -440,6 +445,9 @@ def type_new_token_name(
     driver = selenium[browser_id]
     input_box = OZLoggedIn(driver)["tokens"].create_token_page.token_name_input
     input_box.value = token_name
+    assert (
+        input_box.value == token_name
+    ), f"Failed to type new token name, expected {token_name}, got: {input_box.value}"
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

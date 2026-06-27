@@ -100,6 +100,7 @@ def upload_discovery_gui_plugin(
         "{tab_name} of harvester configuration page"
     )
 )
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_tab_of_harvester_config_page(
     selenium: SeleniumDrivers, browser_id: str, button: str, tab_name: str
 ) -> None:

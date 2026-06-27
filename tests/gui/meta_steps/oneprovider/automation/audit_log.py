@@ -27,7 +27,7 @@ from tests.gui.meta_steps.oneprovider.automation.workflow_results import (
 )
 from tests.gui.meta_steps.oneprovider.data import get_file_id_from_details_modal
 from tests.gui.steps.common.url import switch_to_last_tab
-from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.modals.modal import click_modal_button, wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.gui.steps.oneprovider.automation.automation_basic import (
     check_if_task_is_opened,
@@ -305,10 +305,9 @@ def compare_audit_log_to_store_log(
         store_key,
     )
 
-    modal = Modals(driver).audit_log
+    click_modal_button(selenium, browser_id, "user_log", "audit_log")
+    click_modal_button(selenium, browser_id, "copy_json", "audit_log")
 
-    modal.user_log.click()
-    modal.copy_json()
     audit_log = json.loads(clipboard.paste(display=displays[browser_id]))
 
     err_msg = (
@@ -353,7 +352,6 @@ def assert_task_audit_log_is_like_store_audit_log(
     time.sleep(1)
 
     compare_audit_log_to_store_log(
-        driver,
         clipboard,
         displays,
         browser_id,
@@ -389,7 +387,6 @@ def assert_workflow_audit_log_contains_store_audit_log_info(
     driver = selenium[browser_id]
 
     compare_audit_log_to_store_log(
-        driver,
         clipboard,
         displays,
         browser_id,

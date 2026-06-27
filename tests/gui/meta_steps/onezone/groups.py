@@ -23,12 +23,9 @@ from tests.gui.steps.modals.modal import (
 from tests.gui.steps.onezone.groups import (
     assert_group_exists,
     click_create_group_button_in_panel,
-    click_on_confirmation_button_to_rename_group,
-    click_on_group_menu_button,
     confirm_name_input_on_main_groups_page,
     go_to_group_subpage,
     input_name_into_input_box_on_main_groups_page,
-    input_new_group_name_into_rename_group_inpux_box,
     press_enter_on_active_element,
 )
 from tests.gui.steps.onezone.members import (
@@ -100,6 +97,8 @@ def wt_get_group_and_click_menu_button(
     parsers.re(
         'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
         'to "(?P<new_group_name>.*)" using '
+        'user of (?P<browser_id>.*) renames group "(?P<group_name>.*)" '
+        'to "(?P<new_group_name>.*)" using '
         "(?P<confirm_type>.*) to confirm"
     )
 )
@@ -112,15 +111,13 @@ def rename_group(
     confirm_type: str,
 ) -> None:
     option = "Rename"
-    text = new_group
 
-    click_on_group_menu_button(selenium, browser_id, option, group)
-    input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text)
+    group = get_group_and_click_menu_button(selenium, browser_id, option, group_name)
+    input_new_group_name_into_rename_group_inpux_box(group, new_group_name)
     if confirm_type == "button":
-        click_on_confirmation_button_to_rename_group(selenium, browser_id)
+        click_on_confirmation_button_to_rename_group(group)
     else:
         press_enter_on_active_element(selenium, browser_id)
-        selenium[browser_id].switch_to.active_element.send_keys(Keys.RETURN)
 
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
@@ -129,7 +126,7 @@ def leave_group(selenium: SeleniumDrivers, browser_id: str, group: str) -> None:
     option = "Leave"
     modal = "LEAVE GROUP"
 
-    click_on_group_menu_button(selenium, browser_id, option, group)
+    _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
     click_modal_button(selenium, browser_id, option, modal)
 
 
@@ -159,7 +156,7 @@ def remove_group(selenium: SeleniumDrivers, browser_id: str, group_list: str) ->
     modal = "REMOVE GROUP"
 
     for group in parse_seq(group_list):
-        click_on_group_menu_button(selenium, browser_id, option, group)
+        _ = get_group_and_click_menu_button(selenium, browser_id, option, group)
         click_modal_button(selenium, browser_id, option, modal)
 
 

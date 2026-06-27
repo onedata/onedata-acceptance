@@ -88,7 +88,7 @@ def click_on_provider_in_uploads_sidebar_with_provider_name(
     selenium: SeleniumDrivers, browser_id: str, provider: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["uploads"].elements_list[provider].click()
+    OZLoggedIn(driver)["uploads"].uploads_list[provider].click()
 
 
 @wt(
@@ -112,4 +112,4 @@ def click_on_all_uploads_in_uploads_sidebar_with_provider_name(
     selenium: SeleniumDrivers, browser_id: str
 ) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["uploads"].elements_list["All uploads"].click()
+    OZLoggedIn(driver)["uploads"].uploads_list["All uploads"].click()

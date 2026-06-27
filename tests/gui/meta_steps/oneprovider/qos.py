@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.modals.modal import (
     click_modal_button,
     click_panel_button,
@@ -31,7 +32,6 @@ from tests.gui.steps.onezone.spaces import click_on_option_of_space_on_left_side
 from tests.gui.type_definitions import Clipboard, TmpMemory
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import parsers, wt
-from tests.utils.utils import repeat_failed
 
 
 def _add_qos_requirement_in_modal(
@@ -54,6 +54,7 @@ def _add_qos_requirement_in_modal(
     choose_option_for_file_from_selection_menu(
         browser_id, selenium, qos_option, tmp_memory, item_name
     )
+    assert_tab_in_modal(selenium, browser_id, "QoS", details_modal)
     click_panel_button(selenium, browser_id, add_button, panel)
     click_enter_as_text_link(selenium, browser_id)
     write_name_into_text_field_in_panel(
@@ -74,7 +75,6 @@ def _add_qos_requirement_in_modal(
         'for "{item_name}" in space "{space_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -103,7 +103,6 @@ def add_qos_requirement_in_modal(
         '"{space_name}"'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_qos_requirement_in_modal_with_replicas(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -130,7 +129,6 @@ def add_qos_requirement_in_modal_with_replicas(
         'storageId for "{item_name}" from file browser'
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_id_qos_requirement_in_modal(
     selenium: SeleniumDrivers,
     browser_id: str,

@@ -72,3 +72,11 @@ class APIPage(DocumentationPage):
 
 class DocsPage(DocumentationPage):
     pass
+
+
+class HowItWorksPage(PageObject):
+    pass
+
+
+class QuickStartPage(PageObject):
+    pass

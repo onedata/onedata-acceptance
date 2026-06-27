@@ -109,6 +109,12 @@ def evict_file(
     click_modal_button(selenium, browser_id, close_button, details_modal)
 
 
+@wt(
+    parsers.re(
+        r'user of (?P<browser_id>.+) waits until "(?P<provider>.+)" transfers complete'
+        r' for "(?P<space>.+)" space'
+    )
+)
 def wait_for_all_transfers_to_start_and_finish(
     selenium: SeleniumDrivers, browser_id: str, provider: str, space: str, hosts: Hosts
 ) -> None:

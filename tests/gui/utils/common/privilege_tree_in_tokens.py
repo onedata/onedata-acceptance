@@ -184,7 +184,7 @@ class PrivilegeTree(PageObject):
         name: str,
     ) -> None:
         driver = selenium[browser_id]
-        privilege_row = self.privilege_groups[name]
+        privilege_row = self.get_privilege_group_row(name)
         granted = group["granted"]
         if granted == "Partially":
             sub_privileges = group["privilege subtypes"]
@@ -250,7 +250,7 @@ class PrivilegeTree(PageObject):
         with_scroll: bool = False,
     ) -> None:
         driver = selenium[browser_id]
-        privilege_row = self.privilege_groups[name]
+        privilege_row = self.get_privilege_group_row(name)
         granted = group["granted"]
         if granted == "Partially":
             sub_privileges = group["privilege subtypes"]

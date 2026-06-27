@@ -16,6 +16,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
 from tests.gui.utils.generic import transform
 from tests.gui.utils.onezone.generic_page import GenericPage
@@ -54,18 +55,14 @@ def assert_n_items_in_items_list(
     driver = selenium[browser_id]
     seen_items = set()
     stop_scrolling_flag = False
-    if not transform_fun:
-        transform_fun = lambda item: item.text.split("\n")[0]
     while not stop_scrolling_flag:
-        new_items = _get_visible_items_list(page, items_names)
-        new_items_names = [
-            transform_fun(el) for el in new_items if transform_fun(el) != ""
-        ]
+        new_items = get_visible_items_list(page, items_type, main_field)
+        new_items_fields = [getattr(el, main_field) for el in new_items]
 
-        # if there are at least 1 new item keep scrolling
-        stop_scrolling_flag = not any(el not in seen_items for el in new_items_names)
-        seen_items.update(new_items_names)
-        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1])
+        stop_scrolling_flag = not any(el not in seen_items for el in new_items_fields)
+        seen_items.update(new_items_fields)
+        driver.execute_script("arguments[0].scrollIntoView();", new_items[-1].web_elem)
+
     assert len(seen_items) == number, (
         f"There are {len(seen_items)} items, but should be: {number}. All found"
         f" items:\n {seen_items}"
@@ -107,10 +104,16 @@ def _get_page(where: str, driver: WebDriver) -> Any:
 
 
 @wt(
-    parsers.parse(
-        "user of {browser_id} can see there are {number} {items} on the {where} list in"
-        " the sidebar"
-    )
+    parsers.re(
+        r"user of (?P<browser_id>.*) can see there are (?P<number>\d+)"
+        r" (?P<items_type>.*) on the (?P<list_type>.*)"
+        r" list in the sidebar",
+    ),
+    converters={
+        "number": int,
+        "items_type": ListElement,
+        "list_type": ListElement,
+    },
 )
 def wt_assert_n_items_in_items_list(
     selenium: dict[str, WebDriver],
@@ -120,8 +123,8 @@ def wt_assert_n_items_in_items_list(
     list_type: ListElement,
 ) -> None:
     driver = selenium[browser_id]
-    page = _get_page(where, driver)
-    assert_n_items_in_items_list(page, selenium, browser_id, number, items)
+    page = _get_page(list_type.value, driver)
+    assert_n_items_in_items_list(page, selenium, browser_id, number, items_type, "name")
 
 
 def get_last_item_number_in_table(driver: WebDriver) -> int:

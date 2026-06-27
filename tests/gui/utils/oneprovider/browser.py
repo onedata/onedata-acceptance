@@ -15,15 +15,16 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
     Input,
     Label,
     WebElement,
-    WebElementsSequence,
     WebItemsSequence,
 )
+from tests.utils.utils import repeat_failed
 
 from ..core import scroll_to_css_selector
 from .breadcrumbs import Breadcrumbs
@@ -35,6 +36,7 @@ class Browser(ABC, PageObject):
     column_header_cls: ClassVar[Optional[type[PageObject]]] = None
     data: ClassVar[WebItemsSequence]
     column_headers: ClassVar[WebItemsSequence]
+    files_list: ClassVar[WebItemsSequence]
 
     header = WebElement(".file-browser-head-container")
     browser_msg_header = Label(".content-info-content-container h1")
@@ -46,11 +48,6 @@ class Browser(ABC, PageObject):
     error_msg = Label(".error-dir-text")
     _empty_dir_icon = WebElement(".empty-dir-image")
 
-    _data = WebElementsSequence(".data-row.fb-table-row")
-    items_list_web_elems = WebElementsSequence(
-        ".data-row.fb-table-row .fb-table-col-files"
-    )
-
     _bottom = WebElement(".table-bottom-spacing")
 
     parent = ""
@@ -59,6 +56,7 @@ class Browser(ABC, PageObject):
         super().__init_subclass__(**kwargs)
         if cls.row_cls is not None:
             cls.data = WebItemsSequence(".data-row.fb-table-row", cls=cls.row_cls)
+            cls.files_list = cls.data
         if cls.column_header_cls is not None:
             cls.column_headers = WebItemsSequence(
                 ".fb-table-secondary-col", cls=cls.column_header_cls

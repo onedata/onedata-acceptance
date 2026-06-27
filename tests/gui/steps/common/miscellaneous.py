@@ -22,6 +22,10 @@ from tests.gui.utils import Popups
 from tests.gui.utils.generic import transform
 from tests.type_definitions import SeleniumDrivers
 from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.entities_setup import (
+    DOWNLOAD_INACTIVITY_PERIOD_SEC,
+    GUI_DOWNLOAD_CHUNK_SIZE,
+)
 from tests.utils.utils import repeat_failed
 
 

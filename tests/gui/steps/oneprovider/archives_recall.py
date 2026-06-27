@@ -11,6 +11,7 @@ import re
 import time
 from collections.abc import Callable
 from datetime import datetime
+from typing import List
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.common import scroll_and_get_columns
@@ -236,8 +237,7 @@ def assert_entries_with_file_names_in_archive_recall(
     # contain '(' or ')' characters
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    file_name_p = file_name.split(".")[0]
-    file_name_s = file_name.split(".")[1]
+    file_name_p, file_name_s = file_name.rsplit(".", 1)
     # if we want to scroll cursor need to be somewhere on the
     # table containing error logs
     modal.move_to_error_logs_table(driver)
@@ -247,8 +247,7 @@ def assert_entries_with_file_names_in_archive_recall(
             "source_file"
         )[index:]
         for entry_name in new_entries_names:
-            file_name_p_ = entry_name.split(".")[0]
-            file_name_s_ = entry_name.split(".")[1]
+            file_name_p_, file_name_s_ = file_name.rsplit(".", 1)
             file_name_p_ = file_name_p_.split("(")[0]
             err_msg = (
                 f"file name {entry_name} does not match name or name "
@@ -299,12 +298,7 @@ def _scroll_and_check_condition(
 ) -> list[str]:
     driver = selenium[browser_id]
     modal = Modals(driver).archive_recall_information
-    entries = modal.error_file_row
-    new_entries = [
-        entry.text.split("\n")[1]
-        for entry in entries
-        if len(entry.text.split("\n")) > 1
-    ]
+    new_entries: List[str] = modal.get_visible_rows_of_single_column("source_file")
     detected_entries = []
     detected_entries.extend(new_entries)
     index = 0
@@ -312,12 +306,7 @@ def _scroll_and_check_condition(
         condition(*args, index=index)
 
         modal.scroll_by_press_space()
-        entries = modal.error_file_row
-        new_entries = [
-            entry.text.split("\n")[1]
-            for entry in entries
-            if len(entry.text.split("\n")) > 1
-        ]
+        new_entries = modal.get_visible_rows_of_single_column("source_file")
         index = 0
         for entry in new_entries:
             if entry not in detected_entries:

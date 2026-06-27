@@ -71,6 +71,7 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "automation/workflow/workflow-empty-lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser sees that workflow editor appeared
     And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
     And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
@@ -127,6 +128,7 @@ Feature: Basic workflows management
   Scenario: User sees new workflow revision after using redesign as new revision
     When user of browser uploads "echo" workflow from automation-examples repository to "inventory1" inventory
     And user of browser clicks on "Redesign as new revision" button from 2nd revision of "echo" workflow menu
+    And user of browser sees that workflow editor appeared
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking "Save" button from menu bar

@@ -41,7 +41,7 @@ class AutomationDetailsPage(PageObject):
 
 
 class AutomationPage(GenericPage):
-    elements_list = WebItemsSequence(
+    automations_list = WebItemsSequence(
         ".sidebar-atm-inventories .one-list>.one-list-item.clickable",
         cls=Inventory,
     )

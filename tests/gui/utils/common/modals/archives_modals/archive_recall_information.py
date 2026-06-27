@@ -8,18 +8,29 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 from typing import Dict, List, Optional
 
+from typing import Dict, List, Optional
+
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (
     Button,
     Label,
     WebElement,
-    WebElementsSequence,
+    WebItemsSequence,
 )
+from tests.gui.utils.oneprovider.browser_row import BrowserRow
+from tests.utils.utils import repeat_failed
+
+
+class ErrorLogRow(BrowserRow):
+    source_file = Label(".cell-file", scroll=False)
+    time = Label(".timestamp-cell", scroll=False)
+    error_message = Label(".truncated-string", scroll=False)
 
 
 class ArchiveRecallInformation(Modal):
@@ -36,7 +47,7 @@ class ArchiveRecallInformation(Modal):
     recalling_oneprovider = Label(".recall-info-row-recalling-provider .property-value")
     recall_destination = Label(".recall-info-row-target-path .property-value")
     error_log = Button(".logs-nav-link")
-    error_file_row = WebElementsSequence(".table-entry.data-row")
+    error_file_rows = WebItemsSequence(".table-entry.data-row", cls=ErrorLogRow)
     error_log_table = WebElement(".infinite-scroll-table")
 
     @staticmethod

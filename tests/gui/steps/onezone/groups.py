@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.common import get_visible_items_list
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.utils import OZLoggedIn, Popups
 from tests.gui.utils.common.modals import Modals
@@ -137,9 +138,9 @@ def go_to_group_subpage(
     selenium: SeleniumDrivers, browser_id: str, group: str, subpage: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[group]()
+    page.groups_list[group]()
     if subpage != "main":
-        getattr(page.elements_list[group], subpage)()
+        getattr(page.groups_list[group], subpage)()
 
 
 @wt(parsers.parse('user of {browser_id} see that page with text "{text}" appeared'))
@@ -313,6 +314,10 @@ def assert_group_in_groups_page(
     browser_id: str, selenium: SeleniumDrivers, group_name: str
 ) -> None:
     driver = selenium[browser_id]
-    assert (
-        group_name in OZLoggedIn(driver)["groups"].elements_list
-    ), f"There is no group {group_name} in groups list."
+
+    group_headers = get_visible_items_list(
+        OZLoggedIn(driver)["groups"], ListElement.GROUPS_HEADERS, "name"
+    )
+
+    header = [header for header in group_headers if header.name == group_name]
+    assert header, f"There is no group {group_name} in groups list."

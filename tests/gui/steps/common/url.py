@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import re
 from typing import Union
 
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.expected_conditions import staleness_of

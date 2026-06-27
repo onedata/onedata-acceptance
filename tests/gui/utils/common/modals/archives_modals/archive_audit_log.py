@@ -69,18 +69,19 @@ class ArchiveAuditLog(Modal):
         for row in self.data_row:
             row = cast(FilesLog, row)
             values_in_row = [getattr(row, column) for column in temp_columns]
-            if any(param == "" for param in values_in_row):
+            if any(value_in_row == "" for value_in_row in values_in_row):
                 continue
-            try:
-                name_hash = row.duplicated_name_hash
-            except RuntimeError:
-                name_hash = None
-
-            if name_hash:
-                values_in_row[temp_columns.index("file")] += name_hash
 
             for column, param in zip(temp_columns, values_in_row):
                 column_values[column].append(param)
+
+            try:
+                name_hash = getattr(row, "duplicated_name_hash")
+            except RuntimeError:
+                name_hash = ""
+
+            column_values["file"][-1] += name_hash
+            # adding hash to last file name to make it unique in case of duplicated names
 
         return column_values
 

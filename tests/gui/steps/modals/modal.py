@@ -176,6 +176,9 @@ def assert_modal_does_not_appear(
         pass
 
 
+@given(
+    parsers.parse('user of {browser_id} seen that "{modal_name}" modal has appeared')
+)
 @wt(
     parsers.re(
         r'(using web GUI, )?user of (?P<browser_id>.*) sees that "(?P<modal_name>.*)"'
@@ -538,7 +541,7 @@ def click_modal_button(
 ) -> None:
     modal = getattr(Modals(selenium[browser_id]), check_modal_name(modal_name))
     button = button.replace(".", "")
-    getattr(modal, transform(button))()
+    getattr(modal, transform(button)).click()
 
 
 @wt(

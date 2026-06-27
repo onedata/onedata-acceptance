@@ -155,7 +155,7 @@ class DiscoveryPage(GenericPage):
         "button", text="Invite space using token"
     )
 
-    elements_list = WebItemsSequence(
+    harvesters_list = WebItemsSequence(
         ".sidebar-harvesters li.one-list-item.clickable", cls=Harvester
     )
 

@@ -9,6 +9,7 @@ import json
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.common.miscellaneous import press_backspace_on_active_element
 from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onezone.automation.automation_basic import collapse_revision_list
@@ -34,6 +35,9 @@ def click_add_new_button_in_menu_bar(
 ) -> None:
     driver = selenium[browser_id]
     getattr(OZLoggedIn(driver)["automation"].main_page, transform(option)).click()
+    wait_for_sliding_panel_to_stop_moving(
+        driver, WAIT_FRONTEND, '[data-one-carousel-slide-id="editor"]'
+    )
 
 
 @wt(
@@ -368,7 +372,7 @@ def add_lambda_revision_to_workflow(
     selenium: SeleniumDrivers, browser_id: str, lambda_name: str, ordinal: str
 ) -> None:
     subpage = OZLoggedIn(selenium[browser_id])["automation"].lambdas_page
-    lambda_object = subpage.elements_list[lambda_name]
+    lambda_object = subpage.lambdas_list[lambda_name]
     revision = lambda_object.revision_list[ordinal[:-2]]
 
     try:

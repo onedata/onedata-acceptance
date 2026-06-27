@@ -346,8 +346,8 @@ def click_generate_token_in_subgroups_list(
     selenium: SeleniumDrivers, browser_id: str, group: str, member: str
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[group]()
-    page.elements_list[group].members()
+    page.groups_list[group]()
+    page.groups_list[group].members()
     getattr(page.main_page.members, member).generate_token()
 
 
@@ -420,8 +420,8 @@ def assert_element_is_groups_child(
     parent: str,
 ) -> None:
     page = OZLoggedIn(selenium[browser_id]).get_page_and_click("groups")
-    page.elements_list[parent]()
-    page.elements_list[parent].members()
+    page.groups_list[parent]()
+    page.groups_list[parent].members()
 
     try:
         page.members_page.groups.items[child]
@@ -497,8 +497,8 @@ def check_user_in_space_members_list(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["data"]
-    page.spaces_header_list[space_name]()
-    page.elements_list[space_name].members()
+    page.spaces_headers_list[space_name]()
+    page.spaces_list[space_name].members()
     try:
         page.members_page.users.items[username]
     except RuntimeError:
@@ -533,8 +533,9 @@ def remove_member_from_parent(
         main_page = OZLoggedIn(selenium[browser_id]).get_page_and_click(
             _change_to_tab_name(where)
         )
-        main_page.elements_list[name]()
-        main_page.elements_list[name].members()
+        list_name = f"{where}s_list"
+        getattr(main_page, list_name)[name]()
+        getattr(main_page, list_name)[name].members()
     members_page = _find_members_page(driver, where)
     list_name = member_type + "s"
     (
@@ -663,7 +664,7 @@ def copy_invitation_token(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver).get_page_and_click("groups")
-    page.elements_list[group]()
+    page.groups_list[group]()
 
     getattr(page.main_page.members, who + "s").header.menu_button()
     button = f"Invite {who} using token"
@@ -691,7 +692,7 @@ def get_invitation_token(
 ) -> None:
     driver = selenium[browser_id]
     page = OZLoggedIn(driver)["groups"]
-    page.elements_list[group]()
+    page.groups_list[group]()
     page.main_page.menu_button()
     Popups(driver).menu_popup_with_text.menu["Invite " + who]()
     token = page.members_page.token.token
@@ -908,7 +909,6 @@ def click_button_on_element_header_in_members(
     driver.find_element(By.CSS_SELECTOR, ".list-header-row " + option_selector).click()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_on_element_header_in_members_and_wait(
     selenium: SeleniumDrivers,
     browser_id: str,
@@ -1081,8 +1081,8 @@ def check_list_length_on_members_subpage(
 
 @wt(
     parsers.parse(
-        "user of {browser_id} sees that {where} {item_name} has "
-        "following privilege configuration for {target} {name}:"
+        'user of {browser_id} sees that {item_type} "{item_name}" has '
+        'following privilege configuration for {target} "{name}":'
         "\n{config}"
     )
 )
@@ -1097,37 +1097,42 @@ def assert_privilege_config_for_user(
     hosts: Hosts,
 ) -> None:
     list_type = target + "s"
-    option = where + "s" if where != "inventory" else "automation"
+
+    option = item_type + "s" if item_type != "inventory" else "automation"
     option2 = "Members"
 
     data = yaml.load(config, yaml.Loader)
     privileges = data["privileges"]
 
-    if where != "cluster":
+    if item_type != "cluster":
         click_element_on_lists_on_left_sidebar_menu(
             selenium, browser_id, option, item_name
         )
-    if where == "space":
+
+    if item_type == "space":
         click_on_option_of_space_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "harvester":
+    elif item_type == "harvester":
         click_on_option_of_harvester_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "inventory":
+    elif item_type == "inventory":
         click_on_option_of_inventory_on_left_sidebar_menu(
             selenium, browser_id, item_name, option2
         )
-    elif where == "group":
+    elif item_type == "group":
         go_to_group_subpage(selenium, browser_id, item_name, option2.lower())
-    elif where == "cluster":
+    elif item_type == "cluster":
         click_on_record_in_clusters_menu(selenium, browser_id, item_name, hosts)
         wt_click_on_subitem_for_item(
             selenium, browser_id, option, option2, item_name, hosts
         )
-    click_element_in_members_list(selenium, browser_id, name, where, list_type)
-    privilege_tree = get_privilege_tree(selenium, browser_id, where, list_type, name)
+
+    click_element_in_members_list(selenium, browser_id, name, item_type, list_type)
+    privilege_tree = get_privilege_tree(
+        selenium, browser_id, item_type, list_type, name
+    )
     privilege_tree.assert_privileges(selenium, browser_id, privileges)
 
 

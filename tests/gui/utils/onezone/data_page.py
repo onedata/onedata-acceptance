@@ -32,11 +32,13 @@ from .space_marketplace import SpaceMarketplacePage
 
 
 class Space(Element):
-    name = id = Label(".item-name")
-    support_size = Label(".status-toolbar-icon:first-of-type")
-    supporting_providers_number = Label(".status-toolbar-icon:last-of-type")
-    advertised_icon = Icon(".oneicon-cart-checked")
-    home_icon = WebElement(".status-toolbar-icon:first-of-type span")
+    name = id = Label(".item-name", scroll=False)
+    support_size = Label(".status-toolbar-icon:first-of-type", scroll=False)
+    supporting_providers_number = Label(
+        ".status-toolbar-icon:last-of-type", scroll=False
+    )
+    advertised_icon = Icon(".oneicon-cart-checked", scroll=False)
+    home_icon = WebElement(".status-toolbar-icon:first-of-type span", scroll=False)
 
     overview = NamedButton(".one-list-level-2 .item-header", text="Overview")
     files = NamedButton(".one-list-level-2 .item-header", text="Files")
@@ -254,14 +256,13 @@ class DataPage(GenericPage):
 
     marketplace_button = Button(".one-sidebar-toolbar-button .oneicon-cart")
 
-    spaces_header_list = WebItemsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
-    )
-    spaces_header_list_web_elems = WebElementsSequence(
-        ".sidebar-spaces li.one-list-item.clickable.data-row"
+    spaces_headers_list = WebItemsSequence(
+        ".sidebar-spaces li.one-list-item.clickable.resource-item"
+        " .item-header:not(.truncate)",
+        cls=SpaceHeader,
     )
 
-    elements_list = WebItemsSequence(
+    spaces_list = WebItemsSequence(
         ".sidebar-spaces li.one-list-item.clickable.resource-item", cls=Space
     )
 

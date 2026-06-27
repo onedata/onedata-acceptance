@@ -16,7 +16,6 @@ from tests.conftest import REQUEST_TIMEOUT
 from tests.gui.type_definitions import Clipboard
 from tests.utils.bdd_utils import parsers, wt
 
-# HOST_URL = 'volume-s3.dev-volume-s3-krakow.default:9000'
 HOST_URL = "dev-volume-s3-krakow.default:9000"
 
 ACCESS_KEY = "accessKey"

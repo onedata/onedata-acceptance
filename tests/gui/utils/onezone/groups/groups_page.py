@@ -11,7 +11,6 @@ from tests.gui.utils.core.web_elements import (
     Input,
     Label,
     NamedButton,
-    WebElementsSequence,
     WebItem,
     WebItemsSequence,
 )
@@ -23,10 +22,16 @@ from .hierarchy_subpage import GroupHierarchyPage
 
 
 class Group(Element):
-    menu = Button(".collapsible-toolbar-toggle")
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
     members = NamedButton(".one-list-level-2 .item-header", text="Members")
     hierarchy = NamedButton(".one-list-level-2 .item-header", text="Hierarchy")
     edit_box = WebItem(".name-editor", cls=EditBox)
+
+
+class GroupHeader(Element):
+    name = id = Label(".item-name", scroll=False)
+    menu = Button(".collapsible-toolbar-toggle", scroll=False)
 
 
 class GroupDetailsPage(PageObject):
@@ -45,11 +50,11 @@ class MenuItem(PageObject):
 
 
 class GroupsPage(GenericPage):
-    elements_list = WebItemsSequence(
+    groups_list = WebItemsSequence(
         ".sidebar-groups .one-list>.one-list-item.clickable", cls=Group
     )
-    groups_list_web_elems = WebElementsSequence(
-        ".sidebar-groups .one-list>.one-list-item.clickable"
+    groups_headers_list = WebItemsSequence(
+        ".sidebar-groups .one-list>.one-list-item.clickable", cls=GroupHeader
     )
 
     create_group = Button(".create-group-btn")

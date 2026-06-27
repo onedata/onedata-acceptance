@@ -45,6 +45,7 @@ from tests.gui.steps.onezone.automation.automation_basic import (
     go_to_inventory_subpage,
     upload_workflow_as_json,
     upload_workflow_from_repository,
+    wait_for_workflow_editor_to_expand,
 )
 from tests.gui.steps.onezone.automation.workflow_creation import (
     click_add_new_button_in_menu_bar,
@@ -98,6 +99,7 @@ def upload_and_assert_workflow_to_inventory_using_gui(
     upload_workflow_as_json(selenium, browser_id, file_name)
     _wait_for_modal_to_appear(driver, browser_id, "Upload workflow", tmp_memory)
     click_modal_button(selenium, browser_id, "Apply", "Upload workflow")
+    wait_for_workflow_editor_to_expand(driver)
     go_to_inventory_subpage(selenium, browser_id, inventory, "workflows", tmp_memory)
 
     assert_workflow_exists(selenium, browser_id, workflow, "sees")

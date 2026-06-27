@@ -78,7 +78,7 @@ def click_on_status_tag_for_file_in_file_browser(
         "user of {browser_id} sees only items named {item_list} in {which_browser}"
     )
 )
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_only_given_items_in_file_browser(
     browser_id: str, item_list: str, tmp_memory: TmpMemory, which_browser: str
 ) -> None:
@@ -189,13 +189,13 @@ def wait_for_size_to_be_displayed_in_data_row(
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_bottom_of_file_browser(browser_id: str, tmp_memory: TmpMemory) -> None:
     browser = tmp_memory[browser_id]["file_browser"]
-    visible_files = browser.names_of_visible_elems()
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     detected_files = []
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
         browser.scroll_visible_fragment()
-        visible_files = browser.names_of_visible_elems()
+        visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
         new_files = [f for f in visible_files if f and f not in detected_files]
 
 
@@ -290,7 +290,7 @@ def select_first_n_files(
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
         selected_files = []
-        visible_files = browser.names_of_visible_elems()
+        visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
         new_files = [f for f in visible_files if f]
         err_msg = (
             f"there are {len(new_files)} files in file browser"
@@ -487,7 +487,7 @@ def count_files_while_scrolling(
 
     browser = tmp_memory[browser_id][transform(which_browser.value)]
     detected_files = []
-    visible_files = browser.names_of_visible_elems()
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
@@ -499,7 +499,9 @@ def count_files_while_scrolling(
         # wait if page does not respond instantly
         for _ in range(10):
             try:
-                visible_files = browser.names_of_visible_elems()
+                visible_files = browser.get_field_value_from_visible_rows(
+                    browser.files_list
+                )
                 break
             except StaleElementReferenceException:
                 time.sleep(0.1)
@@ -714,7 +716,7 @@ def assert_item_displayed_on_page(
     which: str,
 ) -> None:
     browser = tmp_memory[browser_id][f"{which}_browser"]
-    visible_files = browser.names_of_visible_elems()
+    visible_files = browser.get_field_value_from_visible_rows(browser.files_list)
     items = parse_seq(item_list)
     data = [f for f in visible_files if f]
     for name in items:

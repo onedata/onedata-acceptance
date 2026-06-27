@@ -11,6 +11,7 @@ from time import sleep
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.common import wait_for_sliding_panel_to_stop_moving
 from tests.gui.steps.modals.modal import check_modal_name
 from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser,
@@ -142,10 +143,14 @@ def assert_tab_in_modal(
     # the transition ended. Currently we check that rectangle position of modal stops
     # changing.
     # TODO: VFS-12424 Add class to fully-transitioned file details panel
-    sleep(2)
-    active_tab = getattr(
-        Modals(selenium[browser_id]), check_modal_name(transform(modal_name))
-    ).active_tab
+    driver = selenium[browser_id]
+    modal_name_transformed = check_modal_name(transform(modal_name))
+    if modal_name_transformed == "details_modal":
+        wait_for_sliding_panel_to_stop_moving(
+            driver, WAIT_FRONTEND, ".modal-content .modal-body"
+        )
+
+    active_tab = getattr(Modals(driver), modal_name_transformed).active_tab
     err_msg = (
         f"Expected tab: {tab} does not match actual active tab: "
         f"{active_tab} on modal {modal_name}"
