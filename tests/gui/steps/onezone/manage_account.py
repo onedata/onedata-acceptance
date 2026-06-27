@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 
+from selenium.webdriver.common.action_chains import ActionChains
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils import Modals, OZLoggedIn, Popups
 from tests.type_definitions import SeleniumDrivers
@@ -22,7 +24,9 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) -> None:
     driver = selenium[browser_id]
-    OZLoggedIn(driver)["profile"].profile()
+    OZLoggedIn(driver).get_page_and_click("data")
+    button = OZLoggedIn(driver)["profile"].profile.web_elem
+    ActionChains(driver).move_to_element(button).click(button).perform()
 
 
 @wt(
@@ -36,8 +40,7 @@ def expand_account_settings_in_oz(selenium: SeleniumDrivers, browser_id: str) ->
 def click_on_option_in_account_settings_in_oz(
     selenium: SeleniumDrivers, browser_id: str, option: str
 ) -> None:
-    driver = selenium[browser_id]
-    Popups(driver).user_account_menu.options[option].click()
+    Popups(selenium[browser_id]).user_account_menu.options[option].click()
 
 
 @wt(parsers.parse("user of {browser_id} clicks on menu button on Profile page"))
