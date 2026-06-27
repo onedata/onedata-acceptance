@@ -43,7 +43,6 @@ show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = ["bamboos.*"]
-follow_imports = "skip"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
@@ -94,5 +93,4 @@ module = [
     "tests.mixed.cdmi_client.*",
 ]
 ignore_missing_imports = true
-follow_imports = "skip"
 ignore_errors = true
