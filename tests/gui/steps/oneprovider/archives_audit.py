@@ -175,8 +175,7 @@ def _scroll_and_check_condition(
     driver = selenium[browser_id]
     modal = Modals(driver).archive_audit_log
     checked_elems = []
-    rows_of_columns = modal.get_rows_of_columns()
-    visible_elems = rows_of_columns["file"]
+    visible_elems = modal.get_visible_rows_of_single_column("file")
     new_elems = visible_elems
     last_index = 0
 

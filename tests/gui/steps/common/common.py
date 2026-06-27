@@ -17,6 +17,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils import OZLoggedIn
+from tests.gui.utils.common.modals.archives_modals.archive_audit_log import (
+    ArchiveAuditLog,
+)
+from tests.gui.utils.common.modals.archives_modals.archive_recall_information import (
+    ArchiveRecallInformation,
+)
 from tests.gui.utils.generic import ListElement, transform
 from tests.gui.utils.oneprovider.browser import Browser
 from tests.gui.utils.onezone.generic_page import GenericPage
@@ -204,15 +210,18 @@ def assert_logs_order_with_optional_logs(
 
 
 def scroll_and_get_columns(
-    modal: Any, columns: list[str], main_column: str = "file"
+    modal: ArchiveRecallInformation | ArchiveAuditLog,
+    columns: list[str],
+    main_column: str = "file",
 ) -> list[str]:
     # The modal has to be a class that implements get_visible_rows_of_columns
     checked_names = set()
     columns = [transform(column) for column in columns]
     stop_scrolling_flag = False
     while not stop_scrolling_flag:
-        visible_elems = modal.get_rows_of_columns(columns)
-        visible_names = visible_elems[transform(main_column)]
+        visible_elems = modal.get_visible_rows_of_columns(columns)
+        visible_names = visible_elems[main_column]
+
         modal.scroll_by_press_space()
         stop_scrolling_flag = not any(
             name not in checked_names for name in visible_names

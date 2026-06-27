@@ -4,6 +4,9 @@ __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Button,
@@ -32,7 +35,7 @@ class ProviderDetails(PageObject):
 class ProviderMapPopover(PageObject):
     provider_name = id = Label(".provider-label")
     provider_hostname = Input(".provider-host-text")
-    copy_hostname = Button(".provider-host-copy-btn .one-icon")
+    copy_hostname = Button(".provider-host-copy-btn-container")
     spaces_list = WebItemsSequence(
         ".spaces-list li.provider-place-drop-space", cls=Space
     )
@@ -42,3 +45,8 @@ class ProviderMapPopover(PageObject):
     visit_provider = NamedButton(
         ".btn-container .btn-go-to-files", text="Visit provider"
     )
+
+    def click_copy_hostname_icon(self, driver: WebDriver) -> None:
+        button = self.copy_hostname.web_elem
+        # Also move_to_element_with_offset can be tried
+        ActionChains(driver).move_to_element(button).click(button).perform()

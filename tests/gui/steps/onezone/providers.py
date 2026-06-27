@@ -120,7 +120,7 @@ def assert_provider_hostname_matches_test_hostname(
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _click_copy_hostname(driver: WebDriver) -> None:
-    Popups(driver).provider_map_popover.copy_hostname()
+    Popups(driver).provider_map_popover.click_copy_hostname_icon(driver)
 
 
 def _click_on_btn_in_provider_popup(
