@@ -159,9 +159,6 @@ stages:
         - singleprovider storage modification singleclient directio
         - singleprovider storage modification singleclient directio hardlinks
         - singleprovider storage modification singleclient directio symlinks
-        # tests applicable only to PKG mode - not present in SRC
-        # @TODO VFS-6710 fix onedata_fs tests
-        # - onedata_fs tests
   - Qnthack - rerun:
       manual: false
       final: true
@@ -2101,23 +2098,6 @@ singleprovider storage modification singleclient directio symlinks:
         <<: *run-acceptance-tests
         scripts:
           - make SUITE=test_storage_modification ENV_FILE=singleprovider_storage_modification test_oneclient_pkg FILE_MODE=symlink
-
-# tests applicable only to PKG mode - not present in SRC
-# @TODO VFS-6710 fix onedata_fs tests
-# onedata_fs tests:
-#   <<: *acceptance-oneclient-tests-job
-#   key: OT
-#   tasks:
-#     - script: *clear-env
-#     - script: *restart-minikube
-#     - checkout: *checkout-default-repository
-#     - script: *init-submodules
-#     - script: *quarantine-hack-pull-surefire
-#     - script: *download-artifacts
-#     - script:
-#         <<: *run-acceptance-tests
-#         scripts:
-#           - make test_onedata_fs
 
 
 Qnthack - rerun:
