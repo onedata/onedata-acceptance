@@ -39,7 +39,7 @@ from tests.utils import onenv_utils, xvfb_utils
 from tests.utils.ffmpeg_utils import RecorderManager
 from tests.utils.path_utils import build_test_dir_name, make_logdir
 
-# avoid cyclic imports
+# avoid circular imports
 if TYPE_CHECKING:
     from tests.gui.utils import DataDiscoveryPage, OZLoggedIn, Popups
 
